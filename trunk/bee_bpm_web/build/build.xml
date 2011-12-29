@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author: sgurin -->
+<project name="bee_bpm_web.jar" default="jar">
+
+	<property file="build.properties"/>
+	<description>
+        make java doc of all this java project
+		@author: nes
+    </description>
+
+	<!--<classpath id="libraries" name="libraries">
+      <fileset dir="../lib">
+        <include name="**/*.jar"/>
+      </fileset>	    
+    </classpath>-->
+
+	<path id="libraries">
+	    <pathelement path="${binFolder}"/>
+		<fileset dir="../WebContent/WEB-INF/lib" includes="*.jar" />
+		<fileset dir="/home/nestor/sw/tools/apache-tomcat-6/lib" includes="*.jar" />
+	</path>
+
+	
+	<target name="compile">
+	    <javac srcdir="${srcFolder}" destdir="classes" classpathref="libraries"/>
+  	</target>		  
+	
+	<target name="jar" depends="compile" description="">
+		 <jar destfile="${distFolder}/${jarName}"
+	         basedir="${binFolder}"
+		 	includes="**/*.class, **/*.xml, **/*.properties, **/*.menu"
+	         />
+	</target>
+	<target name="deploy" depends="jar">
+		
+		<delete dir="${webAppFolder}"/>
+		<mkdir dir="${webAppFolder}" />
+
+
+		<copy todir="${webAppFolder}" flatten="false" overwrite="yes"> 
+				<fileset  dir="../WebContent"  includes="**" />
+		</copy>
+
+		<delete dir="${webAppFolder}/WEB-INF/classes"/>
+			
+		<copy file="${jarName}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${commonUserJarName}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${bdcJarName}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${hibernateConfigName}" todir="${webAppFolder}/WEB-INF/classes" />		
+		<copy file="${log4jName}" todir="${webAppFolder}/WEB-INF/classes" />	
+		<copy file="${configurationName}" todir="${webAppFolder}/WEB-INF/classes" />		
+		<copy file="${camposBuscadorName}" todir="${webAppFolder}/WEB-INF/classes" />
+		
+
+		
+	</target>
+	
+</project>

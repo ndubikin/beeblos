@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+<!-- ind_estado_proyecto_general.xhtml : muestra un cuadrito con el estado del proyecto, proximo paso y tarea  -->
+
+				<rich:panel 
+					onmouseover="document.getElementById(this.id+'_header').style.background='#60BA01';document.getElementById(this.id+'_body').style.background='#F4FFF8'"
+					onmouseout="document.getElementById(this.id+'_header').style.background='#4C9600';document.getElementById(this.id+'_body').style.background='#E4FFC8'"
+					headerClass="head2" bodyClass="body3">
+
+					<f:facet name="header">#{msg.label_SituacionGeneral}:</f:facet>
+	
+					<h:panelGrid columns="3" width="70%">
+	
+						<h:outputText value="#{msg.label_EstadoSituacionGeneral}:" styleClass="labelForm"
+							style="text-align : right;" />
+						<h:inputText value="#{fichaProyectoBean.proyecto.estadoProyecto.estadoProyectoNombre}"
+							style="width:100px;" disabled="false" />
+						<h:outputText value="" styleClass="text" />
+						
+						<h:outputText value="#{msg.label_desde}" styleClass="labelForm"
+							style="text-align : right;" size="15" />
+						<h:inputText value="#{fichaProyectoBean.proyecto.proyectoFechaEstado}"
+							style="width:100px;" disabled="false" size="15">
+							<f:convertDateTime type="date" pattern="#{msg.formatoFecha}" dateStyle="medium"/>
+						</h:inputText>	
+						<h:outputText value="" styleClass="text"/>
+						
+						<h:outputText value="#{msg.label_dptoDeOrigen}" styleClass="labelForm"
+							style="text-align : right;" size="15" />
+						<h:inputText value="#{fichaProyectoBean.proyecto.departamentoOrigen.departamentoNombre}"
+							style="width:100px;" disabled="false" size="15">
+						</h:inputText>	
+						<h:outputText value="" styleClass="text"/>
+						
+						<h:outputText value="#{msg.label_recibido}" styleClass="labelForm"
+							style="text-align : right;" size="15" />
+						<h:inputText value="#{fichaProyectoBean.proyecto.proyectoFechaRecepcion}"
+							style="width:100px;" disabled="false" size="15">
+							<f:convertDateTime type="date" pattern="#{msg.formatoFecha}" dateStyle="medium"/>
+						</h:inputText>	
+						<h:outputText value="" styleClass="text"/>
+						
+						<h:outputText value="#{msg.label_fase}:" styleClass="labelForm"
+							style="text-align : right;" size="15" />
+						<h:inputText value="#{fichaProyectoBean.proyecto.proyectoFase}"
+							style="width:100px;" disabled="false" size="5" />
+						<h:outputText value="" styleClass="text" />
+
+						<h:outputText value="Convenio:" styleClass="labelForm"
+							style="text-align : right;" size="15" />
+						<h:inputText value="#{fichaProyectoBean.proyecto.proyectoFechaSancionDefinitiva}"
+							style="width:100px;" disabled="false" size="15">
+							<f:convertDateTime type="date" pattern="#{msg.formatoFecha}" dateStyle="medium"/>
+						</h:inputText>	
+						<h:outputText value="" styleClass="text"/>
+												
+	
+					</h:panelGrid>
+					
+						
+					<h:panelGrid columns="1" width="70%">
+	
+						<rich:spacer height="10" />
+	
+						<h:outputText value="#{msg.label_AhoraEstaEn}:" styleClass="labelForm"
+							style="text-align : right;"  />
+	
+						<h:inputText  value=""
+							styleClass="labelFormBold" disabled="false"  size="25"/>
+							
+							<rich:spacer height="10" />
+	
+						<h:outputText value="#{msg.label_ParaRealizarTarea}:" styleClass="labelForm"
+							style="text-align : right;"  />
+	
+						<h:inputText  value=""
+							styleClass="labelFormBold" disabled="false"  size="25"/>
+	
+						<h:outputText value="" styleClass="text" />
+	
+					</h:panelGrid>
+				</rich:panel>
+</ui:composition>
+

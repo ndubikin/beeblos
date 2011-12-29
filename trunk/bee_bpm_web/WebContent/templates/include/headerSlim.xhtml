@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<ui:composition>
+<!--  version 0.1 -->
+<!--<f:loadBundle var="path" basename="org/richfaces/demo/common/path"/>-->
+<div class="page_brick"></div>
+<table class="top_navbar_slim" >
+<tbody>
+	<tr>
+
+		<td>
+			<h:outputLink value="http://80.38.104.210:8080/">Search</h:outputLink>
+		</td>
+			
+		<td>
+		<h:form>
+		  <a4j:commandLink action="#{login_x_Bean.logout}">
+                <h:outputText value="Logout ..." rendered="#{(loggedUserBean.usuarioLogueado != '')}"/> 
+          </a4j:commandLink>
+		</h:form>
+		</td>
+	</tr>
+</tbody>
+</table>
+
+<h:form>
+    <a4j:commandLink action="#{login_x_Bean.goToWelcome}">
+                 <h:outputText     value="#{contextoSeguridad.tituloPrincipal}"
+                                 style="font-weight: bold; padding-top: 5px;"
+                                class="main_title" />
+        <a4j:support event="onclick" ajaxSingle="true">
+                    <a4j:actionparam name="param1" value="#{null}" assignTo="#{consultaActividadBean.lProyectoActividades}"/>
+                    <a4j:actionparam name="param2" value="#{null}" assignTo="#{consultaTareaBean.lTareasDepto4}"/>
+                    <a4j:actionparam name="param3" value="#{null}" assignTo="#{consultaFacturaBean.listaFacturasPlanificacionPagos}"/>
+                    <a4j:actionparam name="param4" value="#{null}" assignTo="#{consultaPagoBean.lpagos}"/>
+                    <a4j:actionparam name="param5" value="#{null}" assignTo="#{consultaPresupuestoBean.listaPresupuestosSolicitadosEnEstado}"/>
+        </a4j:support>
+
+    </a4j:commandLink>
+ </h:form>   
+
+<h:outputText 	value="Bienvenido #{loggedUserBean.usuarioLogueado} !" 
+				rendered="#{(loggedUserBean.usuarioLogueado != '')}"
+				style="font-weight: bold; margin-left: 300px; padding-top: 5px;" 
+				class="main_title"  />
+
+
+</ui:composition>
+</html>
