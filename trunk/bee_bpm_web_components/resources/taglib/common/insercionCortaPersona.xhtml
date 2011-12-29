@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition>
+
+<script type="text/javascript">
+</script>
+
+<h:messages id="insercionCortaPersonaMsg" showDetail="true" showSummary="false" styleClass="error" style="font-size: 13px; color: #FF0000; " fatalClass="fatal" />
+
+<fieldset class="demo_fieldset">
+	<legend class="demo_legend"><h:outputText value="#{msg.title_datos_basicos}"/></legend> 
+	<h:panelGrid id="insertionContentPanel" width="99%" columns="2" columnClasses="colStyleF1,colStyleF2,colStyleF3">
+						
+		<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />				
+		<h:inputText id="nombreContacto" disabled="#{insercionCortaPersonaBean.deshabilitarCampos}" 
+			value="#{insercionCortaPersonaBean.persona.personaNombre}" style="width:150px; font-size:13px;	padding: 4px;">							
+		</h:inputText>	
+		<h:outputText id="nameContactEnBlanco" value=""/>	
+		<h:message for="nombreContacto"></h:message>				
+		
+		<h:outputText value="#{msg.label_lastName1}:" styleClass="firstLeftText" />				
+		<h:inputText id="apellido1Contacto" value="#{insercionCortaPersonaBean.persona.personaApellido1}" 		 
+			style="width:150px; font-size:13px;	padding: 4px;" disabled="#{insercionCortaPersonaBean.deshabilitarCampos}">									
+		</h:inputText>	
+		<h:outputText id="apellido1ContactEnBlanco" value=""/>	
+		<h:message for="apellido1Contacto"></h:message>			
+		
+		<h:outputText value="#{msg.label_lastName2}:" styleClass="firstLeftText" />				
+		<h:inputText id="apellido2Contacto" value="#{insercionCortaPersonaBean.persona.personaApellido2}" 		 
+			style="width:150px; font-size:13px;	padding: 4px;" disabled="#{insercionCortaPersonaBean.deshabilitarCampos}">								
+		</h:inputText>		
+		<h:outputText id="apellido2ContactoEnBlanco" value=""/>	
+		<h:message for="apellido2Contacto"></h:message>			
+		
+		<h:outputText value="#{msg.label_dni}:" styleClass="firstLeftText" />
+		<h:panelGrid width="90%" columns="3" style="margin-left: -3px;">
+		
+			<h:selectOneMenu id="idPaisTipoIdentificacionContacto" value="#{insercionCortaPersonaBean.idPaisTipoIdentificacion}" 
+				style="width:100px; height: 24px; font-size:13px;padding: 3px;" disabled="#{insercionCortaPersonaBean.deshabilitarCampos}">
+				<f:selectItems value="#{insercionCortaPersonaBean.listaPaisTipoIdentificacion}" />
+				<a4j:support ajaxSingle="true"  actionListener="#{insercionCortaPersonaBean.cambioPaisTipoIdentificacion}"
+					event="onchange" reRender="tipoIdentificacionContacto,identificacionContacto" />
+			</h:selectOneMenu>			
+		
+			<h:selectOneMenu id="tipoIdentificacionContacto" value="#{insercionCortaPersonaBean.tipoIdentificacionContacto}"  
+				style="width:100px; height: 24px; font-size:13px;padding: 3px;" disabled="#{insercionCortaPersonaBean.deshabilitarCampos}">
+				<f:selectItems value="#{insercionCortaPersonaBean.listaTiposIdentificacion}" />
+				<a4j:support ajaxSingle="true"  actionListener="#{insercionCortaPersonaBean.cambioTipoIdentificacion}"
+					event="onchange" reRender="identificacionContacto" />
+			</h:selectOneMenu>												
+		
+			<h:inputText id="identificacionContacto" value="#{insercionCortaPersonaBean.identificacion}" 		
+				style="width:100px; font-size:13px;	padding: 4px;" disabled="#{insercionCortaPersonaBean.deshabilitarCampos}">													
+			</h:inputText>		
+				
+		</h:panelGrid>							
+		<h:outputText id="idenTypeContactoEnBlanco" value=""/>
+		<h:message for="identificacionContacto"></h:message>
+		
+		<rich:spacer id="spacer1" height="10" />
+		<rich:spacer id="spacer2" height="10" />
+		<rich:spacer id="spacer3" height="10" />
+								
+		
+		 
+		<h:panelGrid columns="2">
+			<a4j:commandButton id="cancelarContacto" value="#{msg.label_cancel}" 
+				actionListener="#{insercionCortaPersonaBean.cancelar}"
+				oncomplete="javascript:cerrarPopupInsersionPersonaCorta();" 
+				style="width: 80px; margin-left: 0px;"  />
+		 	<a4j:commandButton id="insertContact" value="#{msg.label_guardar}" style="width: 120px; margin-left: 5px;" 
+		 		action="#{insercionCortaPersonaBean.agrega}" 
+		 		oncomplete="if(#{insercionCortaPersonaBean.flagGuardado}){Richfaces.showModalPanel('panelInsercionCortaPersonaOK');javascript:cerrarPopupInsersionPersonaCorta();}"
+		 		reRender="insercionCortaPersonaMsg,ing_prop_datos_personales" />
+		</h:panelGrid>				
+											
+	</h:panelGrid>
+</fieldset>	
+
+
+		<rich:modalPanel id="panelInsercionCortaPersonaOK" autosized="false" keepVisualState="false" width="300" height="100">
+	        <f:facet name="header">
+	            <h:outputText value="#{msg.label_response}"/>
+	        </f:facet>
+	        <h:panelGroup layout="block" styleClass="scrollsFullSize">
+	        	<h:panelGrid columns="1" style="margin-left:0px;" >
+	        	 <h:outputText value="#{msg.label_responseInsersionCortaPersona}" />
+					 	<a4j:commandButton  value="#{msg.label_OK}"
+							style="width: 80px; margin-right: 0px; margin-left: 100px;" 
+							oncomplete="javascript:enviarPersona('#{insercionCortaPersonaBean.persona.idPersona}', '#{insercionCortaPersonaBean.persona.personaNombre}','#{insercionCortaPersonaBean.persona.personaApellido1}','#{insercionCortaPersonaBean.persona.personaApellido2}','#{insercionCortaPersonaBean.persona.personaDocumentoNumero}');Richfaces.hideModalPanel('panelInsercionCortaPersonaOK');Richfaces.hideModalPanel('panelInsercionCortaPersonaOK');Richfaces.hideModalPanel('mpInsertarPersonas');" 
+							status="statusLoad" reRender="ing_prop_datos_personales">
+						</a4j:commandButton>		
+				</h:panelGrid>
+			</h:panelGroup>
+	    </rich:modalPanel>
+	    		
+</ui:composition>
+</html>

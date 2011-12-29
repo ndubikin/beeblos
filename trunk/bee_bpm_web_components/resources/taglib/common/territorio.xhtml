@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<h:panelGroup id="territorio_actual_refresh">
+
+	<table cellspacing="0" cellpadding="2" border="0">
+		<tr>
+			<td style="width: 220px;">
+				<span class="firstLeftText">
+					#{msg.label_Pais}:
+				</span>
+			</td>
+			<td style="width: 300px;">
+				<h:selectOneMenu id="fep_pais" value="#{territorioBean.idPais}"
+					style="width:250px; height: 26px; font-size:13px;padding: 4px;">
+					<f:selectItems value="#{territorioBean.listaPaises}" />
+					<a4j:support ajaxSingle="true"
+						actionListener="#{territorioBean.changePais}" event="onchange"
+						reRender="jerarquia_territorial, territorio_actual_refresh" />
+				</h:selectOneMenu>
+			</td>
+		</tr>
+	</table>
+
+	<table cellspacing="0" cellpadding="2" border="0">
+
+		<a4j:repeat value="#{territorioBean.jerarquiaTerritorial}" 
+					var="jt"
+					rowKeyVar="rowIndex" id="jerarquia_territorial">
+
+			<tr>
+				<td style="width: 220px;">
+					<span class="firstLeftText">
+						<h:outputText 	value="#{jt.tipoTerritorioNombre}:" />
+					</span>					
+				</td>
+				<td style="width: 300px;">
+					<h:panelGroup>
+						<h:inputText 	id="terr_id" maxlength="80"  
+										style="width: 240px; font-size:13px; padding: 4px" 
+										rendered="#{jt.tipoTerritorioPais eq NULL}"
+										actionListener="#{territorioBean.changeTerritorioManual}" 
+										value="#{territorioBean.jerarquiaTerritorioManual[jt.tipoTerritorioNivel]}" />
+						
+						<h:selectOneMenu 	id="nivel#{jt.tipoTerritorioNivel}" 
+											value="#{territorioBean.idTerritorioSeleccionado}" 
+											rendered="#{jt.tipoTerritorioPais != NULL}" 
+											style="width:250px; height: 26px; font-size:13px;padding: 3px;">
+							
+							<f:selectItems value="#{territorioBean.jerarquiaParaDesplegables[jt.tipoTerritorioNivel]}" />
+							
+							<a4j:support ajaxSingle="true"  actionListener="#{territorioBean.changeNivel}" 
+																	event="onchange" reRender="territorio_actual_refresh" />
+						</h:selectOneMenu>		
+						
+					</h:panelGroup>					
+				</td>
+								
+			</tr>
+
+		</a4j:repeat>
+	</table>
+
+</h:panelGroup>
+
+</ui:composition>
