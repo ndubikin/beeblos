@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition template="/templates/component-sample.xhtml">
+<ui:define name="sample">
+
+
+<script type="text/javascript">
+
+	function confirmar() {
+	  var txtConfirm = String.fromCharCode(191)+"Est"+String.fromCharCode(225)+" seguro que desea eliminar el Usuario seleccionado"+String.fromCharCode(63);
+		if (confirm(txtConfirm)) {
+			return true;
+		}
+		return false;
+	}
+	
+	function confirmarCambioPass() {
+		  var txtConfirmCambioPass = String.fromCharCode(191)+"Est"+String.fromCharCode(225)+" seguro que desea reestablecer la contraseña por defecto para este Usuario"+String.fromCharCode(63);
+			if (confirm(txtConfirmCambioPass)) {
+				return true;
+			}
+			return false;
+		}
+		
+	
+	function actualizarUsuario(idUsuario,nombres,apellidos,email,usuarioLogin,admon,suLectura,password,idDepto) {
+	  		
+			var txtNombres = document.getElementById("frmUsuarioModif:hddNombres");
+			var txtApellidos = document.getElementById("frmUsuarioModif:hddApellidos");
+			var txtEmail = document.getElementById("frmUsuarioModif:hddEmail");
+			var txtLoginUser = document.getElementById("frmUsuarioModif:hddUsuarioLogin");
+			var txtIdDepto = document.getElementById("frmUsuarioModif:hddIdDepto");
+			var txtAdmon = document.getElementById("frmUsuarioModif:hddAdmon");
+			var txtSuLectura = document.getElementById("frmUsuarioModif:hddSuLectura");
+			var txtIdUsuario = document.getElementById("frmUsuarioModif:hddIdUsuario");
+			var txtIdUser = document.getElementById("frmUsuarioHeader:hddIdUser");
+			
+			var modificarUsuario = document.getElementById("frmUsuarioModif:modificarUsuario");
+					
+			txtNombres.value = nombres;
+			txtApellidos.value = apellidos;
+			txtEmail.value = email;
+			txtLoginUser.value = usuarioLogin;
+			txtAdmon.value=admon;
+			txtSuLectura.value=suLectura;
+
+			txtIdDepto.value=idDepto;
+			txtIdUsuario.value=idUsuario;
+			txtIdUser.value=idUsuario;
+			
+			modificarUsuario.onclick();
+		
+	}
+	
+</script>
+
+	<style type="text/css">
+	.rich-message-label {
+		color: red;
+	}
+	</style>
+
+
+		<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />
+
+	<body>
+
+	<center><!-- ********************************* Alta de Usuarios ********************    -->
+
+	<rich:panel style="width:100%" >
+		<f:facet name="header">
+			<h:outputText value="Usuarios" styleClass="labelFormBold" />
+		</f:facet>
+
+		<h:form id="frmUsuarioModif">
+				
+			<h:inputHidden id="hddIdUsuario" value="#{usuarioBean.idUsuario}"/>
+					<h:inputHidden id="hddNombres" value="#{usuarioBean.currentUsuario.nombres}"/>
+					<h:inputHidden id="hddApellidos" value="#{usuarioBean.currentUsuario.apellidos}"/>
+					<h:inputHidden id="hddEmail" value="#{usuarioBean.currentUsuario.email}"/>
+					<h:inputHidden id="hddUsuarioLogin" value="#{usuarioBean.currentUsuario.usuarioLogin}"/>
+					<h:inputHidden id="hddAdmon" value="#{usuarioBean.currentUsuario.admon}"/>
+					<h:inputHidden id="hddSuLectura" value="#{usuarioBean.currentUsuario.suLectura}"/>
+
+					<h:inputHidden id="hddIdDepto" value="#{usuarioBean.idDepto}"/>
+					<h:commandLink id="modificarUsuario" value="" action="#{usuarioBean.modificarUsuario}" />
+		
+		</h:form>
+			
+		<h:form id="frmUsuarioHeader">
+	
+		<h:panelGrid columns="2">
+	
+			<h:outputText value="#{msg.label_login_user}" styleClass="labelForm" />
+				<h:panelGrid columns="2" >
+					<h:inputText id="loginuser" value="#{usuarioBean.currentUsuario.usuarioLogin}"
+						required="true"  style="width:300px"/>
+					<h:commandButton id="btnBuscar" value="#{msg.label_buscar}"
+						action="#{usuarioBean.buscarUsuarios}"
+						style="width:80px;" />	
+				</h:panelGrid>	
+		
+				<h:outputText value="#{msg.label_nombres}" styleClass="labelForm" />
+				<h:inputText id="nombres" value="#{usuarioBean.currentUsuario.nombres}"
+					required="false"  style="width:300px"/>
+				
+				<h:outputText value="#{msg.label_apellidos}" styleClass="labelForm" />
+				<h:inputText id="apellidos" value="#{usuarioBean.currentUsuario.apellidos}"
+						required="false"  style="width:300px"/>
+	
+				<rich:spacer height="10" /><rich:spacer height="10" />
+	
+				<h:outputText value="#{msg.label_departamento}" styleClass="labelForm" />
+				<h:selectOneMenu id="departamentoCombo" value="#{usuarioBean.currentUsuario.idDepto}" style="width:300px" >
+					<f:selectItems value="#{usuarioBean.listadoDeptos}" />
+				</h:selectOneMenu>
+				
+				<rich:spacer height="10" /><rich:spacer height="10" />
+				
+				
+				<h:outputText value="#{msg.label_userpass}" styleClass="labelForm"/>
+			
+				<h:panelGroup>
+					<h:inputSecret id="pass" value="#{usuarioBean.password}" 
+						style="width:200px" rendered="#{usuarioBean.muestraPassword}"/>
+					<h:commandButton id="btnResetPass" value="#{msg.label_resetPassword}" 
+						rendered="#{usuarioBean.muestraBtnReset}" style="width:170px;"
+						action="#{usuarioBean.resetPassword}" onclick="return confirmarCambioPass();"/>
+						
+						<h:panelGroup rendered="#{usuarioBean.showResetPassMsg}">
+							<rich:spacer width="10" />
+							<h:outputText id="resetPassMsg"	value="#{msg.label_contraseniaRestablecida} : '12345' " 
+								styleClass="labelForm" />
+						</h:panelGroup>		
+				</h:panelGroup>
+				
+				
+				<h:outputText value="#{msg.label_habilitado}" styleClass="labelForm" />
+				<h:panelGroup>
+					<h:selectOneRadio  id="habilitado" value="#{usuarioBean.currentUsuario.habilitado}" styleClass="labelForm">
+						<f:selectItem itemValue="N" itemLabel="No" />
+						<f:selectItem itemValue="S" itemLabel="Si" />
+					</h:selectOneRadio>
+				</h:panelGroup>
+				
+				<h:outputText value="#{msg.label_admon}" styleClass="labelForm" />
+				<h:panelGroup>
+					<h:selectOneRadio  id="admon" value="#{usuarioBean.currentUsuario.admon}" styleClass="labelForm">
+						<f:selectItem itemValue="N" itemLabel="No" />
+						<f:selectItem itemValue="S" itemLabel="Si" />
+					</h:selectOneRadio>
+				</h:panelGroup>
+				
+				<h:outputText value="#{msg.label_jefeDeDepartamento}" styleClass="labelForm" />
+				<h:panelGroup>
+					<h:selectOneRadio id="jefe" value="#{usuarioBean.currentUsuario.jefeDepartamento}" styleClass="labelForm">
+						<f:selectItem  itemValue="N" itemLabel="No"/>
+						<f:selectItem  itemValue="S" itemLabel="Si"/>
+					</h:selectOneRadio>
+				</h:panelGroup>
+				
+				<h:outputText value="#{msg.label_suLectura}" styleClass="labelForm" />
+				<h:panelGroup>
+					<h:selectOneRadio id="suLectura" value="#{usuarioBean.currentUsuario.suLectura}" styleClass="labelForm">
+						<f:selectItem  itemValue="N" itemLabel="No"/>
+						<f:selectItem  itemValue="S" itemLabel="Si"/>
+					</h:selectOneRadio>
+										
+				</h:panelGroup>
+				
+				<h:inputHidden id="hddIdUser" value="#{usuarioBean.idUsuario}"/>
+				
+				<h:panelGrid columns="2">	
+									
+						<h:commandButton id="btnGuardar" 
+							value="#{usuarioBean.valueBtn}" style="width:80px;"
+							actionListener="#{usuarioBean.guardar}" />
+						
+						<h:commandButton id="btnBorrar" 
+							value="#{msg.label_borrar}" style="width:80px;" 
+							disabled="#{usuarioBean.disableBotonBorrar}"
+							action="#{usuarioBean.borra}" onclick="return confirmar();"/>
+					</h:panelGrid>
+
+		</h:panelGrid>
+		
+		<rich:spacer height="10" />
+				
+			
+			
+	<rich:panel style="width:100%">
+		
+			<rich:dataTable id="usuariosTable" width="98%"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				onRowClick="return actualizarUsuario('#{u.idUsuario}',
+													 '#{u.nombres}',
+													 '#{u.apellidos}',
+													 '#{u.email}',
+													 '#{u.usuarioLogin}',
+													 '#{u.admon}',
+													 '#{u.suLectura}',
+													 '#{u.password}',
+													 '#{u.idDepto}');"
+				rows="5" styleClass="table" 
+				value="#{usuarioBean.usuarios}" var="u" >
+			
+				<f:facet name="header">
+					<h:outputText value="#{msg.label_usuariosEnElSistema}" />
+				</f:facet>
+			
+				<rich:column sortBy="#{u.idUsuario}" style="width:30px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_id}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.idUsuario}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{u.usuarioLogin}" style="width:150px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_loginUser}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.usuarioLogin}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{u.nombres}" style="width:150px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_nombre}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.nombres}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{u.apellidos}" style="width:150px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_apellidos}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.apellidos}"/>
+	            </rich:column>
+	            
+	             <rich:column sortBy="#{u.habilitado}" style="width:30px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_habilitado}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.habilitado=='S' ? msg.label_si : msg.label_no}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{u.admon}" style="width:20px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_admon}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.admon=='S' ? msg.label_si : msg.label_no}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{u.jefeDepartamento}" style="width:30px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_jefeDeDepartamento}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.jefeDepartamento=='S' ? msg.label_si : msg.label_no}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{u.suLectura}" style="width:20px; text-align: left;"> 
+	            	<f:facet name="header">
+	                    <h:outputText value="#{msg.label_suLectura}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.suLectura=='S' ? msg.label_si : msg.label_no}"/>
+	            </rich:column>
+	        	            
+	            <rich:column sortBy="#{u.idDepto}" style="width:30px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_idDepto}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.idDepto}"/>
+	            </rich:column>
+	               <rich:column sortBy="#{u.lastLoginDate}" style="width:100px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_ultimoLogin}"/>
+	                </f:facet>
+	                <h:outputText value="#{u.lastLoginDate}"/>
+	            </rich:column>
+	            
+									
+			</rich:dataTable>
+			
+			<rich:spacer height="10" />
+			<rich:datascroller for="usuariosTable" maxPages="10"  />
+			
+
+		
+	</rich:panel>
+	</h:form>
+	</rich:panel>
+	 
+	</center>
+	</body>
+
+
+
+
+		</ui:define>
+	</ui:composition>
+</html>

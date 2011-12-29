@@ -1,0 +1,187 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+<style type="text/css">
+.colStyleF1 { 
+	width: 120px;
+}
+.colStyleF2 { 
+
+
+}
+.colStyleF2_thin { 
+	width: 200px;
+
+}
+.colStyleF3 { 
+	width: 50px;
+
+}
+.colStyleF3 { 
+	width: 50px;
+
+}
+.firstLeftText {
+	margin-left: 18px;
+	font-family : Arial;
+	font-size : 12px;
+}
+.uploadFormClass {
+	margin-left: 18px;
+	font-family : Arial;
+	font-size : 12px;
+}
+
+.rich-fileupload-list-decor{
+	border: 0px;
+}
+
+.rich-fileupload-toolbar-decor{
+	border-bottom: 0px;
+	border-top: 0px;
+	border-right: 0px;
+	border-left: 0px;
+}
+
+.rich-fileupload-ico{
+	padding-left: 8px;
+}
+
+.rich-fileupload-ico-clear  {
+	background-image:url("");
+}
+
+.rich-fileupload-ico-stop  {
+	background-image:url("");
+}
+
+.rich-fileupload-ico-add{
+	background-image:url("");
+}
+
+.rich-fileupload-ico-add-dis{
+	background-image:url("");
+}
+.clear-all{
+	background:none;
+	border: none;
+	display: none;
+}
+
+</style>
+
+
+	<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8"/>	
+
+        <rich:modalPanel id="fp_panelDocumento" autosized="false" keepVisualState="false" width="620" height="300" >
+                <f:facet name="header">
+                    <h:outputText value="#{documentacionBean.titleModal}" />
+                </f:facet>
+                <f:facet name="controls">
+                </f:facet>
+                
+            <h:panelGroup layout="block" styleClass="scrollsFullSize">
+            
+				<h:form id="documentacionBean" >
+				<h:messages id="documentacionMessages" showDetail="true" showSummary="false" styleClass="error" style="font-size: 13px; color: #FF0000; " fatalClass="fatal" />
+				<h:panelGrid width="90%" columns="3" columnClasses="colStyleF1,colStyleF2,colStyleF3">
+			
+					<h:outputText value="#{msg.label_Clase_Documental}:"  />
+					<h:selectOneMenu id="DocClaseDocumental" value="#{documentacionBean.documentoAdjunto.docclassId}" 
+					style="height: 24px; font-size:13px;padding: 3px; width : 342px;" disabled="#{ !(documentacionBean.docclassIdEnabled) or (!(documentacionBean.editableClaseDocumental or (documentacionBean.accion eq 'altaDoc')))}" >
+						<f:selectItems value="#{documentacionBean.listaClasesDocumentalesCombo}" />
+					</h:selectOneMenu>
+					
+					<h:panelGroup>
+		            <a4j:commandLink actionListener="#{documentacionBean.habilitaComboClaseDocumental}" rendered="#{(documentacionBean.accion eq 'modifProp') or (documentacionBean.accion eq 'modifDoc') }" reRender="DocClaseDocumental" >
+		                <h:outputText value="Cambiar" /> 
+		            </a4j:commandLink>					
+					</h:panelGroup>
+					
+					<h:outputText value="#{msg.label_descripcion}:" />
+		            <h:inputTextarea id="documentoDescripcion" value="#{documentacionBean.documentoAdjunto.documentoDescripcion}" style="width: 340px;" />
+					<h:outputText value="" styleClass="text" />	
+									
+					<h:outputText value="#{msg.label_adjuntarFichero}:" />
+			        <h:panelGrid columns="1" style="border: 0px; margin-left: 0px;">
+			
+						 <h:panelGrid columns="2" style="border: 0px; margin-left: -10px;">
+					        <rich:fileUpload fileUploadListener="#{documentUploadBean.listener}" style="margin-left: -10px;"
+					            maxFilesQuantity="#{documentUploadBean.uploadsAvailable}" disabled="#{documentUploadBean.disabled or (documentacionBean.accion eq 'modifProp')or (documentacionBean.accion eq 'elimiDoc')}"
+					            id="uploadDocument" addControlLabel="#{msg.label_asociar}" addButtonClass="adicionar-archivo" 
+					            stopButtonClass="adicionar-archivo" 
+					            clearControlLabel="#{msg.label_clearControlLabel}" doneLabel="#{msg.label_doneLabel}"
+					            uploadControlLabel="#{msg.label_uploadControlLabel}"
+					            listHeight="0px" clearAllControlLabel="" cleanButtonClass="clear-all" 
+					            immediateUpload="#{documentUploadBean.autoUpload}" listWidth="170px"
+					            acceptedTypes="*" allowFlash="#{documentUploadBean.useFlash}" >
+					            <a4j:support event="onfileuploadcomplete" reRender="infoDocumento, botoneraAnexos" >
+					             <a4j:actionparam name="unicoFile" assignTo="#{documentUploadBean.unicoUpload}" value="true"/>
+					            </a4j:support>
+					        </rich:fileUpload>
+				        </h:panelGrid>	        
+		
+						<h:panelGroup id="infoDocumento" >
+			            <rich:dataGrid columns="1" style="margin-left: 0px; border:0;" value="#{documentUploadBean.files}" var="file" rowKeyVar="row" >
+		                     <h:panelGrid columns="2" style="border:0;">
+		                    			<h:graphicImage style="border:0;" value="/images/icons/clip.png" />
+		                    			<h:outputText value="#{file.name}"  />
+		                     </h:panelGrid>
+			            </rich:dataGrid>
+			            </h:panelGroup>
+				        		
+					 </h:panelGrid>
+					 <h:outputText value="" styleClass="text" />	
+			
+				</h:panelGrid>
+				
+				
+				<h:panelGrid columns="2" columnClasses="top, top" style="margin-left:145px;">
+					<h:panelGroup id="botoneraAnexos" >
+				   	<a4j:commandButton id="btnIPCancelarAnexos" value="#{msg.label_cancelar}" onclick="javascript:Richfaces.hideModalPanel('fp_panelDocumento');" />
+		
+				 	<a4j:commandButton id="btnIPAgregaOActualizaAnexos" value="#{msg.label_confirmarIngreso}" rendered="#{documentacionBean.accion eq 'defineElBean'}"
+						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.agregarOModificarDocumento}" 
+						reRender="fp_panelDocumento, documentacionMessages, infoDocumento, uploadDocument, infoListaDocumentos" disabled="#{!(documentUploadBean.size>0)}"
+						oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitConfirmarAgregaOActualizaDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');} else if(#{!documentacionBean.autoGuardarRepositorio}){onsubmitNoAutoGuardarConfirmarIngresoDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
+					</a4j:commandButton>
+				   			
+				 	<a4j:commandButton id="btnIPNuevoAnexos" value="#{msg.label_confirmarIngreso}" rendered="#{documentacionBean.accion eq 'altaDoc'}"
+						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.guardarDocumentoRepositorio}" 
+						reRender="fp_panelDocumento, documentacionMessages, infoDocumento, uploadDocument, infoListaDocumentos" disabled="#{!(documentUploadBean.size>0)}"
+						oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitConfirmarIngresoDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');} else if(#{!documentacionBean.autoGuardarRepositorio}){onsubmitNoAutoGuardarConfirmarIngresoDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
+					</a4j:commandButton>
+
+				 	<a4j:commandButton id="btnIPGuardarAnexos" value="#{msg.label_confirmarModificacion}" rendered="#{documentacionBean.accion eq 'modifDoc'}"
+						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.subirNuevoDocumentoRepositorio}" 
+						reRender="documentacionMessages, infoDocumento, uploadDocument, botoneraAnexos, infoListaDocumentos" disabled="#{!(documentUploadBean.size>0)}" 
+						oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitModificacionDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
+					</a4j:commandButton>
+
+				 	<a4j:commandButton id="btnIPModificarPropiedadesAnexos" value="#{msg.label_confirmarModificacion}" rendered="#{documentacionBean.accion eq 'modifProp'}"
+						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.modificarPropiedadesDocumento}" 
+						reRender="documentacionMessages, infoListaDocumentos" oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitModificacionDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
+					</a4j:commandButton>
+
+				 	<a4j:commandButton id="btnIPEliminarAnexos" value="#{msg.label_confirmarEliminacion}" rendered="#{documentacionBean.accion eq 'elimiDoc'}"
+						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.eliminarDocumento}" 
+						reRender="documentacionMessages, infoListaDocumentos" oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitEliminarDocumento(#{documentacionBean.documentoAdjunto.docId});javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
+					</a4j:commandButton>
+
+					
+					</h:panelGroup>		
+			   </h:panelGrid>		       
+				       
+			</h:form>
+			
+            </h:panelGroup>
+        </rich:modalPanel>
+		
+		
+</ui:composition>
+	
