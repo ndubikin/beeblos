@@ -1,0 +1,26 @@
+# list of components in comma-separated format
+#id=name,iconImage,captionImage,devGuideLocation,tldDocLocation,javaDocLocation
+
+
+tarea=		     	general,          Tareas workflow,			/images/ico_MenuSeparator.gif,         /images/cn_panel.gif,          rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /general/consultaTarea.jsf,					consultaTareaBean, 		org.beeblos.bpm.web.bean.ConsultaTareaBean, 559
+accesos=			general,          AccesosUsuario,			/images/ico_MenuSeparator.gif,         /images/cn_panel.gif,          rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /general/consultaUsuarioLogin.jsf,			-,-, 534
+
+
+ProcesarTarea= 		task,            Procesar tarea, 			/images/ico_MenuSeparator.gif,  		/images/cn_panel.gif,         rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /dap/procesarPaginaBienvenida.jsf,			pasoBean,						org.beeblos.bpm.web.bean.wf.PasoBean
+inyectorDAP=       	task,            Inyector,            	/images/ico_MenuSeparator.gif,  		/images/cn_panel.gif,         rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /dap/inyectarWorkflow.jsf,             			inyectorBean, 				org.beeblos.bpm.web.bean.wf.InyectorBean
+lanzarWorkflowS12= 	task,            Lanzar Workflow S12,    	/images/ico_MenuSeparator.gif,  		/images/cn_panel.gif,         rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /dap/lanzarWorkflowPasoS12.jsf,        			inyectorPasoS12Bean, 		org.beeblos.bpm.web.bean.InyectorPasoS12Bean
+
+
+miCuenta=           myaccount,            MiUsuario,             /images/ico_MenuSeparator.gif,          /images/cn_panel.gif,         rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /micuenta/miCuentaCaller.jsf 
+tareas=             myaccount,            Tareas personales,     /images/ico_MenuSeparator.gif,          /images/cn_panel.gif,         rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /tareas/gestionListaTask.jsf,                   ttaskBean,          org.beeblos.bpm.web.bean.TTaskBean
+
+
+pais=      						crud,            Paises,    		/images/ico_MenuSeparator.gif,          /images/cn_panel.gif,         rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /mantenimientos/paisCrud.jsf
+territorio=     				crud,            Territorio, 		/images/ico_MenuSeparator.gif,          /images/cn_panel.gif,         rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /mantenimientos/territorioCrud.jsf
+moneda=      					crud,            Monedas,    		  				/images/ico_MenuSeparator.gif,          /images/cn_panel.gif,                    rich_panel.html,                                               rich/panel.html,               org/richfaces/component/UIPanel.html,                      /mantenimientos/monedaCrud.jsf
+tipoDireccion=      			crud,            TiposDireccion,    		  		/images/ico_MenuSeparator.gif,          /images/cn_panel.gif,                    rich_panel.html,                                               rich/panel.html,               org/richfaces/component/UIPanel.html,                      /mantenimientos/tipoDireccionCrud.jsf
+departamento=      				crud,            Departamentos,    		  		/images/ico_MenuSeparator.gif,          /images/cn_panel.gif,                    rich_panel.html,                                               rich/panel.html,               org/richfaces/component/UIPanel.html,                      /mantenimientos/departamentoCrud.jsf
+usuarios=						crud,            Usuarios,  						/images/ico_MenuSeparator.gif,          /images/cn_panel.gif,         			rich_panel.html,           										rich/panel.html,               org/richfaces/component/UIPanel.html,           			 /mantenimientos/usuarioCrud.jsf
+usuarioCuentasEmail=            crud,            CuentasCorreo,                  	/images/ico_MenuSeparator.gif,          /images/cn_panel.gif,                     rich_panel.html,                                               rich/panel.html,                org/richfaces/component/UIPanel.html,                     /mantenimientos/usuarioCuentasEmailCrud.jsf
+
+wRoleDef=			admin,			WRoleDef,					/images/ico_MenuSeparator.gif,         /images/cn_panel.gif,          rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /admin/wRoleDefCrud.jsf

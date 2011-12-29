@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition>
+
+<style type="text/css">
+    .rich-calendar-input { 
+		width:75px; height: 20px;
+	}
+</style>
+
+	<h:panelGrid columns="1" width="100%">
+		<h:panelGroup>
+			<fieldset class="demo_fieldset">
+				<legend class="demo_legend">Ingrese los datos que conozca de la Tarea que desea buscar</legend>
+				<div>
+					<ui:include src="/general/pestanias/paneles/tarea_buscar.xhtml"/>
+				</div>
+			</fieldset>
+	
+			<fieldset class="demo_fieldset">
+				<legend class="demo_legend">Lista de Tareas</legend>
+				<div>
+					<ui:include src="/general/pestanias/paneles/tarea_lista.xhtml"/>
+				</div>
+			</fieldset>
+		
+		</h:panelGroup>
+	</h:panelGrid>
+
+</ui:composition>
+</html>

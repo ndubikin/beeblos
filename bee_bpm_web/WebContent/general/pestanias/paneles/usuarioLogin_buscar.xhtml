@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+
+<style type="text/css">
+.colStyle1 { 
+	width: 150px;
+	margin: 0px;
+
+}
+.colStyle2 { 
+	width: 120px;
+	margin: 0px;
+
+}
+.colStyle3 { 
+	width: 20px;
+	margin: 0px;
+
+}
+.colStyle4 { 
+	width: 150px;
+	margin: 0px;
+
+}
+.rich-calendar-input {
+	width:80px; 
+	font-size:12px; 
+	padding: 4px;
+
+}
+</style>
+
+<h:form id="convcaratula_form">
+	<h:panelGrid columns="4" style=" width : auto; height : auto; padding-left: 15px;" 
+			columnClasses="colStyle1,colStyle2, colStyle3, colStyle4">
+
+		<h:outputText value="#{msg.label_nombre}" />
+		<h:inputText id="usuarioNombre"
+			value="#{consultaUsuarioLoginBean.filtroUsuarioLogin}"
+			disabled="false"
+			size="30" style="font-size:12px;	padding: 4px;  font-weight: bold; "/>
+		
+        <h:commandButton id="btnBuscar" value="#{msg.label_buscar}"
+						 style="width:100px;"
+						 action="#{consultaUsuarioLoginBean.buscarUsuarioLogin}" />
+
+		<rich:spacer height="10" />	
+		
+		<h:outputText value="#{msg.label_apellidos}" />
+		<h:inputText id="usuarioApellidos"
+			value="#{consultaUsuarioLoginBean.filtroApellidos}"
+			disabled="false"
+			size="30" style="font-size:12px;	padding: 4px;  font-weight: bold; "/>
+		<rich:spacer height="10" />	
+		<rich:spacer height="10" />	
+		
+		<h:outputText value="#{msg.label_de}" />
+		<rich:calendar id="t_InitialDate"  value="#{consultaUsuarioLoginBean.filtroFechaInicial}" 
+						datePattern="yyyy-MM-dd"  
+						enableManualInput="true" showInput="true" resetTimeOnDateSelect="true">
+					</rich:calendar>
+		<rich:spacer height="10" />
+		<rich:spacer height="10" />					
+		
+		<h:outputText value="#{msg.label_hasta}" />			
+		<rich:calendar id="t_FinalDate"  value="#{consultaUsuarioLoginBean.filtroFechaFinal}" 
+						datePattern="yyyy-MM-dd"
+						enableManualInput="true" showInput="true" resetTimeOnDateSelect="true">
+					</rich:calendar>
+		<rich:spacer height="10" />
+		<rich:spacer height="10" />						 
+
+	
+
+		
+
+
+	</h:panelGrid>
+</h:form> 
+
+</ui:composition>

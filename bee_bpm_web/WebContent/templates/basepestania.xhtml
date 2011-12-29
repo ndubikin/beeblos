@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+	<ui:composition>
+	
+<style type="text/css">
+.colStyle1 { 
+	width: 220px;
+	margin: 0px;
+
+
+}
+.colStyle2 { 
+	width: 290px;
+	margin: 0px;
+
+
+}
+.colStyle3 { 
+	width: 20px;
+	margin: 0px;
+
+}
+
+.colStyle10 { 
+	width: 100px;
+	margin: 0px;
+
+}
+</style>
+
+<ui:define name="titulo_pestania">
+	<rich:spacer height="10" />
+
+	
+			<ui:include src="/fichas/fichaPersonaGP/pestanias/paneles/pgp_titulo_ficha.xhtml" />
+			
+			<rich:spacer height="20" />
+			
+
+</ui:define>
+
+	<ui:insert name="cuerpo_pestania"/>
+
+	</ui:composition>
+
+
+</html>
