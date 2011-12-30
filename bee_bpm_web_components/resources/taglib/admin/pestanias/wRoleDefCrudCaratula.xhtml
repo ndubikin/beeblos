@@ -9,17 +9,15 @@
 <ui:composition template="/templates/component-sample.xhtml">
 	<ui:define name="sample">
 
-
 <script type="text/javascript">
 
-	function confirm() {
+	function confirmDelete() {
 	  var txtConfirm = String.fromCharCode(191)+"Est"+String.fromCharCode(225)+" seguro que desea eliminar el WRoleDef seleccionado"+String.fromCharCode(63);
 		if (confirm(txtConfirm)) {
 			return true;
 		}
 		return false;
 	}
-	
 
 </script>
 
@@ -36,7 +34,7 @@
 <a4j:jsFunction name="setBeanId" >
 
 </a4j:jsFunction>
-<a4j:jsFunction name="loadRecord" actionListener="#{wRoleDefBean.loadRecord}" 
+<a4j:jsFunction name="loadRecord" action="#{wRoleDefBean.loadRecord}" 
 				reRender="name_id, description_id, delete_button, cancel_button, save_button" >
 	 <a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
 </a4j:jsFunction>
@@ -60,8 +58,7 @@
 
 							<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 							<h:inputText id="name_id"
-								value="#{wRoleDefBean.currentWRoleDef.name}" required="true"
-								style="width:300px" >
+								value="#{wRoleDefBean.currentWRoleDef.name}" style="width:300px" >
 								<a4j:support event="onchange" reRender="save_button, cancel_button, delete_button" />							
 							</h:inputText>
 								
@@ -87,7 +84,7 @@
 								<h:commandButton id="delete_button" value="#{msg.label_delete}"
 									style="width:80px;"
 									disabled="#{wRoleDefBean.id eq 0}"
-									action="#{wRoleDefBean.delete}" onclick="alert('hola');" />
+									action="#{wRoleDefBean.delete}" onclick="return confirmDelete();" />
 							</h:panelGrid>
 
 						</h:panelGrid>
