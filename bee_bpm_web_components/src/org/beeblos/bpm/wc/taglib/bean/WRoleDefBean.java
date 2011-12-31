@@ -78,7 +78,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	private String valueBtn;
 
 	
-	public WRoleDefBean() throws WRoleDefException {
+	public WRoleDefBean() {
 		
 		super();
 		_init();
@@ -87,7 +87,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	}
 	
 	// when load the backing bean
-	private void _init() throws WRoleDefException {
+	private void _init() {
 		roleList = this.getwRoleDefList(); // load object list
 		this.setId(0);
 	}
