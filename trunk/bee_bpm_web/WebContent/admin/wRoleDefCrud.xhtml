@@ -12,12 +12,10 @@
 	<ui:define name="current">wRoleDefCrud</ui:define>
 	<ui:define name="body">
 	
-	<ui:include src="/common/errorPanel.xhtml" />
-	
-	
-		<beecomp:wRoleDefCrudCaratula />
+		<ui:include src="/common/errorPanel.xhtml" />
+		<h:messages  style="#{wRoleDefBean.messageStyle}"/>
 		
-		<h:messages showDetail="true" showSummary="true"/>
+		<beecomp:wRoleDefCrudCaratula />
 		
 	</ui:define>
 	
