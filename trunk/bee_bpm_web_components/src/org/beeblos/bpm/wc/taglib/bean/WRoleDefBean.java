@@ -76,6 +76,8 @@ public class WRoleDefBean extends CoreManagedBean {
 	private Integer currentRow;
 	
 	private String valueBtn;
+	
+	private String messageStyle;
 
 	
 	public WRoleDefBean() {
@@ -129,6 +131,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" update() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -143,7 +146,8 @@ public class WRoleDefBean extends CoreManagedBean {
 			reset();
 			
 		} catch (WRoleDefException e) {
-			
+
+			messageStyle=errorMessageStyle();
 			String message = "WRoleDefException: Method update in WRoleDefBean: "
 								+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
@@ -152,6 +156,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		} catch (Exception e) {
 
+			messageStyle=errorMessageStyle();
 			String message = "Exception: Method update in WRoleDefBean: "
 								+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
@@ -169,6 +174,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" add() role name:" +this.currentWRoleDef.getName() );
 		
 		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 		
@@ -184,6 +190,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		 } catch (WRoleDefException e) {
 
+			messageStyle=errorMessageStyle();
 			String message = "WRoleDefException: Method add in WRoleDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
@@ -192,6 +199,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		} catch (Exception e) {
 
+			messageStyle=errorMessageStyle();
 			String message = "Exception: Method add in WRoleDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
@@ -210,6 +218,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" delete() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
 
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -229,6 +238,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		} catch (WRoleDefException e) {
 
+			messageStyle=errorMessageStyle();
 			String message = "WRoleDefException: Method delete in WRoleDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
@@ -237,6 +247,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		} catch (Exception e) {
 
+			messageStyle=errorMessageStyle();
 			String message = "Exception: Method delete in WRoleDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
@@ -254,6 +265,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" loadRecord() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
 		
 		if (this.id!=null && this.id!=0){
 			try {
@@ -266,6 +278,7 @@ public class WRoleDefBean extends CoreManagedBean {
 				
 			} catch (WRoleDefException e) {
 
+				messageStyle=errorMessageStyle();
 				String message = "WRoleDefException: Method loadRecord in WRoleDefBean: "
 										+ e.getMessage() + " - " + e.getCause();
 				String params[] = { message + ",", "WRoleDefException" };
@@ -281,6 +294,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	public List<WRoleDef> getwRoleDefList() {
 		
 		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
 
 		List<WRoleDef> objectList;
 		
@@ -366,8 +380,14 @@ public class WRoleDefBean extends CoreManagedBean {
 	public void setRoleList(List<WRoleDef> roleList) {
 		this.roleList = roleList;
 	}
+	
+	public String getMessageStyle() {
+		return messageStyle;
+	}
 
-
+	public void setMessageStyle(String messageStyle) {
+		this.messageStyle = messageStyle;
+	}
 
 	public void setCurrentUserId(){
 		
@@ -379,7 +399,6 @@ public class WRoleDefBean extends CoreManagedBean {
 		}
 		
 	}
-
 
 	private String setUpdateOkMessage() {
 		return "WRoleDef id:[ "+this.id+" ] with name:[ "+this.currentWRoleDef.getName()+" ] was updated correctly";
