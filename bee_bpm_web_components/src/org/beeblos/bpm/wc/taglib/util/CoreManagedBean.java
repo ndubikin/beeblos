@@ -171,6 +171,14 @@ public class CoreManagedBean implements Serializable {
 		FacesMessage facesMessage = new FacesMessage(resumen, detalle);
 		getContext().addMessage(null, facesMessage);
 	}
+	
+	public String normalMessageStyle() {
+		return "font-weight:bold;";
+	}
+	
+	public String errorMessageStyle(){
+		return "font-weight:bold; color:red;";
+	}
 
 	public FacesContext getContext() {
 		return FacesContext.getCurrentInstance();
