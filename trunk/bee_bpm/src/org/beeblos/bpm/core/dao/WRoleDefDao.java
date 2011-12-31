@@ -25,41 +25,41 @@ public class WRoleDefDao {
 		super();
 	}
 	
-	public Integer add(WRoleDef user) throws WRoleDefException {
+	public Integer add(WRoleDef role) throws WRoleDefException {
 		
-		logger.debug("add() WRoleDef - Name: ["+user.getName()+"]");
+		logger.debug("add() WRoleDef - Name: ["+role.getName()+"]");
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(user));
+			return Integer.valueOf(HibernateUtil.guardar(role));
 
 		} catch (HibernateException ex) {
-			logger.error("WRoleDefDao: add - Can't store user definition record "+ 
-					user.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WRoleDefException("WRoleDefDao: add - Can't store user definition record "+ 
-					user.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
+			logger.error("WRoleDefDao: add - Can't store role definition record "+ 
+					role.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WRoleDefException("WRoleDefDao: add - Can't store role definition record "+ 
+					role.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
 
 	}
 	
 	
-	public void update(WRoleDef user) throws WRoleDefException {
+	public void update(WRoleDef role) throws WRoleDefException {
 		
-		logger.debug("update() WRoleDef < id = "+user.getId()+">");
+		logger.debug("update() WRoleDef < id = "+role.getId()+">");
 		
 		try {
 
-			HibernateUtil.actualizar(user);
+			HibernateUtil.actualizar(role);
 
 
 		} catch (HibernateException ex) {
-			logger.error("WRoleDefDao: update - Can't update user definition record "+ 
-					user.getName()  +
-					" - id = "+user.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WRoleDefException("WRoleDefDao: update - Can't update user definition record "+ 
-					user.getName()  +
-					" - id = "+user.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+			logger.error("WRoleDefDao: update - Can't update role definition record "+ 
+					role.getName()  +
+					" - id = "+role.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
+			throw new WRoleDefException("WRoleDefDao: update - Can't update role definition record "+ 
+					role.getName()  +
+					" - id = "+role.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
 					
@@ -93,8 +93,8 @@ public class WRoleDefDao {
 	}
 	
 	public void delete(Integer roleId) throws WRoleDefException {
-
 		logger.debug("delete() WRoleDef - Name: ["+roleId+"]");
+		
 		WRoleDef role =null;
 		try {
 
@@ -103,24 +103,32 @@ public class WRoleDefDao {
 			HibernateUtil.borrar(role);
 
 		} catch (HibernateException ex) {
-			logger.error("WRoleDefDao: delete - Can't delete role definition record "+ 
-					" <id = "+roleId+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WRoleDefException("WRoleDefDao:  delete - Can't delete role definition record  "+ 
-					" <id = "+roleId+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			
+			String mess = "WRoleDefDao: HibernateException: Error deleting role rec " 
+					+ " <id = "+roleId+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause(); 
+			logger.error( mess );
+			throw new WRoleDefException(mess );
 
 		} catch (WRoleDefException ex1) {
-			logger.error("WRoleDefDao: delete - Exception in deleting role rec "+ 
-					" <id = "+roleId+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
-			throw new WRoleDefException("WRoleDefDao: delete - Exception in deleting role rec "+ 
-					" <id = "+roleId+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
 
-		} 
+			String mess = "WRoleDefDao: WRoleDefException: Error deleting role rec " 
+					+ " <id = "+roleId+ "> \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause();
+			logger.error( mess );
+			throw new WRoleDefException(mess );
 
+		} catch (Exception e) {
+		
+			String mess = "WRoleDefDao: Exception: Error deleting role rec " 
+							+ " <id = "+roleId+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause()
+							+ " - "+ e.getClass(); 
+			logger.error( mess );
+			throw new WRoleDefException(mess );
+		}
 	}
 
 	public WRoleDef getWRoleDefByPK(Integer id) throws WRoleDefException {
 
-		WRoleDef user = null;
+		WRoleDef role = null;
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
@@ -130,7 +138,7 @@ public class WRoleDefDao {
 			tx = session.getTransaction();
 			tx.begin();
 
-			user = (WRoleDef) session.get(WRoleDef.class, id);
+			role = (WRoleDef) session.get(WRoleDef.class, id);
 
 			tx.commit();
 
@@ -144,13 +152,13 @@ public class WRoleDefDao {
 
 		}
 
-		return user;
+		return role;
 	}
 	
 	
 	public WRoleDef getWRoleDefByName(String name) throws WRoleDefException {
 
-		WRoleDef  user = null;
+		WRoleDef  role = null;
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
@@ -161,7 +169,7 @@ public class WRoleDefDao {
 
 			tx.begin();
 
-			user = (WRoleDef) session.createCriteria(WRoleDef.class).add(
+			role = (WRoleDef) session.createCriteria(WRoleDef.class).add(
 					Restrictions.naturalId().set("name", name))
 					.uniqueResult();
 
@@ -170,14 +178,14 @@ public class WRoleDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WRoleDefDao: getWRoleDefByName - can't obtain user name = " +
+			logger.warn("WRoleDefDao: getWRoleDefByName - can't obtain role name = " +
 					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WRoleDefException("getWRoleDefByName;  can't obtain user name: " + 
+			throw new WRoleDefException("getWRoleDefByName;  can't obtain role name: " + 
 					name + " - " + ex.getMessage()+"\n"+ex.getCause());
 
 		}
 
-		return user;
+		return role;
 	}
 
 	
@@ -202,9 +210,9 @@ public class WRoleDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WRoleDefDao: getWRoleDefs() - can't obtain user list - " +
+			logger.warn("WRoleDefDao: getWRoleDefs() - can't obtain role list - " +
 					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WRoleDefException("WRoleDefDao: getWRoleDefs() - can't obtain user list: "
+			throw new WRoleDefException("WRoleDefDao: getWRoleDefs() - can't obtain role list: "
 					+ ex.getMessage()+"\n"+ex.getCause());
 
 		}
@@ -247,7 +255,7 @@ public class WRoleDefDao {
 					
 					if ( blank!=null && !"".equals(blank) ) {
 						if ( !blank.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
+							retorno.add(new StringPair(null,blank));  // white line (separation)
 						} else {
 							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
 						}
@@ -259,7 +267,7 @@ public class WRoleDefDao {
 						retorno.add(new StringPair(wpd.getId(),wpd.getName()));
 					}
 				} else {
-					// nes  - si el select devuelve null entonces devuelvo null
+					// nes  -if select returns null then I return null
 					retorno=null;
 				}
 				
@@ -276,8 +284,8 @@ public class WRoleDefDao {
 	}
 
 	 /**
-	   * returns the user list for a given Role
-	   * orderBy: id (user) or name
+	   * returns the role list for a given Role
+	   * orderBy: id (role) or name
 	   */
 	public List<WUserDef> getWUserDefByRole( Integer idRole, String orderBy ) throws WUserDefException {
 		
@@ -286,8 +294,8 @@ public class WRoleDefDao {
 	}
 
 	 /**
-	   * returns the ID user list for a given Role
-	   * orderBy: id (user) or name
+	   * returns the ID role list for a given Role
+	   * orderBy: id (role) or name
 	   */
 	public List<Integer> getWUserDefIdByRole( Integer idRole ) throws WUserDefException {
 
