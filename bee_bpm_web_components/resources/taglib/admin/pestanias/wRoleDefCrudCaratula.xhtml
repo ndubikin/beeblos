@@ -21,7 +21,7 @@
 
 </script>
 
-		<style type="text/css">
+<style type="text/css">
 .rich-message-label {
 	color: red;
 }
@@ -31,9 +31,7 @@
 		<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages"
 			var="msg" />
 <h:form>
-<a4j:jsFunction name="setBeanId" >
 
-</a4j:jsFunction>
 <a4j:jsFunction name="loadRecord" action="#{wRoleDefBean.loadRecord}" 
 				reRender="name_id, description_id, delete_button, cancel_button, save_button" >
 	 <a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
@@ -42,11 +40,13 @@
 
 <a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" reRender="delete_button, cancel_button, save_button" />
 
-
-
 </h:form>
 		<body>
+		
+			<h:messages  />
+		
 			<center>
+				
 				<rich:panel style="width:100%">
 					<f:facet name="header">
 						<h:outputText value="WRoleDefs" styleClass="labelFormBold" />
@@ -90,8 +90,6 @@
 						</h:panelGrid>
 
 						<rich:spacer height="10" />
-
-
 
 						<rich:panel style="width:100%">
 
