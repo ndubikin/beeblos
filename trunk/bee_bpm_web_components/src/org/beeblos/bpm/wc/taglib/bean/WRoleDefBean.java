@@ -14,20 +14,50 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
 
 
 /*
-NOTA dml 20111230: estas 2 funciones servirían para evitar el problema de tener que llamar a "loadRecord" con 
-				   un action como se esta haciendo ahora para hacer dicha llamada. Con esto primero cargamos
-				   el parametro que nos va a hacer falta para la segunda, y que solo con una función por
-				   motivos del flujo de ajax no podemos solucionar.
-
-<a4j:jsFunction name="loadParam"
-	reRender="name_id, description_id, delete_button, cancel_button, save_button" >
+ * 
+ * NOTE FROM VIEW ( XHTML ) AND AJAX CALLS:
+ * 
+ * In the grid we fire an ajax operation with the user clicks a row. The onRowClic method provided 
+ * for RichFaces 3.3.x rich:dataTable is used to call a a4j:jsFunction ( or a js traditional function)
+ * and the id of object clicked is sent.
+ * 
+ * The js function is defined with Richfaces a4j:jsFunction and a a4j:actionparam sycnhronize the
+ * id with the backing bean id property to load de objet to work with ( with the actionListener
+ * provided by a4j:jsFunction )
+ * 
+ * The behavior observed with the view and the controller ( backing bean ) is not always convenient
+ * because the richfaces components first fire the actionListener and then in second place syncrhonize
+ * the id indicated in the a4j:actionparam, so the id property is set after the object is loaded
+ * 
+ * Two solutions were encountered:
+ * 
+ * 1) using "action" property instead of actionparam forces synchronization of all jsf tree and the id
+ * is set before the load occurs
+ * 
+ 
+ <a4j:jsFunction name="loadRecord" action="#{wRoleDefBean.loadRecord}" 
+				reRender="name_id, description_id, delete_button, cancel_button, save_button" >
+	 <a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
+</a4j:jsFunction>
+ 
+ * 
+ * 2) using a 2 js threaded functions, first of all synchronize the id property and second call load
+ * method to load the object, as you can see next:
+ * 
+ *
+ * 
+< a4j:jsFunction name="loadParam" >
 	<a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
 </a4j:jsFunction>
+
 <a4j:jsFunction name="loadRecord" actionListener="#{wRoleDefBean.loadRecord}" 
 	reRender="name_id, description_id, delete_button, cancel_button, save_button" >
 </a4j:jsFunction>
 
+*
+*
 */
+
 
 public class WRoleDefBean extends CoreManagedBean {
 
@@ -56,7 +86,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		
 	}
 	
-	// when load backing bean
+	// when load the backing bean
 	private void _init() throws WRoleDefException {
 		roleList = this.getwRoleDefList(); // load object list
 		this.setId(0);
@@ -67,7 +97,8 @@ public class WRoleDefBean extends CoreManagedBean {
 	}
 	
 	private String initProperties() {
-
+		logger.debug(" initProperties()");
+		
 		this.setId(0);
 		this.currentWRoleDef = new WRoleDef();
 		this.currentRow=0;
@@ -80,22 +111,21 @@ public class WRoleDefBean extends CoreManagedBean {
 	}
 
 
-	public String save() throws WRoleDefException {
+	public String save() {
 		logger.debug(" save() id:" +this.getId()+" name:"+this.currentWRoleDef.getName() );
 		
-		String returnValue = null; // always returns null because calls are ajax
+		String returnValue = null; // always returns null because calls here are ajax
 		
 		if (this.id!=null && this.id!=0) {
 			returnValue = update();
 		} else {
 			returnValue = add();
 		}
-		reset();
 		
 		return returnValue;
 	}
 
-	public String update() throws WRoleDefException{
+	public String update() {
 		logger.debug(" update() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
@@ -106,22 +136,27 @@ public class WRoleDefBean extends CoreManagedBean {
 			
 			new WRoleDefBL().update(currentWRoleDef, this.getCurrentUserId());
 			
-			agregarMensaje("WRoleDefBean updated correctly");
+			String message = setUpdateOkMessage();
+			agregarMensaje(message);
 			setShowHeaderMessage(true);
+			
+			reset();
 			
 		} catch (WRoleDefException e) {
 			
-			String message = "Method update in WRoleDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
+			String message = "WRoleDefException: Method update in WRoleDefBean: "
+								+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
 			agregarMensaje("200", message, params, FGPException.WARN);
 			logger.error(message);
-			throw new WRoleDefException(message);
 
 		} catch (Exception e) {
 
-			logger.error("Exception: Error trying to update a Role: "
-					+ e.getMessage()+" - "+e.getCause()+" - "+e.getClass());
+			String message = "Exception: Method update in WRoleDefBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", "WRoleDefException" };
+			agregarMensaje("200", message, params, FGPException.WARN);
+			logger.error(message);
 
 		} 
 
@@ -129,34 +164,39 @@ public class WRoleDefBean extends CoreManagedBean {
 
 	}
 
-	public String add() throws WRoleDefException {
+
+	public String add() {
+		logger.debug(" add() role name:" +this.currentWRoleDef.getName() );
 		
 		setShowHeaderMessage(false);
-		
-		logger.debug(" add() role name:" +this.currentWRoleDef.getName() );
 		
 		String returnValue = null; // always returns null because calls are ajax
 		
 		 try {
 			
-			new WRoleDefBL().add(this.currentWRoleDef, this.getCurrentUserId());
-
-			agregarMensaje("WRoleDefBean added correctly");
+			Integer newId = new WRoleDefBL().add(this.currentWRoleDef, this.getCurrentUserId());
+			
+			String message = setAddOkMessage(newId);
+			agregarMensaje(message);
 			setShowHeaderMessage(true);
+			
+			reset();
 
 		 } catch (WRoleDefException e) {
 
-			String message = "Method add in WRoleDefBean: "
+			String message = "WRoleDefException: Method add in WRoleDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
 			agregarMensaje("200", message, params, FGPException.WARN);
 			logger.error(message);
-			throw new WRoleDefException(message);
 
 		} catch (Exception e) {
 
-			logger.error("Exception: Error adding a Role: "
-					+ e.getMessage()+" - "+e.getCause()+" - "+e.getClass());
+			String message = "Exception: Method add in WRoleDefBean: "
+					+ e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", "WRoleDefException" };
+			agregarMensaje("200", message, params, FGPException.WARN);
+			logger.error(message);
 
 		} 
 
@@ -164,41 +204,77 @@ public class WRoleDefBean extends CoreManagedBean {
 
 	}
 
-	public String delete() throws WRoleDefException {
+
+
+	public String delete() {
+		logger.debug(" delete() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		
-		logger.debug(" delete() :" +this.getId() );
 
 		String returnValue = null; // always returns null because calls are ajax
 
 		try {
 			
+			String deletedRoleName = this.currentWRoleDef.getName();
+			
 			new WRoleDefBL().delete(this.id, this.getCurrentUserId());
 			
-			logger.info("WRoleDef id:["+this.id+"] deleted by user:[" + this.getCurrentUserId() +"]");
-			agregarMensaje("WRoleDefBean deleted correctly");
+			// set ok message 
+			String message = getDeleteOkMessage(deletedRoleName); 
+			logger.info(message);
+			agregarMensaje(message);
 			setShowHeaderMessage(true);
 
 			reset();
 
 		} catch (WRoleDefException e) {
 
-			String message = "Method delete in WRoleDefBean: "
+			String message = "WRoleDefException: Method delete in WRoleDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "WRoleDefException" };
 			agregarMensaje("200", message, params, FGPException.WARN);
 			logger.error(message);
-			throw new WRoleDefException(message);
 
 		} catch (Exception e) {
 
-			logger.error("Exception: Error trying to delete a Role: "
-					+ e.getMessage()+" - "+e.getCause()+" - "+e.getClass());
+			String message = "Exception: Method delete in WRoleDefBean: "
+					+ e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", "WRoleDefException" };
+			agregarMensaje("200", message, params, FGPException.WARN);
+			logger.error(message);
 
 		} 
 
 		return returnValue;
+
+	}
+
+	// called from view
+	public void loadRecord() {
+		logger.debug(" loadRecord() :" +this.getId() );
+		
+		setShowHeaderMessage(false);
+		
+		if (this.id!=null && this.id!=0){
+			try {
+				
+				this.currentWRoleDef = 
+						new WRoleDefBL()
+							.getWRoleDefByPK( this.id, this.getCurrentUserId() );
+
+				modifyValueBtn();
+				
+			} catch (WRoleDefException e) {
+
+				String message = "WRoleDefException: Method loadRecord in WRoleDefBean: "
+										+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "WRoleDefException" };
+				agregarMensaje("200", message, params, FGPException.WARN);
+				logger.error(message);
+
+			}
+		
+		}
 
 	}
 	
@@ -219,41 +295,12 @@ public class WRoleDefBean extends CoreManagedBean {
 			objectList=null;
 			
 			logger
-			.warn("Error trying to load role list "
-				+ e.getMessage()+" - "+e.getCause());
+				.warn("WRoleDefException: Error trying to load role list "
+						+ e.getMessage()+" - "+e.getCause());
 
 		}
+		
 		return objectList;
-	}
-
-
-	public void loadRecord() throws WRoleDefException {
-
-		setShowHeaderMessage(false);
-		
-		logger.debug(" loadRecord() :" +this.getId() );
-		
-		if (this.id!=null && this.id!=0){
-			try {
-				
-				this.currentWRoleDef = 
-						new WRoleDefBL()
-							.getWRoleDefByPK( this.id, this.getCurrentUserId() );
-
-				modifyValueBtn();
-				
-			} catch (WRoleDefException e) {
-
-				String message = "Method loadRecord in WRoleDefBean: "
-						+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WRoleDefException" };
-				agregarMensaje("200", message, params, FGPException.WARN);
-				logger.error(message);
-				throw new WRoleDefException(message);
-
-			}
-		}
-
 	}
 
 	public void setwRoleDefList(List<WRoleDef> wRoleDefList) {
@@ -333,5 +380,18 @@ public class WRoleDefBean extends CoreManagedBean {
 		
 	}
 
+
+	private String setUpdateOkMessage() {
+		return "WRoleDef id:[ "+this.id+" ] with name:[ "+this.currentWRoleDef.getName()+" ] was updated correctly";
+	}
+	
+	private String setAddOkMessage(Integer newId) {
+		return "WRoleDef id:["+newId+"] with name:["+this.currentWRoleDef.getName()+"] was added correctly";
+	}
+	
+	private String getDeleteOkMessage(String name) {
+		return "WRoleDef id:[ "+this.id+" ] with name:[ "+ name +" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
+	}
+	
 	
 }
