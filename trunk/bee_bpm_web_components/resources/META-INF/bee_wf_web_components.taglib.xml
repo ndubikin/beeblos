@@ -20,6 +20,11 @@
  </tag>
  
  <tag>
+  <tag-name>wProcessDefQuery</tag-name>
+  <source>/taglib/general/wProcessDefQuery.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>miCuenta</tag-name>
   <source>/taglib/micuenta/miCuenta.xhtml</source>
  </tag>

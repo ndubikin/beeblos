@@ -23,4 +23,6 @@ public class Constantes {
 	
 	public static final String SUCCESS_WROLEDEF = "SUCCESS_WROLEDEF";
 	
+	public static final String WPROCESSDEF_QUERY = "WPROCESSDEF_QUERY";
+	
 }
