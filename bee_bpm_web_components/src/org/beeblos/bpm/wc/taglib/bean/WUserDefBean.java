@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.WRoleDefBL;
-import org.beeblos.bpm.core.error.WRoleDefException;
-import org.beeblos.bpm.core.model.WRoleDef;
+import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -35,9 +35,9 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
  * is set before the load occurs
  * 
  
- <a4j:jsFunction name="loadRecord" action="#{wRoleDefBean.loadRecord}" 
+ <a4j:jsFunction name="loadRecord" action="#{wUserDefBean.loadRecord}" 
 				reRender="name_id, description_id, delete_button, cancel_button, save_button" >
-	 <a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
+	 <a4j:actionparam name="param1" assignTo="#{wUserDefBean.id}"  />
 </a4j:jsFunction>
  
  * 
@@ -47,10 +47,10 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
  *
  * 
 < a4j:jsFunction name="loadParam" >
-	<a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
+	<a4j:actionparam name="param1" assignTo="#{wUserDefBean.id}"  />
 </a4j:jsFunction>
 
-<a4j:jsFunction name="loadRecord" actionListener="#{wRoleDefBean.loadRecord}" 
+<a4j:jsFunction name="loadRecord" actionListener="#{wUserDefBean.loadRecord}" 
 	reRender="name_id, description_id, delete_button, cancel_button, save_button" >
 </a4j:jsFunction>
 
@@ -59,9 +59,9 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
 */
 
 
-public class WRoleDefBean extends CoreManagedBean {
+public class WUserDefBean extends CoreManagedBean {
 
-	private static final Log logger = LogFactory.getLog(WRoleDefBean.class.getName());
+	private static final Log logger = LogFactory.getLog(WUserDefBean.class.getName());
 
 	private static final long serialVersionUID = -3619314142932182990L;
 	
@@ -69,9 +69,9 @@ public class WRoleDefBean extends CoreManagedBean {
 	
 	private Integer id;
 	
-	private WRoleDef currentWRoleDef;
+	private WUserDef currentWUserDef;
 
-	private List<WRoleDef> roleList;
+	private List<WUserDef> userList;
 
 	private Integer currentRow;
 	
@@ -80,7 +80,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	private String messageStyle;
 
 	
-	public WRoleDefBean() {
+	public WUserDefBean() {
 		
 		super();
 		_init();
@@ -90,7 +90,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	
 	// when load the backing bean
 	private void _init() {
-		roleList = this.getwRoleDefList(); // load object list
+		userList = this.getwUserDefList(); // load object list
 		this.setId(0);
 	}
 	
@@ -102,9 +102,9 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" initProperties()");
 		
 		this.setId(0);
-		this.currentWRoleDef = new WRoleDef();
+		this.currentWUserDef = new WUserDef();
 		this.currentRow=0;
-		roleList = this.getwRoleDefList(); 
+		userList = this.getwUserDefList(); 
 		
 		this.valueBtn="Save";
 		
@@ -114,7 +114,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 
 	public String save() {
-		logger.debug(" save() id:" +this.getId()+" name:"+this.currentWRoleDef.getName() );
+		logger.debug(" save() id:" +this.getId()+" name:"+this.currentWUserDef.getName() );
 		
 		String returnValue = null; // always returns null because calls here are ajax
 		
@@ -137,9 +137,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		try {
 			
-			currentWRoleDef.setName(null);
-			
-			new WRoleDefBL().update(currentWRoleDef, this.getCurrentUserId());
+			new WUserDefBL().update(currentWUserDef, this.getCurrentUserId());
 			
 			String message = setUpdateOkMessage();
 			agregarMensaje(message);
@@ -147,22 +145,22 @@ public class WRoleDefBean extends CoreManagedBean {
 			
 			reset();
 			
-		} catch (WRoleDefException e) {
+		} catch (WUserDefException e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method update in WRoleDefBean: "
+			String message = "WUserDefException: Method update in WUserDefBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WUserDefException" };
+			agregarMensaje("201", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} catch (Exception e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "Exception: Method update in WRoleDefBean: "
+			String message = "Exception: Method update in WUserDefBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WUserDefException" };
+			agregarMensaje("201", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} 
@@ -173,7 +171,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 
 	public String add() {
-		logger.debug(" add() role name:" +this.currentWRoleDef.getName() );
+		logger.debug(" add() user name:" +this.currentWUserDef.getName() );
 		
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
@@ -182,7 +180,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		
 		 try {
 			
-			Integer newId = new WRoleDefBL().add(this.currentWRoleDef, this.getCurrentUserId());
+			Integer newId = new WUserDefBL().add(this.currentWUserDef, this.getCurrentUserId());
 			
 			String message = setAddOkMessage(newId);
 			agregarMensaje(message);
@@ -190,22 +188,22 @@ public class WRoleDefBean extends CoreManagedBean {
 			
 			reset();
 
-		 } catch (WRoleDefException e) {
+		 } catch (WUserDefException e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method add in WRoleDefBean: "
+			String message = "WUserDefException: Method add in WUserDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WUserDefException" };
+			agregarMensaje("201", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} catch (Exception e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "Exception: Method add in WRoleDefBean: "
+			String message = "Exception: Method add in WUserDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WUserDefException" };
+			agregarMensaje("201", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} 
@@ -226,34 +224,34 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		try {
 			
-			String deletedRoleName = this.currentWRoleDef.getName();
+			String deletedUserName = this.currentWUserDef.getName();
 			
-			new WRoleDefBL().delete(this.id, this.getCurrentUserId());
+			new WUserDefBL().delete(this.id, this.getCurrentUserId());
 			
 			// set ok message 
-			String message = getDeleteOkMessage(deletedRoleName); 
+			String message = getDeleteOkMessage(deletedUserName); 
 			logger.info(message);
 			agregarMensaje(message);
 			setShowHeaderMessage(true);
 
 			reset();
 
-		} catch (WRoleDefException e) {
+		} catch (WUserDefException e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method delete in WRoleDefBean: "
+			String message = "WUserDefException: Method delete in WUserDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WUserDefException" };
+			agregarMensaje("201", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} catch (Exception e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "Exception: Method delete in WRoleDefBean: "
+			String message = "Exception: Method delete in WUserDefBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WUserDefException" };
+			agregarMensaje("201", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} 
@@ -272,19 +270,19 @@ public class WRoleDefBean extends CoreManagedBean {
 		if (this.id!=null && this.id!=0){
 			try {
 				
-				this.currentWRoleDef = 
-						new WRoleDefBL()
-							.getWRoleDefByPK( this.id, this.getCurrentUserId() );
+				this.currentWUserDef = 
+						new WUserDefBL()
+							.getWUserDefByPK( this.id, this.getCurrentUserId() );
 
 				modifyValueBtn();
 				
-			} catch (WRoleDefException e) {
+			} catch (WUserDefException e) {
 
 				messageStyle=errorMessageStyle();
-				String message = "WRoleDefException: Method loadRecord in WRoleDefBean: "
+				String message = "WUserDefException: Method loadRecord in WUserDefBean: "
 										+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WRoleDefException" };
-				agregarMensaje("200", message, params, FGPException.WARN);
+				String params[] = { message + ",", "WUserDefException" };
+				agregarMensaje("201", message, params, FGPException.WARN);
 				logger.error(message);
 
 			}
@@ -293,25 +291,25 @@ public class WRoleDefBean extends CoreManagedBean {
 
 	}
 	
-	public List<WRoleDef> getwRoleDefList() {
+	public List<WUserDef> getwUserDefList() {
 		
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
 
-		List<WRoleDef> objectList;
+		List<WUserDef> objectList;
 		
 		try {
 
 			objectList = 
-					new WRoleDefBL()
-						.getWRoleDefs(this.getCurrentUserId());
+					new WUserDefBL()
+						.getWUserDefs(this.getCurrentUserId());
 			
-		} catch (WRoleDefException e) {
+		} catch (WUserDefException e) {
 			
 			objectList=null;
 			
 			logger
-				.warn("WRoleDefException: Error trying to load role list "
+				.warn("WUserDefException: Error trying to load user list "
 						+ e.getMessage()+" - "+e.getCause());
 
 		}
@@ -319,8 +317,8 @@ public class WRoleDefBean extends CoreManagedBean {
 		return objectList;
 	}
 
-	public void setwRoleDefList(List<WRoleDef> wRoleDefList) {
-		this.roleList = wRoleDefList;
+	public void setwUserDefList(List<WUserDef> wUserDefList) {
+		this.userList = wUserDefList;
 	}
 
 	public void setCurrentRow(Integer currentRow) {
@@ -367,20 +365,20 @@ public class WRoleDefBean extends CoreManagedBean {
 	}
 
 
-	public WRoleDef getCurrentWRoleDef() {
-		return currentWRoleDef;
+	public WUserDef getCurrentWUserDef() {
+		return currentWUserDef;
 	}
 
-	public void setCurrentWRoleDef(WRoleDef currentWRoleDef) {
-		this.currentWRoleDef = currentWRoleDef;
+	public void setCurrentWUserDef(WUserDef currentWUserDef) {
+		this.currentWUserDef = currentWUserDef;
 	}
 
-	public List<WRoleDef> getRoleList() {
-		return roleList;
+	public List<WUserDef> getUserList() {
+		return userList;
 	}
 
-	public void setRoleList(List<WRoleDef> roleList) {
-		this.roleList = roleList;
+	public void setUserList(List<WUserDef> userList) {
+		this.userList = userList;
 	}
 	
 	public String getMessageStyle() {
@@ -403,15 +401,15 @@ public class WRoleDefBean extends CoreManagedBean {
 	}
 
 	private String setUpdateOkMessage() {
-		return "WRoleDef id:[ "+this.id+" ] with name:[ "+this.currentWRoleDef.getName()+" ] was updated correctly";
+		return "WUserDef id:[ "+this.id+" ] with name:[ "+this.currentWUserDef.getName()+" ] was updated correctly";
 	}
 	
 	private String setAddOkMessage(Integer newId) {
-		return "WRoleDef id:["+newId+"] with name:["+this.currentWRoleDef.getName()+"] was added correctly";
+		return "WUserDef id:["+newId+"] with name:["+this.currentWUserDef.getName()+"] was added correctly";
 	}
 	
 	private String getDeleteOkMessage(String name) {
-		return "WRoleDef id:[ "+this.id+" ] with name:[ "+ name +" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
+		return "WUserDef id:[ "+this.id+" ] with name:[ "+ name +" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
 	}
 	
 	
