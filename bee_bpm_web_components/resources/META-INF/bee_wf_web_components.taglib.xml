@@ -15,6 +15,11 @@
  </tag>
  
  <tag>
+  <tag-name>wTimeUnitCrudCaratula</tag-name>
+  <source>/taglib/admin/pestanias/wTimeUnitCrudCaratula.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>miCuenta</tag-name>
   <source>/taglib/micuenta/miCuenta.xhtml</source>
  </tag>
