@@ -61,7 +61,7 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
 
 public class WRoleDefBean extends CoreManagedBean {
 
-	private static final Log logger = LogFactory.getLog(UsuarioBean.class);
+	private static final Log logger = LogFactory.getLog(WRoleDefBean.class.getName());
 
 	private static final long serialVersionUID = -3619314142932182990L;
 	
