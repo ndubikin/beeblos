@@ -15,7 +15,7 @@ public class WTimeUnit implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String name;
-	private Long conversion;
+	private Integer conversion;
 
 	public WTimeUnit() {
 		super();
@@ -27,7 +27,7 @@ public class WTimeUnit implements java.io.Serializable {
 			
 		}	
 	}
-	public WTimeUnit(String name, long conversion) {
+	public WTimeUnit(String name, Integer conversion) {
 		this.name = name;
 		this.conversion = conversion;
 	}
@@ -56,42 +56,38 @@ public class WTimeUnit implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Long getConversion() {
+	public Integer getConversion() {
 		return this.conversion;
 	}
 
-	public void setConversion(Long conversion) {
+	public void setConversion(Integer conversion) {
 		this.conversion = conversion;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(conversion);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result
+				+ ((conversion == null) ? 0 : conversion.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WTimeUnit))
+		if (getClass() != obj.getClass())
 			return false;
 		WTimeUnit other = (WTimeUnit) obj;
-		if (Double.doubleToLongBits(conversion) != Double
-				.doubleToLongBits(other.conversion))
+		if (conversion == null) {
+			if (other.conversion != null)
+				return false;
+		} else if (!conversion.equals(other.conversion))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -101,20 +97,17 @@ public class WTimeUnit implements java.io.Serializable {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "WTimeUnit [conversion=" + conversion + ", id=" + id + ", name="
-				+ name + "]";
+		return "WTimeUnit [id=" + id + ", name=" + name + ", conversion="
+				+ conversion + "]";
 	}
 
 	public boolean empty() {
 
 		if (id!=null && ! id.equals(0)) return false;
 		if (name!=null && ! "".equals(name)) return false;
-		if (conversion!=null && ! conversion.equals(0.0)) return false;
+		if (conversion!=null && ! conversion.equals(0)) return false;
 		
 		return true;
 	}

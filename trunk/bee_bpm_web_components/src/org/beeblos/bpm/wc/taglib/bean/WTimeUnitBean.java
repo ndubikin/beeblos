@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.WRoleDefBL;
-import org.beeblos.bpm.core.error.WRoleDefException;
-import org.beeblos.bpm.core.model.WRoleDef;
+import org.beeblos.bpm.core.bl.WTimeUnitBL;
+import org.beeblos.bpm.core.error.WTimeUnitException;
+import org.beeblos.bpm.core.model.WTimeUnit;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -35,9 +35,9 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
  * is set before the load occurs
  * 
  
- <a4j:jsFunction name="loadRecord" action="#{wRoleDefBean.loadRecord}" 
+ <a4j:jsFunction name="loadRecord" action="#{wTimeUnitBean.loadRecord}" 
 				reRender="name_id, description_id, delete_button, cancel_button, save_button" >
-	 <a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
+	 <a4j:actionparam name="param1" assignTo="#{wTimeUnitBean.id}"  />
 </a4j:jsFunction>
  
  * 
@@ -47,10 +47,10 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
  *
  * 
 < a4j:jsFunction name="loadParam" >
-	<a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
+	<a4j:actionparam name="param1" assignTo="#{wTimeUnitBean.id}"  />
 </a4j:jsFunction>
 
-<a4j:jsFunction name="loadRecord" actionListener="#{wRoleDefBean.loadRecord}" 
+<a4j:jsFunction name="loadRecord" actionListener="#{wTimeUnitBean.loadRecord}" 
 	reRender="name_id, description_id, delete_button, cancel_button, save_button" >
 </a4j:jsFunction>
 
@@ -59,9 +59,9 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
 */
 
 
-public class WRoleDefBean extends CoreManagedBean {
+public class WTimeUnitBean extends CoreManagedBean {
 
-	private static final Log logger = LogFactory.getLog(WRoleDefBean.class.getName());
+	private static final Log logger = LogFactory.getLog(WTimeUnitBean.class.getName());
 
 	private static final long serialVersionUID = -3619314142932182990L;
 	
@@ -69,9 +69,9 @@ public class WRoleDefBean extends CoreManagedBean {
 	
 	private Integer id;
 	
-	private WRoleDef currentWRoleDef;
+	private WTimeUnit currentWTimeUnit;
 
-	private List<WRoleDef> roleList;
+	private List<WTimeUnit> timeUnitList;
 
 	private Integer currentRow;
 	
@@ -80,7 +80,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	private String messageStyle;
 
 	
-	public WRoleDefBean() {
+	public WTimeUnitBean() {
 		
 		super();
 		_init();
@@ -90,7 +90,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	
 	// when load the backing bean
 	private void _init() {
-		roleList = this.getwRoleDefList(); // load object list
+		timeUnitList = this.getwTimeUnitList(); // load object list
 		this.setId(0);
 	}
 	
@@ -102,9 +102,9 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" initProperties()");
 		
 		this.setId(0);
-		this.currentWRoleDef = new WRoleDef();
+		this.currentWTimeUnit = new WTimeUnit();
 		this.currentRow=0;
-		roleList = this.getwRoleDefList(); 
+		timeUnitList = this.getwTimeUnitList(); 
 		
 		this.valueBtn="Save";
 		
@@ -114,7 +114,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 
 	public String save() {
-		logger.debug(" save() id:" +this.getId()+" name:"+this.currentWRoleDef.getName() );
+		logger.debug(" save() id:" +this.getId()+" name:"+this.currentWTimeUnit.getName() );
 		
 		String returnValue = null; // always returns null because calls here are ajax
 		
@@ -137,7 +137,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		try {
 			
-			new WRoleDefBL().update(currentWRoleDef, this.getCurrentUserId());
+			new WTimeUnitBL().update(currentWTimeUnit, this.getCurrentUserId());
 			
 			String message = setUpdateOkMessage();
 			agregarMensaje(message);
@@ -145,22 +145,22 @@ public class WRoleDefBean extends CoreManagedBean {
 			
 			reset();
 			
-		} catch (WRoleDefException e) {
+		} catch (WTimeUnitException e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method update in WRoleDefBean: "
+			String message = "WTimeUnitException: Method update in WTimeUnitBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WTimeUnitException" };
+			agregarMensaje("202", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} catch (Exception e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "Exception: Method update in WRoleDefBean: "
+			String message = "Exception: Method update in WTimeUnitBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WTimeUnitException" };
+			agregarMensaje("202", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} 
@@ -171,7 +171,7 @@ public class WRoleDefBean extends CoreManagedBean {
 
 
 	public String add() {
-		logger.debug(" add() role name:" +this.currentWRoleDef.getName() );
+		logger.debug(" add() time unit name:" +this.currentWTimeUnit.getName() );
 		
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
@@ -180,7 +180,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		
 		 try {
 			
-			Integer newId = new WRoleDefBL().add(this.currentWRoleDef, this.getCurrentUserId());
+			Integer newId = new WTimeUnitBL().add(this.currentWTimeUnit, this.getCurrentUserId());
 			
 			String message = setAddOkMessage(newId);
 			agregarMensaje(message);
@@ -188,22 +188,22 @@ public class WRoleDefBean extends CoreManagedBean {
 			
 			reset();
 
-		 } catch (WRoleDefException e) {
+		 } catch (WTimeUnitException e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method add in WRoleDefBean: "
+			String message = "WTimeUnitException: Method add in WTimeUnitBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WTimeUnitException" };
+			agregarMensaje("202", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} catch (Exception e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "Exception: Method add in WRoleDefBean: "
+			String message = "Exception: Method add in WTimeUnitBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WTimeUnitException" };
+			agregarMensaje("202", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} 
@@ -224,34 +224,34 @@ public class WRoleDefBean extends CoreManagedBean {
 
 		try {
 			
-			String deletedRoleName = this.currentWRoleDef.getName();
+			String deletedTimeUnitName = this.currentWTimeUnit.getName();
 			
-			new WRoleDefBL().delete(this.id, this.getCurrentUserId());
+			new WTimeUnitBL().delete(this.currentWTimeUnit, this.getCurrentUserId());
 			
 			// set ok message 
-			String message = getDeleteOkMessage(deletedRoleName); 
+			String message = getDeleteOkMessage(deletedTimeUnitName); 
 			logger.info(message);
 			agregarMensaje(message);
 			setShowHeaderMessage(true);
 
 			reset();
 
-		} catch (WRoleDefException e) {
+		} catch (WTimeUnitException e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method delete in WRoleDefBean: "
+			String message = "WTimeUnitException: Method delete in WTimeUnitBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WTimeUnitException" };
+			agregarMensaje("202", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} catch (Exception e) {
 
 			messageStyle=errorMessageStyle();
-			String message = "Exception: Method delete in WRoleDefBean: "
+			String message = "Exception: Method delete in WTimeUnitBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
+			String params[] = { message + ",", "WTimeUnitException" };
+			agregarMensaje("202", message, params, FGPException.WARN);
 			logger.error(message);
 
 		} 
@@ -270,19 +270,19 @@ public class WRoleDefBean extends CoreManagedBean {
 		if (this.id!=null && this.id!=0){
 			try {
 				
-				this.currentWRoleDef = 
-						new WRoleDefBL()
-							.getWRoleDefByPK( this.id, this.getCurrentUserId() );
+				this.currentWTimeUnit = 
+						new WTimeUnitBL()
+							.getWTimeUnitByPK( this.id, this.getCurrentUserId() );
 
 				modifyValueBtn();
 				
-			} catch (WRoleDefException e) {
+			} catch (WTimeUnitException e) {
 
 				messageStyle=errorMessageStyle();
-				String message = "WRoleDefException: Method loadRecord in WRoleDefBean: "
+				String message = "WTimeUnitException: Method loadRecord in WTimeUnitBean: "
 										+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WRoleDefException" };
-				agregarMensaje("200", message, params, FGPException.WARN);
+				String params[] = { message + ",", "WTimeUnitException" };
+				agregarMensaje("202", message, params, FGPException.WARN);
 				logger.error(message);
 
 			}
@@ -291,25 +291,25 @@ public class WRoleDefBean extends CoreManagedBean {
 
 	}
 	
-	public List<WRoleDef> getwRoleDefList() {
+	public List<WTimeUnit> getwTimeUnitList() {
 		
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
 
-		List<WRoleDef> objectList;
+		List<WTimeUnit> objectList;
 		
 		try {
 
 			objectList = 
-					new WRoleDefBL()
-						.getWRoleDefs(this.getCurrentUserId());
+					new WTimeUnitBL()
+						.getWTimeUnits(this.getCurrentUserId());
 			
-		} catch (WRoleDefException e) {
+		} catch (WTimeUnitException e) {
 			
 			objectList=null;
 			
 			logger
-				.warn("WRoleDefException: Error trying to load role list "
+				.warn("WTimeUnitException: Error trying to load time unit list "
 						+ e.getMessage()+" - "+e.getCause());
 
 		}
@@ -317,8 +317,8 @@ public class WRoleDefBean extends CoreManagedBean {
 		return objectList;
 	}
 
-	public void setwRoleDefList(List<WRoleDef> wRoleDefList) {
-		this.roleList = wRoleDefList;
+	public void setwTimeUnitList(List<WTimeUnit> wTimeUnitList) {
+		this.timeUnitList = wTimeUnitList;
 	}
 
 	public void setCurrentRow(Integer currentRow) {
@@ -365,20 +365,20 @@ public class WRoleDefBean extends CoreManagedBean {
 	}
 
 
-	public WRoleDef getCurrentWRoleDef() {
-		return currentWRoleDef;
+	public WTimeUnit getCurrentWTimeUnit() {
+		return currentWTimeUnit;
 	}
 
-	public void setCurrentWRoleDef(WRoleDef currentWRoleDef) {
-		this.currentWRoleDef = currentWRoleDef;
+	public void setCurrentWTimeUnit(WTimeUnit currentWTimeUnit) {
+		this.currentWTimeUnit = currentWTimeUnit;
 	}
 
-	public List<WRoleDef> getRoleList() {
-		return roleList;
+	public List<WTimeUnit> getTimeUnitList() {
+		return timeUnitList;
 	}
 
-	public void setRoleList(List<WRoleDef> roleList) {
-		this.roleList = roleList;
+	public void setTimeUnitList(List<WTimeUnit> timeUnitList) {
+		this.timeUnitList = timeUnitList;
 	}
 	
 	public String getMessageStyle() {
@@ -401,15 +401,15 @@ public class WRoleDefBean extends CoreManagedBean {
 	}
 
 	private String setUpdateOkMessage() {
-		return "WRoleDef id:[ "+this.id+" ] with name:[ "+this.currentWRoleDef.getName()+" ] was updated correctly";
+		return "WTimeUnit id:[ "+this.id+" ] with name:[ "+this.currentWTimeUnit.getName()+" ] was updated correctly";
 	}
 	
 	private String setAddOkMessage(Integer newId) {
-		return "WRoleDef id:["+newId+"] with name:["+this.currentWRoleDef.getName()+"] was added correctly";
+		return "WTimeUnit id:["+newId+"] with name:["+this.currentWTimeUnit.getName()+"] was added correctly";
 	}
 	
 	private String getDeleteOkMessage(String name) {
-		return "WRoleDef id:[ "+this.id+" ] with name:[ "+ name +" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
+		return "WTimeUnit id:[ "+this.id+" ] with name:[ "+ name +" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
 	}
 	
 	
