@@ -4,9 +4,14 @@
 <facelet-taglib>
  <namespace>http://www.beeblos.org/bee_bpm_web_components</namespace>
  
-  <tag>
+ <tag>
   <tag-name>wRoleDefCrudCaratula</tag-name>
   <source>/taglib/admin/pestanias/wRoleDefCrudCaratula.xhtml</source>
+ </tag>
+ 
+ <tag>
+  <tag-name>wUserDefCrudCaratula</tag-name>
+  <source>/taglib/admin/pestanias/wUserDefCrudCaratula.xhtml</source>
  </tag>
  
  <tag>

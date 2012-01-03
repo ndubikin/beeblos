@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -24,9 +25,9 @@ public class WUserDefBL {
 		logger.debug("add() WUserDef - Name: ["+user.getName()+"]");
 		
 		// timestamp & trace info
-//		user.setInsertDate(new Date());
+		user.setInsertDate(new Date());
 //		user.setModDate(new Date());
-//		user.setInsertUser(currentUser);
+		user.setInsertUser(currentUser);
 //		user.setModUser(null);
 		return new WUserDefDao().add(user);
 
