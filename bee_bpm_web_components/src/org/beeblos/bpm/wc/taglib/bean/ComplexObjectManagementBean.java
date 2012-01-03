@@ -1,6 +1,5 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
-import java.util.Date;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -16,12 +15,10 @@ import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 
-import com.beeblos.wsapi.model.BeeblosException;
-
 /**
- * Backing bean para manejo de la Factura (CRUD) 
+ * Empty backing bean 
  *
- * @author rrl
+ * @author nes
  *
  */
 public class ComplexObjectManagementBean extends CoreManagedBean {
@@ -41,7 +38,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 	private TimeZone timeZone;
 
 	private BeeblosAttachment attachment;
-	private String linkDocumento;
+	private String documentLink;
 
 	
 	
@@ -71,7 +68,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 		
 		attachment = new BeeblosAttachment();
 
-		linkDocumento=null; 
+		documentLink=null; 
 		
 		HelperUtil.recreateBean("documentacionBean", "com.softpoint.taglib.common.DocumentacionBean");
 
@@ -330,14 +327,44 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 	}
 	
 
-	public String getLinkDocumento() {
-		return linkDocumento;
+
+		
+
+	public ObjectM getCurrentObject() {
+		return currentObject;
 	}
 
-	public void setLinkDocumento(String linkDocumento) {
-		this.linkDocumento = linkDocumento;
+	public void setCurrentObject(ObjectM currentObject) {
+		this.currentObject = currentObject;
 	}
-		
+
+	public Integer getCurrentObjectId() {
+		return currentObjectId;
+	}
+
+	public void setCurrentObjectId(Integer currentObjectId) {
+		this.currentObjectId = currentObjectId;
+	}
+
+	public BeeblosAttachment getAttachment() {
+		return attachment;
+	}
+
+	public void setAttachment(BeeblosAttachment attachment) {
+		this.attachment = attachment;
+	}
+
+	public String getDocumentLink() {
+		return documentLink;
+	}
+
+	public void setDocumentLink(String documentLink) {
+		this.documentLink = documentLink;
+	}
+
+	public void setTimeZone(TimeZone timeZone) {
+		this.timeZone = timeZone;
+	}
 
 	public Integer getCurrentUserId() {
 		if ( currentUserId== null ) {
