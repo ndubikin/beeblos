@@ -13,7 +13,7 @@ import org.beeblos.bpm.core.model.noper.StringPair;
 
 public class WStepResponseDefBL {
 	
-	private static final Log logger = LogFactory.getLog(WStepResponseDefBL.class);
+	private static final Log logger = LogFactory.getLog(WStepResponseDefBL.class.getName());
 	
 	public WStepResponseDefBL (){
 		

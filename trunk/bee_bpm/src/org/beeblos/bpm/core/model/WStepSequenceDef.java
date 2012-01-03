@@ -11,6 +11,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private WProcessDef process;
 	private Integer version;

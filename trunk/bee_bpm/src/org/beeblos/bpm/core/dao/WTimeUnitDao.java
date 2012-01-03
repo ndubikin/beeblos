@@ -17,7 +17,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class WTimeUnitDao {
 	
-	private static final Log logger = LogFactory.getLog(WTimeUnitDao.class);
+	private static final Log logger = LogFactory.getLog(WTimeUnitDao.class.getName());
 	
 	public WTimeUnitDao (){
 		

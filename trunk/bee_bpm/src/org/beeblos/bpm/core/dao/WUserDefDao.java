@@ -16,7 +16,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class WUserDefDao {
 	
-	private static final Log logger = LogFactory.getLog(WUserDefDao.class);
+	private static final Log logger = LogFactory.getLog(WUserDefDao.class.getName());
 	
 	public WUserDefDao (){
 		super();

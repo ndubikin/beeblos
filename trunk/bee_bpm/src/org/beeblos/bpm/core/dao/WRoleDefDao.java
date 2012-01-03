@@ -19,7 +19,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class WRoleDefDao {
 	
-	private static final Log logger = LogFactory.getLog(WRoleDefDao.class);
+	private static final Log logger = LogFactory.getLog(WRoleDefDao.class.getName());
 	
 	public WRoleDefDao (){
 		super();

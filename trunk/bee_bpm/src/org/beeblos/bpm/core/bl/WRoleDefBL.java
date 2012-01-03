@@ -15,7 +15,7 @@ import org.beeblos.bpm.core.model.noper.StringPair;
 
 public class WRoleDefBL {
 	
-	private static final Log logger = LogFactory.getLog(WRoleDefBL.class);
+	private static final Log logger = LogFactory.getLog(WRoleDefBL.class.getName());
 	
 	public WRoleDefBL (){
 		

@@ -21,7 +21,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class WStepWorkDao {
 	
-	private static final Log logger = LogFactory.getLog(WStepWorkDao.class);
+	private static final Log logger = LogFactory.getLog(WStepWorkDao.class.getName());
 	
 	public WStepWorkDao (){
 		

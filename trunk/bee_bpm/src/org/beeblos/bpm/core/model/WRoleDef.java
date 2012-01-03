@@ -1,6 +1,6 @@
 package org.beeblos.bpm.core.model;
 
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+//import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
 // Generated Nov 9, 2011 1:15:47 PM by Hibernate Tools 3.4.0.CR1
 
@@ -20,6 +20,7 @@ public class WRoleDef implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private String name;
 	private String description;

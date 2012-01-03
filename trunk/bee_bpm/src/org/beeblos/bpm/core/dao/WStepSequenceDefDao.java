@@ -18,7 +18,7 @@ import org.hibernate.HibernateException;
 
 public class WStepSequenceDefDao {
 	
-	private static final Log logger = LogFactory.getLog(WStepSequenceDefDao.class);
+	private static final Log logger = LogFactory.getLog(WStepSequenceDefDao.class.getName());
 	
 	public WStepSequenceDefDao (){
 		
