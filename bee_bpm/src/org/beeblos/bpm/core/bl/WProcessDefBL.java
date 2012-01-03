@@ -3,7 +3,6 @@ package org.beeblos.bpm.core.bl;
 import java.util.Date;
 import java.util.List;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDefDao;
@@ -88,6 +87,16 @@ public class WProcessDefBL {
 	throws WProcessDefException {
 		 
 		return new WProcessDefDao().getComboList(textoPrimeraLinea, separacion);
+		
+	}
+	
+	public List<WProcessDef> finder(Date initialInsertDateFilter, Date finalInsertDateFilter, 
+			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
+			String listZoneFilter, String workZoneFilter, String additinalZoneFilter)
+	throws WProcessDefException {
+		 
+		return new WProcessDefDao().finder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
+				nameFilter, commentFilter, listZoneFilter, workZoneFilter, additinalZoneFilter);
 
 
 	}

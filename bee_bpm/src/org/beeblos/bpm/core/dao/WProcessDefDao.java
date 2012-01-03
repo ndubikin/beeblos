@@ -1,14 +1,17 @@
 package org.beeblos.bpm.core.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
@@ -251,6 +254,187 @@ public class WProcessDefDao {
 
 	}
 
+	public List<WProcessDef> finder(Date initialInsertDateFilter, Date finalInsertDateFilter, 
+			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
+			String listZoneFilter, String workZoneFilter, String additinalZoneFilter)
+	throws WProcessDefException {
+		
+		String filter="";
+
+		
+		if (nameFilter!=null && ! "".equals(nameFilter)){
+			filter=" wpd.name LIKE '%"+nameFilter.trim()+"%' ";
+		} else 	{ 
+			filter="";
+		}
+		
+		if (commentFilter!=null && ! "".equals(commentFilter)){
+			filter=" wpd.comment LIKE '%"+commentFilter.trim()+"%' ";
+		} else 	{ 
+			filter="";
+		}
+		
+		if (listZoneFilter!=null && ! "".equals(listZoneFilter)){
+			filter=" wpd.id_list_zone LIKE '%"+listZoneFilter.trim()+"%' ";
+		} else 	{ 
+			filter="";
+		}		
+		
+		if (workZoneFilter!=null && ! "".equals(workZoneFilter)){
+			filter=" wpd.id_work_zone LIKE '%"+workZoneFilter.trim()+"%' ";
+		} else 	{ 
+			filter="";
+		}		
+		
+		if (additinalZoneFilter!=null && ! "".equals(additinalZoneFilter)){
+			filter=" wpd.id_additional_zone LIKE '%"+additinalZoneFilter.trim()+"%' ";
+		} else 	{ 
+			filter="";
+		}
+		
+		if (initialInsertDateFilter!=null){
+
+			java.sql.Date initialInsertDateFilterSQL=new java.sql.Date(initialInsertDateFilter.getTime());
+			
+			if (strictInsertDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" wpd.insert_date = '"+initialInsertDateFilterSQL+"' ";
+			} else {
+				if (finalInsertDateFilter!=null){
+					java.sql.Date finalInsertDateFilterSQL=new java.sql.Date(finalInsertDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (wpd.insert_date >= '"+initialInsertDateFilterSQL+"' AND wpd.insert_date <= '"+finalInsertDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" wpd.insert_date >= '"+initialInsertDateFilterSQL+"' ";
+				}
+			}
+		}
+		
+		if (filter!=null && !"".equals(filter)) {
+			filter= " WHERE "+filter;
+		}
+
+		logger.debug("002 ------>> finderWProcessDef -> filter:"+filter+"<<-------");
+		
+		String query = _armaQuery(filter);
+
+		return finder(query);
+	
+	}
+	
+	public List<WProcessDef> finder(String query) throws WProcessDefException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<Object[]> result = null;
+		List<WProcessDef> returnList = new ArrayList<WProcessDef>();
+		
+		Integer id, idBegin, idInsertUser, idModUser;
+		String name, idListZone, idWorkZone, idAdditionalZone, comments;
+		Date insertDate, modDate = new Date();
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			Hibernate.initialize(result); // nes 20100821
+	
+			result = session
+			.createSQLQuery(query)
+			.list();
+
+			tx.commit();
+	
+			WStepDef wsd = null;
+			WProcessDef wpd = null;
+	
+			if (result!=null) {
+				for (Object irObj: result) {
+			
+					Object [] cols= (Object []) irObj;
+			
+					id = (cols[0]!=null ? new Integer(cols[0].toString()):null);
+					
+					name = (cols[1]!=null ? cols[1].toString():"");
+					comments = (cols[2]!=null ? cols[2].toString():"");
+
+					idBegin = (cols[3]!=null ? new Integer(cols[3].toString()):null);
+					idListZone = (cols[4]!=null ? cols[4].toString():"");
+					idWorkZone = (cols[5]!=null ? cols[5].toString():"");
+					idAdditionalZone = (cols[6]!=null ? cols[6].toString():"");
+			
+					insertDate = (cols[7]!=null ? (Date)cols[7]:null);
+					idInsertUser = (cols[8]!=null ? new Integer(cols[8].toString()):null);
+
+					modDate = (cols[4]!=null ? (Date)cols[4]:null);
+					idModUser = (cols[9]!=null ? new Integer(cols[9].toString()):null);
+			
+					wsd = new WStepDef();
+					wsd.setId(idBegin);
+					wpd = new WProcessDef(name, comments, wsd, idListZone, idWorkZone, idAdditionalZone, insertDate, idInsertUser, modDate, idModUser);
+					wpd.setId(id);
+					
+					returnList.add(wpd);
+		
+				}
+		
+			} else {
+				
+				returnList=null;
+				
+			}
+
+		} catch (HibernateException ex) {
+			
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDefDAO: finder() - It cannot be possible get the WProcessDef list - "+
+					ex.getMessage()+ "\n"+ex.getLocalizedMessage()+" \n"+ex.getCause());
+			throw new WProcessDefException(ex);
+
+		} catch (Exception e) {
+			
+			logger.warn("Exception WProcessDefDAO: finderWProcessDef() - an error managing the WProcessDef list has happened - "+
+					e.getMessage()+ "\n"+e.getLocalizedMessage()+" \n"+e.getCause());
+			e.getStackTrace();
+			throw new WProcessDefException(e);
+			
+		}
+
+		return returnList;
+
+	}
+
+
+
+private String _armaQuery(String filter){
+
+	String tmpQuery = "SELECT wpd.id, wpd.name, wpd.comments, wpd.id_begin , wpd.id_list_zone,";
+	tmpQuery += " wpd.id_work_zone, wpd.id_additional_zone, wpd.insert_date, wpd.insert_user,";
+	tmpQuery += " wpd.mod_date, wpd.mod_user  ";
+	tmpQuery += " FROM w_process_def wpd ";
+	tmpQuery += filter;
+	tmpQuery += " ORDER by wpd.id;";
+
+	logger.debug("------>> finderWProcessDef -> query:"+tmpQuery+"<<-------");
+	
+	System.out.println("QUERY: "+tmpQuery);
+
+	return tmpQuery;
+
+}
+
+	
 //	// nes 20101001 - hasta el final ...
 //	public List<WProcessDefAmpliada> finderWProcessDef(
 //			String filtroNombreWProcessDef, Integer processAnio
