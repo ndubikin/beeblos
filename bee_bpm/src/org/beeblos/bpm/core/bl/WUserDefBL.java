@@ -13,7 +13,7 @@ import org.beeblos.bpm.core.model.noper.StringPair;
 
 public class WUserDefBL {
 	
-	private static final Log logger = LogFactory.getLog(WUserDefBL.class);
+	private static final Log logger = LogFactory.getLog(WUserDefBL.class.getName());
 	
 	public WUserDefBL (){
 		

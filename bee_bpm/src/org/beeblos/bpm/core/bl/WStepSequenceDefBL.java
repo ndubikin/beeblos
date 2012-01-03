@@ -15,7 +15,7 @@ import org.beeblos.bpm.core.model.noper.StringPair;
 
 public class WStepSequenceDefBL {
 	
-	private static final Log logger = LogFactory.getLog(WStepSequenceDefBL.class);
+	private static final Log logger = LogFactory.getLog(WStepSequenceDefBL.class.getName());
 	
 	public WStepSequenceDefBL (){
 		

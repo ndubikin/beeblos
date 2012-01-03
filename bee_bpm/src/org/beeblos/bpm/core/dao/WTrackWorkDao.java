@@ -16,7 +16,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class WTrackWorkDao {
 
-	private static final Log logger = LogFactory.getLog(WTrackWorkDao.class);
+	private static final Log logger = LogFactory.getLog(WTrackWorkDao.class.getName());
 
 	public WTrackWorkDao() {
 

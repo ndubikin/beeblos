@@ -19,7 +19,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class WProcessDefDao {
 	
-	private static final Log logger = LogFactory.getLog(WProcessDefDao.class);
+	private static final Log logger = LogFactory.getLog(WProcessDefDao.class.getName());
 	
 	public WProcessDefDao (){
 		

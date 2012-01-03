@@ -9,6 +9,11 @@ import java.util.Date;
  */
 public class WStepUser implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private WStepDef step;
 	private WUserDef user;
 	private boolean admin;

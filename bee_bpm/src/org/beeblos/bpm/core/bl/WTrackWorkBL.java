@@ -14,7 +14,7 @@ import org.beeblos.bpm.core.model.noper.StringPair;
 
 public class WTrackWorkBL {
 
-	private static final Log logger = LogFactory.getLog(WTrackWorkBL.class);
+	private static final Log logger = LogFactory.getLog(WTrackWorkBL.class.getName());
 
 	public WTrackWorkBL() {
 

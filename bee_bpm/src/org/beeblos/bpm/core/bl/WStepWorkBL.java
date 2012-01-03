@@ -32,7 +32,7 @@ import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 
 public class WStepWorkBL {
 	
-	private static final Log logger = LogFactory.getLog(WStepWorkBL.class);
+	private static final Log logger = LogFactory.getLog(WStepWorkBL.class.getName());
 	
 	public WStepWorkBL (){
 		

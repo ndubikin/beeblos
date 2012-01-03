@@ -15,7 +15,7 @@ import org.beeblos.bpm.core.model.noper.StringPair;
 
 public class WProcessDefBL {
 	
-	private static final Log logger = LogFactory.getLog(WProcessDefBL.class);
+	private static final Log logger = LogFactory.getLog(WProcessDefBL.class.getName());
 	
 	public WProcessDefBL (){
 		

@@ -13,7 +13,7 @@ import org.hibernate.HibernateException;
 
 public class WUserRoleDao {
 	
-	private static final Log logger = LogFactory.getLog(WUserRoleDao.class);
+	private static final Log logger = LogFactory.getLog(WUserRoleDao.class.getName());
 	
 	public WUserRoleDao (){
 		super();

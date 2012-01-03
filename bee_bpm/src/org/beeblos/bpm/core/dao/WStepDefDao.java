@@ -17,7 +17,7 @@ import org.hibernate.criterion.Restrictions;
 
 public class WStepDefDao {
 	
-	private static final Log logger = LogFactory.getLog(WStepDefDao.class);
+	private static final Log logger = LogFactory.getLog(WStepDefDao.class.getName());
 	
 	public WStepDefDao (){
 		

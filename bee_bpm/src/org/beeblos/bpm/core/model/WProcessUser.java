@@ -9,6 +9,11 @@ import java.util.Date;
  */
 public class WProcessUser implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private WProcessDef process;
 	private WUserDef user;
 	private boolean admin;
