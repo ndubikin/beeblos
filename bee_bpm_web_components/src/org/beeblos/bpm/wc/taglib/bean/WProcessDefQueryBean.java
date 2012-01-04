@@ -295,12 +295,13 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		if (this.id != null){
 			
 			ValueExpression valueBinding = super
-					.getValueExpression("#{WProcessDefFormBean}");
+					.getValueExpression("#{wProcessDefFormBean}");
 
 			if (valueBinding != null) {
 
-				WProcessDefFormBean wpdfb = (WProcessDefFormBean) valueBinding
-						.getValue(super.getELContext());
+				WProcessDefFormBean wpdfb = 
+						(WProcessDefFormBean) valueBinding
+							.getValue(super.getELContext());
 				wpdfb.init();
 				wpdfb.setCurrentWProcessDefId(id);
 				wpdfb.loadCurrentWProcessDef(id);
