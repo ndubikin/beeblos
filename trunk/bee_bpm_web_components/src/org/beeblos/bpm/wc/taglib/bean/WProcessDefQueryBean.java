@@ -13,6 +13,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 
 public class WProcessDefQueryBean extends CoreManagedBean {
@@ -31,6 +32,8 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	private String listZoneFilter;
 	private String workZoneFilter;
 	private String additionalZoneFilter;
+	
+	private Integer currentUserId;
 	
 
 	private List<WProcessDef> wProcessDefList = new ArrayList<WProcessDef>();
@@ -124,8 +127,9 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		try {
 
 			wProcessDefList = (ArrayList<WProcessDef>) new WProcessDefBL()
-					.finder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
-							nameFilter, commentsFilter, listZoneFilter, workZoneFilter, additionalZoneFilter);
+					.getProcessListByFinder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
+							nameFilter, commentsFilter, listZoneFilter, workZoneFilter, additionalZoneFilter, 
+							getCurrentUserId(), true);
 
 			nResults = wProcessDefList.size();
 
@@ -269,4 +273,15 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
 	}
+	
+
+	public Integer getCurrentUserId() {
+		if ( currentUserId== null ) {
+			ContextoSeguridad cs = (ContextoSeguridad)
+						getSession().getAttribute(SECURITY_CONTEXT);
+			if (cs!=null) currentUserId=cs.getIdUsuario();
+		}
+		return currentUserId;
+	}	
+
 }
