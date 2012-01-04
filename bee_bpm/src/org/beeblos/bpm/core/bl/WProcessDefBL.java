@@ -89,7 +89,7 @@ public class WProcessDefBL {
 		return new WProcessDefDao().getComboList(textoPrimeraLinea, separacion);
 		
 	}
-	
+/*	
 	public List<WProcessDef> finder(Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter)
@@ -98,6 +98,17 @@ public class WProcessDefBL {
 		return new WProcessDefDao().finder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
 				nameFilter, commentFilter, listZoneFilter, workZoneFilter, additinalZoneFilter);
 
+	}
+*/	
+	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
+			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
+			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
+			Integer userId, boolean isAdmin ) 
+	throws WProcessDefException {
+		
+		return new WProcessDefDao().getProcessListByFinder(initialInsertDateFilter, finalInsertDateFilter, 
+				strictInsertDateFilter, nameFilter, commentFilter, listZoneFilter, 
+				workZoneFilter, additinalZoneFilter, userId, isAdmin);
 
 	}
 
