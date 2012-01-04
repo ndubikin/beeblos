@@ -6,10 +6,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-<ui:composition template="/templates/main.xhtml">
-	<ui:define name="title">WProcessDef Query</ui:define>
-	<ui:define name="current">wProcessDefQuery</ui:define>
-	<ui:define name="body">
+<ui:composition>
 	
 <style type="text/css">
 
@@ -22,8 +19,6 @@
     
 </style>
 	
-	<ui:include src="/common/errorPanel.xhtml" />
-	
 	<rich:tabPanel switchType="server" 
 			selectedTab="#{componentNavigator.currentComponent.activeTab}"
 			valueChangeListener="#{componentNavigator.tabPanelSwitched}" >
@@ -32,11 +27,10 @@
                 <a4j:support event="ontabenter" ajaxSingle="true" action="#{wProcessDefBean.searchWProcessDefs}" reRender="w_process_def_list_table">
                 	<a4j:actionparam name="valor" value="" assignTo="#{wProcessDefBean.action}"/>
                 </a4j:support>
-				<ui:include src="/taglib/general/pestanias/wProcessDefSearch.xhtml" />
+				<ui:include src="pestanias/wProcessDefSearch.xhtml" />
 			</rich:tab>
 			
 	</rich:tabPanel>
 
-	</ui:define>
 </ui:composition>
 </html>
