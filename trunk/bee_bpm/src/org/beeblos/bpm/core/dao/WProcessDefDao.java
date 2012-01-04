@@ -263,33 +263,48 @@ public class WProcessDefDao {
 
 		
 		if (nameFilter!=null && ! "".equals(nameFilter)){
-			filter=" wpd.name LIKE '%"+nameFilter.trim()+"%' ";
-		} else 	{ 
-			filter="";
+			if (filter == ""){
+				filter+=" wpd.name LIKE '%"+nameFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wpd.name LIKE '%"+nameFilter.trim()+"%' ";
+			}
 		}
 		
 		if (commentFilter!=null && ! "".equals(commentFilter)){
-			filter=" wpd.comment LIKE '%"+commentFilter.trim()+"%' ";
-		} else 	{ 
-			filter="";
+			if (filter == ""){
+				filter+=" wpd.comments LIKE '%"+commentFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wpd.comments LIKE '%"+commentFilter.trim()+"%' ";
+			}
 		}
 		
 		if (listZoneFilter!=null && ! "".equals(listZoneFilter)){
-			filter=" wpd.id_list_zone LIKE '%"+listZoneFilter.trim()+"%' ";
-		} else 	{ 
-			filter="";
-		}		
+			if (filter == ""){
+				filter+=" wpd.id_list_zone LIKE '%"+listZoneFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wpd.id_list_zone LIKE '%"+listZoneFilter.trim()+"%' ";
+			}
+		}
 		
 		if (workZoneFilter!=null && ! "".equals(workZoneFilter)){
-			filter=" wpd.id_work_zone LIKE '%"+workZoneFilter.trim()+"%' ";
-		} else 	{ 
-			filter="";
-		}		
+			if (filter == ""){
+				filter+=" wpd.id_work_zone LIKE '%"+workZoneFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wpd.id_work_zone LIKE '%"+workZoneFilter.trim()+"%' ";
+			}
+		}
 		
 		if (additinalZoneFilter!=null && ! "".equals(additinalZoneFilter)){
-			filter=" wpd.id_additional_zone LIKE '%"+additinalZoneFilter.trim()+"%' ";
-		} else 	{ 
-			filter="";
+			if (filter == ""){
+				filter+=" wpd.id_additional_zone LIKE '%"+additinalZoneFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wpd.id_additional_zone LIKE '%"+additinalZoneFilter.trim()+"%' ";
+			}
 		}
 		
 		if (initialInsertDateFilter!=null){
@@ -376,8 +391,8 @@ public class WProcessDefDao {
 					insertDate = (cols[7]!=null ? (Date)cols[7]:null);
 					idInsertUser = (cols[8]!=null ? new Integer(cols[8].toString()):null);
 
-					modDate = (cols[4]!=null ? (Date)cols[4]:null);
-					idModUser = (cols[9]!=null ? new Integer(cols[9].toString()):null);
+					modDate = (cols[9]!=null ? (Date)cols[9]:null);
+					idModUser = (cols[10]!=null ? new Integer(cols[10].toString()):null);
 			
 					wsd = new WStepDef();
 					wsd.setId(idBegin);
