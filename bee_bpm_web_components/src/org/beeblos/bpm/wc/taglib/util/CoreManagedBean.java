@@ -2,7 +2,6 @@ package org.beeblos.bpm.wc.taglib.util;
 
 import static org.beeblos.bpm.core.util.Constants.FICHERO_BDC_MENSAJES;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.ResourceBundle;

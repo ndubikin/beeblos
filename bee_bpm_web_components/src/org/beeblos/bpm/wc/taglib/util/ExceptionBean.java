@@ -56,6 +56,7 @@ public class ExceptionBean extends CoreManagedBean {
 
 	public boolean isRenderMessage() {
 		
+		@SuppressWarnings("unchecked")
 		ArrayList<FGPException> sessionList = (ArrayList<FGPException>)getContext().getAttributes().get("exceptionList");
 		
 		if(sessionList != null && sessionList.size() > 0 ){
