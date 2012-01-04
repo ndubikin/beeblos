@@ -44,4 +44,11 @@ public class Constants {
 	public static final String ERROR_MESSAGE_ICON 			= "ERROR_MESSAGE_ICON";
 	public static final String FATAL_MESSAGE_ICON 			= "FATAL_MESSAGE_ICON";
 	
+
+	public static final String SUCCESS_FORM_WPROCESSDEF = "SUCCESS_FORM_WPROCESSDEF";
+	public static final String LOAD_WPROCESSDEF = "LOAD_WPROCESSDEF";
+	public static final String WPROCESSDEF_QUERY = "WPROCESSDEF_QUERY";
+	public static final String SUCCESS_WROLEDEF = "SUCCESS_WROLEDEF";
+	
+	
 }
