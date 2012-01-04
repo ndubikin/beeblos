@@ -77,7 +77,7 @@
 				</f:facet>
 
 				<rich:column sortBy="#{wpd.id}"
-					style="width:30px; text-align: left;">
+					style="width:10px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_id}" />
 					</f:facet>
@@ -85,7 +85,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.name}"
-					style="width:30px; text-align: left;">
+					style="width:90px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_name}" />
 					</f:facet>
@@ -93,23 +93,24 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.comments}"
-					style="width:30px; text-align: left;">
+					style="width:120px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_comments}" />
 					</f:facet>
 					<h:outputText value="#{wpd.comments}" />
 				</rich:column>
 
-				<rich:column sortBy="#{wpd.beginStep.id}"
-					style="width:30px; text-align: left;">
+				<rich:column sortBy="#{wpd.beginStep.name}"
+					style="width:120px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_begin_step}" />
 					</f:facet>
-					<h:outputText value="#{wpd.beginStep.id}" />
+					<h:outputText value="#{wpd.beginStep.name}" />
+					<h:outputText value="(id:#{wpd.beginStep.id})" />
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.insertDate}"
-					style="width:30px; text-align: left;">
+					style="width:20px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_insert_date}" />
 					</f:facet>
