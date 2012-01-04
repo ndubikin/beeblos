@@ -27,10 +27,10 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	private boolean strictInsertDateFilter;
 	
 	private String nameFilter;
-	private String commentFilter;
+	private String commentsFilter;
 	private String listZoneFilter;
 	private String workZoneFilter;
-	private String additinalZoneFilter;
+	private String additionalZoneFilter;
 	
 
 	private List<WProcessDef> wProcessDefList = new ArrayList<WProcessDef>();
@@ -63,10 +63,10 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		strictInsertDateFilter = false;
 
 		nameFilter = "";
-		commentFilter = "";
+		commentsFilter = "";
 		listZoneFilter = "";
 		workZoneFilter = "";
-		additinalZoneFilter = "";
+		additionalZoneFilter = "";
 		
 		id = 0;
 
@@ -125,7 +125,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 			wProcessDefList = (ArrayList<WProcessDef>) new WProcessDefBL()
 					.finder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
-							nameFilter, commentFilter, listZoneFilter, workZoneFilter, additinalZoneFilter);
+							nameFilter, commentsFilter, listZoneFilter, workZoneFilter, additionalZoneFilter);
 
 			nResults = wProcessDefList.size();
 
@@ -234,12 +234,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		this.nameFilter = nameFilter;
 	}
 
-	public String getCommentFilter() {
-		return commentFilter;
+	public String getCommentsFilter() {
+		return commentsFilter;
 	}
 
-	public void setCommentFilter(String commentFilter) {
-		this.commentFilter = commentFilter;
+	public void setCommentsFilter(String commentsFilter) {
+		this.commentsFilter = commentsFilter;
 	}
 
 	public String getListZoneFilter() {
@@ -258,12 +258,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		this.workZoneFilter = workZoneFilter;
 	}
 
-	public String getAdditinalZoneFilter() {
-		return additinalZoneFilter;
+	public String getAdditionalZoneFilter() {
+		return additionalZoneFilter;
 	}
 
-	public void setAdditinalZoneFilter(String additinalZoneFilter) {
-		this.additinalZoneFilter = additinalZoneFilter;
+	public void setAdditionalZoneFilter(String additionalZoneFilter) {
+		this.additionalZoneFilter = additionalZoneFilter;
 	}
 
 	public void setTimeZone(TimeZone timeZone) {

@@ -95,11 +95,11 @@
                 <h:outputText value="#{wpd.comments}" />
             </rich:column>
                         
-            <rich:column sortBy="#{wpd.beginStep.name}" style="width:30px; text-align: left;"> 
+            <rich:column sortBy="#{wpd.beginStep.id}" style="width:30px; text-align: left;"> 
                 <f:facet name="header">
-                    <h:outputText value="#{msg.label_step}"/>
+                    <h:outputText value="#{msg.label_begin_step}"/>
                 </f:facet>
-                <h:outputText value="#{wpd.beginStep.name}" />
+                <h:outputText value="#{wpd.beginStep.id}" />
             </rich:column>
             
             <rich:column sortBy="#{wpd.insertDate}" style="width:30px; text-align: left;"> 
