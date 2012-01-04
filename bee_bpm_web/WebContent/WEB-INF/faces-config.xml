@@ -163,6 +163,11 @@
 		</navigation-case>
 
 		<navigation-case>
+			<from-outcome>WPROCESSDEF_QUERY</from-outcome>
+			<to-view-id>/admin/wProcessDefCrud.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
 			<from-outcome>LOAD_WPROCESSDEF</from-outcome>
 			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
 		</navigation-case>
@@ -183,20 +188,13 @@
 			<to-view-id>/welcome.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
 	
 	<navigation-rule>
 		<display-name>WProcessDefForm</display-name>
 		<from-view-id>/forms/wProcessDefFormCall.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>FAIL</from-outcome>
-			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-		<!-- <navigation-case>
-			<from-outcome>SUCESS_WPROCESSDEF_FORM</from-outcome>
-			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
-		</navigation-case> -->
-		<navigation-case>
-			<from-outcome>LOAD_WPROCESSDEF</from-outcome>
 			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
