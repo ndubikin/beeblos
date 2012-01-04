@@ -52,7 +52,7 @@
 		</property>
 
 		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"
-			column="id_begin"  name="beginStep" fetch="join" />
+			column="id_begin"  name="beginStep" fetch="join" lazy="false"/>
 
 		<set cascade="all" name="rolesRelated" sort="unsorted"
 			table="w_process_role"  lazy="false" >
