@@ -71,15 +71,6 @@
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean> 
  
- 	<navigation-rule>
-		<from-view-id>*</from-view-id>
-		<navigation-case>
-			<from-outcome>WPROCESSDEF_QUERY</from-outcome>
-			<to-view-id>/admin/wProcessDefCrud.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-
  <application>
   <view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
   <resource-bundle>
