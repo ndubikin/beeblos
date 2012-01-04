@@ -6,22 +6,22 @@
  
  <tag>
   <tag-name>wRoleDefCrudCaratula</tag-name>
-  <source>/taglib/admin/pestanias/wRoleDefCrudCaratula.xhtml</source>
+  <source>/taglib/admin/tags/wRoleDefCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wUserDefCrudCaratula</tag-name>
-  <source>/taglib/admin/pestanias/wUserDefCrudCaratula.xhtml</source>
+  <source>/taglib/admin/tags/wUserDefCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wTimeUnitCrudCaratula</tag-name>
-  <source>/taglib/admin/pestanias/wTimeUnitCrudCaratula.xhtml</source>
+  <source>/taglib/admin/tags/wTimeUnitCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wProcessDefQuery</tag-name>
-  <source>/taglib/general/wProcessDefQuery.xhtml</source>
+  <source>/taglib/admin/wProcessDefQuery.xhtml</source>
  </tag>
  
  <tag>
