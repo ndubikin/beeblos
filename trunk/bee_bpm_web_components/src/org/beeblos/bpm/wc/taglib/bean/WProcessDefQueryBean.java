@@ -1,12 +1,15 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
-import static org.beeblos.bpm.wc.taglib.util.Constantes.WPROCESSDEF_QUERY;
+import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
+import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import javax.el.ValueExpression;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -284,4 +287,31 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		return currentUserId;
 	}	
 
+	// dml 20120104
+	public String loadWProcessDefForm() {
+
+		String ret = "FAIL";
+
+		if (this.id != null){
+			
+			ValueExpression valueBinding = super
+					.getValueExpression("#{WProcessDefFormBean}");
+
+			if (valueBinding != null) {
+
+				WProcessDefFormBean wpdfb = (WProcessDefFormBean) valueBinding
+						.getValue(super.getELContext());
+				wpdfb.init();
+				wpdfb.setCurrentWProcessDefId(id);
+				wpdfb.loadCurrentWProcessDef(id);
+
+				ret = LOAD_WPROCESSDEF;
+			
+			}
+		}
+
+		return ret;
+	}
+
+	
 }

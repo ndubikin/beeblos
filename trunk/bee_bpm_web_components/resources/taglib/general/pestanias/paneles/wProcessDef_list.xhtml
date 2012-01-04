@@ -43,8 +43,19 @@
 
 	<h:form id="w_process_def_form${action}">
 
+
 		<h:panelGrid width="100%" columns="1">
 
+       		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessDefForm}" submitMode="server">
+                	<b> Load WProcessDef</b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
+            </rich:contextMenu>
+            
+		</h:panelGrid>   
+
+		<h:panelGrid width="100%" columns="1">
 
 			<rich:datascroller id="dseUp" for="w_process_def_list_table"
 				maxPages="10" reRender="w_process_def_form${action}"
@@ -128,8 +139,9 @@
 					<h:outputText value="#{wpd.insertUser}" />
 				</rich:column>
 
-				<rich:componentControl event="onRowClick" for="searchMenu"
+				<rich:componentControl event="onRowClick" for="w_process_def_search_menu"
 					operation="show">
+               <f:param value="#{wpd.id}" name="currentRowId"/>
 				</rich:componentControl>
 
 			</rich:dataTable>
