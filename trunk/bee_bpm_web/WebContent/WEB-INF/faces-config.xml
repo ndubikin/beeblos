@@ -162,7 +162,11 @@
 			<to-view-id>/mantenimientos/usuarioCrud.xhtml</to-view-id>
 		</navigation-case>
 
-	
+		<navigation-case>
+			<from-outcome>LOAD_WPROCESSDEF</from-outcome>
+			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+			
 	</navigation-rule>
 
 	
@@ -180,7 +184,22 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	
+	<navigation-rule>
+		<display-name>WProcessDefForm</display-name>
+		<from-view-id>/forms/wProcessDefFormCall.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>FAIL</from-outcome>
+			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+		<!-- <navigation-case>
+			<from-outcome>SUCESS_WPROCESSDEF_FORM</from-outcome>
+			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+		</navigation-case> -->
+		<navigation-case>
+			<from-outcome>LOAD_WPROCESSDEF</from-outcome>
+			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 
 	<application>
