@@ -460,20 +460,6 @@ public class WStepWorkDao {
 	
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*
-	 * 
-	 */
-	
-
 	// ALL WORKITEMS FOR A PROCESS IN A CONCRETE STEP
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getStepListByProcess (

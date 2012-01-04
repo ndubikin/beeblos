@@ -532,7 +532,7 @@ public class WProcessDefDao {
 				}
 				
 				// set userId
-				q.setInteger("userId",userId);
+				//q.setInteger("userId",userId);
 				
 				// retrieve list
 				lprocess = q.list();
