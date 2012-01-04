@@ -29,10 +29,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Log logger = LogFactory
-			.getLog(WProcessDefFormBean.class);
+	private static final Log logger = 
+			LogFactory
+				.getLog(WProcessDefFormBean.class.getName());
 
-	private static final String MANAGED_BEAN_NAME = "WProcessDefFormBean";
+	private static final String MANAGED_BEAN_NAME = "wProcessDefFormBean";
 
 	private Integer currentUserId;
 
