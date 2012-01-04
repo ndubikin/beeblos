@@ -26,7 +26,7 @@ public class WUserDefBL {
 		
 		// timestamp & trace info
 		user.setInsertDate(new Date());
-//		user.setModDate(new Date());
+//		user.setModDate(DEFAULT_MOD_DATE);
 		user.setInsertUser(currentUser);
 //		user.setModUser(null);
 		return new WUserDefDao().add(user);
