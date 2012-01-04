@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +25,7 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
+import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
@@ -46,7 +48,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private BeeblosAttachment attachment;
 	private String documentLink;
 	
-	private List<StringPair> stepList = new ArrayList<StringPair>();
+	private List<SelectItem> stepList = new ArrayList<SelectItem>();
 
 	public static ComplexObjectManagementBean getCurrentInstance() {
 		return (ComplexObjectManagementBean) FacesContext.getCurrentInstance()
@@ -87,7 +89,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		try {
 			
-			setStepList(new WStepDefBL().getComboList("Select...", null));
+			setStepList(UtilsVs.castStringPairToSelectitem(new WStepDefBL().getComboList("Select...", null)));
 			
 		} catch (WStepDefException e) {
 			e.printStackTrace();
@@ -373,11 +375,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return java.util.TimeZone.getDefault();
 	}
 
-	public List<StringPair> getStepList() {
+	public List<SelectItem> getStepList() {
 		return stepList;
 	}
 
-	public void setStepList(List<StringPair> stepList) {
+	public void setStepList(List<SelectItem> stepList) {
 		this.stepList = stepList;
 	}
 

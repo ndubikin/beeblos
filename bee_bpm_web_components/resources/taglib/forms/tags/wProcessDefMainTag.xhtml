@@ -55,7 +55,7 @@
 							<h:inputText id="fact_w_process_def_name" 
 								value="#{wProcessDefFormBean.currentWProcessDef.name}"
 								readonly="true"  
-								style="width:100px; font-size:13px;	padding: 4px;"/>
+								style="width:238px; font-size:13px;	padding: 4px;"/>
 
 							<rich:spacer height="10" />
 							<rich:spacer height="10" />		
@@ -64,14 +64,14 @@
 							<h:inputText id="fact_w_process_def_comments" 
 								value="#{wProcessDefFormBean.currentWProcessDef.comments}"
 								readonly="true"  
-								style="width:100px; font-size:13px;	padding: 4px;"/>
+								style="width:350px; font-size:13px;	padding: 4px;"/>
 
 							<rich:spacer height="10" />
 							<rich:spacer height="10" />
 							
 							<h:outputText value="#{msg.label_begin_step}:"  styleClass="firstLeftText" />
 							<h:selectOneMenu id="fact_w_process_def_begin_step"
-								value="#{wProcessDefFormBean.currentWProcessDef.beginStep.name}"
+								value="#{wProcessDefFormBean.currentWProcessDef.beginStep.id}"
 								disabled="true"
 								style="width:250px; height: 24px; font-size:13px;padding: 3px;">
 								<f:selectItems value="#{wProcessDefFormBean.stepList}" />
@@ -84,7 +84,7 @@
 							<h:inputText id="fact_w_process_def_id_list_zone" 
 								value="#{wProcessDefFormBean.currentWProcessDef.idListZone}"
 								readonly="true"  
-								style="width:100px; font-size:13px;	padding: 4px;"/>
+								style="width:350px; font-size:13px;	padding: 4px;"/>
 
 							<rich:spacer height="10" />
 							<rich:spacer height="10" />
@@ -93,7 +93,7 @@
 							<h:inputText id="fact_w_process_def_id_work_zone" 
 								value="#{wProcessDefFormBean.currentWProcessDef.idWorkZone}"
 								readonly="true"  
-								style="width:100px; font-size:13px;	padding: 4px;"/>
+								style="width:350px; font-size:13px;	padding: 4px;"/>
 
 							<rich:spacer height="10" />
 							<rich:spacer height="10" />
@@ -102,7 +102,7 @@
 							<h:inputText id="fact_w_process_def_id_additional_zone" 
 								value="#{wProcessDefFormBean.currentWProcessDef.idAdditionalZone}"
 								readonly="true"  
-								style="width:100px; font-size:13px;	padding: 4px;"/>
+								style="width:350px; font-size:13px;	padding: 4px;"/>
 						
 						</h:panelGrid>
 						</fieldset>

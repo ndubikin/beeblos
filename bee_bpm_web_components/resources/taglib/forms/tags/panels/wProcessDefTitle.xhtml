@@ -5,19 +5,25 @@
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:rich="http://richfaces.org/rich">
 
+<style type="text/css">
+.title_style{
+	font-size: 14px;
+	font-weight: bold;
+}
+</style>
 
 	<div>
 	
 		<h:outputText value="WProcessDef: #{wProcessDefFormBean.currentWProcessDef.id}" 
-							styleClass="titulo_ficha_proyecto" 
+							styleClass="title_style" 
 							style="margin-left: 32px; margin-bottom: 10px;"/>
 
 		<h:outputText value=" - " 
-							styleClass="titulo_ficha_proyecto" 
+							styleClass="title_style" 
 							style="margin-bottom: 10px;"/>
 	
 		<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.insertDate}" 
-							styleClass="titulo_ficha_proyecto" 
+							styleClass="title_style" 
 							style="margin-bottom: 10px;">
 			<f:convertDateTime pattern="#{msg.label_date_format}" timeZone="#{wProcessDefFormBean.timeZone}"/>
 		</h:outputText>
