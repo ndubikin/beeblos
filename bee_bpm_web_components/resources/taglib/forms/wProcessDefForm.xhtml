@@ -6,35 +6,38 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:fbbva="http://www.softpoint.org/fbbva-common-user">
 
+	<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" reRender="cancel_button, save_button" />
+
 	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages"
 		var="msg" />
+	
 	<rich:tabPanel switchType="server" height="540px"
 		selectedTab="#{componentNavigator.currentComponent.activeTab}"
 		valueChangeListener="#{componentNavigator.tabPanelSwitched}">
 
 		<rich:tab name="w_process_def_maintag"
-			label="#{msg.label_w_process_def_main_tag}">
+			label="#{msg.label_wprocessdef_main_tab}">
 			<ui:include src="tags/wProcessDefMainTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_MAINTAG" />
 			</ui:include>
 		</rich:tab>
 
 		<rich:tab name="w_process_def_roles_and_users_tag"
-			label="#{msg.label_w_process_def_roles_and_users_tag}">
+			label="#{msg.label_role_and_user}">
 			<ui:include src="tags/wProcessDefRolesAndUsersTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_ROLESANDUSERSTAG" />
 			</ui:include>
 		</rich:tab>
 
 		<rich:tab name="w_process_def_steps_tag"
-			label="#{msg.label_w_process_def_steps_tag}">
+			label="#{msg.label_steps}">
 			<ui:include src="tags/wProcessDefStepsTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_STEPSTAG" />
 			</ui:include>
 		</rich:tab>
 
 		<rich:tab name="w_process_def_zone_tag"
-			label="#{msg.label_w_process_def_zone_tag}">
+			label="#{msg.label_zone}">
 			<ui:include src="tags/wProcessDefZoneTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_ZONETAG" />
 			</ui:include>
