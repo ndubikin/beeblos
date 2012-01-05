@@ -7,9 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
-import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
-import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -186,6 +184,7 @@ public class WStepDefDao {
 		return steps;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<WStepDef> getWStepDefs(Integer currentWProcessDefId, Integer version) throws WStepDefException {
 	
 		org.hibernate.Session session = null;
@@ -210,7 +209,8 @@ public class WStepDefDao {
 			steps = session.createSQLQuery(query)
 					.addEntity("WStepDef", WStepDef.class)
 					.setParameter("idStep", currentWProcessDefId)
-					.setParameter("version", version).list();
+					.setParameter("version", version)
+					.list();
 
 			tx.commit();
 
@@ -228,6 +228,7 @@ public class WStepDefDao {
 	
 	}	
 	
+	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )
 	throws WStepDefException {
@@ -291,8 +292,6 @@ public class WStepDefDao {
 
 	}
 	
-	
-	// nes 20101217
 	// returns a list with step names
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
