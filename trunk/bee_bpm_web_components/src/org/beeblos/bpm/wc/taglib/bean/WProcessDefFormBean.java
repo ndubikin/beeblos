@@ -50,7 +50,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private BeeblosAttachment attachment;
 	private String documentLink;
 	
-	private List<SelectItem> stepCombo = new ArrayList<SelectItem>();
+	private List<SelectItem> lStepCombo = new ArrayList<SelectItem>();
 	
 	// dml 	20120105
 	private List<WStepDef> lSteps = new ArrayList<WStepDef>();
@@ -96,46 +96,29 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	}
 
-	private void loadStepCombo() {
-		
-		try {
-			
-			setStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL().getComboList("Select...", null)));
-			
-		} catch (WStepDefException e) {
-			e.printStackTrace();
-		}
-	}
 
-	// dml 20120105
-	private void loadLSteps() {
-		
-		try {
-			
-			if (this.currentId != null 
-					&& this.currentId != 0){
-			
-				setlSteps(new WStepDefBL().getWStepDefs(this.currentId, 1));
-			
-			}
-		} catch (WStepDefException e) {
-			e.printStackTrace();
-		}
-	}
 
 	// load an Object in currentWProcessDef
-	public void loadCurrentWProcessDef(Integer currentWProcessDefId) {
+	public void loadCurrentWProcessDef(Integer id) {
+		
+		this.currentId=id;
+		this.loadCurrentWProcessDef();
+		
+	}
+	
+	
+	public void loadCurrentWProcessDef() {
 
 		WProcessDefBL wpdbl = new WProcessDefBL();
 
 		try {
 
-			currentWProcessDef = wpdbl.getWProcessDefByPK(currentWProcessDefId,
-					getCurrentUserId());
+			currentWProcessDef = 
+					wpdbl
+						.getWProcessDefByPK( this.currentId, getCurrentUserId() );
 			
 			if (currentWProcessDef != null) {
 
-				// dml 20120105
 				loadLSteps();
 
 			}
@@ -145,7 +128,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		} catch (WProcessDefException ex1) {
 
 			logger.error("An error has happened trying to load the WProcessDef: "
-					+ currentWProcessDefId + " : " + ex1.getMessage());
+					+ this.currentId + " : " + ex1.getMessage() + " -" + ex1.getCause());
 		}
 
 	}
@@ -190,7 +173,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public String cancel() {
 
+		Integer id= this.currentId;
 		_reset();
+		this.currentId=id;
+		this.loadCurrentWProcessDef();
 		return null;
 	}
 
@@ -336,29 +322,33 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		return ret;
 	}
-
-	private void loadCurrentWProcessDef() {
-		logger.debug("loadCurrentWProcessDef()");
-
-		WProcessDefBL wpdBL = new WProcessDefBL();
-
+	
+	private void loadStepCombo() {
+		
 		try {
-			WProcessDef wpd = wpdBL.getWProcessDefByPK(
-					currentWProcessDef.getId(), this.getCurrentUserId());
-
-			if (wpd != null) {
-
-				currentId = wpd.getId();
-				// etc etc
-			}
-
-		} catch (WProcessDefException ex1) {
-			logger.error("Error retrieving object: "
-					+ currentWProcessDef.getId() + " : " + ex1.getMessage()
-					+ " - " + ex1.getCause());
+			
+			setStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL().getComboList("Select...", null)));
+			
+		} catch (WStepDefException e) {
+			e.printStackTrace();
 		}
 	}
 
+	// dml 20120105
+	private void loadLSteps() {
+		
+		try {
+			
+			if (this.currentId != null 
+					&& this.currentId != 0){
+			
+				setlSteps(new WStepDefBL().getWStepDefs(this.currentId, 1));
+			
+			}
+		} catch (WStepDefException e) {
+			e.printStackTrace();
+		}
+	}
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
 	}
@@ -411,11 +401,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	public List<SelectItem> getStepCombo() {
-		return stepCombo;
+		return lStepCombo;
 	}
 
 	public void setStepCombo(List<SelectItem> stepCombo) {
-		this.stepCombo = stepCombo;
+		this.lStepCombo = stepCombo;
 	}
 
 	public List<WStepDef> getlSteps() {
