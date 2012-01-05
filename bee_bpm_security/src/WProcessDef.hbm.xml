@@ -59,7 +59,7 @@
 			<key column="id_process" />
 			<composite-element class="org.beeblos.bpm.core.model.WProcessRole">
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
-					column="id_role" cascade="save-update"/>
+					column="id_role" cascade="save-update" lazy="false" />
 				<property name="admin"	type="java.lang.Boolean">
 					<column name="admin">
 						<comment>indicates this role is an admin role for this process</comment>
@@ -85,7 +85,7 @@
 			<key column="id_process" />
 			<composite-element class="org.beeblos.bpm.core.model.WProcessUser">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
-					column="id_user" cascade="save-update"/>
+					column="id_user" cascade="save-update" lazy="false" />
 				<property name="admin"	type="java.lang.Boolean">
 					<column name="admin">
 						<comment>indicates this role is an admin role for this process</comment>
@@ -106,6 +106,10 @@
 			</composite-element>
 		</set>		
 		
+		<property generated="never" lazy="false" name="adminEmail"
+			type="string">
+			<column name="admin_email" />
+		</property>
 		
 	</class>
 	
