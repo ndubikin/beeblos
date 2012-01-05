@@ -17,8 +17,19 @@
 
 	<rich:spacer height="10" />
 
-	<h:panelGrid width="90%" columns="2" columnClasses="top,top">
+<rich:spacer height="40" />
+<h:outputText value="LISTA DE ROLES CON REPEAT Y EL iterator:" />
+<table>
+ 	<beecomp:repeat value="#{wProcessDefFormBean.currentWProcessDef.rolesRelated}" var="rr" rowKeyVar="rowIndex" 
+				id="rr_tmp"  >                
+            		<tr><td>	
+            			<h:outputText value="Rol id:#{rr.role.id}" /> 
+		</td></tr>
+	</beecomp:repeat>
+</table>
 
+	<h:panelGrid width="90%" columns="2" columnClasses="top,top">
+	
 		<h:panelGroup>
 
 
@@ -130,6 +141,7 @@
 				<div class="sample-container" style="width: 690px;">
 
 					<h:form id="w_process_def_related_users_form${action}">
+					
 						<h:panelGrid width="90%" columns="2"
 							columnClasses="colStyle2,colStyle3">
 

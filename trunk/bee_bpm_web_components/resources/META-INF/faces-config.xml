@@ -5,14 +5,14 @@
 
  <component>
   <display-name>Iterator</display-name>
-  <component-type>com.softpoint.Iterator</component-type>
-  <component-class>com.softpoint.fgper.util.UIIterator</component-class>
+  <component-type>org.beeblos.Iterator</component-type>
+  <component-class>org.beeblos.bpm.wc.taglib.util.UIIterator</component-class>
   <component-extension>
    <component-family>javax.faces.Data</component-family>
    <renderer-type>org.ajax4jsf.components.RepeatRenderer</renderer-type>
   </component-extension>
  </component>
- 
+
  <managed-bean>
   <managed-bean-name>login_x_Bean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.Login_x_Bean</managed-bean-class>

@@ -15,7 +15,7 @@
  <tag>
 	<tag-name>dataTable</tag-name>
 	<component>
-	<component-type>org.beeblos.Iterator</component-type>
+	<component-type>org.beeblos.Iterator2</component-type>
 	<renderer-type>org.richfaces.DataTableRenderer</renderer-type>
 	</component>
  </tag>
