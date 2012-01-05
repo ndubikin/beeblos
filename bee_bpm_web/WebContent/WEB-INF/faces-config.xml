@@ -18,7 +18,7 @@
 		<managed-property>
 			<property-name>skin</property-name>
 			<property-class>java.lang.String</property-class>
-			<value>glassX</value>
+			<value>laguna</value>
 		</managed-property>
 	</managed-bean>
 
