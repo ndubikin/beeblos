@@ -3,6 +3,16 @@
  xmlns:xi="http://www.w3.org/2001/XInclude"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
+ <component>
+  <display-name>Iterator</display-name>
+  <component-type>com.softpoint.Iterator</component-type>
+  <component-class>com.softpoint.fgper.util.UIIterator</component-class>
+  <component-extension>
+   <component-family>javax.faces.Data</component-family>
+   <renderer-type>org.ajax4jsf.components.RepeatRenderer</renderer-type>
+  </component-extension>
+ </component>
+ 
  <managed-bean>
   <managed-bean-name>login_x_Bean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.Login_x_Bean</managed-bean-class>

@@ -5,6 +5,22 @@
  <namespace>http://www.beeblos.org/bee_bpm_web_components</namespace>
  
  <tag>
+	<tag-name>repeat</tag-name>
+	<component>
+	<component-type>org.beeblos.Iterator</component-type>
+	<renderer-type>org.ajax4jsf.components.RepeatRenderer</renderer-type>
+	</component>
+ </tag>
+
+ <tag>
+	<tag-name>dataTable</tag-name>
+	<component>
+	<component-type>org.beeblos.Iterator</component-type>
+	<renderer-type>org.richfaces.DataTableRenderer</renderer-type>
+	</component>
+ </tag>
+ 
+ <tag>
   <tag-name>wRoleDefCrudCaratula</tag-name>
   <source>/taglib/admin/tags/wRoleDefCrudCaratula.xhtml</source>
  </tag>
