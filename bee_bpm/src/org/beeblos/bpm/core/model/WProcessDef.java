@@ -46,6 +46,9 @@ public class WProcessDef implements java.io.Serializable {
 	private Integer insertUser;
 	private Date modDate;
 	private Integer modUser;
+	
+	// dml 20120105
+	private String adminEmail;
 
 	public WProcessDef() {
 		super();
@@ -72,7 +75,7 @@ public class WProcessDef implements java.io.Serializable {
 	public WProcessDef(String name, String comments, WStepDef beginStep,
 			String idListZone, String idWorkZone, String idAdditionalZone,
 			Date insertDate, Integer insertUser, Date modDate,
-			Integer modUser ) {
+			Integer modUser, String adminEmail ) {
 		this.name = name;
 		this.comments = comments;
 		this.beginStep = beginStep;
@@ -83,6 +86,7 @@ public class WProcessDef implements java.io.Serializable {
 		this.insertUser = insertUser;
 		this.modDate = modDate;
 		this.modUser = modUser;
+		this.adminEmail = adminEmail;
 	}
 
 	public Integer getId() {
@@ -200,6 +204,16 @@ public class WProcessDef implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
+	public String getAdminEmail() {
+		return adminEmail;
+	}
+
+
+	public void setAdminEmail(String adminEmail) {
+		this.adminEmail = adminEmail;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -220,6 +234,8 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
 		result = prime * result
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
+		result = prime * result
+				+ ((adminEmail == null) ? 0 : adminEmail.hashCode());
 		return result;
 	}
 
@@ -267,11 +283,16 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!rolesRelated.equals(other.rolesRelated))
 			return false;
-		if (usersRelated == null) {
-			if (other.usersRelated != null)
+			if (usersRelated == null) {
+				if (other.usersRelated != null)
+					return false;
+			} else if (!usersRelated.equals(other.usersRelated))
 				return false;
-		} else if (!usersRelated.equals(other.usersRelated))
-			return false;
+			if (adminEmail == null) {
+				if (other.adminEmail != null)
+					return false;
+			} else if (!adminEmail.equals(other.adminEmail))
+				return false;
 		return true;
 	}
 
@@ -293,7 +314,8 @@ public class WProcessDef implements java.io.Serializable {
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser : "") + "]";
+				+ (modUser != null ? "modUser=" + modUser : "")
+				+ (adminEmail != null ? "adminEmail=" + adminEmail : "") + "]";
 	}
 	
 
@@ -308,6 +330,7 @@ public class WProcessDef implements java.io.Serializable {
 		if (idListZone!=null && ! "".equals(idListZone)) return false;
 		if (idWorkZone!=null && ! "".equals(idWorkZone)) return false;
 		if (idAdditionalZone!=null && ! "".equals(idAdditionalZone)) return false;
+		if (adminEmail!=null && ! "".equals(adminEmail)) return false;
 		
 		return true;
 	}

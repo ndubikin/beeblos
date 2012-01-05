@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<c:if test="${empty action}">
+	<c:set var="action" value="" />
+</c:if>
+
+<style type="text/css">
+
+.rich-calendar-input {
+	width:80px; 
+    font-size:13px !important;
+	padding: 4px;
+}
+
+.colStyle1 {
+	width: 140px;
+	margin: 0px;
+}
+
+.colStyle2 {
+	width: 480px;
+	margin: 0px;
+}
+
+</style>
+
+	<rich:spacer height="20" />
+
+	<ui:include
+		src="panels/wProcessDefTitle.xhtml" />
+
+	<rich:spacer height="10" />
+
+	<h:panelGrid columns="1" width="100%" style="margin-left:16px;">
+
+		<h:panelGroup>
+
+			<table cellpadding="0" cellspacing="0" border="0" width="98%">
+				<tr>
+					<td width="80%">
+					<h:form id="w_process_def_steps_tag_form">
+						<fieldset class="demo_fieldset">
+						
+						<h:panelGrid
+							width="98%" columns="2" style=" width : 650px;"
+							columnClasses="colStyle1,colStyle2">
+																			
+							<h:outputText value="#{msg.label_id_list_zone}:" styleClass="firstLeftText" />
+							<h:inputText id="fact_w_process_def_id_list_zone" 
+								value="#{wProcessDefFormBean.currentWProcessDef.idListZone}"
+								readonly="true"  
+								style="width:350px; font-size:13px;	padding: 4px;"/>
+
+							<rich:spacer height="10" />
+							<rich:spacer height="10" />
+												
+							<h:outputText value="#{msg.label_id_work_zone}:" styleClass="firstLeftText" />
+							<h:inputText id="fact_w_process_def_id_work_zone" 
+								value="#{wProcessDefFormBean.currentWProcessDef.idWorkZone}"
+								readonly="true"  
+								style="width:350px; font-size:13px;	padding: 4px;"/>
+
+							<rich:spacer height="10" />
+							<rich:spacer height="10" />
+												
+							<h:outputText value="#{msg.label_id_additional_zone}:" styleClass="firstLeftText" />
+							<h:inputText id="fact_w_process_def_id_additional_zone" 
+								value="#{wProcessDefFormBean.currentWProcessDef.idAdditionalZone}"
+								readonly="true"  
+								style="width:350px; font-size:13px;	padding: 4px;"/>
+						
+						</h:panelGrid>
+						</fieldset>
+						
+					</h:form>
+					</td>
+				</tr>
+			</table>
+		</h:panelGroup>
+	</h:panelGrid>
+
+
+
+
+</ui:composition>
