@@ -7,7 +7,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -184,6 +186,47 @@ public class WStepDefDao {
 		return steps;
 	}
 	
+	public List<WStepDef> getWStepDefs(Integer currentWProcessDefId, Integer version) throws WStepDefException {
+	
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WStepDef> steps = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			String query =  "SELECT * FROM w_step_def ws " +
+							"WHERE ws.id IN (SELECT DISTINCT wsd.id_origin_step " +
+							"FROM  w_step_sequence_def wsd " +
+							"WHERE wsd.id_process = :idStep AND wsd.version = :version)";
+			
+			System.out.println("[QUERY]: "+query);
+			
+			steps = session.createSQLQuery(query)
+					.addEntity("WStepDef", WStepDef.class)
+					.setParameter("idStep", currentWProcessDefId)
+					.setParameter("version", version).list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepDefDao: getWStepDefs() - can't obtain step list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		return steps;
+	
+	}	
 	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )
