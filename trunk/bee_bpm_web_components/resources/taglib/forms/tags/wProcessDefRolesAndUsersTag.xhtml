@@ -1,0 +1,232 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<rich:spacer height="20" />
+
+	<ui:include src="panels/wProcessDefTitle.xhtml" />
+
+	<rich:spacer height="10" />
+
+	<h:panelGrid width="90%" columns="2" columnClasses="top,top">
+
+		<h:panelGroup>
+
+
+			<fieldset class="demo_fieldset">
+				<legend class="demo_legend">#{msg.label_w_process_def_related_roles}</legend>
+
+				<div class="sample-container" style="width: 690px;">
+
+					<h:form id="w_process_def_related_roles_form${action}">
+						<h:panelGrid width="90%" columns="2"
+							columnClasses="colStyle2,colStyle3">
+
+							<rich:datascroller id="dseUp"
+								for="w_process_def_related_roles_table" maxPages="10"
+								reRender="w_process_def_related_roles_form${action}"
+								renderIfSinglePage="false" pageIndexVar="pageIndex"
+								pagesVar="pages">
+
+								<f:facet name="first">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last">
+									<h:outputText value="...#{pages}" />
+								</f:facet>
+								<f:facet name="first_disabled">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last_disabled">
+									<h:outputText value="... #{pages}" />
+								</f:facet>
+								<h:outputText value="#{pages}" />
+							</rich:datascroller>
+
+							<rich:dataTable id="w_process_def_related_roles_table"
+								value="#{wProcessDefFormBean.rolesRelatedList}"
+								onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+								onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+								var="rr" width="98%" columnClasses="center" rows="10"
+								reRender="dseUp,dseDown" style="margin-left: 16px;">
+
+								<f:facet name="header">
+									<h:outputText value="WProcessDef Roles List" />
+								</f:facet>
+
+								<rich:column sortBy="#{rr.role.id}"
+									style="width:10px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_id}" />
+									</f:facet>
+									<h:outputText value="#{rr.role.id}" />
+								</rich:column>
+
+								<rich:column sortBy="#{rr.role.name}"
+									style="width:10px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_name}" />
+									</f:facet>
+									<h:outputText value="#{rr.role.name}" />
+								</rich:column>
+
+								<rich:column style="width:10px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_is_admin}" />
+									</f:facet>
+									<h:outputText value="#{rr.admin ? 'Yes' : 'No'}" />
+								</rich:column>
+
+								<rich:componentControl event="onRowClick"
+									for="w_process_def_related_roles_table" operation="show">
+								</rich:componentControl>
+
+							</rich:dataTable>
+
+							<rich:datascroller id="dseDown"
+								for="w_process_def_related_roles_table" maxPages="10"
+								reRender="w_process_def_related_roles_form${action}"
+								renderIfSinglePage="false" pageIndexVar="pageIndex"
+								pagesVar="pages">
+
+								<f:facet name="first">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last">
+									<h:outputText value="...#{pages}" />
+								</f:facet>
+								<f:facet name="first_disabled">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last_disabled">
+									<h:outputText value="... #{pages}" />
+								</f:facet>
+								<h:outputText value="#{pages}" />
+
+							</rich:datascroller>
+
+							<rich:spacer height="10" />
+
+						</h:panelGrid>
+
+					</h:form>
+
+				</div>
+
+			</fieldset>
+
+			<fieldset class="demo_fieldset">
+				<legend class="demo_legend">#{msg.label_w_process_def_related_users}</legend>
+
+				<div class="sample-container" style="width: 690px;">
+
+					<h:form id="w_process_def_related_users_form${action}">
+						<h:panelGrid width="90%" columns="2"
+							columnClasses="colStyle2,colStyle3">
+
+							<rich:datascroller id="dseUp"
+								for="w_process_def_related_users_table" maxPages="10"
+								reRender="w_process_def_related_users_form${action}"
+								renderIfSinglePage="false" pageIndexVar="pageIndex"
+								pagesVar="pages">
+
+								<f:facet name="first">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last">
+									<h:outputText value="...#{pages}" />
+								</f:facet>
+								<f:facet name="first_disabled">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last_disabled">
+									<h:outputText value="... #{pages}" />
+								</f:facet>
+								<h:outputText value="#{pages}" />
+							</rich:datascroller>
+
+							<rich:dataTable id="w_process_def_related_users_table"
+								value="#{wProcessDefFormBean.usersRelatedList}"
+								onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+								onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+								var="ru" width="98%" columnClasses="center" rows="10"
+								reRender="dseUp,dseDown" style="margin-left: 16px;">
+
+								<f:facet name="header">
+									<h:outputText value="WProcessDef Users List" />
+								</f:facet>
+
+								<rich:column sortBy="#{ru.user.id}"
+									style="width:10px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_id}" />
+									</f:facet>
+									<h:outputText value="#{ru.user.id}" />
+								</rich:column>
+
+								<rich:column sortBy="#{ru.user.name}"
+									style="width:10px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_name}" />
+									</f:facet>
+									<h:outputText value="#{ru.user.name}" />
+								</rich:column>
+
+								<rich:column style="width:10px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_is_admin}" />
+									</f:facet>
+									<h:outputText value="#{ru.admin ? 'Yes' : 'No'}" />
+								</rich:column>
+
+								<rich:componentControl event="onRowClick"
+									for="w_process_def_related_users_table" operation="show">
+								</rich:componentControl>
+
+							</rich:dataTable>
+
+							<rich:datascroller id="dseDown"
+								for="w_process_def_related_users_table" maxPages="10"
+								reRender="w_process_def_related_users_form${action}"
+								renderIfSinglePage="false" pageIndexVar="pageIndex"
+								pagesVar="pages">
+
+								<f:facet name="first">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last">
+									<h:outputText value="...#{pages}" />
+								</f:facet>
+								<f:facet name="first_disabled">
+									<h:outputText value="1..." />
+								</f:facet>
+								<f:facet name="last_disabled">
+									<h:outputText value="... #{pages}" />
+								</f:facet>
+								<h:outputText value="#{pages}" />
+
+							</rich:datascroller>
+
+							<rich:spacer height="10" />
+
+						</h:panelGrid>
+
+					</h:form>
+
+				</div>
+
+			</fieldset>
+
+		</h:panelGroup>
+
+	</h:panelGrid>
+</ui:composition>

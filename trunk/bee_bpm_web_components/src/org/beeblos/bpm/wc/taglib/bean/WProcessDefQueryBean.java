@@ -303,7 +303,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 						(WProcessDefFormBean) valueBinding
 							.getValue(super.getELContext());
 				wpdfb.init();
-				wpdfb.setCurrentWProcessDefId(id);
+				wpdfb.setCurrentId(id);
 				wpdfb.loadCurrentWProcessDef(id);
 
 				ret = LOAD_WPROCESSDEF;

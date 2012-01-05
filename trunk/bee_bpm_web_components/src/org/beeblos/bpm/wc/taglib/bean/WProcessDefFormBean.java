@@ -11,6 +11,7 @@ import java.util.TimeZone;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.ajax4jsf.component.UIRepeat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
@@ -18,14 +19,16 @@ import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WProcessRole;
+import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
-import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
@@ -41,7 +44,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	private WProcessDef currentWProcessDef;
 
-	private Integer currentWProcessDefId; // current object managed by this bb
+	private Integer currentId; // current object managed by this bb
 
 	private TimeZone timeZone;
 
@@ -49,7 +52,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private String documentLink;
 	
 	private List<SelectItem> stepList = new ArrayList<SelectItem>();
-
+	
 	public static ComplexObjectManagementBean getCurrentInstance() {
 		return (ComplexObjectManagementBean) FacesContext.getCurrentInstance()
 				.getExternalContext().getRequestMap().get(MANAGED_BEAN_NAME);
@@ -73,7 +76,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void _reset() {
 
-		this.currentWProcessDefId = null;
+		this.currentId = null;
 		this.currentWProcessDef = null;
 
 		attachment = new BeeblosAttachment();
@@ -105,7 +108,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			currentWProcessDef = wpdbl.getWProcessDefByPK(currentWProcessDefId,
 					getCurrentUserId());
-
+			
 			if (currentWProcessDef != null) {
 
 				// xxxxx
@@ -121,7 +124,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 
 	}
-
+	
 	private void setModel() {
 
 		if (currentWProcessDef != null) {
@@ -202,7 +205,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public String add() throws WProcessDefException {
 
 		logger.debug("WProcessDefFormBean: add: currentWProcessDefId:["
-				+ this.currentWProcessDefId + "] ");
+				+ this.currentId + "] ");
 
 		setShowHeaderMessage(false);
 
@@ -227,7 +230,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			setModel(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 
-			currentWProcessDefId = wpdBL.add(currentWProcessDef,
+			currentId = wpdBL.add(currentWProcessDef,
 					this.getCurrentUserId());
 
 			// Manual process to store attachment in the repository ( if
@@ -313,7 +316,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			if (wpd != null) {
 
-				currentWProcessDefId = wpd.getId();
+				currentId = wpd.getId();
 				// etc etc
 			}
 
@@ -332,12 +335,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.currentWProcessDef = currentWProcessDef;
 	}
 
-	public Integer getCurrentWProcessDefId() {
-		return currentWProcessDefId;
+	public Integer getCurrentId() {
+		return currentId;
 	}
 
-	public void setCurrentWProcessDefId(Integer currentWProcessDefId) {
-		this.currentWProcessDefId = currentWProcessDefId;
+	public void setCurrentId(Integer currentId) {
+		this.currentId = currentId;
 	}
 
 	public BeeblosAttachment getAttachment() {
@@ -381,6 +384,38 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setStepList(List<SelectItem> stepList) {
 		this.stepList = stepList;
+	}
+
+	// dml 20120105
+	public List<WProcessRole> getRolesRelatedList(){
+		
+		List<WProcessRole> rrl= new ArrayList<WProcessRole>();
+		
+		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
+				&& currentWProcessDef.getRolesRelated().size() != 0){
+			
+			rrl= new ArrayList<WProcessRole>(currentWProcessDef.getRolesRelated());
+			
+		}
+		
+		return rrl;
+		
+	}
+
+	// dml 20120105
+	public List<WProcessUser> getUsersRelatedList(){
+		
+		List<WProcessUser> url = new ArrayList<WProcessUser>();
+		
+		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
+				&& currentWProcessDef.getUsersRelated().size() != 0){
+			
+			url= new ArrayList<WProcessUser>(currentWProcessDef.getUsersRelated());
+
+		}
+		
+		return url;
+		
 	}
 
 }
