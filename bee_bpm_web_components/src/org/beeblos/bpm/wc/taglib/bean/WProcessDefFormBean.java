@@ -55,6 +55,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 	20120105
 	private List<WStepDef> lSteps = new ArrayList<WStepDef>();
 	
+	// dml 20120105
+	private boolean readOnly;
+	
 	public static ComplexObjectManagementBean getCurrentInstance() {
 		return (ComplexObjectManagementBean) FacesContext.getCurrentInstance()
 				.getExternalContext().getRequestMap().get(MANAGED_BEAN_NAME);
@@ -80,6 +83,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		this.currentId = null;
 		this.currentWProcessDef = null;
+		
+		// dml 20120105
+		this.readOnly=false;
 
 		attachment = new BeeblosAttachment();
 
@@ -171,6 +177,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private boolean checkInputData() {
 
 		boolean result = false;
+		
+		if (this.currentWProcessDef.getName() != null 
+				&& !"".equals(this.currentWProcessDef.getName())){
+				
+			result = true;
+			
+		}
 
 		return result;
 	}
@@ -443,6 +456,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		return url;
 		
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 
 }

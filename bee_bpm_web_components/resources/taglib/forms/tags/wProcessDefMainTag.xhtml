@@ -47,6 +47,8 @@
 					<h:form id="w_process_def_main_tag_form">
 						<fieldset class="demo_fieldset">
 						
+						<ui:include src="/common/errorPanel.xhtml" />
+	
 						<h:panelGrid
 							width="98%" columns="2" style=" width : 650px;"
 							columnClasses="colStyle1,colStyle2">
@@ -54,7 +56,7 @@
 							<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
 							<h:inputText id="fact_w_process_def_name" 
 								value="#{wProcessDefFormBean.currentWProcessDef.name}"
-								readonly="true"  
+								readonly="#{wProcessDefFormBean.readOnly}"  
 								style="width:350px; font-size:13px;	padding: 4px;"/>
 
 							<rich:spacer height="10" />
@@ -63,7 +65,7 @@
 							<h:outputText value="#{msg.label_comments}:" styleClass="firstLeftText" />
 							<h:inputText id="fact_w_process_def_comments" 
 								value="#{wProcessDefFormBean.currentWProcessDef.comments}"
-								readonly="true"  
+								readonly="#{wProcessDefFormBean.readOnly}"  
 								style="width:350px; font-size:13px;	padding: 4px;"/>
 
 							<rich:spacer height="10" />
@@ -72,7 +74,7 @@
 							<h:outputText value="#{msg.label_begin_step}:"  styleClass="firstLeftText" />
 							<h:selectOneMenu id="fact_w_process_def_begin_step"
 								value="#{wProcessDefFormBean.currentWProcessDef.beginStep.id}"
-								disabled="true"
+								disabled="#{wProcessDefFormBean.readOnly}"
 								style="width:250px; height: 24px; font-size:13px;padding: 3px;">
 								<f:selectItems value="#{wProcessDefFormBean.stepCombo}" />
 							</h:selectOneMenu>	
@@ -83,7 +85,7 @@
 							<h:outputText value="#{msg.label_admin_email}:" styleClass="firstLeftText" />
 							<h:inputText id="fact_w_process_def_admin_email" 
 								value="#{wProcessDefFormBean.currentWProcessDef.adminEmail}"
-								readonly="true"  
+								readonly="#{wProcessDefFormBean.readOnly}"  
 								style="width:350px; font-size:13px;	padding: 4px;"/>
 
 							<rich:spacer height="10" />
@@ -123,6 +125,28 @@
 							<rich:spacer height="10" />
 
 						</h:panelGrid>
+						
+						<h:panelGrid columns="3" columnClasses="top,top" style="margin-left:400px;">
+						
+  							<a4j:commandButton 	id="cancel_button" value="#{msg.label_cancel}"
+								action="#{wProcessDefFormBean.cancel}"
+  								reRender="w_process_def_main_tag_form"
+								style="width:80px; margin-right:20px; " /> 	
+							    	
+							<a4j:commandButton 	id="save_continue_button" 
+								value="#{msg.label_save_continue}"
+  								reRender="ingresoFactura_form"
+								action="#{wProcessDefFormBean.save_continue}"
+								style="width:120px; " />
+								
+  							<a4j:commandButton  id="save_button" value="#{msg.label_save}"
+  								action="#{wProcessDefFormBean.save}"
+  								reRender="w_process_def_main_tag_form"
+								style="width: 80px; margin-right: 0px; width:120px; " />	
+
+						</h:panelGrid>
+						
+						
 						</fieldset>
 						
 					</h:form>
