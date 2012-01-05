@@ -81,6 +81,12 @@ public class WStepDefBL {
 	
 	}
 	
+	public List<WStepDef> getWStepDefs(Integer currentWProcessDefId, Integer version) throws WStepDefException {
+
+		return new WStepDefDao().getWStepDefs(currentWProcessDefId, version);
+	
+	}
+	
 	
 	public List<StringPair> getComboList(
 			String firstLineText, String blank )

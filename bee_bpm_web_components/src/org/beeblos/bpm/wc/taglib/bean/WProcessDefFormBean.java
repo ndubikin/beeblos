@@ -50,7 +50,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private BeeblosAttachment attachment;
 	private String documentLink;
 	
-	private List<SelectItem> stepList = new ArrayList<SelectItem>();
+	private List<SelectItem> stepCombo = new ArrayList<SelectItem>();
+	
+	// dml 	20120105
+	private List<WStepDef> lSteps = new ArrayList<WStepDef>();
 	
 	public static ComplexObjectManagementBean getCurrentInstance() {
 		return (ComplexObjectManagementBean) FacesContext.getCurrentInstance()
@@ -68,8 +71,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		setShowHeaderMessage(false);
 		
-		loadStepList();
-
+		loadStepCombo();
+		
 		_reset();
 	}
 
@@ -87,12 +90,28 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	}
 
-	private void loadStepList() {
+	private void loadStepCombo() {
 		
 		try {
 			
-			setStepList(UtilsVs.castStringPairToSelectitem(new WStepDefBL().getComboList("Select...", null)));
+			setStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL().getComboList("Select...", null)));
 			
+		} catch (WStepDefException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// dml 20120105
+	private void loadLSteps() {
+		
+		try {
+			
+			if (this.currentId != null 
+					&& this.currentId != 0){
+			
+				setlSteps(new WStepDefBL().getWStepDefs(this.currentId, 1));
+			
+			}
 		} catch (WStepDefException e) {
 			e.printStackTrace();
 		}
@@ -110,7 +129,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			if (currentWProcessDef != null) {
 
-				// xxxxx
+				// dml 20120105
+				loadLSteps();
 
 			}
 
@@ -377,12 +397,20 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return java.util.TimeZone.getDefault();
 	}
 
-	public List<SelectItem> getStepList() {
-		return stepList;
+	public List<SelectItem> getStepCombo() {
+		return stepCombo;
 	}
 
-	public void setStepList(List<SelectItem> stepList) {
-		this.stepList = stepList;
+	public void setStepCombo(List<SelectItem> stepCombo) {
+		this.stepCombo = stepCombo;
+	}
+
+	public List<WStepDef> getlSteps() {
+		return lSteps;
+	}
+
+	public void setlSteps(List<WStepDef> lSteps) {
+		this.lSteps = lSteps;
 	}
 
 	// dml 20120105
