@@ -12,7 +12,6 @@ import java.util.TimeZone;
 import javax.el.ValueExpression;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -23,8 +22,8 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger
-			.getLogger(WProcessDefQueryBean.class);
+	private static final Logger logger = 
+			Logger.getLogger(WProcessDefQueryBean.class);
 
 	private Date initialInsertDateFilter;
 	private Date finalInsertDateFilter;
@@ -52,7 +51,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	public WProcessDefQueryBean() {
 		super();
-		PropertyConfigurator.configure("log4j.properties");
+
 		_init();
 
 	}
