@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpEditWStepDef" width="600" height="600">
+	    <f:facet name="header">
+	        <h:panelGroup id="edit_WStepDef_title_panel">
+	            <h:outputText id="edit_wstepdef_title"  value="#{msg.label_editing_wstepdef}"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="edit_wstepdef_panel">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_edit_wstepdef"/>
+		        <rich:componentControl id="edit_wstepdef_control" for="mpEditWStepDef" attachTo="hidelink_edit_wstepdef" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+			<ui:include src="editWStepDef.xhtml">
+				<ui:param name="element_to_rerender" value="#{element_to_rerender}"/>
+			</ui:include>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	

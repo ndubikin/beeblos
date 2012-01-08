@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<style type="text/css">
+
+.rich-calendar-input {
+	width:80px;
+	height:26px; 
+
+	inputSize: 13px;
+	padding: 4px;
+
+}
+</style>
+	<h:form id="edit_wstepdef_form">
+
+		<h:messages showDetail="true" showSummary="true"/>
+
+		<h:panelGroup>
+
+			<rich:spacer height="10" />
+
+			<h:panelGrid width="100%" columns="2" 
+				columnClasses="colStyle140px, colStyle400px">
+	
+				<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
+				<h:inputText value="#{wStepDefFormBean.currentWStepDef.name}" style="width:380px; height:24px;font-size: 14px;"/>
+	
+				<h:outputText value="#{msg.label_id}:" styleClass="firstLeftText" />
+				<h:outputText value="#{wStepDefFormBean.currentWStepDef.id}" style="width:380px; height:24px;font-size: 14px;"/>
+				
+				<h:outputText value="#{msg.label_comments}:" styleClass="firstLeftText" />
+				<h:inputTextarea value="#{wStepDefFormBean.currentWStepDef.stepComments}" 
+								style="width:380px; height:60px;font-size: 14px;"/>
+				
+				<h:outputText value="#{msg.label_instructions}:" styleClass="firstLeftText" />
+				<h:inputTextarea value="#{wStepDefFormBean.currentWStepDef.instructions}" 
+									style="width:380px; height:80px;font-size: 14px;"/>
+				
+				<h:outputText value="#{msg.label_assigned_time}:" styleClass="firstLeftText" title="#{msg.label_amount_of_time_user_has_to_realize_the_work}"/>
+				<h:panelGroup>
+					<h:inputText value="#{wStepDefFormBean.currentWStepDef.assignedTime}" style="width:80px; height:24px;font-size: 14px;"/>
+					
+					<h:selectOneMenu id="id_assigned_time_unit"
+										value="#{wStepDefFormBean.currentWStepDef.timeUnit.id}"
+										disabled="#{wProcessDefFormBean.readOnly}"
+										style="width:150px; height: 27px; font-size:13px;padding: 3px;"
+										onchange="return refreshSaveButton();">
+									<f:selectItems value="#{wStepDefFormBean.lWTimeUnit}" />
+					</h:selectOneMenu>
+
+				</h:panelGroup>
+	
+				<h:outputText value="#{msg.label_deadline}:" styleClass="firstLeftText" />
+				<h:panelGroup>
+					<rich:calendar value="#{wStepDefFormBean.currentWStepDef.deadlineDate}"
+								   id="id_deadline_date" enableManualInput="true"
+								   popup="true" datePattern="#{msg.formatoFecha}" locale="ES" >
+						<rich:ajaxValidator event="oninputblur" />
+					</rich:calendar>					
+					<h:outputText value="#{wStepDefFormBean.currentWStepDef.deadlineTime}" 
+									style="font-weight: bold; margin-left: 10px;"/>
+				</h:panelGroup>
+	
+				<h:outputText value="#{msg.label_reminder}:" styleClass="firstLeftText" />
+				<h:panelGroup>
+					<h:inputText value="#{wStepDefFormBean.currentWStepDef.reminderTime}" style="width:80px; height:24px;font-size: 14px;"/>
+					<h:selectOneMenu id="id_reminder_time_unit"
+										value="#{wStepDefFormBean.currentWStepDef.reminderTimeUnit.id}"
+										disabled="#{wProcessDefFormBean.readOnly}"
+										style="width:150px; height: 27px; font-size:13px;padding: 3px;"
+										onchange="return refreshSaveButton();">
+									<f:selectItems value="#{wStepDefFormBean.lWTimeUnit}" />
+					</h:selectOneMenu>
+				</h:panelGroup>
+	
+				<h:outputText value="#{msg.label_modifiable_at_runtime}:" styleClass="firstLeftText" />
+				<h:outputText value="#{(wStepDefFormBean.currentWStepDef.runtimeModifiable ? 'yes':'none')}" style="font-weight: bold;"/>
+							
+	
+				<rich:spacer height="10" />
+				<rich:spacer height="10" />
+				
+			</h:panelGrid>
+
+			<rich:spacer height="40" />
+
+			<h:panelGroup>
+				<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+					action="#{wStepDefFormBean.cancel}"
+					onclick="javascript:Richfaces.hideModalPanel('mpEditWStepDef')"
+					 style="width:80px; height:24px;" />
+				<a4j:commandButton id="ok_button_sr" value="#{msg.label_save}"
+					action="#{wStepDefFormBean.save}"
+					onclick="javascript:Richfaces.hideModalPanel('mpEditWStepDef'); "
+					reRender="#{element_to_rerender}"
+					style="width:120px; left-margin: 20px; height:24px;" />
+			</h:panelGroup>
+
+
+		</h:panelGroup>
+
+	</h:form>
+</ui:composition>

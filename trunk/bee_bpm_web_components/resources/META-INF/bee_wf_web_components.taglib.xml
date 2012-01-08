@@ -11,13 +11,23 @@
 	<renderer-type>org.ajax4jsf.components.RepeatRenderer</renderer-type>
 	</component>
  </tag>
-
+ 
  <tag>
 	<tag-name>dataTable</tag-name>
 	<component>
 	<component-type>org.beeblos.Iterator2</component-type>
 	<renderer-type>org.richfaces.DataTableRenderer</renderer-type>
 	</component>
+ </tag>
+
+ <tag>
+  <tag-name>mpSearchRole</tag-name>
+  <source>/taglib/common/mpSearchRole.xhtml</source>
+ </tag>
+
+ <tag>
+  <tag-name>mpEditWStepDef</tag-name>
+  <source>/taglib/common/mpEditWStepDef.xhtml</source>
  </tag>
  
  <tag>
