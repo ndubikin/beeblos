@@ -14,29 +14,34 @@
 	padding: 4px;
 }
 
-.colStyle1 {
-	width: 140px;
-	margin: 0px;
-}
-
-.colStyle2 {
-	width: 480px;
-	margin: 0px;
-}
 </style>
 
+<h:form>
+
+	<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessDefFormBean.changeReadOnly}" 
+					reRender="cancel_button, save_button" />
+</h:form>
+
+
 	<h:form id="w_process_def_main_tag_form">
-
-
+		
 		<h:panelGrid width="98%" columns="2" style=" width : 650px;"
-			columnClasses="colStyle1,colStyle2">
-
+			columnClasses="colStyle140px, colStyle480px">
+			
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+			
 			<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_name"
 				value="#{wProcessDefFormBean.currentWProcessDef.name}"
-				readonly="#{wProcessDefFormBean.readOnly}"
 				style="width:350px; font-size:13px;	padding: 4px;"
-				onchange="return refreshSaveButton();" />
+				onchange="return refreshSaveButton();" 
+				rendered="#{!wProcessDefFormBean.readOnly}"/>
+			<h:outputText 
+				value="#{wProcessDefFormBean.currentWProcessDef.name}"
+				style="width:350px; font-size:13px;	padding: 4px;"
+				rendered="#{wProcessDefFormBean.readOnly}"/>
+
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -45,9 +50,13 @@
 				styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_comments"
 				value="#{wProcessDefFormBean.currentWProcessDef.comments}"
-				readonly="#{wProcessDefFormBean.readOnly}"
 				style="width:350px; font-size:13px;	padding: 4px;"
-				onchange="return refreshSaveButton();" />
+				onchange="return refreshSaveButton();" 
+				rendered="#{!wProcessDefFormBean.readOnly}"/>
+			<h:outputText 
+				value="#{wProcessDefFormBean.currentWProcessDef.comments}"
+				style="width:350px; font-size:13px;	padding: 4px;"
+				rendered="#{wProcessDefFormBean.readOnly}"/>
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -56,11 +65,16 @@
 				styleClass="firstLeftText" />
 			<h:selectOneMenu id="fact_w_process_def_begin_step"
 				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.id}"
-				disabled="#{wProcessDefFormBean.readOnly}"
 				style="width:250px; height: 24px; font-size:13px;padding: 3px;"
-				onchange="return refreshSaveButton();">
+				onchange="return refreshSaveButton();" 
+				rendered="#{!wProcessDefFormBean.readOnly}">
 				<f:selectItems value="#{wProcessDefFormBean.stepCombo}" />
 			</h:selectOneMenu>
+			<h:outputText 
+				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.name}"
+				style="width:350px; font-size:13px;	padding: 4px;"
+				rendered="#{wProcessDefFormBean.readOnly}"/>
+			
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -69,9 +83,13 @@
 				styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_admin_email"
 				value="#{wProcessDefFormBean.currentWProcessDef.adminEmail}"
-				readonly="#{wProcessDefFormBean.readOnly}"
 				style="width:350px; font-size:13px;	padding: 4px;"
-				onchange="return refreshSaveButton();" />
+				onchange="return refreshSaveButton();" 
+				rendered="#{!wProcessDefFormBean.readOnly}"/>
+			<h:outputText 
+				value="#{wProcessDefFormBean.currentWProcessDef.adminEmail}"
+				style="width:350px; font-size:13px;	padding: 4px;"
+				rendered="#{wProcessDefFormBean.readOnly}"/>				
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -116,22 +134,23 @@
 			<rich:spacer height="10" />
 
 			<h:panelGroup>
+				<a4j:commandButton id="edit_button" value="#{msg.label_edit}"
+					actionListener="#{wProcessDefFormBean.changeReadOnly}"
+					reRender="w_process_def_main_tag_form"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{wProcessDefFormBean.readOnly}"/>
+			
 				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
 					action="#{wProcessDefFormBean.cancel}"
 					reRender="w_process_def_main_tag_form"
 					style="width:80px; margin-right:20px; " 
-					disabled="!wProcessDefFormBean.readOnly"/>
-
-				<a4j:commandButton id="save_continue_button"
-					value="#{msg.label_save_continue}" reRender="ingresoFactura_form"
-					action="#{wProcessDefFormBean.save_continue}" style="width:120px; " 
-					disabled="!wProcessDefFormBean.readOnly"/>
+					rendered="#{!wProcessDefFormBean.readOnly}"/>
 
 				<a4j:commandButton id="save_button" value="#{msg.label_save}"
 					action="#{wProcessDefFormBean.save}"
 					reRender="w_process_def_main_tag_form"
 					style="width: 80px; margin-right: 0px; width:120px; " 
-					disabled="!wProcessDefFormBean.readOnly"/>
+					rendered="#{!wProcessDefFormBean.readOnly}"/>
 
 			</h:panelGroup>
 		</h:panelGrid>

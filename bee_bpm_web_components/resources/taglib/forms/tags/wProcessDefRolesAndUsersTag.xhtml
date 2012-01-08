@@ -17,38 +17,24 @@
 
 	<rich:spacer height="10" />
 
-	<h:panelGrid width="90%" columns="2" columnClasses="top,top">
+		<fieldset class="demo_fieldset">
+			<legend class="demo_legend">#{msg.label_roles_with_permissions_in_this_process}</legend>
 
-		<h:panelGroup>
+			<ui:include src="panels/wProcessDef_role_list.xhtml">
+				<ui:param name="action" value="${action}" />
+			</ui:include>
+			<ui:include src="panels/wProcessDef_role_add_new.xhtml" >
+				<ui:param name="action" value="${action}" />
+			</ui:include>
+		</fieldset>
 
+		<fieldset class="demo_fieldset">
+			<legend class="demo_legend">#{msg.label_users_with_permissions_in_this_process}</legend>
 
-			<fieldset class="demo_fieldset">
-				<legend class="demo_legend">#{msg.label_roles_with_permissions_in_this_process}</legend>
+			<ui:include src="panels/wProcessDef_user_list.xhtml">
+				<ui:param name="action" value="${action}" />
+			</ui:include>
 
-				<div class="sample-container" style="width: 690px;">
-				
-					<ui:include src="panels/wProcessDef_role_list.xhtml">
-						<ui:param name="action" value="${action}" />
-					</ui:include>
-					
-				</div>
+		</fieldset>
 
-			</fieldset>
-
-			<fieldset class="demo_fieldset">
-				<legend class="demo_legend">#{msg.label_users_with_permissions_in_this_process}</legend>
-
-				<div class="sample-container" style="width: 690px;">
-
-					<ui:include src="panels/wProcessDef_user_list.xhtml">
-						<ui:param name="action" value="${action}" />
-					</ui:include>
-
-				</div>
-
-			</fieldset>
-
-		</h:panelGroup>
-
-	</h:panelGrid>
 </ui:composition>

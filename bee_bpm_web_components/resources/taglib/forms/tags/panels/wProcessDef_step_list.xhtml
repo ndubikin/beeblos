@@ -6,9 +6,25 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+<script type="text/javascript">
+
+	function testNes(message) {
+		
+		var txtConfirm = message;
+
+		alert(txtConfirm);
+			
+	}
+
+</script>
 
 
 	<h:form id="w_process_def_steps${action}">
+
+<a4j:jsFunction name="loadStepData" action="#{wStepDefFormBean.loadObject}" 
+				reRender="w_process_def_step_definition, w_process_def_step_permissions, edit_wstepdef_form" >
+	 <a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.currObjId}"  />
+</a4j:jsFunction>
 
 		<h:panelGrid width="100%" columns="1">
 
@@ -36,7 +52,8 @@
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 				var="step" width="98%" columnClasses="center" rows="5"
-				reRender="dseUp,dseDown" style="margin-left: 16px;">
+				reRender="dseUp,dseDown" style="margin-left: 16px;"
+				onRowClick="return loadStepData('#{step.id}');">
 
 				<f:facet name="header">
 					<h:outputText value="WProcessDef Roles List" />
@@ -66,9 +83,6 @@
 					<h:outputText value="#{step.stepComments}" />
 				</rich:column>
 
-				<rich:componentControl event="onRowClick"
-					for="w_process_def_steps_table" operation="show">
-				</rich:componentControl>
 
 			</rich:dataTable>
 

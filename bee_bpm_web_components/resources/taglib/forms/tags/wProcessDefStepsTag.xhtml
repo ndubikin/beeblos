@@ -5,7 +5,12 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
-
+<style type="text/css">
+.top {
+	    vertical-align: top;
+	    
+	}
+</style>
 	<rich:spacer height="20" />
 
 	<ui:include src="panels/wProcessDefTitle.xhtml" />
@@ -15,9 +20,18 @@
 	<fieldset class="demo_fieldset">
 		<legend class="demo_legend">#{msg.label_steps_referenced_by_this_proccess}</legend>
 
-		<ui:include src="panels/wProcessDef_step_list.xhtml"></ui:include>
+			<ui:include src="panels/wProcessDef_step_list.xhtml"></ui:include>
 
 	</fieldset>
+	
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">#{msg.label_step_definition_and_permissions}</legend>
 
+		<h:panelGrid columns="2" styleClass="colStyle50_percent,colStyle50_percent">
+				<ui:include src="panels/wProcessDef_step_definition.xhtml"></ui:include>
+				<ui:include src="panels/wProcessDef_step_permissions.xhtml"></ui:include>
+		</h:panelGrid>
+
+	</fieldset>
 
 </ui:composition>
