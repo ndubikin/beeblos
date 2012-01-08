@@ -188,6 +188,10 @@ input, select, textarea, button, keygen, isindex, legend, a {
 	color:#999998;
 }
 
+.title_style{
+	font-size: 14px;
+	font-weight: bold;
+}
 
 .left_menu{
 	position : absolute;
@@ -455,4 +459,48 @@ table.doctable td {
 
 	font-size:14px;
 	padding-left: 10px;
+}
+
+/*
+*
+* COLUMN WIDTH COMMON STYLES
+*
+*/
+
+.colStyle50_percent {
+	width: 50%;
+	margin: 0px;
+}
+
+.colStyle10px {
+	width: 10px;
+}
+
+.colStyle50px {
+	width: 50px;
+}
+
+.colStyle100px {
+	width: 100px;
+	margin: 0px;
+}
+
+.colStyle140px {
+	width: 140px;
+	margin: 0px;
+}
+
+.colStyle250px {
+	width: 250px;
+	margin: 0px;
+}
+
+.colStyle480px {
+	width: 400px;
+	margin: 0px;
+}
+
+.colStyle480px {
+	width: 480px;
+	margin: 0px;
 }

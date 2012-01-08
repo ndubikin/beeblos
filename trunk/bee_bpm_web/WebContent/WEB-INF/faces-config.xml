@@ -94,11 +94,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>destinatariosDeptoBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.bean.DestinatariosDeptoBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>		
 		
 	<navigation-rule>
 		<display-name>Consulta Tarea</display-name>
