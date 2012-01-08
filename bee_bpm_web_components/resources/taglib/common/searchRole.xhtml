@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<style>
+.top {
+	vertical-align: top;
+}
+
+.panelScroll {
+	height: 245px;
+	overflow: auto;
+}
+
+</style>
+
+	<h:form>
+
+		<h:panelGroup>
+
+			<rich:spacer height="10" />
+
+			<h:panelGrid id="role_list_check" columns="6"
+				style="width:90%; text-align:left;"
+				columnClasses="colStyle10px, colStyle50px, colStyle10px, colStyle50px, colStyle10px, colStyle50px">
+
+				<h:selectBooleanCheckbox
+					value="#{userAndRoleSelectorBean.selectedDirectoresDeptoRoles}">
+					<a4j:support
+						action="#{userAndRoleSelectorBean.seleccionarDirectoresDeptoRoles}"
+						ajaxSingle="true" event="onclick"
+						reRender="id_select_many_role" />
+				</h:selectBooleanCheckbox>
+				<h:outputText value="Directores" style="font-weight:bold;" />
+
+				<h:selectBooleanCheckbox
+					value="#{userAndRoleSelectorBean.selectedSubdirectoresRoles}">
+					<a4j:support
+						action="#{userAndRoleSelectorBean.seleccionarSubdirectoresRoles}"
+						ajaxSingle="true" event="onclick"
+						reRender="id_select_many_role" />
+				</h:selectBooleanCheckbox>
+				<h:outputText value="Subdirectores"
+					style="margin-left:10px; font-weight:bold;" />
+
+				<h:selectBooleanCheckbox
+					value="#{userAndRoleSelectorBean.selectedTodosRoles}">
+					<a4j:support
+						action="#{userAndRoleSelectorBean.seleccionarTodosRoles}"
+						ajaxSingle="true" event="onclick"
+						reRender="id_select_many_role,role_list_check" />
+				</h:selectBooleanCheckbox>
+				<h:outputText value="Todos"
+					style="margin-left:10px; font-weight:bold;" />
+			</h:panelGrid>
+
+			<rich:spacer height="10" />
+
+			<rich:panel bodyClass="panelScroll"
+				style="width:90%px;">
+				<f:facet name="header">
+                	<h:outputText value="#{msg.label_select_role}" />
+            	</f:facet>
+				<h:selectManyCheckbox id="id_select_many_role"
+					value="#{userAndRoleSelectorBean.selectedWUserDefList}"
+					layout="pageDirection">
+					<f:selectItems
+						value="#{userAndRoleSelectorBean.listaWUserDefCombo}" var="ld"
+						itemLabel="#{ld.label}" itemValue="#{ld.value}" />
+					<a4j:support
+						action="#{userAndRoleSelectorBean.seleccionarWUserDefList}"
+						ajaxSingle="true" event="onclick" />
+				</h:selectManyCheckbox>
+			</rich:panel>
+
+			<rich:spacer height="40" />
+
+			<h:panelGroup>
+				<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+					action="#{userAndRoleSelectorBean.cancelaAgregarWUserDefSeleccionados}"
+					onclick="javascript:Richfaces.hideModalPanel('mpSearchRole')"
+					 style="width:80px; height:24px;" />
+				<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
+					action="#{userAndRoleSelectorBean.agregaWUserDefSeleccionados}"
+					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchRole'); onsubmitSeleccionarDepartamentos();"
+					style="width:120px; left-margin: 20px; height:24px;" />
+			</h:panelGroup>
+
+
+		</h:panelGroup>
+
+	</h:form>
+</ui:composition>

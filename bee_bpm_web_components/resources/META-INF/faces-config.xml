@@ -13,6 +13,13 @@
   </component-extension>
  </component>
 
+
+	<managed-bean>
+		<managed-bean-name>userAndRoleSelectorBean</managed-bean-name>
+		<managed-bean-class>org.beeblos.bpm.wc.taglib.bean.UserAndRoleSelectorBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
  <managed-bean>
   <managed-bean-name>login_x_Bean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.Login_x_Bean</managed-bean-class>
@@ -81,6 +88,11 @@
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean> 
  
+   <managed-bean>
+  <managed-bean-name>wStepDefFormBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean> 
  <application>
   <view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
   <resource-bundle>
