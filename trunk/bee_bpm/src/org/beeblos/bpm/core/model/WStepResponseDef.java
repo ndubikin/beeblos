@@ -123,6 +123,12 @@ public class WStepResponseDef implements java.io.Serializable {
 				+ respOrder + "]";
 	}
 
+	public boolean empty() {
 
+		if (id!=null && ! id.equals(0)) return false;
+		if (name!=null && ! "".equals(name)) return false;
+	
+		return true;
+	}
 
 }
