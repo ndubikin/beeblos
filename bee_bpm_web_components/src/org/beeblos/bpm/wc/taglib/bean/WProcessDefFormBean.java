@@ -77,15 +77,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		loadStepCombo();
 		
 		_reset();
+		
 	}
 
+	
 	public void _reset() {
 
 		this.currentId = null;
 		this.currentWProcessDef = null;
 		
-		// dml 20120105
-		this.readOnly=false;
+		this.readOnly=true;
 
 		attachment = new BeeblosAttachment();
 
@@ -95,7 +96,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				"com.softpoint.taglib.common.DocumentacionBean");
 
 	}
-
 
 
 	// load an Object in currentWProcessDef
@@ -454,6 +454,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+	
+	public void changeReadOnly() {
+		this.readOnly=!this.readOnly;
 	}
 
 }
