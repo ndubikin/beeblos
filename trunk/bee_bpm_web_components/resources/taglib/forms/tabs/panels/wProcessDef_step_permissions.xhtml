@@ -11,6 +11,36 @@
 
 	<h:form id="w_process_def_step_permissions" style="margin-left: 16px;">
 
+		<h:panelGrid width="100%" columns="1">
+
+       		<rich:contextMenu attached="false" id="w_process_def_step_permissions_menu_response" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="true">
+                	<b> Add responses </b>
+                	<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currObjId}" value="{currentRowId}"/>
+            	</rich:menuItem>
+             	<rich:menuItem ajaxSingle="true">
+                	<b> Delete responses </b>
+                	<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currObjId}" value="{currentRowId}"/>
+            	</rich:menuItem>
+            </rich:contextMenu>
+		</h:panelGrid>   
+
+
+		<h:panelGrid width="100%" columns="1">
+
+       		<rich:contextMenu attached="false" id="w_process_def_step_permissions_menu_related_users" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false">
+            	<b> Add related users </b>
+                	<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currObjId}" value="{currentRowId}"/>
+            	</rich:menuItem>
+            	<rich:menuItem ajaxSingle="false">
+            	<b> Delete related users </b>
+                	<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currObjId}" value="{currentRowId}"/>
+            	</rich:menuItem>
+            </rich:contextMenu>
+            
+		</h:panelGrid>   
+
 		<rich:dataTable id="w_process_def_step_response"
 				value="#{wStepDefFormBean.responseList}"
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
@@ -30,6 +60,11 @@
 					</f:facet>
 					<h:outputText value="#{response.name}" />
 				</rich:column>
+				
+				<rich:componentControl event="onRowClick" for="w_process_def_step_permissions_menu_response"
+					operation="show">
+               		<f:param value="#{response.id}" name="currentRowId"/>
+				</rich:componentControl>				
 				
 		</rich:dataTable>
 
@@ -56,6 +91,10 @@
 					<h:outputText value="  ( #{msg.label_admin} )" rendered="#{step_role.admin}"/>
 				</rich:column>
 
+				<rich:componentControl event="onRowClick" for="w_process_def_step_permissions_menu_related_users"
+					operation="show">
+               		<f:param value="#{step_role.id}" name="currentRowId"/>
+				</rich:componentControl>
 
 		</rich:dataTable>
 
