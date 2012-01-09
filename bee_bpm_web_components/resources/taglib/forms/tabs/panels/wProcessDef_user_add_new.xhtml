@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<h:form>
+		<a4j:commandLink id="insert_user"
+			title="#{msf.label_add_new_global_user_to_project}"
+			style="margin-left: 18px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
+			tabindex="-1"
+			rendered="#{contextoSeguridad.permiteCualquiera['530']}"
+			onclick="javascript:Richfaces.showModalPanel('mpSearchUser');">
+			<h:graphicImage id="imgInsertar" value="/images/insertar.png"
+				style="border:0;" />
+		</a4j:commandLink>
+
+	</h:form>
+
+</ui:composition>

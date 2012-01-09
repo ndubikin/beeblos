@@ -58,6 +58,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120105
 	private boolean readOnly;
 	
+	// dml 20120109
+	private List<String> selectedWRoleDefList = new ArrayList<String>();
+	private List<String> selectedWUserDefList = new ArrayList<String>();
+	
 	public static ComplexObjectManagementBean getCurrentInstance() {
 		return (ComplexObjectManagementBean) FacesContext.getCurrentInstance()
 				.getExternalContext().getRequestMap().get(MANAGED_BEAN_NAME);
@@ -458,6 +462,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	public void changeReadOnly() {
 		this.readOnly=!this.readOnly;
+	}
+
+	public List<String> getSelectedWRoleDefList() {
+		return selectedWRoleDefList;
+	}
+
+	public void setSelectedWRoleDefList(List<String> selectedWRoleDefList) {
+		this.selectedWRoleDefList = selectedWRoleDefList;
+	}
+
+	public List<String> getSelectedWUserDefList() {
+		return selectedWUserDefList;
+	}
+
+	public void setSelectedWUserDefList(List<String> selectedWUserDefList) {
+		this.selectedWUserDefList = selectedWUserDefList;
 	}
 
 }

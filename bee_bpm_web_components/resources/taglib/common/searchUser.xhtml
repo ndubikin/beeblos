@@ -23,16 +23,16 @@
 
 			<rich:spacer height="10" />
 
-			<h:panelGrid id="role_list_check" columns="2"
+			<h:panelGrid id="user_list_check" columns="2"
 				style="width:90%; text-align:left;"
 				columnClasses="colStyle10px, colStyle50px">
 
 				<h:selectBooleanCheckbox
-					value="#{userAndRoleSelectorBean.selectedAllRoles}">
+					value="#{userAndRoleSelectorBean.selectedAllUsers}">
 					<a4j:support
-						action="#{userAndRoleSelectorBean.selectAllRoles}"
+						action="#{userAndRoleSelectorBean.selectAllUsers}"
 						ajaxSingle="true" event="onclick"
-						reRender="id_select_many_role,role_list_check" />
+						reRender="id_select_many_users,user_list_check" />
 				</h:selectBooleanCheckbox>
 				<h:outputText value="#{msg.label_all}"
 					style="margin-left:10px; font-weight:bold;" />
@@ -43,16 +43,16 @@
 			<rich:panel bodyClass="panelScroll"
 				style="width:90%px;">
 				<f:facet name="header">
-                	<h:outputText value="#{msg.label_select_role}" />
+                	<h:outputText value="#{msg.label_select_user}" />
             	</f:facet>
-				<h:selectManyCheckbox id="id_select_many_role"
-					value="#{userAndRoleSelectorBean.selectedWRoleDefList}"
+				<h:selectManyCheckbox id="id_select_many_users"
+					value="#{userAndRoleSelectorBean.selectedWUserDefList}"
 					layout="pageDirection">
 					<f:selectItems
-						value="#{userAndRoleSelectorBean.wRoleDefListCombo}" var="ld"
+						value="#{userAndRoleSelectorBean.wUserDefListCombo}" var="ld"
 						itemLabel="#{ld.label}" itemValue="#{ld.value}" />
 					<a4j:support
-						action="#{userAndRoleSelectorBean.selectWRoleDefList}"
+						action="#{userAndRoleSelectorBean.selectWUserDefList}"
 						ajaxSingle="true" event="onclick" />
 				</h:selectManyCheckbox>
 			</rich:panel>
@@ -61,12 +61,12 @@
 
 			<h:panelGroup>
 				<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
-					action="#{userAndRoleSelectorBean.cancelAddWRoleDefSelected}"
-					onclick="javascript:Richfaces.hideModalPanel('mpSearchRole')"
+					action="#{userAndRoleSelectorBean.cancelAddWUserDefSelected}"
+					onclick="javascript:Richfaces.hideModalPanel('mpSearchUser')"
 					 style="width:80px; height:24px;" />
 				<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
-					action="#{userAndRoleSelectorBean.addWRoleDefSelected}"
-					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchRole');"
+					action="#{userAndRoleSelectorBean.addSelectedWUserDef}"
+					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchUser');"
 					style="width:120px; left-margin: 20px; height:24px;" />
 			</h:panelGroup>
 

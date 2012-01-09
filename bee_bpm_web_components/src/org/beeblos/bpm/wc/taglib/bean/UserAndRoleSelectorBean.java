@@ -1,31 +1,24 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
-import static org.beeblos.bpm.core.util.Constants.ID_ROLE_DEF_DIRECTORES_DEPTO; 
-import static org.beeblos.bpm.core.util.Constants.ID_ROLE_DEF_SUBDIRECTORES;
+import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import javax.el.ValueExpression;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
-
-/**
- * @author rrl
- * 
- * @version 1.0: Permite seleccionar emails destinatarios por Director Depto y Subdirector 
- * 
- */
 
 public class UserAndRoleSelectorBean extends CoreManagedBean {
 	
@@ -34,16 +27,17 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	private static final Log logger = 
 		LogFactory.getLog(UserAndRoleSelectorBean.class);
 	
-	private String selectedWUserDefText;
 	private List<String> selectedWUserDefList = new ArrayList<String>();
-	private List<String> selectedWUserDefDirectoresDeptoList = new ArrayList<String>();
-	private List<String> selectedWUserDefSubdirectoresList = new ArrayList<String>();
-	private List<SelectItem> listaWUserDefCombo = new ArrayList<SelectItem>();
+	private List<SelectItem> wUserDefListCombo = new ArrayList<SelectItem>();
 	
-	private boolean selectedDirectoresDeptoRoles;
-	private boolean selectedSubdirectoresRoles;
-	private boolean selectedTodosRoles;
+	private boolean selectedAllRoles;
 
+	// dml 20120109
+	private List<String> selectedWRoleDefList = new ArrayList<String>();
+	private List<SelectItem> wRoleDefListCombo = new ArrayList<SelectItem>();
+	
+	// dml 20120109
+	private boolean selectedAllUsers;
 	
 	public UserAndRoleSelectorBean() {
 		super();
@@ -53,25 +47,17 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	public void init() {
 		super.init();
 		
-		selectedWUserDefText = "";
-		inicializaListaRolesCombo();
+		inicializeRoleListCombo();
+		inicializeUserListCombo();
 		
 	}
 	
 	public void reset() {
 		
-		selectedWUserDefText = "";
-		inicializaListaRolesCombo();
+		inicializeRoleListCombo();
+		inicializeUserListCombo();
 	}
 	
-	public void setSelectedWUserDefText(String selectedWUserDefText) {
-		this.selectedWUserDefText = selectedWUserDefText;
-	}
-
-	public String getSelectedWUserDefText() {
-		return selectedWUserDefText;
-	}
-
 	public void setSelectedWUserDefList(List<String> selectedWUserDefList) {
 		this.selectedWUserDefList = selectedWUserDefList;
 	}
@@ -80,146 +66,107 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		return selectedWUserDefList;
 	}
 
-	public void setSelectedWUserDefDirectoresDeptoList(List<String> selectedWUserDefDirectoresDeptoList) {
-		this.selectedWUserDefDirectoresDeptoList = selectedWUserDefDirectoresDeptoList;
+	public void setwUserDefListCombo(List<SelectItem> wUserDefListCombo) {
+		this.wUserDefListCombo = wUserDefListCombo;
 	}
 
-	public List<String> getSelectedWUserDefDirectoresDeptoList() {
-		return selectedWUserDefDirectoresDeptoList;
-	}
-
-	public void setSelectedWUserDefSubdirectoresList(List<String> selectedWUserDefSubdirectoresList) {
-		this.selectedWUserDefSubdirectoresList = selectedWUserDefSubdirectoresList;
-	}
-
-	public List<String> getSelectedWUserDefSubdirectoresList() {
-		return selectedWUserDefSubdirectoresList;
+	public List<SelectItem> getwUserDefListCombo() {
+		return wUserDefListCombo;
 	}
 	
-	public void setListaWUserDefCombo(List<SelectItem> listaWUserDefCombo) {
-		this.listaWUserDefCombo = listaWUserDefCombo;
+	public boolean isSelectedAllRoles() {
+		return selectedAllRoles;
 	}
 
-	public List<SelectItem> getListaWUserDefCombo() {
-		return listaWUserDefCombo;
+	public void setSelectedAllRoles(boolean selectedAllRoles) {
+		this.selectedAllRoles = selectedAllRoles;
 	}
 	
-	public boolean isSelectedDirectoresDeptoRoles() {
-		return selectedDirectoresDeptoRoles;
+	public List<String> getSelectedWRoleDefList() {
+		return selectedWRoleDefList;
 	}
 
-	public void setSelectedDirectoresDeptoRoles(boolean selectedDirectoresDeptoRoles) {
-		this.selectedDirectoresDeptoRoles = selectedDirectoresDeptoRoles;
+	public void setSelectedWRoleDefList(List<String> selectedWRoleDefList) {
+		this.selectedWRoleDefList = selectedWRoleDefList;
 	}
 
-	public boolean isSelectedSubdirectoresRoles() {
-		return selectedSubdirectoresRoles;
+	public List<SelectItem> getwRoleDefListCombo() {
+		return wRoleDefListCombo;
 	}
 
-	public void setSelectedSubdirectoresRoles(boolean selectedSubdirectoresRoles) {
-		this.selectedSubdirectoresRoles = selectedSubdirectoresRoles;
+	public void setwRoleDefListCombo(List<SelectItem> wRoleDefListCombo) {
+		this.wRoleDefListCombo = wRoleDefListCombo;
 	}
 
-	public boolean isSelectedTodosRoles() {
-		return selectedTodosRoles;
+	public boolean isSelectedAllUsers() {
+		return selectedAllUsers;
 	}
 
-	public void setSelectedTodosRoles(boolean selectedTodosRoles) {
-		this.selectedTodosRoles = selectedTodosRoles;
+	public void setSelectedAllUsers(boolean selectedAllUsers) {
+		this.selectedAllUsers = selectedAllUsers;
 	}
-	
-	private void inicializaListaRolesCombo() {
 
-		WUserDefBL wUserDefBL = new WUserDefBL();
+	private void inicializeRoleListCombo() {
+
+		WRoleDefBL wRoleDefBL = new WRoleDefBL();
 
 		try {
-			listaWUserDefCombo = 
+			wRoleDefListCombo = 
 					UtilsVs
 					.castStringPairToSelectitem(
-							wUserDefBL.getComboList("", ""));
-		} catch (WUserDefException e) {
-			e.printStackTrace();
-		}
-
-		// Lista de seleccion de Directores Depto
-		try {
-			List<Integer> listaIdDirectoresDepto = wUserDefBL
-					.getWUserDefIdByRole(ID_ROLE_DEF_DIRECTORES_DEPTO);
-			
-			selectedWUserDefDirectoresDeptoList.clear();
-			for (Integer idDirectoresDepto : listaIdDirectoresDepto) {
-				selectedWUserDefDirectoresDeptoList.add( idDirectoresDepto.toString() );
-			}
-			
-		} catch (WUserDefException e) {
-			e.printStackTrace();
-		}
-		
-		// Lista de seleccion de Subdirectores
-		try {
-			List<Integer> listaIdSubdirectores = wUserDefBL
-					.getWUserDefIdByRole(ID_ROLE_DEF_SUBDIRECTORES);
-
-			selectedWUserDefSubdirectoresList.clear();
-			for (Integer idSubdirectores : listaIdSubdirectores) {
-				selectedWUserDefSubdirectoresList.add( idSubdirectores.toString() );
-			}
-
-		} catch (WUserDefException e) {
+							wRoleDefBL.getComboList("", ""));
+		} catch (WRoleDefException e) {
 			e.printStackTrace();
 		}
 		
 	}
 
-	// rrl 20111130
-	public String agregaWUserDefSeleccionados() {
+	public String addSelectedWUserDef() {
+
 
 		String ret = null;
 
-		selectedWUserDefText = "";
+		loadWProcessDefForm();
+
+		/*
 		WUserDef wUserDef;
 		WUserDefBL wUserDefBL = new WUserDefBL();
 
 		try {
 
+
+			
 			for (String s : selectedWUserDefList) {
 				wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s));
-				selectedWUserDefText += wUserDef.getEmail() + "; "; // rrl 20111221 
 			}
-			if (!selectedWUserDefText.isEmpty()) {
-				selectedWUserDefText = selectedWUserDefText.substring(0,
-						selectedWUserDefText.length() - 2);
+			
+			loadWProcessDefForm();
+			
+			} catch (NumberFormatException e) {
+				String mensaje = e.getMessage() + " - " + e.getCause();
+				String params[] = { mensaje + ",",
+						".addSelectedWUserDef() WUserDef NumberFormatException ..." };
+				agregarMensaje("204", mensaje, params, FGPException.ERROR);
+				e.printStackTrace();
+			} catch (WUserDefException e) {
+				String mensaje = e.getMessage() + " - " + e.getCause();
+				String params[] = { mensaje + ",",
+						".addSelectedWUserDef() WUserDef WUserDefException ..." };
+				agregarMensaje("204", mensaje, params, FGPException.ERROR);
+				e.printStackTrace();
 			}
-
-		} catch (NumberFormatException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".Error en recuperacion de WUserDef NumberFormatException ..." };
-			agregarMensaje("1020", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-			selectedWUserDefText += " error en recuperacion de WUserDef NumberFormatException";
-		} catch (WUserDefException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".Error en recuperacion de WUserDef WUserDefException ..." };
-			agregarMensaje("1020", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-			selectedWUserDefText += " error en recuperacion de WUserDefExceptio WUserDefException";
-		}
-
+			*/
 		return ret;
 	}
+	public String cancelAddWUserDefSelected() {
 
-	// rrl 20111214
-	public String cancelaAgregarWUserDefSeleccionados() {
-
-		System.out.println("### TRAZA.... cancelaAgregarSeleccionados()");
+		System.out.println("### TRAZA.... cancelAddWUserDefSelected()");
 
 		return null;
 	}
 	
 	
-	public String seleccionarWUserDefList() {
+	public String selectWUserDefList() {
 
 		// No eliminar este método, asi hace submit en Ajax y guarda selectedWUserDefList
 		logger.debug("Seleccionado item en selectedWUserDefList");
@@ -227,54 +174,131 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		return null;
 	}
 
-	public String seleccionarDirectoresDeptoRoles() {
 
-		Set<String> selectedActual = new HashSet<String>(selectedWUserDefList);
-		selectedWUserDefList.clear();
+	public String selectAllRoles() {
 		
-		if (selectedDirectoresDeptoRoles) {
-			selectedActual.addAll(selectedWUserDefDirectoresDeptoList);
+		if (selectedAllRoles) {
+			selectedWRoleDefList.clear();
+			for (SelectItem item : wRoleDefListCombo) {
+				selectedWRoleDefList.add(item.getValue().toString());
+			}
 		} else {
-			selectedActual.removeAll(selectedWUserDefDirectoresDeptoList);
+			selectedWRoleDefList.clear();
 		}
 		
-		selectedWUserDefList.addAll(selectedActual);
+		return null;
+	}
+	
+	private void inicializeUserListCombo() {
+
+		WUserDefBL wUserDefBL = new WUserDefBL();
+
+		try {
+			wUserDefListCombo = 
+					UtilsVs
+					.castStringPairToSelectitem(
+							wUserDefBL.getComboList("", ""));
+		} catch (WUserDefException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public String addWRoleDefSelected() {
+
+		String ret = null;
+
+		loadWProcessDefForm();
+
+		/*
+		WUserDef wUserDef;
+		WUserDefBL wUserDefBL = new WUserDefBL();
+
+		try {
+
+			for (String s : selectedWUserDefList) {
+				wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s));
+			}
+
+			loadWProcessDefForm();
+			
+		} catch (NumberFormatException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					"addWRoleDefSelected() NumberFormatException ..." };
+			agregarMensaje("204", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WUserDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".addWRoleDefSelected() WUserDefException ..." };
+			agregarMensaje("204", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		}*/
+
+		return ret;
+	}
+
+
+	public String cancelAddWRoleDefSelected() {
+
+		System.out.println("### TRAZA.... cancelAddWRoleDefSelected()");
+
+		return null;
+	}
+	
+	
+	public String selectWRoleDefList() {
+
+		// No eliminar este método, asi hace submit en Ajax y guarda selectedWRoleDefList
+		logger.debug("Item selected from selectedWRoleDefList");
 		
 		return null;
 	}
 
-	public String seleccionarSubdirectoresRoles() {
-
-		Set<String> selectedActual = new HashSet<String>(selectedWUserDefList);
-		selectedWUserDefList.clear();
+	public String selectAllUsers() {
 		
-		if (selectedSubdirectoresRoles) {
-			selectedActual.addAll(selectedWUserDefSubdirectoresList);
-		} else {
-			selectedActual.removeAll(selectedWUserDefSubdirectoresList);
-		}
-		
-		selectedWUserDefList.addAll(selectedActual);
-		
-		return null;
-	}
-
-	public String seleccionarTodosRoles() {
-		
-		if (selectedTodosRoles) {
+		if (selectedAllUsers) {
 			selectedWUserDefList.clear();
-			for (SelectItem item : listaWUserDefCombo) {
+			for (SelectItem item : wUserDefListCombo) {
 				selectedWUserDefList.add(item.getValue().toString());
 			}
 		} else {
 			selectedWUserDefList.clear();
 		}
 		
-		selectedDirectoresDeptoRoles=false;
-		selectedSubdirectoresRoles=false;
-		
 		return null;
 	}
 	
-	
+	// dml 20120104
+	public void loadWProcessDefForm() {
+
+			ValueExpression valueBinding = super
+					.getValueExpression("#{wProcessDefFormBean}");
+
+			if (valueBinding != null) {
+
+				WProcessDefFormBean wpdfb = 
+						(WProcessDefFormBean) valueBinding
+							.getValue(super.getELContext());
+				wpdfb.init();
+				
+				if (selectedWRoleDefList != null 
+						&& !selectedWRoleDefList.isEmpty()){
+
+					wpdfb.setSelectedWRoleDefList(selectedWRoleDefList);
+
+				}
+
+				if (selectedWUserDefList != null 
+						&& !selectedWUserDefList.isEmpty()){
+
+					wpdfb.setSelectedWUserDefList(selectedWUserDefList);
+
+				}
+
+			}
+
+	}
+
 }
