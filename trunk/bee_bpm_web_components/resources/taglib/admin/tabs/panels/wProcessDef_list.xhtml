@@ -1,0 +1,171 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<style>
+.center {
+	text-align: center;
+}
+
+.rich-datascr-button {
+	width: 40px;
+	font-size: 95%;
+}
+
+.colCustomTotalF1 {
+	width: 200px;
+	text-align: right;
+}
+
+.colCustomTotalF2 {
+	width: 80px;
+	text-align: right;
+}
+
+.colCustomTotalF3 {
+	width: 30px;
+	text-align: left;
+}
+
+.colCustomPanelGrid {
+	text-align: right;
+}
+</style>
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:form id="w_process_def_form${action}">
+
+
+		<h:panelGrid width="100%" columns="1">
+
+       		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessDefForm}" submitMode="server">
+                	<b> Load WProcessDef</b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
+            </rich:contextMenu>
+            
+		</h:panelGrid>   
+
+		<h:panelGrid width="100%" columns="1">
+
+			<rich:datascroller id="dseUp" for="w_process_def_list_table"
+				maxPages="10" reRender="w_process_def_form${action}"
+				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
+
+				<f:facet name="first">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last">
+					<h:outputText value="...#{pages}" />
+				</f:facet>
+				<f:facet name="first_disabled">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last_disabled">
+					<h:outputText value="... #{pages}" />
+				</f:facet>
+				<h:outputText value="#{pages}" />
+			</rich:datascroller>
+
+			<rich:dataTable id="w_process_def_list_table"
+				value="#{wProcessDefQueryBean.wProcessDefList}"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				var="wpd" width="98%" columnClasses="center" rows="10"
+				reRender="dseUp,dseDown" style="margin-left: 16px;">
+				<f:facet name="header">
+					<h:outputText
+						value="WProcessDef List ( #{wProcessDefQueryBean.nResults} #{msg.label_results} )" />
+				</f:facet>
+
+				<rich:column sortBy="#{wpd.id}"
+					style="width:10px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_id}" />
+					</f:facet>
+					<h:outputText value="#{wpd.id}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wpd.name}"
+					style="width:90px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_name}" />
+					</f:facet>
+					<h:outputText value="#{wpd.name}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wpd.comments}"
+					style="width:120px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_comments}" />
+					</f:facet>
+					<h:outputText value="#{wpd.comments}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wpd.beginStep.name}"
+					style="width:120px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_begin_step}" />
+					</f:facet>
+					<h:outputText value="#{wpd.beginStep.name}" />
+					<h:outputText value="(id:#{wpd.beginStep.id})" />
+				</rich:column>
+
+				<rich:column sortBy="#{wpd.insertDate}"
+					style="width:20px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_insert_date}" />
+					</f:facet>
+					<h:outputText value="#{wpd.insertDate}">
+						<f:convertDateTime pattern="#{msg.label_date_format}"
+							timeZone="#{wProcessDefQueryBean.timeZone}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column sortBy="#{wpd.insertUser}"
+					style="width:30px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_insert_user}" />
+					</f:facet>
+					<h:outputText value="#{wpd.insertUser}" />
+				</rich:column>
+
+				<rich:componentControl event="onRowClick" for="w_process_def_search_menu"
+					operation="show">
+               <f:param value="#{wpd.id}" name="currentRowId"/>
+				</rich:componentControl>
+
+			</rich:dataTable>
+
+			<rich:datascroller id="dseDown" for="w_process_def_list_table"
+				maxPages="10" reRender="w_process_def_form${action}"
+				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
+
+				<f:facet name="first">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last">
+					<h:outputText value="...#{pages}" />
+				</f:facet>
+				<f:facet name="first_disabled">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last_disabled">
+					<h:outputText value="... #{pages}" />
+				</f:facet>
+				<h:outputText value="#{pages}" />
+
+			</rich:datascroller>
+
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

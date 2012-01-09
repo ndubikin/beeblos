@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition template="/templates/component-sample.xhtml">
+	<ui:define name="sample">
+
+<script type="text/javascript">
+
+	function confirmDelete(message, name) {
+		
+		var txtConfirm = message + " '" + name + "'" + String.fromCharCode(63);
+
+		if (confirm(txtConfirm)) {
+			return true;
+		}
+		return false;
+
+	}
+
+</script>
+
+<style type="text/css">
+.rich-message-label {
+	color: red;
+}
+</style>
+
+
+		<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages"
+			var="msg" />
+<h:form>
+
+<a4j:jsFunction name="loadRecord" action="#{wRoleDefBean.loadRecord}" 
+				reRender="exceptionsPnl, name_id, description_id, delete_button, cancel_button, save_button" >
+	 <a4j:actionparam name="param1" assignTo="#{wRoleDefBean.id}"  />
+</a4j:jsFunction>
+
+
+<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" reRender="delete_button, cancel_button, save_button" />
+
+</h:form>
+		<body>
+
+			<center>
+				
+				<rich:panel style="width:100%">
+					<f:facet name="header">
+						<h:outputText value="WRoleDefs" styleClass="labelFormBold" />
+					</f:facet>
+
+					<h:form id="frmWRoleDefHeader">
+
+						<h:panelGrid columns="2" style=" width:50%">
+
+							<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
+							<h:inputText id="name_id"
+								value="#{wRoleDefBean.currentWRoleDef.name}" style="width:300px" >
+								<a4j:support event="onchange" reRender="save_button, cancel_button, delete_button" />							
+							</h:inputText>
+								
+							<h:outputText value="#{msg.label_description}"
+								styleClass="labelForm" />
+							<h:inputText id="description_id"
+								value="#{wRoleDefBean.currentWRoleDef.description}"
+								required="false" style="width:300px" />
+
+							<rich:spacer width="10"/>
+							<h:panelGrid columns="3" style="margin: -4px;">
+
+								<h:commandButton id="cancel_button" value="#{msg.label_cancel}"
+									style="width:120px; align: left;"
+									disabled="#{(wRoleDefBean.currentWRoleDef.name eq null or wRoleDefBean.currentWRoleDef.name eq '') and wRoleDefBean.id eq 0}"
+									action="#{wRoleDefBean.reset}" />
+
+								<h:commandButton id="save_button"
+									value="#{wRoleDefBean.valueBtn}" style="width:120px;"
+									disabled="#{(wRoleDefBean.currentWRoleDef.name eq null or wRoleDefBean.currentWRoleDef.name eq '') and wRoleDefBean.id eq 0}"
+									actionListener="#{wRoleDefBean.save}" />
+
+								<h:commandButton id="delete_button" value="#{msg.label_delete}"
+									style="width:80px;"
+									disabled="#{wRoleDefBean.id eq 0}"
+									action="#{wRoleDefBean.delete}" onclick="return confirmDelete('#{msg.label_are_you_sure_to_delete_the_role}','#{wRoleDefBean.currentWRoleDef.name}');" />
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+						<rich:spacer height="10" />
+
+						<rich:panel style="width:100%">
+
+							<rich:dataTable id="wRoleDefTable" width="98%"
+								onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+								onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+								onRowClick="return loadRecord('#{wrd.id}');"
+								rows="5" styleClass="table" value="#{wRoleDefBean.roleList}"
+								var="wrd">
+								
+								<f:facet name="header">
+									<h:outputText value="#{msg.label_system_defined_roles}" />
+								</f:facet>
+
+								<rich:column sortBy="#{wrd.id}"
+									style="width:30px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_id}" />
+									</f:facet>
+									<h:outputText value="#{wrd.id}" />
+								</rich:column>
+								<rich:column sortBy="#{wrd.name}"
+									style="width:150px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_name}" />
+									</f:facet>
+									<h:outputText value="#{wrd.name}" />
+								</rich:column>
+								<rich:column sortBy="#{wrd.description}"
+									style="width:150px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_description}" />
+									</f:facet>
+									<h:outputText value="#{wrd.description}" />
+								</rich:column>
+								<rich:column sortBy="#{wrd.idObject}"
+									style="width:150px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_object_id}" />
+									</f:facet>
+									<h:outputText value="#{wrd.idObject}" />
+								</rich:column>
+
+								<rich:column sortBy="#{msg.label_object_type_id}"
+									style="width:30px; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_object_type_id}" />
+									</f:facet>
+									<h:outputText value="#{wrd.idObjectType}" />
+								</rich:column>
+
+							</rich:dataTable>
+
+							<rich:spacer height="10" />
+							<rich:datascroller for="wRoleDefTable" maxPages="10" />
+
+						</rich:panel>
+					</h:form>
+				</rich:panel>
+
+			</center>
+		</body>
+
+
+
+
+	</ui:define>
+</ui:composition>
+</html>
