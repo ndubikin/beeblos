@@ -1,7 +1,5 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
-import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +12,7 @@ import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 

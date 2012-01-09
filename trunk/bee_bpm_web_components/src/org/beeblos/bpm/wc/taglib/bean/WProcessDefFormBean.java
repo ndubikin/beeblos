@@ -181,6 +181,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		_reset();
 		this.currentId=id;
 		this.loadCurrentWProcessDef();
+		this.setReadOnly(true);
 		return null;
 	}
 
@@ -307,6 +308,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			setShowHeaderMessage(true);
 			ret = SUCCESS_FORM_WPROCESSDEF;
+			this.setReadOnly(true);
 
 		} catch (WProcessDefException ex1) {
 
@@ -460,8 +462,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.readOnly = readOnly;
 	}
 	
-	public void changeReadOnly() {
-		this.readOnly=!this.readOnly;
+	public void changeReadOnlyToFalse() {
+		this.readOnly=false;
 	}
 
 	public List<String> getSelectedWRoleDefList() {

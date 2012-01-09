@@ -85,7 +85,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 		documentLink=null; 
 		
-		HelperUtil.recreateBean("documentacionBean", "com.softpoint.taglib.common.DocumentacionBean");
+//		HelperUtil.recreateBean("documentacionBean", "com.softpoint.taglib.common.DocumentacionBean");
 
 	
 	}
