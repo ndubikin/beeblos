@@ -32,17 +32,17 @@
  
  <tag>
   <tag-name>wRoleDefCrudCaratula</tag-name>
-  <source>/taglib/admin/tags/wRoleDefCrudCaratula.xhtml</source>
+  <source>/taglib/admin/tabs/wRoleDefCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wUserDefCrudCaratula</tag-name>
-  <source>/taglib/admin/tags/wUserDefCrudCaratula.xhtml</source>
+  <source>/taglib/admin/tabs/wUserDefCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wTimeUnitCrudCaratula</tag-name>
-  <source>/taglib/admin/tags/wTimeUnitCrudCaratula.xhtml</source>
+  <source>/taglib/admin/tabs/wTimeUnitCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
