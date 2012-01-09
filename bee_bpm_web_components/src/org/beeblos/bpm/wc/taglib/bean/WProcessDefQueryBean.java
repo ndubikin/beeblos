@@ -17,6 +17,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
+import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 
 public class WProcessDefQueryBean extends CoreManagedBean {
 
@@ -57,24 +58,32 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 
 	private void _init() {
+		
 		logger.debug("ConsultaFacturaBean._init()");
 
-		wProcessDefList = new ArrayList<WProcessDef>();
+		this.wProcessDefList = new ArrayList<WProcessDef>();
 
-		nResults = 0;
+		this.nResults = 0;
 		
-		initialInsertDateFilter = null;
-		finalInsertDateFilter = null;
-		strictInsertDateFilter = false;
+		this.initialInsertDateFilter = null;
+		this.finalInsertDateFilter = null;
+		this.strictInsertDateFilter = false;
 
-		nameFilter = "";
-		commentsFilter = "";
-		listZoneFilter = "";
-		workZoneFilter = "";
-		additionalZoneFilter = "";
+		this.nameFilter = "";
+		this.commentsFilter = "";
+		this.listZoneFilter = "";
+		this.workZoneFilter = "";
+		this.additionalZoneFilter = "";
 		
-		id = 0;
-
+		this.id = 0;
+		
+		// reset session wProcessDefFormBean
+		HelperUtil
+			.recreateBean(
+					"wProcessDefFormBean", "org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean");
+		HelperUtil
+			.recreateBean(
+				"wStepDefFormBean", "org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean");
 	}
 
 	public List<WProcessDef> getwProcessDefList() {
@@ -313,5 +322,4 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		return ret;
 	}
 
-	
 }
