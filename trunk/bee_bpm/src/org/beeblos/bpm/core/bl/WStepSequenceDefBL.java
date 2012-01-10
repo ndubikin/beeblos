@@ -28,7 +28,7 @@ public class WStepSequenceDefBL {
 		
 		// timestamp & trace info
 //		route.setFechaAlta(new Date());
-//		route.setFechaModificacion(new Date());
+//		response.setFechaModificacion(DEFAULT_MOD_DATE);
 //		route.setUsuarioAlta(user);
 //		route.setUsuarioModificacion(user);
 		return new WStepSequenceDefDao().add(route);

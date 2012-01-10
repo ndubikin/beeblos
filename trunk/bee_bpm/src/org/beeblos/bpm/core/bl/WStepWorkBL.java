@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK;
 
@@ -44,7 +45,8 @@ public class WStepWorkBL {
 		
 		// timestamp & trace info
 		stepw.setArrivingDate(new Date());
-		stepw.setInsertUser( new WUserDef(currentUser) ); // nes 20111222
+		stepw.setInsertUser( new WUserDef(currentUser) );
+		stepw.setModDate( DEFAULT_MOD_DATE);
 		return new WStepWorkDao().add(stepw);
 
 	}

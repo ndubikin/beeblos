@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class WTrackWorkBL {
 		// timestamp & trace info
 		trackw.setInsertDate(new Date());
 		trackw.setInsertUser(currentUser);
+//		trackw.setModDate( DEFAULT_MOD_DATE);
 		return new WTrackWorkDao().add(trackw);
 
 	}

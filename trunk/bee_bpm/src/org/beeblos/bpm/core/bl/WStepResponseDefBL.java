@@ -25,7 +25,7 @@ public class WStepResponseDefBL {
 		
 		// timestamp & trace info
 //		response.setFechaAlta(new Date());
-//		response.setFechaModificacion(new Date());
+//		response.setFechaModificacion(DEFAULT_MOD_DATE);
 //		response.setUsuarioAlta(user);
 //		response.setUsuarioModificacion(user);
 		return new WStepResponseDefDao().add(response);

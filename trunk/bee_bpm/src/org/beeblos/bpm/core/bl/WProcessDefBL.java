@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import java.util.Date;
 import java.util.List;
 
@@ -26,9 +27,9 @@ public class WProcessDefBL {
 		
 		// timestamp & trace info
 		process.setInsertDate(new Date());
-		process.setModDate(new Date());
+		process.setModDate( DEFAULT_MOD_DATE);
 		process.setInsertUser(currentUser);
-		process.setModUser(currentUser);
+		process.setModUser(null);
 		return new WProcessDefDao().add(process);
 
 	}
@@ -49,9 +50,7 @@ public class WProcessDefBL {
 			
 			logger.debug("WProcessDefBL.update - nothing to do ...");
 		}
-		
-
-					
+			
 	}
 	
 	
