@@ -204,7 +204,7 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 
 		String ret = null;
 
-		loadWProcessDefForm();
+//		loadWProcessDefForm();
 
 		/*
 		WUserDef wUserDef;
