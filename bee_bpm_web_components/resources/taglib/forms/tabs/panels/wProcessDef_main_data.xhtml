@@ -34,8 +34,7 @@
 			<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_name"
 				value="#{wProcessDefFormBean.currentWProcessDef.name}"
-				style="width:350px; font-size:13px;	padding: 4px;"
-				
+				style="width:350px; font-size:13px;	padding: 4px;"				
 				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
 				value="#{wProcessDefFormBean.currentWProcessDef.name}"
@@ -75,7 +74,6 @@
 				style="width:350px; font-size:13px;	padding: 4px;"
 				rendered="#{wProcessDefFormBean.readOnly}"/>
 			
-
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 
@@ -144,11 +142,17 @@
 					style="width:80px; margin-right:20px; " 
 					rendered="#{!wProcessDefFormBean.readOnly}"/>
 
-				<a4j:commandButton id="save_button" value="#{msg.label_save}"
+				<a4j:commandButton id="update_button" value="#{msg.label_update}"
 					actionListener="#{wProcessDefFormBean.update}"
 					reRender="w_process_def_main_tag_form"
 					style="margin-right: 0px; width:120px; " 
-					rendered="#{!wProcessDefFormBean.readOnly}"/>
+					rendered="#{!wProcessDefFormBean.readOnly and (wProcessDefFormBean.currentId != null) and (wProcessDefFormBean.currentId != 0)}"/>
+
+				<h:commandButton id="save_continue_button" value="#{msg.label_save}"
+					actionListener="#{wProcessDefFormBean.save_continue}"
+					reRender="w_process_def_main_tag_form"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wProcessDefFormBean.readOnly and ((wProcessDefFormBean.currentId == null) or (wProcessDefFormBean.currentId == 0))}"/>
 
 			</h:panelGroup>
 			

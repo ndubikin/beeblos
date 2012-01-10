@@ -27,21 +27,24 @@
 		</rich:tab>
 
 		<rich:tab name="w_process_def_roles_and_users_tag"
-			label="#{msg.label_role_and_user}">
+			label="#{msg.label_role_and_user}"
+			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
 			<ui:include src="tabs/wProcessDefRolesAndUsersTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_ROLESANDUSERSTAG" />
 			</ui:include>
 		</rich:tab>
 
 		<rich:tab name="w_process_def_steps_tag"
-			label="#{msg.label_steps}">
+			label="#{msg.label_steps}"
+			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
 			<ui:include src="tabs/wProcessDefStepsTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_STEPSTAG" />
 			</ui:include>
 		</rich:tab>
 
 		<rich:tab name="w_process_def_zone_tag"
-			label="#{msg.label_jsf}">
+			label="#{msg.label_jsf}"
+			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
 			<ui:include src="tabs/wProcessDefZoneTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_ZONETAG" />
 			</ui:include>

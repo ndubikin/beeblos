@@ -137,6 +137,19 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	}
 	
+	// dml 20120110
+	public void prepareNewWProcessDef() {
+
+		currentId = null;
+		
+		currentWProcessDef = new WProcessDef();
+		
+		this.setReadOnly(false);
+		
+		createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+
+	}
+	
 	private void setModel() {
 
 		if (currentWProcessDef != null) {
@@ -165,7 +178,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		boolean result = false;
 		
-		if (this.currentWProcessDef.getName() != null 
+		if (this.currentWProcessDef != null && this.currentWProcessDef.getName() != null 
 				&& !"".equals(this.currentWProcessDef.getName())){
 				
 			result = true;
@@ -265,10 +278,18 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 
 			createNullObjectTypeProperties();
-
+			
+			// dml 20120110 - We load the name of the BeginStep to show it on the form reRender.
+			String beginStepName = new WStepDefBL().getWStepDefByPK(currentWProcessDef.getBeginStep().getId(), getCurrentUserId()).getName();
+			currentWProcessDef.getBeginStep().setName(beginStepName);
+			
+			this.setReadOnly(true);
+			
 			ret = SUCCESS_FORM_WPROCESSDEF;
+			
 			setShowHeaderMessage(true);
-
+			
+			
 		} catch (WProcessDefException ex1) {
 
 			String message = ex1.getMessage() + " - " + ex1.getCause();
