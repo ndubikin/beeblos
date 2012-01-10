@@ -2,6 +2,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
+import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.util.ArrayList;
@@ -317,6 +318,29 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				ret = LOAD_WPROCESSDEF;
 			
 			}
+		}
+
+		return ret;
+	}
+
+	// dml 20120110
+	public String createNewWProcessDefForm() {
+
+		String ret = "FAIL";
+
+		ValueExpression valueBinding = super
+				.getValueExpression("#{wProcessDefFormBean}");
+
+		if (valueBinding != null) {
+
+			WProcessDefFormBean wpdfb = 
+					(WProcessDefFormBean) valueBinding
+						.getValue(super.getELContext());
+			wpdfb.init();
+			wpdfb.prepareNewWProcessDef();
+			
+			ret = CREATE_NEW_WPROCESSDEF;
+		
 		}
 
 		return ret;

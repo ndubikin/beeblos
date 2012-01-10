@@ -49,6 +49,9 @@ public class Constants {
 	public static final String LOAD_WPROCESSDEF = "LOAD_WPROCESSDEF";
 	public static final String WPROCESSDEF_QUERY = "WPROCESSDEF_QUERY";
 	public static final String SUCCESS_WROLEDEF = "SUCCESS_WROLEDEF";
-	
+
+	// dml 20120110
+	public static final String CREATE_NEW_WPROCESSDEF = "CREATE_NEW_WPROCESSDEF";
+
 	
 }

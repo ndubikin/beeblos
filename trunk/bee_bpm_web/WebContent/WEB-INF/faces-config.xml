@@ -167,6 +167,11 @@
 			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
 		</navigation-case>
 			
+		<navigation-case>
+			<from-outcome>CREATE_NEW_WPROCESSDEF</from-outcome>
+			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+			
 	</navigation-rule>
 
 	
