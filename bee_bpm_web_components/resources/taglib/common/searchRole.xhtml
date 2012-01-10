@@ -61,11 +61,11 @@
 
 			<h:panelGroup>
 				<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
-					action="#{userAndRoleSelectorBean.cancelAddWRoleDefSelected}"
+					actionListener="#{userAndRoleSelectorBean.cancelAddWRoleDefSelected}"
 					onclick="javascript:Richfaces.hideModalPanel('mpSearchRole')"
 					 style="width:80px; height:24px;" />
 				<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
-					action="#{userAndRoleSelectorBean.addWRoleDefSelected}"
+					actionListener="#{userAndRoleSelectorBean.addWRoleDefSelected}"
 					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchRole');"
 					style="width:120px; left-margin: 20px; height:24px;" />
 			</h:panelGroup>
