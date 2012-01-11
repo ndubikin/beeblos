@@ -108,6 +108,7 @@ public class WRoleDef implements java.io.Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((idObject == null) ? 0 : idObject.hashCode());
 		result = prime * result
@@ -129,6 +130,11 @@ public class WRoleDef implements java.io.Serializable {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (idObject == null) {
 			if (other.idObject != null)

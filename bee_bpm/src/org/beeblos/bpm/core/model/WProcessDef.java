@@ -219,9 +219,12 @@ public class WProcessDef implements java.io.Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
+				+ ((adminEmail == null) ? 0 : adminEmail.hashCode());
+		result = prime * result
 				+ ((beginStep == null) ? 0 : beginStep.hashCode());
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime
 				* result
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
@@ -234,8 +237,6 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
 		result = prime * result
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
-		result = prime * result
-				+ ((adminEmail == null) ? 0 : adminEmail.hashCode());
 		return result;
 	}
 
@@ -248,6 +249,11 @@ public class WProcessDef implements java.io.Serializable {
 		if (!(obj instanceof WProcessDef))
 			return false;
 		WProcessDef other = (WProcessDef) obj;
+		if (adminEmail == null) {
+			if (other.adminEmail != null)
+				return false;
+		} else if (!adminEmail.equals(other.adminEmail))
+			return false;
 		if (beginStep == null) {
 			if (other.beginStep != null)
 				return false;
@@ -257,6 +263,11 @@ public class WProcessDef implements java.io.Serializable {
 			if (other.comments != null)
 				return false;
 		} else if (!comments.equals(other.comments))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (idAdditionalZone == null) {
 			if (other.idAdditionalZone != null)
@@ -283,16 +294,11 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!rolesRelated.equals(other.rolesRelated))
 			return false;
-			if (usersRelated == null) {
-				if (other.usersRelated != null)
-					return false;
-			} else if (!usersRelated.equals(other.usersRelated))
+		if (usersRelated == null) {
+			if (other.usersRelated != null)
 				return false;
-			if (adminEmail == null) {
-				if (other.adminEmail != null)
-					return false;
-			} else if (!adminEmail.equals(other.adminEmail))
-				return false;
+		} else if (!usersRelated.equals(other.usersRelated))
+			return false;
 		return true;
 	}
 

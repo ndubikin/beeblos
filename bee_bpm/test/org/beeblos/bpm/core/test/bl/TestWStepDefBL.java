@@ -11,6 +11,7 @@ import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
+import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.junit.Test;
 
@@ -42,12 +43,13 @@ public class TestWStepDefBL extends TestCase{
 		
 		@Test
 		
-		public void testAgregarWStepDef() throws Exception {
+		public void testAgregarWStepDef() {
 			
+			try {
 			WRoleDefBL roleBl = new WRoleDefBL();
 			Integer idRol1 = roleBl.add(new WRoleDef("rol s1", "descrip rol 1", null, "1..2..probando..."), 1000);
 			Integer idRol2 = roleBl.add(new WRoleDef("rol s2", "desc rol 2", 1, "pepe"), 1000	);
-			
+		
 			WUserDefBL userBl = new WUserDefBL();
 			Integer idUser1 = userBl.add(new WUserDef( "juan ss", "jn", true, 1000, new Date()), 1000);
 			Integer idUser2 = userBl.add(new WUserDef( "maria ss", "mr", true, 1000, new Date()), 1000);
@@ -70,6 +72,32 @@ public class TestWStepDefBL extends TestCase{
 			System.out.println("---------------- ----------------------------- -------------------------------------");
 			
 			assertEquals(iproc, stepBL.getWStepDefByPK(iproc, 1000).getId());
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+
+			
+			try {
+				
+				WStepDef sd1 = new WStepDef(); 
+				sd1 = new WStepDefBL().getWStepDefByPK(iproc, 1000);
+
+				for ( WStepRole wsr: sd1.getRolesRelated() ) {
+					stepBL.deleteStepRole(sd1, wsr);			
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
+//			WStepRole wsr = sd.getRolesRelated().iterator().next();
+			
+//			System.out.println("WStepRole a borrar role:"+wsr.getRole().getId()+" step:"+wsr.getStep().getId());
+			
+	
 			
 
 		}

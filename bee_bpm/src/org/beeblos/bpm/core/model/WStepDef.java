@@ -343,14 +343,13 @@ public class WStepDef implements java.io.Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-//		result = prime * result
-//				+ ((assigned == null) ? 0 : assigned.hashCode());
 		result = prime * result
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
 		result = prime * result
 				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
 		result = prime * result
 				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime
 				* result
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
@@ -370,6 +369,8 @@ public class WStepDef implements java.io.Serializable {
 				+ ((reminderTimeUnit == null) ? 0 : reminderTimeUnit.hashCode());
 		result = prime * result
 				+ ((response == null) ? 0 : response.hashCode());
+		result = prime * result
+				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
 		result = prime * result + (runtimeModifiable ? 1231 : 1237);
 		result = prime * result
 				+ ((stepComments == null) ? 0 : stepComments.hashCode());
@@ -377,6 +378,8 @@ public class WStepDef implements java.io.Serializable {
 				+ ((submitForm == null) ? 0 : submitForm.hashCode());
 		result = prime * result
 				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
+		result = prime * result
+				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
 		return result;
 	}
 
@@ -391,11 +394,6 @@ public class WStepDef implements java.io.Serializable {
 		if (!(obj instanceof WStepDef))
 			return false;
 		WStepDef other = (WStepDef) obj;
-//		if (assigned == null) {
-//			if (other.assigned != null)
-//				return false;
-//		} else if (!assigned.equals(other.assigned))
-//			return false;
 		if (assignedTime == null) {
 			if (other.assignedTime != null)
 				return false;
@@ -410,6 +408,11 @@ public class WStepDef implements java.io.Serializable {
 			if (other.deadlineTime != null)
 				return false;
 		} else if (!deadlineTime.equals(other.deadlineTime))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (idAdditionalZone == null) {
 			if (other.idAdditionalZone != null)
@@ -461,6 +464,11 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!response.equals(other.response))
 			return false;
+		if (rolesRelated == null) {
+			if (other.rolesRelated != null)
+				return false;
+		} else if (!rolesRelated.equals(other.rolesRelated))
+			return false;
 		if (runtimeModifiable != other.runtimeModifiable)
 			return false;
 		if (stepComments == null) {
@@ -477,6 +485,11 @@ public class WStepDef implements java.io.Serializable {
 			if (other.timeUnit != null)
 				return false;
 		} else if (!timeUnit.equals(other.timeUnit))
+			return false;
+		if (usersRelated == null) {
+			if (other.usersRelated != null)
+				return false;
+		} else if (!usersRelated.equals(other.usersRelated))
 			return false;
 		return true;
 	}
@@ -599,6 +612,5 @@ public class WStepDef implements java.io.Serializable {
 		wsu.setUser(user);
 		usersRelated.add(wsu);
 	}
-
 
 }
