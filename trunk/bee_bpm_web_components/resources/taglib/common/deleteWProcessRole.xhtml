@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<style>
+.top {
+	vertical-align: top;
+}
+
+.panelScroll {
+	height: 60px;
+	overflow: auto;
+}
+
+</style>
+
+	<h:form>
+
+	<h:panelGrid column="1">
+	
+		<h:outputText value="#{msg.label_are_you_sure_to_delete_the_wprocess_related_role}: " />
+
+		<rich:spacer height="10" />
+
+		<h:panelGroup>
+			<h:outputText value="#{msg.label_role_name}: " />
+			<h:outputText id="wprocess_related_role_name"
+				value="#{wProcessDefFormBean.currentWProcessRole.role.name}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+		</h:panelGroup>
+		
+		<rich:spacer height="10" />
+
+		<h:panelGroup>
+			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+				onclick="javascript:Richfaces.hideModalPanel('mpDeleteWProcessRole')"
+				style="width:80px; height:24px;" />
+			<a4j:commandButton id="delete_button_sr" value="#{msg.label_delete}"
+				actionListener="#{wProcessDefFormBean.deleteWProcessRole}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWProcessRole');"
+				reRender="w_process_def_related_roles_table"
+				style="width:120px; left-margin: 20px; height:24px;" />
+		</h:panelGroup>
+
+	</h:panelGrid>
+	
+	</h:form>
+</ui:composition>
