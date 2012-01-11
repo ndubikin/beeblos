@@ -10,11 +10,12 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WTimeUnitBL;
 import org.beeblos.bpm.core.error.ObjectException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
-import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
@@ -22,7 +23,6 @@ import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
-import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 /**
@@ -53,6 +53,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 	
 	// auxiliar fields
 	private List<SelectItem> lWTimeUnit;
+	
+	// dml 20120111
+	private WStepResponseDef stepResponse;
 
 	
     public static WStepDefFormBean getCurrentInstance() {
@@ -80,6 +83,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 	
 		this.currObjId=new Integer(0);
 		this.currentWStepDef=null;
+		
+		// dml 20110111
+		this.stepResponse = new WStepResponseDef();
 		
 		attachment = new BeeblosAttachment();
 
@@ -333,9 +339,29 @@ public class WStepDefFormBean extends CoreManagedBean {
 		}			
 	}
 	
-
-
+	public void loadResponse(){
 		
+		if (stepResponse != null && stepResponse.getId() != null
+				&& stepResponse.getId() != 0){
+			
+			try {
+				
+				stepResponse = new WStepResponseDefBL().getWStepResponseDefByPK(stepResponse.getId(), getCurrentUserId().toString());
+			
+			} catch (WStepResponseDefException ex1) {
+
+				logger.error("Error retrieving object: "
+						+ stepResponse.getId()
+						+ " : "
+						+ ex1.getMessage()
+						+ " - "
+						+ ex1.getCause());
+
+			}
+		
+		}
+		
+	}
 
 	public WStepDef getCurrentWStepDef() {
 		return currentWStepDef;
@@ -417,7 +443,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 					0);
 	}
 	
-	
+	public WStepResponseDef getStepResponse() {
+		return stepResponse;
+	}
+
+	public void setStepResponse(WStepResponseDef stepResponse) {
+		this.stepResponse = stepResponse;
+	}
+
 	public List<WStepResponseDef> getResponseList() {
 		
 		List<WStepResponseDef> lresp = new ArrayList<WStepResponseDef>();
@@ -439,6 +472,85 @@ public class WStepDefFormBean extends CoreManagedBean {
 					0);
 	}
 	
+	// dml 20120111
+	public void addStepResponse(){
+		
+		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
+		WStepDefBL wsdBL = new WStepDefBL();
+		
+		try {
+
+			if (stepResponse.getName() != null && !"".equals(stepResponse.getName())){
+			
+				wsrdBL.add(stepResponse, this.getCurrentUserId().toString());
+				
+				this.currentWStepDef.addResponse(stepResponse);
+				wsdBL.update(currentWStepDef, this.getCurrentUserId());
+		
+				loadObject();
+				getResponseList();
+				getResponseSize();
+				
+			}
+		
+			
+		} catch (WStepResponseDefException ex1) {
+			logger.warn("WStepResponseDefException: Error trying to add response "
+					+ ex1.getMessage()+" - "+ex1.getCause());
+		} catch (WStepDefException ex2) {
+			logger.warn("WStepDefException: Error trying to add response "
+					+ ex2.getMessage()+" - "+ex2.getCause());
+		}
+		
+	}
+
+	// dml 20120111
+	public void deleteStepResponse(){
+		
+		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
+		
+		try {
+			if (stepResponse != null && stepResponse.getId() != null){
+			
+				stepResponse = wsrdBL.getWStepResponseDefByPK(stepResponse.getId(), this.getCurrentUserId().toString());
+				wsrdBL.delete(stepResponse, this.getCurrentUserId().toString());
+
+				loadObject();
+				getResponseList();
+				getResponseSize();
+				
+			}		
+			
+		} catch (WStepResponseDefException ex1) {
+			logger.warn("WStepResponseDefException: Error trying to delete response "
+					+ ex1.getMessage()+" - "+ex1.getCause());
+		}
+		
+	}
+
+	// dml 20120111
+	public void editStepResponse(){
+		
+		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
+		
+		try {
+			if (stepResponse != null){
+			
+				wsrdBL.update(stepResponse, this.getCurrentUserId().toString());
+
+				loadObject();
+				getResponseList();
+				getResponseSize();
+				
+			}		
+			
+		} catch (WStepResponseDefException ex1) {
+			logger.warn("WStepResponseDefException: Error trying to edit response "
+					+ ex1.getMessage()+" - "+ex1.getCause());
+		}
+		
+	}
+
 	private List<SelectItem> loadWTimeUnitForCombo(){
 		
 		List<SelectItem> ltu=null;

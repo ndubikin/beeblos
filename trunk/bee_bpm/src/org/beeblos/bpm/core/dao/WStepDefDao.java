@@ -109,18 +109,16 @@ public class WStepDefDao {
 			
 
 			for (WStepRole wsteprole: wstepdef.getRolesRelated()) {
-				if ( wsteprole.getRole().getId()==wsr.getRole().getId() ) {
+				if ( wsteprole.getRole().getId().equals(wsr.getRole().getId()) ) {
 			
 					wstepdef.getRolesRelated().remove(wsteprole);
-					wsteprole.setStep(null);
+					//wsteprole.setStep(null);
 					session.update(wstepdef);
 					break;
 					
 				}
 			}
 			
-			
-
 			tx.commit();
 
 		} catch (HibernateException ex) {
