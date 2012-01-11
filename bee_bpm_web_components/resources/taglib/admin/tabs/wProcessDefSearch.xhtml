@@ -36,11 +36,11 @@
 		
 		<h:form>
 			<a4j:commandLink id="inserta_rol"
-			title="#{msg.label_add_new_global_process}"
+			title="#{msg.label_add_new_process}"
 			style="margin-left: 30px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
 			tabindex="-1"
 			rendered="#{contextoSeguridad.permiteCualquiera['530']}"
-			action="#{wProcessDefQueryBean.createNewWProcessDefForm}">
+			action="#{wProcessDefQueryBean.createNewWProcessDef}">
 			<h:graphicImage id="imgInsertar" value="/images/insertar.png"
 				style="border:0;" />
 		</a4j:commandLink>

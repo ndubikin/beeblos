@@ -23,20 +23,18 @@
 
 			<rich:spacer height="10" />
 
-			<h:panelGrid id="role_list_check" columns="2"
-				style="width:90%; text-align:left;"
-				columnClasses="colStyle10px, colStyle50px">
 
-				<h:selectBooleanCheckbox
-					value="#{userAndRoleSelectorBean.selectedAllRoles}">
-					<a4j:support
-						action="#{userAndRoleSelectorBean.selectAllRoles}"
-						ajaxSingle="true" event="onclick"
-						reRender="id_select_many_role,role_list_check" />
-				</h:selectBooleanCheckbox>
-				<h:outputText value="#{msg.label_all}"
-					style="margin-left:10px; font-weight:bold;" />
-			</h:panelGrid>
+
+			<h:selectBooleanCheckbox
+				value="#{userAndRoleSelectorBean.selectedAllRoles}">
+				<a4j:support
+					action="#{userAndRoleSelectorBean.selectAllRoles}"
+					ajaxSingle="true" event="onclick"
+					reRender="id_select_many_role,role_list_check" />
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{msg.label_all}"
+				style="margin-left:10px; font-weight:bold;" />
+
 
 			<rich:spacer height="10" />
 

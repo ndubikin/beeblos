@@ -20,6 +20,8 @@
 
 	<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}" 
 					reRender="cancel_button, save_button" />
+
+
 </h:form>
 
 
@@ -65,9 +67,10 @@
 			<h:selectOneMenu id="fact_w_process_def_begin_step"
 				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.id}"
 				style="width:250px; height: 24px; font-size:13px;padding: 3px;"
-				 
+
 				rendered="#{!wProcessDefFormBean.readOnly}">
-				<f:selectItems value="#{wProcessDefFormBean.stepCombo}" />
+				<f:selectItems value="#{wProcessDefFormBean.stepCombo}" 
+					/>
 			</h:selectOneMenu>
 			<h:outputText 
 				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.name}"
