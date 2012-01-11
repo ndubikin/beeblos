@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	
+	<class name="org.beeblos.security.st.model.Departamento" table="departamento">
+		<id name="idDepartamento" type="java.lang.Integer">
+			<column name="id_departamento" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="departamentoAbreviatura"
+			type="string">
+			<column length="5" name="departamento_abreviatura">
+				<comment>Abreviacion del nombre del departamento</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="departamentoNombre"
+			type="string">
+			<column length="50" name="departamento_nombre" />
+		</property>
+		<property generated="never" lazy="false" name="departamentoComentario"
+			type="string">
+			<column name="departamento_comentario" />
+		</property>
+		<property generated="never" lazy="false" name="departamentoTitulo"
+			type="string">
+			<column length="50" name="departamento_titulo" />
+		</property>
+	</class>
+	
+	<class name="org.beeblos.security.st.model.Usuario" table="usuario">
+		<id name="idUsuario" type="java.lang.Integer">
+			<column name="ID_USUARIO" />
+			<generator class="identity" />
+		</id>
+		<property name="nombres" type="string">
+			<column name="NOMBRES" length="45" not-null="true" />
+		</property>
+		<property name="apellidos" type="string">
+			<column name="APELLIDOS" length="45" not-null="true" />
+		</property>
+		<property name="email" type="string">
+			<column name="EMAIL" length="45" not-null="true" />
+		</property>
+		<property name="usuarioLogin" type="string">
+			<column name="USUARIO_LOGIN" length="45" not-null="true" />
+		</property>
+		<property name="password" type="string">
+			<column name="PASSWORD" length="45" not-null="true" />
+		</property>
+		<property name="admon" type="string">
+			<column name="ADMON" length="1" not-null="true" />
+		</property>
+		<property name="suLectura" type="string">
+			<column name="SU_LECTURA" length="1" not-null="true" />
+		</property>
+		<property name="idDepto" type="java.lang.Integer">
+			<column name="ID_DEPTO" />
+		</property>
+		<property name="lastLoginDate" type="timestamp">
+			<column name="LAST_LOGIN_DATE" length="0">
+				<comment>Fecha de ultimo login</comment>
+			</column>
+		</property>
+		<property name="habilitado" type="string">
+			<column name="HABILITADO" length="1" />
+		</property>
+		<property name="jefeDepartamento" type="string">
+			<column name="JEFE_DEPARTAMENTO" length="1">
+				<comment>Para determinar los permisos sobre un departamento en
+					particular</comment>
+			</column>
+		</property>
+
+		<!--
+			<property name="usuarioFoto" type="binary"> <column
+			name="USUARIO_FOTO"> <comment>De momento en la tabla pero no
+			mapeado</comment> </column> </property>
+		-->
+
+		<property name="fechaAlta" type="timestamp">
+			<column name="FECHA_ALTA" length="0" not-null="true" />
+		</property>
+		<property name="usuarioAlta" type="string">
+			<column name="USUARIO_ALTA" length="50" />
+		</property>
+		<property name="fechaModificacion" type="timestamp">
+			<column name="FECHA_MODIFICACION" length="0" not-null="true" />
+		</property>
+		<property name="usuarioModificacion" type="string">
+			<column name="USUARIO_MODIFICACION" length="50" />
+		</property>
+	</class>
+
+
+
+	<class name="org.beeblos.security.st.model.UsuarioCuentasEmail" table="usuario_cuentas_email">
+		<id name="idUce" type="java.lang.Integer">
+			<column name="id_uce" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="idUsuario"
+			type="java.lang.Integer">
+			<column name="id_usuario" not-null="true">
+				<comment>id usuario de la tabla de usuarios</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="preferida"
+			type="boolean">
+			<column name="preferida">
+				<comment>Si está en true indica que es la cuenta preferida de ese
+					usuario</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="uceNombre"
+			type="string">
+			<column name="uce_nombre">
+				<comment>Nombre que debe aparecer en la referencia de la direcci</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="uceEmail"
+			type="string">
+			<column length="150" name="uce_email" not-null="true">
+				<comment>email</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="uceDireccionDeRespuesta"
+			type="string">
+			<column length="150" name="uce_direccion_de_respuesta">
+				<comment>email de respuesta / si esta vacio deberia tomarse el de
+					arriba</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="uceTextoDeLaFirma"
+			type="string">
+			<column name="uce_texto_de_la_firma" />
+		</property>
+		<property generated="never" lazy="false" name="uceFirmaAdjuntaTxt"
+			type="text">
+			<column name="uce_firma_adjunta_txt" />
+		</property>
+		<property generated="never" lazy="false" name="uceFirmaAdjuntaHtml"
+			type="text">
+			<column name="uce_firma_adjunta_html" />
+		</property>
+		<property generated="never" lazy="false" name="tipoServidorEntrada"
+			type="string">
+			<column length="20" name="tipo_servidor_entrada">
+				<comment>defecto POP</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="nombreDelServidorEntrada"
+			type="string">
+			<column length="100" name="nombre_del_servidor_entrada" />
+		</property>
+		<property generated="never" lazy="false" name="puertoEntrada"
+			type="java.lang.Integer">
+			<column name="puerto_entrada" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="seguridadConexion"
+			type="string">
+			<column length="20" name="seguridad_conexion" not-null="true">
+				<comment>Ninguna, SATRTTLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="metodoIdentificacion"
+			type="string">
+			<column length="20" name="metodo_identificacion" not-null="true">
+				<comment>Contrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="formato" type="string">
+			<column length="10" name="formato" not-null="true">
+				<comment>Texto, HTML</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="nombreServidorDeSalida"
+			type="string">
+			<column length="100" name="nombre_servidor_de_salida">
+				<comment>Nombre del servidor de salida</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="servidorDeSalida"
+			type="string">
+			<column length="100" name="servidor_de_salida">
+				<comment>id del servidor de salida . por ej: smtp.softpoint.org</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="puertoSalida"
+			type="java.lang.Integer">
+			<column name="puerto_salida" not-null="true">
+				<comment>Predeterminado 25</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false"
+			name="seguridadDeLaConexionSalida" type="string">
+			<column length="10" name="seguridad_de_la_conexion_salida">
+				<comment>Ninguna, STARTTLS, SSL/TLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="metodoIdentificacionSalida"
+			type="string">
+			<column length="1" name="metodo_identificacion_salida">
+				<comment>"S"in identificacion, "I"ontrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="nombreUsuarioSalida"
+			type="string">
+			<column length="40" name="nombre_usuario_salida" />
+		</property>
+		<property generated="never" lazy="false" name="contraseniaSalida"
+			type="string">
+			<column length="20" name="contrasenia_salida">
+				<comment>para las cuentas no riesgosas para poner la contrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idExchange"
+			type="string">
+			<column length="50" name="id_exchange">
+				<comment>por las dudas para conectarnos con exchange ...</comment>
+			</column>
+		</property>
+	</class>
+	<class name="org.beeblos.security.st.model.UsuarioLogin" table="usuario_login">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="idUsuario" type="java.lang.Integer">
+			<column name="id_usuario" not-null="true" />
+		</property>
+		<property name="loginExitoso" type="boolean">
+			<column name="login_exitoso" not-null="true">
+				<comment>Indicador de que el login se realiza correctamente o no</comment>
+			</column>
+		</property>
+		<property name="loginIp" type="string">
+			<column name="login_ip" length="100">
+				<comment>IP desde el que se accede</comment>
+			</column>
+		</property>
+		<property name="loginIntento" type="string">
+			<column name="login_intento" length="30">
+				<comment>login introducido, util para los login fallidos</comment>
+			</column>
+		</property>
+		<property name="loginOrigen" type="string">
+			<column name="origen" length="10">
+				<comment>Sistema Origen desde donde se hace el login: DAP, GP, ...</comment>
+			</column>
+		</property>
+
+		<property name="fecha" type="timestamp">
+			<column name="fecha" length="0" not-null="true" />
+		</property>
+		
+		<property name="perfiles" type="string">
+			<column name="perfiles" length="255">
+				<comment>Perfiles del usuario en el momento de acceder</comment>
+			</column>
+		</property>
+	</class>
+	
+
+
+</hibernate-mapping>

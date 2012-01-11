@@ -8,6 +8,7 @@ import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.noper.StringPair;
 
 
@@ -57,12 +58,24 @@ public class WStepDefBL {
 	
 	public void delete(WStepDef step, Integer currentUser) throws WStepDefException {
 
-		logger.debug("delete() WStepDef - Name: ["+step.getName()+"]");
+		logger.info("delete() WStepDef - Name: ["+step.getName()+"] id:["+step.getId()+"]");
 		
 		new WStepDefDao().delete(step);
 
 	}
 
+	public void deleteStepRole(WStepDef step, WStepRole wsr) throws WStepDefException {
+
+//		logger.debug("delete() WStepDef - Name: ["+step.getName()+"] id:["+step.getId()+"] wsteprole.role:"+wsr.getRole().getId()+" wsteprolw.step:"+wsr.getStep().getId());
+		
+//		if ( wsr.getStep().getId() != step.getId() ) {
+//			throw new WStepDefException("can't delete wsteprole id:"+wsr.getStep().getId()+ " for this step with id:"+step.getId() );
+//		}
+		
+		new WStepDefDao().deleteStepRole(step,wsr);
+
+	}
+	
 	public WStepDef getWStepDefByPK(Integer id, Integer currentUser) throws WStepDefException {
 
 		return new WStepDefDao().getWStepDefByPK(id);
