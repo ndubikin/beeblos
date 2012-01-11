@@ -1,9 +1,9 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.el.ValueExpression;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
@@ -31,6 +31,7 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	// dml 20120109
 	private List<String> selectedWRoleDefList = new ArrayList<String>();
 	private List<SelectItem> wRoleDefListCombo = new ArrayList<SelectItem>();
+	private String strRoleString;
 	
 	// dml 20120109
 	private boolean selectedAllUsers;
@@ -45,6 +46,8 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		
 		inicializeRoleListCombo();
 		inicializeUserListCombo();
+		
+		//selectedWRoleDefList=Arrays.asList("2", "5", "7");
 		
 	}
 	
@@ -122,7 +125,7 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 
 		String ret = null;
 
-		loadWProcessDefForm();
+//		loadWProcessDefForm();
 
 		/*
 		WUserDef wUserDef;
@@ -265,36 +268,15 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		
 		return null;
 	}
-	
-	// dml 20120104
-	public void loadWProcessDefForm() {
 
-			ValueExpression valueBinding = super
-					.getValueExpression("#{wProcessDefFormBean}");
-
-			if (valueBinding != null) {
-
-				WProcessDefFormBean wpdfb = 
-						(WProcessDefFormBean) valueBinding
-							.getValue(super.getELContext());
-				wpdfb.init();
-				
-				if (selectedWRoleDefList != null 
-						&& !selectedWRoleDefList.isEmpty()){
-
-					wpdfb.setSelectedWRoleDefList(selectedWRoleDefList);
-
-				}
-
-				if (selectedWUserDefList != null 
-						&& !selectedWUserDefList.isEmpty()){
-
-					wpdfb.setSelectedWUserDefList(selectedWUserDefList);
-
-				}
-
-			}
-
+	public String getStrRoleString() {
+		return strRoleString;
 	}
 
+	public void setStrRoleString(String strRoleString) {
+		this.strRoleString = strRoleString;
+		selectedWRoleDefList=Arrays.asList(this.strRoleString.split(","));
+	}
+	
+	
 }

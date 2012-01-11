@@ -324,7 +324,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 
 	// dml 20120110
-	public String createNewWProcessDefForm() {
+	public String createNewWProcessDef() {
 
 		String ret = "FAIL";
 
@@ -337,7 +337,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 					(WProcessDefFormBean) valueBinding
 						.getValue(super.getELContext());
 			wpdfb.init();
-			wpdfb.prepareNewWProcessDef();
+			wpdfb.initEmptyWProcessDef();
 			
 			ret = CREATE_NEW_WPROCESSDEF;
 		

@@ -454,4 +454,17 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 		return ltu;
 	}
+	
+	public String getStrRoleList() {
+		
+//		System.out.println(this.currentWStepDef.getRolesRelated().toString());
+		
+		String strRoleList="";
+		for ( WStepRole sr: this.currentWStepDef.getRolesRelated()) {
+			strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+sr.getRole().getId();
+		}
+		
+		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
+		return strRoleList;
+	}
 }
