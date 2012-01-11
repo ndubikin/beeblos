@@ -52,18 +52,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	private List<SelectItem> lStepCombo = new ArrayList<SelectItem>();
 	
-	// dml 	20120105
 	private List<WStepDef> lSteps = new ArrayList<WStepDef>();
 	
-	// dml 20120105
 	private boolean readOnly;
 	
-	// dml 20120109
 	private List<String> selectedWRoleDefList = new ArrayList<String>();
 	private List<String> selectedWUserDefList = new ArrayList<String>();
 	
-	public static ComplexObjectManagementBean getCurrentInstance() {
-		return (ComplexObjectManagementBean) FacesContext.getCurrentInstance()
+	public static WProcessDefFormBean getCurrentInstance() {
+		return (WProcessDefFormBean) FacesContext.getCurrentInstance()
 				.getExternalContext().getRequestMap().get(MANAGED_BEAN_NAME);
 	}
 
@@ -84,6 +81,19 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
+	// to add a new WProcessDef
+	public void initEmptyWProcessDef() {
+
+		currentId = null;
+		
+		currentWProcessDef = new WProcessDef();
+		
+		this.setReadOnly(false);
+		
+		createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+										  // to avoid access to null objects from view
+
+	}
 	
 	public void _reset() {
 
@@ -134,19 +144,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			logger.error("An error has happened trying to load the WProcessDef: "
 					+ this.currentId + " : " + ex1.getMessage() + " -" + ex1.getCause());
 		}
-
-	}
-	
-	// dml 20120110
-	public void prepareNewWProcessDef() {
-
-		currentId = null;
-		
-		currentWProcessDef = new WProcessDef();
-		
-		this.setReadOnly(false);
-		
-		createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 
 	}
 	
@@ -266,8 +263,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			setModel(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 
-			currentId = wpdBL.add(currentWProcessDef,
+			this.currentId = wpdBL.add(currentWProcessDef,
 					this.getCurrentUserId());
+			
+			loadCurrentWProcessDef(); // reload object from db
 
 			// Manual process to store attachment in the repository ( if
 			// attachment exists ...
@@ -278,10 +277,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 
 			createNullObjectTypeProperties();
-			
-			// dml 20120110 - We load the name of the BeginStep to show it on the form reRender.
-			String beginStepName = new WStepDefBL().getWStepDefByPK(currentWProcessDef.getBeginStep().getId(), getCurrentUserId()).getName();
-			currentWProcessDef.getBeginStep().setName(beginStepName);
 			
 			this.setReadOnly(true);
 			
@@ -324,6 +319,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			setModel();
 
 			wpdBL.update(currentWProcessDef, this.getCurrentUserId());
+			
+			loadCurrentWProcessDef(); // reload object from db
 
 			createNullObjectTypeProperties();
 
@@ -376,6 +373,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			e.printStackTrace();
 		}
 	}
+	
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
 	}
@@ -503,4 +501,26 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.selectedWUserDefList = selectedWUserDefList;
 	}
 
+	public String getStrRoleList() {
+		
+//		System.out.println(this.currentWStepDef.getRolesRelated().toString());
+		
+		String strRoleList="";
+		for ( WProcessRole pr: this.currentWProcessDef.getRolesRelated()) {
+			strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+pr.getRole().getId();
+		}
+		
+		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
+		return strRoleList;
+	}
+	
+//	public void setNewBeginStep() {
+//		if ( this.currentWProcessDef!=null ) {
+//			if ( this.currentWProcessDef.getBeginStep()!=null ) {
+//				Integer id=this.currentWProcessDef.getBeginStep().getId();
+//				this.currentWProcessDef.setBeginStep(new WStepDef(true));
+//				this.currentWProcessDef.getBeginStep().setId(id);
+//			}
+//		}
+//	}
 }
