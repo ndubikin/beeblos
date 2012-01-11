@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -87,6 +88,50 @@ public class WStepDefDao {
 					" <id = "+step.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
 
 		} 
+
+	}
+	
+	public void deleteStepRole(WStepDef step, WStepRole wsr) throws WStepDefException {
+
+		logger.debug("deleteStepRole() WStepDef - Name: ["+step.getName()+"]");
+		
+		WStepDef wstepdef = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			wstepdef = (WStepDef) session.get(WStepDef.class, step.getId());
+			
+
+			for (WStepRole wsteprole: wstepdef.getRolesRelated()) {
+				if ( wsteprole.getRole().getId()==wsr.getRole().getId() ) {
+			
+					wstepdef.getRolesRelated().remove(wsteprole);
+					wsteprole.setStep(null);
+					session.update(wstepdef);
+					break;
+					
+				}
+			}
+			
+			
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepDefDao: getWStepDefByPK - we can't obtain the required id = "+
+					step.getId() + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("WStepDefDao: getWStepDefByPK - we can't obtain the required id : " + step.getId() + " - "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		}
 
 	}
 
