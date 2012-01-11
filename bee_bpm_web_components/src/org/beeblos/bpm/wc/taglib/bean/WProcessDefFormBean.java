@@ -20,6 +20,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
+import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
@@ -59,6 +60,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private List<String> selectedWRoleDefList = new ArrayList<String>();
 	private List<String> selectedWUserDefList = new ArrayList<String>();
 	
+	// dml 20120111
+	private WProcessRole currentWProcessRole;
+	private WProcessUser currentWProcessUser;
+
 	public static WProcessDefFormBean getCurrentInstance() {
 		return (WProcessDefFormBean) FacesContext.getCurrentInstance()
 				.getExternalContext().getRequestMap().get(MANAGED_BEAN_NAME);
@@ -87,7 +92,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		currentId = null;
 		
 		currentWProcessDef = new WProcessDef();
-		
+				
 		this.setReadOnly(false);
 		
 		createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
@@ -99,6 +104,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		this.currentId = null;
 		this.currentWProcessDef = null;
+		
+		// dml 20120111
+		this.currentWProcessRole = new WProcessRole();
+		this.currentWProcessUser = new WProcessUser();
+		createNullObjectTypeProperties();
 		
 		this.readOnly=true;
 
@@ -167,6 +177,20 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 
 		}
+		
+		if (currentWProcessRole != null) {
+
+			if (currentWProcessRole.getProcess() == null) {
+				currentWProcessRole.setProcess(new WProcessDef(EMPTY_OBJECT));
+			}
+
+			if (currentWProcessRole.getRole() == null) {
+				currentWProcessRole.setRole(new WRoleDef(EMPTY_OBJECT));
+			}
+
+		}
+		
+		
 
 	}
 
@@ -512,6 +536,98 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
 		return strRoleList;
+	}
+
+	public WProcessRole getCurrentWProcessRole() {
+		return currentWProcessRole;
+	}
+
+	public void setCurrentWProcessRole(WProcessRole currentWProcessRole) {
+		this.currentWProcessRole = currentWProcessRole;
+	}	
+	
+	public WProcessUser getCurrentWProcessUser() {
+		return currentWProcessUser;
+	}
+
+	public void setCurrentWProcessUser(WProcessUser currentWProcessUser) {
+		this.currentWProcessUser = currentWProcessUser;
+	}
+
+	// dml 20120111
+	public void deleteWProcessRole(){
+		
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
+				&& !currentWProcessDef.getRolesRelated().isEmpty()){
+			
+			for (WProcessRole wpr : currentWProcessDef.getRolesRelated()){
+				
+				if (wpr.getRole() != null && wpr.getRole().getId() != null 
+						&& wpr.getRole().getId().equals(currentWProcessRole.getRole().getId())){
+					
+					currentWProcessDef.getRolesRelated().remove(wpr);
+					break;
+					
+				}
+					
+			}
+			
+			try {
+				
+				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				
+			} catch (WProcessDefException ex1) {
+
+				String message = ex1.getMessage() + " - " + ex1.getCause();
+				String params[] = { message + ",", ".Error deleting WProcessRole ..." };
+				agregarMensaje("203", message, params, FGPException.ERROR);
+
+			}
+			
+		}
+		
+	}
+	
+	// dml 20120111
+	public void changeAdminPrivilegesWProcessRole(){
+		
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
+				&& !currentWProcessDef.getRolesRelated().isEmpty()){
+			
+			for (WProcessRole wpr : currentWProcessDef.getRolesRelated()){
+				
+				if (wpr.getRole() != null && wpr.getRole().getId() != null 
+						&& wpr.getRole().getId().equals(currentWProcessRole.getRole().getId())){
+					
+					if (wpr.isAdmin()){
+						wpr.setAdmin(false);
+					}else {
+						wpr.setAdmin(true);
+					}					
+					break;
+					
+				}
+				
+			}
+			
+			try {
+				
+				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				
+			} catch (WProcessDefException ex1) {
+
+				String message = ex1.getMessage() + " - " + ex1.getCause();
+				String params[] = { message + ",", ".Error deleting admin privileges ..." };
+				agregarMensaje("203", message, params, FGPException.ERROR);
+
+			}
+			
+		}
+		
 	}
 	
 //	public void setNewBeginStep() {
