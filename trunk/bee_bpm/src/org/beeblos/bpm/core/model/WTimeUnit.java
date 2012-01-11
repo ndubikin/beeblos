@@ -71,6 +71,7 @@ public class WTimeUnit implements java.io.Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((conversion == null) ? 0 : conversion.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -81,13 +82,18 @@ public class WTimeUnit implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WTimeUnit))
 			return false;
 		WTimeUnit other = (WTimeUnit) obj;
 		if (conversion == null) {
 			if (other.conversion != null)
 				return false;
 		} else if (!conversion.equals(other.conversion))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (name == null) {
 			if (other.name != null)

@@ -122,6 +122,7 @@ public class WUserDef implements java.io.Serializable {
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
@@ -144,6 +145,11 @@ public class WUserDef implements java.io.Serializable {
 			if (other.email != null)
 				return false;
 		} else if (!email.equals(other.email))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (login == null) {
 			if (other.login != null)
