@@ -613,4 +613,9 @@ public class WStepDef implements java.io.Serializable {
 		usersRelated.add(wsu);
 	}
 
+	// dml 20120110
+	public void addResponse( WStepResponseDef wStepResponseDef ) {
+		response.add(wStepResponseDef);
+	}
+
 }

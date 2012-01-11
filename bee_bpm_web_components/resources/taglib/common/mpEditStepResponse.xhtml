@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpEditStepResponse" width="400" height="200">
+	    <f:facet name="header">
+	        <h:panelGroup id="editResponseStepTitlePanel">
+	            <h:outputText id="editStepResponseTitlePanel"  value="#{msg.label_step_response}"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="editStepResponse">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_edit_step_response"/>
+		        <rich:componentControl id="editStepResponseControl" for="mpEditStepResponse" attachTo="hidelink_edit_step_response" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+		<ui:include src="editStepResponse.xhtml"/>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	

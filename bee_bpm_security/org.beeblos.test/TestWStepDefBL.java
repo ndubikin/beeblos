@@ -37,20 +37,14 @@ public class TestWStepDefBL extends TestCase {
 
 		try {
 			WRoleDefBL roleBl = new WRoleDefBL();
-			Integer idRol1 = roleBl.add(new WRoleDef("rol s1", "descrip rol 1",
-					null, "1..2..probando..."), 1000);
-			Integer idRol2 = roleBl.add(new WRoleDef("rol s2", "desc rol 2", 1,
-					"pepe"), 1000);
-			Integer idRol3 = roleBl.add(new WRoleDef("rol s3", "desc rol 3", 1,
-					"pepe"), 1000);
-			Integer idRol4 = roleBl.add(new WRoleDef("rol s4", "desc rol 4", 1,
-					"pepe"), 1000);
+			Integer idRol1 = roleBl.add(roleBl.getWRoleDefByPK(1, 1000), 1000);
+			Integer idRol2 = roleBl.add(roleBl.getWRoleDefByPK(2, 1000), 1000);
+			Integer idRol3 = roleBl.add(roleBl.getWRoleDefByPK(3, 1000), 1000);
+			Integer idRol4 = roleBl.add(roleBl.getWRoleDefByPK(4, 1000), 1000);
 
 			WUserDefBL userBl = new WUserDefBL();
-			Integer idUser1 = userBl.add(new WUserDef("juan ss", "jn", true,
-					1000, new Date()), 1000);
-			Integer idUser2 = userBl.add(new WUserDef("maria ss", "mr", true,
-					1000, new Date()), 1000);
+			Integer idUser1 = userBl.add(userBl.getWUserDefByPK(1000, 1000), 1000);
+			Integer idUser2 = userBl.add(userBl.getWUserDefByPK(1001, 1000), 1000);
 
 			step = new WStepDef(null, "paso 1", 2, 3, "ejecute este paso plis",
 					"sincomentarios ...", null, null, null);
@@ -99,12 +93,20 @@ public class TestWStepDefBL extends TestCase {
 			assertEquals(2, sd1.getRolesRelated().size()); // vuelve a tener 2
 															// WStepRole ...
 
-			wsr = sd1.getRolesRelated().iterator().next();
-
-			sd1.getRolesRelated().remove(wsr);
+			while (sd1.getRolesRelated().iterator().hasNext()){
+				sd1.getRolesRelated().remove(sd1.getRolesRelated().iterator().next());
+			}
+			
+			while (sd1.getUsersRelated().iterator().hasNext()){
+				sd1.getUsersRelated().remove(sd1.getUsersRelated().iterator().next());
+			}
+			
 			new WStepDefBL().update(sd1, 1000);
-			assertEquals(1, stepBL.getWStepDefByPK(iproc, 1000)
-					.getRolesRelated().size()); // ahora debe tener 1 ...
+
+			assertEquals(0, stepBL.getWStepDefByPK(iproc, 1000)
+					.getRolesRelated().size()); // ahora debe tener 0 ...
+			assertEquals(0, stepBL.getWStepDefByPK(iproc, 1000)
+					.getUsersRelated().size()); // ahora debe tener 0 ...
 
 		} catch (Exception e) {
 			e.printStackTrace();
