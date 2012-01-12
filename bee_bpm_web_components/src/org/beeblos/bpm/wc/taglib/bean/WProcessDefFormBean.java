@@ -22,6 +22,7 @@ import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -190,8 +191,18 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		}
 		
-		
+		if (currentWProcessUser != null) {
 
+			if (currentWProcessUser.getProcess() == null) {
+				currentWProcessUser.setProcess(new WProcessDef(EMPTY_OBJECT));
+			}
+
+			if (currentWProcessUser.getUser() == null) {
+				currentWProcessUser.setUser(new WUserDef(EMPTY_OBJECT));
+			}
+
+		}
+		
 	}
 
 	// checks input data before save or update
@@ -621,7 +632,83 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			} catch (WProcessDefException ex1) {
 
 				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error deleting admin privileges ..." };
+				String params[] = { message + ",", ".Error changing admin privileges ..." };
+				agregarMensaje("203", message, params, FGPException.ERROR);
+
+			}
+			
+		}
+		
+	}
+	
+	// dml 20120112
+	public void deleteWProcessUser(){
+		
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
+				&& !currentWProcessDef.getUsersRelated().isEmpty()){
+			
+			for (WProcessUser wpu : currentWProcessDef.getUsersRelated()){
+				
+				if (wpu.getUser() != null && wpu.getUser().getId() != null 
+						&& wpu.getUser().getId().equals(currentWProcessUser.getUser().getId())){
+					
+					currentWProcessDef.getUsersRelated().remove(wpu);
+					break;
+					
+				}
+					
+			}
+			
+			try {
+				
+				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				
+			} catch (WProcessDefException ex1) {
+
+				String message = ex1.getMessage() + " - " + ex1.getCause();
+				String params[] = { message + ",", ".Error deleting WProcessUser ..." };
+				agregarMensaje("203", message, params, FGPException.ERROR);
+
+			}
+			
+		}
+		
+	}
+	
+	// dml 20120112
+	public void changeAdminPrivilegesWProcessUser(){
+		
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
+				&& !currentWProcessDef.getUsersRelated().isEmpty()){
+			
+			for (WProcessUser wpu : currentWProcessDef.getUsersRelated()){
+				
+				if (wpu.getUser() != null && wpu.getUser().getId() != null 
+						&& wpu.getUser().getId().equals(currentWProcessUser.getUser().getId())){
+					
+					if (wpu.isAdmin()){
+						wpu.setAdmin(false);
+					}else {
+						wpu.setAdmin(true);
+					}					
+					break;
+					
+				}
+				
+			}
+			
+			try {
+				
+				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				
+			} catch (WProcessDefException ex1) {
+
+				String message = ex1.getMessage() + " - " + ex1.getCause();
+				String params[] = { message + ",", ".Error changing admin privileges ..." };
 				agregarMensaje("203", message, params, FGPException.ERROR);
 
 			}

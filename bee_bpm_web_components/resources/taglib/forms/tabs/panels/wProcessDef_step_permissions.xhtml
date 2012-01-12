@@ -44,7 +44,7 @@
 					<h:outputText value="#{msg.label_step_responses}" />
 				</f:facet>
 
-				<rich:column sortBy="#{response.name}"
+				<rich:column sortBy="#{response.respOrder}"
 					style="width:250px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_name}" />
@@ -62,7 +62,7 @@
 		<rich:spacer height="10px"/>
 
 		<a4j:commandLink id="insert_step_response"
-			title="#{msg.label_add_new_step_response}"
+			title="#{msg.label_add_new_responses_to_this_step}"
 			rendered="#{contextoSeguridad.permiteCualquiera['530'] and wStepDefFormBean.currentWStepDef != null}"
 			onclick="javascript:Richfaces.showModalPanel('mpAddStepResponse');"
 			reRender="w_process_def_step_response_table">
