@@ -275,7 +275,7 @@
 			<key column="id_step" />
 			<composite-element class="org.beeblos.bpm.core.model.WStepUser">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
-					column="id_user" cascade="save-update"/>
+					column="id_user" cascade="save-update" lazy="false"/>
 				<property name="admin"	type="java.lang.Boolean">
 					<column name="admin">
 						<comment>indicates this role is an admin role for this process</comment>
