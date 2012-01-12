@@ -19,6 +19,7 @@ import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
+import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -440,6 +441,27 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		return (currentWStepDef != null && currentWStepDef.getRolesRelated() != null ?
 				currentWStepDef.getRolesRelated().size():
+					0);
+	}
+	
+	public List<WStepUser> getUserRelatedList() {
+		
+		List<WStepUser> lsu = new ArrayList<WStepUser>();
+		
+		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
+				&& currentWStepDef.getUsersRelated().size() != 0){
+			
+			lsu= new ArrayList<WStepUser>( currentWStepDef.getUsersRelated() );
+
+		}
+		
+		return lsu;
+	}
+	
+	public Integer getUserRelatedListSize() {
+		
+		return (currentWStepDef != null && currentWStepDef.getUsersRelated() != null ?
+				currentWStepDef.getUsersRelated().size():
 					0);
 	}
 	
