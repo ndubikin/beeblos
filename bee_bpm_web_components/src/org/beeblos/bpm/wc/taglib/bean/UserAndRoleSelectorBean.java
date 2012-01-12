@@ -157,6 +157,7 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 			*/
 		return ret;
 	}
+	
 	public String cancelAddWUserDefSelected() {
 
 		System.out.println("### TRAZA.... cancelAddWUserDefSelected()");
@@ -203,38 +204,21 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		
 	}
 
+	//rrl 20120112
 	public String addWRoleDefSelected() {
 
 		String ret = null;
 
-//		loadWProcessDefForm();
-
-		/*
-		WUserDef wUserDef;
-		WUserDefBL wUserDefBL = new WUserDefBL();
-
-		try {
-
-			for (String s : selectedWUserDefList) {
-				wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s));
-			}
-
-			loadWProcessDefForm();
-			
-		} catch (NumberFormatException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					"addWRoleDefSelected() NumberFormatException ..." };
-			agregarMensaje("204", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-		} catch (WUserDefException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".addWRoleDefSelected() WUserDefException ..." };
-			agregarMensaje("204", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-		}*/
-
+		strRoleString = "";
+		for (String s : selectedWRoleDefList) {
+			strRoleString += s + ",";
+		}
+		
+		// remove the last comma
+		if (strRoleString.endsWith(",")) {
+			strRoleString = strRoleString.substring(0, strRoleString.length() - 1);
+		}
+		
 		return ret;
 	}
 
@@ -273,10 +257,14 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		return strRoleString;
 	}
 
+	//rrl 20120112
 	public void setStrRoleString(String strRoleString) {
+		selectedWRoleDefList = new ArrayList<String>();
+		if (strRoleString != null && !"".equals(strRoleString)) {
+			selectedWRoleDefList=Arrays.asList(strRoleString.split(","));
+		}
+		
 		this.strRoleString = strRoleString;
-		selectedWRoleDefList=Arrays.asList(this.strRoleString.split(","));
 	}
-	
 	
 }

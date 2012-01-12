@@ -6,24 +6,27 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
 	<h:form>
 	
-<a4j:jsFunction name="loadRoleList" >
-	 <a4j:actionparam name="param1" assignTo="#{userAndRoleSelectorBean.strRoleString}"  />
+<a4j:jsFunction name="onsubmitSearchRole" action="#{wProcessDefFormBean.updateRolesRelated}" reRender="w_process_def_related_roles_form${action}">
+	 <a4j:actionparam name="param1" assignTo="#{wProcessDefFormBean.strRoleList}"  />
 </a4j:jsFunction>		
-	
 	
 		<a4j:commandLink id="inserta_rol"
 			title="#{msf.label_add_new_global_role_to_project}"
 			style="margin-left: 18px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
 			tabindex="-1"
-			onbeforedomupdate="return loadRoleList('#{wProcessDefFormBean.strRoleList}');"
-			rendered="#{contextoSeguridad.permiteCualquiera['530']}"
-			onclick="javascript:Richfaces.showModalPanel('mpSearchRole');">
-			<h:graphicImage id="imgInsertar" value="/images/insertar.png"
-				style="border:0;" />
+			oncomplete="javascript:Richfaces.showModalPanel('mpSearchRole');"
+			reRender="mpSearchRole"
+			rendered="#{contextoSeguridad.permiteCualquiera['530']}">
+			<h:graphicImage id="imgInsertar" value="/images/insertar.png" style="border:0;" />
+	 		<a4j:actionparam name="strRole" value="#{wProcessDefFormBean.strRoleList}" assignTo="#{userAndRoleSelectorBean.strRoleString}" />
 		</a4j:commandLink>
-
+				
 	</h:form>
 
 </ui:composition>
