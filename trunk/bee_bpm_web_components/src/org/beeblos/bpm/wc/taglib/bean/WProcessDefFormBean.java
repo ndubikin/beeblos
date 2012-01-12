@@ -6,6 +6,7 @@ import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -14,8 +15,10 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
@@ -64,6 +67,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120111
 	private WProcessRole currentWProcessRole;
 	private WProcessUser currentWProcessUser;
+
+	// rrl 20120112
+	private String strRoleList;
+
 
 	public static WProcessDefFormBean getCurrentInstance() {
 		return (WProcessDefFormBean) FacesContext.getCurrentInstance()
@@ -540,7 +547,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 //		System.out.println(this.currentWStepDef.getRolesRelated().toString());
 		
-		String strRoleList="";
+//		String strRoleList="";
+		
+		strRoleList="";  //rrl 20120112
 		for ( WProcessRole pr: this.currentWProcessDef.getRolesRelated()) {
 			strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+pr.getRole().getId();
 		}
@@ -549,6 +558,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return strRoleList;
 	}
 
+	public void setStrRoleList(String strRoleList) {
+		this.strRoleList = strRoleList;
+	}
+	
 	public WProcessRole getCurrentWProcessRole() {
 		return currentWProcessRole;
 	}
@@ -715,6 +728,48 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 		}
 		
+	}
+
+	//rrl 20120112
+	public String updateRolesRelated() {
+		WRoleDef wRoleDef;
+		WRoleDefBL wRoleDefBL = new WRoleDefBL();
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		Set<WProcessRole> rolesRelated = currentWProcessDef.getRolesRelated();
+		currentWProcessDef.getRolesRelated().removeAll(rolesRelated);
+		
+		try {
+			if (strRoleList!=null && !"".equals(strRoleList)) {
+	            for (String s : strRoleList.split("\\,")) {
+					wRoleDef = wRoleDefBL.getWRoleDefByPK(Integer.parseInt(s), null);
+					currentWProcessDef.addRole(wRoleDef, true, null, null, getCurrentUserId());
+	            }
+			}
+            
+			wpdBL.update(currentWProcessDef, getCurrentUserId());
+			
+		} catch (NumberFormatException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateRolesRelated() NumberFormatException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WRoleDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateRolesRelated() WRoleDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WProcessDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateRolesRelated() WProcessDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 //	public void setNewBeginStep() {

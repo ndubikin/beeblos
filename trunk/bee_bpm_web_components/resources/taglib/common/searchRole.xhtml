@@ -64,7 +64,7 @@
 					 style="width:80px; height:24px;" />
 				<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
 					actionListener="#{userAndRoleSelectorBean.addWRoleDefSelected}"
-					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchRole');"
+					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchRole');onsubmitSearchRole('#{userAndRoleSelectorBean.strRoleString}')"
 					style="width:120px; left-margin: 20px; height:24px;" />
 			</h:panelGroup>
 
