@@ -22,9 +22,9 @@
 	<h:panelGrid column="1">
 	
 		<h:panelGroup>
-			<h:outputText value="#{msg.label_confirm_removing_privileges_to_role} " />
-			<h:outputText id="wprocess_related_role_name"
-				value="#{wProcessDefFormBean.currentWProcessRole.role.name}"
+			<h:outputText value="#{msg.label_confirm_removing_privileges_to_user} " />
+			<h:outputText id="wprocess_related_user_name"
+				value="#{wProcessDefFormBean.currentWProcessUser.user.name}"
 				style="width:200px; font-size:13px;	padding: 4px;" />
 			<h:outputText value="#{msg.label_in_this_process}" />
 		</h:panelGroup>
@@ -33,12 +33,12 @@
 
 		<h:panelGroup>
 			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
-				onclick="javascript:Richfaces.hideModalPanel('mpDeleteWProcessRole')"
+				onclick="javascript:Richfaces.hideModalPanel('mpDeleteWProcessUser')"
 				style="width:80px; height:24px;" />
 			<a4j:commandButton id="delete_button_sr" value="#{msg.label_remove}"
-				actionListener="#{wProcessDefFormBean.deleteWProcessRole}"
-				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWProcessRole');"
-				reRender="w_process_def_related_roles_table"
+				actionListener="#{wProcessDefFormBean.deleteWProcessUser}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWProcessUser');"
+				reRender="w_process_def_related_users_table"
 				style="width:120px; margin-left: 10px; height:24px;" />
 		</h:panelGroup>
 

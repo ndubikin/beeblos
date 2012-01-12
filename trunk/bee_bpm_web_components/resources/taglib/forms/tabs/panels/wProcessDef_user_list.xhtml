@@ -12,6 +12,35 @@
 	</c:if>
 
 	<h:form id="w_process_def_related_users_form${action}">
+
+		<h:panelGrid width="90%" columns="1">
+		
+      		<rich:contextMenu attached="false" id="w_process_def_wprocess_related_user_menu" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessDefFormBean.changeAdminPrivilegesWProcessUser}"
+            		reRender="w_process_def_related_users_table" style="{styleIsNotAdmin}">
+                	<b> Make </b> {currentUserName} <b> admin of this process </b>
+               		<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentWProcessUser.user.id}" value="{currentUserId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentWProcessUser.user.name}" value="{currentUserName}"/>
+	           	</rich:menuItem>
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessDefFormBean.changeAdminPrivilegesWProcessUser}"
+            		reRender="w_process_def_related_users_table" style="{styleIsAdmin}">
+                	<b> Remove admin privileges for </b> {currentUserName}
+               		<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentWProcessUser.user.id}" value="{currentUserId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentWProcessUser.user.name}" value="{currentUserName}"/>
+	           	</rich:menuItem>
+           		<rich:menuItem ajaxSingle="true" 
+           			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteWProcessUser');"
+           			reRender="mpDeleteWProcessUser">
+                	<b> Remove </b> {currentUserName} <b> privileges to this step </b>
+               		<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentWProcessUser.user.id}" value="{currentUserId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentWProcessUser.user.name}" value="{currentUserName}"/>
+                <f:param value="#{lfact.numeroReferenciaPresupuesto == '' ? 'display:none;' : ''}" name="stylePresupuestoNotNull"/>
+ 	           	</rich:menuItem>
+            </rich:contextMenu>		
+		
+		</h:panelGrid>
+
+
 		<h:panelGrid width="90%" columns="1">
 
 			<rich:datascroller id="dseUp" for="w_process_def_related_users_table"
@@ -68,7 +97,11 @@
 				</rich:column>
 
 				<rich:componentControl event="onRowClick"
-					for="w_process_def_related_users_table" operation="show">
+					for="w_process_def_wprocess_related_user_menu" operation="show">
+             		<f:param value="#{ru.user.id}" name="currentUserId"/>
+              		<f:param value="#{ru.user.name}" name="currentUserName"/>
+                	<f:param value="#{ru.admin ? '' : 'display:none;'}" name="styleIsAdmin"/>
+                	<f:param value="#{ru.admin ? 'display:none;' : ''}" name="styleIsNotAdmin"/>
 				</rich:componentControl>
 
 			</rich:dataTable>

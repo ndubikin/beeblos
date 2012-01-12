@@ -17,18 +17,20 @@
       		<rich:contextMenu attached="false" id="w_process_def_wprocess_related_role_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefFormBean.changeAdminPrivilegesWProcessRole}"
             		reRender="w_process_def_related_roles_table" style="{styleIsNotAdmin}">
-                	<b> Make admin </b> {currentRoleId}
+                	<b> Make </b> {currentRoleName} <b> admin of this process </b>
                		<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentWProcessRole.role.id}" value="{currentRoleId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentWProcessRole.role.name}" value="{currentRoleName}"/>
 	           	</rich:menuItem>
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefFormBean.changeAdminPrivilegesWProcessRole}"
             		reRender="w_process_def_related_roles_table" style="{styleIsAdmin}">
-                	<b> Remove admin privileges </b> {currentRoleId}
+                	<b> Remove admin privileges for </b> {currentRoleName}
                		<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentWProcessRole.role.id}" value="{currentRoleId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentWProcessRole.role.name}" value="{currentRoleName}"/>
 	           	</rich:menuItem>
            		<rich:menuItem ajaxSingle="true" 
            			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteWProcessRole');"
            			reRender="mpDeleteWProcessRole">
-                	<b> Delete Role </b> {currentRoleId}
+                	<b> Remove </b> {currentRoleName} <b> privileges to this step </b>
                		<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentWProcessRole.role.id}" value="{currentRoleId}"/>
                		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentWProcessRole.role.name}" value="{currentRoleName}"/>
                 <f:param value="#{lfact.numeroReferenciaPresupuesto == '' ? 'display:none;' : ''}" name="stylePresupuestoNotNull"/>

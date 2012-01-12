@@ -60,8 +60,8 @@
 			<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
 				actionListener="#{wStepDefFormBean.addStepResponse}"
 				oncomplete="javascript:Richfaces.hideModalPanel('mpAddStepResponse');"
-				reRender="w_process_def_step_response_table"
-				style="width:120px; left-margin: 20px; height:24px;" />
+				reRender="w_process_def_step_permissions, w_process_def_step_response_table, mpAddStepResponse"
+				style="width:120px; margin-left: 10px; height:24px;" />
 		</h:panelGroup>
 
 	</h:form>

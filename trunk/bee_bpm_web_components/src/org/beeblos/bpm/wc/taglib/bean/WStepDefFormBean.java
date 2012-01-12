@@ -482,6 +482,25 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 			if (stepResponse.getName() != null && !"".equals(stepResponse.getName())){
 			
+				// dml 20120112
+				if (stepResponse.getRespOrder() == null || stepResponse.getRespOrder() == 0){
+					
+					Integer nextRespOrder = 0;
+					
+					for (WStepResponseDef wsrd : getResponseList()){
+						
+						if (nextRespOrder < wsrd.getRespOrder()){
+							
+							nextRespOrder = wsrd.getRespOrder();
+							
+						}
+						
+					}
+					
+					stepResponse.setRespOrder(nextRespOrder+1);
+					
+				}
+				
 				wsrdBL.add(stepResponse, this.getCurrentUserId().toString());
 				
 				this.currentWStepDef.addResponse(stepResponse);
@@ -490,6 +509,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 				loadObject();
 				getResponseList();
 				getResponseSize();
+				
+				//dml 20120112
+				setStepResponse(new WStepResponseDef());
 				
 			}
 		
