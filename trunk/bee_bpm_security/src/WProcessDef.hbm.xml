@@ -146,7 +146,7 @@
 			<column length="30" name="name" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="idDept" type="int">
-			<column name="id_dept" not-null="true">
+			<column name="id_dept">
 				<comment>departamento al que corresponde el paso</comment>
 			</column>
 		</property>
@@ -226,6 +226,22 @@
 					processor</comment>
 			</column>
 		</property>
+
+		<property generated="never" lazy="false" name="insertDate"
+			type="timestamp">
+			<column length="0" name="insert_date" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date" />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
+
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" name="timeUnit">
 			<column name="id_time_unit">

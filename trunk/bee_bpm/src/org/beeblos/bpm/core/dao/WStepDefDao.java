@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.dao;
 
+import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_ADDED;
+import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_MODIFIED;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -409,7 +412,7 @@ public class WStepDefDao {
 	}
 
 	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
-			String instructionsFilter, Integer userId, boolean isAdmin ) 
+			String instructionsFilter, Integer userId, boolean isAdmin, String action ) 
 	throws WStepDefException {
 		
 		org.hibernate.Session session = null;
@@ -441,7 +444,7 @@ public class WStepDefDao {
 		System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
 
 		// builds full query phrase
-		query += filter+getSQLOrder();
+		query += filter+getSQLOrder(action);
 
 		System.out.println(" ---->>>>>>>>>> FULL query:["+query+"]");
 		System.out.println(" ---->>>>>>>>>> userId: "+userId);
@@ -581,9 +584,25 @@ public class WStepDefDao {
 	
 	
 	
-	private String getSQLOrder() {
+	private String getSQLOrder(String action) {
 	
-		return "";
+		String ret = "";
+		
+		if (action==null || action.equals("")) {
+			
+			ret = "";
+			
+		} else if (action.equals(LAST_W_STEP_DEF_ADDED)) {
+			
+			ret = " ORDER by wsd.insert_date DESC ";
+			
+		} else if (action.equals(LAST_W_STEP_DEF_MODIFIED)) {
+			
+			ret = " ORDER by wsd.mod_date DESC ";
+			
+		}
+		
+		return ret;
 		
 	}
 	
