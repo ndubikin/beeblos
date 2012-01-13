@@ -143,7 +143,7 @@
   </welcome-file-list>
   <error-page>
     <error-code>500</error-code>
-    <location>/login.xhtml</location>
+    <location>/login.jsf</location>
   </error-page>
   <login-config>
     <auth-method>BASIC</auth-method>
