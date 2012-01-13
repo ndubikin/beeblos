@@ -52,6 +52,13 @@ public class Constants {
 
 	// dml 20120110
 	public static final String CREATE_NEW_WPROCESSDEF = "CREATE_NEW_WPROCESSDEF";
+	
+	// dml 20120112
+	public static final String SUCCESS_FORM_WSTEPDEF = "SUCCESS_FORM_WSTEPDEF";
+	public static final String LOAD_WSTEPDEF = "LOAD_WSTEPDEF";
+	public static final String CREATE_NEW_WSTEPDEF = "CREATE_NEW_WSTEPDEF";
+	public static final String WSTEPDEF_QUERY = "WSTEPDEF_QUERY";
+
 
 	
 }

@@ -172,6 +172,21 @@
 			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
 		</navigation-case>
 			
+		<navigation-case>
+			<from-outcome>WSTEPDEF_QUERY</from-outcome>
+			<to-view-id>/admin/wStepDefCrud.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>LOAD_WSTEPDEF</from-outcome>
+			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+			
+		<navigation-case>
+			<from-outcome>CREATE_NEW_WSTEPDEF</from-outcome>
+			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+			
 	</navigation-rule>
 
 	
@@ -200,6 +215,19 @@
 		<navigation-case>
 			<from-outcome>SUCCESS_FORM_WPROCESSDEF</from-outcome>
 			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<display-name>WStepDefForm</display-name>
+		<from-view-id>/forms/wStepDefFormCall.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>FAIL</from-outcome>
+			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>SUCCESS_FORM_WSTEPDEF</from-outcome>
+			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

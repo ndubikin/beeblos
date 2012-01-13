@@ -119,5 +119,15 @@ public class WStepDefBL {
 		
 	}
 
+	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
+			String instructionsFilter, Integer userId, boolean isAdmin ) 
+	throws WStepDefException {
+		
+		return new WStepDefDao().getStepListByFinder(nameFilter, commentFilter, instructionsFilter, 
+				userId, isAdmin);
+
+	}
+
+
 }
 	

@@ -56,6 +56,16 @@
  </tag>
  
  <tag>
+  <tag-name>wStepDefQuery</tag-name>
+  <source>/taglib/admin/wStepDefQuery.xhtml</source>
+ </tag>
+ 
+ <tag>
+  <tag-name>wStepDefForm</tag-name>
+  <source>/taglib/forms/wStepDefForm.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>miCuenta</tag-name>
   <source>/taglib/micuenta/miCuenta.xhtml</source>
  </tag>
