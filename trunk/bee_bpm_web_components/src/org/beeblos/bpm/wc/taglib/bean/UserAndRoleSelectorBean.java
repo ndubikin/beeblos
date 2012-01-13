@@ -2,7 +2,9 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
@@ -12,6 +14,7 @@ import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
@@ -36,6 +39,10 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	
 	// dml 20120109
 	private boolean selectedAllUsers;
+	
+	//rrl 20120113
+	private String searchRoleDefName;	
+	private List<SelectItem> wRoleDefListStatic = new ArrayList<SelectItem>();
 	
 	public UserAndRoleSelectorBean() {
 		super();
@@ -115,6 +122,10 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 					UtilsVs
 					.castStringPairToSelectitem(
 							wRoleDefBL.getComboList("", ""));
+			
+			// rrl 20120113 not to read several times to the database
+			wRoleDefListStatic = new ArrayList<SelectItem>(wRoleDefListCombo);
+			
 		} catch (WRoleDefException e) {
 			e.printStackTrace();
 		}
@@ -186,6 +197,8 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	//rrl 20120112
 	public String addWRoleDefSelected() {
 
+		System.out.println("### TRAZA.... addWRoleDefSelected()");
+
 		strRoleString = "";
 		for (String s : selectedWRoleDefList) {
 			strRoleString += s + ",";
@@ -207,9 +220,36 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		return null;
 	}
 	
-	
 	public String selectWRoleDefList() {
-
+		
+		System.out.println("### TRAZA.... selectWRoleDefList()");
+		
+//		// recover lost items selected (to the union of elements "selectedWRoleDefList" and "strRoleString") 
+//		Set<String> hsUnionWRoleDef=new HashSet<String>();
+//		hsUnionWRoleDef.addAll(selectedWRoleDefList);
+//		if (strRoleString != null && !"".equals(strRoleString)) {
+//			hsUnionWRoleDef.addAll(Arrays.asList(strRoleString.split(",")));
+//		}
+//
+//		selectedWRoleDefList.clear();
+//		selectedWRoleDefList.addAll(hsUnionWRoleDef);
+//		
+//		// refresh "strRoleString"
+//		this.strRoleString = "";
+//		for (String s : selectedWRoleDefList) {
+//			this.strRoleString += s + ",";
+//		}
+//		
+//		// remove the last comma
+//		if (this.strRoleString.endsWith(",")) {
+//			this.strRoleString = this.strRoleString.substring(0, this.strRoleString.length() - 1);
+//		}
+		
+		for (String item : selectedWRoleDefList) {
+			System.out.println("### TRAZA.... selectedWRoleDefList="+item);
+		}
+		System.out.println("#### TRAZA.... strRoleString="+strRoleString);
+		
 		// No eliminar este método, asi hace submit en Ajax y guarda selectedWRoleDefList
 		logger.debug("Item selected from selectedWRoleDefList");
 		
@@ -236,12 +276,47 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 
 	//rrl 20120112
 	public void setStrRoleString(String strRoleString) {
-		selectedWRoleDefList = new ArrayList<String>();
+		System.out.println("#### TRAZA: setStrRoleString().strRoleString="+strRoleString);
+		
+		for (String item : selectedWRoleDefList) {
+			System.out.println("### TRAZA.... selectedWRoleDefList="+item);
+		}
+		System.out.println("#### TRAZA.... strRoleString="+strRoleString);
+		
+		selectedWRoleDefList.clear();
 		if (strRoleString != null && !"".equals(strRoleString)) {
-			selectedWRoleDefList=Arrays.asList(strRoleString.split(","));
+			selectedWRoleDefList.addAll( Arrays.asList(strRoleString.split(",")) );
 		}
 		
-		this.strRoleString = strRoleString;
+		this.strRoleString = strRoleString;		
+		
+		
+// SOLUCION UNO		
+//		Set<String> hsUnionWRoleDef=new HashSet<String>();
+//		hsUnionWRoleDef.addAll(selectedWRoleDefList);
+//		
+//		selectedWRoleDefList.clear();
+//		if (strRoleString != null && !"".equals(strRoleString)) {
+//			hsUnionWRoleDef.addAll(Arrays.asList(strRoleString.split(",")));
+//			selectedWRoleDefList.addAll(hsUnionWRoleDef);
+//		}
+//		
+//		this.strRoleString = "";
+//		for (String s : selectedWRoleDefList) {
+//			this.strRoleString += s + ",";
+//		}
+//		
+//		// remove the last comma
+//		if (this.strRoleString.endsWith(",")) {
+//			this.strRoleString = this.strRoleString.substring(0, this.strRoleString.length() - 1);
+//		}
+
+		
+		// SOLUCION DOS		
+		
+		
+//		this.strRoleString = strRoleString;
+//		selectedWRoleDefList=Arrays.asList(this.strRoleString.split(","));		
 	}
 	
 	//rrl 20120113
@@ -256,6 +331,88 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		}
 		
 		this.strUserString = strUserString;
+	}
+	
+	public String getSearchRoleDefName() {
+		return searchRoleDefName;
+	}
+
+	public void setSearchRoleDefName(String searchRoleDefName) {
+		this.searchRoleDefName = searchRoleDefName;
+	}
+	
+	public List<SelectItem> getwRoleDefListStatic() {
+		return wRoleDefListStatic;
+	}
+
+	public void setwRoleDefListStatic(List<SelectItem> wRoleDefListStatic) {
+		this.wRoleDefListStatic = wRoleDefListStatic;
+	}
+	
+	public ArrayList<SelectItem> autocompleteRoleDefName(Object input) {
+		
+		System.out.println("#### TRAZA: autocompleteRoleDefName()");
+		
+		for (String item : selectedWRoleDefList) {
+			System.out.println("### TRAZA.... selectedWRoleDefList="+item);
+		}
+		System.out.println("#### TRAZA.... strRoleString="+strRoleString);
+		
+		
+		ArrayList<SelectItem> result = new ArrayList<SelectItem>();
+		String likeWordsName = (String) input;
+		
+		if (likeWordsName.trim().equals("")){
+			
+			// show all  
+			wRoleDefListCombo = new ArrayList<SelectItem>(wRoleDefListStatic);
+			
+		} else {
+			
+			// The static list has all the elements and also filter the table  
+			for ( SelectItem s: wRoleDefListStatic) {
+				if (s.getLabel().toLowerCase().indexOf(likeWordsName.toLowerCase()) > -1) {
+					result.add(s);
+				}
+			}
+			
+			wRoleDefListCombo = result;
+		}
+		
+		recoverLostWRoleDefSelected();		
+		
+		return result;
+	}
+
+	// rrl 20120113 recover lost items selected (to the union of elements "selectedWRoleDefList" and "strRoleString")
+	private void recoverLostWRoleDefSelected() {
+		
+		System.out.println("### TRAZA.... recoverLostItemsSelected()");
+		
+		Set<String> hsUnionWRoleDef=new HashSet<String>();
+		hsUnionWRoleDef.addAll(selectedWRoleDefList);
+		if (strRoleString != null && !"".equals(strRoleString)) {
+			hsUnionWRoleDef.addAll(Arrays.asList(strRoleString.split(",")));
+		}
+
+		selectedWRoleDefList.clear();
+		selectedWRoleDefList.addAll(hsUnionWRoleDef);
+		
+		// refresh "strRoleString"
+		this.strRoleString = "";
+		for (String s : selectedWRoleDefList) {
+			this.strRoleString += s + ",";
+		}
+		
+		// remove the last comma
+		if (this.strRoleString.endsWith(",")) {
+			this.strRoleString = this.strRoleString.substring(0, this.strRoleString.length() - 1);
+		}
+		
+		for (String item : selectedWRoleDefList) {
+			System.out.println("### TRAZA.... selectedWRoleDefList="+item);
+		}
+		System.out.println("#### TRAZA.... strRoleString="+strRoleString);
 	}
 	
 }

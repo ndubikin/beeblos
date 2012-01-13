@@ -17,13 +17,36 @@
 
 </style>
 
-	<h:form>
+		<h:form id="searchRole_form">  
+
+		<h:panelGrid column="1">
+			
+			<h:panelGroup>
+				<h:outputText value="#{msg.label_role_name}:" styleClass="firstLeftText"/>
+		
+				<h:inputText id="id_searchRoleDefName" 
+					value="#{userAndRoleSelectorBean.searchRoleDefName}"
+					style="width:450px; font-size:13px;	padding: 4px; margin-left:10px;" />
+					
+				<rich:suggestionbox status="none" immediate="true" 
+								suggestionAction="#{userAndRoleSelectorBean.autocompleteRoleDefName}" 
+								var="autoRole" for="id_searchRoleDefName"
+								reRender="id_select_many_role" 
+								fetchValue="#{autoRole.label}" width="450" height="100">
+					<h:column>
+						<h:outputText value="#{autoRole.label}"/>
+					</h:column>
+					
+					<a4j:support ajaxSingle="true" event="onselect">
+						<f:setPropertyActionListener value="#{autoRole.label}" target="#{userAndRoleSelectorBean.searchRoleDefName}" />
+					</a4j:support>	                				
+				</rich:suggestionbox>	
+			</h:panelGroup>
+	
 
 		<h:panelGroup>
 
 			<rich:spacer height="10" />
-
-
 
 			<h:selectBooleanCheckbox
 				value="#{userAndRoleSelectorBean.selectedAllRoles}">
@@ -39,7 +62,7 @@
 			<rich:spacer height="10" />
 
 			<rich:panel bodyClass="panelScroll"
-				style="width:90%px;">
+				style="width:100%;">
 				<f:facet name="header">
                 	<h:outputText value="#{msg.label_select_role}" />
             	</f:facet>
@@ -71,5 +94,6 @@
 
 		</h:panelGroup>
 
-	</h:form>
+		</h:panelGrid>
+		</h:form>
 </ui:composition>
