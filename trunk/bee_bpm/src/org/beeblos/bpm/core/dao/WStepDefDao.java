@@ -408,5 +408,184 @@ public class WStepDefDao {
 
 	}
 
+	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
+			String instructionsFilter, Integer userId, boolean isAdmin ) 
+	throws WStepDefException {
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		org.hibernate.Query q = null;
+					
+		List<WStepDef> lprocess = null;
+		
+		// build filter from user params. String and Integer values will be added to
+		// the String directly in the string filter.
+		// Date parameters must be added to hibernate query in the try / catch clause below
+		String userFilter = getSQLFilter(nameFilter, commentFilter, instructionsFilter);
+		
+		String requiredFilter = "";//getRequiredFilter(userId, isAdmin);
+		
+		String filter = userFilter + ( userFilter!=null && !"".equals(userFilter) 
+							&& requiredFilter!=null && !"".equals(requiredFilter)?" AND ":"" ) 
+							+ requiredFilter ;
+		
+		filter = (( filter != null && !"".equals(filter)) ? " WHERE ":"") + filter;
+		
+		System.out.println(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
+		System.out.println(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
+		System.out.println(" ---->>>>>>>>>> filter:["+filter+"]");
+		
+		// load base query phrase
+		String query = getBaseQuery( isAdmin );
+		
+		System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
+
+		// builds full query phrase
+		query += filter+getSQLOrder();
+
+		System.out.println(" ---->>>>>>>>>> FULL query:["+query+"]");
+		System.out.println(" ---->>>>>>>>>> userId: "+userId);
+
+		
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			q = session
+					.createSQLQuery(query)
+					.addEntity("WStepDef", WStepDef.class);
+
+			// set userId
+			//q.setInteger("userId",userId);
+			
+			// retrieve list
+			lprocess = q.list();
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="WStepDefDao: 002 getWStepDefs() - can't obtain process list - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(message );
+			throw new WStepDefException(message);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="WStepDefDao: 002B getWStepDefs() - can't obtain process list - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(message );
+			throw new WStepDefException(message);
+		}
+		
+		return lprocess;
+	}
+
+	private String getRequiredFilter ( Integer userId, boolean isAdmin ) {
+		
+		String reqFilter = " ( ( wsr.id_role in ";
+		reqFilter +="(select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId ) OR  ";
+		reqFilter +=" ( wsu.id_user =:userId ) OR  ";
+		reqFilter +=" ( wswa.id_role in ";
+		reqFilter +="(select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId )) OR  ";
+		reqFilter +=" ( wswa.id_user =:userId )  ) ) ";
+	
+		return reqFilter;
+	
+	}
+	
+	private String getBaseQuery(boolean isAdmin) {
+	
+		String baseQueryTmp="SELECT * FROM w_step_def wsd ";
+	
+		return baseQueryTmp;
+	
+	}
+	
+	private String getFilter(String nameFilter, String commentFilter, String instructionsFilter) {
+
+		String filter="";
+	
+		if ( nameFilter!=null && ! "".equals(nameFilter) ) {
+			if ( filter ==null || !"".equals(filter)) {
+				filter +=" AND ";
+			}
+			filter +=" wpd.name = "+nameFilter;
+		}
+	
+		if ( commentFilter!=null && ! "".equals(commentFilter) ) {
+			if ( filter ==null || !"".equals(filter)) {
+				filter +=" AND ";
+			}
+			filter +=" stepComments = "+commentFilter;
+		}
+	
+		if ( instructionsFilter!=null && ! "".equals(instructionsFilter) ) {
+			if ( filter ==null || !"".equals(filter)) {
+				filter +=" AND ";
+			}
+			filter +=" instructions = "+instructionsFilter;
+		}
+	
+		return filter;
+	
+	}
+	
+	private String getSQLFilter(String nameFilter, String commentFilter, String instructionsFilter) {
+	
+		String filter="";
+	
+	
+		if (nameFilter!=null && ! "".equals(nameFilter)){
+			if (filter == ""){
+				filter+=" wsd.name LIKE '%"+nameFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wsd.name LIKE '%"+nameFilter.trim()+"%' ";
+			}
+		}
+		
+		if (commentFilter!=null && ! "".equals(commentFilter)){
+			if (filter == ""){
+				filter+=" wsd.step_comments LIKE '%"+commentFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wsd.step_comments LIKE '%"+commentFilter.trim()+"%' ";
+			}
+		}
+	
+		if (instructionsFilter!=null && ! "".equals(instructionsFilter)){
+			if (filter == ""){
+				filter+=" wsd.instructions LIKE '%"+instructionsFilter.trim()+"%' ";
+			}
+			else { 
+				filter+=" AND wsd.instructions LIKE '%"+instructionsFilter.trim()+"%' ";
+			}
+		}
+	
+		return filter;
+	}
+	
+	
+	
+	private String getOrder() {
+	
+		return "";
+		
+	}
+	
+	
+	
+	private String getSQLOrder() {
+	
+		return "";
+		
+	}
+	
 }
 	

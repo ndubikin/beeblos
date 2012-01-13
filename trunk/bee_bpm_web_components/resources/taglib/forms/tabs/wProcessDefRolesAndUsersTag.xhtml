@@ -17,26 +17,26 @@
 
 	<rich:spacer height="10" />
 
-		<fieldset class="demo_fieldset">
-			<legend class="demo_legend">#{msg.label_roles_involved_in_this_process}</legend>
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">#{msg.label_roles_involved_in_this_process}</legend>
 
-			<ui:include src="panels/wProcessDef_role_list.xhtml">
-				<ui:param name="action" value="${action}" />
-			</ui:include>
-			<ui:include src="panels/wProcessDef_role_add_new.xhtml" >
-				<ui:param name="action" value="${action}" />
-			</ui:include>
-		</fieldset>
+		<ui:include src="panels/wProcessDef_role_list.xhtml">
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+		<ui:include src="panels/wProcessDef_role_add_new.xhtml" >
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+	</fieldset>
 
-		<fieldset class="demo_fieldset">
-			<legend class="demo_legend">#{msg.label_users_involved_in_this_process}</legend>
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">#{msg.label_users_involved_in_this_process}</legend>
 
-			<ui:include src="panels/wProcessDef_user_list.xhtml">
-				<ui:param name="action" value="${action}" />
-			</ui:include>
-			<ui:include src="panels/wProcessDef_user_add_new.xhtml" >
-				<ui:param name="action" value="${action}" />
-			</ui:include>
-		</fieldset>
+		<ui:include src="panels/wProcessDef_user_list.xhtml">
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+		<ui:include src="panels/wProcessDef_user_add_new.xhtml" >
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+	</fieldset>
 
 </ui:composition>

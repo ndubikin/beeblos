@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+<style type="text/css">
+.rich-calendar-input {
+	width: 80px;
+	font-size: 13px !important;
+	padding: 4px;
+}
+</style>
+
+	<h:form id="w_process_def_steps_tag_form">
+
+		<h:panelGrid width="98%" columns="2" style=" width : 650px;"
+			columnClasses="colStyle140px, colStyle480px">
+
+			<h:outputText value="#{msg.label_list_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_id_list_zone"
+				value="#{wStepDefFormBean.currentWStepDef.idListZone}"
+				readonly="true" style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_work_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_id_work_zone"
+				value="#{wStepDefFormBean.currentWStepDef.idWorkZone}"
+				readonly="true" style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_additional_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_id_additional_zone"
+				value="#{wStepDefFormBean.currentWStepDef.idAdditionalZone}"
+				readonly="true" style="width:480px; font-size:13px;	padding: 4px;" />
+
+		</h:panelGrid>
+		
+	</h:form>
+	
+</ui:composition>
