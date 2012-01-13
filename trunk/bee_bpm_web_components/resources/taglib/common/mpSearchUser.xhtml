@@ -6,7 +6,8 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	
-	<rich:modalPanel  id="mpSearchUser" width="600" height="600">
+	<rich:modalPanel  id="mpSearchUser" width="600" height="420"
+		onshow="document.getElementById('userSearchTitle').innerHTML=event.parameters.titleParam;">
 	    <f:facet name="header">
 	        <h:panelGroup id="userSearchTitlePanel">
 	            <h:outputText id="userSearchTitle"  value="#{msg.label_people_search}"></h:outputText>

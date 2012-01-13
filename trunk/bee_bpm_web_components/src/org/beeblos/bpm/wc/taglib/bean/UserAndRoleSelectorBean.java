@@ -25,6 +25,7 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	
 	private List<String> selectedWUserDefList = new ArrayList<String>();
 	private List<SelectItem> wUserDefListCombo = new ArrayList<SelectItem>();
+	private String strUserString;  //rrl 20120113
 	
 	private boolean selectedAllRoles;
 
@@ -120,42 +121,20 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		
 	}
 
-	public String addSelectedWUserDef() {
+	//rrl 20120113
+	public String addWUserDefSelected() {
 
-
-		String ret = null;
-
-//		loadWProcessDefForm();
-
-		/*
-		WUserDef wUserDef;
-		WUserDefBL wUserDefBL = new WUserDefBL();
-
-		try {
-
-
-			
-			for (String s : selectedWUserDefList) {
-				wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s));
-			}
-			
-			loadWProcessDefForm();
-			
-			} catch (NumberFormatException e) {
-				String mensaje = e.getMessage() + " - " + e.getCause();
-				String params[] = { mensaje + ",",
-						".addSelectedWUserDef() WUserDef NumberFormatException ..." };
-				agregarMensaje("204", mensaje, params, FGPException.ERROR);
-				e.printStackTrace();
-			} catch (WUserDefException e) {
-				String mensaje = e.getMessage() + " - " + e.getCause();
-				String params[] = { mensaje + ",",
-						".addSelectedWUserDef() WUserDef WUserDefException ..." };
-				agregarMensaje("204", mensaje, params, FGPException.ERROR);
-				e.printStackTrace();
-			}
-			*/
-		return ret;
+		strUserString = "";
+		for (String s : selectedWUserDefList) {
+			strUserString += s + ",";
+		}
+		
+		// remove the last comma
+		if (strUserString.endsWith(",")) {
+			strUserString = strUserString.substring(0, strUserString.length() - 1);
+		}
+		
+		return null;
 	}
 	
 	public String cancelAddWUserDefSelected() {
@@ -207,8 +186,6 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	//rrl 20120112
 	public String addWRoleDefSelected() {
 
-		String ret = null;
-
 		strRoleString = "";
 		for (String s : selectedWRoleDefList) {
 			strRoleString += s + ",";
@@ -219,7 +196,7 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 			strRoleString = strRoleString.substring(0, strRoleString.length() - 1);
 		}
 		
-		return ret;
+		return null;
 	}
 
 
@@ -265,6 +242,20 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		}
 		
 		this.strRoleString = strRoleString;
+	}
+	
+	//rrl 20120113
+	public String getStrUserString() {
+		return strUserString;
+	}
+
+	public void setStrUserString(String strUserString) {
+		selectedWUserDefList = new ArrayList<String>();
+		if (strUserString != null && !"".equals(strUserString)) {
+			selectedWUserDefList=Arrays.asList(strUserString.split(","));
+		}
+		
+		this.strUserString = strUserString;
 	}
 	
 }
