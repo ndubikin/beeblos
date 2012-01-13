@@ -59,6 +59,9 @@ public class Constants {
 	public static final String CREATE_NEW_WSTEPDEF = "CREATE_NEW_WSTEPDEF";
 	public static final String WSTEPDEF_QUERY = "WSTEPDEF_QUERY";
 
+	// dml 20120113
+	public static final String LAST_W_STEP_DEF_ADDED = "LAST_W_STEP_DEF_ADDED";	
+	public static final String LAST_W_STEP_DEF_MODIFIED = "LAST_W_STEP_DEF_MODIFIED";
 
 	
 }

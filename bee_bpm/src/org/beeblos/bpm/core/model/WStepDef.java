@@ -50,6 +50,12 @@ public class WStepDef implements java.io.Serializable {
 	// MANY2MANY
 	Set<WStepRole> rolesRelated=new HashSet<WStepRole>();
 	Set<WStepUser> usersRelated=new HashSet<WStepUser>();
+	
+	// dml 20120113
+	private Date insertDate;
+	private Integer insertUser;
+	private Date modDate;
+	private Integer modUser;
 
 	public WStepDef() {
 	}
@@ -66,7 +72,8 @@ public class WStepDef implements java.io.Serializable {
 	public WStepDef(Integer id, String name, Integer idDept, Integer idPhase,
 			String instructions, String stepComments, String idListZone,
 			String idWorkZone, String idAdditionalZone/*,
-			Set<WStepResponseDef> response*/) {
+			Set<WStepResponseDef> response*/, Date insertDate, 
+			Integer insertUser, Date modDate, Integer modUser) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -78,6 +85,10 @@ public class WStepDef implements java.io.Serializable {
 		this.idWorkZone = idWorkZone;
 		this.idAdditionalZone = idAdditionalZone;
 //		this.response = response;
+		this.insertDate = insertDate;
+		this.insertUser = insertUser;
+		this.modDate = modDate;
+		this.modUser = modUser;
 	}
 
 
@@ -527,6 +538,10 @@ public class WStepDef implements java.io.Serializable {
 				+ "runtimeModifiable="
 				+ runtimeModifiable
 				+ ", "
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser + ", " : "")
 				+ (response != null ? "response=" + response + ", " : "")
 				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated + ", "
 						: "")
@@ -595,6 +610,38 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setUsersRelated(Set<WStepUser> usersRelated) {
 		this.usersRelated = usersRelated;
+	}
+
+	public Date getInsertDate() {
+		return insertDate;
+	}
+
+	public void setInsertDate(Date insertDate) {
+		this.insertDate = insertDate;
+	}
+
+	public Integer getInsertUser() {
+		return insertUser;
+	}
+
+	public void setInsertUser(Integer insertUser) {
+		this.insertUser = insertUser;
+	}
+
+	public Date getModDate() {
+		return modDate;
+	}
+
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
+	}
+
+	public Integer getModUser() {
+		return modUser;
+	}
+
+	public void setModUser(Integer modUser) {
+		this.modUser = modUser;
 	}
 
 	// nes 20111209

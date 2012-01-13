@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -26,10 +29,10 @@ public class WStepDefBL {
 		logger.debug("add() WStepDef - Name: ["+step.getName()+"]");
 		
 		// timestamp & trace info
-//		step.setFechaAlta(new Date());
-//		step.setFechaModificacion(new Date());
-//		step.setUsuarioAlta(user);
-//		step.setUsuarioModificacion(user);
+		step.setInsertDate(new Date());
+		step.setModDate( DEFAULT_MOD_DATE);
+		step.setInsertUser(currentUser);
+		step.setModUser(null);
 		return new WStepDefDao().add(step);
 
 	}
@@ -42,8 +45,8 @@ public class WStepDefBL {
 		if (!step.equals(new WStepDefDao().getWStepDefByPK(step.getId())) ) {
 
 			// timestamp & trace info
-//			step.setFechaModificacion(new Date());
-//			step.setUsuarioModificacion(user);
+			step.setModDate(new Date());
+			step.setModUser(currentUser);
 			new WStepDefDao().update(step);
 			
 		} else {
@@ -120,11 +123,11 @@ public class WStepDefBL {
 	}
 
 	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
-			String instructionsFilter, Integer userId, boolean isAdmin ) 
+			String instructionsFilter, Integer userId, boolean isAdmin, String action ) 
 	throws WStepDefException {
 		
 		return new WStepDefDao().getStepListByFinder(nameFilter, commentFilter, instructionsFilter, 
-				userId, isAdmin);
+				userId, isAdmin, action);
 
 	}
 

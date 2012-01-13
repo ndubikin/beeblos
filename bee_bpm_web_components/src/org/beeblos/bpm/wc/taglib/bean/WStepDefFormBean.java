@@ -6,6 +6,7 @@ import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WSTEPDEF;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -13,13 +14,20 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WTimeUnitBL;
+import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessRole;
+import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
@@ -65,7 +73,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private WStepRole currentWStepRole;
 	private WStepUser currentWStepUser;	
 	
-    public static WStepDefFormBean getCurrentInstance() {
+	// rrl 20120113
+	private String strRoleList;
+	private String strUserList;
+
+	public static WStepDefFormBean getCurrentInstance() {
         return (WStepDefFormBean) FacesContext.getCurrentInstance().getExternalContext()
             .getRequestMap().get(MANAGED_BEAN_NAME);
     }
@@ -204,10 +216,15 @@ public class WStepDefFormBean extends CoreManagedBean {
 		boolean result = false;
 		
 		if (this.currentWStepDef != null && this.currentWStepDef.getName() != null 
-				&& !"".equals(this.currentWStepDef.getName())
-				&& this.currentWStepDef.getIdDept() != null){
+				&& !"".equals(this.currentWStepDef.getName())){
 				
 			result = true;
+			
+		} else {
+			
+			String message = "You must insert correct values";
+			String params[] = {message + ",", ".Please confirm input values." };				
+			agregarMensaje("205",message,params,FGPException.ERROR);			
 			
 		}
 
@@ -272,7 +289,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	
 	
 	public String add() throws WStepDefException {		
-		logger.debug("ComplexWStepDefanagementBean: add: objectId:["+this.currObjId+"] ");
+		logger.debug("WStepDefFormBean: add: objectId:["+this.currObjId+"] ");
 		
 		setShowHeaderMessage(false);
 
@@ -294,13 +311,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 		WStepDefBL wsdBL = new WStepDefBL();
 	
 		try {	
-			
-			// dml 20120113
-			if (currentWStepDef.getDeadlineDate().getTime() != 0){
-				
-				currentWStepDef.setDeadlineTime(currentWStepDef.getDeadlineDate());
-				
-			}
 			
 			setModel(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 
@@ -352,14 +362,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		WStepDefBL wsdBL = new WStepDefBL();
 
 		try {
-			
-			// dml 20120113
-			if (currentWStepDef.getDeadlineDate().getTime() != 0){
-				
-				currentWStepDef.setDeadlineTime(currentWStepDef.getDeadlineDate());
-				
-			}			
-			
+						
 			setModel();
 			
 			wsdBL.update(currentWStepDef, this.getCurrentUserId() );
@@ -386,8 +389,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 			String params[] = {message + ",", ".Please confirm input values." };				
 			agregarMensaje("205",message,params,FGPException.ERROR);	
 
-			logger.error(message);
-			
 		}
 		
 		return ret;
@@ -770,6 +771,18 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 
+	public String getStrUserList() {
+		return strUserList;
+	}
+
+	public void setStrUserList(String strUserList) {
+		this.strUserList = strUserList;
+	}
+
+	public void setStrRoleList(String strRoleList) {
+		this.strRoleList = strRoleList;
+	}
+
 	// dml 20120113
 	public void deleteWStepUser(){
 		
@@ -937,5 +950,90 @@ public class WStepDefFormBean extends CoreManagedBean {
 		}
 		
 	}
+	
+	//rrl 20120112
+	public String updateRolesRelated() {
+		WRoleDef wRoleDef;
+		WRoleDefBL wRoleDefBL = new WRoleDefBL();
+		WStepDefBL wsdBL = new WStepDefBL();
+		
+		Set<WStepRole> rolesRelated = currentWStepDef.getRolesRelated();
+		currentWStepDef.getRolesRelated().removeAll(rolesRelated);
+		
+		try {
+			if (strRoleList!=null && !"".equals(strRoleList)) {
+	            for (String s : strRoleList.split(",")) {
+					wRoleDef = wRoleDefBL.getWRoleDefByPK(Integer.parseInt(s), null);
+					currentWStepDef.addRole(wRoleDef, false, null, null, getCurrentUserId());
+	            }
+			}
+            
+			wsdBL.update(currentWStepDef, getCurrentUserId());
+			
+		} catch (NumberFormatException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateRolesRelated() NumberFormatException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WRoleDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateRolesRelated() WRoleDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WStepDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateRolesRelated() WStepDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	//rrl 20120113
+	public String updateUsersRelated() {
+		WUserDef wUserDef;
+		WUserDefBL wUserDefBL = new WUserDefBL();
+		WStepDefBL wsdBL = new WStepDefBL();
+		
+		Set<WStepUser> usersRelated = currentWStepDef.getUsersRelated();
+		currentWStepDef.getUsersRelated().removeAll(usersRelated);
+		
+		try {
+			if (strUserList!=null && !"".equals(strUserList)) {
+	            for (String s : strUserList.split(",")) {
+					wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s), null);
+					currentWStepDef.addUser(wUserDef, false, null, null, getCurrentUserId());
+	            }
+			}
+            
+			wsdBL.update(currentWStepDef, getCurrentUserId());
+			
+		} catch (NumberFormatException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateUsersRelated() NumberFormatException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WUserDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateUsersRelated() WUserDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WStepDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateUsersRelated() WStepDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
 	
 }

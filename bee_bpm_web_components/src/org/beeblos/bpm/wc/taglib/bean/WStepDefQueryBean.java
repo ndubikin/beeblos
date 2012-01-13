@@ -78,7 +78,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 
 			wStepDefList = (ArrayList<WStepDef>) new WStepDefBL()
 					.getStepListByFinder(nameFilter, commentsFilter, 
-							instructionsFilter, getCurrentUserId(), true);
+							instructionsFilter, getCurrentUserId(), true, action);
 
 			nResults = wStepDefList.size();
 

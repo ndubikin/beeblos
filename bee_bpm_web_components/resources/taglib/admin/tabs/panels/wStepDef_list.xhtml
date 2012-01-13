@@ -118,7 +118,31 @@
 					</f:facet>
 					<h:outputText value="#{wsd.instructions}" />
 				</rich:column>
-
+	
+	            <rich:column sortBy="#{wsd.insertDate}" 
+	            	style="width:45px; text-align: left;" 
+	            	rendered="#{wStepDefQueryBean.action eq 'LAST_W_STEP_DEF_ADDED'}"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_insert_date}"/>
+	                </f:facet>
+	                <h:outputText value="#{wsd.insertDate}">
+						<f:convertDateTime pattern="#{msg.label_date_format}" 
+							timeZone="#{wStepDefQueryBean.timeZone}"/>
+	                </h:outputText>
+	            </rich:column>
+	            
+	            <rich:column sortBy="#{wsd.modDate}" 
+	            	style="width:45px; text-align: left;" 
+	            	rendered="#{wStepDefQueryBean.action eq 'LAST_W_STEP_DEF_MODIFIED'}"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_modify_date}"/>
+	                </f:facet>
+	                <h:outputText value="#{wsd.modDate}">
+						<f:convertDateTime pattern="#{msg.label_date_format}" 
+							timeZone="#{wStepDefQueryBean.timeZone}"/>
+	                </h:outputText>
+	            </rich:column>
+	            
 				<rich:componentControl event="onRowClick" for="w_step_def_search_menu"
 					operation="show">
                <f:param value="#{wsd.id}" name="currentRowId"/>
