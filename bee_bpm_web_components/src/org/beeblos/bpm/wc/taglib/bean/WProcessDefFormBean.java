@@ -17,9 +17,11 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
@@ -68,8 +70,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private WProcessRole currentWProcessRole;
 	private WProcessUser currentWProcessUser;
 
-	// rrl 20120112
+	// rrl 20120113
 	private String strRoleList;
+	private String strUserList;
 
 
 	public static WProcessDefFormBean getCurrentInstance() {
@@ -543,13 +546,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.selectedWUserDefList = selectedWUserDefList;
 	}
 
+	//rrl 20120112
 	public String getStrRoleList() {
-		
-//		System.out.println(this.currentWStepDef.getRolesRelated().toString());
-		
-//		String strRoleList="";
-		
-		strRoleList="";  //rrl 20120112
+		strRoleList="";
 		for ( WProcessRole pr: this.currentWProcessDef.getRolesRelated()) {
 			strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+pr.getRole().getId();
 		}
@@ -560,6 +559,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setStrRoleList(String strRoleList) {
 		this.strRoleList = strRoleList;
+	}
+	
+	//rrl 20120113
+	public String getStrUserList() {
+		strUserList="";
+		
+		for ( WProcessUser pu: this.currentWProcessDef.getUsersRelated()) {
+			strUserList+=(strUserList!=null && !"".equals(strUserList)?",":"")+pu.getUser().getId();
+		}
+		
+		System.out.println("--------------->>>>>>>>> strUserList ------------>>>>>>>>"+strUserList);
+		return strUserList;
+	}
+
+	public void setStrUserList(String strUserList) {
+		this.strUserList = strUserList;
 	}
 	
 	public WProcessRole getCurrentWProcessRole() {
@@ -741,9 +756,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		try {
 			if (strRoleList!=null && !"".equals(strRoleList)) {
-	            for (String s : strRoleList.split("\\,")) {
+	            for (String s : strRoleList.split(",")) {
 					wRoleDef = wRoleDefBL.getWRoleDefByPK(Integer.parseInt(s), null);
-					currentWProcessDef.addRole(wRoleDef, true, null, null, getCurrentUserId());
+					currentWProcessDef.addRole(wRoleDef, false, null, null, getCurrentUserId());
 	            }
 			}
             
@@ -772,6 +787,51 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return null;
 	}
 	
+	//rrl 20120113
+	public String updateUsersRelated() {
+		WUserDef wUserDef;
+		WUserDefBL wUserDefBL = new WUserDefBL();
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		Set<WProcessUser> usersRelated = currentWProcessDef.getUsersRelated();
+		currentWProcessDef.getUsersRelated().removeAll(usersRelated);
+		
+		try {
+			if (strUserList!=null && !"".equals(strUserList)) {
+	            for (String s : strUserList.split(",")) {
+					wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s), null);
+					currentWProcessDef.addUser(wUserDef, false, null, null, getCurrentUserId());
+	            }
+			}
+            
+			wpdBL.update(currentWProcessDef, getCurrentUserId());
+			
+		} catch (NumberFormatException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateUsersRelated() NumberFormatException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WUserDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateUsersRelated() WUserDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WProcessDefException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateUsersRelated() WProcessDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	
+	
+
 //	public void setNewBeginStep() {
 //		if ( this.currentWProcessDef!=null ) {
 //			if ( this.currentWProcessDef.getBeginStep()!=null ) {

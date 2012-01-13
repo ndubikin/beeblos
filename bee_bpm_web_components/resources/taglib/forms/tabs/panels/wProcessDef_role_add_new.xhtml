@@ -20,7 +20,7 @@
 			title="#{msf.label_add_new_global_role_to_project}"
 			style="margin-left: 18px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
 			tabindex="-1"
-			oncomplete="javascript:Richfaces.showModalPanel('mpSearchRole');"
+			oncomplete="javascript:Richfaces.showModalPanel('mpSearchRole', {titleParam: '#{msg.label_roles_involved_in_this_process}'});"
 			reRender="mpSearchRole"
 			rendered="#{contextoSeguridad.permiteCualquiera['530']}">
 			<h:graphicImage id="imgInsertar" value="/images/insertar.png" style="border:0;" />

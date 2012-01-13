@@ -6,17 +6,28 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
 	<h:form>
+	
+<a4j:jsFunction name="onsubmitSearchUser" action="#{wProcessDefFormBean.updateUsersRelated}" reRender="w_process_def_related_users_form${action}">
+	 <a4j:actionparam name="param1" assignTo="#{wProcessDefFormBean.strUserList}"  />
+</a4j:jsFunction>		
+	
 		<a4j:commandLink id="insert_user"
 			title="#{msg.label_add_new_global_user_to_project}"
 			style="margin-left: 18px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
 			tabindex="-1"
-			rendered="#{contextoSeguridad.permiteCualquiera['530']}"
-			onclick="javascript:Richfaces.showModalPanel('mpSearchUser');">
+			oncomplete="javascript:Richfaces.showModalPanel('mpSearchUser', {titleParam: '#{msg.label_users_involved_in_this_process}'});"
+			reRender="mpSearchUser"
+			rendered="#{contextoSeguridad.permiteCualquiera['530']}">
 			<h:graphicImage id="imgInsertar" value="/images/insertar.png"
 				style="border:0;" />
+	 		<a4j:actionparam name="strUser" value="#{wProcessDefFormBean.strUserList}" assignTo="#{userAndRoleSelectorBean.strUserString}" />
 		</a4j:commandLink>
-
+		
 	</h:form>
 
 </ui:composition>
