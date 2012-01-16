@@ -106,7 +106,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				
 		this.setReadOnly(false);
 		
-		createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+		recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 										  // to avoid access to null objects from view
 
 	}
@@ -119,7 +119,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		// dml 20120111
 		this.currentWProcessRole = new WProcessRole();
 		this.currentWProcessUser = new WProcessUser();
-		createNullObjectTypeProperties();
+		recoverNullObjects();
 		
 		this.readOnly=true;
 
@@ -158,7 +158,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			}
 
-			createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+			recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 
 		} catch (WProcessDefException ex1) {
 
@@ -179,7 +179,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 	}
 
-	private void createNullObjectTypeProperties() {
+	private void recoverNullObjects() {
 
 		if (currentWProcessDef != null) {
 
@@ -249,10 +249,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			try {
 
 				result = add();
-				createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<<IMPORTANT>>>>>>>>>>>>>>>>>>
+				recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<<IMPORTANT>>>>>>>>>>>>>>>>>>
 
 			} catch (WProcessDefException e) {
-				createNullObjectTypeProperties();
+				recoverNullObjects();
 				result = FAIL;
 			}
 		}
@@ -272,7 +272,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				_reset();
 
 			} catch (WProcessDefException e) {
-				createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<<IMPORTANT>>>>>>>>>>>>>>>>>>
+				recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<<IMPORTANT>>>>>>>>>>>>>>>>>>
 				result = null;
 			}
 		}
@@ -321,7 +321,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				update();
 			}
 
-			createNullObjectTypeProperties();
+			recoverNullObjects();
 			
 			this.setReadOnly(true);
 			
@@ -367,7 +367,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			loadCurrentWProcessDef(); // reload object from db
 
-			createNullObjectTypeProperties();
+			recoverNullObjects();
 
 			setShowHeaderMessage(true);
 			ret = SUCCESS_FORM_WPROCESSDEF;
@@ -762,7 +762,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	            }
 			}
             
-			wpdBL.update(currentWProcessDef, getCurrentUserId());
+			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -791,7 +791,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public String updateUsersRelated() {
 		WUserDef wUserDef;
 		WUserDefBL wUserDefBL = new WUserDefBL();
-		WProcessDefBL wpdBL = new WProcessDefBL();
 		
 		Set<WProcessUser> usersRelated = currentWProcessDef.getUsersRelated();
 		currentWProcessDef.getUsersRelated().removeAll(usersRelated);
@@ -804,7 +803,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	            }
 			}
             
-			wpdBL.update(currentWProcessDef, getCurrentUserId());
+			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -829,6 +828,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return null;
 	}
 	
+	
+	private void updateCurrentObject() throws  WProcessDefException {
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		this.setModel();
+		wpdBL.update(this.currentWProcessDef, getCurrentUserId());
+		this.recoverNullObjects();
+	}
+
 	
 	
 

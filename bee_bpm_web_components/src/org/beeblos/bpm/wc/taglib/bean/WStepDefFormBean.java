@@ -105,7 +105,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		currentWStepDef = new WStepDef(EMPTY_OBJECT);
 		
-		createNullObjectTypeProperties();
+		recoverNullObjects();
 		
 		this.setReadOnly(false);
 				
@@ -170,7 +170,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	
 	// CREATE NULL PROPERTIES OF OBJECT TYPE TO AVOID PROBLEMS
 	// WITH VIEW AND ITS REFERENES TO THESE OBJECTS ...
-	private void createNullObjectTypeProperties(){
+	private void recoverNullObjects(){
 		
 		if(currentWStepDef != null){
 			
@@ -254,10 +254,10 @@ public class WStepDefFormBean extends CoreManagedBean {
 			try {
 
 				result = add();
-				createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<<IMPORTANT>>>>>>>>>>>>>>>>>>
+				recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<<IMPORTANT>>>>>>>>>>>>>>>>>>
 
 			} catch (WStepDefException e) {
-				createNullObjectTypeProperties();
+				recoverNullObjects();
 				result = FAIL;
 			}
 		}
@@ -277,7 +277,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 				_reset();
 				
 			} catch (WStepDefException e) {
-				createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+				recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 				result =  null;
 			}
 		}
@@ -322,7 +322,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 				update();
 			}
 			
-			createNullObjectTypeProperties();
+			recoverNullObjects();
 			
 			this.setReadOnly(true);
 
@@ -367,7 +367,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 			wsdBL.update(currentWStepDef, this.getCurrentUserId() );
 			
-			createNullObjectTypeProperties();
+			recoverNullObjects();
 			
 			this.setReadOnly(true);
 
@@ -413,7 +413,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 					wsdBL
 						.getWStepDefByPK(this.currObjId, this.getCurrentUserId() );
 			
-			createNullObjectTypeProperties();
+			recoverNullObjects();
 			
 		} catch (WStepDefException ex1) {
 			logger.error("Error retrieving object: "
@@ -955,7 +955,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public String updateRolesRelated() {
 		WRoleDef wRoleDef;
 		WRoleDefBL wRoleDefBL = new WRoleDefBL();
-		WStepDefBL wsdBL = new WStepDefBL();
+		//WStepDefBL wsdBL = new WStepDefBL();
 		
 		Set<WStepRole> rolesRelated = currentWStepDef.getRolesRelated();
 		currentWStepDef.getRolesRelated().removeAll(rolesRelated);
@@ -968,7 +968,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 	            }
 			}
             
-			wsdBL.update(currentWStepDef, getCurrentUserId());
+
+			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -997,7 +998,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public String updateUsersRelated() {
 		WUserDef wUserDef;
 		WUserDefBL wUserDefBL = new WUserDefBL();
-		WStepDefBL wsdBL = new WStepDefBL();
+		
 		
 		Set<WStepUser> usersRelated = currentWStepDef.getUsersRelated();
 		currentWStepDef.getUsersRelated().removeAll(usersRelated);
@@ -1010,7 +1011,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	            }
 			}
             
-			wsdBL.update(currentWStepDef, getCurrentUserId());
+			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -1035,5 +1036,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return null;
 	}
 
+	private void updateCurrentObject() throws WStepDefException {
+		WStepDefBL wsdBL = new WStepDefBL();
+		this.setModel();
+		wsdBL.update(currentWStepDef, getCurrentUserId());
+		this.recoverNullObjects();
+	}
 	
 }
