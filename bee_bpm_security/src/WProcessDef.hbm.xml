@@ -81,7 +81,7 @@
 		</set>
 		
 		<set cascade="all" name="usersRelated" sort="unsorted"
-			table="w_process_user" lazy="false" inverse="true" >
+			table="w_process_user" lazy="false">
 			<key column="id_process" />
 			<composite-element class="org.beeblos.bpm.core.model.WProcessUser">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
