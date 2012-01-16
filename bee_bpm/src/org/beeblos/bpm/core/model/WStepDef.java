@@ -72,8 +72,7 @@ public class WStepDef implements java.io.Serializable {
 	public WStepDef(Integer id, String name, Integer idDept, Integer idPhase,
 			String instructions, String stepComments, String idListZone,
 			String idWorkZone, String idAdditionalZone/*,
-			Set<WStepResponseDef> response*/, Date insertDate, 
-			Integer insertUser, Date modDate, Integer modUser) {
+			Set<WStepResponseDef> response*/) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -85,10 +84,6 @@ public class WStepDef implements java.io.Serializable {
 		this.idWorkZone = idWorkZone;
 		this.idAdditionalZone = idAdditionalZone;
 //		this.response = response;
-		this.insertDate = insertDate;
-		this.insertUser = insertUser;
-		this.modDate = modDate;
-		this.modUser = modUser;
 	}
 
 
