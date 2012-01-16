@@ -2,7 +2,9 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
@@ -42,6 +44,11 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	private Integer idWRoleDefSelected;
 	private String searchUserDefName;
 	private Integer idWUserDefSelected;
+	private boolean selectedShowOnlySelectedRoles;
+	private List<SelectItem> wRoleDefListStatic = null;
+	private boolean selectedShowOnlySelectedUsers;
+	private List<SelectItem> wUserDefListStatic = null;
+	
 	
 	public UserAndRoleSelectorBean() {
 		super();
@@ -59,11 +66,12 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		selectedAllRoles=false;
 		searchRoleDefName="";
 		idWRoleDefSelected=0;
+		selectedShowOnlySelectedRoles=false;
 		
 		selectedAllUsers=false;
 		searchUserDefName="";
 		idWUserDefSelected=0;
-		
+		selectedShowOnlySelectedUsers=false;
 	}
 	
 	public void reset() {
@@ -75,10 +83,12 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		selectedAllRoles=false;
 		searchRoleDefName="";
 		idWRoleDefSelected=0;
+		selectedShowOnlySelectedRoles=false;
 		
 		selectedAllUsers=false;
 		searchUserDefName="";
 		idWUserDefSelected=0;
+		selectedShowOnlySelectedUsers=false;
 	}
 	
 	public void setSelectedWUserDefList(List<String> selectedWUserDefList) {
@@ -139,6 +149,8 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 					.castStringPairToSelectitem(
 							wRoleDefBL.getComboList("", ""));
 			
+			wRoleDefListStatic = new ArrayList<SelectItem>(wRoleDefListCombo);
+			
 		} catch (WRoleDefException e) {
 			e.printStackTrace();
 		}
@@ -197,6 +209,9 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 					UtilsVs
 					.castStringPairToSelectitem(
 							wUserDefBL.getComboList("", ""));
+			
+			wUserDefListStatic = new ArrayList<SelectItem>(wUserDefListCombo);
+			
 		} catch (WUserDefException e) {
 			e.printStackTrace();
 		}
@@ -308,6 +323,24 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		this.idWUserDefSelected = idWUserDefSelected;
 	}
 	
+	public boolean isSelectedShowOnlySelectedRoles() {
+		return selectedShowOnlySelectedRoles;
+	}
+
+	public void setSelectedShowOnlySelectedRoles(
+			boolean selectedShowOnlySelectedRoles) {
+		this.selectedShowOnlySelectedRoles = selectedShowOnlySelectedRoles;
+	}
+	
+	public boolean isSelectedShowOnlySelectedUsers() {
+		return selectedShowOnlySelectedUsers;
+	}
+
+	public void setSelectedShowOnlySelectedUsers(
+			boolean selectedShowOnlySelectedUsers) {
+		this.selectedShowOnlySelectedUsers = selectedShowOnlySelectedUsers;
+	}
+	
 	public ArrayList<SelectItem> autocompleteRoleDefName(Object input) {
 		
 		ArrayList<SelectItem> result = new ArrayList<SelectItem>();
@@ -392,4 +425,53 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 		reset();
 		return null;
 	}
+
+	public String selectShowOnlySelectedRoles() {
+
+		if (selectedShowOnlySelectedRoles) {
+
+			Set<String> hsSelectedWRoleDefList=new HashSet<String>();
+			hsSelectedWRoleDefList.addAll(selectedWRoleDefList);
+			wRoleDefListCombo.clear();
+
+			for (SelectItem item : wRoleDefListStatic) {
+				if (hsSelectedWRoleDefList.contains(item.getValue())) {
+					wRoleDefListCombo.add(item);
+				}
+			}
+			
+		} else {
+			
+			wRoleDefListCombo.clear();
+			wRoleDefListCombo.addAll(wRoleDefListStatic);
+		}
+		
+		return null;
+	}
+	
+	public String selectShowOnlySelectedUsers() {
+
+		if (selectedShowOnlySelectedUsers) {
+
+			Set<String> hsSelectedWUserDefList=new HashSet<String>();
+			hsSelectedWUserDefList.addAll(selectedWUserDefList);
+			wUserDefListCombo.clear();
+
+			for (SelectItem item : wUserDefListStatic) {
+				if (hsSelectedWUserDefList.contains(item.getValue())) {
+					wUserDefListCombo.add(item);
+				}
+			}
+			
+		} else {
+			
+			wUserDefListCombo.clear();
+			wUserDefListCombo.addAll(wUserDefListStatic);
+		}
+		
+		return null;
+	}
+	
+
+	
 }

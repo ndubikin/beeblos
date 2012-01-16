@@ -5,7 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<style>
+<style>
 .top {
 	vertical-align: top;
 }
@@ -15,6 +15,15 @@
 	overflow: auto;
 }
 
+.colStyle1 {
+	margin: 0px;
+	text-align: left;
+}
+
+.colStyle2 {
+	margin: 0px;
+	text-align: right;
+}
 </style>
 
 	<h:form id="searchUser_form">  
@@ -48,17 +57,31 @@
 
 			<rich:spacer height="10" />
 
-			<h:panelGroup>
-				<h:selectBooleanCheckbox
-					value="#{userAndRoleSelectorBean.selectedAllUsers}">
-					<a4j:support
-						action="#{userAndRoleSelectorBean.selectAllUsers}"
-						ajaxSingle="true" event="onclick"
-						reRender="id_select_many_users,user_list_check" />
-				</h:selectBooleanCheckbox>
-				<h:outputText value="#{msg.label_all}"
-					style="margin-left:10px; font-weight:bold;" />
-			</h:panelGroup>
+			<h:panelGrid width="100%" columns="2" columnClasses="colStyle1,colStyle2">
+				<h:panelGroup>
+					<h:selectBooleanCheckbox
+						value="#{userAndRoleSelectorBean.selectedAllUsers}">
+						<a4j:support
+							action="#{userAndRoleSelectorBean.selectAllUsers}"
+							ajaxSingle="true" event="onclick"
+							reRender="id_select_many_users" />
+					</h:selectBooleanCheckbox>
+					<h:outputText value="#{msg.label_all}"
+						style="margin-left:10px; font-weight:bold;" />
+				</h:panelGroup>
+				
+				<h:panelGroup>
+					<h:selectBooleanCheckbox
+						value="#{userAndRoleSelectorBean.selectedShowOnlySelectedUsers}">
+						<a4j:support
+							action="#{userAndRoleSelectorBean.selectShowOnlySelectedUsers}"
+							ajaxSingle="true" event="onclick"
+							reRender="id_select_many_users" />
+					</h:selectBooleanCheckbox>
+					<h:outputText value="#{msg.label_show_only_selected_users}"
+						style="margin-left:10px; font-weight:bold;" />
+				</h:panelGroup>
+			</h:panelGrid>
 
 			<rich:spacer height="10" />
 

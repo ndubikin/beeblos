@@ -616,6 +616,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			try {
 				
 				wpdBL.update(currentWProcessDef, getCurrentUserId());
+
+				//rrl 20120116
+				strRoleList="";
+				for ( WProcessRole pr: this.currentWProcessDef.getRolesRelated()) {
+					strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+pr.getRole().getId();
+				}
+				
+				System.out.println("#### TRAZA... deleteWProcessRole().strRoleList="+strRoleList);
 				
 			} catch (WProcessDefException ex1) {
 
@@ -692,6 +700,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			try {
 				
 				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				
+				//rrl 20120116
+				strUserList="";
+				for ( WProcessUser pu: this.currentWProcessDef.getUsersRelated()) {
+					strUserList+=(strUserList!=null && !"".equals(strUserList)?",":"")+pu.getUser().getId();
+				}
 				
 			} catch (WProcessDefException ex1) {
 
@@ -788,7 +802,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	//rrl 20120113
-	public String updateUsersRelated() {
+	public String pepe() {
 		WUserDef wUserDef;
 		WUserDefBL wUserDefBL = new WUserDefBL();
 		
@@ -837,7 +851,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	
-	
+// PENDIENTE: metele un check que diga: "Show only selected roles"
+// PENDIENTE: email de CASTOR	
 
 //	public void setNewBeginStep() {
 //		if ( this.currentWProcessDef!=null ) {

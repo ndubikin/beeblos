@@ -38,7 +38,7 @@
 			<a4j:commandButton id="delete_button_sr" value="#{msg.label_remove}"
 				actionListener="#{wProcessDefFormBean.deleteWProcessUser}"
 				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWProcessUser');"
-				reRender="w_process_def_related_users_table"
+				reRender="w_process_def_related_users_table, insert_user"
 				style="width:120px; margin-left: 10px; height:24px;" />
 		</h:panelGroup>
 
