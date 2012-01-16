@@ -704,8 +704,10 @@ public class WStepDefFormBean extends CoreManagedBean {
 //		System.out.println(this.currentWStepDef.getRolesRelated().toString());
 		
 		String strRoleList="";
-		for ( WStepRole sr: this.currentWStepDef.getRolesRelated()) {
-			strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+sr.getRole().getId();
+		if ( currentWStepDef.getRolesRelated()!=null ) {
+			for ( WStepRole sr: this.currentWStepDef.getRolesRelated()) {
+				strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+sr.getRole().getId();
+			}
 		}
 		
 		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
@@ -958,8 +960,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 		//WStepDefBL wsdBL = new WStepDefBL();
 		
 		Set<WStepRole> rolesRelated = currentWStepDef.getRolesRelated();
-		currentWStepDef.getRolesRelated().removeAll(rolesRelated);
-		
+		if (currentWStepDef.getRolesRelated()!=null ) {
+			currentWStepDef.getRolesRelated().removeAll(rolesRelated);
+		}
 		try {
 			if (strRoleList!=null && !"".equals(strRoleList)) {
 	            for (String s : strRoleList.split(",")) {
@@ -1001,7 +1004,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		
 		Set<WStepUser> usersRelated = currentWStepDef.getUsersRelated();
-		currentWStepDef.getUsersRelated().removeAll(usersRelated);
+		if ( currentWStepDef.getUsersRelated()!= null ) {
+			currentWStepDef.getUsersRelated().removeAll(usersRelated);
+		}
 		
 		try {
 			if (strUserList!=null && !"".equals(strUserList)) {
