@@ -17,7 +17,7 @@
 
 </style>
 
-		<h:form id="searchRole_form">  
+	<h:form id="searchRole_form">  
 
 		<h:panelGrid column="1">
 			
@@ -37,27 +37,28 @@
 						<h:outputText value="#{autoRole.label}"/>
 					</h:column>
 					
-					<a4j:support ajaxSingle="true" event="onselect">
+					<a4j:support ajaxSingle="true" event="onselect" 
+							action="#{userAndRoleSelectorBean.selectedAutocompleteWRoleDef}"
+							reRender="id_select_many_role">
 						<f:setPropertyActionListener value="#{autoRole.label}" target="#{userAndRoleSelectorBean.searchRoleDefName}" />
+                        <f:setPropertyActionListener value="#{autoRole.value}" target="#{userAndRoleSelectorBean.idWRoleDefSelected}" />
 					</a4j:support>	                				
 				</rich:suggestionbox>	
 			</h:panelGroup>
-	
-
-		<h:panelGroup>
 
 			<rich:spacer height="10" />
 
-			<h:selectBooleanCheckbox
-				value="#{userAndRoleSelectorBean.selectedAllRoles}">
-				<a4j:support
-					action="#{userAndRoleSelectorBean.selectAllRoles}"
-					ajaxSingle="true" event="onclick"
-					reRender="id_select_many_role,role_list_check" />
-			</h:selectBooleanCheckbox>
-			<h:outputText value="#{msg.label_all}"
-				style="margin-left:10px; font-weight:bold;" />
-
+			<h:panelGroup>
+				<h:selectBooleanCheckbox
+					value="#{userAndRoleSelectorBean.selectedAllRoles}">
+					<a4j:support
+						action="#{userAndRoleSelectorBean.selectAllRoles}"
+						ajaxSingle="true" event="onclick"
+						reRender="id_select_many_role" />
+				</h:selectBooleanCheckbox>
+				<h:outputText value="#{msg.label_all}"
+					style="margin-left:10px; font-weight:bold;" />
+			</h:panelGroup>
 
 			<rich:spacer height="10" />
 
@@ -78,22 +79,19 @@
 				</h:selectManyCheckbox>
 			</rich:panel>
 
-			<rich:spacer height="40" />
+			<rich:spacer height="10" />
 
 			<h:panelGroup>
 				<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
-					actionListener="#{userAndRoleSelectorBean.cancelAddWRoleDefSelected}"
-					onclick="javascript:Richfaces.hideModalPanel('mpSearchRole')"
-					 style="width:80px; height:24px;" />
+					action="#{userAndRoleSelectorBean.cancelAddWRoleDefSelected}"
+					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchRole')"
+					style="width:80px; height:24px;" />
 				<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
-					actionListener="#{userAndRoleSelectorBean.addWRoleDefSelected}"
+					action="#{userAndRoleSelectorBean.addWRoleDefSelected}"
 					oncomplete="javascript:Richfaces.hideModalPanel('mpSearchRole');onsubmitSearchRole('#{userAndRoleSelectorBean.strRoleString}');"
 					style="width:120px; left-margin: 20px; height:24px;" />
 			</h:panelGroup>
 
-
-		</h:panelGroup>
-
 		</h:panelGrid>
-		</h:form>
+	</h:form>
 </ui:composition>

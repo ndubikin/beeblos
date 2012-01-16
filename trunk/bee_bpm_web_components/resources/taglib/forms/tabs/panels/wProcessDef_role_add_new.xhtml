@@ -10,9 +10,9 @@
 		<c:set var="action" value="" />
 	</c:if>
 
-	<h:form>
+	<h:form id="w_process_def_role_add_new_form${action}">
 	
-<a4j:jsFunction name="onsubmitSearchRole" action="#{wProcessDefFormBean.updateRolesRelated}" reRender="w_process_def_related_roles_form${action}">
+<a4j:jsFunction name="onsubmitSearchRole" action="#{wProcessDefFormBean.updateRolesRelated}" reRender="w_process_def_role_add_new_form${action},w_process_def_related_roles_form${action}">
 	 <a4j:actionparam name="param1" assignTo="#{wProcessDefFormBean.strRoleList}"  />
 </a4j:jsFunction>		
 	
@@ -20,6 +20,7 @@
 			title="#{msf.label_add_new_global_role_to_project}"
 			style="margin-left: 18px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
 			tabindex="-1"
+			action="#{userAndRoleSelectorBean.inicializeSearchRole}"
 			oncomplete="javascript:Richfaces.showModalPanel('mpSearchRole', {titleParam: '#{msg.label_roles_involved_in_this_process}'});"
 			reRender="mpSearchRole"
 			rendered="#{contextoSeguridad.permiteCualquiera['530']}">

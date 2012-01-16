@@ -6,8 +6,8 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	
-	<rich:modalPanel  id="mpSearchRole" width="600" height="480"
-		onshow="document.getElementById('roleSearchTitle').innerHTML=event.parameters.titleParam;">
+	<rich:modalPanel  id="mpSearchRole" width="560" height="480"
+		onshow="document.getElementById('roleSearchTitle').innerHTML=event.parameters.titleParam; #{rich:element('id_searchRoleDefName')}.focus();">
 	    <f:facet name="header">
 	        <h:panelGroup id="roleSearchTitlePanel">
 	            <h:outputText id="roleSearchTitle"  value="#{msg.label_roles_search}"></h:outputText>
