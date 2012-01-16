@@ -2,9 +2,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
@@ -14,7 +12,6 @@ import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
