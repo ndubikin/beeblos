@@ -254,7 +254,7 @@
 				<comment>UNIDAD DE MEDIDA DE TIEMPO PARA EL DEADLINE</comment>
 			</column>
 		</many-to-one>
-		<set cascade="all" lazy="false" name="response" sort="unsorted">
+		<set cascade="all" lazy="false" name="response" order-by="respOrder">
 			<key column="id_step" />
 			<one-to-many class="org.beeblos.bpm.core.model.WStepResponseDef" />
 		</set>
