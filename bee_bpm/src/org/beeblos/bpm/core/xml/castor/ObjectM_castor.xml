@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping xmlns="http://castor.exolab.org/" xmlns:cst="http://castor.exolab.org/">
+    <description xmlns="">Castor generated mapping file</description>
+    <class name="org.beeblos.bpm.core.model.ObjectM">
+        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.ObjectM</description>
+        <map-to/>
+        <field name="insertUser" type="java.lang.Integer">
+            <bind-xml name="insert-user" node="element"/>
+        </field>
+        <field name="insertDate" type="java.util.Date">
+            <bind-xml name="insert-date" node="element"/>
+        </field>
+        <field name="name" type="java.lang.String">
+            <bind-xml name="name" node="element"/>
+        </field>
+        <field name="modUser" type="java.lang.Integer">
+            <bind-xml name="mod-user" node="element"/>
+        </field>
+        <field name="modDate" type="java.util.Date">
+            <bind-xml name="mod-date" node="element"/>
+        </field>
+        <field name="comments" type="java.lang.String">
+            <bind-xml name="comments" node="element"/>
+        </field>
+        <field name="id" type="java.lang.Integer">
+            <bind-xml name="id" node="element"/>
+        </field>
+    </class>
+</mapping>

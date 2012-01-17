@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                         "http://castor.org/mapping.dtd">
+<mapping>
+    <description xmlns="">Castor generated mapping file</description>
+    
+    <class name="org.beeblos.bpm.core.model.WTimeUnit">
+        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WTimeUnit</description>
+        <map-to/>
+        <field name="name" type="java.lang.String">
+            <bind-xml name="name" node="element"/>
+        </field>
+        <field name="conversion" type="java.lang.Integer">
+            <bind-xml name="conversion" node="element"/>
+        </field>
+        <field name="id" type="java.lang.Integer">
+            <bind-xml name="id" node="element"/>
+        </field>
+    </class>
+</mapping>
