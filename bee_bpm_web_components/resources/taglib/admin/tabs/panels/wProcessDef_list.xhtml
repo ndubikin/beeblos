@@ -51,6 +51,11 @@
                 	<b> Load WProcessDef</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>
+            	<rich:menuSeparator />         
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.generateXmlWProcessDef}" submitMode="server">
+                	<b> Generate WProcessDef to XML</b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
             </rich:contextMenu>
             
 		</h:panelGrid>   

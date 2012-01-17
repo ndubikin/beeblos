@@ -4,13 +4,17 @@ import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +33,7 @@ import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
+import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -166,6 +171,55 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					+ this.currentId + " : " + ex1.getMessage() + " -" + ex1.getCause());
 		}
 
+	}
+	
+	//rrl 20120116
+	public void generateXMLCurrentWProcessDef() {
+		
+		System.out.println(">>>>>>>>>> Castor XML starting the process Marshall");
+		
+		String templateWProcessDef = "/home/u097/workspace/bee_bpm/src/org/beeblos/bpm/core/xml/castor/WProcessDef_castor.xml";
+
+    	HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+
+		String contenidoXML = UtilJavaToXML.toXML(currentWProcessDef, templateWProcessDef);
+		
+		if (contenidoXML != null) {
+			
+			try{
+				byte[] buffer =  contenidoXML.getBytes();
+				
+				response.setContentLength(buffer.length);
+				response.setContentType("text/xml"); 
+//				response.setLocale( new Locale(DEFAULT_ENCODING) );
+				response.setLocale( new Locale("UTF-8") );
+
+				response.addHeader("Content-Disposition",  "attachment; filename=\""  + "WProcessDef_id_" + currentWProcessDef.getId() + ".xml"  +  "\"");						
+				response.setHeader("Cache-Control","no-cache");
+				
+				ServletOutputStream outStream = response.getOutputStream();
+				outStream.write(buffer,0,buffer.length);
+				outStream.flush();
+				outStream.close();
+				FacesContext.getCurrentInstance().responseComplete();
+				
+		        System.out.println(contenidoXML);
+				
+			}catch(IOException e){
+				
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error generate current WProcessDef to XML ..." };
+				agregarMensaje("203", message, params, FGPException.ERROR);
+				
+				logger.error(message);
+				
+			}
+		} else {
+			System.out.println(">>>>>>>>>> Castor XML the content XML is null");
+		}
+		
+		System.out.println(">>>>>>>>>> Castor XML process complete Marshall");
+		
 	}
 	
 	private void setModel() {
@@ -622,8 +676,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				for ( WProcessRole pr: this.currentWProcessDef.getRolesRelated()) {
 					strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+pr.getRole().getId();
 				}
-				
-				System.out.println("#### TRAZA... deleteWProcessRole().strRoleList="+strRoleList);
 				
 			} catch (WProcessDefException ex1) {
 
