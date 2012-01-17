@@ -38,7 +38,7 @@
 			<a4j:commandButton id="delete_button_sr" value="#{msg.label_remove}"
 				actionListener="#{wStepDefFormBean.deleteWStepRole}"
 				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWStepRole');"
-				reRender="w_step_def_related_roles_table"
+				reRender="w_step_def_related_roles_table,insert_role"
 				style="width:120px; margin-left: 10px; height:24px;" />
 		</h:panelGroup>
 

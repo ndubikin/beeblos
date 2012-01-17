@@ -5,8 +5,8 @@ import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WSTEPDEF;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -14,20 +14,14 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.WProcessDefBL;
-import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WTimeUnitBL;
-import org.beeblos.bpm.core.bl.WUserDefBL;
-import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.model.WProcessRole;
-import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
@@ -39,6 +33,7 @@ import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
+import org.beeblos.bpm.wc.taglib.util.ListUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 public class WStepDefFormBean extends CoreManagedBean {
@@ -180,6 +175,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 			if ( currentWStepDef.getReminderTimeUnit() == null ) {
 				currentWStepDef.setReminderTimeUnit( new WTimeUnit() );
+			}
+
+			if ( currentWStepDef.getRolesRelated() == null ) {
+				currentWStepDef.setRolesRelated( new HashSet<WStepRole>() );
+			}
+
+			if ( currentWStepDef.getUsersRelated() == null ) {
+				currentWStepDef.setUsersRelated( new HashSet<WStepUser>() );
 			}
 
 		}
@@ -377,17 +380,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 		} catch (WStepDefException ex1) {
 
-			String message = "Error updating object: "
-					+ currentWStepDef.getId()
-					+ " - "
-					+ currentWStepDef.getName()
-					+ "\n"
-					+ ex1.getMessage() + "\n" + ex1.getCause();
-			
-			logger.error(message);
-			
-			String params[] = {message + ",", ".Please confirm input values." };				
-			agregarMensaje("205",message,params,FGPException.ERROR);	
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".update() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 
 		}
 		
@@ -416,15 +413,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 			recoverNullObjects();
 			
 		} catch (WStepDefException ex1) {
-			logger.error("Error retrieving object: "
-							+ currentWStepDef.getId()
-							+ " : "
-							+ ex1.getMessage()
-							+ " - "
-							+ ex1.getCause());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".loadObject() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		}			
 	}
 	
@@ -439,12 +432,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 			} catch (WStepResponseDefException ex1) {
 
-				logger.error("Error retrieving object: "
-						+ stepResponse.getId()
-						+ " : "
-						+ ex1.getMessage()
-						+ " - "
-						+ ex1.getCause());
+				String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+				String params[] = { mensaje + ",",
+						".loadResponse() WStepDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+				ex1.printStackTrace();
 
 			}
 		
@@ -561,18 +553,18 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.stepResponse = stepResponse;
 	}
 
-	public List<WStepResponseDef> getResponseList() {
+	public ArrayList<WStepResponseDef> getResponseList() {
 		
-		List<WStepResponseDef> lresp = new ArrayList<WStepResponseDef>();
 		
+
 		if (currentWStepDef != null && currentWStepDef.getResponse() != null
 				&& currentWStepDef.getResponse().size() != 0){
 			
-			lresp= new ArrayList<WStepResponseDef>( currentWStepDef.getResponse() );
-
+			return  new ArrayList<WStepResponseDef>(currentWStepDef.getResponse());
+		
 		}
 		
-		return lresp;
+		return null;
 	}
 	
 	public Integer getResponseSize() {
@@ -586,7 +578,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public void addStepResponse(){
 		
 		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
-		WStepDefBL wsdBL = new WStepDefBL();
 		
 		try {
 
@@ -597,14 +588,12 @@ public class WStepDefFormBean extends CoreManagedBean {
 					
 					Integer nextRespOrder = 0;
 					
-					for (WStepResponseDef wsrd : getResponseList()){
-						
-						if (nextRespOrder < wsrd.getRespOrder()){
-							
-							nextRespOrder = wsrd.getRespOrder();
-							
+					if (getResponseList() != null){
+						for (WStepResponseDef wsrd : getResponseList()){
+							if (nextRespOrder < wsrd.getRespOrder()){
+								nextRespOrder = wsrd.getRespOrder();
+							}
 						}
-						
 					}
 					
 					stepResponse.setRespOrder(nextRespOrder+1);
@@ -614,11 +603,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 				wsrdBL.add(stepResponse, this.getCurrentUserId().toString());
 				
 				this.currentWStepDef.addResponse(stepResponse);
-				wsdBL.update(currentWStepDef, this.getCurrentUserId());
-		
+
+				// dml 20120116
+				updateCurrentObject();
+				
 				loadObject();
-				getResponseList();
-				getResponseSize();
 				
 				//dml 20120112
 				setStepResponse(new WStepResponseDef());
@@ -627,11 +616,17 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 			
 		} catch (WStepResponseDefException ex1) {
-			logger.warn("WStepResponseDefException: Error trying to add response "
-					+ ex1.getMessage()+" - "+ex1.getCause());
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".addStepResponse() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		} catch (WStepDefException ex2) {
-			logger.warn("WStepDefException: Error trying to add response "
-					+ ex2.getMessage()+" - "+ex2.getCause());
+			String mensaje = ex2.getMessage() + " - " + ex2.getCause();
+			String params[] = { mensaje + ",",
+					".addStepResponse() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex2.printStackTrace();
 		}
 		
 	}
@@ -648,14 +643,15 @@ public class WStepDefFormBean extends CoreManagedBean {
 				wsrdBL.delete(stepResponse, this.getCurrentUserId().toString());
 
 				loadObject();
-				getResponseList();
-				getResponseSize();
 				
 			}		
 			
 		} catch (WStepResponseDefException ex1) {
-			logger.warn("WStepResponseDefException: Error trying to delete response "
-					+ ex1.getMessage()+" - "+ex1.getCause());
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".deleteStepResponse() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		}
 		
 	}
@@ -671,14 +667,15 @@ public class WStepDefFormBean extends CoreManagedBean {
 				wsrdBL.update(stepResponse, this.getCurrentUserId().toString());
 
 				loadObject();
-				getResponseList();
-				getResponseSize();
 				
 			}		
 			
 		} catch (WStepResponseDefException ex1) {
-			logger.warn("WStepResponseDefException: Error trying to edit response "
-					+ ex1.getMessage()+" - "+ex1.getCause());
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".editStepResponse() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		}
 		
 	}
@@ -691,9 +688,12 @@ public class WStepDefFormBean extends CoreManagedBean {
 			ltu = UtilsVs
 					.castStringPairToSelectitem(
 					new WTimeUnitBL().getComboList("Select time unit","") );
-		} catch (WTimeUnitException e) {
-			logger.warn("Can't retrieve time unit list for combo: "+e.getMessage()+" "+e.getCause());
-			e.printStackTrace();
+		} catch (WTimeUnitException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".loadWTimeUnitForCombo() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		}
 
 		return ltu;
@@ -732,9 +732,12 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		try {
 			return UtilsVs.castStringPairToSelectitem(wtuBL.getComboList("Select unit ...", ""));
-		} catch (WTimeUnitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (WTimeUnitException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".getTimeUnitComboList() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		}
 		
 		return null;
@@ -774,6 +777,16 @@ public class WStepDefFormBean extends CoreManagedBean {
 	}
 
 	public String getStrUserList() {
+		
+		strUserList="";
+		if ( currentWStepDef.getUsersRelated()!=null ) {
+			for ( WStepUser su: this.currentWStepDef.getUsersRelated()) {
+				strUserList+=(strUserList!=null && !"".equals(strUserList)?",":"")+su.getUser().getId();
+			}
+		}
+		
+		System.out.println("--------------->>>>>>>>> strUserList ------------>>>>>>>>"+strUserList);
+
 		return strUserList;
 	}
 
@@ -787,8 +800,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	// dml 20120113
 	public void deleteWStepUser(){
-		
-		WStepDefBL wsdBL = new WStepDefBL();
 		
 		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
 				&& !currentWStepDef.getUsersRelated().isEmpty()){
@@ -805,26 +816,30 @@ public class WStepDefFormBean extends CoreManagedBean {
 					
 			}
 			
-			try {
+			// dml 20120116
+			try{
 				
-				wsdBL.update(currentWStepDef, getCurrentUserId());
-				
-			} catch (WStepDefException ex1) {
-
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error deleting WStepUser ..." };
-				agregarMensaje("205", message, params, FGPException.ERROR);
-
-			}
+				updateCurrentObject();
 			
+			strUserList="";
+			for ( WStepUser su: this.currentWStepDef.getUsersRelated()) {
+				strUserList+=(strUserList!=null && !"".equals(strUserList)?",":"")+su.getUser().getId();
+			}
+
+			} catch (WStepDefException e) {
+				String mensaje = e.getMessage() + " - " + e.getCause();
+				String params[] = { mensaje + ",",
+				".deleteWStepUser() WStepDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+				e.printStackTrace();
+			}
+	
 		}
-		
+				
 	}
 	
 	// dml 20120113
 	public void changeAdminPrivilegesWStepUser(){
-		
-		WStepDefBL wsdBL = new WStepDefBL();
 		
 		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
 				&& !currentWStepDef.getUsersRelated().isEmpty()){
@@ -845,16 +860,17 @@ public class WStepDefFormBean extends CoreManagedBean {
 				
 			}
 			
-			try {
+			// dml 20120116
+			try{
 				
-				wsdBL.update(currentWStepDef, getCurrentUserId());
-				
-			} catch (WStepDefException ex1) {
-
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error changing admin privileges ..." };
-				agregarMensaje("205", message, params, FGPException.ERROR);
-
+				updateCurrentObject();
+			
+			} catch (WStepDefException e) {
+				String mensaje = e.getMessage() + " - " + e.getCause();
+				String params[] = { mensaje + ",",
+				".changeAdminPrivilegesWStepUser() WStepDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+				e.printStackTrace();
 			}
 			
 		}
@@ -880,8 +896,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 	// dml 20120113
 	public void deleteWStepRole(){
 		
-		WStepDefBL wsdBL = new WStepDefBL();
-		
 		if (currentWStepDef != null && currentWStepDef.getRolesRelated() != null
 				&& !currentWStepDef.getRolesRelated().isEmpty()){
 			
@@ -897,26 +911,30 @@ public class WStepDefFormBean extends CoreManagedBean {
 					
 			}
 			
-			try {
+			// dml 20120116
+			try{
 				
-				wsdBL.update(currentWStepDef, getCurrentUserId());
-				
-			} catch (WStepDefException ex1) {
+				updateCurrentObject();
+			
+				strRoleList="";
+				for ( WStepRole sr: this.currentWStepDef.getRolesRelated()) {
+					strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+sr.getRole().getId();
+				}
 
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error deleting WStepRole ..." };
-				agregarMensaje("205", message, params, FGPException.ERROR);
-
+			} catch (WStepDefException e) {
+				String mensaje = e.getMessage() + " - " + e.getCause();
+				String params[] = { mensaje + ",",
+				".deleteWStepRole() WStepDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+				e.printStackTrace();
 			}
 			
 		}
-		
+			
 	}
 	
 	// dml 20120113
 	public void changeAdminPrivilegesWStepRole(){
-		
-		WStepDefBL wsdBL = new WStepDefBL();
 		
 		if (currentWStepDef != null && currentWStepDef.getRolesRelated() != null
 				&& !currentWStepDef.getRolesRelated().isEmpty()){
@@ -937,60 +955,57 @@ public class WStepDefFormBean extends CoreManagedBean {
 				
 			}
 			
-			try {
+			// dml 20120116
+			try{
 				
-				wsdBL.update(currentWStepDef, getCurrentUserId());
-				
-			} catch (WStepDefException ex1) {
-
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error changing admin privileges ..." };
-				agregarMensaje("205", message, params, FGPException.ERROR);
-
-			}
+				updateCurrentObject();
 			
+			} catch (WStepDefException e) {
+				String mensaje = e.getMessage() + " - " + e.getCause();
+				String params[] = { mensaje + ",",
+				".changeAdminPrivilegesWStepRole() WStepDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+				e.printStackTrace();
+			}
 		}
 		
 	}
 	
 	//rrl 20120112
 	public String updateRolesRelated() {
-		WRoleDef wRoleDef;
-		WRoleDefBL wRoleDefBL = new WRoleDefBL();
-		//WStepDefBL wsdBL = new WStepDefBL();
-		
-		Set<WStepRole> rolesRelated = currentWStepDef.getRolesRelated();
-		if (currentWStepDef.getRolesRelated()!=null ) {
-			currentWStepDef.getRolesRelated().removeAll(rolesRelated);
-		}
-		try {
-			if (strRoleList!=null && !"".equals(strRoleList)) {
-	            for (String s : strRoleList.split(",")) {
-					wRoleDef = wRoleDefBL.getWRoleDefByPK(Integer.parseInt(s), null);
-					currentWStepDef.addRole(wRoleDef, false, null, null, getCurrentUserId());
-	            }
-			}
-            
 
+		try{
+			
+			if ("".equals(strRoleList)){
+				
+				currentWStepDef.setRolesRelated(null);
+				
+			} else {
+
+				// dml 20120117
+				ListUtil.updateStepRoleRelatedList(strRoleList, currentWStepDef, getCurrentUserId());
+			
+			}
+			
 			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".updateRolesRelated() NumberFormatException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		} catch (WRoleDefException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".updateRolesRelated() WRoleDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		} catch (WStepDefException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".updateRolesRelated() WStepDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		}
 		
@@ -999,42 +1014,39 @@ public class WStepDefFormBean extends CoreManagedBean {
 	
 	//rrl 20120113
 	public String updateUsersRelated() {
-		WUserDef wUserDef;
-		WUserDefBL wUserDefBL = new WUserDefBL();
+				
+		try{
 		
-		
-		Set<WStepUser> usersRelated = currentWStepDef.getUsersRelated();
-		if ( currentWStepDef.getUsersRelated()!= null ) {
-			currentWStepDef.getUsersRelated().removeAll(usersRelated);
-		}
-		
-		try {
-			if (strUserList!=null && !"".equals(strUserList)) {
-	            for (String s : strUserList.split(",")) {
-					wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s), null);
-					currentWStepDef.addUser(wUserDef, false, null, null, getCurrentUserId());
-	            }
+			if ("".equals(strUserList)){
+				
+				currentWStepDef.setUsersRelated(null);
+				
+			} else {
+
+				// dml 20120117
+				ListUtil.updateStepUserRelatedList(strUserList, currentWStepDef, getCurrentUserId());
+				
 			}
-            
+			
 			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".updateUsersRelated() NumberFormatException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		} catch (WUserDefException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".updateUsersRelated() WUserDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		} catch (WStepDefException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".updateUsersRelated() WStepDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		}
 		

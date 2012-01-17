@@ -6,9 +6,9 @@ import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -19,9 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
-import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
-import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
@@ -38,6 +36,7 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
+import org.beeblos.bpm.wc.taglib.util.ListUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 
@@ -239,6 +238,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			if (currentWProcessDef.getBeginStep() == null) {
 				currentWProcessDef.setBeginStep(new WStepDef(EMPTY_OBJECT));
+			}
+
+			if ( currentWProcessDef.getRolesRelated() == null ) {
+				currentWProcessDef.setRolesRelated( new HashSet<WProcessRole>() );
+			}
+
+			if ( currentWProcessDef.getUsersRelated() == null ) {
+				currentWProcessDef.setUsersRelated( new HashSet<WProcessUser>() );
 			}
 
 		}
@@ -650,8 +657,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120111
 	public void deleteWProcessRole(){
 		
-		WProcessDefBL wpdBL = new WProcessDefBL();
-		
 		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
 				&& !currentWProcessDef.getRolesRelated().isEmpty()){
 			
@@ -669,7 +674,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				// dml 20120116
+				updateCurrentObject();
 
 				//rrl 20120116
 				strRoleList="";
@@ -692,8 +698,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120111
 	public void changeAdminPrivilegesWProcessRole(){
 		
-		WProcessDefBL wpdBL = new WProcessDefBL();
-		
 		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
 				&& !currentWProcessDef.getRolesRelated().isEmpty()){
 			
@@ -715,7 +719,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				// dml 20120116
+				updateCurrentObject();
 				
 			} catch (WProcessDefException ex1) {
 
@@ -731,9 +736,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	// dml 20120112
 	public void deleteWProcessUser(){
-		
-		WProcessDefBL wpdBL = new WProcessDefBL();
-		
+				
 		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
 				&& !currentWProcessDef.getUsersRelated().isEmpty()){
 			
@@ -751,7 +754,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				// dml 20120116
+				updateCurrentObject();
 				
 				//rrl 20120116
 				strUserList="";
@@ -774,8 +778,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120112
 	public void changeAdminPrivilegesWProcessUser(){
 		
-		WProcessDefBL wpdBL = new WProcessDefBL();
-		
 		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
 				&& !currentWProcessDef.getUsersRelated().isEmpty()){
 			
@@ -797,7 +799,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				wpdBL.update(currentWProcessDef, getCurrentUserId());
+				// dml 20120116
+				updateCurrentObject();
 				
 			} catch (WProcessDefException ex1) {
 
@@ -813,21 +816,20 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	//rrl 20120112
 	public String updateRolesRelated() {
-		WRoleDef wRoleDef;
-		WRoleDefBL wRoleDefBL = new WRoleDefBL();
-		WProcessDefBL wpdBL = new WProcessDefBL();
-		
-		Set<WProcessRole> rolesRelated = currentWProcessDef.getRolesRelated();
-		currentWProcessDef.getRolesRelated().removeAll(rolesRelated);
 		
 		try {
-			if (strRoleList!=null && !"".equals(strRoleList)) {
-	            for (String s : strRoleList.split(",")) {
-					wRoleDef = wRoleDefBL.getWRoleDefByPK(Integer.parseInt(s), null);
-					currentWProcessDef.addRole(wRoleDef, false, null, null, getCurrentUserId());
-	            }
-			}
+
+			if ("".equals(strRoleList)){
+				
+				currentWProcessDef.setRolesRelated(null);
+				
+			} else {
+
+				// dml 20120117
+				ListUtil.updateProcessRoleRelatedList(strRoleList, currentWProcessDef, getCurrentUserId());
             
+			}
+			
 			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {
@@ -854,21 +856,21 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	//rrl 20120113
-	public String pepe() {
-		WUserDef wUserDef;
-		WUserDefBL wUserDefBL = new WUserDefBL();
-		
-		Set<WProcessUser> usersRelated = currentWProcessDef.getUsersRelated();
-		currentWProcessDef.getUsersRelated().removeAll(usersRelated);
-		
+	public String updateUsersRelated() {
+
 		try {
-			if (strUserList!=null && !"".equals(strUserList)) {
-	            for (String s : strUserList.split(",")) {
-					wUserDef = wUserDefBL.getWUserDefByPK(Integer.parseInt(s), null);
-					currentWProcessDef.addUser(wUserDef, false, null, null, getCurrentUserId());
-	            }
-			}
+
+			if ("".equals(strUserList)){
+				
+				currentWProcessDef.setUsersRelated(null);
+				
+			} else {
+
+				// dml 20120117
+				ListUtil.updateProcessUserRelatedList(strUserList, currentWProcessDef, getCurrentUserId());
             
+			}
+			
 			updateCurrentObject();
 			
 		} catch (NumberFormatException e) {

@@ -10,9 +10,9 @@
 		<c:set var="action" value="" />
 	</c:if>
 
-	<h:form>
+	<h:form  id="w_step_def_user_add_new_form${action}">
 	
-<a4j:jsFunction name="onsubmitSearchUser" action="#{wStepDefFormBean.updateUsersRelated}" reRender="w_step_def_related_users_form${action}">
+<a4j:jsFunction name="onsubmitSearchUser" action="#{wStepDefFormBean.updateUsersRelated}" reRender="w_step_def_user_add_new_form${action}, w_step_def_related_users_form${action}">
 	 <a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strUserList}"  />
 </a4j:jsFunction>		
 	

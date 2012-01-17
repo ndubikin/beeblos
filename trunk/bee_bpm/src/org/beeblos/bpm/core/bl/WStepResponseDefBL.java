@@ -80,7 +80,6 @@ public class WStepResponseDefBL {
 	
 	}
 	
-	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )
 	throws WStepResponseDefException {
