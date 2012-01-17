@@ -43,6 +43,20 @@ public class WStepDef implements java.io.Serializable {
 	
 	boolean runtimeModifiable; // si se pueden modificar los deadline y eso en runtime ...
 	
+	private boolean sentAdminNotice;
+	private boolean arrivingAdminNotice;
+	private boolean deadlineAdminNotice;
+	private boolean reminderAdminNotice;
+	private boolean expiredAdminNotice;
+	private boolean sentUserNotice;
+	private boolean arrivingUserNotice;
+	private boolean deadlineUserNotice;
+	private boolean reminderUserNotice;
+	private boolean expiredUserNotice;
+	
+	private boolean emailNotification;
+	private boolean engineNotification;
+	
 	private Set<WStepResponseDef> response = new HashSet<WStepResponseDef>();
 //	private Set<WStepAssignedDef> assigned = new HashSet<WStepAssignedDef>();
 	
@@ -349,12 +363,20 @@ public class WStepDef implements java.io.Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (arrivingAdminNotice ? 1231 : 1237);
+		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
+		result = prime * result + (deadlineAdminNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
 		result = prime * result
 				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
+		result = prime * result + (deadlineUserNotice ? 1231 : 1237);
+		result = prime * result + (emailNotification ? 1231 : 1237);
+		result = prime * result + (engineNotification ? 1231 : 1237);
+		result = prime * result + (expiredAdminNotice ? 1231 : 1237);
+		result = prime * result + (expiredUserNotice ? 1231 : 1237);
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime
 				* result
@@ -368,16 +390,20 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result
 				+ ((instructions == null) ? 0 : instructions.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (reminderAdminNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
 		result = prime
 				* result
 				+ ((reminderTimeUnit == null) ? 0 : reminderTimeUnit.hashCode());
+		result = prime * result + (reminderUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((response == null) ? 0 : response.hashCode());
 		result = prime * result
 				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
 		result = prime * result + (runtimeModifiable ? 1231 : 1237);
+		result = prime * result + (sentAdminNotice ? 1231 : 1237);
+		result = prime * result + (sentUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((stepComments == null) ? 0 : stepComments.hashCode());
 		result = prime * result
@@ -400,10 +426,16 @@ public class WStepDef implements java.io.Serializable {
 		if (!(obj instanceof WStepDef))
 			return false;
 		WStepDef other = (WStepDef) obj;
+		if (arrivingAdminNotice != other.arrivingAdminNotice)
+			return false;
+		if (arrivingUserNotice != other.arrivingUserNotice)
+			return false;
 		if (assignedTime == null) {
 			if (other.assignedTime != null)
 				return false;
 		} else if (!assignedTime.equals(other.assignedTime))
+			return false;
+		if (deadlineAdminNotice != other.deadlineAdminNotice)
 			return false;
 		if (deadlineDate == null) {
 			if (other.deadlineDate != null)
@@ -414,6 +446,16 @@ public class WStepDef implements java.io.Serializable {
 			if (other.deadlineTime != null)
 				return false;
 		} else if (!deadlineTime.equals(other.deadlineTime))
+			return false;
+		if (deadlineUserNotice != other.deadlineUserNotice)
+			return false;
+		if (emailNotification != other.emailNotification)
+			return false;
+		if (engineNotification != other.engineNotification)
+			return false;
+		if (expiredAdminNotice != other.expiredAdminNotice)
+			return false;
+		if (expiredUserNotice != other.expiredUserNotice)
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -455,6 +497,8 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (reminderAdminNotice != other.reminderAdminNotice)
+			return false;
 		if (reminderTime == null) {
 			if (other.reminderTime != null)
 				return false;
@@ -464,6 +508,8 @@ public class WStepDef implements java.io.Serializable {
 			if (other.reminderTimeUnit != null)
 				return false;
 		} else if (!reminderTimeUnit.equals(other.reminderTimeUnit))
+			return false;
+		if (reminderUserNotice != other.reminderUserNotice)
 			return false;
 		if (response == null) {
 			if (other.response != null)
@@ -476,6 +522,10 @@ public class WStepDef implements java.io.Serializable {
 		} else if (!rolesRelated.equals(other.rolesRelated))
 			return false;
 		if (runtimeModifiable != other.runtimeModifiable)
+			return false;
+		if (sentAdminNotice != other.sentAdminNotice)
+			return false;
+		if (sentUserNotice != other.sentUserNotice)
 			return false;
 		if (stepComments == null) {
 			if (other.stepComments != null)
@@ -532,16 +582,40 @@ public class WStepDef implements java.io.Serializable {
 						: "")
 				+ "runtimeModifiable="
 				+ runtimeModifiable
+				+ ", sentAdminNotice="
+				+ sentAdminNotice
+				+ ", arrivingAdminNotice="
+				+ arrivingAdminNotice
+				+ ", deadlineAdminNotice="
+				+ deadlineAdminNotice
+				+ ", reminderAdminNotice="
+				+ reminderAdminNotice
+				+ ", expiredAdminNotice="
+				+ expiredAdminNotice
+				+ ", sentUserNotice="
+				+ sentUserNotice
+				+ ", arrivingUserNotice="
+				+ arrivingUserNotice
+				+ ", deadlineUserNotice="
+				+ deadlineUserNotice
+				+ ", reminderUserNotice="
+				+ reminderUserNotice
+				+ ", expiredUserNotice="
+				+ expiredUserNotice
+				+ ", emailNotification="
+				+ emailNotification
+				+ ", engineNotification="
+				+ engineNotification
 				+ ", "
-				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
-				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser + ", " : "")
 				+ (response != null ? "response=" + response + ", " : "")
 				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated + ", "
 						: "")
-				+ (usersRelated != null ? "usersRelated=" + usersRelated : "")
-				+ "]";
+				+ (usersRelated != null ? "usersRelated=" + usersRelated + ", "
+						: "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
 
@@ -637,6 +711,104 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setModUser(Integer modUser) {
 		this.modUser = modUser;
+	}
+	
+	
+
+	public boolean isSentAdminNotice() {
+		return sentAdminNotice;
+	}
+
+	public void setSentAdminNotice(boolean sentAdminNotice) {
+		this.sentAdminNotice = sentAdminNotice;
+	}
+
+	public boolean isArrivingAdminNotice() {
+		return arrivingAdminNotice;
+	}
+
+	public void setArrivingAdminNotice(boolean arrivingAdminNotice) {
+		this.arrivingAdminNotice = arrivingAdminNotice;
+	}
+
+	public boolean isDeadlineAdminNotice() {
+		return deadlineAdminNotice;
+	}
+
+	public void setDeadlineAdminNotice(boolean deadlineAdminNotice) {
+		this.deadlineAdminNotice = deadlineAdminNotice;
+	}
+
+	public boolean isReminderAdminNotice() {
+		return reminderAdminNotice;
+	}
+
+	public void setReminderAdminNotice(boolean reminderAdminNotice) {
+		this.reminderAdminNotice = reminderAdminNotice;
+	}
+
+	public boolean isExpiredAdminNotice() {
+		return expiredAdminNotice;
+	}
+
+	public void setExpiredAdminNotice(boolean expiredAdminNotice) {
+		this.expiredAdminNotice = expiredAdminNotice;
+	}
+
+	public boolean isSentUserNotice() {
+		return sentUserNotice;
+	}
+
+	public void setSentUserNotice(boolean sentUserNotice) {
+		this.sentUserNotice = sentUserNotice;
+	}
+
+	public boolean isArrivingUserNotice() {
+		return arrivingUserNotice;
+	}
+
+	public void setArrivingUserNotice(boolean arrivingUserNotice) {
+		this.arrivingUserNotice = arrivingUserNotice;
+	}
+
+	public boolean isDeadlineUserNotice() {
+		return deadlineUserNotice;
+	}
+
+	public void setDeadlineUserNotice(boolean deadlineUserNotice) {
+		this.deadlineUserNotice = deadlineUserNotice;
+	}
+
+	public boolean isReminderUserNotice() {
+		return reminderUserNotice;
+	}
+
+	public void setReminderUserNotice(boolean reminderUserNotice) {
+		this.reminderUserNotice = reminderUserNotice;
+	}
+
+	public boolean isExpiredUserNotice() {
+		return expiredUserNotice;
+	}
+
+	public void setExpiredUserNotice(boolean expiredUserNotice) {
+		this.expiredUserNotice = expiredUserNotice;
+	}
+
+	public boolean isEmailNotification() {
+		return emailNotification;
+	}
+
+	public void setEmailNotification(boolean emailNotification) {
+		this.emailNotification = emailNotification;
+	}
+
+	public boolean isEngineNotification() {
+		return engineNotification;
+	}
+
+	public void setEngineNotification(boolean engineNotification) {
+		this.engineNotification = engineNotification;
 	}
 
 	// nes 20111209
