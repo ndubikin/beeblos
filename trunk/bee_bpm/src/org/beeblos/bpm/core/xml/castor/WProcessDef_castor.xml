@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                         "http://castor.org/mapping.dtd">
+<mapping>
+    <description xmlns="">Castor generated mapping file</description>
+    
+    <include href="WProcessUser_castor.xml" />
+    <include href="WStepDef_castor.xml" />
+    <include href="WProcessRole_castor.xml" />
+    
+    <class name="org.beeblos.bpm.core.model.WProcessDef">
+        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WProcessDef</description>
+        <map-to/>
+        <field name="modDate" type="java.util.Date">
+            <bind-xml name="mod-date" node="element"/>
+        </field>
+        <field name="name" type="java.lang.String">
+            <bind-xml name="name" node="element"/>
+        </field>
+        <field name="id" type="java.lang.Integer">
+            <bind-xml name="id" node="element"/>
+        </field>
+        <field name="usersRelated" type="org.beeblos.bpm.core.model.WProcessUser" collection="set">
+            <bind-xml name="users-related" node="element"/>
+        </field>
+        <field name="modUser" type="java.lang.Integer">
+            <bind-xml name="mod-user" node="element"/>
+        </field>
+        <field name="idAdditionalZone" type="java.lang.String">
+            <bind-xml name="id-additional-zone" node="element"/>
+        </field>
+        <field name="beginStep" type="org.beeblos.bpm.core.model.WStepDef">
+            <bind-xml name="begin-step" node="element"/>
+        </field>
+        <field name="insertDate" type="java.util.Date">
+            <bind-xml name="insert-date" node="element"/>
+        </field>
+        <field name="insertUser" type="java.lang.Integer">
+            <bind-xml name="insert-user" node="element"/>
+        </field>
+        <field name="comments" type="java.lang.String">
+            <bind-xml name="comments" node="element"/>
+        </field>
+        <field name="adminEmail" type="java.lang.String">
+            <bind-xml name="admin-email" node="element"/>
+        </field>
+        <field name="rolesRelated" type="org.beeblos.bpm.core.model.WProcessRole" collection="set">
+            <bind-xml name="roles-related" node="element"/>
+        </field>
+        <field name="idWorkZone" type="java.lang.String">
+            <bind-xml name="id-work-zone" node="element"/>
+        </field>
+        <field name="idListZone" type="java.lang.String">
+            <bind-xml name="id-list-zone" node="element"/>
+        </field>
+    </class>
+</mapping>
