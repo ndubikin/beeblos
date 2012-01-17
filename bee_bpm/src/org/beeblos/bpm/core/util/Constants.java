@@ -8,6 +8,8 @@ import java.util.Date;
 public class Constants {
 	
 	//public static final Integer VENCIMIENTO_FACTURA_PROVEEDOR_DEFAULT  = getIntegerProperty("dfag.vencimiento.factura.default.en.dias",60);
+
+	public static final String TEXT_XML="text/xml";
 	
 	/** PARÁMETROS PARA EL SISTEMA DE WORKFLOW */
 	public static final String ROLE = "ROLE";
