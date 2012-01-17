@@ -7,7 +7,9 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.ObjectBL;
+import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.error.ObjectException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.ObjectM;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
@@ -92,7 +94,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 	
 	// CREATE NULL PROPERTIES OF OBJECT TYPE TO AVOID PROBLEMS
 	// WITH VIEW AND ITS REFERENES TO THESE OBJECTS ...
-	private void createNullObjectTypeProperties(){
+	private void recoverNullObjects(){
 		
 		if(currentObject != null){
 			
@@ -112,7 +114,13 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 		return result;
 	}
 	
-	
+	private void updateCurrentObject() throws ObjectException {
+		ObjectBL womBL = new ObjectBL();
+		this.setModel();
+		womBL.update(currentObject, getCurrentUserId());
+		this.recoverNullObjects();
+	}
+
 
 	public String cancel(){
 		
@@ -153,7 +161,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 				_reset();
 				
 			} catch (ObjectException e) {
-				createNullObjectTypeProperties(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+				recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 				result =  null;
 			}
 		}
@@ -199,7 +207,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 				update();
 			}
 			
-			createNullObjectTypeProperties();
+			recoverNullObjects();
 			
 			ret="OK";
 			setShowHeaderMessage(true);
@@ -242,7 +250,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 			
 			objBL.update(currentObject, this.getCurrentUserId() );
 			
-			createNullObjectTypeProperties();
+			recoverNullObjects();
 			
 			setShowHeaderMessage(true);
 			ret="OK";

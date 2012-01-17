@@ -43,39 +43,36 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private static final Log logger = LogFactory.getLog(WStepDefFormBean.class);
 	
 	private static final String MANAGED_BEAN_NAME = "wStepDefFormBean";
-
-    private Integer currentUserId;
-    
-	private WStepDef currentWStepDef; 
 	
-	private Integer currObjId; // current object managed by this bb
-
-	private TimeZone timeZone;
-
-	private BeeblosAttachment attachment;
-	private String documentLink;
-	
-	// auxiliar fields
-	private List<SelectItem> lWTimeUnit;
-	
-	// dml 20120111
-	private WStepResponseDef stepResponse;
-
-	// dml 20120112
-	private boolean readOnly;
-	
-	// dml 20120113
-	private WStepRole currentWStepRole;
-	private WStepUser currentWStepUser;	
-	
-	// rrl 20120113
-	private String strRoleList;
-	private String strUserList;
-
 	public static WStepDefFormBean getCurrentInstance() {
         return (WStepDefFormBean) FacesContext.getCurrentInstance().getExternalContext()
             .getRequestMap().get(MANAGED_BEAN_NAME);
     }
+
+	private TimeZone timeZone;
+	
+    private Integer currentUserId; // session user
+
+    // main properties:
+    
+	private WStepDef currentWStepDef; 
+	private Integer currObjId; // current object id managed by this backing bean
+	
+	// auxiliar fields:
+
+	private BeeblosAttachment attachment;
+	private String documentLink;
+	
+	private List<SelectItem> lWTimeUnit; // to show time unit list
+
+			// properties to handle (edit, update, etc) step's roles, users and responses 
+	private WStepResponseDef stepResponse;
+	private WStepRole currentWStepRole;
+	private WStepUser currentWStepUser;	
+	
+	private boolean readOnly; // help to view to know when is in edit mode and when in display mode
+	private String strRoleList; // help to pass current role list ids to popup
+	private String strUserList; // idem 
 
 	public WStepDefFormBean() {		
 		super();
@@ -111,18 +108,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.currObjId=new Integer(0);
 		this.currentWStepDef=null;
 		
-		// dml 20110111
 		this.stepResponse = new WStepResponseDef();
-		
-		// dml 20120113
 		this.currentWStepRole = new WStepRole();
 		this.currentWStepUser = new WStepUser();
 
 		attachment = new BeeblosAttachment();
-
 		documentLink=null; 
 		
-		this.setReadOnly(true);
+		this.setReadOnly(true); // backing bean handle object in read-only mode by default
 
 		//		HelperUtil.recreateBean("documentacionBean", "com.softpoint.taglib.common.DocumentacionBean");
 
@@ -428,7 +421,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				stepResponse = new WStepResponseDefBL().getWStepResponseDefByPK(stepResponse.getId(), getCurrentUserId().toString());
+				stepResponse = 
+						new WStepResponseDefBL()
+								.getWStepResponseDefByPK(stepResponse.getId(), getCurrentUserId() );
 			
 			} catch (WStepResponseDefException ex1) {
 
@@ -581,26 +576,16 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		try {
 
-			if (stepResponse.getName() != null && !"".equals(stepResponse.getName())){
+			if (stepResponse.getName() != null && !"".equals(stepResponse.getName())) {
 			
-				// dml 20120112
-				if (stepResponse.getRespOrder() == null || stepResponse.getRespOrder() == 0){
+				// DAVID: 0 ES UN ORDEN VALIDO PARA UNA RESPUESTA... ASI Q SOLO CONTROLAMOS EL NULL
+				if ( stepResponse.getRespOrder() == null ) {
 					
-					Integer nextRespOrder = 0;
-					
-					if (getResponseList() != null){
-						for (WStepResponseDef wsrd : getResponseList()){
-							if (nextRespOrder < wsrd.getRespOrder()){
-								nextRespOrder = wsrd.getRespOrder();
-							}
-						}
-					}
-					
-					stepResponse.setRespOrder(nextRespOrder+1);
+					stepResponse.setRespOrder( getNextResponseOrder() );
 					
 				}
 				
-				wsrdBL.add(stepResponse, this.getCurrentUserId().toString());
+				wsrdBL.add( stepResponse, this.getCurrentUserId() );
 				
 				this.currentWStepDef.addResponse(stepResponse);
 
@@ -631,6 +616,21 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 
+	private Integer getNextResponseOrder() {
+		
+		Integer nextRespOrder = 0;
+		
+		if (getResponseList() != null){
+			for (WStepResponseDef wsrd : getResponseList()){
+				if (nextRespOrder < wsrd.getRespOrder()){
+					nextRespOrder = wsrd.getRespOrder();
+				}
+			}
+		}
+		
+		return nextRespOrder+1;
+	}
+
 	// dml 20120111
 	public void deleteStepResponse(){
 		
@@ -639,8 +639,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 		try {
 			if (stepResponse != null && stepResponse.getId() != null){
 			
-				stepResponse = wsrdBL.getWStepResponseDefByPK(stepResponse.getId(), this.getCurrentUserId().toString());
-				wsrdBL.delete(stepResponse, this.getCurrentUserId().toString());
+				stepResponse = wsrdBL.getWStepResponseDefByPK(stepResponse.getId(), this.getCurrentUserId() );
+				wsrdBL.delete(stepResponse, this.getCurrentUserId() );
 
 				loadObject();
 				
@@ -664,7 +664,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		try {
 			if (stepResponse != null){
 			
-				wsrdBL.update(stepResponse, this.getCurrentUserId().toString());
+				wsrdBL.update(stepResponse, this.getCurrentUserId() );
 
 				loadObject();
 				
