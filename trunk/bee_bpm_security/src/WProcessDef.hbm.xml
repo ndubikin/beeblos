@@ -81,7 +81,7 @@
 		</set>
 		
 		<set cascade="all" name="usersRelated" sort="unsorted"
-			table="w_process_user" lazy="false">
+			table="w_process_user" lazy="false" >
 			<key column="id_process" />
 			<composite-element class="org.beeblos.bpm.core.model.WProcessUser">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
@@ -265,7 +265,7 @@
 			<key column="id_step" />
 			<composite-element class="org.beeblos.bpm.core.model.WStepRole">
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
-					column="id_role" cascade="save-update" lazy="false"/>
+					column="id_role" lazy="false"/>
 				<property name="admin"	type="java.lang.Boolean">
 					<column name="admin">
 						<comment>indicates this role is an admin role for this process</comment>
@@ -291,10 +291,10 @@
 			<key column="id_step" />
 			<composite-element class="org.beeblos.bpm.core.model.WStepUser">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
-					column="id_user" cascade="save-update" lazy="false"/>
+					column="id_user" lazy="false" />
 				<property name="admin"	type="java.lang.Boolean">
 					<column name="admin">
-						<comment>indicates this role is an admin role for this process</comment>
+						<comment>indicates this role is an admin role for this step</comment>
 					</column>
 				</property>
 		        <property name="idObject" type="java.lang.Integer">
