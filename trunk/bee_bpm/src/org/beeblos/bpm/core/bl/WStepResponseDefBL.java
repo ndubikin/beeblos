@@ -19,7 +19,7 @@ public class WStepResponseDefBL {
 		
 	}
 	
-	public Integer add(WStepResponseDef response, String user) throws WStepResponseDefException {
+	public Integer add(WStepResponseDef response, Integer user) throws WStepResponseDefException {
 		
 		logger.debug("add() WStepResponseDef - Name: ["+response.getName()+"]");
 		
@@ -33,7 +33,7 @@ public class WStepResponseDefBL {
 	}
 	
 	
-	public void update(WStepResponseDef response, String user) throws WStepResponseDefException {
+	public void update(WStepResponseDef response, Integer user) throws WStepResponseDefException {
 		
 		logger.debug("update() WStepResponseDef < id = "+response.getId()+">");
 		
@@ -54,7 +54,7 @@ public class WStepResponseDefBL {
 	}
 	
 	
-	public void delete(WStepResponseDef response, String user) throws WStepResponseDefException {
+	public void delete(WStepResponseDef response, Integer user) throws WStepResponseDefException {
 
 		logger.debug("delete() WStepResponseDef - Name: ["+response.getName()+"]");
 		
@@ -62,19 +62,19 @@ public class WStepResponseDefBL {
 
 	}
 
-	public WStepResponseDef getWStepResponseDefByPK(Integer id, String user) throws WStepResponseDefException {
+	public WStepResponseDef getWStepResponseDefByPK(Integer id, Integer user) throws WStepResponseDefException {
 
 		return new WStepResponseDefDao().getWStepResponseDefByPK(id);
 	}
 	
 	
-	public WStepResponseDef getWStepResponseDefByName(String name, String user) throws WStepResponseDefException {
+	public WStepResponseDef getWStepResponseDefByName(String name, Integer user) throws WStepResponseDefException {
 
 		return new WStepResponseDefDao().getWStepResponseDefByName(name);
 	}
 
 	
-	public List<WStepResponseDef> getWStepResponseDefs(String user) throws WStepResponseDefException {
+	public List<WStepResponseDef> getWStepResponseDefs(Integer user) throws WStepResponseDefException {
 
 		return new WStepResponseDefDao().getWStepResponseDefs();
 	
