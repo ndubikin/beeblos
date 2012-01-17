@@ -8,13 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +21,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
@@ -31,62 +29,57 @@ import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
-import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
-
+import org.beeblos.bpm.wc.taglib.util.XMLGenerationUtil;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Log logger = 
-			LogFactory
-				.getLog(WProcessDefFormBean.class.getName());
+	private static final Log logger = LogFactory
+			.getLog(WProcessDefFormBean.class.getName());
 
 	private static final String MANAGED_BEAN_NAME = "wProcessDefFormBean";
-
-	private Integer currentUserId;
-
-	private WProcessDef currentWProcessDef;
-
-	private Integer currentId; // current object managed by this bb
-
-	private TimeZone timeZone;
-
-	private BeeblosAttachment attachment;
-	private String documentLink;
-	
-	private List<SelectItem> lStepCombo = new ArrayList<SelectItem>();
-	
-	private List<WStepDef> lSteps = new ArrayList<WStepDef>();
-	
-	private boolean readOnly;
-	
-	private List<String> selectedWRoleDefList = new ArrayList<String>();
-	private List<String> selectedWUserDefList = new ArrayList<String>();
-	
-	// dml 20120111
-	private WProcessRole currentWProcessRole;
-	private WProcessUser currentWProcessUser;
-
-	// rrl 20120113
-	private String strRoleList;
-	private String strUserList;
-
 
 	public static WProcessDefFormBean getCurrentInstance() {
 		return (WProcessDefFormBean) FacesContext.getCurrentInstance()
 				.getExternalContext().getRequestMap().get(MANAGED_BEAN_NAME);
 	}
 
+	private Integer currentUserId;
+	private TimeZone timeZone;
+
+	// main properties:
+
+	private WProcessDef currentWProcessDef;
+	private Integer currentId; // current object managed by this bb
+
+	// auxiliar properties
+
+	private BeeblosAttachment attachment;
+	private String documentLink;
+
+	private List<SelectItem> lStepCombo = new ArrayList<SelectItem>();
+	private List<WStepDef> lSteps = new ArrayList<WStepDef>();
+
+	private boolean readOnly;
+
+	private List<String> selectedWRoleDefList = new ArrayList<String>();
+	private List<String> selectedWUserDefList = new ArrayList<String>();
+
+	private WProcessRole currentWProcessRole;
+	private WProcessUser currentWProcessUser;
+
+	private String strRoleList;
+	private String strUserList;
+
 	public WProcessDefFormBean() {
 		super();
-
 		init();
 	}
 
@@ -94,133 +87,112 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		super.init();
 
 		setShowHeaderMessage(false);
-		
 		loadStepCombo();
-		
 		_reset();
-		
+
 	}
 
 	// to add a new WProcessDef
 	public void initEmptyWProcessDef() {
 
 		currentId = null;
-		
 		currentWProcessDef = new WProcessDef();
-				
 		this.setReadOnly(false);
-		
-		recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
-										  // to avoid access to null objects from view
-
+		recoverNullObjects(); // <<<<<<<<< IMPORTANT >>>>>>>>>>>
+							  // to avoid access to null objects from view
 	}
-	
+
 	public void _reset() {
 
 		this.currentId = null;
 		this.currentWProcessDef = null;
-		
-		// dml 20120111
 		this.currentWProcessRole = new WProcessRole();
 		this.currentWProcessUser = new WProcessUser();
+		this.readOnly = true;
+		this.attachment = new BeeblosAttachment();
+		this.documentLink = null;
+
 		recoverNullObjects();
-		
-		this.readOnly=true;
-
-		attachment = new BeeblosAttachment();
-
-		documentLink = null;
 
 		HelperUtil.recreateBean("documentacionBean",
 				"com.softpoint.taglib.common.DocumentacionBean");
 
 	}
 
-
 	// load an Object in currentWProcessDef
 	public void loadCurrentWProcessDef(Integer id) {
-		
-		this.currentId=id;
+
+		this.currentId = id;
 		this.loadCurrentWProcessDef();
-		
+
 	}
-	
-	
+
 	public void loadCurrentWProcessDef() {
 
 		WProcessDefBL wpdbl = new WProcessDefBL();
 
 		try {
 
-			currentWProcessDef = 
-					wpdbl
-						.getWProcessDefByPK( this.currentId, getCurrentUserId() );
-			
+			currentWProcessDef = wpdbl.getWProcessDefByPK(this.currentId,
+					getCurrentUserId());
+
 			if (currentWProcessDef != null) {
 
 				loadLSteps();
 
 			}
 
-			recoverNullObjects(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+			recoverNullObjects(); // <<<<<<<< IMPORTANT >>>>>>>>>>>
 
 		} catch (WProcessDefException ex1) {
 
 			logger.error("An error has happened trying to load the WProcessDef: "
-					+ this.currentId + " : " + ex1.getMessage() + " -" + ex1.getCause());
+					+ this.currentId
+					+ " : "
+					+ ex1.getMessage()
+					+ " -"
+					+ ex1.getCause());
 		}
 
 	}
-	
-	//rrl 20120116
+
 	public void generateXMLCurrentWProcessDef() {
-		
-		System.out.println(">>>>>>>>>> Castor XML starting the process Marshall");
-		
-		String templateWProcessDef = "/home/u097/workspace/bee_bpm/src/org/beeblos/bpm/core/xml/castor/WProcessDef_castor.xml";
+		logger.debug(">>>>>>>>>> Castor XML starting the process Marshalling");
 
-    	HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+		try {
 
-		String contenidoXML = UtilJavaToXML.toXML(currentWProcessDef, templateWProcessDef);
-		
-		if (contenidoXML != null) {
+// path pointing to folder "castor" in webapps/appname/castor ( or in WebContent/castor in eclipse environment ) 
+//			String xmlTemplatesPath = getSession().getServletContext().getRealPath("/")+"xmlTemplates";
+//			xmlTemplatesPath+="castor/"+currentWProcessDef.getClass().getSimpleName()+"_castor.xml";
+
+			XMLGenerationUtil.generateXMLObject(currentWProcessDef,
+					currentWProcessDef.getId(), null);
+
+		} catch (IOException e) {
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = {
+					message + ",",
+					".Error generating current WProcessDef to XML ..."
+							+ currentWProcessDef.getId() };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+
+			logger.error(message);
+
+		} catch (XMLGenerationException e) {
 			
-			try{
-				byte[] buffer =  contenidoXML.getBytes();
-				
-				response.setContentLength(buffer.length);
-				response.setContentType("text/xml"); 
-//				response.setLocale( new Locale(DEFAULT_ENCODING) );
-				response.setLocale( new Locale("UTF-8") );
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = {
+					message + ",",
+					". XMLGenerationException: Error generating current WProcessDef to XML ..."
+							+ currentWProcessDef.getId() };
+			agregarMensaje("203", message, params, FGPException.ERROR);
 
-				response.addHeader("Content-Disposition",  "attachment; filename=\""  + "WProcessDef_id_" + currentWProcessDef.getId() + ".xml"  +  "\"");						
-				response.setHeader("Cache-Control","no-cache");
-				
-				ServletOutputStream outStream = response.getOutputStream();
-				outStream.write(buffer,0,buffer.length);
-				outStream.flush();
-				outStream.close();
-				FacesContext.getCurrentInstance().responseComplete();
-				
-		        System.out.println(contenidoXML);
-				
-			}catch(IOException e){
-				
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error generate current WProcessDef to XML ..." };
-				agregarMensaje("203", message, params, FGPException.ERROR);
-				
-				logger.error(message);
-				
-			}
-		} else {
-			System.out.println(">>>>>>>>>> Castor XML the content XML is null");
+			logger.error(message);
 		}
-		
-		System.out.println(">>>>>>>>>> Castor XML process complete Marshall");
-		
+
 	}
-	
+
 	private void setModel() {
 
 		if (currentWProcessDef != null) {
@@ -240,16 +212,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				currentWProcessDef.setBeginStep(new WStepDef(EMPTY_OBJECT));
 			}
 
-			if ( currentWProcessDef.getRolesRelated() == null ) {
-				currentWProcessDef.setRolesRelated( new HashSet<WProcessRole>() );
+			if (currentWProcessDef.getRolesRelated() == null) {
+				currentWProcessDef.setRolesRelated(new HashSet<WProcessRole>());
 			}
 
-			if ( currentWProcessDef.getUsersRelated() == null ) {
-				currentWProcessDef.setUsersRelated( new HashSet<WProcessUser>() );
+			if (currentWProcessDef.getUsersRelated() == null) {
+				currentWProcessDef.setUsersRelated(new HashSet<WProcessUser>());
 			}
 
 		}
-		
+
 		if (currentWProcessRole != null) {
 
 			if (currentWProcessRole.getProcess() == null) {
@@ -261,7 +233,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 
 		}
-		
+
 		if (currentWProcessUser != null) {
 
 			if (currentWProcessUser.getProcess() == null) {
@@ -273,19 +245,20 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 
 		}
-		
+
 	}
 
 	// checks input data before save or update
 	private boolean checkInputData() {
 
 		boolean result = false;
-		
-		if (this.currentWProcessDef != null && this.currentWProcessDef.getName() != null 
-				&& !"".equals(this.currentWProcessDef.getName())){
-				
+
+		if (this.currentWProcessDef != null
+				&& this.currentWProcessDef.getName() != null
+				&& !"".equals(this.currentWProcessDef.getName())) {
+
 			result = true;
-			
+
 		}
 
 		return result;
@@ -293,9 +266,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public String cancel() {
 
-		Integer id= this.currentId;
+		Integer id = this.currentId;
 		_reset();
-		this.currentId=id;
+		this.currentId = id;
 		this.loadCurrentWProcessDef();
 		this.setReadOnly(true);
 		return null;
@@ -371,7 +344,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			this.currentId = wpdBL.add(currentWProcessDef,
 					this.getCurrentUserId());
-			
+
 			loadCurrentWProcessDef(); // reload object from db
 
 			// Manual process to store attachment in the repository ( if
@@ -383,14 +356,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 
 			recoverNullObjects();
-			
+
 			this.setReadOnly(true);
-			
+
 			ret = SUCCESS_FORM_WPROCESSDEF;
-			
+
 			setShowHeaderMessage(true);
-			
-			
+
 		} catch (WProcessDefException ex1) {
 
 			String message = ex1.getMessage() + " - " + ex1.getCause();
@@ -425,7 +397,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			setModel();
 
 			wpdBL.update(currentWProcessDef, this.getCurrentUserId());
-			
+
 			loadCurrentWProcessDef(); // reload object from db
 
 			recoverNullObjects();
@@ -452,13 +424,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		return ret;
 	}
-	
+
 	private void loadStepCombo() {
-		
+
 		try {
-			
-			setStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL().getComboList("Select...", null)));
-			
+
+			setStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL()
+					.getComboList("Select...", null)));
+
 		} catch (WStepDefException e) {
 			e.printStackTrace();
 		}
@@ -466,20 +439,19 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	// dml 20120105
 	private void loadLSteps() {
-		
+
 		try {
-			
-			if (this.currentId != null 
-					&& this.currentId != 0){
-			
+
+			if (this.currentId != null && this.currentId != 0) {
+
 				setlSteps(new WStepDefBL().getWStepDefs(this.currentId, 1));
-			
+
 			}
 		} catch (WStepDefException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
 	}
@@ -547,36 +519,38 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.lSteps = lSteps;
 	}
 
-	// dml 20120105
-	public List<WProcessRole> getRolesRelatedList(){
-		
-		List<WProcessRole> rrl= new ArrayList<WProcessRole>();
-		
-		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
-				&& currentWProcessDef.getRolesRelated().size() != 0){
-			
-			rrl= new ArrayList<WProcessRole>(currentWProcessDef.getRolesRelated());
-			
+	public List<WProcessRole> getRolesRelatedList() {
+
+		List<WProcessRole> rrl = new ArrayList<WProcessRole>();
+
+		if (currentWProcessDef != null
+				&& currentWProcessDef.getRolesRelated() != null
+				&& currentWProcessDef.getRolesRelated().size() != 0) {
+
+			rrl = new ArrayList<WProcessRole>(
+					currentWProcessDef.getRolesRelated());
+
 		}
-		
+
 		return rrl;
-		
+
 	}
 
-	// dml 20120105
-	public List<WProcessUser> getUsersRelatedList(){
-		
+	public List<WProcessUser> getUsersRelatedList() {
+
 		List<WProcessUser> url = new ArrayList<WProcessUser>();
-		
-		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
-				&& currentWProcessDef.getUsersRelated().size() != 0){
-			
-			url= new ArrayList<WProcessUser>(currentWProcessDef.getUsersRelated());
+
+		if (currentWProcessDef != null
+				&& currentWProcessDef.getUsersRelated() != null
+				&& currentWProcessDef.getUsersRelated().size() != 0) {
+
+			url = new ArrayList<WProcessUser>(
+					currentWProcessDef.getUsersRelated());
 
 		}
-		
+
 		return url;
-		
+
 	}
 
 	public boolean isReadOnly() {
@@ -586,9 +560,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
-	
+
 	public void changeReadOnlyToFalse() {
-		this.readOnly=false;
+		this.readOnly = false;
 	}
 
 	public List<String> getSelectedWRoleDefList() {
@@ -607,45 +581,51 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.selectedWUserDefList = selectedWUserDefList;
 	}
 
-	//rrl 20120112
 	public String getStrRoleList() {
-		strRoleList="";
-		for ( WProcessRole pr: this.currentWProcessDef.getRolesRelated()) {
-			strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+pr.getRole().getId();
+		strRoleList = "";
+		for (WProcessRole pr : this.currentWProcessDef.getRolesRelated()) {
+			strRoleList += (strRoleList != null && !"".equals(strRoleList) ? ","
+					: "")
+					+ pr.getRole().getId();
 		}
-		
-		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
+
+		System.out
+				.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"
+						+ strRoleList);
 		return strRoleList;
 	}
 
 	public void setStrRoleList(String strRoleList) {
 		this.strRoleList = strRoleList;
 	}
-	
-	//rrl 20120113
+
 	public String getStrUserList() {
-		strUserList="";
-		
-		for ( WProcessUser pu: this.currentWProcessDef.getUsersRelated()) {
-			strUserList+=(strUserList!=null && !"".equals(strUserList)?",":"")+pu.getUser().getId();
+		strUserList = "";
+
+		for (WProcessUser pu : this.currentWProcessDef.getUsersRelated()) {
+			strUserList += (strUserList != null && !"".equals(strUserList) ? ","
+					: "")
+					+ pu.getUser().getId();
 		}
-		
-		System.out.println("--------------->>>>>>>>> strUserList ------------>>>>>>>>"+strUserList);
+
+		System.out
+				.println("--------------->>>>>>>>> strUserList ------------>>>>>>>>"
+						+ strUserList);
 		return strUserList;
 	}
 
 	public void setStrUserList(String strUserList) {
 		this.strUserList = strUserList;
 	}
-	
+
 	public WProcessRole getCurrentWProcessRole() {
 		return currentWProcessRole;
 	}
 
 	public void setCurrentWProcessRole(WProcessRole currentWProcessRole) {
 		this.currentWProcessRole = currentWProcessRole;
-	}	
-	
+	}
+
 	public WProcessUser getCurrentWProcessUser() {
 		return currentWProcessUser;
 	}
@@ -654,184 +634,193 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.currentWProcessUser = currentWProcessUser;
 	}
 
-	// dml 20120111
-	public void deleteWProcessRole(){
-		
-		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
-				&& !currentWProcessDef.getRolesRelated().isEmpty()){
-			
-			for (WProcessRole wpr : currentWProcessDef.getRolesRelated()){
-				
-				if (wpr.getRole() != null && wpr.getRole().getId() != null 
-						&& wpr.getRole().getId().equals(currentWProcessRole.getRole().getId())){
-					
+	public void deleteWProcessRole() {
+
+		if (currentWProcessDef != null
+				&& currentWProcessDef.getRolesRelated() != null
+				&& !currentWProcessDef.getRolesRelated().isEmpty()) {
+
+			for (WProcessRole wpr : currentWProcessDef.getRolesRelated()) {
+
+				if (wpr.getRole() != null
+						&& wpr.getRole().getId() != null
+						&& wpr.getRole().getId()
+								.equals(currentWProcessRole.getRole().getId())) {
+
 					currentWProcessDef.getRolesRelated().remove(wpr);
 					break;
-					
-				}
-					
-			}
-			
-			try {
-				
-				// dml 20120116
-				updateCurrentObject();
 
-				//rrl 20120116
-				strRoleList="";
-				for ( WProcessRole pr: this.currentWProcessDef.getRolesRelated()) {
-					strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+pr.getRole().getId();
 				}
-				
+
+			}
+
+			try {
+
+				persistCurrentObject();
+				strRoleList = "";
+				for (WProcessRole pr : this.currentWProcessDef
+						.getRolesRelated()) {
+					strRoleList += (strRoleList != null
+							&& !"".equals(strRoleList) ? "," : "")
+							+ pr.getRole().getId();
+				}
+
 			} catch (WProcessDefException ex1) {
 
 				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error deleting WProcessRole ..." };
+				String params[] = { message + ",",
+						".Error deleting WProcessRole ..." };
 				agregarMensaje("203", message, params, FGPException.ERROR);
 
 			}
-			
+
 		}
-		
+
 	}
-	
-	// dml 20120111
-	public void changeAdminPrivilegesWProcessRole(){
-		
-		if (currentWProcessDef != null && currentWProcessDef.getRolesRelated() != null
-				&& !currentWProcessDef.getRolesRelated().isEmpty()){
-			
-			for (WProcessRole wpr : currentWProcessDef.getRolesRelated()){
-				
-				if (wpr.getRole() != null && wpr.getRole().getId() != null 
-						&& wpr.getRole().getId().equals(currentWProcessRole.getRole().getId())){
-					
-					if (wpr.isAdmin()){
+
+	public void changeAdminPrivilegesWProcessRole() {
+
+		if (currentWProcessDef != null
+				&& currentWProcessDef.getRolesRelated() != null
+				&& !currentWProcessDef.getRolesRelated().isEmpty()) {
+
+			for (WProcessRole wpr : currentWProcessDef.getRolesRelated()) {
+
+				if (wpr.getRole() != null
+						&& wpr.getRole().getId() != null
+						&& wpr.getRole().getId()
+								.equals(currentWProcessRole.getRole().getId())) {
+
+					if (wpr.isAdmin()) {
 						wpr.setAdmin(false);
-					}else {
+					} else {
 						wpr.setAdmin(true);
-					}					
+					}
 					break;
-					
+
 				}
-				
+
 			}
-			
+
 			try {
-				
-				// dml 20120116
-				updateCurrentObject();
-				
+
+				persistCurrentObject();
+
 			} catch (WProcessDefException ex1) {
 
 				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error changing admin privileges ..." };
+				String params[] = { message + ",",
+						".Error changing admin privileges ..." };
 				agregarMensaje("203", message, params, FGPException.ERROR);
 
 			}
-			
+
 		}
-		
+
 	}
-	
-	// dml 20120112
-	public void deleteWProcessUser(){
-				
-		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
-				&& !currentWProcessDef.getUsersRelated().isEmpty()){
-			
-			for (WProcessUser wpu : currentWProcessDef.getUsersRelated()){
-				
-				if (wpu.getUser() != null && wpu.getUser().getId() != null 
-						&& wpu.getUser().getId().equals(currentWProcessUser.getUser().getId())){
-					
+
+	public void deleteWProcessUser() {
+
+		if (currentWProcessDef != null
+				&& currentWProcessDef.getUsersRelated() != null
+				&& !currentWProcessDef.getUsersRelated().isEmpty()) {
+
+			for (WProcessUser wpu : currentWProcessDef.getUsersRelated()) {
+
+				if (wpu.getUser() != null
+						&& wpu.getUser().getId() != null
+						&& wpu.getUser().getId()
+								.equals(currentWProcessUser.getUser().getId())) {
+
 					currentWProcessDef.getUsersRelated().remove(wpu);
 					break;
-					
+
 				}
-					
+
 			}
-			
+
 			try {
-				
-				// dml 20120116
-				updateCurrentObject();
-				
-				//rrl 20120116
-				strUserList="";
-				for ( WProcessUser pu: this.currentWProcessDef.getUsersRelated()) {
-					strUserList+=(strUserList!=null && !"".equals(strUserList)?",":"")+pu.getUser().getId();
+
+				persistCurrentObject();
+				strUserList = "";
+				for (WProcessUser pu : this.currentWProcessDef
+						.getUsersRelated()) {
+					strUserList += (strUserList != null
+							&& !"".equals(strUserList) ? "," : "")
+							+ pu.getUser().getId();
 				}
-				
+
 			} catch (WProcessDefException ex1) {
 
 				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error deleting WProcessUser ..." };
+				String params[] = { message + ",",
+						".Error deleting WProcessUser ..." };
 				agregarMensaje("203", message, params, FGPException.ERROR);
 
 			}
-			
+
 		}
-		
+
 	}
-	
-	// dml 20120112
-	public void changeAdminPrivilegesWProcessUser(){
-		
-		if (currentWProcessDef != null && currentWProcessDef.getUsersRelated() != null
-				&& !currentWProcessDef.getUsersRelated().isEmpty()){
-			
-			for (WProcessUser wpu : currentWProcessDef.getUsersRelated()){
-				
-				if (wpu.getUser() != null && wpu.getUser().getId() != null 
-						&& wpu.getUser().getId().equals(currentWProcessUser.getUser().getId())){
-					
-					if (wpu.isAdmin()){
+
+	public void changeAdminPrivilegesWProcessUser() {
+
+		if (currentWProcessDef != null
+				&& currentWProcessDef.getUsersRelated() != null
+				&& !currentWProcessDef.getUsersRelated().isEmpty()) {
+
+			for (WProcessUser wpu : currentWProcessDef.getUsersRelated()) {
+
+				if (wpu.getUser() != null
+						&& wpu.getUser().getId() != null
+						&& wpu.getUser().getId()
+								.equals(currentWProcessUser.getUser().getId())) {
+
+					if (wpu.isAdmin()) {
 						wpu.setAdmin(false);
-					}else {
+					} else {
 						wpu.setAdmin(true);
-					}					
+					}
 					break;
-					
+
 				}
-				
+
 			}
-			
+
 			try {
-				
-				// dml 20120116
-				updateCurrentObject();
-				
+
+				persistCurrentObject();
+
 			} catch (WProcessDefException ex1) {
 
 				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",", ".Error changing admin privileges ..." };
+				String params[] = { message + ",",
+						".Error changing admin privileges ..." };
 				agregarMensaje("203", message, params, FGPException.ERROR);
 
 			}
-			
+
 		}
-		
+
 	}
 
-	//rrl 20120112
 	public String updateRolesRelated() {
-		
+
 		try {
 
-			if ("".equals(strRoleList)){
-				
+			if ("".equals(strRoleList)) {
+
 				currentWProcessDef.setRolesRelated(null);
-				
+
 			} else {
 
-				// dml 20120117
-				ListUtil.updateProcessRoleRelatedList(strRoleList, currentWProcessDef, getCurrentUserId());
-            
+				ListUtil.updateProcessRoleRelatedList(strRoleList,
+						currentWProcessDef, getCurrentUserId());
+
 			}
-			
-			updateCurrentObject();
-			
+
+			persistCurrentObject();
+
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
@@ -851,28 +840,27 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			agregarMensaje("203", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
-	//rrl 20120113
+
 	public String updateUsersRelated() {
 
 		try {
 
-			if ("".equals(strUserList)){
-				
+			if ("".equals(strUserList)) {
+
 				currentWProcessDef.setUsersRelated(null);
-				
+
 			} else {
 
-				// dml 20120117
-				ListUtil.updateProcessUserRelatedList(strUserList, currentWProcessDef, getCurrentUserId());
-            
+				ListUtil.updateProcessUserRelatedList(strUserList,
+						currentWProcessDef, getCurrentUserId());
+
 			}
-			
-			updateCurrentObject();
-			
+
+			persistCurrentObject();
+
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
@@ -892,29 +880,27 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			agregarMensaje("203", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
-	
-	private void updateCurrentObject() throws  WProcessDefException {
+
+	private void persistCurrentObject() throws WProcessDefException {
 		WProcessDefBL wpdBL = new WProcessDefBL();
 		this.setModel();
 		wpdBL.update(this.currentWProcessDef, getCurrentUserId());
 		this.recoverNullObjects();
 	}
 
-	
-// PENDIENTE: metele un check que diga: "Show only selected roles"
-// PENDIENTE: email de CASTOR	
+	// PENDIENTE: metele un check que diga: "Show only selected roles"
+	// PENDIENTE: email de CASTOR
 
-//	public void setNewBeginStep() {
-//		if ( this.currentWProcessDef!=null ) {
-//			if ( this.currentWProcessDef.getBeginStep()!=null ) {
-//				Integer id=this.currentWProcessDef.getBeginStep().getId();
-//				this.currentWProcessDef.setBeginStep(new WStepDef(true));
-//				this.currentWProcessDef.getBeginStep().setId(id);
-//			}
-//		}
-//	}
+	// public void setNewBeginStep() {
+	// if ( this.currentWProcessDef!=null ) {
+	// if ( this.currentWProcessDef.getBeginStep()!=null ) {
+	// Integer id=this.currentWProcessDef.getBeginStep().getId();
+	// this.currentWProcessDef.setBeginStep(new WStepDef(true));
+	// this.currentWProcessDef.getBeginStep().setId(id);
+	// }
+	// }
+	// }
 }

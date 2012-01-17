@@ -58,7 +58,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private WStepDef currentWStepDef; 
 	private Integer currObjId; // current object id managed by this backing bean
 	
-	// auxiliar fields:
+	// auxiliar properties
 
 	private BeeblosAttachment attachment;
 	private String documentLink;
@@ -66,13 +66,13 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private List<SelectItem> lWTimeUnit; // to show time unit list
 
 			// properties to handle (edit, update, etc) step's roles, users and responses 
-	private WStepResponseDef stepResponse;
+	private WStepResponseDef currentStepResponse;
 	private WStepRole currentWStepRole;
 	private WStepUser currentWStepUser;	
 	
 	private boolean readOnly; // help to view to know when is in edit mode and when in display mode
-	private String strRoleList; // help to pass current role list ids to popup
-	private String strUserList; // idem 
+	private String strRoleList; // property to pass current role list ids to popup
+	private String strUserList; // property to pass current role list ids to popup
 
 	public WStepDefFormBean() {		
 		super();
@@ -108,7 +108,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.currObjId=new Integer(0);
 		this.currentWStepDef=null;
 		
-		this.stepResponse = new WStepResponseDef();
+		this.currentStepResponse = new WStepResponseDef();
 		this.currentWStepRole = new WStepRole();
 		this.currentWStepUser = new WStepUser();
 
@@ -416,14 +416,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 	
 	public void loadResponse(){
 		
-		if (stepResponse != null && stepResponse.getId() != null
-				&& stepResponse.getId() != 0){
+		if (currentStepResponse != null && currentStepResponse.getId() != null
+				&& currentStepResponse.getId() != 0){
 			
 			try {
 				
-				stepResponse = 
+				currentStepResponse = 
 						new WStepResponseDefBL()
-								.getWStepResponseDefByPK(stepResponse.getId(), getCurrentUserId() );
+								.getWStepResponseDefByPK(currentStepResponse.getId(), getCurrentUserId() );
 			
 			} catch (WStepResponseDefException ex1) {
 
@@ -541,11 +541,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 	}
 	
 	public WStepResponseDef getStepResponse() {
-		return stepResponse;
+		return currentStepResponse;
 	}
 
 	public void setStepResponse(WStepResponseDef stepResponse) {
-		this.stepResponse = stepResponse;
+		this.currentStepResponse = stepResponse;
 	}
 
 	public ArrayList<WStepResponseDef> getResponseList() {
@@ -569,36 +569,36 @@ public class WStepDefFormBean extends CoreManagedBean {
 					0);
 	}
 	
-	// dml 20120111
 	public void addStepResponse(){
 		
 		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
 		
 		try {
 
-			if (stepResponse.getName() != null && !"".equals(stepResponse.getName())) {
+			if (currentStepResponse.getName() != null && 
+					!"".equals(currentStepResponse.getName())) {
 			
-				// DAVID: 0 ES UN ORDEN VALIDO PARA UNA RESPUESTA... ASI Q SOLO CONTROLAMOS EL NULL
-				if ( stepResponse.getRespOrder() == null ) {
+				if ( currentStepResponse.getRespOrder() == null || 
+						currentStepResponse.getRespOrder().equals(0) ) {
 					
-					stepResponse.setRespOrder( getNextResponseOrder() );
+					currentStepResponse.setRespOrder( getNextResponseOrder() );
 					
 				}
 				
-				wsrdBL.add( stepResponse, this.getCurrentUserId() );
+				wsrdBL.add( currentStepResponse, this.getCurrentUserId() );
 				
-				this.currentWStepDef.addResponse(stepResponse);
+				this.currentWStepDef.addResponse(currentStepResponse);
 
-				// dml 20120116
-				updateCurrentObject();
+				persistCurrentObject();
 				
 				loadObject();
 				
-				//dml 20120112
 				setStepResponse(new WStepResponseDef());
 				
+			} else {
+				
+				// DAVID : PONELE 1 MENSAJE: "DEBE INGRESAR UN NOMBRE EN LA RESPUESTA" 
 			}
-		
 			
 		} catch (WStepResponseDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
@@ -631,16 +631,16 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return nextRespOrder+1;
 	}
 
-	// dml 20120111
 	public void deleteStepResponse(){
 		
 		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
 		
 		try {
-			if (stepResponse != null && stepResponse.getId() != null){
 			
-				stepResponse = wsrdBL.getWStepResponseDefByPK(stepResponse.getId(), this.getCurrentUserId() );
-				wsrdBL.delete(stepResponse, this.getCurrentUserId() );
+			if (currentStepResponse != null && currentStepResponse.getId() != null){
+			
+				currentStepResponse = wsrdBL.getWStepResponseDefByPK(currentStepResponse.getId(), this.getCurrentUserId() );
+				wsrdBL.delete(currentStepResponse, this.getCurrentUserId() );
 
 				loadObject();
 				
@@ -656,15 +656,15 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 
-	// dml 20120111
 	public void editStepResponse(){
 		
 		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
 		
 		try {
-			if (stepResponse != null){
 			
-				wsrdBL.update(stepResponse, this.getCurrentUserId() );
+			if (currentStepResponse != null){
+			
+				wsrdBL.update(currentStepResponse, this.getCurrentUserId() );
 
 				loadObject();
 				
@@ -685,9 +685,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 		List<SelectItem> ltu=null;
 		
 		try {
+			
 			ltu = UtilsVs
 					.castStringPairToSelectitem(
 					new WTimeUnitBL().getComboList("Select time unit","") );
+			
 		} catch (WTimeUnitException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
@@ -700,8 +702,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 	}
 	
 	public String getStrRoleList() {
-		
-//		System.out.println(this.currentWStepDef.getRolesRelated().toString());
 		
 		String strRoleList="";
 		if ( currentWStepDef.getRolesRelated()!=null ) {
@@ -760,7 +760,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.currentWStepUser = currentWStepUser;
 	}
 	
-	// dml 20120113
 	public List<WStepUser> getUsersRelatedList(){
 		
 		List<WStepUser> url= new ArrayList<WStepUser>();
@@ -798,7 +797,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.strRoleList = strRoleList;
 	}
 
-	// dml 20120113
 	public void deleteWStepUser(){
 		
 		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
@@ -816,10 +814,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 					
 			}
 			
-			// dml 20120116
 			try{
 				
-				updateCurrentObject();
+				persistCurrentObject();
 			
 			strUserList="";
 			for ( WStepUser su: this.currentWStepDef.getUsersRelated()) {
@@ -838,7 +835,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 				
 	}
 	
-	// dml 20120113
 	public void changeAdminPrivilegesWStepUser(){
 		
 		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
@@ -860,10 +856,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 				
 			}
 			
-			// dml 20120116
 			try{
 				
-				updateCurrentObject();
+				persistCurrentObject();
 			
 			} catch (WStepDefException e) {
 				String mensaje = e.getMessage() + " - " + e.getCause();
@@ -877,7 +872,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 	
-	// dml 20120113
 	public List<WStepRole> getRolesRelatedList(){
 		
 		List<WStepRole> rrl= new ArrayList<WStepRole>();
@@ -893,7 +887,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 
-	// dml 20120113
 	public void deleteWStepRole(){
 		
 		if (currentWStepDef != null && currentWStepDef.getRolesRelated() != null
@@ -911,10 +904,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 					
 			}
 			
-			// dml 20120116
 			try{
 				
-				updateCurrentObject();
+				persistCurrentObject();
 			
 				strRoleList="";
 				for ( WStepRole sr: this.currentWStepDef.getRolesRelated()) {
@@ -933,7 +925,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 	}
 	
-	// dml 20120113
 	public void changeAdminPrivilegesWStepRole(){
 		
 		if (currentWStepDef != null && currentWStepDef.getRolesRelated() != null
@@ -955,10 +946,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 				
 			}
 			
-			// dml 20120116
 			try{
 				
-				updateCurrentObject();
+				persistCurrentObject();
 			
 			} catch (WStepDefException e) {
 				String mensaje = e.getMessage() + " - " + e.getCause();
@@ -971,23 +961,21 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 	
-	//rrl 20120112
 	public String updateRolesRelated() {
 
-		try{
+		try {
 			
-			if ("".equals(strRoleList)){
+			if ("".equals(strRoleList)) {
 				
 				currentWStepDef.setRolesRelated(null);
 				
 			} else {
 
-				// dml 20120117
 				ListUtil.updateStepRoleRelatedList(strRoleList, currentWStepDef, getCurrentUserId());
 			
 			}
 			
-			updateCurrentObject();
+			persistCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -1012,23 +1000,21 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return null;
 	}
 	
-	//rrl 20120113
 	public String updateUsersRelated() {
 				
-		try{
+		try {
 		
-			if ("".equals(strUserList)){
+			if ("".equals(strUserList)) {
 				
 				currentWStepDef.setUsersRelated(null);
 				
 			} else {
 
-				// dml 20120117
-				ListUtil.updateStepUserRelatedList(strUserList, currentWStepDef, getCurrentUserId());
+				ListUtil.updateStepUserRelatedList( strUserList, currentWStepDef, getCurrentUserId() );
 				
 			}
 			
-			updateCurrentObject();
+			persistCurrentObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -1053,7 +1039,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return null;
 	}
 
-	private void updateCurrentObject() throws WStepDefException {
+	private void persistCurrentObject() throws WStepDefException {
 		WStepDefBL wsdBL = new WStepDefBL();
 		this.setModel();
 		wsdBL.update(currentWStepDef, getCurrentUserId());

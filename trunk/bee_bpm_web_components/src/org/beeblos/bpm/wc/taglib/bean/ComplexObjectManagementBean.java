@@ -114,7 +114,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 		return result;
 	}
 	
-	private void updateCurrentObject() throws ObjectException {
+	private void persistCurrentObject() throws ObjectException {
 		ObjectBL womBL = new ObjectBL();
 		this.setModel();
 		womBL.update(currentObject, getCurrentUserId());
