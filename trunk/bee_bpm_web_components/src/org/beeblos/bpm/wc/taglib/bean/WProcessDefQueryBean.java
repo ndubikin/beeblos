@@ -322,6 +322,30 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 		return ret;
 	}
+	
+	//rrl 20120117
+	public String generateXmlWProcessDef() {
+
+		if (this.id != null){
+			
+			ValueExpression valueBinding = super
+					.getValueExpression("#{wProcessDefFormBean}");
+
+			if (valueBinding != null) {
+
+				WProcessDefFormBean wpdfb = 
+						(WProcessDefFormBean) valueBinding
+							.getValue(super.getELContext());
+				wpdfb.init();
+				wpdfb.setCurrentId(id);
+				wpdfb.loadCurrentWProcessDef(id);
+				
+				wpdfb.generateXMLCurrentWProcessDef();
+			}
+		}
+		
+		return null;
+	}
 
 	// dml 20120110
 	public String createNewWProcessDef() {
