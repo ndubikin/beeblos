@@ -32,22 +32,22 @@
  
  <tag>
   <tag-name>wRoleDefCrudCaratula</tag-name>
-  <source>/taglib/admin/tabs/wRoleDefCrudCaratula.xhtml</source>
+  <source>/taglib/def/tabs/wRoleDefCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wUserDefCrudCaratula</tag-name>
-  <source>/taglib/admin/tabs/wUserDefCrudCaratula.xhtml</source>
+  <source>/taglib/def/tabs/wUserDefCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wTimeUnitCrudCaratula</tag-name>
-  <source>/taglib/admin/tabs/wTimeUnitCrudCaratula.xhtml</source>
+  <source>/taglib/def/tabs/wTimeUnitCrudCaratula.xhtml</source>
  </tag>
  
  <tag>
   <tag-name>wProcessDefQuery</tag-name>
-  <source>/taglib/admin/wProcessDefQuery.xhtml</source>
+  <source>/taglib/def/wProcessDefQuery.xhtml</source>
  </tag>
  
  <tag>
@@ -57,7 +57,7 @@
  
  <tag>
   <tag-name>wStepDefQuery</tag-name>
-  <source>/taglib/admin/wStepDefQuery.xhtml</source>
+  <source>/taglib/def/wStepDefQuery.xhtml</source>
  </tag>
  
  <tag>
