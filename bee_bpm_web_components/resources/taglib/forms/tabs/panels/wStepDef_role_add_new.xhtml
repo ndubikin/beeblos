@@ -12,7 +12,8 @@
 
 	<h:form  id="w_step_def_role_add_new_form${action}">
 	
-<a4j:jsFunction name="onsubmitSearchRole" action="#{wStepDefFormBean.updateRolesRelated}" reRender="w_step_def_role_add_new_form${action}, w_step_def_related_roles_form${action}">
+<a4j:jsFunction name="onsubmitSearchRole" action="#{wStepDefFormBean.updateRolesRelated}" 
+				reRender="w_step_def_role_add_new_form${action}, w_step_def_related_roles_form${action}">
 	 <a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strRoleList}"  />
 </a4j:jsFunction>		
 	
