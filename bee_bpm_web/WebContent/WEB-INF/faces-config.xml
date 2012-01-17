@@ -1,251 +1,216 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
-	<converter>
-		<converter-id>SPDateConverter</converter-id>
-		<converter-class>org.beeblos.bpm.wc.taglib.util.SPDateConverter</converter-class>
-	</converter>
-	<managed-bean>
-		<managed-bean-name>componentNavigator</managed-bean-name>
-		<managed-bean-class>org.richfaces.demo.common.ComponentNavigator</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>skinBean</managed-bean-name>
-		<managed-bean-class>org.richfaces.demo.common.SkinBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>skin</property-name>
-			<property-class>java.lang.String</property-class>
-			<value>laguna</value>
-		</managed-property>
-	</managed-bean>
-
-
-  <managed-bean>
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+ <converter>
+  <converter-id>SPDateConverter</converter-id>
+  <converter-class>org.beeblos.bpm.wc.taglib.util.SPDateConverter</converter-class>
+ </converter>
+ <managed-bean>
+  <managed-bean-name>componentNavigator</managed-bean-name>
+  <managed-bean-class>org.richfaces.demo.common.ComponentNavigator</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>skinBean</managed-bean-name>
+  <managed-bean-class>org.richfaces.demo.common.SkinBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+  <managed-property>
+   <property-name>skin</property-name>
+   <property-class>java.lang.String</property-class>
+   <value>laguna</value>
+  </managed-property>
+ </managed-bean>
+ <managed-bean>
   <managed-bean-name>wRoleDefBean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WRoleDefBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
- 
-  <managed-bean>
+ <managed-bean>
   <managed-bean-name>wUserDefBean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WUserDefBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
- 
-  <managed-bean>
+ <managed-bean>
   <managed-bean-name>wTimeUnitBean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WTimeUnitBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
- 
-	<managed-bean>
-		<managed-bean-name>menuesStatusBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.common.MenuesStatusBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>consultaUsuarioLoginBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.bean.ConsultaUsuarioLoginBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-
-	<managed-bean>
-		<managed-bean-name>exceptionBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.wc.taglib.util.ExceptionBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>loggedUserBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.bean.LoggedUserBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>updateBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.bean.UpdateBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>rsBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.common.rsBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>calendarBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.common.CalendarBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>pasoBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.bean.wf.PasoBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-
-	<managed-bean>
-		<managed-bean-name>inyectorBean</managed-bean-name>
-		<managed-bean-class>org.beeblos.bpm.web.bean.wf.InyectorBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-		
-	<navigation-rule>
-		<display-name>Consulta Tarea</display-name>
-		<from-view-id>/general/consultaTarea.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>CONSULTA_TAREA</from-outcome>
-			<to-view-id>/general/consultaTarea.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>FAIL</from-outcome>
-			<to-view-id>/general/consultaTarea.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<navigation-rule>
-		<display-name>Login</display-name>
-		<from-view-id>/login.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>FAIL</from-outcome>
-			<to-view-id>/login.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<from-view-id>/login.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>LOGIN</from-outcome>
-			<to-view-id>/welcome.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>LOGOUT</from-outcome>
-			<to-view-id>/login.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<from-view-id>*</from-view-id>
-
-<!-- 		<navigation-case> -->
-<!-- 			<from-outcome>PROCESAR_TAREA</from-outcome> -->
-<!-- 			<to-view-id>/dap/procesarProyectoDAP.xhtml</to-view-id> -->
-<!-- 		</navigation-case> -->
-		<navigation-case>
-			<from-outcome>WELCOME_PAGE</from-outcome>
-			<to-view-id>/welcome.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-
-		<navigation-case>
-			<from-outcome>LOGOUT</from-outcome>
-			<to-view-id>/login.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>CONSULTA_USUARIO_LOGIN</from-outcome>
-			<to-view-id>/general/consultaUsuarioLogin.xhtml</to-view-id>
-			<redirect />
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>SUCCESS_USUARIO</from-outcome>
-			<to-view-id>/mantenimientos/usuarioCrud.xhtml</to-view-id>
-		</navigation-case>
-
-		<navigation-case>
-			<from-outcome>WPROCESSDEF_QUERY</from-outcome>
-			<to-view-id>/admin/wProcessDefCrud.xhtml</to-view-id>
-		</navigation-case>
-		
-		<navigation-case>
-			<from-outcome>LOAD_WPROCESSDEF</from-outcome>
-			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-			
-		<navigation-case>
-			<from-outcome>CREATE_NEW_WPROCESSDEF</from-outcome>
-			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-			
-		<navigation-case>
-			<from-outcome>WSTEPDEF_QUERY</from-outcome>
-			<to-view-id>/admin/wStepDefCrud.xhtml</to-view-id>
-		</navigation-case>
-		
-		<navigation-case>
-			<from-outcome>LOAD_WSTEPDEF</from-outcome>
-			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-			
-		<navigation-case>
-			<from-outcome>CREATE_NEW_WSTEPDEF</from-outcome>
-			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-			
-	</navigation-rule>
-
-	
-
-
-	<navigation-rule>
-		<from-view-id>/welcome.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>SUCCESS_WELCOME</from-outcome>
-			<to-view-id>/welcome.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>FAIL</from-outcome>
-			<to-view-id>/welcome.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	
-	<navigation-rule>
-		<display-name>WProcessDefForm</display-name>
-		<from-view-id>/forms/wProcessDefFormCall.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>FAIL</from-outcome>
-			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>SUCCESS_FORM_WPROCESSDEF</from-outcome>
-			<to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<display-name>WStepDefForm</display-name>
-		<from-view-id>/forms/wStepDefFormCall.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>FAIL</from-outcome>
-			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>SUCCESS_FORM_WSTEPDEF</from-outcome>
-			<to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-
-	<application>
-		<resource-bundle>
-			<base-name>org.beeblos.bpm.wc.taglib.util.error_messages</base-name>
-			<var>errormsg</var>
-		</resource-bundle>
-		<resource-bundle>
-			<base-name>org.beeblos.bpm.wc.taglib.util.messages</base-name>
-			<var>msg</var>
-		</resource-bundle>
-		<message-bundle>org.beeblos.bpm.wc.taglib.util.jsf_messages</message-bundle>
-		<variable-resolver>org.beeblos.bpm.wc.taglib.security.ContextoSeguridadVariableResolver</variable-resolver>
-		<property-resolver>org.beeblos.bpm.wc.taglib.security.ContextoSeguridadPropertyResolver</property-resolver>
-	</application>
-	<lifecycle>
-		<phase-listener>org.beeblos.bpm.web.util.LifeCycleListener</phase-listener>
-	</lifecycle>
+ <managed-bean>
+  <managed-bean-name>menuesStatusBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.common.MenuesStatusBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>consultaUsuarioLoginBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.bean.ConsultaUsuarioLoginBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>exceptionBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.util.ExceptionBean</managed-bean-class>
+  <managed-bean-scope>request</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>loggedUserBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.bean.LoggedUserBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>updateBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.bean.UpdateBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>rsBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.common.rsBean</managed-bean-class>
+  <managed-bean-scope>request</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>calendarBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.common.CalendarBean</managed-bean-class>
+  <managed-bean-scope>request</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>pasoBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.bean.wf.PasoBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
+  <managed-bean-name>inyectorBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.web.bean.wf.InyectorBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <navigation-rule>
+  <display-name>Consulta Tarea</display-name>
+  <from-view-id>/general/consultaTarea.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>CONSULTA_TAREA</from-outcome>
+   <to-view-id>/general/consultaTarea.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>FAIL</from-outcome>
+   <to-view-id>/general/consultaTarea.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <display-name>Login</display-name>
+  <from-view-id>/login.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>FAIL</from-outcome>
+   <to-view-id>/login.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <from-view-id>/login.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>LOGIN</from-outcome>
+   <to-view-id>/welcome.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>LOGOUT</from-outcome>
+   <to-view-id>/login.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <from-view-id>*</from-view-id>
+  <!-- 		<navigation-case> 
+ 			<from-outcome>PROCESAR_TAREA</from-outcome> 
+ 			<to-view-id>/dap/procesarProyectoDAP.xhtml</to-view-id> 
+ 		</navigation-case> -->
+  <navigation-case>
+   <from-outcome>WELCOME_PAGE</from-outcome>
+   <to-view-id>/welcome.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>LOGOUT</from-outcome>
+   <to-view-id>/login.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>CONSULTA_USUARIO_LOGIN</from-outcome>
+   <to-view-id>/general/consultaUsuarioLogin.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>SUCCESS_USUARIO</from-outcome>
+   <to-view-id>/mantenimientos/usuarioCrud.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>WPROCESSDEF_QUERY</from-outcome>
+   <to-view-id>/def/wProcessDefCrud.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>LOAD_WPROCESSDEF</from-outcome>
+   <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>CREATE_NEW_WPROCESSDEF</from-outcome>
+   <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>WSTEPDEF_QUERY</from-outcome>
+   <to-view-id>/def/wStepDefCrud.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>LOAD_WSTEPDEF</from-outcome>
+   <to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>CREATE_NEW_WSTEPDEF</from-outcome>
+   <to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <from-view-id>/welcome.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>SUCCESS_WELCOME</from-outcome>
+   <to-view-id>/welcome.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>FAIL</from-outcome>
+   <to-view-id>/welcome.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <display-name>WProcessDefForm</display-name>
+  <from-view-id>/forms/wProcessDefFormCall.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>FAIL</from-outcome>
+   <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>SUCCESS_FORM_WPROCESSDEF</from-outcome>
+   <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+ <navigation-rule>
+  <display-name>WStepDefForm</display-name>
+  <from-view-id>/forms/wStepDefFormCall.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>FAIL</from-outcome>
+   <to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>SUCCESS_FORM_WSTEPDEF</from-outcome>
+   <to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+ <application>
+  <resource-bundle>
+   <base-name>org.beeblos.bpm.wc.taglib.util.error_messages</base-name>
+   <var>errormsg</var>
+  </resource-bundle>
+  <resource-bundle>
+   <base-name>org.beeblos.bpm.wc.taglib.util.messages</base-name>
+   <var>msg</var>
+  </resource-bundle>
+  <message-bundle>org.beeblos.bpm.wc.taglib.util.jsf_messages</message-bundle>
+  <variable-resolver>org.beeblos.bpm.wc.taglib.security.ContextoSeguridadVariableResolver</variable-resolver>
+  <property-resolver>org.beeblos.bpm.wc.taglib.security.ContextoSeguridadPropertyResolver</property-resolver>
+ </application>
+ <lifecycle>
+  <phase-listener>org.beeblos.bpm.web.util.LifeCycleListener</phase-listener>
+ </lifecycle>
 </faces-config>
