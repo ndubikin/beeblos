@@ -242,6 +242,43 @@
 			<column  name="mod_user" />
 		</property>
 
+        <property name="sentAdminNotice" type="boolean">
+            <column name="sent_admin_notice" not-null="true" />
+        </property>
+        <property name="arrivingAdminNotice" type="boolean">
+            <column name="arriving_admin_notice" not-null="true" />
+        </property>
+        <property name="deadlineAdminNotice" type="boolean">
+            <column name="deadline_admin_notice" not-null="true" />
+        </property>
+        <property name="reminderAdminNotice" type="boolean">
+            <column name="reminder_admin_notice" not-null="true" />
+        </property>
+        <property name="expiredAdminNotice" type="boolean">
+            <column name="expired_admin_notice" not-null="true" />
+        </property>
+        <property name="emailNotification" type="boolean">
+            <column name="email_notification" not-null="true" />
+        </property>
+        <property name="engineNotification" type="boolean">
+            <column name="engine_notification" not-null="true" />
+        </property>
+        <property name="sentUserNotice" type="boolean">
+            <column name="sent_user_notice" not-null="true" />
+        </property>
+        <property name="arrivingUserNotice" type="boolean">
+            <column name="arriving_user_notice" not-null="true" />
+        </property>
+        <property name="deadlineUserNotice" type="boolean">
+            <column name="deadline_user_notice" not-null="true" />
+        </property>
+        <property name="reminderUserNotice" type="boolean">
+            <column name="reminder_user_notice" not-null="true" />
+        </property>
+        <property name="expiredUserNotice" type="boolean">
+            <column name="expired_user_notice" not-null="true" />
+        </property>
+
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" name="timeUnit">
 			<column name="id_time_unit">
