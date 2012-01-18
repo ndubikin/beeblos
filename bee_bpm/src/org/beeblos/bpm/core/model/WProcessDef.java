@@ -49,6 +49,15 @@ public class WProcessDef implements java.io.Serializable {
 	
 	// dml 20120105
 	private String adminEmail;
+	
+	// dml 20120118
+	private boolean active;
+	private Date productionDate;
+	private Integer productionUser;
+	private Integer totalTime;
+	private WTimeUnit totalTimeUnit;
+	private String globalDeadlineDate;
+	
 
 	public WProcessDef() {
 		super();
@@ -214,17 +223,81 @@ public class WProcessDef implements java.io.Serializable {
 	}
 
 
+	public boolean isActive() {
+		return active;
+	}
+
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+
+	public Date getProductionDate() {
+		return productionDate;
+	}
+
+
+	public void setProductionDate(Date productionDate) {
+		this.productionDate = productionDate;
+	}
+
+
+	public Integer getProductionUser() {
+		return productionUser;
+	}
+
+
+	public void setProductionUser(Integer productionUser) {
+		this.productionUser = productionUser;
+	}
+
+
+	public Integer getTotalTime() {
+		return totalTime;
+	}
+
+
+	public void setTotalTime(Integer totalTime) {
+		this.totalTime = totalTime;
+	}
+
+
+	public WTimeUnit getTotalTimeUnit() {
+		return totalTimeUnit;
+	}
+
+
+	public void setTotalTimeUnit(WTimeUnit totalTimeUnit) {
+		this.totalTimeUnit = totalTimeUnit;
+	}
+
+
+	public String getGlobalDeadlineDate() {
+		return globalDeadlineDate;
+	}
+
+
+	public void setGlobalDeadlineDate(String globalDeadlineDate) {
+		this.globalDeadlineDate = globalDeadlineDate;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result
 				+ ((adminEmail == null) ? 0 : adminEmail.hashCode());
 		result = prime * result
 				+ ((beginStep == null) ? 0 : beginStep.hashCode());
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime
+				* result
+				+ ((globalDeadlineDate == null) ? 0 : globalDeadlineDate
+						.hashCode());
 		result = prime
 				* result
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
@@ -232,9 +305,23 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((idListZone == null) ? 0 : idListZone.hashCode());
 		result = prime * result
 				+ ((idWorkZone == null) ? 0 : idWorkZone.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
+				+ ((productionDate == null) ? 0 : productionDate.hashCode());
+		result = prime * result
+				+ ((productionUser == null) ? 0 : productionUser.hashCode());
+		result = prime * result
 				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
+		result = prime * result
+				+ ((totalTime == null) ? 0 : totalTime.hashCode());
+		result = prime * result
+				+ ((totalTimeUnit == null) ? 0 : totalTimeUnit.hashCode());
 		result = prime * result
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
 		return result;
@@ -246,9 +333,11 @@ public class WProcessDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WProcessDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WProcessDef other = (WProcessDef) obj;
+		if (active != other.active)
+			return false;
 		if (adminEmail == null) {
 			if (other.adminEmail != null)
 				return false;
@@ -264,10 +353,10 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!comments.equals(other.comments))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (globalDeadlineDate == null) {
+			if (other.globalDeadlineDate != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!globalDeadlineDate.equals(other.globalDeadlineDate))
 			return false;
 		if (idAdditionalZone == null) {
 			if (other.idAdditionalZone != null)
@@ -284,15 +373,55 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!idWorkZone.equals(other.idWorkZone))
 			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (productionDate == null) {
+			if (other.productionDate != null)
+				return false;
+		} else if (!productionDate.equals(other.productionDate))
+			return false;
+		if (productionUser == null) {
+			if (other.productionUser != null)
+				return false;
+		} else if (!productionUser.equals(other.productionUser))
+			return false;
 		if (rolesRelated == null) {
 			if (other.rolesRelated != null)
 				return false;
 		} else if (!rolesRelated.equals(other.rolesRelated))
+			return false;
+		if (totalTime == null) {
+			if (other.totalTime != null)
+				return false;
+		} else if (!totalTime.equals(other.totalTime))
+			return false;
+		if (totalTimeUnit == null) {
+			if (other.totalTimeUnit != null)
+				return false;
+		} else if (!totalTimeUnit.equals(other.totalTimeUnit))
 			return false;
 		if (usersRelated == null) {
 			if (other.usersRelated != null)
@@ -304,24 +433,18 @@ public class WProcessDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WProcessDef ["
-				+ (id != null ? "id=" + id + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
-				+ (comments != null ? "comments=" + comments + ", " : "")
-//				+ (beginStep != null ? "beginStep=" + beginStep + ", " : "")
-				+ (idListZone != null ? "idListZone=" + idListZone + ", " : "")
-				+ (idWorkZone != null ? "idWorkZone=" + idWorkZone + ", " : "")
-				+ (idAdditionalZone != null ? "idAdditionalZone="
-						+ idAdditionalZone + ", " : "")
-				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated + ", "
-						: "")
-				+ (usersRelated != null ? "usersRelated=" + usersRelated + ", "
-						: "")
-				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
-				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser : "")
-				+ (adminEmail != null ? "adminEmail=" + adminEmail : "") + "]";
+		return "WProcessDef [id=" + id + ", name=" + name + ", comments="
+				+ comments + ", beginStep=" + beginStep + ", idListZone="
+				+ idListZone + ", idWorkZone=" + idWorkZone
+				+ ", idAdditionalZone=" + idAdditionalZone + ", rolesRelated="
+				+ rolesRelated + ", usersRelated=" + usersRelated
+				+ ", insertDate=" + insertDate + ", insertUser=" + insertUser
+				+ ", modDate=" + modDate + ", modUser=" + modUser
+				+ ", adminEmail=" + adminEmail + ", active=" + active
+				+ ", productionDate=" + productionDate + ", productionUser="
+				+ productionUser + ", totalTime=" + totalTime
+				+ ", totalTimeUnit=" + totalTimeUnit + ", globalDeadlineDate="
+				+ globalDeadlineDate + "]";
 	}
 	
 
