@@ -7,6 +7,10 @@ import java.util.Date;
 
 public class Constants {
 	
+	public static final String WORKINGPROCESS_QUERY = "WORKINGPROCESS_QUERY";
+	public static final String WORKINGPROCESSWORKS_QUERY = "WORKINGPROCESSWORKS_QUERY";
+	public static final String WORKINGPROCESSSTEPS_QUERY = "WORKINGPROCESSSTEPS_QUERY";
+
 	//public static final Integer VENCIMIENTO_FACTURA_PROVEEDOR_DEFAULT  = getIntegerProperty("dfag.vencimiento.factura.default.en.dias",60);
 
 	public static final String TEXT_XML="text/xml";

@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,9 @@ import org.beeblos.bpm.core.dao.WProcessDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
+import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.core.model.noper.WorkingProcessStep;
+import org.beeblos.bpm.core.model.noper.WorkingProcessWork;
 
 
 
@@ -109,6 +113,31 @@ public class WProcessDefBL {
 				strictInsertDateFilter, nameFilter, commentFilter, listZoneFilter, 
 				workZoneFilter, additinalZoneFilter, userId, isAdmin);
 
+	}
+
+	public List<WProcessDefLight> getWorkingProcessListByFinder(String action, String filter1)
+	throws WProcessDefException {
+		
+		return new WProcessDefDao().getWorkingProcessListByFinder(action, filter1);
+		
+	}
+
+	public List<WorkingProcessWork> getWorkingProcessWorkListByFinder(Integer idProcess, 
+			boolean onlyActiveWorksFilter, String action, String filter1)
+	throws WProcessDefException {
+		
+		return new WProcessDefDao().getWorkingProcessWorkListByFinder(idProcess, 
+				onlyActiveWorksFilter, action, filter1);
+		
+	}
+
+	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess, 
+			boolean onlyActiveStepsFilter, String action, String filter1)
+	throws WProcessDefException {
+		
+		return new WProcessDefDao().getWorkingProcessStepListByFinder(idProcess, 
+				onlyActiveStepsFilter, action, filter1);
+		
 	}
 
 }
