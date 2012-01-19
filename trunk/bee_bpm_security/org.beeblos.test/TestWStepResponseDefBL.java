@@ -47,7 +47,7 @@ public class TestWStepResponseDefBL extends TestCase{
 			
 			response = new WStepResponseDef(1,null,"Respuesta1");
 
-			idResponse = responseBL.add(response,"juan");
+			idResponse = responseBL.add(response,1000);
 			
 			step = stepBL.getWStepDefByPK(800, 1000);
 			step.addResponse(response);
@@ -56,7 +56,7 @@ public class TestWStepResponseDefBL extends TestCase{
 			
 			step = stepBL.getWStepDefByPK(idStep, 1000);
 			
-			assertEquals(idResponse, responseBL.getWStepResponseDefByPK(idResponse, "juan").getId());
+			assertEquals(idResponse, responseBL.getWStepResponseDefByPK(idResponse, 1000).getId());
 			assertEquals(idStep, step.getId());
 			assertEquals(1, step.getResponse().size());
 			
@@ -66,12 +66,12 @@ public class TestWStepResponseDefBL extends TestCase{
 				assertEquals(idResponse, it.next().getId());
 			}
 
-			responseBL.delete(response, "1000");
+			responseBL.delete(response, 1000);
 			
 			step = stepBL.getWStepDefByPK(idStep, 1);
 		
 			assertTrue(step.getResponse().isEmpty());
-			assertNull(responseBL.getWStepResponseDefByPK(idResponse, "juan"));
+			assertNull(responseBL.getWStepResponseDefByPK(idResponse, 1000));
 		}
 		
 //		public void testConsultasWStepResponseDef() throws Exception{
