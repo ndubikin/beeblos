@@ -546,80 +546,23 @@ public class WProcessDefDao {
 	}
 	
 	// dml 20120118
-	public List<WProcessDefLight> getWorkingProcessListByFinder(String action, String filter1) throws WProcessDefException {
+	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter,
+			String action) throws WProcessDefException {
 
 		String filter = "";
-/*
-		if (idEstadoRequerido != null) {
-			if (!"".equals(filtro)) {
-				filtro += " AND p.id_estado = ";
+		
+		if (onlyWorkingProcessesFilter) {
+			if (!"".equals(filter)) {
+				filter += " AND wpd.active IS TRUE ";
 			} else {
-				filtro += " p.id_estado = ";
+				filter += " wpd.active IS TRUE ";
 
-			}
-			if (idEstadoRequerido.size() != 1) {
-				for (int i = 0; i < idEstadoRequerido.size() - 1; i++) {
-					filtro += idEstadoRequerido.get(i) + " or p.id_estado = ";
-				}
-			}
-			filtro += idEstadoRequerido.get(idEstadoRequerido.size() - 1) + " ";
-
-		}
-
-		if (proveedorNombre != null && !"".equals(proveedorNombre)) {
-			if (!"".equals(filtro)) {
-				filtro += " AND ";
-			}
-			filtro += " prov.proveedor_nombre LIKE '%" + proveedorNombre.trim()
-					+ "%' ";
-		}
-
-		// rrl 20111010
-		if (idProveedor != null && !idProveedor.equals(0)) {
-			if (!"".equals(filtro)) {
-				filtro += " AND ";
-			}
-			filtro += " p.id_proveedor = " + idProveedor.toString();
-		}
-
-		if (idDepartamento != null && !idDepartamento.equals(0)) {
-			if (!"".equals(filtro)) {
-				filtro += " AND ";
-			}
-			filtro += " p.id_departamento = " + idDepartamento.toString();
-		}
-
-		if (fechaEntradaInicial != null) {
-
-			java.sql.Date fechaEntradaInicialSQL = new java.sql.Date(
-					fechaEntradaInicial.getTime());
-
-			if (estrictoFechaEntrada) {
-				if (!"".equals(filtro)) {
-					filtro += " AND ";
-				}
-				filtro += " p.fecha_entrada = '" + fechaEntradaInicialSQL
-						+ "' ";
-			} else {
-				if (fechaEntradaFinal != null) {
-					java.sql.Date fechaEntradaFinalSQL = new java.sql.Date(
-							fechaEntradaFinal.getTime());
-					if (!"".equals(filtro)) {
-						filtro += " AND ";
-					}
-					filtro += " (p.fecha_entrada >= '" + fechaEntradaInicialSQL
-							+ "' AND p.fecha_entrada <= '"
-							+ fechaEntradaFinalSQL + "') ";
-				} else {
-					if (!"".equals(filtro)) {
-						filtro += " AND ";
-					}
-					filtro += " p.fecha_entrada >= '" + fechaEntradaInicialSQL
-							+ "' ";
-				}
 			}
 		}
-*/
+		
+		if (filter != null && !"".equals(filter)){
+			filter = "WHERE " + filter;
+		}
 
 		logger.debug("------>> getWorkingProcessListByFinder -> filter:" + filter
 				+ "<<-------");
@@ -629,20 +572,20 @@ public class WProcessDefDao {
 		return getWorkingProcessListByFinder(query);
 	}
 
+	// dml 20120118
 	private String _armaQueryWorkingProcessDefLight(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
-		tmpQuery += " wpd.id, ";
+		tmpQuery += " DISTINCT(wpd.id), ";
 		tmpQuery += " wpd.name, ";
 		tmpQuery += " wpd.production_date, ";
 		tmpQuery += " wpd.production_user, ";
-		tmpQuery += " liveWorks, ";
-		tmpQuery += " liveSteps, ";
+		tmpQuery += " (SELECT COUNT(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.id_process = wpd.id) AS liveWorks, ";
+		tmpQuery += " (SELECT COUNT(DISTINCT reference) FROM w_step_work work3 WHERE work3.decided_date IS NULL AND work3.id_process = wpd.id) liveSteps, ";
 		tmpQuery += " wpd.active ";
 
 		tmpQuery += " FROM w_process_def wpd ";
-		tmpQuery += " LEFT OUTER JOIN (SELECT id_process, COUNT(distinct reference) as liveWorks FROM w_step_work WHERE decided_date IS NULL) w ON w.id_process = wpd.id ";
-		tmpQuery += " LEFT OUTER JOIN (SELECT id_process, count(id) as liveSteps FROM w_step_work WHERE decided_date IS NULL) s ON s.id_process = wpd.id ";
+		tmpQuery += " LEFT OUTER JOIN w_step_work work ON work.id_process = wpd.id ";
 
 		tmpQuery += filter;
 
@@ -658,6 +601,7 @@ public class WProcessDefDao {
 		return tmpQuery;
 	}
 
+	// dml 20120118
 	private List<WProcessDefLight> getWorkingProcessListByFinder(String query)
 			throws WProcessDefException {
 
@@ -714,7 +658,7 @@ public class WProcessDefDao {
 				}
 
 			} else {
-				// Si el select devuelve null entonces devuelvo null
+
 				returnList = null;
 			}
 
@@ -736,7 +680,7 @@ public class WProcessDefDao {
 
 	// dml 20120118
 	public List<WorkingProcessWork> getWorkingProcessWorkListByFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, String action, String filter1) throws WProcessDefException {
+			boolean onlyActiveWorksFilter, String action) throws WProcessDefException {
 
 		String filter = "";
 
@@ -760,7 +704,7 @@ public class WProcessDefDao {
 			filter = "WHERE " + filter;
 		}
 		
-		logger.debug("------>> getWorkingProcessListByFinder -> filter:" + filter
+		logger.debug("------>> getWorkingProcessWorkListByFinder -> filter:" + filter
 				+ "<<-------");
 
 		String query = _armaQueryWorkingProcessWork(idProcess, filter, action);
@@ -769,6 +713,7 @@ public class WProcessDefDao {
 		
 	}
 
+	// dml 20120118
 	private String _armaQueryWorkingProcessWork(Integer idProcess, String filter, String action) {
 
 		
@@ -798,6 +743,7 @@ public class WProcessDefDao {
 		return tmpQuery;
 	}
 
+	// dml 20120118
 	private List<WorkingProcessWork> getWorkingProcessWorkListByFinder(String query)
 			throws WProcessDefException {
 
@@ -854,14 +800,14 @@ public class WProcessDefDao {
 				}
 
 			} else {
-				// Si el select devuelve null entonces devuelvo null
+
 				returnList = null;
 			}
 
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-				logger.warn("WProcessDefDao: getWorkingProcessListByFinder() - " +
+				logger.warn("WProcessDefDao: getWorkingProcessWorkListByFinder() - " +
 						"It cannot be posible to get the WorkingProcessWork list - "
 					+ ex.getMessage() + "\n" + ex.getLocalizedMessage() + " \n" + ex.getCause());
 			throw new WProcessDefException(ex);
@@ -871,11 +817,169 @@ public class WProcessDefDao {
 		return returnList;
 	}
 	
-	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, String action, String filter1) throws WProcessDefException {
+	// dml 20120118
+	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess,
+			Integer idStep, String stepTypeFilter, boolean onlyActiveStepsFilter, 
+			String action) throws WProcessDefException {
 		
-		return null;
+		String filter = "";
+
+		if (idProcess != null && idProcess != 0) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			filter += " work.id_process = " + idProcess;
+		}
 		
+		if (idStep != null && idStep != 0) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			filter += " work.id_current_step = " + idStep;
+		}
+		
+		if (!"".equals(stepTypeFilter) || !"ALL".equals(stepTypeFilter)) {
+			if ("PENDING".equals(stepTypeFilter)) {
+				if (!"".equals(filter)) {
+					filter += " AND ";
+				}
+				filter += " work.decided_date IS NOT NULL ";				
+			} else if ("PROCESSED".equals(stepTypeFilter)){
+				if (!"".equals(filter)) {
+					filter += " AND ";
+				}
+				filter += " work.decided_date IS NULL ";				
+			}
+		}
+		
+		if (onlyActiveStepsFilter) {
+			if (!"".equals(filter)) {
+				filter += " AND work.decided_date IS NULL ";
+			} else {
+				filter += " work.decided_date IS NULL ";
+
+			}
+		}
+		
+		if (filter != null && !"".equals(filter)){
+			filter = "WHERE " + filter;
+		}
+		
+		logger.debug("------>> getWorkingProcessListStepByFinder -> filter:" + filter
+				+ "<<-------");
+
+		String query = _armaQueryWorkingProcessStep(idProcess, filter, action);
+
+		return getWorkingProcessStepListByFinder(query);
+		
+	}
+
+	// dml 20120118
+	private String _armaQueryWorkingProcessStep(Integer idProcess, String filter, String action) {
+
+		String tmpQuery = "SELECT ";
+		tmpQuery += " work.id_process, ";
+		tmpQuery += " work.id_current_step, ";
+		tmpQuery += " step.name, ";
+		tmpQuery += " work.arriving_date, ";
+		tmpQuery += " work.opened_date, ";
+		tmpQuery += " work.opener_user, ";
+		tmpQuery += " work.decided_date, ";
+		tmpQuery += " work.performer_user_id, ";
+		tmpQuery += " work.deadline_time ";
+
+		tmpQuery += " FROM w_step_work work ";
+		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = work.id_current_step ";
+
+		tmpQuery += filter;
+
+		if (action == null || action.equals("")) {
+			tmpQuery += " ORDER by work.id_process ASC;";
+		} 
+
+		logger.debug("------>> getWorkingProcessStepListByFinder -> query:" + tmpQuery
+				+ "<<-------");
+
+		System.out.println("QUERY:" + tmpQuery);
+
+		return tmpQuery;
+	}
+
+	// dml 20120118
+	private List<WorkingProcessStep> getWorkingProcessStepListByFinder(String query)
+			throws WProcessDefException {
+
+		Integer idProcess;
+		Integer idStep;
+		String stepName;
+		Date arrivingDate;
+		Date openedDate;
+		Integer openerUser;
+		Date decidedDate;
+		Integer performer;
+		Date deadlineTime;
+		
+		
+		Session session = null;
+		Transaction tx = null;
+
+		List<Object[]> result = null;
+		List<WorkingProcessStep> returnList = new ArrayList<WorkingProcessStep>();
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			Hibernate.initialize(result);
+
+			result = session.createSQLQuery(query).list();
+
+			tx.commit();
+
+			if (result != null) {
+
+				for (Object irObj : result) {
+
+					Object[] cols = (Object[]) irObj;
+
+
+					idProcess = (cols[0] != null ? new Integer(
+							cols[0].toString()) : null);
+					idStep = (cols[1] != null ? new Integer(
+							cols[1].toString()) : null);
+					stepName = (cols[2] != null ? cols[2].toString() : "");
+					arrivingDate = (cols[3] != null ? (Date) cols[3] : null);
+					openedDate = (cols[4] != null ? (Date) cols[4] : null);
+					openerUser = (cols[5] != null ? new Integer(
+							cols[5].toString()) : null);
+					decidedDate = (cols[6] != null ? (Date) cols[6] : null);
+					performer = (cols[7] != null ? new Integer(
+							cols[7].toString()) : null);
+					deadlineTime = (cols[8] != null ? (Date) cols[8] : null);
+
+					returnList.add(new WorkingProcessStep(idProcess, idStep, stepName, 
+							arrivingDate, openedDate, openerUser, decidedDate, 
+							performer, deadlineTime));
+				}
+
+			} else {
+
+				returnList = null;
+			}
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+				logger.warn("WProcessDefDao: getWorkingProcessStepListByFinder() - " +
+						"It cannot be posible to get the WorkingProcessStep list - "
+					+ ex.getMessage() + "\n" + ex.getLocalizedMessage() + " \n" + ex.getCause());
+			throw new WProcessDefException(ex);
+
+		}
+
+		return returnList;
 	}
 
 

@@ -1,0 +1,191 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<style>
+.center {
+	text-align: center;
+}
+
+.rich-datascr-button {
+	width: 40px;
+	font-size: 95%;
+}
+
+.colCustomTotalF1 {
+	width: 200px;
+	text-align: right;
+}
+
+.colCustomTotalF2 {
+	width: 80px;
+	text-align: right;
+}
+
+.colCustomTotalF3 {
+	width: 30px;
+	text-align: left;
+}
+
+.colCustomPanelGrid {
+	text-align: right;
+}
+</style>
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:form id="working_process_step_form${action}">
+
+		<h:panelGrid width="100%" columns="1">
+
+			<rich:datascroller id="dseUp" for="working_process_step_list_table"
+				maxPages="10" reRender="working_process_step_form${action}"
+				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
+
+				<f:facet name="first">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last">
+					<h:outputText value="...#{pages}" />
+				</f:facet>
+				<f:facet name="first_disabled">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last_disabled">
+					<h:outputText value="... #{pages}" />
+				</f:facet>
+				<h:outputText value="#{pages}" />
+			</rich:datascroller>
+
+			<rich:dataTable id="working_process_step_list_table"
+				value="#{workingProcessQueryBean.workingProcessStepList}"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				var="wps" width="98%" columnClasses="center" rows="10"
+				reRender="dseUp,dseDown" style="margin-left: 16px;">
+				<f:facet name="header">
+					<h:outputText
+						value="Working Process Step List ( #{workingProcessQueryBean.nStepResults} #{msg.label_results} )" />
+				</f:facet>
+
+				<rich:column sortBy="#{wps.idProcess}"
+					style="width:5%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_process_id}" />
+					</f:facet>
+					<h:outputText value="#{wps.idProcess}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wps.idStep}"
+					style="width:5%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_step_id}" />
+					</f:facet>
+					<h:outputText value="#{wps.idStep}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wps.stepName}"
+					style="width:30%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_step_name}" />
+					</f:facet>
+					<h:outputText value="#{wps.stepName}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wps.arrivingDate}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_arriving_date}" />
+					</f:facet>
+					<h:outputText value="#{wps.arrivingDate}">
+						<f:convertDateTime pattern="#{msg.label_date_format}"
+							timeZone="#{workingProcessQueryBean.timeZone}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column sortBy="#{wps.openedDate}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_opened_date}" />
+					</f:facet>
+					<h:outputText value="#{wps.openedDate}">
+						<f:convertDateTime pattern="#{msg.label_date_format}"
+							timeZone="#{workingProcessQueryBean.timeZone}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column sortBy="#{wps.openerUser}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_opener_user}" />
+					</f:facet>
+					<h:outputText value="#{wps.openerUser}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wps.decidedDate}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_decided_date}" />
+					</f:facet>
+					<h:outputText value="#{wps.decidedDate}">
+						<f:convertDateTime pattern="#{msg.label_date_format}"
+							timeZone="#{workingProcessQueryBean.timeZone}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:column sortBy="#{wps.performer}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_performer}" />
+					</f:facet>
+					<h:outputText value="#{wps.performer}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wps.deadlineTime}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_deadline_time}" />
+					</f:facet>
+					<h:outputText value="#{wps.deadlineTime}">
+						<f:convertDateTime pattern="#{msg.label_date_format}"
+							timeZone="#{workingProcessQueryBean.timeZone}" />
+					</h:outputText>
+				</rich:column>
+
+				<rich:componentControl event="onRowClick" for="working_process_step_search_menu"
+					operation="show">
+               <f:param value="#{wps.idProcess}" name="currentRowId"/>
+				</rich:componentControl>
+
+			</rich:dataTable>
+
+			<rich:datascroller id="dseDown" for="working_process_step_list_table"
+				maxPages="10" reRender="working_process_work_form${action}"
+				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
+
+				<f:facet name="first">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last">
+					<h:outputText value="...#{pages}" />
+				</f:facet>
+				<f:facet name="first_disabled">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last_disabled">
+					<h:outputText value="... #{pages}" />
+				</f:facet>
+				<h:outputText value="#{pages}" />
+
+			</rich:datascroller>
+
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

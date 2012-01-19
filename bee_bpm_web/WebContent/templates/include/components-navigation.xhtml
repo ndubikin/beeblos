@@ -49,6 +49,19 @@
  		</ui:include>
 	</rich:panelBarItem>
 
+	<rich:panelBarItem   id="definitions" rendered="#{contextoSeguridad.permiteCualquiera['508']}">
+		<f:facet name="label">
+			<h:panelGroup layout="block">
+				<ui:include src="/templates/include/navigationPanelHeader.xhtml" >
+					<ui:param name="label" value="Definitions" />
+					<ui:param name="isNew" value="#{componentNavigator.ajaxSupportHasNew}" />
+				</ui:include>
+			</h:panelGroup>
+		</f:facet>
+		<ui:include src="/templates/include/components-group.xhtml" >
+ 			<ui:param name="components" value="#{componentNavigator.definitions}" />
+ 		</ui:include>
+	</rich:panelBarItem>
 
 	<rich:panelBarItem   id="myaccount" rendered="#{contextoSeguridad.permiteCualquiera['510']}">
 		<f:facet name="label">

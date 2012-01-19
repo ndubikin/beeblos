@@ -141,6 +141,18 @@
    <from-outcome>WPROCESSDEF_QUERY</from-outcome>
    <to-view-id>/def/wProcessDefCrud.xhtml</to-view-id>
   </navigation-case>
+ <navigation-case>
+   <from-outcome>WORKINGPROCESS_QUERY</from-outcome>
+   <to-view-id>/admin/workingProcessQueryCall.xhtml</to-view-id>
+  </navigation-case>
+ <navigation-case>
+   <from-outcome>WORKINGPROCESSWORKS_QUERY</from-outcome>
+   <to-view-id>/admin/workingProcessWorkQueryCall.xhtml</to-view-id>
+  </navigation-case>
+ <navigation-case>
+   <from-outcome>WORKINGPROCESSSTEPS_QUERY</from-outcome>
+   <to-view-id>/admin/workingProcessStepQueryCall.xhtml</to-view-id>
+  </navigation-case>
   <navigation-case>
    <from-outcome>LOAD_WPROCESSDEF</from-outcome>
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>

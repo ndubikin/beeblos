@@ -51,6 +51,26 @@
 			<column  name="mod_user" />
 		</property>
 
+		<property name="active"	type="java.lang.Boolean">
+			<column name="active"/>
+		</property>
+        <property name="productionDate" type="timestamp">
+            <column name="production_date" length="0" />
+        </property>
+        <property name="productionUser" type="java.lang.Integer">
+            <column name="production_user" />
+        </property>
+        <property name="totalTime" type="java.lang.Integer">
+            <column name="total_time" />
+        </property>
+        <property name="globalDeadlineDate" type="java.lang.String">
+            <column name="global_deadline_date" />
+        </property>
+		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
+			lazy="false" name="totalTimeUnit">
+			<column name="total_time_unit"/>
+		</many-to-one>
+
 		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"
 			column="id_begin"  name="beginStep" fetch="join" lazy="false"/>
 

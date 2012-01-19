@@ -115,28 +115,31 @@ public class WProcessDefBL {
 
 	}
 
-	public List<WProcessDefLight> getWorkingProcessListByFinder(String action, String filter1)
+	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter, 
+			String action)
 	throws WProcessDefException {
 		
-		return new WProcessDefDao().getWorkingProcessListByFinder(action, filter1);
+		return new WProcessDefDao().getWorkingProcessListByFinder(onlyWorkingProcessesFilter, 
+				action);
 		
 	}
 
 	public List<WorkingProcessWork> getWorkingProcessWorkListByFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, String action, String filter1)
+			boolean onlyActiveWorksFilter, String action)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getWorkingProcessWorkListByFinder(idProcess, 
-				onlyActiveWorksFilter, action, filter1);
+				onlyActiveWorksFilter, action);
 		
 	}
 
 	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess, 
-			boolean onlyActiveStepsFilter, String action, String filter1)
+			Integer idStep, String stepTypeFilter, boolean onlyActiveStepsFilter, 
+			String action)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getWorkingProcessStepListByFinder(idProcess, 
-				onlyActiveStepsFilter, action, filter1);
+				idStep, stepTypeFilter, onlyActiveStepsFilter, action);
 		
 	}
 

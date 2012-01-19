@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:panelGrid columns="1" width="100%">
+
+		<fieldset class="demo_fieldset">
+			<legend class="demo_legend">Search Working Process List</legend>
+			<div>
+				<ui:include src="panels/working_process_search.xhtml">
+					<ui:param name="action" value="${action}" />
+				</ui:include>
+			</div>
+		</fieldset>
+
+		<fieldset class="demo_fieldset">
+			<legend class="demo_legend">Working Process List</legend>
+			<div>
+				<ui:include src="panels/working_process_list.xhtml">
+					<ui:param name="action" value="${action}" />
+				</ui:include>
+			</div>
+		</fieldset>
+
+	</h:panelGrid>
+
+
+</ui:composition>

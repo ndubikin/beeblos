@@ -306,6 +306,10 @@ public class ComponentNavigator implements Serializable {
         return getFilteredComponents("admin");
     }
 
+    public List getDefinitions() {
+        return getFilteredComponents("definitions");
+    }
+
     public List getMyaccount() {
         return getFilteredComponents("myaccount");
     }

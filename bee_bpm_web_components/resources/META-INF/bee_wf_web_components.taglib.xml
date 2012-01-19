@@ -51,6 +51,21 @@
  </tag>
  
  <tag>
+  <tag-name>workingProcessQuery</tag-name>
+  <source>/taglib/admin/workingProcessQuery.xhtml</source>
+ </tag>
+ 
+ <tag>
+  <tag-name>workingProcessWorkQuery</tag-name>
+  <source>/taglib/admin/workingProcessWorkQuery.xhtml</source>
+ </tag>
+ 
+ <tag>
+  <tag-name>workingProcessStepQuery</tag-name>
+  <source>/taglib/admin/workingProcessStepQuery.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>wProcessDefForm</tag-name>
   <source>/taglib/forms/wProcessDefForm.xhtml</source>
  </tag>

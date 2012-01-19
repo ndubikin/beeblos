@@ -60,7 +60,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	private void _init() {
 		
-		logger.debug("ConsultaFacturaBean._init()");
+		logger.debug("WProcessDefQueryBean._init()");
 
 		this.wProcessDefList = new ArrayList<WProcessDef>();
 
