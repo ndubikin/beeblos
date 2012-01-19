@@ -7,14 +7,19 @@ import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESSWORKS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
 import javax.el.ValueExpression;
+import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.core.model.noper.WorkingProcessStep;
 import org.beeblos.bpm.core.model.noper.WorkingProcessWork;
@@ -22,6 +27,7 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
+import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 public class WorkingProcessQueryBean extends CoreManagedBean {
 	
@@ -45,11 +51,28 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private boolean onlyActiveWorkingProcessesFilter;
 	private boolean onlyActiveWorksFilter;
 	private boolean onlyActiveStepsFilter;
+	private String referenceFilter;
 	
 	private Integer processIdFilter;
 	private Integer stepIdFilter;
 	
 	private String stepTypeFilter;
+	
+	private String processNameFilter;
+
+	private Date initialProductionDateFilter;
+	private Date finalProductionDateFilter;
+	private boolean estrictProductionDateFilter;
+	
+	private Date initialStartedDateFilter;
+	private Date finalStartedDateFilter;
+	private boolean estrictStartedDateFilter;
+	
+	private Date initialFinishedDateFilter;
+	private Date finalFinishedDateFilter;
+	private boolean estrictFinishedDateFilter;
+	
+	private Integer productionUserFilter;
 	
 	private String action; 
 	
@@ -85,6 +108,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 		this.stepTypeFilter = "ALL";
 		
+		this.processNameFilter= "";
+
+		this.initialProductionDateFilter = null;
+		this.finalProductionDateFilter = null;
+		this.estrictProductionDateFilter = false;
+		
+		this.productionUserFilter = 0;
+
 		this.id = 0;
 		
 		// reset session wProcessDefFormBean
@@ -180,6 +211,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.onlyActiveStepsFilter = onlyActiveStepsFilter;
 	}
 
+	public String getReferenceFilter() {
+		return referenceFilter;
+	}
+
+	public void setReferenceFilter(String referenceFilter) {
+		this.referenceFilter = referenceFilter;
+	}
+
 	public Integer getProcessIdFilter() {
 		return processIdFilter;
 	}
@@ -202,6 +241,94 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	public void setStepTypeFilter(String stepTypeFilter) {
 		this.stepTypeFilter = stepTypeFilter;
+	}
+
+	public String getProcessNameFilter() {
+		return processNameFilter;
+	}
+
+	public void setProcessNameFilter(String processNameFilter) {
+		this.processNameFilter = processNameFilter;
+	}
+
+	public Date getInitialProductionDateFilter() {
+		return initialProductionDateFilter;
+	}
+
+	public void setInitialProductionDateFilter(Date initialProductionDateFilter) {
+		this.initialProductionDateFilter = initialProductionDateFilter;
+	}
+
+	public Date getFinalProductionDateFilter() {
+		return finalProductionDateFilter;
+	}
+
+	public void setFinalProductionDateFilter(Date finalProductionDateFilter) {
+		this.finalProductionDateFilter = finalProductionDateFilter;
+	}
+
+	public boolean isEstrictProductionDateFilter() {
+		return estrictProductionDateFilter;
+	}
+
+	public void setEstrictProductionDateFilter(boolean estrictProductionDateFilter) {
+		this.estrictProductionDateFilter = estrictProductionDateFilter;
+	}
+
+	public Date getInitialStartedDateFilter() {
+		return initialStartedDateFilter;
+	}
+
+	public void setInitialStartedDateFilter(Date initialStartedDateFilter) {
+		this.initialStartedDateFilter = initialStartedDateFilter;
+	}
+
+	public Date getFinalStartedDateFilter() {
+		return finalStartedDateFilter;
+	}
+
+	public void setFinalStartedDateFilter(Date finalStartedDateFilter) {
+		this.finalStartedDateFilter = finalStartedDateFilter;
+	}
+
+	public boolean isEstrictStartedDateFilter() {
+		return estrictStartedDateFilter;
+	}
+
+	public void setEstrictStartedDateFilter(boolean estrictStartedDateFilter) {
+		this.estrictStartedDateFilter = estrictStartedDateFilter;
+	}
+
+	public Date getInitialFinishedDateFilter() {
+		return initialFinishedDateFilter;
+	}
+
+	public void setInitialFinishedDateFilter(Date initialFinishedDateFilter) {
+		this.initialFinishedDateFilter = initialFinishedDateFilter;
+	}
+
+	public Date getFinalFinishedDateFilter() {
+		return finalFinishedDateFilter;
+	}
+
+	public void setFinalFinishedDateFilter(Date finalFinishedDateFilter) {
+		this.finalFinishedDateFilter = finalFinishedDateFilter;
+	}
+
+	public boolean isEstrictFinishedDateFilter() {
+		return estrictFinishedDateFilter;
+	}
+
+	public void setEstrictFinishedDateFilter(boolean estrictFinishedDateFilter) {
+		this.estrictFinishedDateFilter = estrictFinishedDateFilter;
+	}
+
+	public Integer getProductionUserFilter() {
+		return productionUserFilter;
+	}
+
+	public void setProductionUserFilter(Integer productionUserFilter) {
+		this.productionUserFilter = productionUserFilter;
 	}
 
 	public String getAction() {
@@ -235,7 +362,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
-					.getWorkingProcessListByFinder(onlyActiveWorkingProcessesFilter, action);
+					.getWorkingProcessListByFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
+							initialProductionDateFilter, finalProductionDateFilter, 
+							estrictProductionDateFilter, productionUserFilter, action);
 
 			nResults = wProcessDefLightList.size();
 
@@ -257,7 +386,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
-					.getWorkingProcessListByFinder(onlyActiveWorkingProcessesFilter, action);
+					.getWorkingProcessListByFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
+							initialProductionDateFilter, finalProductionDateFilter, 
+							estrictProductionDateFilter, processIdFilter, action);
 
 			nResults = wProcessDefLightList.size();
 
@@ -366,8 +497,13 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		try {
 
+			
+			
 			workingProcessWorkList = (ArrayList<WorkingProcessWork>) new WProcessDefBL()
-					.getWorkingProcessWorkListByFinder(processIdFilter, onlyActiveWorksFilter, action);
+					.getWorkingProcessWorkListByFinder(processIdFilter, onlyActiveWorksFilter, 
+							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
+							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
+							action);
 
 			nWorkResults = workingProcessWorkList.size();
 
@@ -383,6 +519,32 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 	}
 
+	public void reloadWorkingProcessWorks(){
+
+		logger.debug("searchWorkingProcessLiveWorks() - action: " + action);
+
+		try {
+
+			
+			
+			workingProcessWorkList = (ArrayList<WorkingProcessWork>) new WProcessDefBL()
+					.getWorkingProcessWorkListByFinder(processIdFilter, onlyActiveWorksFilter, 
+							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
+							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
+							action);
+
+			nWorkResults = workingProcessWorkList.size();
+
+		} catch (WProcessDefException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".searchWorkingProcessLiveWorks() WProcessDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+		
+	}
+
 	public String searchWorkingProcessLiveSteps(){
 		
 		logger.debug("searchWorkingProcessLiveWorks() - action: " + action);
@@ -391,7 +553,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 			workingProcessStepList = (ArrayList<WorkingProcessStep>) new WProcessDefBL()
 					.getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
-							stepTypeFilter, onlyActiveStepsFilter, action);
+							stepTypeFilter, onlyActiveStepsFilter, referenceFilter, action);
 
 			nStepResults = workingProcessStepList.size();
 
@@ -406,5 +568,70 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return WORKINGPROCESSSTEPS_QUERY;
 		
 	}
+	
+	public void desactivateWProcessDef(){
+		
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		WProcessDef wpd;
 
+		try {
+			
+			wpd = wpdBL.getWProcessDefByPK(id, getCurrentUserId());
+			
+			if (wpd != null){
+				
+				wpd.setActive(false);
+				wpdBL.update(wpd, getCurrentUserId());
+				
+			}
+			
+		} catch (WProcessDefException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".desactivateWProcessDef() WProcessDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+
+	}
+	
+	public List<SelectItem> getwUsersDef(){
+		
+		try {
+			
+			return UtilsVs
+					.castStringPairToSelectitem(new WUserDefBL().getComboList("Select an user ...", ""));
+			
+		} catch (WUserDefException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".loadWDefUsers() WUserDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+	
+	public List<SelectItem> getwProcessesDef(){
+		
+		try {
+			
+			return UtilsVs
+					.castStringPairToSelectitem(new WProcessDefBL().getComboList("Select a process ...", ""));
+			
+		} catch (WProcessDefException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".getwProcessesDef() WProcessDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+	
 }

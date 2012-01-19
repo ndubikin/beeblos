@@ -7,6 +7,7 @@ public class WorkingProcessWork {
 	private Integer idProcess;
 	private String processName;
 	private String workReference;
+	private String workComments;
 	private Integer liveSteps;
 	private Date started;
 	private String status;
@@ -17,12 +18,13 @@ public class WorkingProcessWork {
 	}
 	
 	public WorkingProcessWork(Integer idProcess, String processName,
-			String workReference, Integer liveSteps, Date started, String status,
+			String workReference, String workComments, Integer liveSteps, Date started, String status,
 			Date finished) {
 		super();
 		this.idProcess = idProcess;
 		this.processName = processName;
 		this.workReference = workReference;
+		this.workComments = workComments;
 		this.liveSteps = liveSteps;
 		this.started = started;
 		this.status = status;
@@ -51,6 +53,14 @@ public class WorkingProcessWork {
 
 	public void setWorkReference(String workReference) {
 		this.workReference = workReference;
+	}
+
+	public String getWorkComments() {
+		return workComments;
+	}
+
+	public void setWorkComments(String workComments) {
+		this.workComments = workComments;
 	}
 
 	public Integer getLiveSteps() {
@@ -88,9 +98,10 @@ public class WorkingProcessWork {
 	@Override
 	public String toString() {
 		return "WorkingProcessWork [idProcess=" + idProcess + ", processName="
-				+ processName + ", workReference=" + workReference + ", liveSteps="
-				+ liveSteps + ", started=" + started + ", status=" + status
-				+ ", finished=" + finished + "]";
+				+ processName + ", workReference=" + workReference
+				+ ", workComments=" + workComments + ", liveSteps=" + liveSteps
+				+ ", started=" + started + ", status=" + status + ", finished="
+				+ finished + "]";
 	}
 
 	@Override
@@ -108,6 +119,8 @@ public class WorkingProcessWork {
 		result = prime * result + ((liveSteps == null) ? 0 : liveSteps.hashCode());
 		result = prime * result
 				+ ((workReference == null) ? 0 : workReference.hashCode());
+		result = prime * result
+				+ ((workComments == null) ? 0 : workComments.hashCode());
 		return result;
 	}
 
@@ -154,6 +167,11 @@ public class WorkingProcessWork {
 			if (other.workReference != null)
 				return false;
 		} else if (!workReference.equals(other.workReference))
+			return false;
+		if (workComments == null) {
+			if (other.workComments != null)
+				return false;
+		} else if (!workComments.equals(other.workComments))
 			return false;
 		return true;
 	}

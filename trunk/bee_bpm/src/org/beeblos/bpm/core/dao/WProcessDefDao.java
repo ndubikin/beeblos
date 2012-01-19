@@ -546,8 +546,10 @@ public class WProcessDefDao {
 	}
 	
 	// dml 20120118
-	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter,
-			String action) throws WProcessDefException {
+	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter, 
+			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
+			boolean estrictProductionDateFilter, Integer productionUserFilter, String action) 
+	throws WProcessDefException {
 
 		String filter = "";
 		
@@ -559,6 +561,50 @@ public class WProcessDefDao {
 
 			}
 		}
+		
+		if (processNameFilter != null && !"".endsWith(processNameFilter)){
+			if (!"".equals(filter)) {
+				filter += " AND wpd.name LIKE '%"+processNameFilter+"%'";
+			} else {
+				filter += " wpd.name LIKE '%"+processNameFilter+"%'";
+
+			}			
+		}
+		
+		if (initialProductionDateFilter!=null){
+			
+			java.sql.Date initialProductionDateFilterSQL=new java.sql.Date(initialProductionDateFilter.getTime());
+			
+			if (estrictProductionDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" wpd.production_date = '"+initialProductionDateFilterSQL+"' ";
+			} else {
+				if (finalProductionDateFilter!=null){
+					java.sql.Date finalProductionDateFilterSQL=new java.sql.Date(finalProductionDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (wpd.production_date >= '"+initialProductionDateFilterSQL+"' AND wpd.production_date <= '"+finalProductionDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" wpd.production_date >= '"+initialProductionDateFilterSQL+"' ";
+				}
+			}
+		}
+		
+		if (productionUserFilter != null && productionUserFilter != 0) {
+			if (!"".equals(filter)) {
+				filter += " AND wpd.production_user = "+productionUserFilter;
+			} else {
+				filter += " wpd.production_user = "+productionUserFilter;
+
+			}
+		}
+		
 		
 		if (filter != null && !"".equals(filter)){
 			filter = "WHERE " + filter;
@@ -578,6 +624,7 @@ public class WProcessDefDao {
 		String tmpQuery = "SELECT ";
 		tmpQuery += " DISTINCT(wpd.id), ";
 		tmpQuery += " wpd.name, ";
+		tmpQuery += " wpd.comments, ";
 		tmpQuery += " wpd.production_date, ";
 		tmpQuery += " wpd.production_user, ";
 		tmpQuery += " (SELECT COUNT(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.id_process = wpd.id) AS liveWorks, ";
@@ -607,6 +654,7 @@ public class WProcessDefDao {
 
 		Integer id;
 		String name;
+		String comments;
 		Date productionDate;
 		Integer productionUser;
 		
@@ -644,16 +692,17 @@ public class WProcessDefDao {
 					id = (cols[0] != null ? new Integer(
 							cols[0].toString()) : null);
 					name = (cols[1] != null ? cols[1].toString() : "");
-					productionDate = (cols[2] != null ? (Date) cols[2] : null);
-					productionUser = (cols[3] != null ? new Integer(
-							cols[3].toString()) : null);
-					liveWorks = (cols[4] != null ? new Integer(
+					comments = (cols[2] != null ? cols[2].toString() : "");
+					productionDate = (cols[3] != null ? (Date) cols[3] : null);
+					productionUser = (cols[4] != null ? new Integer(
 							cols[4].toString()) : null);
-					liveSteps= (cols[5] != null ? new Integer(
+					liveWorks = (cols[5] != null ? new Integer(
 							cols[5].toString()) : null);
-					status = (cols[6] != null ? (Boolean) cols[6] : false);
+					liveSteps= (cols[6] != null ? new Integer(
+							cols[6].toString()) : null);
+					status = (cols[7] != null ? (Boolean) cols[7] : false);
 
-					returnList.add(new WProcessDefLight(id, name, productionDate, 
+					returnList.add(new WProcessDefLight(id, name, comments, productionDate, 
 							productionUser, liveWorks, liveSteps, status));
 				}
 
@@ -680,7 +729,9 @@ public class WProcessDefDao {
 
 	// dml 20120118
 	public List<WorkingProcessWork> getWorkingProcessWorkListByFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, String action) throws WProcessDefException {
+			boolean onlyActiveWorksFilter, Date initialStartedDateFilter, Date finalStartedDateFilter, 
+			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
+			boolean estrictFinishedDateFilter, String action) throws WProcessDefException {
 
 		String filter = "";
 
@@ -700,6 +751,56 @@ public class WProcessDefDao {
 			}
 		}
 		
+		if (initialStartedDateFilter!=null){
+			
+			java.sql.Date initialStartedDateFilterSQL=new java.sql.Date(initialStartedDateFilter.getTime());
+			
+			if (estrictStartedDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" arriving_date = '"+initialStartedDateFilterSQL+"' ";
+			} else {
+				if (finalStartedDateFilter!=null){
+					java.sql.Date finalStartedDateFilterSQL=new java.sql.Date(finalStartedDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (arriving_date >= '"+initialStartedDateFilterSQL+"' AND arriving_date <= '"+finalStartedDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" arriving_date >= '"+initialStartedDateFilterSQL+"' ";
+				}
+			}
+		}
+
+		if (initialFinishedDateFilter!=null){
+			
+			java.sql.Date initialFinishedDateFilterSQL=new java.sql.Date(initialFinishedDateFilter.getTime());
+			
+			if (estrictFinishedDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" finished_date = '"+initialFinishedDateFilterSQL+"' ";
+			} else {
+				if (finalFinishedDateFilter!=null){
+					java.sql.Date finalFinishedDateFilterSQL=new java.sql.Date(finalFinishedDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (finished_date >= '"+initialFinishedDateFilterSQL+"' AND finished_date <= '"+finalFinishedDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" finished_date >= '"+initialFinishedDateFilterSQL+"' ";
+				}
+			}
+		}
+
 		if (filter != null && !"".equals(filter)){
 			filter = "WHERE " + filter;
 		}
@@ -722,9 +823,10 @@ public class WProcessDefDao {
 		tmpQuery += " wpd.id, ";
 		tmpQuery += " wpd.name, ";
 		tmpQuery += " (SELECT COUNT(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.reference = work.reference ) AS liveSteps, ";
-		tmpQuery += " (SELECT arriving_date FROM w_step_work WHERE reference = work.reference AND id_previous_step IS NULL ) AS arrivingDate, ";
+		tmpQuery += " (SELECT arriving_date FROM w_step_work WHERE reference = work.reference AND id_previous_step IS NULL ) AS arriving_date, ";
 		tmpQuery += " IF(((SELECT count(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.reference = work.reference)) > 0, 'running', 'finished') AS status, ";
-		tmpQuery += " (SELECT max(decided_date) FROM w_step_work WHERE reference = work.reference AND (SELECT COUNT(id) FROM w_step_work WHERE decided_date IS NULL AND reference = work.reference) = 0 ) AS finishedDate ";
+		tmpQuery += " (SELECT max(decided_date) FROM w_step_work WHERE reference = work.reference AND (SELECT COUNT(id) FROM w_step_work WHERE decided_date IS NULL AND reference = work.reference) = 0 ) AS finished_date, ";
+		tmpQuery += " work.comments ";
 
 		tmpQuery += " FROM w_step_work work ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id=work.id_process ";
@@ -750,6 +852,7 @@ public class WProcessDefDao {
 		Integer idProcess;
 		String processName;
 		String workReference;
+		String workComments;
 
 		Integer liveSteps;
 		
@@ -794,9 +897,10 @@ public class WProcessDefDao {
 					started = (cols[4] != null ? (Date) cols[4] : null);
 					status = (cols[5] != null ? cols[5].toString() : "");
 					finished = (cols[6] != null ? (Date) cols[6] : null);
+					workComments = (cols[7] != null ? cols[7].toString() : "");
 
 					returnList.add(new WorkingProcessWork(idProcess, processName, 
-							workReference, liveSteps, started, status, finished));
+							workReference, workComments, liveSteps, started, status, finished));
 				}
 
 			} else {
@@ -820,7 +924,7 @@ public class WProcessDefDao {
 	// dml 20120118
 	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess,
 			Integer idStep, String stepTypeFilter, boolean onlyActiveStepsFilter, 
-			String action) throws WProcessDefException {
+			String referenceFilter, String action) throws WProcessDefException {
 		
 		String filter = "";
 
@@ -857,6 +961,15 @@ public class WProcessDefDao {
 				filter += " AND work.decided_date IS NULL ";
 			} else {
 				filter += " work.decided_date IS NULL ";
+
+			}
+		}
+		
+		if (referenceFilter != null && !"".equals(referenceFilter)) {
+			if (!"".equals(filter)) {
+				filter += " AND work.reference = '"+referenceFilter+"'";
+			} else {
+				filter += " work.reference = '"+referenceFilter+"'";
 
 			}
 		}

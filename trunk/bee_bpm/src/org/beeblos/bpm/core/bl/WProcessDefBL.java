@@ -116,30 +116,36 @@ public class WProcessDefBL {
 	}
 
 	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter, 
-			String action)
+			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
+			boolean estrictProductionDateFilter, Integer productionUserFilter, String action)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getWorkingProcessListByFinder(onlyWorkingProcessesFilter, 
-				action);
+				processNameFilter, initialProductionDateFilter, finalProductionDateFilter,
+				estrictProductionDateFilter, productionUserFilter, action);
 		
 	}
 
 	public List<WorkingProcessWork> getWorkingProcessWorkListByFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, String action)
+			boolean onlyActiveWorksFilter, Date initialStartedDateFilter, Date finalStartedDateFilter, 
+			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
+			boolean estrictFinishedDateFilter, String action)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getWorkingProcessWorkListByFinder(idProcess, 
-				onlyActiveWorksFilter, action);
+				onlyActiveWorksFilter, initialStartedDateFilter, finalStartedDateFilter, 
+				estrictStartedDateFilter, initialFinishedDateFilter, finalFinishedDateFilter, 
+				estrictFinishedDateFilter, action);
 		
 	}
 
 	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess, 
 			Integer idStep, String stepTypeFilter, boolean onlyActiveStepsFilter, 
-			String action)
+			String referenceFilter, String action)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getWorkingProcessStepListByFinder(idProcess, 
-				idStep, stepTypeFilter, onlyActiveStepsFilter, action);
+				idStep, stepTypeFilter, onlyActiveStepsFilter, referenceFilter, action);
 		
 	}
 

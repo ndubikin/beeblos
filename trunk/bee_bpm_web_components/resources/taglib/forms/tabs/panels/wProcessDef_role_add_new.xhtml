@@ -12,9 +12,10 @@
 
 	<h:form id="w_process_def_role_add_new_form${action}">
 	
-<a4j:jsFunction name="onsubmitSearchRole" action="#{wProcessDefFormBean.updateRolesRelated}" reRender="w_process_def_role_add_new_form${action},w_process_def_related_roles_form${action}">
-	 <a4j:actionparam name="param1" assignTo="#{wProcessDefFormBean.strRoleList}"  />
-</a4j:jsFunction>		
+		<a4j:jsFunction name="onsubmitSearchRole" action="#{wProcessDefFormBean.updateRolesRelated}" 
+			reRender="w_process_def_role_add_new_form${action},w_process_def_related_roles_form${action}">
+			<a4j:actionparam name="param1" assignTo="#{wProcessDefFormBean.strRoleList}"  />
+		</a4j:jsFunction>		
 	
 		<a4j:commandLink id="insert_role"
 			title="#{msf.label_add_new_global_role_to_project}"

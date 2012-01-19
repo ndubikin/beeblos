@@ -59,7 +59,23 @@
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PROCESSED"/>
             	</rich:menuItem>
-            </rich:contextMenu>
+            	<rich:menuSeparator />         
+             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
+                	<b> Edit process definition </b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
+            	<rich:menuSeparator />         
+                   		<rich:menuItem ajaxSingle="true"
+           			oncomplete="javascript:Richfaces.showModalPanel('mpDesactivateWProcessDef');"
+           			reRender="mpDesactivateWProcessDef" style="{styleIsActive}">
+                	<b> Desactivate process </b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+ 	           	</rich:menuItem>
+             	<rich:menuItem ajaxSingle="false" submitMode="server">
+                	<b> Suspend process </b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
+ 	   	</rich:contextMenu>
             
 		</h:panelGrid>   
 
@@ -73,7 +89,7 @@
 						ajaxSingle="true" event="onclick"
 						reRender="working_process_list_table" />
 				</h:selectBooleanCheckbox>
-				<h:outputText value="#{msg.label_only_active_processes}"
+				<h:outputText value="#{msg.label_show_only_active_processes}"
 					style="margin-left:10px; font-weight:bold;" />			
 			</h:panelGroup>
 
@@ -120,11 +136,19 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wp.name}"
-					style="width:90px; text-align: left;">
+					style="width:120px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_name}" />
 					</f:facet>
 					<h:outputText value="#{wp.name}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wp.comments}"
+					style="width:180px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_comments}" />
+					</f:facet>
+					<h:outputText value="#{wp.comments}" />
 				</rich:column>
 
 				<rich:column sortBy="#{wp.productionDate}"
@@ -146,6 +170,13 @@
 					<h:outputText value="#{wp.productionUser}" />
 				</rich:column>
 
+				<rich:column style="width:10px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_status}" />
+					</f:facet>
+					<h:outputText value="#{wp.status ? 'Active' : 'Non active'}" />
+				</rich:column>
+
 				<rich:column sortBy="#{wp.liveWorks}"
 					style="width:10px; text-align: left;">
 					<f:facet name="header">
@@ -162,16 +193,10 @@
 					<h:outputText value="#{wp.liveSteps}" />
 				</rich:column>
 
-				<rich:column style="width:10px; text-align: left;">
-					<f:facet name="header">
-						<h:outputText value="#{msg.label_status}" />
-					</f:facet>
-					<h:outputText value="#{wp.status ? 'Active' : 'Non active'}" />
-				</rich:column>
-
 				<rich:componentControl event="onRowClick" for="working_process_search_menu"
 					operation="show">
-               <f:param value="#{wp.id}" name="currentRowId"/>
+               		<f:param value="#{wp.id}" name="currentRowId"/>
+               		<f:param value="#{wp.status ? '' : 'display:none;'}" name="styleIsActive"/>
 				</rich:componentControl>
 
 			</rich:dataTable>

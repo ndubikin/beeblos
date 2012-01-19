@@ -6,6 +6,7 @@ public class WProcessDefLight {
 
 	private Integer id;
 	private String name;
+	private String comments;
 	private Date productionDate;
 	private Integer productionUser;
 	
@@ -18,11 +19,12 @@ public class WProcessDefLight {
 		
 	}
 
-	public WProcessDefLight(Integer id, String name, Date productionDate,
+	public WProcessDefLight(Integer id, String name, String comments, Date productionDate,
 			Integer productionUser, Integer liveWorks, Integer liveSteps, boolean status) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.comments = comments;
 		this.productionDate = productionDate;
 		this.productionUser = productionUser;
 		this.liveWorks = liveWorks;
@@ -44,6 +46,14 @@ public class WProcessDefLight {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 
 	public Date getProductionDate() {
@@ -91,6 +101,7 @@ public class WProcessDefLight {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result
 				+ ((productionDate == null) ? 0 : productionDate.hashCode());
 		result = prime * result
@@ -114,6 +125,11 @@ public class WProcessDefLight {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (comments == null) {
+			if (other.comments != null)
+				return false;
+		} else if (!comments.equals(other.comments))
 			return false;
 		if (productionDate == null) {
 			if (other.productionDate != null)
@@ -142,7 +158,7 @@ public class WProcessDefLight {
 
 	@Override
 	public String toString() {
-		return "WProcessDefLight [id=" + id + ", name=" + name
+		return "WProcessDefLight [id=" + id + ", name=" + name + ", comments=" + comments
 				+ ", productionDate=" + productionDate + ", productionUser="
 				+ productionUser + ", liveWorks=" + liveWorks + ", liveSteps=" + liveSteps
 				+ ", status=" + status + "]";

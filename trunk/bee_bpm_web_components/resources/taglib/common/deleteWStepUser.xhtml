@@ -24,7 +24,7 @@
 		<h:panelGroup>
 			<h:outputText value="#{msg.label_confirm_removing_privileges_to_user} " />
 			<h:outputText id="wprocess_related_user_name"
-				value="#{wProcessDefFormBean.currentWProcessUser.user.name}"
+				value="#{wStepDefFormBean.currentWStepUser.user.name}"
 				style="width:200px; font-size:13px;	padding: 4px;" />
 			<h:outputText value="#{msg.label_in_this_process}" />
 		</h:panelGroup>
@@ -38,7 +38,7 @@
 			<a4j:commandButton id="delete_button_sr" value="#{msg.label_remove}"
 				actionListener="#{wStepDefFormBean.deleteWStepUser}"
 				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWStepUser');"
-				reRender="w_step_def_related_users_table, insert_user"
+				reRender="w_step_def_related_users_table, insert_user, w_process_def_step_permissions"
 				style="width:120px; margin-left: 10px; height:24px;" />
 		</h:panelGroup>
 
