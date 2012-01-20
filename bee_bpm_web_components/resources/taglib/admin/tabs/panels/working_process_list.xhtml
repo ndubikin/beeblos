@@ -7,36 +7,6 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 
-	<style>
-.center {
-	text-align: center;
-}
-
-.rich-datascr-button {
-	width: 40px;
-	font-size: 95%;
-}
-
-.colCustomTotalF1 {
-	width: 200px;
-	text-align: right;
-}
-
-.colCustomTotalF2 {
-	width: 80px;
-	text-align: right;
-}
-
-.colCustomTotalF3 {
-	width: 30px;
-	text-align: left;
-}
-
-.colCustomPanelGrid {
-	text-align: right;
-}
-</style>
-
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
@@ -75,15 +45,16 @@
                 	<b> Suspend process </b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>
- 	   	</rich:contextMenu>
+ 	   		</rich:contextMenu>
             
 		</h:panelGrid>   
 
-		<h:panelGrid align="left">
-
+		<h:panelGrid width="100%" columns="1">
+		
 			<h:panelGroup>
 				<h:selectBooleanCheckbox
-					value="#{workingProcessQueryBean.onlyActiveWorkingProcessesFilter}">
+					value="#{workingProcessQueryBean.onlyActiveWorkingProcessesFilter}"
+					style="margin-left: 16px;">
 					<a4j:support
 						action="#{workingProcessQueryBean.reloadWorkingProcesses}"
 						ajaxSingle="true" event="onclick"
@@ -92,10 +63,6 @@
 				<h:outputText value="#{msg.label_show_only_active_processes}"
 					style="margin-left:10px; font-weight:bold;" />			
 			</h:panelGroup>
-
-		</h:panelGrid>
-
-		<h:panelGrid width="100%" columns="1">
 
 			<rich:datascroller id="dseUp" for="working_process_list_table"
 				maxPages="10" reRender="working_process_form${action}"
@@ -120,8 +87,9 @@
 				value="#{workingProcessQueryBean.wProcessDefLightList}"
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-				var="wp" width="98%" columnClasses="center" rows="10"
+				var="wp" width="98%" columnClasses="centerCol" rows="10"
 				reRender="dseUp,dseDown" style="margin-left: 16px;">
+				
 				<f:facet name="header">
 					<h:outputText
 						value="Working Process List ( #{workingProcessQueryBean.nResults} #{msg.label_results} )" />
@@ -152,7 +120,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wp.productionDate}"
-					style="width:20px; text-align: left;">
+					style="width:50px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_production_date}" />
 					</f:facet>
@@ -163,14 +131,14 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wp.productionUser}"
-					style="width:30px; text-align: left;">
+					style="width:50px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_production_user}" />
 					</f:facet>
 					<h:outputText value="#{wp.productionUser}" />
 				</rich:column>
 
-				<rich:column style="width:10px; text-align: left;">
+				<rich:column style="width:50px; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_status}" />
 					</f:facet>
@@ -178,7 +146,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wp.liveWorks}"
-					style="width:10px; text-align: left;">
+					style="width:30px; text-align: right;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_live_works}" />
 					</f:facet>
@@ -186,11 +154,11 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wp.liveSteps}"
-					style="width:10px; text-align: left;">
+					style="width:30px; text-align: right;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_live_steps}" />
 					</f:facet>
-					<h:outputText value="#{wp.liveSteps}" />
+					<h:outputText value="#{wp.liveSteps}" style="text-align: right;"/>
 				</rich:column>
 
 				<rich:componentControl event="onRowClick" for="working_process_search_menu"
