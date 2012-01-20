@@ -467,6 +467,9 @@ table.doctable td {
 *
 */
 
+.centerCol {
+	text-align: center;
+}
 .colStyle50_percent {
 	width: 50%;
 	margin: 0px;
@@ -496,7 +499,7 @@ table.doctable td {
 }
 
 .colStyle480px {
-	width: 400px;
+	width: 480px;
 	margin: 0px;
 }
 
