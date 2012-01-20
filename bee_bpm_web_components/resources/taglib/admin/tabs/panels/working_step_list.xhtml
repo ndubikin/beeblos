@@ -78,21 +78,23 @@
 				<rich:column sortBy="#{wps.idProcess}"
 					style="width:5%; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_process_id}" />
+						<h:outputText value="#{msg.label_process_step_ids}" />
 					</f:facet>
 					<h:outputText value="#{wps.idProcess}" />
-				</rich:column>
-
-				<rich:column sortBy="#{wps.idStep}"
-					style="width:5%; text-align: left;">
-					<f:facet name="header">
-						<h:outputText value="#{msg.label_step_id}" />
-					</f:facet>
+					<h:outputText value=" / " />
 					<h:outputText value="#{wps.idStep}" />
 				</rich:column>
 
+				<rich:column sortBy="#{wps.workReference}"
+					style="width:5%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_reference}" />
+					</f:facet>
+					<h:outputText value="#{wps.workReference}" />
+				</rich:column>
+				
 				<rich:column sortBy="#{wps.stepName}"
-					style="width:30%; text-align: left;">
+					style="width:25%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_step_name}" />
 					</f:facet>
@@ -148,13 +150,18 @@
 					<h:outputText value="#{wps.performer}" />
 				</rich:column>
 
-				<rich:column sortBy="#{wps.deadlineTime}"
-					style="width:10%; text-align: left;">
+				<rich:column sortBy="#{wps.deadlineDate}"
+					style="width:15%; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_deadline_time}" />
+						<h:outputText value="#{msg.label_deadline_date_time}" />
 					</f:facet>
-					<h:outputText value="#{wps.deadlineTime}">
+					<h:outputText value="#{wps.deadlineDate}">
 						<f:convertDateTime pattern="#{msg.label_date_format}"
+							timeZone="#{workingProcessQueryBean.timeZone}" />
+					</h:outputText>
+					<h:outputText value=" / " />
+					<h:outputText value="#{wps.deadlineTime}">
+						<f:convertDateTime pattern="HH:mm"
 							timeZone="#{workingProcessQueryBean.timeZone}" />
 					</h:outputText>
 				</rich:column>

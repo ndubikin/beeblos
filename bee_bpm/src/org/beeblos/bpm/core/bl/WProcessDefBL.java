@@ -92,7 +92,16 @@ public class WProcessDefBL {
 		return new WProcessDefDao().getComboList(textoPrimeraLinea, separacion);
 		
 	}
-/*	
+
+	// dml 20120120
+	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank )
+	throws WProcessDefException {
+	
+		return new WProcessDefDao().getComboActiveProcessList(firstLineText, blank);
+	
+	}	
+	
+	/*	
 	public List<WProcessDef> finder(Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter)
@@ -139,13 +148,22 @@ public class WProcessDefBL {
 		
 	}
 
-	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess, 
-			Integer idStep, String stepTypeFilter, boolean onlyActiveStepsFilter, 
-			String referenceFilter, String action)
+	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer processIdFilter, 
+			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
+			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			String action)
 	throws WProcessDefException {
-		
-		return new WProcessDefDao().getWorkingProcessStepListByFinder(idProcess, 
-				idStep, stepTypeFilter, onlyActiveStepsFilter, referenceFilter, action);
+
+		return new WProcessDefDao().getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
+				stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
+				finalArrivingDateFilter, estrictArrivingDateFilter, 
+				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
+				initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
+				initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
+				action);
 		
 	}
 
