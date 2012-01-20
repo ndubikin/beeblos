@@ -6,37 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-
 	<style type="text/css">
-.colStyle1 {
-	width: 150px;
-	margin: 0px;
-}
-
-.colStyle2 {
-	width: 125px;
-	margin: 0px;
-}
-
-.colStyle3 {
-	width: 60px;
-	margin: 0px;
-}
-
-.colStyle4 {
-	width: 125px;
-	margin: 0px;
-}
-
-.colStyle5 {
-	width: 80px;
-	margin: 0px;
-}
-
-.colStyle6 {
-	width: 50px;
-	margin: 0px;
-}
 
 .rich-calendar-input {
 	font-size: 13px !important;
@@ -61,27 +31,51 @@
 
 	<h:form id="working_step_search_form${action}">
 
-		<h:panelGrid columns="5"
+		<h:panelGrid columns="3"
 			style=" width : auto; height : auto; padding-left: 15px;"
-			columnClasses="colStyle1">
+			columnClasses="colStyle140px, colStyle480px, colStyle100px">
 			
-			<h:outputText value="#{msg.label_process_id}:" styleClass="firstLeftText" />
-			<h:inputText id="process_id_filter" value="#{workingProcessQueryBean.processIdFilter}"
-				style="width:286px; font-size:12px;	padding: 4px;" />
+			<h:outputText value="#{msg.label_process_id}:" styleClass="firstLeftText"/>
+			<h:panelGroup>
+				<h:selectOneMenu id="process_id" 
+					value="#{workingProcessQueryBean.processIdFilter}"
+					style="width:300px; font-size:13px;	padding: 4px; ">
+					<f:selectItems
+						value="#{workingProcessQueryBean.wProcessesDef}" />
+					<a4j:support ajaxSingle="true"  actionListener="#{workingProcessQueryBean.changeStep}"
+							event="onchange" reRender="step_id" />
+				</h:selectOneMenu>
+				<h:selectBooleanCheckbox
+					value="#{workingProcessQueryBean.onlyActiveWorkingProcessesFilter}">
+					<a4j:support
+						ajaxSingle="true" event="onclick"
+						reRender="process_id" />
+				</h:selectBooleanCheckbox>
+				<h:outputText value="#{msg.label_show_only_active_processes}"
+					style="margin-left:10px; font-weight:bold;" />			
+				
+			</h:panelGroup>
 			<h:commandButton id="searchButton" value="#{msg.label_search}"
 				action="#{workingProcessQueryBean.searchWorkingProcessLiveSteps}"
-				style="width:100px; margin-left:30px;">
+				style="width:100px;">
 				<f:setPropertyActionListener value="${action}"
 					target="#{workingProcessQueryBean.action}" />
 			</h:commandButton>
-			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_step_id}:" styleClass="firstLeftText"/>
+			<h:selectOneMenu id="step_id" 
+				value="#{workingProcessQueryBean.stepIdFilter}"
+				style="width:300px; font-size:13px;	padding: 4px; ">
+				<f:selectItems
+					value="#{workingProcessQueryBean.validStepList}" />
+			</h:selectOneMenu>
 			<rich:spacer height="10" />
 
-			<h:outputText value="#{msg.label_step_id}:" styleClass="firstLeftText" />
-			<h:inputText id="step_id_filter" value="#{workingProcessQueryBean.stepIdFilter}"
-				style="width:286px; font-size:12px;	padding: 4px;" />
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
+			<h:outputText value="#{msg.label_reference}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="reference"
+				value="#{workingProcessQueryBean.referenceFilter}"
+				style="width:290px; font-size:13px;	padding: 4px;" />
 			<rich:spacer height="10" />
 
 			<h:outputText value="#{msg.label_status}:" styleClass="firstLeftText" />
@@ -96,9 +90,147 @@
 				</h:selectOneRadio>
 			</h:panelGroup>
 			<rich:spacer height="10" />
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
+			
+		</h:panelGrid>
 
+		<h:panelGroup>
+			<a4j:outputPanel styleClass="viewFilters" id="look">
+				<rich:effect for="look" event="onclick" type="Fade" params="delay:0.0, duration:0.1" disableDefault="true"/>
+				<rich:effect for="look" event="onclick" type="BlindDown" targetId="filters" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="filters"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="hide2"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<h:outputText escape="false" value="#{msg.label_more_search_filters}" />
+			</a4j:outputPanel>
+	
+			<a4j:outputPanel id="hide2" styleClass="viewFilters" style="display:none">
+				<rich:effect for="hide2" event="onclick" type="BlindUp" targetId="filters" params="id:'filters', duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Appear" targetId="look" params="delay:0.2, duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Fade" targetId="hide2" params="delay:0.0, duration:0.2" />
+				<h:outputText style="padding-right:5px" value="#{msg.label_hide}"/>
+			</a4j:outputPanel>
+		 </h:panelGroup>
+
+
+	<h:panelGrid id="filters" columns="1" style="display:none;" >
+			<h:panelGrid columns="3"
+				style=" width : auto; height : auto; padding-left: 15px;"
+				columnClasses="colStyle140px, colStyle480px, colStyle100px">
+				
+	
+				<h:outputText value="#{msg.label_arriving_date_from}:"
+					styleClass="firstLeftText" />
+	
+				<h:panelGroup>
+	
+					<rich:calendar id="initial_arriving_date"
+						value="#{workingProcessQueryBean.initialArrivingDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+		
+					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+						style="margin-left: 10px; margin-right: 10px;" />
+					<rich:calendar id="final_arriving_date"
+						value="#{workingProcessQueryBean.finalArrivingDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+						disabled="#{workingProcessQueryBean.estrictArrivingDateFilter}" />
+		
+					<h:outputText value="#{msg.label_only_from} :"
+						styleClass="firstLeftText" style="margin-left: 10px;" />
+					<h:selectBooleanCheckbox id="estrict_arriving_date_filter"
+						value="#{workingProcessQueryBean.estrictArrivingDateFilter}">
+						<a4j:support event="onclick" reRender="final_arriving_date" />
+					</h:selectBooleanCheckbox>
+	
+				</h:panelGroup>
+				<rich:spacer height="10" />
+	
+				<h:outputText value="#{msg.label_opened_date_from}:"
+					styleClass="firstLeftText" />
+	
+				<h:panelGroup>
+	
+					<rich:calendar id="initial_opened_date"
+						value="#{workingProcessQueryBean.initialOpenedDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+		
+					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+						style="margin-left: 10px; margin-right: 10px;" />
+					<rich:calendar id="final_opened_date"
+						value="#{workingProcessQueryBean.finalOpenedDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+						disabled="#{workingProcessQueryBean.estrictOpenedDateFilter}" />
+		
+					<h:outputText value="#{msg.label_only_from} :"
+						styleClass="firstLeftText" style="margin-left: 10px;" />
+					<h:selectBooleanCheckbox id="estrict_opened_date_filter"
+						value="#{workingProcessQueryBean.estrictOpenedDateFilter}">
+						<a4j:support event="onclick" reRender="final_opened_date" />
+					</h:selectBooleanCheckbox>
+	
+				</h:panelGroup>
+				<rich:spacer height="10" />
+	
+				<h:outputText value="#{msg.label_deadline_date_from}:"
+					styleClass="firstLeftText" />
+	
+				<h:panelGroup>
+	
+					<rich:calendar id="initial_deadline_date"
+						value="#{workingProcessQueryBean.initialDeadlineDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+		
+					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+						style="margin-left: 10px; margin-right: 10px;" />
+					<rich:calendar id="final_deadline_time"
+						value="#{workingProcessQueryBean.finalDeadlineDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+						disabled="#{workingProcessQueryBean.estrictDeadlineDateFilter}" />
+		
+					<h:outputText value="#{msg.label_only_from} :"
+						styleClass="firstLeftText" style="margin-left: 10px;" />
+					<h:selectBooleanCheckbox id="estrict_deadline_time_filter"
+						value="#{workingProcessQueryBean.estrictDeadlineDateFilter}">
+						<a4j:support event="onclick" reRender="final_deadline_time" />
+					</h:selectBooleanCheckbox>
+	
+				</h:panelGroup>
+				<rich:spacer height="10" />
+	
+				<h:outputText value="#{msg.label_decided_date_from}:"
+					styleClass="firstLeftText" />
+	
+				<h:panelGroup>
+	
+					<rich:calendar id="initial_decided_date"
+						value="#{workingProcessQueryBean.initialDecidedDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+		
+					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+						style="margin-left: 10px; margin-right: 10px;" />
+					<rich:calendar id="final_decided_date"
+						value="#{workingProcessQueryBean.finalDecidedDateFilter}"
+						datePattern="#{msg.label_date_format}" enableManualInput="false"
+						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+						disabled="#{workingProcessQueryBean.estrictDecidedDateFilter}" />
+		
+					<h:outputText value="#{msg.label_only_from} :"
+						styleClass="firstLeftText" style="margin-left: 10px;" />
+					<h:selectBooleanCheckbox id="estrict_decided_date_filter"
+						value="#{workingProcessQueryBean.estrictDecidedDateFilter}">
+						<a4j:support event="onclick" reRender="final_decided_date" />
+					</h:selectBooleanCheckbox>
+	
+				</h:panelGroup>
+				<rich:spacer height="10" />			
+	
+			</h:panelGrid>
+			
 		</h:panelGrid>
 
 	</h:form>

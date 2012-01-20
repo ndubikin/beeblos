@@ -254,7 +254,71 @@ public class WProcessDefDao {
 
 
 	}
-	
+
+	// dml 20120120
+	@SuppressWarnings("unchecked")
+	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank )
+	throws WProcessDefException {
+		 
+			List<WProcessDef> lwpd = null;
+			List<StringPair> retorno = new ArrayList<StringPair>(10);
+			
+			org.hibernate.Session session = null;
+			org.hibernate.Transaction tx = null;
+
+			try {
+
+				session = HibernateUtil.obtenerSession();
+				tx = session.getTransaction();
+				tx.begin();
+
+				lwpd = session
+						.createQuery("From WProcessDef Where active IS TRUE order by name")
+						.list();
+		
+				if (lwpd!=null) {
+					
+					// inserta los extras
+					if ( firstLineText!=null && !"".equals(firstLineText) ) {
+						if ( !firstLineText.equals("WHITESPACE") ) {
+							retorno.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
+						} else {
+							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+						}
+					}
+					
+					if ( blank!=null && !"".equals(blank) ) {
+						if ( !blank.equals("WHITESPACE") ) {
+							retorno.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
+						} else {
+							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+						}
+					}
+					
+				
+					
+					for (WProcessDef wpd: lwpd) {
+						retorno.add(new StringPair(wpd.getId(),wpd.getName()));
+					}
+				} else {
+					// nes  - si el select devuelve null entonces devuelvo null
+					retorno=null;
+				}
+				
+				
+			} catch (HibernateException ex) {
+				if (tx != null)
+					tx.rollback();
+				throw new WProcessDefException(
+						"Can't obtain WProcessDefs combo list "
+						+ex.getMessage()+"\n"+ex.getCause());
+			} catch (Exception e) {}
+
+			return retorno;
+
+
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
@@ -922,24 +986,29 @@ public class WProcessDefDao {
 	}
 	
 	// dml 20120118
-	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer idProcess,
-			Integer idStep, String stepTypeFilter, boolean onlyActiveStepsFilter, 
-			String referenceFilter, String action) throws WProcessDefException {
+	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer processIdFilter, 
+			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
+			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			String action) 
+					throws WProcessDefException {
 		
 		String filter = "";
 
-		if (idProcess != null && idProcess != 0) {
+		if (processIdFilter != null && processIdFilter != 0) {
 			if (!"".equals(filter)) {
 				filter += " AND ";
 			}
-			filter += " work.id_process = " + idProcess;
+			filter += " work.id_process = " + processIdFilter;
 		}
 		
-		if (idStep != null && idStep != 0) {
+		if (stepIdFilter != null && stepIdFilter != 0) {
 			if (!"".equals(filter)) {
 				filter += " AND ";
 			}
-			filter += " work.id_current_step = " + idStep;
+			filter += " work.id_current_step = " + stepIdFilter;
 		}
 		
 		if (!"".equals(stepTypeFilter) || !"ALL".equals(stepTypeFilter)) {
@@ -956,24 +1025,115 @@ public class WProcessDefDao {
 			}
 		}
 		
-		if (onlyActiveStepsFilter) {
-			if (!"".equals(filter)) {
-				filter += " AND work.decided_date IS NULL ";
-			} else {
-				filter += " work.decided_date IS NULL ";
-
-			}
-		}
-		
 		if (referenceFilter != null && !"".equals(referenceFilter)) {
 			if (!"".equals(filter)) {
-				filter += " AND work.reference = '"+referenceFilter+"'";
+				filter += " AND work.reference LIKE '%"+referenceFilter+"%'";
 			} else {
-				filter += " work.reference = '"+referenceFilter+"'";
+				filter += " work.reference LIKE '%"+referenceFilter+"%'";
 
 			}
 		}
 		
+		if (initialArrivingDateFilter!=null){
+			
+			java.sql.Date initialArrivingDateFilterSQL=new java.sql.Date(initialArrivingDateFilter.getTime());
+			
+			if (estrictArrivingDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.arriving_date = '"+initialArrivingDateFilterSQL+"' ";
+			} else {
+				if (finalArrivingDateFilter!=null){
+					java.sql.Date finalArrivingDateFilterSQL=new java.sql.Date(finalArrivingDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.arriving_date >= '"+initialArrivingDateFilterSQL+"' AND work.arriving_date <= '"+finalArrivingDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.arriving_date >= '"+initialArrivingDateFilterSQL+"' ";
+				}
+			}
+		}
+
+		if (initialOpenedDateFilter!=null){
+			
+			java.sql.Date initialOpenedDateFilterSQL=new java.sql.Date(initialOpenedDateFilter.getTime());
+			
+			if (estrictOpenedDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.opened_date = '"+initialOpenedDateFilterSQL+"' ";
+			} else {
+				if (finalOpenedDateFilter!=null){
+					java.sql.Date finalOpenedDateFilterSQL=new java.sql.Date(finalOpenedDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.opened_date >= '"+initialOpenedDateFilterSQL+"' AND work.opened_date <= '"+finalOpenedDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.opened_date >= '"+initialOpenedDateFilterSQL+"' ";
+				}
+			}
+		}
+
+		if (initialDeadlineDateFilter!=null){
+			
+			java.sql.Date initialDeadlineDateFilterSQL=new java.sql.Date(initialDeadlineDateFilter.getTime());
+			
+			if (estrictDeadlineDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.deadline_date = '"+initialDeadlineDateFilterSQL+"' ";
+			} else {
+				if (finalDeadlineDateFilter!=null){
+					java.sql.Date finalDeadlineDateFilterSQL=new java.sql.Date(finalDeadlineDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.deadline_date >= '"+initialDeadlineDateFilterSQL+"' AND work.deadline_date <= '"+finalDeadlineDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.deadline_date >= '"+initialDeadlineDateFilterSQL+"' ";
+				}
+			}
+		}
+
+		if (initialDecidedDateFilter!=null){
+			
+			java.sql.Date initialDecidedDateFilterSQL=new java.sql.Date(initialDecidedDateFilter.getTime());
+			
+			if (estrictDecidedDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.decided_date = '"+initialDecidedDateFilterSQL+"' ";
+			} else {
+				if (finalDecidedDateFilter!=null){
+					java.sql.Date finalDecidedDateFilterSQL=new java.sql.Date(finalDecidedDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.decided_date >= '"+initialDecidedDateFilterSQL+"' AND work.decided_date <= '"+finalDecidedDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.decided_date >= '"+initialDecidedDateFilterSQL+"' ";
+				}
+			}
+		}
+
 		if (filter != null && !"".equals(filter)){
 			filter = "WHERE " + filter;
 		}
@@ -981,14 +1141,14 @@ public class WProcessDefDao {
 		logger.debug("------>> getWorkingProcessListStepByFinder -> filter:" + filter
 				+ "<<-------");
 
-		String query = _armaQueryWorkingProcessStep(idProcess, filter, action);
+		String query = _armaQueryWorkingProcessStep(filter, action);
 
 		return getWorkingProcessStepListByFinder(query);
 		
 	}
 
 	// dml 20120118
-	private String _armaQueryWorkingProcessStep(Integer idProcess, String filter, String action) {
+	private String _armaQueryWorkingProcessStep(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
 		tmpQuery += " work.id_process, ";
@@ -999,7 +1159,9 @@ public class WProcessDefDao {
 		tmpQuery += " work.opener_user, ";
 		tmpQuery += " work.decided_date, ";
 		tmpQuery += " work.performer_user_id, ";
-		tmpQuery += " work.deadline_time ";
+		tmpQuery += " work.deadline_date, ";
+		tmpQuery += " work.deadline_time, ";
+		tmpQuery += " work.reference ";
 
 		tmpQuery += " FROM w_step_work work ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = work.id_current_step ";
@@ -1030,7 +1192,9 @@ public class WProcessDefDao {
 		Integer openerUser;
 		Date decidedDate;
 		Integer performer;
+		Date deadlineDate;
 		Date deadlineTime;
+		String workReference;
 		
 		
 		Session session = null;
@@ -1070,11 +1234,13 @@ public class WProcessDefDao {
 					decidedDate = (cols[6] != null ? (Date) cols[6] : null);
 					performer = (cols[7] != null ? new Integer(
 							cols[7].toString()) : null);
-					deadlineTime = (cols[8] != null ? (Date) cols[8] : null);
+					deadlineDate = (cols[8] != null ? (Date) cols[8] : null);
+					deadlineTime = (cols[9] != null ? (Date) cols[9] : null);
+					workReference = (cols[10] != null ? cols[10].toString() : "");
 
 					returnList.add(new WorkingProcessStep(idProcess, idStep, stepName, 
-							arrivingDate, openedDate, openerUser, decidedDate, 
-							performer, deadlineTime));
+							workReference, arrivingDate, openedDate, openerUser, decidedDate, 
+							performer, deadlineDate, deadlineTime));
 				}
 
 			} else {

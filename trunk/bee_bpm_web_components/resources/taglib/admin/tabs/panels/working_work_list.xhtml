@@ -55,6 +55,10 @@
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.referenceFilter}" value="{currentRowReference}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
+              	<rich:menuItem ajaxSingle="false" submitMode="server">
+                	<b> Show history </b> {currentRowReference} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
                 	<b> Edit process definition </b> {currentRowReference} 

@@ -16,10 +16,13 @@ import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.core.model.noper.WorkingProcessStep;
 import org.beeblos.bpm.core.model.noper.WorkingProcessWork;
@@ -50,7 +53,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	
 	private boolean onlyActiveWorkingProcessesFilter;
 	private boolean onlyActiveWorksFilter;
-	private boolean onlyActiveStepsFilter;
 	private String referenceFilter;
 	
 	private Integer processIdFilter;
@@ -71,6 +73,22 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private Date initialFinishedDateFilter;
 	private Date finalFinishedDateFilter;
 	private boolean estrictFinishedDateFilter;
+	
+	private Date initialArrivingDateFilter;
+	private Date finalArrivingDateFilter;
+	private boolean estrictArrivingDateFilter;
+	
+	private Date initialOpenedDateFilter;
+	private Date finalOpenedDateFilter;
+	private boolean estrictOpenedDateFilter;
+	
+	private Date initialDeadlineDateFilter;
+	private Date finalDeadlineDateFilter;
+	private boolean estrictDeadlineDateFilter;
+	
+	private Date initialDecidedDateFilter;
+	private Date finalDecidedDateFilter;
+	private boolean estrictDecidedDateFilter;
 	
 	private Integer productionUserFilter;
 	
@@ -100,7 +118,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.nWorkResults = 0;
 				
 		this.onlyActiveWorkingProcessesFilter = true;
-		this.onlyActiveStepsFilter = true;
 		this.onlyActiveWorksFilter = true;
 
 		this.processIdFilter = null;
@@ -201,14 +218,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	public void setOnlyActiveWorksFilter(boolean onlyActiveWorksFilter) {
 		this.onlyActiveWorksFilter = onlyActiveWorksFilter;
-	}
-
-	public boolean isOnlyActiveStepsFilter() {
-		return onlyActiveStepsFilter;
-	}
-
-	public void setOnlyActiveStepsFilter(boolean onlyActiveStepsFilter) {
-		this.onlyActiveStepsFilter = onlyActiveStepsFilter;
 	}
 
 	public String getReferenceFilter() {
@@ -321,6 +330,102 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	public void setEstrictFinishedDateFilter(boolean estrictFinishedDateFilter) {
 		this.estrictFinishedDateFilter = estrictFinishedDateFilter;
+	}
+
+	public Date getInitialArrivingDateFilter() {
+		return initialArrivingDateFilter;
+	}
+
+	public void setInitialArrivingDateFilter(Date initialArrivingDateFilter) {
+		this.initialArrivingDateFilter = initialArrivingDateFilter;
+	}
+
+	public Date getFinalArrivingDateFilter() {
+		return finalArrivingDateFilter;
+	}
+
+	public void setFinalArrivingDateFilter(Date finalArrivingDateFilter) {
+		this.finalArrivingDateFilter = finalArrivingDateFilter;
+	}
+
+	public boolean isEstrictArrivingDateFilter() {
+		return estrictArrivingDateFilter;
+	}
+
+	public void setEstrictArrivingDateFilter(boolean estrictArrivingDateFilter) {
+		this.estrictArrivingDateFilter = estrictArrivingDateFilter;
+	}
+
+	public Date getInitialOpenedDateFilter() {
+		return initialOpenedDateFilter;
+	}
+
+	public void setInitialOpenedDateFilter(Date initialOpenedDateFilter) {
+		this.initialOpenedDateFilter = initialOpenedDateFilter;
+	}
+
+	public Date getFinalOpenedDateFilter() {
+		return finalOpenedDateFilter;
+	}
+
+	public void setFinalOpenedDateFilter(Date finalOpenedDateFilter) {
+		this.finalOpenedDateFilter = finalOpenedDateFilter;
+	}
+
+	public boolean isEstrictOpenedDateFilter() {
+		return estrictOpenedDateFilter;
+	}
+
+	public void setEstrictOpenedDateFilter(boolean estrictOpenedDateFilter) {
+		this.estrictOpenedDateFilter = estrictOpenedDateFilter;
+	}
+
+	public Date getInitialDeadlineDateFilter() {
+		return initialDeadlineDateFilter;
+	}
+
+	public void setInitialDeadlineDateFilter(Date initialDeadlineDateFilter) {
+		this.initialDeadlineDateFilter = initialDeadlineDateFilter;
+	}
+
+	public Date getFinalDeadlineDateFilter() {
+		return finalDeadlineDateFilter;
+	}
+
+	public void setFinalDeadlineDateFilter(Date finalDeadlineDateFilter) {
+		this.finalDeadlineDateFilter = finalDeadlineDateFilter;
+	}
+
+	public boolean isEstrictDeadlineDateFilter() {
+		return estrictDeadlineDateFilter;
+	}
+
+	public void setEstrictDeadlineDateFilter(boolean estrictDeadlineDateFilter) {
+		this.estrictDeadlineDateFilter = estrictDeadlineDateFilter;
+	}
+
+	public Date getInitialDecidedDateFilter() {
+		return initialDecidedDateFilter;
+	}
+
+	public void setInitialDecidedDateFilter(Date initialDecidedDateFilter) {
+		this.initialDecidedDateFilter = initialDecidedDateFilter;
+	}
+
+	public Date getFinalDecidedDateFilter() {
+		return finalDecidedDateFilter;
+	}
+
+	public void setFinalDecidedDateFilter(Date finalDecidedDateFilter) {
+		this.finalDecidedDateFilter = finalDecidedDateFilter;
+	}
+
+	public boolean isEstrictDecidedDateFilter() {
+		return estrictDecidedDateFilter;
+	}
+
+	public void setEstrictDecidedDateFilter(boolean estrictDecidedDateFilter) {
+		this.estrictDecidedDateFilter = estrictDecidedDateFilter;
 	}
 
 	public Integer getProductionUserFilter() {
@@ -553,7 +658,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 			workingProcessStepList = (ArrayList<WorkingProcessStep>) new WProcessDefBL()
 					.getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
-							stepTypeFilter, onlyActiveStepsFilter, referenceFilter, action);
+							stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
+							finalArrivingDateFilter, estrictArrivingDateFilter, 
+							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
+							initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
+							initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
+							action);
 
 			nStepResults = workingProcessStepList.size();
 
@@ -601,7 +711,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 			
 			return UtilsVs
-					.castStringPairToSelectitem(new WUserDefBL().getComboList("Select an user ...", ""));
+					.castStringPairToSelectitem(new WUserDefBL().getComboList("All users", ""));
 			
 		} catch (WUserDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
@@ -619,13 +729,47 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 		try {
 			
-			return UtilsVs
-					.castStringPairToSelectitem(new WProcessDefBL().getComboList("Select a process ...", ""));
+			if (onlyActiveWorkingProcessesFilter){
+				
+				return UtilsVs
+						.castStringPairToSelectitem(new WProcessDefBL().
+								getComboActiveProcessList("All active processes", ""));
+				
+			} else {
+				
+				return UtilsVs
+						.castStringPairToSelectitem(new WProcessDefBL().getComboList("All processes", ""));
+				
+			}
 			
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".getwProcessesDef() WProcessDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+	
+	public List<SelectItem> getValidStepList(){
+		
+		try {
+			
+			String stepMessage = "All steps";
+			if (processIdFilter != null && processIdFilter != 0){
+				stepMessage += " of this process";
+			} 
+			
+			return UtilsVs
+					.castStringPairToSelectitem(new WStepDefBL().getComboList(processIdFilter, 1, stepMessage, ""));
+			
+		} catch (WProcessDefException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".getValidStepList() WProcessDefException ..." };
 			agregarMensaje("206", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 		}

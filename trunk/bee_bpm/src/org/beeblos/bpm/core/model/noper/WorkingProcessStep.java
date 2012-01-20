@@ -7,30 +7,34 @@ public class WorkingProcessStep {
 	private Integer idProcess;
 	private Integer idStep;
 	private String stepName;
+	private String workReference;
 	private Date arrivingDate;
 	private Date openedDate;
 	private Integer openerUser;
 	private Date decidedDate;
 	private Integer performer;
 	private Date deadlineTime;
+	private Date deadlineDate;
 	
 	public WorkingProcessStep() {
 		
 	}
 
 	public WorkingProcessStep(Integer idProcess, Integer idStep,
-			String stepName, Date arrivingDate, Date openedDate,
+			String stepName, String workReference, Date arrivingDate, Date openedDate,
 			Integer openerUser, Date decidedDate, Integer performer,
-			Date deadlineTime) {
+			Date deadlineDate, Date deadlineTime) {
 		super();
 		this.idProcess = idProcess;
 		this.idStep = idStep;
 		this.stepName = stepName;
+		this.workReference = workReference;
 		this.arrivingDate = arrivingDate;
 		this.openedDate = openedDate;
 		this.openerUser = openerUser;
 		this.decidedDate = decidedDate;
 		this.performer = performer;
+		this.deadlineDate = deadlineDate;
 		this.deadlineTime = deadlineTime;
 	}
 
@@ -56,6 +60,14 @@ public class WorkingProcessStep {
 
 	public void setStepName(String stepName) {
 		this.stepName = stepName;
+	}
+
+	public String getWorkReference() {
+		return workReference;
+	}
+
+	public void setWorkReference(String workReference) {
+		this.workReference = workReference;
 	}
 
 	public Date getArrivingDate() {
@@ -106,13 +118,23 @@ public class WorkingProcessStep {
 		this.deadlineTime = deadlineTime;
 	}
 
+	public Date getDeadlineDate() {
+		return deadlineDate;
+	}
+
+	public void setDeadlineDate(Date deadlineDate) {
+		this.deadlineDate = deadlineDate;
+	}
+
 	@Override
 	public String toString() {
 		return "WorkingProcessStep [idProcess=" + idProcess + ", idStep="
-				+ idStep + ", stepName=" + stepName + ", arrivingDate="
-				+ arrivingDate + ", openedDate=" + openedDate + ", openerUser="
-				+ openerUser + ", decidedDate=" + decidedDate + ", performer="
-				+ performer + ", deadlineTime=" + deadlineTime + "]";
+				+ idStep + ", stepName=" + stepName + ", workReference="
+				+ workReference + ", arrivingDate=" + arrivingDate
+				+ ", openedDate=" + openedDate + ", openerUser=" + openerUser
+				+ ", decidedDate=" + decidedDate + ", performer=" + performer
+				+ ", deadlineTime=" + deadlineTime + ", deadlineDate="
+				+ deadlineDate + "]";
 	}
 
 	@Override
@@ -121,6 +143,8 @@ public class WorkingProcessStep {
 		int result = 1;
 		result = prime * result
 				+ ((arrivingDate == null) ? 0 : arrivingDate.hashCode());
+		result = prime * result
+				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
 		result = prime * result
 				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
 		result = prime * result
@@ -136,6 +160,8 @@ public class WorkingProcessStep {
 				+ ((performer == null) ? 0 : performer.hashCode());
 		result = prime * result
 				+ ((stepName == null) ? 0 : stepName.hashCode());
+		result = prime * result
+				+ ((workReference == null) ? 0 : workReference.hashCode());
 		return result;
 	}
 
@@ -152,6 +178,11 @@ public class WorkingProcessStep {
 			if (other.arrivingDate != null)
 				return false;
 		} else if (!arrivingDate.equals(other.arrivingDate))
+			return false;
+		if (deadlineDate == null) {
+			if (other.deadlineDate != null)
+				return false;
+		} else if (!deadlineDate.equals(other.deadlineDate))
 			return false;
 		if (deadlineTime == null) {
 			if (other.deadlineTime != null)
@@ -192,6 +223,11 @@ public class WorkingProcessStep {
 			if (other.stepName != null)
 				return false;
 		} else if (!stepName.equals(other.stepName))
+			return false;
+		if (workReference == null) {
+			if (other.workReference != null)
+				return false;
+		} else if (!workReference.equals(other.workReference))
 			return false;
 		return true;
 	}
