@@ -328,8 +328,9 @@ public class InyectorBean  extends CoreManagedBean {
 		pasoAInyectar.setIdObjectType(idObjectType);
 		
 		// nes 20110106 - asocio los identificadores conocidos por el usuario al paso ...
-		pasoAInyectar.setReference(objReference);
-		pasoAInyectar.setComments(objComments);
+		// nes 20120120 - agregado objeto wProcessWork
+		pasoAInyectar.getwProcessWork().setReference(objReference);
+		pasoAInyectar.getwProcessWork().setComments(objComments);
 		
 		pasoAInyectar.setArrivingDate(new Date());
 		

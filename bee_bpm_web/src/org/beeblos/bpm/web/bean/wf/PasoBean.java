@@ -358,8 +358,9 @@ public class PasoBean  extends CoreManagedBean {
 			
 			// set bean to show message and refresh list
 			// antes de limpiar cargo el mensaje que voy a mostrar
-			this.mensajeProceso=	this.pasoActual.getReference()+" - "
-									+ pasoActual.getComments()+ "\n ("
+			// nes 20120120 - agregado objeto wProcessWork
+			this.mensajeProceso=	this.pasoActual.getwProcessWork().getReference()+" - "
+									+ pasoActual.getwProcessWork().getComments()+ "\n ("
 									+ pasoActual.getCurrentStep().getName()+") \n ("
 									+ pasoActual.getCurrentStep().getStepComments()+ " )"
 									+ " fué devuelto al paso anterior : "+pasoActual.getPreviousStep().getName();
@@ -476,8 +477,9 @@ public class PasoBean  extends CoreManagedBean {
 	}
 
 	private void setMensajeproceso() {
-		this.mensajeProceso=	this.pasoActual.getReference()+" - "
-				+ pasoActual.getComments()+ "\n ("
+		// nes 20120120 - agregado objeto wProcessWork
+		this.mensajeProceso=	this.pasoActual.getwProcessWork().getReference()+" - "
+				+ pasoActual.getwProcessWork().getComments()+ "\n ("
 				+ pasoActual.getCurrentStep().getName()+") \n ("
 				+ pasoActual.getCurrentStep().getStepComments()+ " )";
 	}	
@@ -762,8 +764,9 @@ public class PasoBean  extends CoreManagedBean {
 		newWorkItem.setIdObject(pasoActual.getIdObject());
 		newWorkItem.setIdObjectType(pasoActual.getIdObjectType());
 		
-		newWorkItem.setReference(pasoActual.getReference() );
-		newWorkItem.setComments(pasoActual.getComments() );
+		// nes 20120120 - agregado objeto wProcessWork
+		newWorkItem.getwProcessWork().setReference(pasoActual.getwProcessWork().getReference() );
+		newWorkItem.getwProcessWork().setComments(pasoActual.getwProcessWork().getComments() );
 		newWorkItem.setArrivingDate( now );
 		
 		// put user instructions to next step
