@@ -65,7 +65,7 @@
 			</rich:datascroller>
 
 			<rich:dataTable id="working_step_list_table"
-				value="#{workingProcessQueryBean.workingProcessStepList}"
+				value="#{workingProcessQueryBean.stepWorkLightList}"
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 				var="wps" width="98%" columnClasses="center" rows="10"
@@ -78,7 +78,7 @@
 				<rich:column sortBy="#{wps.idProcess}"
 					style="width:5%; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_process_step_ids}" />
+						<h:outputText value="#{msg.label_proc_step}" />
 					</f:facet>
 					<h:outputText value="#{wps.idProcess}" />
 					<h:outputText value=" / " />
@@ -153,17 +153,12 @@
 				<rich:column sortBy="#{wps.deadlineDate}"
 					style="width:15%; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_deadline_date_time}" />
+						<h:outputText value="#{msg.label_deadline}" />
 					</f:facet>
-					<h:outputText value="#{wps.deadlineDate}">
-						<f:convertDateTime pattern="#{msg.label_date_format}"
-							timeZone="#{workingProcessQueryBean.timeZone}" />
-					</h:outputText>
-					<h:outputText value=" / " />
-					<h:outputText value="#{wps.deadlineTime}">
-						<f:convertDateTime pattern="HH:mm"
-							timeZone="#{workingProcessQueryBean.timeZone}" />
-					</h:outputText>
+					<h:outputText value="#{wps.deadlineDate}"/>
+					<h:outputText value=" / " rendered="#{wps.deadlineDate != null}"/>
+					<h:outputText value="#{wps.deadlineTime}"/>
+
 				</rich:column>
 
 				<rich:componentControl event="onRowClick" for="working_step_search_menu"
