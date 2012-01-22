@@ -19,13 +19,11 @@ import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
-import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.model.noper.WorkingProcessStep;
-import org.beeblos.bpm.core.model.noper.WorkingProcessWork;
+import org.beeblos.bpm.core.model.noper.StepWorkLight;
+import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -39,17 +37,21 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private static final Logger logger = 
 			Logger.getLogger(WorkingProcessQueryBean.class);
 
-	
 	private Integer currentUserId;
-	
 
-	private List<WProcessDefLight> wProcessDefLightList = new ArrayList<WProcessDefLight>();
-	private List<WorkingProcessWork> workingProcessWorkList = new ArrayList<WorkingProcessWork>();
-	private List<WorkingProcessStep> workingProcessStepList = new ArrayList<WorkingProcessStep>();
+	private List<WProcessDefLight> wProcessDefLightList;
+	private List<ProcessWorkLight> processWorkLightList;
+	private List<StepWorkLight> stepWorkLightList;
 
-	private Integer nResults = 0;
-	private Integer nStepResults = 0;
-	private Integer nWorkResults = 0;
+	// DAVID: NO INICIALICES COSAS EN LA DEFINICION - HACELO EN EL INIT O EN EL RESET SI CORRESPONDE HACERLO.
+	// BORRA ESTO DESPUES
+//	private Integer nResults = 0;
+//	private Integer nStepResults = 0;
+//	private Integer nWorkResults = 0;
+
+	private Integer nResults;
+	private Integer nStepResults;
+	private Integer nWorkResults;
 	
 	private boolean onlyActiveWorkingProcessesFilter;
 	private boolean onlyActiveWorksFilter;
@@ -110,8 +112,8 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		logger.debug("WorkingProcessQueryBean._init()");
 
 		this.wProcessDefLightList = new ArrayList<WProcessDefLight>();
-		this.workingProcessStepList = new ArrayList<WorkingProcessStep>();
-		this.workingProcessWorkList = new ArrayList<WorkingProcessWork>();
+		this.stepWorkLightList = new ArrayList<StepWorkLight>();
+		this.processWorkLightList = new ArrayList<ProcessWorkLight>();
 
 		this.nResults = 0;
 		this.nStepResults = 0;
@@ -135,13 +137,24 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		this.id = 0;
 		
+		// DAVID: ESTO ESTA MAL. ESTAS REINICIALIZANDO process o step form bean pero le pasás workingProcessQueryBean como parametro ..
+		// hace un debug y fijate que hace, seguramente haga cualqueir cosa, te anoto abajo como es correcto hacerlo:
+
+//		// reset session wProcessDefFormBean
+//		HelperUtil
+//			.recreateBean(
+//					"workingProcessQueryBean", "org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean");
+//		HelperUtil
+//			.recreateBean(
+//				"workingProcessQueryBean", "org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean");
+		
 		// reset session wProcessDefFormBean
 		HelperUtil
 			.recreateBean(
-					"workingProcessQueryBean", "org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean");
+					"wProcessDefFormBean", "org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean");
 		HelperUtil
 			.recreateBean(
-				"workingProcessQueryBean", "org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean");
+				"wStepDefFormBean", "org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean");
 	}
 
 	public List<WProcessDefLight> getwProcessDefLightList() {
@@ -156,27 +169,27 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.wProcessDefLightList = wProcessDefLightList;
 	}
 
-
-	public List<WorkingProcessWork> getWorkingProcessWorkList() {
-		if (workingProcessWorkList == null || workingProcessWorkList.isEmpty()) {
-			nWorkResults = 0;
-		}
-		return workingProcessWorkList;
+	public List<ProcessWorkLight> getProcessWorkLightList() {
+		if (processWorkLightList == null || processWorkLightList.isEmpty()) {
+		nWorkResults = 0;
+	}
+		return processWorkLightList;
 	}
 
-	public void setWorkingProcessWorkList(List<WorkingProcessWork> workingProcessWorkList) {
-		this.workingProcessWorkList = workingProcessWorkList;
+	public void setProcessWorkLightList(List<ProcessWorkLight> processWorkLightList) {
+		this.processWorkLightList = processWorkLightList;
 	}
 
-	public List<WorkingProcessStep> getWorkingProcessStepList() {
-		if (workingProcessStepList == null || workingProcessStepList.isEmpty()) {
-			nWorkResults = 0;
-		}
-		return workingProcessStepList;
+	public List<StepWorkLight> getStepWorkLightList() {
+		if (processWorkLightList == null || processWorkLightList.isEmpty()) {
+		nStepResults = 0;
+	}
+		
+		return stepWorkLightList;
 	}
 
-	public void setWorkingProcessStepList(List<WorkingProcessStep> workingProcessStepList) {
-		this.workingProcessStepList = workingProcessStepList;
+	public void setStepWorkLightList(List<StepWorkLight> stepWorkLightList) {
+		this.stepWorkLightList = stepWorkLightList;
 	}
 
 	public Integer getnResults() {
@@ -573,7 +586,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return null;
 	}
 
-	// dml 20120110
+	// DAVID ESTO HAY QUE SACARLO A UN UTIL ( WProcessDefUtil.java )
 	public String createNewWProcessDef() {
 
 		String ret = "FAIL";
@@ -602,15 +615,13 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		try {
 
-			
-			
-			workingProcessWorkList = (ArrayList<WorkingProcessWork>) new WProcessDefBL()
+			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessDefBL()
 					.getWorkingProcessWorkListByFinder(processIdFilter, onlyActiveWorksFilter, 
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
 
-			nWorkResults = workingProcessWorkList.size();
+			nWorkResults = processWorkLightList.size();
 
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
@@ -632,13 +643,13 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			
 			
-			workingProcessWorkList = (ArrayList<WorkingProcessWork>) new WProcessDefBL()
+			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessDefBL()
 					.getWorkingProcessWorkListByFinder(processIdFilter, onlyActiveWorksFilter, 
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
 
-			nWorkResults = workingProcessWorkList.size();
+			nWorkResults = processWorkLightList.size();
 
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
@@ -650,13 +661,13 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 	}
 
-	public String searchWorkingProcessLiveSteps(){
+	public String searchLiveSteps(){
 		
 		logger.debug("searchWorkingProcessLiveWorks() - action: " + action);
 
 		try {
 			
-			workingProcessStepList = (ArrayList<WorkingProcessStep>) new WProcessDefBL()
+			stepWorkLightList = (ArrayList<StepWorkLight>) new WProcessDefBL()
 					.getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
 							stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
 							finalArrivingDateFilter, estrictArrivingDateFilter, 
@@ -665,12 +676,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 							initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
 							action);
 
-			nStepResults = workingProcessStepList.size();
+			nStepResults = stepWorkLightList.size();
 
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
-					".searchWorkingProcessLiveSteps() WProcessDefException ..." };
+					".searchLiveSteps() WProcessDefException ..." };
 			agregarMensaje("206", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 		}
