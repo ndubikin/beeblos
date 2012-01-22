@@ -435,6 +435,76 @@
 			</column>
 		</property>
 	</class>
+
+    <class name="org.beeblos.bpm.core.model.WProcessStatus" table="w_process_status">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="30" not-null="true" />
+        </property>
+    </class>
+    	
+	<class name="org.beeblos.bpm.core.model.WProcessWork" table="w_process_work">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <version name="version" type="int">
+            <column name="version" not-null="true">
+                <comment>version</comment>
+            </column>
+        </version>
+        <property name="idProcess" type="int">
+            <column name="id_process" not-null="true">
+                <comment>process related</comment>
+            </column>
+        </property>
+        <property name="startingTime" type="timestamp">
+            <column name="starting_time" length="0" not-null="true">
+                <comment>the work was started at this date and time (UTC TIME)</comment>
+            </column>
+        </property>
+        <property name="startingType" type="java.lang.Integer">
+            <column name="starting_type">
+                <comment>indicates ir start is manual (human) or automated</comment>
+            </column>
+        </property>
+        <property name="endTime" type="timestamp">
+            <column name="end_time" length="0">
+                <comment>loads when work finish o forced end</comment>
+            </column>
+        </property>
+        <property name="reference" type="string">
+            <column name="reference" length="20" not-null="true">
+                <comment>user friendly reference to identificate this work</comment>
+            </column>
+        </property>
+        <property name="comments" type="string">
+            <column name="comments" length="1000">
+                <comment>user friendly comments to identificate this work</comment>
+            </column>
+        </property>
+        <property name="insertUser" type="int">
+            <column name="insert_user" not-null="true" />
+        </property>
+        <property name="insertDate" type="timestamp">
+            <column name="insert_date" length="0" not-null="true" />
+        </property>
+        <property name="modUser" type="int">
+            <column name="mod_user" not-null="true" />
+        </property>
+        <property name="modDate" type="timestamp">
+            <column name="mod_date" length="0" not-null="true" />
+        </property>
+        <many-to-one name="status" class="org.beeblos.bpm.core.model.WProcessStatus" fetch="join">
+            <column name="id_status" not-null="true">
+                <comment>1-processing / 2 - paused / 3 - finished / 4 - foced end / 5 - others ( ver tabla w_status_type)</comment>
+            </column>
+        </many-to-one>        
+    </class>
+	
 	<class name="org.beeblos.bpm.core.model.WStepWork" table="w_step_work">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -456,18 +526,7 @@
 				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="reference"
-			type="string">
-			<column length="20" name="reference">
-				<comment>Reference id ( user level ) about the step</comment>
-			</column>
-		</property>
-		<property generated="never" lazy="false" name="comments"
-			type="string">
-			<column length="100" name="comments">
-				<comment>String reference about the step</comment>
-			</column>
-		</property>
+
 		<property generated="never" lazy="false" name="arrivingDate"
 			type="timestamp">
 			<column length="0" name="arriving_date" not-null="true">
@@ -585,9 +644,13 @@
 		
 		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
 			column="insert_user" lazy="false" name="insertUser" fetch="join"/>
-		
 		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
 			column="locked_by" lazy="false" name="lockedBy" fetch="join"/>
+        <many-to-one name="wProcessWork" class="org.beeblos.bpm.core.model.WProcessWork" fetch="join" lazy="false">
+            <column name="id_work" not-null="true">
+                <comment>Indica el id dado al work lanzado del que depende este paso</comment>
+            </column>
+        </many-to-one>			
 		
 		<set cascade="all" lazy="false" name="assignedTo" sort="unsorted">
 			<key column="id_step_work" />
