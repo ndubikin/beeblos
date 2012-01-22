@@ -2,12 +2,12 @@ package org.beeblos.bpm.core.model.noper;
 
 import java.util.Date;
 
-public class WorkingProcessStep {
+public class StepWorkLight {
 
 	private Integer idProcess;
 	private Integer idStep;
 	private String stepName;
-	private String workReference;
+	private String reference;
 	private Date arrivingDate;
 	private Date openedDate;
 	private Integer openerUser;
@@ -16,19 +16,19 @@ public class WorkingProcessStep {
 	private Date deadlineTime;
 	private Date deadlineDate;
 	
-	public WorkingProcessStep() {
+	public StepWorkLight() {
 		
 	}
 
-	public WorkingProcessStep(Integer idProcess, Integer idStep,
-			String stepName, String workReference, Date arrivingDate, Date openedDate,
+	public StepWorkLight(Integer idProcess, Integer idStep,
+			String stepName, String reference, Date arrivingDate, Date openedDate,
 			Integer openerUser, Date decidedDate, Integer performer,
 			Date deadlineDate, Date deadlineTime) {
 		super();
 		this.idProcess = idProcess;
 		this.idStep = idStep;
 		this.stepName = stepName;
-		this.workReference = workReference;
+		this.reference = reference;
 		this.arrivingDate = arrivingDate;
 		this.openedDate = openedDate;
 		this.openerUser = openerUser;
@@ -63,11 +63,11 @@ public class WorkingProcessStep {
 	}
 
 	public String getWorkReference() {
-		return workReference;
+		return reference;
 	}
 
 	public void setWorkReference(String workReference) {
-		this.workReference = workReference;
+		this.reference = workReference;
 	}
 
 	public Date getArrivingDate() {
@@ -128,9 +128,9 @@ public class WorkingProcessStep {
 
 	@Override
 	public String toString() {
-		return "WorkingProcessStep [idProcess=" + idProcess + ", idStep="
-				+ idStep + ", stepName=" + stepName + ", workReference="
-				+ workReference + ", arrivingDate=" + arrivingDate
+		return "StepWorkLight [idProcess=" + idProcess + ", idStep="
+				+ idStep + ", stepName=" + stepName + ", reference="
+				+ reference + ", arrivingDate=" + arrivingDate
 				+ ", openedDate=" + openedDate + ", openerUser=" + openerUser
 				+ ", decidedDate=" + decidedDate + ", performer=" + performer
 				+ ", deadlineTime=" + deadlineTime + ", deadlineDate="
@@ -161,7 +161,7 @@ public class WorkingProcessStep {
 		result = prime * result
 				+ ((stepName == null) ? 0 : stepName.hashCode());
 		result = prime * result
-				+ ((workReference == null) ? 0 : workReference.hashCode());
+				+ ((reference == null) ? 0 : reference.hashCode());
 		return result;
 	}
 
@@ -173,7 +173,7 @@ public class WorkingProcessStep {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		WorkingProcessStep other = (WorkingProcessStep) obj;
+		StepWorkLight other = (StepWorkLight) obj;
 		if (arrivingDate == null) {
 			if (other.arrivingDate != null)
 				return false;
@@ -224,10 +224,10 @@ public class WorkingProcessStep {
 				return false;
 		} else if (!stepName.equals(other.stepName))
 			return false;
-		if (workReference == null) {
-			if (other.workReference != null)
+		if (reference == null) {
+			if (other.reference != null)
 				return false;
-		} else if (!workReference.equals(other.workReference))
+		} else if (!reference.equals(other.reference))
 			return false;
 		return true;
 	}

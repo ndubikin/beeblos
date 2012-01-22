@@ -11,8 +11,8 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.model.noper.WorkingProcessStep;
-import org.beeblos.bpm.core.model.noper.WorkingProcessWork;
+import org.beeblos.bpm.core.model.noper.StepWorkLight;
+import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -255,7 +255,6 @@ public class WProcessDefDao {
 
 	}
 
-	// dml 20120120
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank )
 	throws WProcessDefException {
@@ -609,7 +608,6 @@ public class WProcessDefDao {
 		
 	}
 	
-	// dml 20120118
 	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action) 
@@ -682,7 +680,6 @@ public class WProcessDefDao {
 		return getWorkingProcessListByFinder(query);
 	}
 
-	// dml 20120118
 	private String _armaQueryWorkingProcessDefLight(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
@@ -692,7 +689,7 @@ public class WProcessDefDao {
 		tmpQuery += " wpd.production_date, ";
 		tmpQuery += " wpd.production_user, ";
 		tmpQuery += " (SELECT COUNT(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.id_process = wpd.id) AS liveWorks, ";
-		tmpQuery += " (SELECT COUNT(DISTINCT reference) FROM w_step_work work3 WHERE work3.decided_date IS NULL AND work3.id_process = wpd.id) liveSteps, ";
+		tmpQuery += " (SELECT COUNT(DISTINCT id_work) FROM w_step_work work3 WHERE work3.decided_date IS NULL AND work3.id_process = wpd.id) liveSteps, ";
 		tmpQuery += " wpd.active ";
 
 		tmpQuery += " FROM w_process_def wpd ";
@@ -712,7 +709,6 @@ public class WProcessDefDao {
 		return tmpQuery;
 	}
 
-	// dml 20120118
 	private List<WProcessDefLight> getWorkingProcessListByFinder(String query)
 			throws WProcessDefException {
 
@@ -791,8 +787,7 @@ public class WProcessDefDao {
 		return returnList;
 	}
 
-	// dml 20120118
-	public List<WorkingProcessWork> getWorkingProcessWorkListByFinder(Integer idProcess, 
+	public List<ProcessWorkLight> getWorkingProcessWorkListByFinder(Integer idProcess, 
 			boolean onlyActiveWorksFilter, Date initialStartedDateFilter, Date finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action) throws WProcessDefException {
@@ -808,9 +803,9 @@ public class WProcessDefDao {
 		
 		if (onlyActiveWorksFilter) {
 			if (!"".equals(filter)) {
-				filter += " AND work.decided_date IS NULL ";
+				filter += " AND pw.end_time IS NULL ";
 			} else {
-				filter += " work.decided_date IS NULL ";
+				filter += " pw.end_time IS NULL ";
 
 			}
 		}
@@ -878,22 +873,22 @@ public class WProcessDefDao {
 		
 	}
 
-	// dml 20120118
 	private String _armaQueryWorkingProcessWork(Integer idProcess, String filter, String action) {
 
 		
 		String tmpQuery = "SELECT ";
-		tmpQuery += " DISTINCT(work.reference), ";
+		tmpQuery += " pw.reference, ";
 		tmpQuery += " wpd.id, ";
 		tmpQuery += " wpd.name, ";
-		tmpQuery += " (SELECT COUNT(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.reference = work.reference ) AS liveSteps, ";
-		tmpQuery += " (SELECT arriving_date FROM w_step_work WHERE reference = work.reference AND id_previous_step IS NULL ) AS arriving_date, ";
-		tmpQuery += " IF(((SELECT count(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.reference = work.reference)) > 0, 'running', 'finished') AS status, ";
-		tmpQuery += " (SELECT max(decided_date) FROM w_step_work WHERE reference = work.reference AND (SELECT COUNT(id) FROM w_step_work WHERE decided_date IS NULL AND reference = work.reference) = 0 ) AS finished_date, ";
-		tmpQuery += " work.comments ";
+		tmpQuery += " (SELECT COUNT(id_work) FROM w_step_work work WHERE work.decided_date IS NULL AND work.id_work = pw.id ) AS liveSteps, ";
+		tmpQuery += " pw.starting_time, ";
+		tmpQuery += " ps.name, ";
+		tmpQuery += " pw.end_time, ";
+		tmpQuery += " pw.comments ";
 
-		tmpQuery += " FROM w_step_work work ";
-		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id=work.id_process ";
+		tmpQuery += " FROM w_process_work pw ";
+		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id=pw.id_process ";
+		tmpQuery += " LEFT OUTER JOIN w_process_status ps ON ps.id=pw.id_status ";
 
 		tmpQuery += filter;
 
@@ -909,14 +904,13 @@ public class WProcessDefDao {
 		return tmpQuery;
 	}
 
-	// dml 20120118
-	private List<WorkingProcessWork> getWorkingProcessWorkListByFinder(String query)
+	private List<ProcessWorkLight> getWorkingProcessWorkListByFinder(String query)
 			throws WProcessDefException {
 
 		Integer idProcess;
 		String processName;
-		String workReference;
-		String workComments;
+		String reference;
+		String comments;
 
 		Integer liveSteps;
 		
@@ -931,7 +925,7 @@ public class WProcessDefDao {
 		Transaction tx = null;
 
 		List<Object[]> result = null;
-		List<WorkingProcessWork> returnList = new ArrayList<WorkingProcessWork>();
+		List<ProcessWorkLight> returnList = new ArrayList<ProcessWorkLight>();
 
 		try {
 
@@ -952,7 +946,7 @@ public class WProcessDefDao {
 					Object[] cols = (Object[]) irObj;
 
 
-					workReference = (cols[0] != null ? cols[0].toString() : "");
+					reference = (cols[0] != null ? cols[0].toString() : "");
 					idProcess = (cols[1] != null ? new Integer(
 							cols[1].toString()) : null);
 					processName = (cols[2] != null ? cols[2].toString() : "");
@@ -961,10 +955,10 @@ public class WProcessDefDao {
 					started = (cols[4] != null ? (Date) cols[4] : null);
 					status = (cols[5] != null ? cols[5].toString() : "");
 					finished = (cols[6] != null ? (Date) cols[6] : null);
-					workComments = (cols[7] != null ? cols[7].toString() : "");
+					comments = (cols[7] != null ? cols[7].toString() : "");
 
-					returnList.add(new WorkingProcessWork(idProcess, processName, 
-							workReference, workComments, liveSteps, started, status, finished));
+					returnList.add(new ProcessWorkLight(idProcess, processName, 
+							reference, comments, liveSteps, started, status, finished));
 				}
 
 			} else {
@@ -976,7 +970,7 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 				logger.warn("WProcessDefDao: getWorkingProcessWorkListByFinder() - " +
-						"It cannot be posible to get the WorkingProcessWork list - "
+						"It cannot be posible to get the ProcessWorkLight list - "
 					+ ex.getMessage() + "\n" + ex.getLocalizedMessage() + " \n" + ex.getCause());
 			throw new WProcessDefException(ex);
 
@@ -985,8 +979,7 @@ public class WProcessDefDao {
 		return returnList;
 	}
 	
-	// dml 20120118
-	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer processIdFilter, 
+	public List<StepWorkLight> getWorkingProcessStepListByFinder(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
@@ -1016,20 +1009,20 @@ public class WProcessDefDao {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
-				filter += " work.decided_date IS NOT NULL ";				
+				filter += " pw.end_time IS NOT NULL ";				
 			} else if ("PROCESSED".equals(stepTypeFilter)){
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
-				filter += " work.decided_date IS NULL ";				
+				filter += " pw.end_time IS NULL ";				
 			}
 		}
 		
 		if (referenceFilter != null && !"".equals(referenceFilter)) {
 			if (!"".equals(filter)) {
-				filter += " AND work.reference LIKE '%"+referenceFilter+"%'";
+				filter += " AND pw.reference LIKE '%"+referenceFilter+"%'";
 			} else {
-				filter += " work.reference LIKE '%"+referenceFilter+"%'";
+				filter += " pw.reference LIKE '%"+referenceFilter+"%'";
 
 			}
 		}
@@ -1147,7 +1140,6 @@ public class WProcessDefDao {
 		
 	}
 
-	// dml 20120118
 	private String _armaQueryWorkingProcessStep(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
@@ -1161,10 +1153,11 @@ public class WProcessDefDao {
 		tmpQuery += " work.performer_user_id, ";
 		tmpQuery += " work.deadline_date, ";
 		tmpQuery += " work.deadline_time, ";
-		tmpQuery += " work.reference ";
+		tmpQuery += " pw.reference ";
 
 		tmpQuery += " FROM w_step_work work ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = work.id_current_step ";
+		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = work.id_work ";
 
 		tmpQuery += filter;
 
@@ -1180,8 +1173,7 @@ public class WProcessDefDao {
 		return tmpQuery;
 	}
 
-	// dml 20120118
-	private List<WorkingProcessStep> getWorkingProcessStepListByFinder(String query)
+	private List<StepWorkLight> getWorkingProcessStepListByFinder(String query)
 			throws WProcessDefException {
 
 		Integer idProcess;
@@ -1194,14 +1186,14 @@ public class WProcessDefDao {
 		Integer performer;
 		Date deadlineDate;
 		Date deadlineTime;
-		String workReference;
+		String reference;
 		
 		
 		Session session = null;
 		Transaction tx = null;
 
 		List<Object[]> result = null;
-		List<WorkingProcessStep> returnList = new ArrayList<WorkingProcessStep>();
+		List<StepWorkLight> returnList = new ArrayList<StepWorkLight>();
 
 		try {
 
@@ -1236,10 +1228,10 @@ public class WProcessDefDao {
 							cols[7].toString()) : null);
 					deadlineDate = (cols[8] != null ? (Date) cols[8] : null);
 					deadlineTime = (cols[9] != null ? (Date) cols[9] : null);
-					workReference = (cols[10] != null ? cols[10].toString() : "");
+					reference = (cols[10] != null ? cols[10].toString() : "");
 
-					returnList.add(new WorkingProcessStep(idProcess, idStep, stepName, 
-							workReference, arrivingDate, openedDate, openerUser, decidedDate, 
+					returnList.add(new StepWorkLight(idProcess, idStep, stepName, 
+							reference, arrivingDate, openedDate, openerUser, decidedDate, 
 							performer, deadlineDate, deadlineTime));
 				}
 
@@ -1252,7 +1244,7 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 				logger.warn("WProcessDefDao: getWorkingProcessStepListByFinder() - " +
-						"It cannot be posible to get the WorkingProcessStep list - "
+						"It cannot be posible to get the StepWorkLight list - "
 					+ ex.getMessage() + "\n" + ex.getLocalizedMessage() + " \n" + ex.getCause());
 			throw new WProcessDefException(ex);
 
