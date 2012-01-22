@@ -56,7 +56,7 @@
 				
 			</h:panelGroup>
 			<h:commandButton id="searchButton" value="#{msg.label_search}"
-				action="#{workingProcessQueryBean.searchWorkingProcessLiveSteps}"
+				action="#{workingProcessQueryBean.searchLiveSteps}"
 				style="width:100px;">
 				<f:setPropertyActionListener value="${action}"
 					target="#{workingProcessQueryBean.action}" />
@@ -110,128 +110,126 @@
 			</a4j:outputPanel>
 		 </h:panelGroup>
 
-
-	<h:panelGrid id="filters" columns="1" style="display:none;" >
-			<h:panelGrid columns="3"
-				style=" width : auto; height : auto; padding-left: 15px;"
-				columnClasses="colStyle140px, colStyle480px, colStyle100px">
-				
-	
-				<h:outputText value="#{msg.label_arriving_date_from}:"
-					styleClass="firstLeftText" />
-	
-				<h:panelGroup>
-	
-					<rich:calendar id="initial_arriving_date"
-						value="#{workingProcessQueryBean.initialArrivingDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
-		
-					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
-						style="margin-left: 10px; margin-right: 10px;" />
-					<rich:calendar id="final_arriving_date"
-						value="#{workingProcessQueryBean.finalArrivingDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
-						disabled="#{workingProcessQueryBean.estrictArrivingDateFilter}" />
-		
-					<h:outputText value="#{msg.label_only_from} :"
-						styleClass="firstLeftText" style="margin-left: 10px;" />
-					<h:selectBooleanCheckbox id="estrict_arriving_date_filter"
-						value="#{workingProcessQueryBean.estrictArrivingDateFilter}">
-						<a4j:support event="onclick" reRender="final_arriving_date" />
-					</h:selectBooleanCheckbox>
-	
-				</h:panelGroup>
-				<rich:spacer height="10" />
-	
-				<h:outputText value="#{msg.label_opened_date_from}:"
-					styleClass="firstLeftText" />
-	
-				<h:panelGroup>
-	
-					<rich:calendar id="initial_opened_date"
-						value="#{workingProcessQueryBean.initialOpenedDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
-		
-					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
-						style="margin-left: 10px; margin-right: 10px;" />
-					<rich:calendar id="final_opened_date"
-						value="#{workingProcessQueryBean.finalOpenedDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
-						disabled="#{workingProcessQueryBean.estrictOpenedDateFilter}" />
-		
-					<h:outputText value="#{msg.label_only_from} :"
-						styleClass="firstLeftText" style="margin-left: 10px;" />
-					<h:selectBooleanCheckbox id="estrict_opened_date_filter"
-						value="#{workingProcessQueryBean.estrictOpenedDateFilter}">
-						<a4j:support event="onclick" reRender="final_opened_date" />
-					</h:selectBooleanCheckbox>
-	
-				</h:panelGroup>
-				<rich:spacer height="10" />
-	
-				<h:outputText value="#{msg.label_deadline_date_from}:"
-					styleClass="firstLeftText" />
-	
-				<h:panelGroup>
-	
-					<rich:calendar id="initial_deadline_date"
-						value="#{workingProcessQueryBean.initialDeadlineDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
-		
-					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
-						style="margin-left: 10px; margin-right: 10px;" />
-					<rich:calendar id="final_deadline_time"
-						value="#{workingProcessQueryBean.finalDeadlineDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
-						disabled="#{workingProcessQueryBean.estrictDeadlineDateFilter}" />
-		
-					<h:outputText value="#{msg.label_only_from} :"
-						styleClass="firstLeftText" style="margin-left: 10px;" />
-					<h:selectBooleanCheckbox id="estrict_deadline_time_filter"
-						value="#{workingProcessQueryBean.estrictDeadlineDateFilter}">
-						<a4j:support event="onclick" reRender="final_deadline_time" />
-					</h:selectBooleanCheckbox>
-	
-				</h:panelGroup>
-				<rich:spacer height="10" />
-	
-				<h:outputText value="#{msg.label_decided_date_from}:"
-					styleClass="firstLeftText" />
-	
-				<h:panelGroup>
-	
-					<rich:calendar id="initial_decided_date"
-						value="#{workingProcessQueryBean.initialDecidedDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
-		
-					<h:outputText value="#{msg.label_to}" styleClass="labelForm"
-						style="margin-left: 10px; margin-right: 10px;" />
-					<rich:calendar id="final_decided_date"
-						value="#{workingProcessQueryBean.finalDecidedDateFilter}"
-						datePattern="#{msg.label_date_format}" enableManualInput="false"
-						locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
-						disabled="#{workingProcessQueryBean.estrictDecidedDateFilter}" />
-		
-					<h:outputText value="#{msg.label_only_from} :"
-						styleClass="firstLeftText" style="margin-left: 10px;" />
-					<h:selectBooleanCheckbox id="estrict_decided_date_filter"
-						value="#{workingProcessQueryBean.estrictDecidedDateFilter}">
-						<a4j:support event="onclick" reRender="final_decided_date" />
-					</h:selectBooleanCheckbox>
-	
-				</h:panelGroup>
-				<rich:spacer height="10" />			
-	
-			</h:panelGrid>
+		<h:panelGrid columns="3" id="filters" 
+			style=" width : auto; height : auto; padding-left: 15px; display:none;"
+			columnClasses="colStyle140px, colStyle480px, colStyle100px">
 			
+
+			<h:outputText value="#{msg.label_arriving_date_from}:"
+				styleClass="firstLeftText" />
+
+			<h:panelGroup>
+
+				<rich:calendar id="initial_arriving_date"
+					value="#{workingProcessQueryBean.initialArrivingDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+	
+				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+					style="margin-left: 10px; margin-right: 10px;" />
+				<rich:calendar id="final_arriving_date"
+					value="#{workingProcessQueryBean.finalArrivingDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+					disabled="#{workingProcessQueryBean.estrictArrivingDateFilter}" />
+	
+				<h:outputText value="#{msg.label_only_from} :"
+					styleClass="firstLeftText" style="margin-left: 10px;" />
+				<h:selectBooleanCheckbox id="estrict_arriving_date_filter"
+					value="#{workingProcessQueryBean.estrictArrivingDateFilter}">
+					<a4j:support event="onclick" reRender="final_arriving_date" />
+				</h:selectBooleanCheckbox>
+
+			</h:panelGroup>
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_opened_date_from}:"
+				styleClass="firstLeftText" />
+
+			<h:panelGroup>
+
+				<rich:calendar id="initial_opened_date"
+					value="#{workingProcessQueryBean.initialOpenedDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+	
+				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+					style="margin-left: 10px; margin-right: 10px;" />
+				<rich:calendar id="final_opened_date"
+					value="#{workingProcessQueryBean.finalOpenedDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+					disabled="#{workingProcessQueryBean.estrictOpenedDateFilter}" />
+	
+				<h:outputText value="#{msg.label_only_from} :"
+					styleClass="firstLeftText" style="margin-left: 10px;" />
+				<h:selectBooleanCheckbox id="estrict_opened_date_filter"
+					value="#{workingProcessQueryBean.estrictOpenedDateFilter}">
+					<a4j:support event="onclick" reRender="final_opened_date" />
+				</h:selectBooleanCheckbox>
+
+			</h:panelGroup>
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_deadline_date_from}:"
+				styleClass="firstLeftText" />
+
+			<h:panelGroup>
+
+				<rich:calendar id="initial_deadline_date"
+					value="#{workingProcessQueryBean.initialDeadlineDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+	
+				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+					style="margin-left: 10px; margin-right: 10px;" />
+				<rich:calendar id="final_deadline_time"
+					value="#{workingProcessQueryBean.finalDeadlineDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+					disabled="#{workingProcessQueryBean.estrictDeadlineDateFilter}" />
+	
+				<h:outputText value="#{msg.label_only_from} :"
+					styleClass="firstLeftText" style="margin-left: 10px;" />
+				<h:selectBooleanCheckbox id="estrict_deadline_time_filter"
+					value="#{workingProcessQueryBean.estrictDeadlineDateFilter}">
+					<a4j:support event="onclick" reRender="final_deadline_time" />
+				</h:selectBooleanCheckbox>
+
+			</h:panelGroup>
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_decided_date_from}:"
+				styleClass="firstLeftText" />
+
+			<h:panelGroup>
+
+				<rich:calendar id="initial_decided_date"
+					value="#{workingProcessQueryBean.initialDecidedDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
+	
+				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+					style="margin-left: 10px; margin-right: 10px;" />
+				<rich:calendar id="final_decided_date"
+					value="#{workingProcessQueryBean.finalDecidedDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
+					disabled="#{workingProcessQueryBean.estrictDecidedDateFilter}" />
+	
+				<h:outputText value="#{msg.label_only_from} :"
+					styleClass="firstLeftText" style="margin-left: 10px;" />
+				<h:selectBooleanCheckbox id="estrict_decided_date_filter"
+					value="#{workingProcessQueryBean.estrictDecidedDateFilter}">
+					<a4j:support event="onclick" reRender="final_decided_date" />
+				</h:selectBooleanCheckbox>
+
+			</h:panelGroup>
+			<rich:spacer height="10" />			
+
 		</h:panelGrid>
+			
+
 
 	</h:form>
 
