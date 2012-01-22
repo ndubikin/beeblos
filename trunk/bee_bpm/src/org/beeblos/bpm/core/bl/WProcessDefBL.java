@@ -12,8 +12,8 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.model.noper.WorkingProcessStep;
-import org.beeblos.bpm.core.model.noper.WorkingProcessWork;
+import org.beeblos.bpm.core.model.noper.StepWorkLight;
+import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 
 
 
@@ -135,7 +135,7 @@ public class WProcessDefBL {
 		
 	}
 
-	public List<WorkingProcessWork> getWorkingProcessWorkListByFinder(Integer idProcess, 
+	public List<ProcessWorkLight> getWorkingProcessWorkListByFinder(Integer idProcess, 
 			boolean onlyActiveWorksFilter, Date initialStartedDateFilter, Date finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action)
@@ -148,7 +148,7 @@ public class WProcessDefBL {
 		
 	}
 
-	public List<WorkingProcessStep> getWorkingProcessStepListByFinder(Integer processIdFilter, 
+	public List<StepWorkLight> getWorkingProcessStepListByFinder(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		

@@ -2,7 +2,7 @@ package org.beeblos.bpm.core.model.noper;
 
 import java.util.Date;
 
-public class WorkingProcessWork {
+public class ProcessWorkLight {
 
 	private Integer idProcess;
 	private String processName;
@@ -13,11 +13,11 @@ public class WorkingProcessWork {
 	private String status;
 	private Date finished;
 	
-	public WorkingProcessWork() {
+	public ProcessWorkLight() {
 		
 	}
 	
-	public WorkingProcessWork(Integer idProcess, String processName,
+	public ProcessWorkLight(Integer idProcess, String processName,
 			String workReference, String workComments, Integer liveSteps, Date started, String status,
 			Date finished) {
 		super();
@@ -97,7 +97,7 @@ public class WorkingProcessWork {
 
 	@Override
 	public String toString() {
-		return "WorkingProcessWork [idProcess=" + idProcess + ", processName="
+		return "ProcessWorkLight [idProcess=" + idProcess + ", processName="
 				+ processName + ", workReference=" + workReference
 				+ ", workComments=" + workComments + ", liveSteps=" + liveSteps
 				+ ", started=" + started + ", status=" + status + ", finished="
@@ -132,7 +132,7 @@ public class WorkingProcessWork {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		WorkingProcessWork other = (WorkingProcessWork) obj;
+		ProcessWorkLight other = (ProcessWorkLight) obj;
 		if (finished == null) {
 			if (other.finished != null)
 				return false;
