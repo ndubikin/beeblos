@@ -23,7 +23,7 @@
                		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
-            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchWorkingProcessLiveSteps}" submitMode="server">
+            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchLiveSteps}" submitMode="server">
                 	<b> Go to live steps </b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
