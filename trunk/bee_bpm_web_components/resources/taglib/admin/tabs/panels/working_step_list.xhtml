@@ -104,23 +104,35 @@
 				<rich:column sortBy="#{wps.arrivingDate}"
 					style="width:10%; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_arriving_date}" />
+						<h:outputText value="#{msg.label_arriving}" />
 					</f:facet>
-					<h:outputText value="#{wps.arrivingDate}">
-						<f:convertDateTime pattern="#{msg.label_date_format}"
-							timeZone="#{workingProcessQueryBean.timeZone}" />
-					</h:outputText>
+					<h:panelGrid columns="1">					
+						<h:outputText value="#{wps.arrivingDate}">
+							<f:convertDateTime pattern="#{msg.label_date_format}"
+								timeZone="#{workingProcessQueryBean.timeZone}" />
+						</h:outputText>
+						<h:outputText value="#{wps.arrivingDate}">
+							<f:convertDateTime pattern="#{msg.label_time_format}"
+								timeZone="#{workingProcessQueryBean.timeZone}" />
+						</h:outputText>
+					</h:panelGrid>
 				</rich:column>
 
 				<rich:column sortBy="#{wps.openedDate}"
 					style="width:10%; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_opened_date}" />
+						<h:outputText value="#{msg.label_opened}" />
 					</f:facet>
-					<h:outputText value="#{wps.openedDate}">
-						<f:convertDateTime pattern="#{msg.label_date_format}"
-							timeZone="#{workingProcessQueryBean.timeZone}" />
-					</h:outputText>
+					<h:panelGrid columns="1">
+						<h:outputText value="#{wps.openedDate}">
+							<f:convertDateTime pattern="#{msg.label_date_format}"
+								timeZone="#{workingProcessQueryBean.timeZone}" />
+						</h:outputText>
+						<h:outputText value="#{wps.openedDate}">
+							<f:convertDateTime pattern="#{msg.label_time_format}"
+								timeZone="#{workingProcessQueryBean.timeZone}" />
+						</h:outputText>
+					</h:panelGrid>					
 				</rich:column>
 
 				<rich:column sortBy="#{wps.openerUser}"
@@ -134,12 +146,19 @@
 				<rich:column sortBy="#{wps.decidedDate}"
 					style="width:10%; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_decided_date}" />
+						<h:outputText value="#{msg.label_decided}" />
 					</f:facet>
-					<h:outputText value="#{wps.decidedDate}">
-						<f:convertDateTime pattern="#{msg.label_date_format}"
-							timeZone="#{workingProcessQueryBean.timeZone}" />
-					</h:outputText>
+					<h:panelGrid columns="1">
+						<h:outputText value="#{wps.decidedDate}">
+							<f:convertDateTime pattern="#{msg.label_date_format}"
+								timeZone="#{workingProcessQueryBean.timeZone}" />
+						</h:outputText>
+						<h:outputText value="#{wps.decidedDate}">
+							<f:convertDateTime pattern="#{msg.label_time_format}"
+								timeZone="#{workingProcessQueryBean.timeZone}" />
+						</h:outputText>
+
+					</h:panelGrid>
 				</rich:column>
 
 				<rich:column sortBy="#{wps.performer}"
