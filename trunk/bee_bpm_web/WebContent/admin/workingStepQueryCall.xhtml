@@ -8,14 +8,14 @@
 	
 
 <ui:composition template="/templates/main.xhtml">
-	<ui:define name="title">Working Process Steps</ui:define>
-	<ui:define name="current">workingProcessStepQuery</ui:define>
+	<ui:define name="title">Working Steps</ui:define>
+	<ui:define name="current">workingStepQuery</ui:define>
 	<ui:define name="body">
 	
 		<ui:include src="/common/errorPanel.xhtml" />
 		<h:messages  style="#{workingProcessQueryBean.messageStyle}"/>
 		
-		<beecomp:workingProcessStepQuery />
+		<beecomp:workingStepQuery />
 		
 	</ui:define>
 	

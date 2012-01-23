@@ -146,12 +146,12 @@
    <to-view-id>/admin/workingProcessQueryCall.xhtml</to-view-id>
   </navigation-case>
  <navigation-case>
-   <from-outcome>WORKINGPROCESSWORKS_QUERY</from-outcome>
-   <to-view-id>/admin/workingProcessWorkQueryCall.xhtml</to-view-id>
+   <from-outcome>WORKINGWORKS_QUERY</from-outcome>
+   <to-view-id>/admin/workingWorkQueryCall.xhtml</to-view-id>
   </navigation-case>
  <navigation-case>
-   <from-outcome>WORKINGPROCESSSTEPS_QUERY</from-outcome>
-   <to-view-id>/admin/workingProcessStepQueryCall.xhtml</to-view-id>
+   <from-outcome>WORKINGSTEPS_QUERY</from-outcome>
+   <to-view-id>/admin/workingStepQueryCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
    <from-outcome>LOAD_WPROCESSDEF</from-outcome>

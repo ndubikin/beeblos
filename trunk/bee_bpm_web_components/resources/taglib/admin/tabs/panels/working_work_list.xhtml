@@ -6,68 +6,36 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-
-	<style>
-.center {
-	text-align: center;
-}
-
-.rich-datascr-button {
-	width: 40px;
-	font-size: 95%;
-}
-
-.colCustomTotalF1 {
-	width: 200px;
-	text-align: right;
-}
-
-.colCustomTotalF2 {
-	width: 80px;
-	text-align: right;
-}
-
-.colCustomTotalF3 {
-	width: 30px;
-	text-align: left;
-}
-
-.colCustomPanelGrid {
-	text-align: right;
-}
-</style>
-
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
 
 	<h:form id="working_work_form${action}">
 
-
 		<h:panelGrid width="100%" columns="1">
 
        		<rich:contextMenu attached="false" id="working_work_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchStepWork}" submitMode="server">
-                	<b> Go to live steps </b> {currentRowReference} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
-              		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
+                	<b> Go to live steps </b> {workReference} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
+              		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentProcessId}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PENDING"/>
-              		<a4j:actionparam name="det4" assignTo="#{workingProcessQueryBean.referenceFilter}" value="{currentRowReference}"/>
+              		<a4j:actionparam name="det4" assignTo="#{workingProcessQueryBean.referenceFilter}" value="{workReference}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
               	<rich:menuItem ajaxSingle="false" submitMode="server">
-                	<b> Show history </b> {currentRowReference} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
+                	<b> Show history </b> {workReference} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
-                	<b> Edit process definition </b> {currentRowReference} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
+                	<b> Edit process definition </b> {workReference} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" submitMode="server">
-                	<b> Cancel pending tasks </b> {currentRowReference} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
+                	<b> Cancel pending tasks </b> {workReference} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
             	</rich:menuItem>
             </rich:contextMenu>
             
@@ -79,7 +47,7 @@
 				<h:selectBooleanCheckbox
 					value="#{workingProcessQueryBean.onlyActiveWorksFilter}">
 					<a4j:support
-						action="#{workingProcessQueryBean.reloadWorkingProcessWorks}"
+						action="#{workingProcessQueryBean.reloadProcessWorkLightList}"
 						ajaxSingle="true" event="onclick"
 						reRender="working_work_list_table" />
 				</h:selectBooleanCheckbox>
@@ -118,7 +86,7 @@
 				reRender="dseUp,dseDown" style="margin-left: 16px;">
 				<f:facet name="header">
 					<h:outputText
-						value="Working Process Work List ( #{workingProcessQueryBean.nWorkResults} #{msg.label_results} )" />
+						value="Working Work List ( #{workingProcessQueryBean.nWorkResults} #{msg.label_results} )" />
 				</f:facet>
 
 				<rich:column sortBy="#{wpw.idProcess}"
@@ -194,8 +162,8 @@
 
 				<rich:componentControl event="onRowClick" for="working_work_search_menu"
 					operation="show">
-	                <f:param value="#{wpw.idProcess}" name="currentRowId"/>
-	                <f:param value="#{wpw.workReference}" name="currentRowReference"/>
+	                <f:param value="#{wpw.idProcess}" name="currentProcessId"/>
+	                <f:param value="#{wpw.workReference}" name="workReference"/>
 				</rich:componentControl>
 
 			</rich:dataTable>

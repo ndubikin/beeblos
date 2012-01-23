@@ -154,7 +154,7 @@ public class WProcessDefBL {
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
 			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
-			String action)
+			String action, boolean onlyActiveWorkingProcessesFilter)
 	throws WProcessDefException {
 
 		return new WProcessDefDao().getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
@@ -163,7 +163,7 @@ public class WProcessDefBL {
 				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 				initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
 				initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
-				action);
+				action, onlyActiveWorkingProcessesFilter);
 		
 	}
 

@@ -3,8 +3,8 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
-import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESSSTEPS_QUERY;
-import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESSWORKS_QUERY;
+import static org.beeblos.bpm.core.util.Constants.WORKINGSTEPS_QUERY;
+import static org.beeblos.bpm.core.util.Constants.WORKINGWORKS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 
 import java.util.ArrayList;
@@ -183,7 +183,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	public List<StepWorkLight> getStepWorkLightList() {
 		
-		if (processWorkLightList == null || processWorkLightList.isEmpty()) {
+		if (stepWorkLightList == null || stepWorkLightList.isEmpty()) {
 			nStepResults = 0;
 		}
 		
@@ -689,7 +689,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			ex1.printStackTrace();
 		}
 
-		return WORKINGPROCESSWORKS_QUERY;
+		return WORKINGWORKS_QUERY;
 		
 	}
 
@@ -732,7 +732,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 							initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
 							initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
-							action);
+							action, onlyActiveWorkingProcessesFilter);
 
 			nStepResults = stepWorkLightList.size();
 
@@ -744,7 +744,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			ex1.printStackTrace();
 		}
 
-		return WORKINGPROCESSSTEPS_QUERY;
+		return WORKINGSTEPS_QUERY;
 		
 	}
 	
@@ -761,7 +761,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 							initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
 							initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
-							action);
+							action, onlyActiveWorkingProcessesFilter);
 
 			nStepResults = stepWorkLightList.size();
 
