@@ -17,10 +17,12 @@ import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepWorkException;
@@ -503,7 +505,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
-					.getWorkingProcessListByFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
+					.getWorkingProcessListFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
 							estrictProductionDateFilter, productionUserFilter, action);
 
@@ -527,7 +529,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
-					.getWorkingProcessListByFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
+					.getWorkingProcessListFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
 							estrictProductionDateFilter, processIdFilter, action);
 
@@ -673,15 +675,15 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		try {
 
-			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessDefBL()
-					.getWorkingProcessWorkListByFinder(processIdFilter, onlyActiveWorksFilter, 
+			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessWorkBL()
+					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, 
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
 
 			nWorkResults = processWorkLightList.size();
 
-		} catch (WProcessDefException ex1) {
+		} catch (WProcessWorkException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".searchProcessWork() WProcessDefException ..." };
@@ -701,15 +703,15 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			
 			
-			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessDefBL()
-					.getWorkingProcessWorkListByFinder(processIdFilter, onlyActiveWorksFilter, 
+			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessWorkBL()
+					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, 
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
 
 			nWorkResults = processWorkLightList.size();
 
-		} catch (WProcessDefException ex1) {
+		} catch (WProcessWorkException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".reloadProcessWorkLightList() WProcessDefException ..." };
@@ -725,8 +727,8 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		try {	
 			
-			stepWorkLightList = (ArrayList<StepWorkLight>) new WProcessDefBL()
-					.getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
+			stepWorkLightList = (ArrayList<StepWorkLight>) new WStepWorkBL()
+					.getWorkingStepListFinder(processIdFilter, stepIdFilter, 
 							stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
 							finalArrivingDateFilter, estrictArrivingDateFilter, 
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
@@ -736,7 +738,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			nStepResults = stepWorkLightList.size();
 
-		} catch (WProcessDefException ex1) {
+		} catch (WStepWorkException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".searchStepWorkLights() WProcessDefException ..." };
@@ -754,8 +756,8 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		try {	
 			
-			stepWorkLightList = (ArrayList<StepWorkLight>) new WProcessDefBL()
-					.getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
+			stepWorkLightList = (ArrayList<StepWorkLight>) new WStepWorkBL()
+					.getWorkingStepListFinder(processIdFilter, stepIdFilter, 
 							stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
 							finalArrivingDateFilter, estrictArrivingDateFilter, 
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
@@ -765,7 +767,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			nStepResults = stepWorkLightList.size();
 
-		} catch (WProcessDefException ex1) {
+		} catch (WStepWorkException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".reloadStepWorkLightList() WProcessDefException ..." };
@@ -884,7 +886,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				if (stepLocked){
 					wswBL.unlockStep(idStepWork, getCurrentUserId(), true);
 				} else {
-					wswBL.lockStep(idStepWork, getCurrentUserId(), true);
+					wswBL.lockStep(idStepWork, null, getCurrentUserId(), true);
 				}
 			}
 			
