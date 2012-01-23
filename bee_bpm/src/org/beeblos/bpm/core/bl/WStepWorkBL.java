@@ -410,6 +410,30 @@ public class WStepWorkBL {
 
 	}
 	
+	// unlock given step
+	public Boolean lockStep (
+			Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
+	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
+	
+		// get the step
+		WStepWork stepToLock = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+		
+		
+		// checks it and unlock
+		if ( !stepToLock.isLocked() ) {
+
+			_lockStep(stepToLock, currentUser);
+
+		} else if ( stepToLock.isLocked() ){
+			String message = "The indicated step ("+ stepToLock.getId() +")is locked yet " ;
+			logger.debug(message);
+			throw new WStepNotLockedException(message);		
+		}
+		
+		return true;
+
+	}
+	
 	private void _setOpenInfo(Integer currentUser, WStepWork storedStep) {
 		// set step opened date and user
 		if ( storedStep.getOpenedDate()==null ) {

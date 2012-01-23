@@ -2,6 +2,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
+import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESSSTEPS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESSWORKS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
@@ -17,8 +18,12 @@ import javax.faces.model.SelectItem;
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
+import org.beeblos.bpm.core.error.WStepNotLockedException;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -42,12 +47,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private List<WProcessDefLight> wProcessDefLightList;
 	private List<ProcessWorkLight> processWorkLightList;
 	private List<StepWorkLight> stepWorkLightList;
-
-	// DAVID: NO INICIALICES COSAS EN LA DEFINICION - HACELO EN EL INIT O EN EL RESET SI CORRESPONDE HACERLO.
-	// BORRA ESTO DESPUES
-//	private Integer nResults = 0;
-//	private Integer nStepResults = 0;
-//	private Integer nWorkResults = 0;
 
 	private Integer nResults;
 	private Integer nStepResults;
@@ -99,6 +98,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private Integer id;
 
 	private TimeZone timeZone;
+	
+	// dml 20120123
+	private Integer idStep;
+	private Integer idStepWork;
+	private boolean stepLocked;
+	private Integer stepLocker;
 
 	public WorkingProcessQueryBean() {
 		super();
@@ -137,18 +142,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		this.id = 0;
 		
-		// DAVID: ESTO ESTA MAL. ESTAS REINICIALIZANDO process o step form bean pero le pasás workingProcessQueryBean como parametro ..
-		// hace un debug y fijate que hace, seguramente haga cualqueir cosa, te anoto abajo como es correcto hacerlo:
-
-//		// reset session wProcessDefFormBean
-//		HelperUtil
-//			.recreateBean(
-//					"workingProcessQueryBean", "org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean");
-//		HelperUtil
-//			.recreateBean(
-//				"workingProcessQueryBean", "org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean");
+		// dml 20120123
+		this.idStep = 0;
+		this.idStepWork = 0;
+		this.stepLocked = false;
+		this.stepLocker = 0;
 		
-		// reset session wProcessDefFormBean
 		HelperUtil
 			.recreateBean(
 					"wProcessDefFormBean", "org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean");
@@ -170,9 +169,11 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	}
 
 	public List<ProcessWorkLight> getProcessWorkLightList() {
+		
 		if (processWorkLightList == null || processWorkLightList.isEmpty()) {
-		nWorkResults = 0;
-	}
+			nWorkResults = 0;
+		}
+		
 		return processWorkLightList;
 	}
 
@@ -181,9 +182,10 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	}
 
 	public List<StepWorkLight> getStepWorkLightList() {
+		
 		if (processWorkLightList == null || processWorkLightList.isEmpty()) {
-		nStepResults = 0;
-	}
+			nStepResults = 0;
+		}
 		
 		return stepWorkLightList;
 	}
@@ -473,6 +475,30 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return java.util.TimeZone.getDefault();
 	}
 
+	public boolean isStepLocked() {
+		return stepLocked;
+	}
+
+	public void setStepLocked(boolean stepLocked) {
+		this.stepLocked = stepLocked;
+	}
+
+	public Integer getStepLocker() {
+		return stepLocker;
+	}
+
+	public void setStepLocker(Integer stepLocker) {
+		this.stepLocker = stepLocker;
+	}
+
+	public Integer getIdStepWork() {
+		return idStepWork;
+	}
+
+	public void setIdStepWork(Integer idStepWork) {
+		this.idStepWork = idStepWork;
+	}
+
 	public String searchWorkingProcesses() {
 
 		logger.debug("searchWorkingProcesses() - action: " + action);
@@ -526,6 +552,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	}
 	
 
+	public Integer getIdStep() {
+		return idStep;
+	}
+
+	public void setIdStep(Integer idStep) {
+		this.idStep = idStep;
+	}
+
 	public Integer getCurrentUserId() {
 		if ( currentUserId== null ) {
 			ContextoSeguridad cs = (ContextoSeguridad)
@@ -555,6 +589,33 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				wpdfb.loadCurrentWProcessDef(id);
 
 				ret = LOAD_WPROCESSDEF;
+			
+			}
+		}
+
+		return ret;
+	}
+	
+	// dml 20120123
+	public String loadWStepDefForm() {
+
+		String ret = "FAIL";
+
+		if (this.idStep != null && this.idStep != 0){
+			
+			ValueExpression valueBinding = super
+					.getValueExpression("#{wStepDefFormBean}");
+
+			if (valueBinding != null) {
+
+				WStepDefFormBean wpdfb = 
+						(WStepDefFormBean) valueBinding
+							.getValue(super.getELContext());
+				wpdfb.init();
+				wpdfb.setCurrObjId(idStep);
+				wpdfb.loadObject(idStep);
+
+				ret = LOAD_WSTEPDEF;
 			
 			}
 		}
@@ -609,9 +670,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return ret;
 	}
 	
-	public String searchWorkingProcessLiveWorks(){
+	public String searchProcessWorkLights(){
 
-		logger.debug("searchWorkingProcessLiveWorks() - action: " + action);
+		logger.debug("searchProcessWorkLights() - action: " + action);
 
 		try {
 
@@ -626,7 +687,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
-					".searchWorkingProcessLiveWorks() WProcessDefException ..." };
+					".searchProcessWorkLights() WProcessDefException ..." };
 			agregarMensaje("206", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 		}
@@ -635,9 +696,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 	}
 
-	public void reloadWorkingProcessWorks(){
+	public void reloadProcessWorkLightList(){
 
-		logger.debug("searchWorkingProcessLiveWorks() - action: " + action);
+		logger.debug("reloadProcessWorkLightList() - action: " + action);
 
 		try {
 
@@ -654,18 +715,18 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
-					".searchWorkingProcessLiveWorks() WProcessDefException ..." };
+					".reloadProcessWorkLightList() WProcessDefException ..." };
 			agregarMensaje("206", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 		}
 		
 	}
 
-	public String searchLiveSteps(){
+	public String searchStepWorkLights(){
 		
-		logger.debug("searchWorkingProcessLiveWorks() - action: " + action);
+		logger.debug("searchStepWorkLights() - action: " + action);
 
-		try {
+		try {	
 			
 			stepWorkLightList = (ArrayList<StepWorkLight>) new WProcessDefBL()
 					.getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
@@ -681,13 +742,40 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
-					".searchLiveSteps() WProcessDefException ..." };
+					".searchStepWorkLights() WProcessDefException ..." };
 			agregarMensaje("206", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 		}
 
 		return WORKINGPROCESSSTEPS_QUERY;
 		
+	}
+	
+	public void reloadStepWorkLightList(){
+		
+		logger.debug("reloadStepWorkLightList() - action: " + action);
+
+		try {	
+			
+			stepWorkLightList = (ArrayList<StepWorkLight>) new WProcessDefBL()
+					.getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
+							stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
+							finalArrivingDateFilter, estrictArrivingDateFilter, 
+							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
+							initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
+							initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
+							action);
+
+			nStepResults = stepWorkLightList.size();
+
+		} catch (WProcessDefException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".reloadStepWorkLightList() WProcessDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+
 	}
 	
 	public void desactivateWProcessDef(){
@@ -786,6 +874,53 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		}
 		
 		return null;
+		
+	}
+	
+	public void lockUnlockStep() {
+		
+		WStepWorkBL wswBL = new WStepWorkBL();
+		
+		try {
+			
+			if (idStepWork != null && idStepWork != 0) {
+				if (stepLocked){
+					wswBL.unlockStep(idStepWork, getCurrentUserId(), true);
+				} else {
+					wswBL.lockStep(idStepWork, getCurrentUserId(), true);
+				}
+			}
+			
+			reloadStepWorkLightList();
+		
+		} catch (WStepNotLockedException ex1) {
+			
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".lockUnlockStep() WStepNotLockedException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+			
+		} catch (WStepLockedByAnotherUserException ex2) {
+			
+			String mensaje = ex2.getMessage() + " - " + ex2.getCause();
+			String params[] = { mensaje + ",",
+					".lockUnlockStep() WStepLockedByAnotherUserException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex2.printStackTrace();
+			
+		} catch (WStepWorkException ex3) {
+			
+			String mensaje = ex3.getMessage() + " - " + ex3.getCause();
+			String params[] = { mensaje + ",",
+					".lockUnlockStep() WStepWorkException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex3.printStackTrace();
+			
+		}
+		
+		
+		
 		
 	}
 	

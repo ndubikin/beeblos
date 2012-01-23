@@ -597,7 +597,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 				
 			} else {
 				
-				// DAVID : PONELE 1 MENSAJE: "DEBE INGRESAR UN NOMBRE EN LA RESPUESTA" 
+				String mensaje = "You should put a correct name value.";
+				String params[] = { mensaje + ",",
+						".addStepResponse() WStepDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+
 			}
 			
 		} catch (WStepResponseDefException ex1) {
