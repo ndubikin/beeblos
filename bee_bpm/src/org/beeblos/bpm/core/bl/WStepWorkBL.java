@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.dao.WProcessDefDao;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
@@ -25,6 +26,7 @@ import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 
@@ -377,23 +379,21 @@ public class WStepWorkBL {
 	
 	// unlock given step
 	public Boolean unlockStep (
-			Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
+			Integer idStepWork, Integer currentUser, boolean isAdmin ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
 	
 		// get the step
-		WStepWork stepToUnlock = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+		WStepWork stepToUnlock = 
+				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 		
 		
 		// checks it and unlock
 		if ( stepToUnlock.isLocked() && 
 				( stepToUnlock.getLockedBy().getId().equals(currentUser) || // nes 20111218
-						isAdminUser ||
+						isAdmin ||
 						currentUser.equals(OMNIADMIN) ) ) {
 
-			stepToUnlock.setLocked(false);
-			stepToUnlock.setLockedBy(null);
-			stepToUnlock.setLockedSince(null);
-			this.update(stepToUnlock, currentUser);
+			this._unlockStep(stepToUnlock, currentUser, isAdmin);
 
 		} else if ( ! stepToUnlock.isLocked() ){
 			String message = "The indicated step ("+ stepToUnlock.getId() +")is not locked " ;
@@ -410,25 +410,20 @@ public class WStepWorkBL {
 
 	}
 	
-	// unlock given step
+	// lock given step
+	// isAdmin 
 	public Boolean lockStep (
-			Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
+			Integer idStepWork, Integer lockUserId, Integer currentUser, boolean isAdminUser ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
 	
 		// get the step
-		WStepWork stepToLock = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+		WStepWork stepToLock = 
+				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 		
+		// 1st check user permissions
 		
-		// checks it and unlock
-		if ( !stepToLock.isLocked() ) {
 
-			_lockStep(stepToLock, currentUser);
-
-		} else if ( stepToLock.isLocked() ){
-			String message = "The indicated step ("+ stepToLock.getId() +")is locked yet " ;
-			logger.debug(message);
-			throw new WStepNotLockedException(message);		
-		}
+		_lockStep(stepToLock, lockUserId);
 		
 		return true;
 
@@ -454,8 +449,9 @@ public class WStepWorkBL {
 			stepToLock.setLockedSince(now);
 			
 			this.update(stepToLock, currentUser);
+			
 		} else {
-			if ( !stepToLock.getLockedBy().getId().equals(currentUser)) { // nes 20111218
+			if ( !stepToLock.getLockedBy().getId().equals(currentUser)) { 
 				String message = "The indicated step ("+ stepToLock.getId() +") is already locked by another user ..." ;
 				logger.info(message);
 				throw new WStepLockedByAnotherUserException(message);
@@ -468,21 +464,17 @@ public class WStepWorkBL {
 		
 		// if step is not locked then locks it !
 		if ( !stepToUnlock.isLocked() ) {
-			if ( stepToUnlock.getLockedBy().getId().equals(currentUser) || // nes 20111218 
-					isAdmin ) {
-				
-				stepToUnlock.setLocked(false);
-				stepToUnlock.setLockedBy(null);
-				stepToUnlock.setLockedSince(null);
-				
-				this.update(stepToUnlock, currentUser);
-				
-				if ( isAdmin ) {
-					logger.info("Step: "+stepToUnlock.getId()+" was unlocked by admin:"+currentUser);
-				}
+
+			stepToUnlock.setLocked(false);
+			stepToUnlock.setLockedBy(null);
+			stepToUnlock.setLockedSince(null);
+			this.update(stepToUnlock, currentUser);
 			
+			this.update(stepToUnlock, currentUser);
+			
+			if ( isAdmin ) {
+				logger.info("Step: "+stepToUnlock.getId()+" was unlocked by admin:"+currentUser);
 			}
-			
 		} 
 	}
 	
@@ -804,6 +796,24 @@ public class WStepWorkBL {
 		return new WStepWorkDao().getStepListByProcessName(idProcess, arrivingDate, openedDate, deadlineDate, status, currentUser);
 	}
 	
+	public List<StepWorkLight> getWorkingStepListFinder(Integer processIdFilter, 
+			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
+			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			String action, boolean onlyActiveWorkingProcessesFilter)
+	throws WStepWorkException {
+
+		return new WStepWorkDao().getWorkingStepListFinder(processIdFilter, stepIdFilter, 
+				stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
+				finalArrivingDateFilter, estrictArrivingDateFilter, 
+				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
+				initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
+				initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
+				action, onlyActiveWorkingProcessesFilter);
+		
+	}
 	
 }
 	

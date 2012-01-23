@@ -24,9 +24,9 @@ public class WProcessWork implements java.io.Serializable {
 	private Date endTime;
 	private String reference;
 	private String comments;
-	private int insertUser;
+	private Integer insertUser;
 	private Date insertDate;
-	private int modUser;
+	private Integer modUser;
 	private Date modDate;
 	
 	private Set<WStepWork> steps = new HashSet<WStepWork>();
@@ -36,8 +36,8 @@ public class WProcessWork implements java.io.Serializable {
 	}
 
 	public WProcessWork(WProcessStatus status, int idProcess,
-			Date startingTime, String reference, int insertUser,
-			Date insertDate, int modUser, Date modDate) {
+			Date startingTime, String reference, Integer insertUser,
+			Date insertDate, Integer modUser, Date modDate) {
 		this.status = status;
 		this.idProcess = idProcess;
 		this.startingTime = startingTime;
@@ -50,8 +50,8 @@ public class WProcessWork implements java.io.Serializable {
 
 	public WProcessWork(WProcessStatus status, int idProcess,
 			Date startingTime, Integer startingType, Date endTime,
-			String reference, String comments, int insertUser, Date insertDate,
-			int modUser, Date modDate) {
+			String reference, String comments, Integer insertUser, Date insertDate,
+			Integer modUser, Date modDate) {
 		this.status = status;
 		this.idProcess = idProcess;
 		this.startingTime = startingTime;
@@ -137,11 +137,11 @@ public class WProcessWork implements java.io.Serializable {
 		this.comments = comments;
 	}
 
-	public int getInsertUser() {
+	public Integer getInsertUser() {
 		return this.insertUser;
 	}
 
-	public void setInsertUser(int insertUser) {
+	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
 	}
 
@@ -153,11 +153,11 @@ public class WProcessWork implements java.io.Serializable {
 		this.insertDate = insertDate;
 	}
 
-	public int getModUser() {
+	public Integer getModUser() {
 		return this.modUser;
 	}
 
-	public void setModUser(int modUser) {
+	public void setModUser(Integer modUser) {
 		this.modUser = modUser;
 	}
 
