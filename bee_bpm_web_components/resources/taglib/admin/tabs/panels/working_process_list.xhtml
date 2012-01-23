@@ -17,33 +17,33 @@
 		<h:panelGrid width="100%" columns="1">
 
        		<rich:contextMenu attached="false" id="working_process_search_menu" submitMode="ajax">
-            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchWorkingProcessLiveWorks}" submitMode="server">
+            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchProcessWork}" submitMode="server">
                 	<b> Go to live works </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
                		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchLiveSteps}" submitMode="server">
                 	<b> Go to live steps </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PROCESSED"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
                 	<b> Edit process definition </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
                    		<rich:menuItem ajaxSingle="true"
            			oncomplete="javascript:Richfaces.showModalPanel('mpDesactivateWProcessDef');"
            			reRender="mpDesactivateWProcessDef" style="{styleIsActive}">
                 	<b> Desactivate process </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
  	           	</rich:menuItem>
              	<rich:menuItem ajaxSingle="false" submitMode="server">
                 	<b> Suspend process </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.id}" value="{currentRowId}"/>
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
             	</rich:menuItem>
  	   		</rich:contextMenu>
             
