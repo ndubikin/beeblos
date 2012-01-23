@@ -766,10 +766,10 @@ public class WProcessDefDao {
 					productionDate = (cols[3] != null ? (Date) cols[3] : null);
 					productionUser = (cols[4] != null ? new Integer(
 							cols[4].toString()) : null);
-					liveWorks = (cols[5] != null ? new Integer(
-							cols[5].toString()) : null);
-					liveSteps= (cols[6] != null ? new Integer(
+					liveWorks = (cols[6] != null ? new Integer(
 							cols[6].toString()) : null);
+					liveSteps= (cols[5] != null ? new Integer(
+							cols[5].toString()) : null);
 					status = (cols[7] != null ? (Boolean) cols[7] : false);
 
 					returnList.add(new WProcessDefLight(id, name, comments, productionDate, 
