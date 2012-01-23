@@ -124,46 +124,14 @@ public class WProcessDefBL {
 
 	}
 
-	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter, 
+	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action)
 	throws WProcessDefException {
 		
-		return new WProcessDefDao().getWorkingProcessListByFinder(onlyWorkingProcessesFilter, 
+		return new WProcessDefDao().getWorkingProcessListFinder(onlyWorkingProcessesFilter, 
 				processNameFilter, initialProductionDateFilter, finalProductionDateFilter,
 				estrictProductionDateFilter, productionUserFilter, action);
-		
-	}
-
-	public List<ProcessWorkLight> getWorkingProcessWorkListByFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, Date initialStartedDateFilter, Date finalStartedDateFilter, 
-			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
-			boolean estrictFinishedDateFilter, String action)
-	throws WProcessDefException {
-		
-		return new WProcessDefDao().getWorkingProcessWorkListByFinder(idProcess, 
-				onlyActiveWorksFilter, initialStartedDateFilter, finalStartedDateFilter, 
-				estrictStartedDateFilter, initialFinishedDateFilter, finalFinishedDateFilter, 
-				estrictFinishedDateFilter, action);
-		
-	}
-
-	public List<StepWorkLight> getWorkingProcessStepListByFinder(Integer processIdFilter, 
-			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
-			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
-			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
-			String action, boolean onlyActiveWorkingProcessesFilter)
-	throws WProcessDefException {
-
-		return new WProcessDefDao().getWorkingProcessStepListByFinder(processIdFilter, stepIdFilter, 
-				stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
-				finalArrivingDateFilter, estrictArrivingDateFilter, 
-				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
-				initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
-				initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
-				action, onlyActiveWorkingProcessesFilter);
 		
 	}
 

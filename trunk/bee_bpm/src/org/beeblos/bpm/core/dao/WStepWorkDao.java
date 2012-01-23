@@ -10,12 +10,17 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -1024,6 +1029,328 @@ public class WStepWorkDao {
 		return stepws;
 	}
 	
+
+
+	public List<StepWorkLight> getWorkingStepListFinder(Integer processIdFilter, 
+			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
+			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			String action, boolean onlyActiveWorkingProcessesFilter) 
+					throws WStepWorkException {
+		
+		String filter = "";
+
+		filter = buildWorkingStepFilter(processIdFilter, stepIdFilter,
+				stepTypeFilter, referenceFilter, initialArrivingDateFilter,
+				finalArrivingDateFilter, estrictArrivingDateFilter,
+				initialOpenedDateFilter, finalOpenedDateFilter,
+				estrictOpenedDateFilter, initialDeadlineDateFilter,
+				finalDeadlineDateFilter, estrictDeadlineDateFilter,
+				initialDecidedDateFilter, finalDecidedDateFilter,
+				estrictDecidedDateFilter, onlyActiveWorkingProcessesFilter, filter);
+
+		if (filter != null && !"".equals(filter)){
+			filter = "WHERE " + filter;
+		}
+
+		String query = buildWorkingStepQuery(filter, action);
+		
+		logger.debug("------>> getWorkingStepListFinder -> query:" + query
+				+ "<<-------");
+
+		return getWorkingStepList(query);
+		
+	}
+
+	private String buildWorkingStepFilter(Integer processIdFilter,
+			Integer stepIdFilter, String stepTypeFilter,
+			String referenceFilter, Date initialArrivingDateFilter,
+			Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter,
+			boolean estrictOpenedDateFilter, Date initialDeadlineDateFilter,
+			Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter,
+			boolean estrictDecidedDateFilter, boolean onlyActiveWorkingProcessesFilter, 
+			String filter) {
+		
+		if (onlyActiveWorkingProcessesFilter) {
+			if (!"".equals(filter)) {
+				filter += " AND wpd.active IS TRUE ";
+			} else {
+				filter += " wpd.active IS TRUE ";
+
+			}
+		}
+		
+		if (processIdFilter != null && processIdFilter != 0) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			filter += " work.id_process = " + processIdFilter;
+		}
+		
+		if (stepIdFilter != null && stepIdFilter != 0) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			filter += " work.id_current_step = " + stepIdFilter;
+		}
+		
+		if (!"".equals(stepTypeFilter) || !"ALL".equals(stepTypeFilter)) {
+			if ("PENDING".equals(stepTypeFilter)) {
+				if (!"".equals(filter)) {
+					filter += " AND ";
+				}
+				filter += " pw.end_time IS NOT NULL ";				
+			} else if ("PROCESSED".equals(stepTypeFilter)){
+				if (!"".equals(filter)) {
+					filter += " AND ";
+				}
+				filter += " pw.end_time IS NULL ";				
+			}
+		}
+		
+		if (referenceFilter != null && !"".equals(referenceFilter)) {
+			if (!"".equals(filter)) {
+				filter += " AND pw.reference LIKE '%"+referenceFilter+"%'";
+			} else {
+				filter += " pw.reference LIKE '%"+referenceFilter+"%'";
+
+			}
+		}
+		
+		if (initialArrivingDateFilter!=null){
+			
+			java.sql.Date initialArrivingDateFilterSQL=new java.sql.Date(initialArrivingDateFilter.getTime());
+			
+			if (estrictArrivingDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.arriving_date = '"+initialArrivingDateFilterSQL+"' ";
+			} else {
+				if (finalArrivingDateFilter!=null){
+					java.sql.Date finalArrivingDateFilterSQL=new java.sql.Date(finalArrivingDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.arriving_date >= '"+initialArrivingDateFilterSQL+"' AND work.arriving_date <= '"+finalArrivingDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.arriving_date >= '"+initialArrivingDateFilterSQL+"' ";
+				}
+			}
+		}
+
+		if (initialOpenedDateFilter!=null){
+			
+			java.sql.Date initialOpenedDateFilterSQL=new java.sql.Date(initialOpenedDateFilter.getTime());
+			
+			if (estrictOpenedDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.opened_date = '"+initialOpenedDateFilterSQL+"' ";
+			} else {
+				if (finalOpenedDateFilter!=null){
+					java.sql.Date finalOpenedDateFilterSQL=new java.sql.Date(finalOpenedDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.opened_date >= '"+initialOpenedDateFilterSQL+"' AND work.opened_date <= '"+finalOpenedDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.opened_date >= '"+initialOpenedDateFilterSQL+"' ";
+				}
+			}
+		}
+
+		if (initialDeadlineDateFilter!=null){
+			
+			java.sql.Date initialDeadlineDateFilterSQL=new java.sql.Date(initialDeadlineDateFilter.getTime());
+			
+			if (estrictDeadlineDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.deadline_date = '"+initialDeadlineDateFilterSQL+"' ";
+			} else {
+				if (finalDeadlineDateFilter!=null){
+					java.sql.Date finalDeadlineDateFilterSQL=new java.sql.Date(finalDeadlineDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.deadline_date >= '"+initialDeadlineDateFilterSQL+"' AND work.deadline_date <= '"+finalDeadlineDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.deadline_date >= '"+initialDeadlineDateFilterSQL+"' ";
+				}
+			}
+		}
+
+		if (initialDecidedDateFilter!=null){
+			
+			java.sql.Date initialDecidedDateFilterSQL=new java.sql.Date(initialDecidedDateFilter.getTime());
+			
+			if (estrictDecidedDateFilter) {
+				if (!"".equals(filter)) {
+					filter+=" AND ";
+				}
+				filter+=" work.decided_date = '"+initialDecidedDateFilterSQL+"' ";
+			} else {
+				if (finalDecidedDateFilter!=null){
+					java.sql.Date finalDecidedDateFilterSQL=new java.sql.Date(finalDecidedDateFilter.getTime());
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" (work.decided_date >= '"+initialDecidedDateFilterSQL+"' AND work.decided_date <= '"+finalDecidedDateFilterSQL+"') ";
+				} else {
+					if (!"".equals(filter)) {
+						filter+=" AND ";
+					}
+					filter+=" work.decided_date >= '"+initialDecidedDateFilterSQL+"' ";
+				}
+			}
+		}
+		return filter;
+	}
+
+	private String buildWorkingStepQuery(String filter, String action) {
+
+		String tmpQuery = "SELECT ";
+		tmpQuery += " work.id_process, ";
+		tmpQuery += " work.id_current_step, ";
+		tmpQuery += " step.name, ";
+		tmpQuery += " work.arriving_date, ";
+		tmpQuery += " work.opened_date, ";
+		tmpQuery += " work.opener_user, ";
+		tmpQuery += " work.decided_date, ";
+		tmpQuery += " work.performer_user_id, ";
+		tmpQuery += " work.deadline_date, ";
+		tmpQuery += " work.deadline_time, ";
+		tmpQuery += " pw.reference, ";
+		tmpQuery += " work.locked, ";
+		tmpQuery += " work.locked_by, ";
+		tmpQuery += " work.id ";
+
+		tmpQuery += " FROM w_step_work work ";
+		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = work.id_current_step ";
+		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = work.id_work ";
+		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = work.id_process ";
+
+		tmpQuery += filter;
+
+		if (action == null || action.equals("")) {
+			tmpQuery += " ORDER by work.decided_date DESC; ";
+		} 
+
+		logger.debug("------>> getWorkingProcessStepListByFinder -> query:" + tmpQuery
+				+ "<<-------");
+
+		System.out.println("QUERY:" + tmpQuery);
+
+		return tmpQuery;
+	}
+
+	private List<StepWorkLight> getWorkingStepList(String query)
+			throws WStepWorkException {
+
+		Integer idProcess;
+		Integer idStep;
+		String stepName;
+		Date arrivingDate;
+		Date openedDate;
+		Integer openerUser;
+		Date decidedDate;
+		Integer performer;
+		Date deadlineDate;
+		Date deadlineTime;
+		String reference;
+		
+		// dml 20120123
+		boolean locked;
+		Integer lockedBy;
+		Integer idStepWork;
+		
+		
+		Session session = null;
+		Transaction tx = null;
+
+		List<Object[]> result = null;
+		List<StepWorkLight> returnList = new ArrayList<StepWorkLight>();
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			Hibernate.initialize(result);
+
+			result = session.createSQLQuery(query).list();
+
+			tx.commit();
+
+			if (result != null) {
+
+				for (Object irObj : result) {
+
+					Object[] cols = (Object[]) irObj;
+
+
+					idProcess = (cols[0] != null ? new Integer(
+							cols[0].toString()) : null);
+					idStep = (cols[1] != null ? new Integer(
+							cols[1].toString()) : null);
+					stepName = (cols[2] != null ? cols[2].toString() : "");
+					arrivingDate = (cols[3] != null ? (Date) cols[3] : null);
+					openedDate = (cols[4] != null ? (Date) cols[4] : null);
+					openerUser = (cols[5] != null ? new Integer(
+							cols[5].toString()) : null);
+					decidedDate = (cols[6] != null ? (Date) cols[6] : null);
+					performer = (cols[7] != null ? new Integer(
+							cols[7].toString()) : null);
+					deadlineDate = (cols[8] != null ? (Date) cols[8] : null);
+					deadlineTime = (cols[9] != null ? (Date) cols[9] : null);
+					reference = (cols[10] != null ? cols[10].toString() : "");
+					locked = (cols[11] != null ? (Boolean) cols[11] : false);
+					lockedBy = (cols[12] != null ? new Integer(
+							cols[12].toString()) : null);
+					idStepWork = (cols[13] != null ? new Integer(
+							cols[13].toString()) : null);
+					
+					
+					returnList.add(new StepWorkLight(idProcess, idStep, stepName, 
+							reference, arrivingDate, openedDate, openerUser, decidedDate, 
+							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork));
+				}
+
+			} else {
+
+				returnList = null;
+			}
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+				logger.warn("WProcessDefDao: getWorkingProcessStepListByFinder() - " +
+						"It cannot be posible to get the StepWorkLight list - "
+					+ ex.getMessage() + "\n" + ex.getLocalizedMessage() + " \n" + ex.getCause());
+			throw new WStepWorkException(ex);
+
+		}
+
+		return returnList;
+	}
+
 	
 	
 }
