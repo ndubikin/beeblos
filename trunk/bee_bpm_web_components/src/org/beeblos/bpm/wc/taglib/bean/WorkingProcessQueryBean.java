@@ -95,7 +95,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	
 	private String action; 
 	
-	private Integer id;
+	private Integer currentProcessId;
 
 	private TimeZone timeZone;
 	
@@ -140,7 +140,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 		this.productionUserFilter = 0;
 
-		this.id = 0;
+		this.currentProcessId = 0;
 		
 		// dml 20120123
 		this.idStep = 0;
@@ -459,15 +459,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.action = action;
 	}
 
-	public Integer getId() {
-
-		return id;
-
+	public Integer getCurrentProcessId() {
+		return currentProcessId;
 	}
 
-	public void setId(Integer id) {
-
-		this.id = id;
+	public void setCurrentProcessId(Integer currentProcessId) {
+		this.currentProcessId = currentProcessId;
 	}
 
 	public TimeZone getTimeZone() {
@@ -574,7 +571,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		String ret = "FAIL";
 
-		if (this.id != null){
+		if (this.currentProcessId != null){
 			
 			ValueExpression valueBinding = super
 					.getValueExpression("#{wProcessDefFormBean}");
@@ -585,8 +582,8 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 						(WProcessDefFormBean) valueBinding
 							.getValue(super.getELContext());
 				wpdfb.init();
-				wpdfb.setCurrentId(id);
-				wpdfb.loadCurrentWProcessDef(id);
+				wpdfb.setCurrentId(currentProcessId);
+				wpdfb.loadCurrentWProcessDef(currentProcessId);
 
 				ret = LOAD_WPROCESSDEF;
 			
@@ -626,7 +623,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	//rrl 20120117
 	public String generateXmlWProcessDef() {
 
-		if (this.id != null){
+		if (this.currentProcessId != null){
 			
 			ValueExpression valueBinding = super
 					.getValueExpression("#{wProcessDefFormBean}");
@@ -637,8 +634,8 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 						(WProcessDefFormBean) valueBinding
 							.getValue(super.getELContext());
 				wpdfb.init();
-				wpdfb.setCurrentId(id);
-				wpdfb.loadCurrentWProcessDef(id);
+				wpdfb.setCurrentId(currentProcessId);
+				wpdfb.loadCurrentWProcessDef(currentProcessId);
 				
 				wpdfb.generateXMLCurrentWProcessDef();
 			}
@@ -670,9 +667,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return ret;
 	}
 	
-	public String searchProcessWorkLights(){
+	public String searchProcessWork(){
 
-		logger.debug("searchProcessWorkLights() - action: " + action);
+		logger.debug("searchProcessWork() - action: " + action);
 
 		try {
 
@@ -687,7 +684,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
-					".searchProcessWorkLights() WProcessDefException ..." };
+					".searchProcessWork() WProcessDefException ..." };
 			agregarMensaje("206", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 		}
@@ -722,9 +719,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 	}
 
-	public String searchStepWorkLights(){
+	public String searchStepWork(){
 		
-		logger.debug("searchStepWorkLights() - action: " + action);
+		logger.debug("searchStepWork() - action: " + action);
 
 		try {	
 			
@@ -786,7 +783,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		try {
 			
-			wpd = wpdBL.getWProcessDefByPK(id, getCurrentUserId());
+			wpd = wpdBL.getWProcessDefByPK(currentProcessId, getCurrentUserId());
 			
 			if (wpd != null){
 				
