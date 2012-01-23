@@ -1153,7 +1153,10 @@ public class WProcessDefDao {
 		tmpQuery += " work.performer_user_id, ";
 		tmpQuery += " work.deadline_date, ";
 		tmpQuery += " work.deadline_time, ";
-		tmpQuery += " pw.reference ";
+		tmpQuery += " pw.reference, ";
+		tmpQuery += " work.locked, ";
+		tmpQuery += " work.locked_by, ";
+		tmpQuery += " work.id ";
 
 		tmpQuery += " FROM w_step_work work ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = work.id_current_step ";
@@ -1187,6 +1190,11 @@ public class WProcessDefDao {
 		Date deadlineDate;
 		Date deadlineTime;
 		String reference;
+		
+		// dml 20120123
+		boolean locked;
+		Integer lockedBy;
+		Integer idStepWork;
 		
 		
 		Session session = null;
@@ -1229,10 +1237,16 @@ public class WProcessDefDao {
 					deadlineDate = (cols[8] != null ? (Date) cols[8] : null);
 					deadlineTime = (cols[9] != null ? (Date) cols[9] : null);
 					reference = (cols[10] != null ? cols[10].toString() : "");
-
+					locked = (cols[11] != null ? (Boolean) cols[11] : false);
+					lockedBy = (cols[12] != null ? new Integer(
+							cols[12].toString()) : null);
+					idStepWork = (cols[13] != null ? new Integer(
+							cols[13].toString()) : null);
+					
+					
 					returnList.add(new StepWorkLight(idProcess, idStep, stepName, 
 							reference, arrivingDate, openedDate, openerUser, decidedDate, 
-							performer, deadlineDate, deadlineTime));
+							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork));
 				}
 
 			} else {

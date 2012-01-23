@@ -45,6 +45,48 @@
 
 		<h:panelGrid width="100%" columns="1">
 
+       		<rich:contextMenu attached="false" id="working_step_search_menu" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false">
+                	<b> View Step Work </b> {currentRowId} 
+            	</rich:menuItem>
+            	<rich:menuSeparator />         
+           		<rich:menuItem ajaxSingle="false">
+                	<b> Process Step </b> {currentRowId} 
+            	</rich:menuItem>
+            	<rich:menuSeparator />         
+           		<rich:menuItem ajaxSingle="false">
+                	<b> Change deadline </b> {currentRowId} 
+            	</rich:menuItem>
+           		<rich:menuItem ajaxSingle="false">
+                	<b> Reroute step </b> {currentRowId} 
+            	</rich:menuItem>
+           		<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.lockUnlockStep}" 
+           			style="{styleIsLocked}" reRender="working_step_form${action}">
+                	<b> Unlock step </b> {currentRowIdStepWork} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{currentRowIdStepWork}"/>
+                	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.stepLocked}" value="{isLocked}"/>
+                	<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepLocker}" value="{lockedBy}"/>
+            	</rich:menuItem>
+           		<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.lockUnlockStep}" 
+           			style="{styleIsUnlocked}" reRender="working_step_form${action}">
+                	<b> Lock step </b> {currentRowIdStepWork} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{currentRowIdStepWork}"/>
+                	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.stepLocked}" value="{isLocked}"/>
+            	</rich:menuItem>
+            		<rich:menuItem ajaxSingle="false">
+                	<b> Reopen step </b> {currentRowId} 
+            	</rich:menuItem>
+            	<rich:menuSeparator />         
+             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWStepDefForm}" submitMode="server">
+                	<b> Edit step definition </b> {currentRowStepId} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStep}" value="{currentRowStepId}"/>
+            	</rich:menuItem>
+            </rich:contextMenu>
+            
+		</h:panelGrid>   
+
+		<h:panelGrid width="100%" columns="1">
+
 			<rich:datascroller id="dseUp" for="working_step_list_table"
 				maxPages="10" reRender="working_step_form${action}"
 				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
@@ -182,7 +224,13 @@
 
 				<rich:componentControl event="onRowClick" for="working_step_search_menu"
 					operation="show">
-               <f:param value="#{wps.idProcess}" name="currentRowId"/>
+               		<f:param value="#{wps.idProcess}" name="currentRowId"/>
+               		<f:param value="#{wps.idStepWork}" name="currentRowIdStepWork"/>
+                	<f:param value="#{wps.idStep}" name="currentRowStepId"/>
+               		<f:param value="#{wps.locked}" name="isLocked"/>
+               		<f:param value="#{wps.lockedBy}" name="lockedBy"/>
+               		<f:param value="#{wps.locked ? '' : 'display:none;'}" name="styleIsLocked"/>
+               		<f:param value="#{wps.locked ? 'display:none;' : ''}" name="styleIsUnlocked"/>
 				</rich:componentControl>
 
 			</rich:dataTable>

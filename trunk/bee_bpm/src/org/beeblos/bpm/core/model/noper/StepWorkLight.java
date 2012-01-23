@@ -16,6 +16,11 @@ public class StepWorkLight {
 	private Date deadlineTime;
 	private Date deadlineDate;
 	
+	// dml 20120123
+	private boolean locked;
+	private Integer lockedBy;
+	private Integer idStepWork;
+	
 	public StepWorkLight() {
 		
 	}
@@ -23,7 +28,8 @@ public class StepWorkLight {
 	public StepWorkLight(Integer idProcess, Integer idStep,
 			String stepName, String reference, Date arrivingDate, Date openedDate,
 			Integer openerUser, Date decidedDate, Integer performer,
-			Date deadlineDate, Date deadlineTime) {
+			Date deadlineDate, Date deadlineTime, boolean locked, Integer lockedBy,
+			Integer idStepWork) {
 		super();
 		this.idProcess = idProcess;
 		this.idStep = idStep;
@@ -36,6 +42,9 @@ public class StepWorkLight {
 		this.performer = performer;
 		this.deadlineDate = deadlineDate;
 		this.deadlineTime = deadlineTime;
+		this.locked = locked;
+		this.lockedBy = lockedBy;
+		this.idStepWork = idStepWork;
 	}
 
 	public Integer getIdProcess() {
@@ -126,15 +135,48 @@ public class StepWorkLight {
 		this.deadlineDate = deadlineDate;
 	}
 
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
+	public Integer getLockedBy() {
+		return lockedBy;
+	}
+
+	public void setLockedBy(Integer lockedBy) {
+		this.lockedBy = lockedBy;
+	}
+
+	public Integer getIdStepWork() {
+		return idStepWork;
+	}
+
+	public void setIdStepWork(Integer idStepWork) {
+		this.idStepWork = idStepWork;
+	}
+
 	@Override
 	public String toString() {
-		return "StepWorkLight [idProcess=" + idProcess + ", idStep="
-				+ idStep + ", stepName=" + stepName + ", reference="
-				+ reference + ", arrivingDate=" + arrivingDate
-				+ ", openedDate=" + openedDate + ", openerUser=" + openerUser
-				+ ", decidedDate=" + decidedDate + ", performer=" + performer
-				+ ", deadlineTime=" + deadlineTime + ", deadlineDate="
-				+ deadlineDate + "]";
+		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep
+				+ ", stepName=" + stepName + ", reference=" + reference
+				+ ", arrivingDate=" + arrivingDate + ", openedDate="
+				+ openedDate + ", openerUser=" + openerUser + ", decidedDate="
+				+ decidedDate + ", performer=" + performer + ", deadlineTime="
+				+ deadlineTime + ", deadlineDate=" + deadlineDate + ", locked="
+				+ locked + ", lockedBy=" + lockedBy + ", idStepWork="
+				+ idStepWork + "]";
 	}
 
 	@Override
@@ -153,15 +195,20 @@ public class StepWorkLight {
 				+ ((idProcess == null) ? 0 : idProcess.hashCode());
 		result = prime * result + ((idStep == null) ? 0 : idStep.hashCode());
 		result = prime * result
+				+ ((idStepWork == null) ? 0 : idStepWork.hashCode());
+		result = prime * result + (locked ? 1231 : 1237);
+		result = prime * result
+				+ ((lockedBy == null) ? 0 : lockedBy.hashCode());
+		result = prime * result
 				+ ((openedDate == null) ? 0 : openedDate.hashCode());
 		result = prime * result
 				+ ((openerUser == null) ? 0 : openerUser.hashCode());
 		result = prime * result
 				+ ((performer == null) ? 0 : performer.hashCode());
 		result = prime * result
-				+ ((stepName == null) ? 0 : stepName.hashCode());
-		result = prime * result
 				+ ((reference == null) ? 0 : reference.hashCode());
+		result = prime * result
+				+ ((stepName == null) ? 0 : stepName.hashCode());
 		return result;
 	}
 
@@ -204,6 +251,18 @@ public class StepWorkLight {
 				return false;
 		} else if (!idStep.equals(other.idStep))
 			return false;
+		if (idStepWork == null) {
+			if (other.idStepWork != null)
+				return false;
+		} else if (!idStepWork.equals(other.idStepWork))
+			return false;
+		if (locked != other.locked)
+			return false;
+		if (lockedBy == null) {
+			if (other.lockedBy != null)
+				return false;
+		} else if (!lockedBy.equals(other.lockedBy))
+			return false;
 		if (openedDate == null) {
 			if (other.openedDate != null)
 				return false;
@@ -219,15 +278,15 @@ public class StepWorkLight {
 				return false;
 		} else if (!performer.equals(other.performer))
 			return false;
-		if (stepName == null) {
-			if (other.stepName != null)
-				return false;
-		} else if (!stepName.equals(other.stepName))
-			return false;
 		if (reference == null) {
 			if (other.reference != null)
 				return false;
 		} else if (!reference.equals(other.reference))
+			return false;
+		if (stepName == null) {
+			if (other.stepName != null)
+				return false;
+		} else if (!stepName.equals(other.stepName))
 			return false;
 		return true;
 	}
