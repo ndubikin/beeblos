@@ -990,6 +990,37 @@ public class WProcessDefDao {
 		
 		String filter = "";
 
+		filter = loadWorkingStepFilter(processIdFilter, stepIdFilter,
+				stepTypeFilter, referenceFilter, initialArrivingDateFilter,
+				finalArrivingDateFilter, estrictArrivingDateFilter,
+				initialOpenedDateFilter, finalOpenedDateFilter,
+				estrictOpenedDateFilter, initialDeadlineDateFilter,
+				finalDeadlineDateFilter, estrictDeadlineDateFilter,
+				initialDecidedDateFilter, finalDecidedDateFilter,
+				estrictDecidedDateFilter, filter);
+
+		if (filter != null && !"".equals(filter)){
+			filter = "WHERE " + filter;
+		}
+		
+		logger.debug("------>> getWorkingProcessListStepByFinder -> filter:" + filter
+				+ "<<-------");
+
+		String query = _armaQueryWorkingProcessStep(filter, action);
+
+		return getWorkingProcessStepListByFinder(query);
+		
+	}
+
+	private String loadWorkingStepFilter(Integer processIdFilter,
+			Integer stepIdFilter, String stepTypeFilter,
+			String referenceFilter, Date initialArrivingDateFilter,
+			Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter,
+			boolean estrictOpenedDateFilter, Date initialDeadlineDateFilter,
+			Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter,
+			boolean estrictDecidedDateFilter, String filter) {
 		if (processIdFilter != null && processIdFilter != 0) {
 			if (!"".equals(filter)) {
 				filter += " AND ";
@@ -1126,18 +1157,7 @@ public class WProcessDefDao {
 				}
 			}
 		}
-
-		if (filter != null && !"".equals(filter)){
-			filter = "WHERE " + filter;
-		}
-		
-		logger.debug("------>> getWorkingProcessListStepByFinder -> filter:" + filter
-				+ "<<-------");
-
-		String query = _armaQueryWorkingProcessStep(filter, action);
-
-		return getWorkingProcessStepListByFinder(query);
-		
+		return filter;
 	}
 
 	private String _armaQueryWorkingProcessStep(String filter, String action) {
@@ -1165,7 +1185,7 @@ public class WProcessDefDao {
 		tmpQuery += filter;
 
 		if (action == null || action.equals("")) {
-			tmpQuery += " ORDER by work.id_process ASC;";
+			tmpQuery += " ORDER by work.decided_date DESC; ";
 		} 
 
 		logger.debug("------>> getWorkingProcessStepListByFinder -> query:" + tmpQuery
