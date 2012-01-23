@@ -608,14 +608,14 @@ public class WProcessDefDao {
 		
 	}
 	
-	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyWorkingProcessesFilter, 
+	public List<WProcessDefLight> getWorkingProcessListByFinder(boolean onlyActiveWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action) 
 	throws WProcessDefException {
 
 		String filter = "";
 		
-		if (onlyWorkingProcessesFilter) {
+		if (onlyActiveWorkingProcessesFilter) {
 			if (!"".equals(filter)) {
 				filter += " AND wpd.active IS TRUE ";
 			} else {
@@ -985,7 +985,7 @@ public class WProcessDefDao {
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
 			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
-			String action) 
+			String action, boolean onlyActiveWorkingProcessesFilter) 
 					throws WProcessDefException {
 		
 		String filter = "";
@@ -997,7 +997,7 @@ public class WProcessDefDao {
 				estrictOpenedDateFilter, initialDeadlineDateFilter,
 				finalDeadlineDateFilter, estrictDeadlineDateFilter,
 				initialDecidedDateFilter, finalDecidedDateFilter,
-				estrictDecidedDateFilter, filter);
+				estrictDecidedDateFilter, onlyActiveWorkingProcessesFilter, filter);
 
 		if (filter != null && !"".equals(filter)){
 			filter = "WHERE " + filter;
@@ -1020,7 +1020,18 @@ public class WProcessDefDao {
 			boolean estrictOpenedDateFilter, Date initialDeadlineDateFilter,
 			Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
 			Date initialDecidedDateFilter, Date finalDecidedDateFilter,
-			boolean estrictDecidedDateFilter, String filter) {
+			boolean estrictDecidedDateFilter, boolean onlyActiveWorkingProcessesFilter, 
+			String filter) {
+		
+		if (onlyActiveWorkingProcessesFilter) {
+			if (!"".equals(filter)) {
+				filter += " AND wpd.active IS TRUE ";
+			} else {
+				filter += " wpd.active IS TRUE ";
+
+			}
+		}
+		
 		if (processIdFilter != null && processIdFilter != 0) {
 			if (!"".equals(filter)) {
 				filter += " AND ";
@@ -1181,6 +1192,7 @@ public class WProcessDefDao {
 		tmpQuery += " FROM w_step_work work ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = work.id_current_step ";
 		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = work.id_work ";
+		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = work.id_process ";
 
 		tmpQuery += filter;
 

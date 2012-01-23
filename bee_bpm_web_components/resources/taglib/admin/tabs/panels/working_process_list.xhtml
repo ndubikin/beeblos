@@ -6,44 +6,42 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
 
 	<h:form id="working_process_form${action}">
 
-
 		<h:panelGrid width="100%" columns="1">
 
        		<rich:contextMenu attached="false" id="working_process_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchProcessWork}" submitMode="server">
-                	<b> Go to live works </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
-               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
+                	<b> Go to live works </b> {idProcess} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
+               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{idProcess}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
-            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchLiveSteps}" submitMode="server">
-                	<b> Go to live steps </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
-              		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentRowId}"/>
+            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchStepWork}" submitMode="server">
+                	<b> Go to live steps </b> {idProcess} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
+              		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{idProcess}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PROCESSED"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
-                	<b> Edit process definition </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
+                	<b> Edit process definition </b> {idProcess} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
                    		<rich:menuItem ajaxSingle="true"
            			oncomplete="javascript:Richfaces.showModalPanel('mpDesactivateWProcessDef');"
            			reRender="mpDesactivateWProcessDef" style="{styleIsActive}">
-                	<b> Desactivate process </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
+                	<b> Desactivate process </b> {idProcess} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
  	           	</rich:menuItem>
              	<rich:menuItem ajaxSingle="false" submitMode="server">
-                	<b> Suspend process </b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentRowId}"/>
+                	<b> Suspend process </b> {idProcess} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
             	</rich:menuItem>
  	   		</rich:contextMenu>
             
@@ -163,7 +161,7 @@
 
 				<rich:componentControl event="onRowClick" for="working_process_search_menu"
 					operation="show">
-               		<f:param value="#{wp.id}" name="currentRowId"/>
+               		<f:param value="#{wp.id}" name="idProcess"/>
                		<f:param value="#{wp.status ? '' : 'display:none;'}" name="styleIsActive"/>
 				</rich:componentControl>
 

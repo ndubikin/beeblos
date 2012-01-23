@@ -6,37 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-
-	<style>
-.center {
-	text-align: center;
-}
-
-.rich-datascr-button {
-	width: 40px;
-	font-size: 95%;
-}
-
-.colCustomTotalF1 {
-	width: 200px;
-	text-align: right;
-}
-
-.colCustomTotalF2 {
-	width: 80px;
-	text-align: right;
-}
-
-.colCustomTotalF3 {
-	width: 30px;
-	text-align: left;
-}
-
-.colCustomPanelGrid {
-	text-align: right;
-}
-</style>
-
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
@@ -47,39 +16,39 @@
 
        		<rich:contextMenu attached="false" id="working_step_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false">
-                	<b> View Step Work </b> {currentRowId} 
+                	<b> View Step Work </b> {idStepWork} 
             	</rich:menuItem>
             	<rich:menuSeparator />         
            		<rich:menuItem ajaxSingle="false">
-                	<b> Process Step </b> {currentRowId} 
+                	<b> Process Step </b> {reference} 
             	</rich:menuItem>
             	<rich:menuSeparator />         
            		<rich:menuItem ajaxSingle="false">
-                	<b> Change deadline </b> {currentRowId} 
+                	<b> Change deadline </b> {reference} 
             	</rich:menuItem>
            		<rich:menuItem ajaxSingle="false">
-                	<b> Reroute step </b> {currentRowId} 
+                	<b> Reroute step </b> {reference} 
             	</rich:menuItem>
            		<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.lockUnlockStep}" 
            			style="{styleIsLocked}" reRender="working_step_form${action}">
-                	<b> Unlock step </b> {currentRowIdStepWork} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{currentRowIdStepWork}"/>
+                	<b> Unlock step </b> {idStepWork} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{idStepWork}"/>
                 	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.stepLocked}" value="{isLocked}"/>
                 	<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepLocker}" value="{lockedBy}"/>
             	</rich:menuItem>
            		<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.lockUnlockStep}" 
            			style="{styleIsUnlocked}" reRender="working_step_form${action}">
-                	<b> Lock step </b> {currentRowIdStepWork} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{currentRowIdStepWork}"/>
+                	<b> Lock step </b> {idStepWork} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{idStepWork}"/>
                 	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.stepLocked}" value="{isLocked}"/>
             	</rich:menuItem>
             		<rich:menuItem ajaxSingle="false">
-                	<b> Reopen step </b> {currentRowId} 
+                	<b> Reopen step </b> {idProcess} 
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWStepDefForm}" submitMode="server">
-                	<b> Edit step definition </b> {currentRowStepId} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStep}" value="{currentRowStepId}"/>
+                	<b> Edit step definition </b> {idStep} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStep}" value="{idStep}"/>
             	</rich:menuItem>
             </rich:contextMenu>
             
@@ -114,7 +83,7 @@
 				reRender="dseUp,dseDown" style="margin-left: 16px;">
 				<f:facet name="header">
 					<h:outputText
-						value="Working Process Step List ( #{workingProcessQueryBean.nStepResults} #{msg.label_results} )" />
+						value="Working Step List ( #{workingProcessQueryBean.nStepResults} #{msg.label_results} )" />
 				</f:facet>
 
 				<rich:column sortBy="#{wps.idProcess}"
@@ -224,11 +193,12 @@
 
 				<rich:componentControl event="onRowClick" for="working_step_search_menu"
 					operation="show">
-               		<f:param value="#{wps.idProcess}" name="currentRowId"/>
-               		<f:param value="#{wps.idStepWork}" name="currentRowIdStepWork"/>
-                	<f:param value="#{wps.idStep}" name="currentRowStepId"/>
+               		<f:param value="#{wps.idProcess}" name="idProcess"/>
+               		<f:param value="#{wps.idStepWork}" name="idStepWork"/>
+                	<f:param value="#{wps.idStep}" name="idStep"/>
                		<f:param value="#{wps.locked}" name="isLocked"/>
                		<f:param value="#{wps.lockedBy}" name="lockedBy"/>
+               		<f:param value="#{wps.reference}" name="reference"/>
                		<f:param value="#{wps.locked ? '' : 'display:none;'}" name="styleIsLocked"/>
                		<f:param value="#{wps.locked ? 'display:none;' : ''}" name="styleIsUnlocked"/>
 				</rich:componentControl>

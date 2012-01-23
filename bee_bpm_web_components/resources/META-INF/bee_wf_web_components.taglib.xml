@@ -56,13 +56,13 @@
  </tag>
  
  <tag>
-  <tag-name>workingProcessWorkQuery</tag-name>
-  <source>/taglib/admin/workingProcessWorkQuery.xhtml</source>
+  <tag-name>workingWorkQuery</tag-name>
+  <source>/taglib/admin/workingWorkQuery.xhtml</source>
  </tag>
  
  <tag>
-  <tag-name>workingProcessStepQuery</tag-name>
-  <source>/taglib/admin/workingProcessStepQuery.xhtml</source>
+  <tag-name>workingStepQuery</tag-name>
+  <source>/taglib/admin/workingStepQuery.xhtml</source>
  </tag>
  
  <tag>
