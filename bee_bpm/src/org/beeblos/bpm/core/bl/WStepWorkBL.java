@@ -423,7 +423,7 @@ public class WStepWorkBL {
 		// 1st check user permissions
 		
 
-		_lockStep(stepToLock, lockUserId);
+		_lockStep(stepToLock, currentUser);
 		
 		return true;
 
@@ -463,15 +463,13 @@ public class WStepWorkBL {
 	private void _unlockStep( WStepWork stepToUnlock, Integer currentUser, boolean isAdmin ) throws WStepWorkException, WStepLockedByAnotherUserException {
 		
 		// if step is not locked then locks it !
-		if ( !stepToUnlock.isLocked() ) {
+		if ( stepToUnlock.isLocked() ) {
 
 			stepToUnlock.setLocked(false);
 			stepToUnlock.setLockedBy(null);
 			stepToUnlock.setLockedSince(null);
 			this.update(stepToUnlock, currentUser);
-			
-			this.update(stepToUnlock, currentUser);
-			
+						
 			if ( isAdmin ) {
 				logger.info("Step: "+stepToUnlock.getId()+" was unlocked by admin:"+currentUser);
 			}

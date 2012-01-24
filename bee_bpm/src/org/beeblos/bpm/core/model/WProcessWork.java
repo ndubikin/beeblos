@@ -2,6 +2,8 @@ package org.beeblos.bpm.core.model;
 
 // Generated Jan 20, 2012 7:08:40 PM by Hibernate Tools 3.4.0.CR1
 
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +35,15 @@ public class WProcessWork implements java.io.Serializable {
 	
 
 	public WProcessWork() {
+		super();
+	}
+	
+	public WProcessWork(boolean createEmtpyObjects ){
+		super();
+		if ( createEmtpyObjects ) {
+			this.status=new WProcessStatus();
+			
+		}	
 	}
 
 	public WProcessWork(WProcessStatus status, int idProcess,
@@ -177,6 +188,125 @@ public class WProcessWork implements java.io.Serializable {
 		this.steps = steps;
 	}
 
+	@Override
+	public String toString() {
+		return "WProcessWork [id=" + id + ", version=" + version + ", status="
+				+ status + ", idProcess=" + idProcess + ", startingTime="
+				+ startingTime + ", startingType=" + startingType
+				+ ", endTime=" + endTime + ", reference=" + reference
+				+ ", comments=" + comments + ", insertUser=" + insertUser
+				+ ", insertDate=" + insertDate + ", modUser=" + modUser
+				+ ", modDate=" + modDate + ", steps=" + steps + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+		result = prime * result + idProcess;
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result
+				+ ((reference == null) ? 0 : reference.hashCode());
+		result = prime * result
+				+ ((startingTime == null) ? 0 : startingTime.hashCode());
+		result = prime * result
+				+ ((startingType == null) ? 0 : startingType.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((steps == null) ? 0 : steps.hashCode());
+		result = prime * result + version;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WProcessWork other = (WProcessWork) obj;
+		if (comments == null) {
+			if (other.comments != null)
+				return false;
+		} else if (!comments.equals(other.comments))
+			return false;
+		if (endTime == null) {
+			if (other.endTime != null)
+				return false;
+		} else if (!endTime.equals(other.endTime))
+			return false;
+		if (idProcess != other.idProcess)
+			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
+			return false;
+		if (reference == null) {
+			if (other.reference != null)
+				return false;
+		} else if (!reference.equals(other.reference))
+			return false;
+		if (startingTime == null) {
+			if (other.startingTime != null)
+				return false;
+		} else if (!startingTime.equals(other.startingTime))
+			return false;
+		if (startingType == null) {
+			if (other.startingType != null)
+				return false;
+		} else if (!startingType.equals(other.startingType))
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
+		if (steps == null) {
+			if (other.steps != null)
+				return false;
+		} else if (!steps.equals(other.steps))
+			return false;
+		if (version != other.version)
+			return false;
+		return true;
+	}
+
+	public boolean empty() {
+
+		if (id!=null && ! id.equals(0)) return false;
+		if (version != 0) return false;
+		if (status!=null && ! status.empty()) return false;		
+		if (idProcess!= 0) return false;
+		if (reference!=null && ! "".equals(reference)) return false;		
+		if (comments!=null && ! "".equals(comments)) return false;
+		
+		return true;
+	}
 	
 	
 }

@@ -93,6 +93,11 @@
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean> 
+   <managed-bean>
+  <managed-bean-name>wStepWorkFormBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WStepWorkFormBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean> 
  <application>
   <view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
   <resource-bundle>

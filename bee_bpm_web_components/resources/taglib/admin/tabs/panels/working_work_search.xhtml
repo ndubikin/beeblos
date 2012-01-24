@@ -6,27 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<style type="text/css">
-
-
-.rich-calendar-input {
-	font-size: 13px !important;
-	width: 80px;
-	padding: 4px;
-}
-
-.viewFilters {
-	text-align: center;
-	padding-left: 0px;
-	font-size: 11px;
-	cursor: pointer;
-	color: #7795AF;
-	font-family: Verdana;
-	text-decoration: underline
-}
-
-</style>
-
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
@@ -70,14 +49,14 @@
 
 				<rich:calendar id="initial_started_date"
 					value="#{workingProcessQueryBean.initialStartedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
 	
 				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
 					style="margin-left: 10px; margin-right: 10px;" />
 				<rich:calendar id="final_started_date"
 					value="#{workingProcessQueryBean.finalStartedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
 					disabled="#{workingProcessQueryBean.estrictStartedDateFilter}" />
 	
@@ -98,14 +77,14 @@
 
 				<rich:calendar id="initial_finished_date"
 					value="#{workingProcessQueryBean.initialFinishedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
 	
 				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
 					style="margin-left: 10px; margin-right: 10px;" />
 				<rich:calendar id="final_finished_date"
 					value="#{workingProcessQueryBean.finalFinishedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
 					disabled="#{workingProcessQueryBean.estrictFinishedDateFilter}" />
 	
