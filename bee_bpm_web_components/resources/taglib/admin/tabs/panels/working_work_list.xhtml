@@ -15,7 +15,7 @@
 		<h:panelGrid width="100%" columns="1">
 
        		<rich:contextMenu attached="false" id="working_work_search_menu" submitMode="ajax">
-            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchStepWork}" submitMode="server">
+            	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchProcessWorkAliveSteps}" submitMode="server">
                 	<b> Go to live steps </b> {workReference} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentProcessId}"/>

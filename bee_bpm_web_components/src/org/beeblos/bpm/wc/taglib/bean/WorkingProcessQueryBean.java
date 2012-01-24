@@ -36,6 +36,7 @@ import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 public class WorkingProcessQueryBean extends CoreManagedBean {
 	
@@ -684,27 +685,10 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return null;
 	}
 
-	// DAVID ESTO HAY QUE SACARLO A UN UTIL ( WProcessDefUtil.java )
+	// NESTOR
 	public String createNewWProcessDef() {
 
-		String ret = "FAIL";
-
-		ValueExpression valueBinding = super
-				.getValueExpression("#{wProcessDefFormBean}");
-
-		if (valueBinding != null) {
-
-			WProcessDefFormBean wpdfb = 
-					(WProcessDefFormBean) valueBinding
-						.getValue(super.getELContext());
-			wpdfb.init();
-			wpdfb.initEmptyWProcessDef();
-			
-			ret = CREATE_NEW_WPROCESSDEF;
-		
-		}
-
-		return ret;
+		return new WProcessDefUtil().createNewWProcessDef();
 	}
 	
 	public String searchProcessWork(){
@@ -759,6 +743,17 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 	}
 
+	// dml 20120124
+	public String searchProcessWorkAliveSteps(){
+		
+		String ret = searchStepWork();
+		
+		idWorkFilter = 0;
+	
+		return ret;
+		
+	}
+	
 	public String searchStepWork(){
 		
 		logger.debug("searchStepWork() - action: " + action);
