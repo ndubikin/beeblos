@@ -20,7 +20,7 @@
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentProcessId}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PENDING"/>
-              		<a4j:actionparam name="det4" assignTo="#{workingProcessQueryBean.referenceFilter}" value="{workReference}"/>
+              		<a4j:actionparam name="det4" assignTo="#{workingProcessQueryBean.idWorkFilter}" value="{idWork}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
               	<rich:menuItem ajaxSingle="false" submitMode="server">
@@ -163,6 +163,7 @@
 				<rich:componentControl event="onRowClick" for="working_work_search_menu"
 					operation="show">
 	                <f:param value="#{wpw.idProcess}" name="currentProcessId"/>
+	                <f:param value="#{wpw.idWork}" name="idWork"/>
 	                <f:param value="#{wpw.workReference}" name="workReference"/>
 				</rich:componentControl>
 

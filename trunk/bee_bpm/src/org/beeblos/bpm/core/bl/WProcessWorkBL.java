@@ -83,13 +83,14 @@ public class WProcessWorkBL {
 	
 	
 	public List<ProcessWorkLight> getWorkingWorkListFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, Date initialStartedDateFilter, Date finalStartedDateFilter, 
+			boolean onlyActiveWorksFilter, boolean onlyActiveWorkingProcessesFilter, 
+			Date initialStartedDateFilter, Date finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action)
 	throws WProcessWorkException {
 		
-		return new WProcessWorkDao().getWorkingWorkListFinder(idProcess, 
-				onlyActiveWorksFilter, initialStartedDateFilter, finalStartedDateFilter, 
+		return new WProcessWorkDao().getWorkingWorkListFinder(idProcess, onlyActiveWorksFilter,
+				onlyActiveWorkingProcessesFilter, initialStartedDateFilter, finalStartedDateFilter, 
 				estrictStartedDateFilter, initialFinishedDateFilter, finalFinishedDateFilter, 
 				estrictFinishedDateFilter, action);
 		

@@ -146,12 +146,12 @@
 					</h:panelGrid>					
 				</rich:column>
 
-				<rich:column sortBy="#{wps.openerUser}"
+				<rich:column sortBy="#{wps.openerUserLogin}"
 					style="width:10%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_opener_user}" />
 					</f:facet>
-					<h:outputText value="#{wps.openerUser}" />
+					<h:outputText value="#{wps.openerUserLogin}" />
 				</rich:column>
 
 				<rich:column sortBy="#{wps.decidedDate}"
@@ -172,12 +172,12 @@
 					</h:panelGrid>
 				</rich:column>
 
-				<rich:column sortBy="#{wps.performer}"
+				<rich:column sortBy="#{wps.performerName}"
 					style="width:10%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_performer}" />
 					</f:facet>
-					<h:outputText value="#{wps.performer}" />
+					<h:outputText value="#{wps.performerName}" />
 				</rich:column>
 
 				<rich:column sortBy="#{wps.deadlineDate}"
