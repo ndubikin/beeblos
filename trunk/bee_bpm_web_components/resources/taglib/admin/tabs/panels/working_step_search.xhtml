@@ -6,25 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<style type="text/css">
-
-.rich-calendar-input {
-	font-size: 13px !important;
-	width: 80px;
-	padding: 4px;
-}
-
-.viewFilters {
-	text-align: center;
-	padding-left: 0px;
-	font-size: 11px;
-	cursor: pointer;
-	color: #7795AF;
-	font-family: Verdana;
-	text-decoration: underline
-}
-</style>
-
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
@@ -121,18 +102,18 @@
 
 				<rich:calendar id="initial_arriving_date"
 					value="#{workingProcessQueryBean.initialArrivingDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
 	
 				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
 					style="margin-left: 10px; margin-right: 10px;" />
 				<rich:calendar id="final_arriving_date"
 					value="#{workingProcessQueryBean.finalArrivingDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
 					disabled="#{workingProcessQueryBean.estrictArrivingDateFilter}" />
 	
-				<h:outputText value="#{msg.label_only_from} :"
+				<h:outputText value="#{msg.label_only_from}: "
 					styleClass="firstLeftText" style="margin-left: 10px;" />
 				<h:selectBooleanCheckbox id="estrict_arriving_date_filter"
 					value="#{workingProcessQueryBean.estrictArrivingDateFilter}">
@@ -149,14 +130,14 @@
 
 				<rich:calendar id="initial_opened_date"
 					value="#{workingProcessQueryBean.initialOpenedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
 	
 				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
 					style="margin-left: 10px; margin-right: 10px;" />
 				<rich:calendar id="final_opened_date"
 					value="#{workingProcessQueryBean.finalOpenedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
 					disabled="#{workingProcessQueryBean.estrictOpenedDateFilter}" />
 	
@@ -177,14 +158,14 @@
 
 				<rich:calendar id="initial_deadline_date"
 					value="#{workingProcessQueryBean.initialDeadlineDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
 	
 				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
 					style="margin-left: 10px; margin-right: 10px;" />
 				<rich:calendar id="final_deadline_time"
 					value="#{workingProcessQueryBean.finalDeadlineDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
 					disabled="#{workingProcessQueryBean.estrictDeadlineDateFilter}" />
 	
@@ -205,14 +186,14 @@
 
 				<rich:calendar id="initial_decided_date"
 					value="#{workingProcessQueryBean.initialDecidedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}" />
 	
 				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
 					style="margin-left: 10px; margin-right: 10px;" />
 				<rich:calendar id="final_decided_date"
 					value="#{workingProcessQueryBean.finalDecidedDateFilter}"
-					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
 					disabled="#{workingProcessQueryBean.estrictDecidedDateFilter}" />
 	

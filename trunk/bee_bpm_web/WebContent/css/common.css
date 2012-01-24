@@ -507,3 +507,31 @@ table.doctable td {
 	width: 480px;
 	margin: 0px;
 }
+
+/*
+*
+* CALENDAR INPUT COMMON STYLE
+*
+*/
+
+.rich-calendar-input {
+	font-size: 13px !important;
+	width: 80px;
+	padding: 4px;
+}
+
+/*
+*
+* FILTER COMMON STYLE
+*
+*/
+
+.viewFilters {
+	text-align: center;
+	padding-left: 0px;
+	font-size: 11px;
+	cursor: pointer;
+	color: #7795AF;
+	font-family: Verdana;
+	text-decoration: underline
+}

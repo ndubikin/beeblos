@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form id="w_view_step_work_form">
+
+		<h:panelGrid width="100%" columns="2"
+			style=" width : 450px; margin-left: 16px;"
+			columnClasses="colStyle140px, colStyle280px">
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_process}: "
+				style="font-weight:bold;" />
+			<h:outputText id="step_work_name"
+				value="#{wStepWorkFormBean.currentWStepWork.process.name}"
+				style="font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_version}: "
+				style="font-weight:bold;" />
+			<h:outputText id="process_work_version"
+				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.version}"
+				style="font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_reference}: "
+				style="font-weight:bold;" />
+			<h:outputText id="process_work_reference"
+				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.reference}"
+				style="font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_comments}: "
+				style="font-weight:bold;" />
+			<h:outputText id="process_work_comments"
+				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.comments}"
+				style="font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_arrived}: "
+				style="font-weight:bold;" />
+			<h:outputText
+				value="#{wStepWorkFormBean.currentWStepWork.arrivingDate}"
+				style="font-size:13px;	padding: 4px;">
+				<f:convertDateTime pattern="#{msg.label_date_time_format}"
+					timeZone="#{wStepWorkFormBean.timeZone}" />
+			</h:outputText>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_from}: " style="font-weight:bold;" />
+			<h:panelGroup>
+				<h:outputText id="previous_step"
+					value="#{wStepWorkFormBean.currentWStepWork.previousStep.name}"
+					style="font-size:13px;	padding: 4px;" />
+				<h:outputText id="insert_user"
+					value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser}"
+					style="font-size:13px;	padding: 4px;" />
+			</h:panelGroup>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_opened_date}: "
+				style="font-weight:bold;" />
+			<h:panelGroup>
+				<h:outputText
+					value="#{wStepWorkFormBean.currentWStepWork.openedDate}"
+					style="font-size:13px;	padding: 4px;">
+					<f:convertDateTime pattern="#{msg.label_date_time_format}"
+						timeZone="#{wStepWorkFormBean.timeZone}" />
+				</h:outputText>
+				<h:outputText value=" #{msg.label_by}: " style="font-weight:bold;" />
+				<h:outputText id="opener_user"
+					value="#{wStepWorkFormBean.currentWStepWork.openerUser}"
+					style="font-size:13px;	padding: 4px;" />
+			</h:panelGroup>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_decided_date}: "
+				style="font-weight:bold;" />
+			<h:panelGroup>
+				<h:outputText
+					value="#{wStepWorkFormBean.currentWStepWork.decidedDate}"
+					style="font-size:13px;	padding: 4px;">
+					<f:convertDateTime pattern="#{msg.label_date_time_format}"
+						timeZone="#{wStepWorkFormBean.timeZone}" />
+				</h:outputText>
+				<h:outputText value=" #{msg.label_by}: " style="font-weight:bold;" />
+				<h:outputText id="performer_user"
+					value="#{wStepWorkFormBean.currentWStepWork.performer} "
+					style="font-size:13px;	padding: 4px;" />
+			</h:panelGroup>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_locked_by}: "
+				style="font-weight:bold;" />
+			<h:panelGroup>
+				<h:outputText id="locker"
+					value="#{wStepWorkFormBean.currentWStepWork.lockedBy.name}"
+					style="font-size:13px;	padding: 4px;" />
+				<h:outputText value=" #{msg.label_since}: " style="font-weight:bold;" />
+				<h:outputText
+					value="#{wStepWorkFormBean.currentWStepWork.lockedSince}"
+					style="font-size:13px;	padding: 4px;">
+					<f:convertDateTime pattern="#{msg.label_date_time_format}"
+						timeZone="#{wStepWorkFormBean.timeZone}" />
+				</h:outputText>
+			</h:panelGroup>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<a4j:commandButton id="close_button_sr" value="#{msg.label_close}"
+				action="#{wStepWorkFormBean.cancel}"
+				onclick="javascript:Richfaces.hideModalPanel('mpViewStepWork')"
+				style="width:80px; height:24px;" />
+			<rich:spacer height="40" />
+
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>
+

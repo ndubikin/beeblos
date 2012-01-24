@@ -665,7 +665,8 @@ public class WProcessDefDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" wpd.production_date = '"+initialProductionDateFilterSQL+"' ";
+				filter+=" wpd.production_date >= '"+initialProductionDateFilterSQL+" 00:00:00' ";
+				filter+=" AND wpd.production_date <= '"+initialProductionDateFilterSQL+" 23:59:59' ";
 			} else {
 				if (finalProductionDateFilter!=null){
 					java.sql.Date finalProductionDateFilterSQL=new java.sql.Date(finalProductionDateFilter.getTime());

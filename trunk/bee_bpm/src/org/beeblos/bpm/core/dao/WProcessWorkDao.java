@@ -247,7 +247,8 @@ public class WProcessWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" pw.starting_time = '"+initialStartedDateFilterSQL+"' ";
+				filter+=" pw.starting_time >= '"+initialStartedDateFilterSQL+" 00:00:00' ";
+				filter+=" AND pw.starting_time <= '"+initialStartedDateFilterSQL+" 23:59:59' ";
 			} else {
 				if (finalStartedDateFilter!=null){
 					java.sql.Date finalStartedDateFilterSQL=new java.sql.Date(finalStartedDateFilter.getTime());
@@ -272,7 +273,8 @@ public class WProcessWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" pw.end_time = '"+initialFinishedDateFilterSQL+"' ";
+				filter+=" pw.end_time >= '"+initialFinishedDateFilterSQL+" 00:00:00' ";
+				filter+=" AND pw.end_time <= '"+initialFinishedDateFilterSQL+" 23:59:59' ";
 			} else {
 				if (finalFinishedDateFilter!=null){
 					java.sql.Date finalFinishedDateFilterSQL=new java.sql.Date(finalFinishedDateFilter.getTime());

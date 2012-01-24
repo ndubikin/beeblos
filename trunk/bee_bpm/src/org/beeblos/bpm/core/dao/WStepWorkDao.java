@@ -1136,7 +1136,8 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" sw.arriving_date = '"+initialArrivingDateFilterSQL+"' ";
+				filter+=" sw.arriving_date >= '"+initialArrivingDateFilterSQL+" 00:00:00' ";
+				filter+=" AND sw.arriving_date <= '"+initialArrivingDateFilterSQL+" 23:59:59' ";
 			} else {
 				if (finalArrivingDateFilter!=null){
 					java.sql.Date finalArrivingDateFilterSQL=new java.sql.Date(finalArrivingDateFilter.getTime());
@@ -1161,7 +1162,8 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" sw.opened_date = '"+initialOpenedDateFilterSQL+"' ";
+				filter+=" sw.opened_date >= '"+initialOpenedDateFilterSQL+" 00:00:00' ";
+				filter+=" AND sw.opened_date <= '"+initialOpenedDateFilterSQL+" 23:59:59' ";
 			} else {
 				if (finalOpenedDateFilter!=null){
 					java.sql.Date finalOpenedDateFilterSQL=new java.sql.Date(finalOpenedDateFilter.getTime());
@@ -1186,7 +1188,8 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" sw.deadline_date = '"+initialDeadlineDateFilterSQL+"' ";
+				filter+=" sw.deadline_date >= '"+initialDeadlineDateFilterSQL+" 00:00:00' ";
+				filter+=" AND sw.deadline_date <= '"+initialDeadlineDateFilterSQL+" 23:59:59' ";
 			} else {
 				if (finalDeadlineDateFilter!=null){
 					java.sql.Date finalDeadlineDateFilterSQL=new java.sql.Date(finalDeadlineDateFilter.getTime());
@@ -1211,7 +1214,8 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" sw.decided_date = '"+initialDecidedDateFilterSQL+"' ";
+				filter+=" sw.decided_date >= '"+initialDecidedDateFilterSQL+" 00:00:00' ";
+				filter+=" AND sw.decided_date <= '"+initialDecidedDateFilterSQL+" 23:59:59' ";
 			} else {
 				if (finalDecidedDateFilter!=null){
 					java.sql.Date finalDecidedDateFilterSQL=new java.sql.Date(finalDecidedDateFilter.getTime());
@@ -1249,7 +1253,7 @@ public class WStepWorkDao {
 		tmpQuery += " pw.reference, ";
 		tmpQuery += " sw.locked, ";
 		tmpQuery += " sw.locked_by, ";
-		tmpQuery += " sw.id_work, ";
+		tmpQuery += " sw.id, ";
 		tmpQuery += " opener.login, ";
 		tmpQuery += " opener.name, ";
 		tmpQuery += " performer.login, ";

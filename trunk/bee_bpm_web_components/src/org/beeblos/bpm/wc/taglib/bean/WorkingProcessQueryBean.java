@@ -1,6 +1,5 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
-import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
@@ -28,6 +27,7 @@ import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -37,6 +37,7 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
+import org.beeblos.bpm.wc.taglib.util.WStepWorkUtil;
 
 public class WorkingProcessQueryBean extends CoreManagedBean {
 	
@@ -110,6 +111,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private Integer idStepWork;
 	private boolean stepLocked;
 	private Integer stepLocker;
+	private WStepWork currentWStepWork;
 
 	public WorkingProcessQueryBean() {
 		super();
@@ -529,6 +531,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.stepLocker = stepLocker;
 	}
 
+	public WStepWork getCurrentWStepWork() {
+		return currentWStepWork;
+	}
+
+	public void setCurrentWStepWork(WStepWork currentWStepWork) {
+		this.currentWStepWork = currentWStepWork;
+	}
+
 	public Integer getIdStepWork() {
 		return idStepWork;
 	}
@@ -685,7 +695,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return null;
 	}
 
-	// NESTOR
+	// dml 20120124
 	public String createNewWProcessDef() {
 
 		return new WProcessDefUtil().createNewWProcessDef();
@@ -953,4 +963,11 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 	}
 	
+	// dml 20120124
+	public void loadWStepWorkForm() {
+
+		new WStepWorkUtil().createNewWStepWorkFormBean(idStepWork);
+
+	}
+
 }
