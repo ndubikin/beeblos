@@ -3,9 +3,9 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
+import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGSTEPS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGWORKS_QUERY;
-import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,9 +28,9 @@ import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
-import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
+import org.beeblos.bpm.core.model.noper.StepWorkLight;
+import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -57,6 +57,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private boolean onlyActiveWorkingProcessesFilter;
 	private boolean onlyActiveWorksFilter;
 	private String referenceFilter;
+	
+	// dml 20120124
+	private Integer idWorkFilter;
 	
 	private Integer processIdFilter;
 	private Integer stepIdFilter;
@@ -128,6 +131,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				
 		this.onlyActiveWorkingProcessesFilter = true;
 		this.onlyActiveWorksFilter = true;
+		
+		this.referenceFilter = "";
+		this.idWorkFilter = 0;
 
 		this.processIdFilter = null;
 		this.stepIdFilter = null;
@@ -139,6 +145,30 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.initialProductionDateFilter = null;
 		this.finalProductionDateFilter = null;
 		this.estrictProductionDateFilter = false;
+		
+		this.initialStartedDateFilter = null;
+		this.finalStartedDateFilter = null;
+		this.estrictStartedDateFilter = false;
+		
+		this.initialFinishedDateFilter = null;
+		this.finalFinishedDateFilter = null;
+		this.estrictFinishedDateFilter = false;
+		
+		this.initialArrivingDateFilter = null;
+		this.finalArrivingDateFilter = null;
+		this.estrictArrivingDateFilter = false;
+		
+		this.initialOpenedDateFilter = null;
+		this.finalOpenedDateFilter = null;
+		this.estrictOpenedDateFilter = false;
+		
+		this.initialDeadlineDateFilter = null;
+		this.finalDeadlineDateFilter = null;
+		this.estrictDeadlineDateFilter = false;
+		
+		this.initialDecidedDateFilter = null;
+		this.finalDecidedDateFilter = null;
+		this.estrictDecidedDateFilter = false;
 		
 		this.productionUserFilter = 0;
 
@@ -243,6 +273,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	public void setReferenceFilter(String referenceFilter) {
 		this.referenceFilter = referenceFilter;
+	}
+
+	public Integer getIdWorkFilter() {
+		return idWorkFilter;
+	}
+
+	public void setIdWorkFilter(Integer idWorkFilter) {
+		this.idWorkFilter = idWorkFilter;
 	}
 
 	public Integer getProcessIdFilter() {
@@ -531,7 +569,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
 					.getWorkingProcessListFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
-							estrictProductionDateFilter, processIdFilter, action);
+							estrictProductionDateFilter, productionUserFilter, action);
 
 			nResults = wProcessDefLightList.size();
 
@@ -676,7 +714,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 
 			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessWorkBL()
-					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, 
+					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, onlyActiveWorkingProcessesFilter, 
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
@@ -704,7 +742,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 			
 			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessWorkBL()
-					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, 
+					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, onlyActiveWorkingProcessesFilter,
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
@@ -729,7 +767,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 			stepWorkLightList = (ArrayList<StepWorkLight>) new WStepWorkBL()
 					.getWorkingStepListFinder(processIdFilter, stepIdFilter, 
-							stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
+							stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 							finalArrivingDateFilter, estrictArrivingDateFilter, 
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 							initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
@@ -758,7 +796,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 			stepWorkLightList = (ArrayList<StepWorkLight>) new WStepWorkBL()
 					.getWorkingStepListFinder(processIdFilter, stepIdFilter, 
-							stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
+							stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 							finalArrivingDateFilter, estrictArrivingDateFilter, 
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 							initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
@@ -917,9 +955,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			ex3.printStackTrace();
 			
 		}
-		
-		
-		
 		
 	}
 	

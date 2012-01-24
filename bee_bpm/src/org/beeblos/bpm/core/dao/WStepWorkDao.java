@@ -1032,7 +1032,7 @@ public class WStepWorkDao {
 
 
 	public List<StepWorkLight> getWorkingStepListFinder(Integer processIdFilter, 
-			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
+			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
@@ -1043,7 +1043,7 @@ public class WStepWorkDao {
 		String filter = "";
 
 		filter = buildWorkingStepFilter(processIdFilter, stepIdFilter,
-				stepTypeFilter, referenceFilter, initialArrivingDateFilter,
+				stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter,
 				finalArrivingDateFilter, estrictArrivingDateFilter,
 				initialOpenedDateFilter, finalOpenedDateFilter,
 				estrictOpenedDateFilter, initialDeadlineDateFilter,
@@ -1066,7 +1066,7 @@ public class WStepWorkDao {
 
 	private String buildWorkingStepFilter(Integer processIdFilter,
 			Integer stepIdFilter, String stepTypeFilter,
-			String referenceFilter, Date initialArrivingDateFilter,
+			String referenceFilter, Integer idWorkFilter, Date initialArrivingDateFilter,
 			Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter,
 			boolean estrictOpenedDateFilter, Date initialDeadlineDateFilter,
@@ -1088,14 +1088,14 @@ public class WStepWorkDao {
 			if (!"".equals(filter)) {
 				filter += " AND ";
 			}
-			filter += " work.id_process = " + processIdFilter;
+			filter += " sw.id_process = " + processIdFilter;
 		}
 		
 		if (stepIdFilter != null && stepIdFilter != 0) {
 			if (!"".equals(filter)) {
 				filter += " AND ";
 			}
-			filter += " work.id_current_step = " + stepIdFilter;
+			filter += " sw.id_current_step = " + stepIdFilter;
 		}
 		
 		if (!"".equals(stepTypeFilter) || !"ALL".equals(stepTypeFilter)) {
@@ -1103,12 +1103,12 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
-				filter += " pw.end_time IS NOT NULL ";				
+				filter += " sw.decided_date IS NULL ";				
 			} else if ("PROCESSED".equals(stepTypeFilter)){
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
-				filter += " pw.end_time IS NULL ";				
+				filter += " sw.decided_date IS NOT NULL ";				
 			}
 		}
 		
@@ -1121,6 +1121,13 @@ public class WStepWorkDao {
 			}
 		}
 		
+		if (idWorkFilter != null && idWorkFilter != 0) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			filter += " sw.id_work = " + idWorkFilter;
+		}
+		
 		if (initialArrivingDateFilter!=null){
 			
 			java.sql.Date initialArrivingDateFilterSQL=new java.sql.Date(initialArrivingDateFilter.getTime());
@@ -1129,19 +1136,19 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" work.arriving_date = '"+initialArrivingDateFilterSQL+"' ";
+				filter+=" sw.arriving_date = '"+initialArrivingDateFilterSQL+"' ";
 			} else {
 				if (finalArrivingDateFilter!=null){
 					java.sql.Date finalArrivingDateFilterSQL=new java.sql.Date(finalArrivingDateFilter.getTime());
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" (work.arriving_date >= '"+initialArrivingDateFilterSQL+"' AND work.arriving_date <= '"+finalArrivingDateFilterSQL+"') ";
+					filter+=" (sw.arriving_date >= '"+initialArrivingDateFilterSQL+"' AND sw.arriving_date <= '"+finalArrivingDateFilterSQL+"') ";
 				} else {
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" work.arriving_date >= '"+initialArrivingDateFilterSQL+"' ";
+					filter+=" sw.arriving_date >= '"+initialArrivingDateFilterSQL+"' ";
 				}
 			}
 		}
@@ -1154,19 +1161,19 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" work.opened_date = '"+initialOpenedDateFilterSQL+"' ";
+				filter+=" sw.opened_date = '"+initialOpenedDateFilterSQL+"' ";
 			} else {
 				if (finalOpenedDateFilter!=null){
 					java.sql.Date finalOpenedDateFilterSQL=new java.sql.Date(finalOpenedDateFilter.getTime());
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" (work.opened_date >= '"+initialOpenedDateFilterSQL+"' AND work.opened_date <= '"+finalOpenedDateFilterSQL+"') ";
+					filter+=" (sw.opened_date >= '"+initialOpenedDateFilterSQL+"' AND sw.opened_date <= '"+finalOpenedDateFilterSQL+"') ";
 				} else {
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" work.opened_date >= '"+initialOpenedDateFilterSQL+"' ";
+					filter+=" sw.opened_date >= '"+initialOpenedDateFilterSQL+"' ";
 				}
 			}
 		}
@@ -1179,19 +1186,19 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" work.deadline_date = '"+initialDeadlineDateFilterSQL+"' ";
+				filter+=" sw.deadline_date = '"+initialDeadlineDateFilterSQL+"' ";
 			} else {
 				if (finalDeadlineDateFilter!=null){
 					java.sql.Date finalDeadlineDateFilterSQL=new java.sql.Date(finalDeadlineDateFilter.getTime());
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" (work.deadline_date >= '"+initialDeadlineDateFilterSQL+"' AND work.deadline_date <= '"+finalDeadlineDateFilterSQL+"') ";
+					filter+=" (sw.deadline_date >= '"+initialDeadlineDateFilterSQL+"' AND sw.deadline_date <= '"+finalDeadlineDateFilterSQL+"') ";
 				} else {
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" work.deadline_date >= '"+initialDeadlineDateFilterSQL+"' ";
+					filter+=" sw.deadline_date >= '"+initialDeadlineDateFilterSQL+"' ";
 				}
 			}
 		}
@@ -1204,52 +1211,61 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" work.decided_date = '"+initialDecidedDateFilterSQL+"' ";
+				filter+=" sw.decided_date = '"+initialDecidedDateFilterSQL+"' ";
 			} else {
 				if (finalDecidedDateFilter!=null){
 					java.sql.Date finalDecidedDateFilterSQL=new java.sql.Date(finalDecidedDateFilter.getTime());
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" (work.decided_date >= '"+initialDecidedDateFilterSQL+"' AND work.decided_date <= '"+finalDecidedDateFilterSQL+"') ";
+					filter+=" (sw.decided_date >= '"+initialDecidedDateFilterSQL+"' AND sw.decided_date <= '"+finalDecidedDateFilterSQL+"') ";
 				} else {
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" work.decided_date >= '"+initialDecidedDateFilterSQL+"' ";
+					filter+=" sw.decided_date >= '"+initialDecidedDateFilterSQL+"' ";
 				}
 			}
 		}
+
+		System.out.println("QUERY FILTER:" + filter);
+
 		return filter;
 	}
 
 	private String buildWorkingStepQuery(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
-		tmpQuery += " work.id_process, ";
-		tmpQuery += " work.id_current_step, ";
+		tmpQuery += " sw.id_process, ";
+		tmpQuery += " sw.id_current_step, ";
 		tmpQuery += " step.name, ";
-		tmpQuery += " work.arriving_date, ";
-		tmpQuery += " work.opened_date, ";
-		tmpQuery += " work.opener_user, ";
-		tmpQuery += " work.decided_date, ";
-		tmpQuery += " work.performer_user_id, ";
-		tmpQuery += " work.deadline_date, ";
-		tmpQuery += " work.deadline_time, ";
+		tmpQuery += " sw.arriving_date, ";
+		tmpQuery += " sw.opened_date, ";
+		tmpQuery += " sw.opener_user, ";
+		tmpQuery += " sw.decided_date, ";
+		tmpQuery += " sw.performer_user_id, ";
+		tmpQuery += " sw.deadline_date, ";
+		tmpQuery += " sw.deadline_time, ";
 		tmpQuery += " pw.reference, ";
-		tmpQuery += " work.locked, ";
-		tmpQuery += " work.locked_by, ";
-		tmpQuery += " work.id ";
+		tmpQuery += " sw.locked, ";
+		tmpQuery += " sw.locked_by, ";
+		tmpQuery += " sw.id_work, ";
+		tmpQuery += " opener.login, ";
+		tmpQuery += " opener.name, ";
+		tmpQuery += " performer.login, ";
+		tmpQuery += " performer.name ";
 
-		tmpQuery += " FROM w_step_work work ";
-		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = work.id_current_step ";
-		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = work.id_work ";
-		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = work.id_process ";
+		tmpQuery += " FROM w_step_work sw ";
+		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
+		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = sw.id_work ";
+		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = sw.id_process ";
+		tmpQuery += " LEFT OUTER JOIN w_user_def opener ON opener.id = sw.opener_user "; 
+		tmpQuery += " LEFT OUTER JOIN w_user_def performer ON performer.id = sw.performer_user_id "; 
 
 		tmpQuery += filter;
 
 		if (action == null || action.equals("")) {
-			tmpQuery += " ORDER by work.decided_date DESC; ";
+			tmpQuery += " ORDER by sw.decided_date DESC; ";
 		} 
 
 		logger.debug("------>> getWorkingProcessStepListByFinder -> query:" + tmpQuery
@@ -1279,6 +1295,12 @@ public class WStepWorkDao {
 		boolean locked;
 		Integer lockedBy;
 		Integer idStepWork;
+		
+		// dml 20120124
+		String openerUserLogin;
+		String openerUserName;
+		String performerLogin;
+		String performerName;
 		
 		
 		Session session = null;
@@ -1326,11 +1348,16 @@ public class WStepWorkDao {
 							cols[12].toString()) : null);
 					idStepWork = (cols[13] != null ? new Integer(
 							cols[13].toString()) : null);
+					openerUserLogin = (cols[14] != null ? cols[14].toString() : "");
+					openerUserName = (cols[15] != null ? cols[15].toString() : "");
+					performerLogin = (cols[16] != null ? cols[16].toString() : "");
+					performerName = (cols[17] != null ? cols[17].toString() : "");
 					
 					
 					returnList.add(new StepWorkLight(idProcess, idStep, stepName, 
 							reference, arrivingDate, openedDate, openerUser, decidedDate, 
-							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork));
+							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork, 
+							openerUserLogin, openerUserName, performerLogin, performerName));
 				}
 
 			} else {

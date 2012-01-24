@@ -690,23 +690,25 @@ public class WProcessDefDao {
 
 			}
 		}
+
+		System.out.println("QUERY FILTER:" + filter);
+
 		return filter;
 	}
 
 	private String buildWorkingProcessQuery(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
-		tmpQuery += " DISTINCT(wpd.id), ";
+		tmpQuery += " wpd.id, ";
 		tmpQuery += " wpd.name, ";
 		tmpQuery += " wpd.comments, ";
 		tmpQuery += " wpd.production_date, ";
 		tmpQuery += " wpd.production_user, ";
-		tmpQuery += " (SELECT COUNT(id) FROM w_step_work work2 WHERE work2.decided_date IS NULL AND work2.id_process = wpd.id) AS liveWorks, ";
-		tmpQuery += " (SELECT COUNT(DISTINCT id_work) FROM w_step_work work3 WHERE work3.decided_date IS NULL AND work3.id_process = wpd.id) liveSteps, ";
+		tmpQuery += " (SELECT COUNT(id) FROM w_process_work pw WHERE pw.end_time IS NULL AND pw.id_process = wpd.id) AS liveWorks, ";
+		tmpQuery += " (SELECT COUNT(id) FROM w_step_work sw WHERE sw.decided_date IS NULL AND sw.id_process = wpd.id) AS liveSteps, ";
 		tmpQuery += " wpd.active ";
 
 		tmpQuery += " FROM w_process_def wpd ";
-		tmpQuery += " LEFT OUTER JOIN w_step_work work ON work.id_process = wpd.id ";
 
 		tmpQuery += filter;
 
@@ -766,10 +768,10 @@ public class WProcessDefDao {
 					productionDate = (cols[3] != null ? (Date) cols[3] : null);
 					productionUser = (cols[4] != null ? new Integer(
 							cols[4].toString()) : null);
-					liveWorks = (cols[6] != null ? new Integer(
-							cols[6].toString()) : null);
-					liveSteps= (cols[5] != null ? new Integer(
+					liveWorks = (cols[5] != null ? new Integer(
 							cols[5].toString()) : null);
+					liveSteps= (cols[6] != null ? new Integer(
+							cols[6].toString()) : null);
 					status = (cols[7] != null ? (Boolean) cols[7] : false);
 
 					returnList.add(new WProcessDefLight(id, name, comments, productionDate, 

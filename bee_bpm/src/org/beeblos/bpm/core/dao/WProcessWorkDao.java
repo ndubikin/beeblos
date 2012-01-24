@@ -182,14 +182,15 @@ public class WProcessWorkDao {
 	}
 	
 	public List<ProcessWorkLight> getWorkingWorkListFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, Date initialStartedDateFilter, Date finalStartedDateFilter, 
+			boolean onlyActiveWorksFilter, boolean onlyActiveWorkingProcessesFilter, 
+			Date initialStartedDateFilter, Date finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action) throws WProcessWorkException {
 
 		String filter = "";
 
 		filter = buildWorkingWorkFilter(idProcess, onlyActiveWorksFilter,
-				initialStartedDateFilter, finalStartedDateFilter,
+				onlyActiveWorkingProcessesFilter, initialStartedDateFilter, finalStartedDateFilter,
 				estrictStartedDateFilter, initialFinishedDateFilter,
 				finalFinishedDateFilter, estrictFinishedDateFilter, filter);
 
@@ -207,10 +208,12 @@ public class WProcessWorkDao {
 	}
 
 	private String buildWorkingWorkFilter(Integer idProcess,
-			boolean onlyActiveWorksFilter, Date initialStartedDateFilter,
+			boolean onlyActiveWorksFilter, boolean onlyActiveWorkingProcessesFilter, 
+			Date initialStartedDateFilter,
 			Date finalStartedDateFilter, boolean estrictStartedDateFilter,
 			Date initialFinishedDateFilter, Date finalFinishedDateFilter,
 			boolean estrictFinishedDateFilter, String filter) {
+		
 		if (idProcess != null && idProcess != 0) {
 			if (!"".equals(filter)) {
 				filter += " AND ";
@@ -227,6 +230,15 @@ public class WProcessWorkDao {
 			}
 		}
 		
+		if (onlyActiveWorkingProcessesFilter) {
+			if (!"".equals(filter)) {
+				filter += " AND wpd.active IS TRUE ";
+			} else {
+				filter += " wpd.active IS TRUE ";
+
+			}
+		}
+		
 		if (initialStartedDateFilter!=null){
 			
 			java.sql.Date initialStartedDateFilterSQL=new java.sql.Date(initialStartedDateFilter.getTime());
@@ -235,19 +247,19 @@ public class WProcessWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" arriving_date = '"+initialStartedDateFilterSQL+"' ";
+				filter+=" pw.starting_time = '"+initialStartedDateFilterSQL+"' ";
 			} else {
 				if (finalStartedDateFilter!=null){
 					java.sql.Date finalStartedDateFilterSQL=new java.sql.Date(finalStartedDateFilter.getTime());
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" (arriving_date >= '"+initialStartedDateFilterSQL+"' AND arriving_date <= '"+finalStartedDateFilterSQL+"') ";
+					filter+=" (pw.starting_time >= '"+initialStartedDateFilterSQL+"' AND pw.starting_time <= '"+finalStartedDateFilterSQL+"') ";
 				} else {
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" arriving_date >= '"+initialStartedDateFilterSQL+"' ";
+					filter+=" pw.starting_time >= '"+initialStartedDateFilterSQL+"' ";
 				}
 			}
 		}
@@ -260,22 +272,25 @@ public class WProcessWorkDao {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
-				filter+=" finished_date = '"+initialFinishedDateFilterSQL+"' ";
+				filter+=" pw.end_time = '"+initialFinishedDateFilterSQL+"' ";
 			} else {
 				if (finalFinishedDateFilter!=null){
 					java.sql.Date finalFinishedDateFilterSQL=new java.sql.Date(finalFinishedDateFilter.getTime());
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" (finished_date >= '"+initialFinishedDateFilterSQL+"' AND finished_date <= '"+finalFinishedDateFilterSQL+"') ";
+					filter+=" (pw.end_time >= '"+initialFinishedDateFilterSQL+"' AND pw.end_time <= '"+finalFinishedDateFilterSQL+"') ";
 				} else {
 					if (!"".equals(filter)) {
 						filter+=" AND ";
 					}
-					filter+=" finished_date >= '"+initialFinishedDateFilterSQL+"' ";
+					filter+=" pw.end_time >= '"+initialFinishedDateFilterSQL+"' ";
 				}
 			}
 		}
+
+		System.out.println("QUERY FILTER:" + filter);
+
 		return filter;
 	}
 
@@ -283,18 +298,19 @@ public class WProcessWorkDao {
 
 		
 		String tmpQuery = "SELECT ";
-		tmpQuery += " pw.reference, ";
-		tmpQuery += " wpd.id, ";
+		tmpQuery += " pw.id_process, ";
 		tmpQuery += " wpd.name, ";
-		tmpQuery += " (SELECT COUNT(id_work) FROM w_step_work work WHERE work.decided_date IS NULL AND work.id_work = pw.id ) AS liveSteps, ";
+		tmpQuery += " pw.reference, ";
+		tmpQuery += " pw.comments, ";
+		tmpQuery += " (SELECT COUNT(id) FROM w_step_work sw WHERE sw.decided_date IS NULL AND sw.id_process = pw.id_process AND sw.id_work = pw.id ) AS liveSteps, ";
 		tmpQuery += " pw.starting_time, ";
 		tmpQuery += " ps.name, ";
 		tmpQuery += " pw.end_time, ";
-		tmpQuery += " pw.comments ";
+		tmpQuery += " pw.id ";		
 
 		tmpQuery += " FROM w_process_work pw ";
-		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id=pw.id_process ";
-		tmpQuery += " LEFT OUTER JOIN w_process_status ps ON ps.id=pw.id_status ";
+		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
+		tmpQuery += " LEFT OUTER JOIN w_process_status ps ON ps.id = pw.id_status ";
 
 		tmpQuery += filter;
 
@@ -315,8 +331,8 @@ public class WProcessWorkDao {
 
 		Integer idProcess;
 		String processName;
-		String reference;
-		String comments;
+		String workReference;
+		String workComments;
 
 		Integer liveSteps;
 		
@@ -325,6 +341,8 @@ public class WProcessWorkDao {
 		String status;
 		
 		Date finished;
+		
+		Integer idWork;
 		
 		
 		Session session = null;
@@ -352,19 +370,21 @@ public class WProcessWorkDao {
 					Object[] cols = (Object[]) irObj;
 
 
-					reference = (cols[0] != null ? cols[0].toString() : "");
-					idProcess = (cols[1] != null ? new Integer(
-							cols[1].toString()) : null);
-					processName = (cols[2] != null ? cols[2].toString() : "");
-					liveSteps = (cols[3] != null ? new Integer(
-							cols[3].toString()) : null);
-					started = (cols[4] != null ? (Date) cols[4] : null);
-					status = (cols[5] != null ? cols[5].toString() : "");
-					finished = (cols[6] != null ? (Date) cols[6] : null);
-					comments = (cols[7] != null ? cols[7].toString() : "");
+					idProcess = (cols[0] != null ? new Integer(
+							cols[0].toString()) : null);
+					processName = (cols[1] != null ? cols[1].toString() : "");
+					workReference = (cols[2] != null ? cols[2].toString() : "");
+					workComments = (cols[3] != null ? cols[3].toString() : "");
+					liveSteps = (cols[4] != null ? new Integer(
+							cols[4].toString()) : null);
+					started = (cols[5] != null ? (Date) cols[5] : null);
+					status = (cols[6] != null ? cols[6].toString() : "");
+					finished = (cols[7] != null ? (Date) cols[7] : null);
+					idWork = (cols[8] != null ? new Integer(
+							cols[8].toString()) : null);
 
-					returnList.add(new ProcessWorkLight(idProcess, processName, 
-							reference, comments, liveSteps, started, status, finished));
+					returnList.add(new ProcessWorkLight(idProcess, processName, workReference, 
+							workComments, liveSteps, started, status, finished, idWork));
 				}
 
 			} else {

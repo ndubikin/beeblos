@@ -21,6 +21,12 @@ public class StepWorkLight {
 	private Integer lockedBy;
 	private Integer idStepWork;
 	
+	// dml 20120124
+	private String openerUserLogin;
+	private String openerUserName;
+	private String performerLogin;
+	private String performerName;
+	
 	public StepWorkLight() {
 		
 	}
@@ -29,7 +35,8 @@ public class StepWorkLight {
 			String stepName, String reference, Date arrivingDate, Date openedDate,
 			Integer openerUser, Date decidedDate, Integer performer,
 			Date deadlineDate, Date deadlineTime, boolean locked, Integer lockedBy,
-			Integer idStepWork) {
+			Integer idStepWork, String openerUserLogin, String openerUserName,
+			String performerLogin, String performerName) {
 		super();
 		this.idProcess = idProcess;
 		this.idStep = idStep;
@@ -45,6 +52,10 @@ public class StepWorkLight {
 		this.locked = locked;
 		this.lockedBy = lockedBy;
 		this.idStepWork = idStepWork;
+		this.openerUserLogin = openerUserLogin;
+		this.openerUserName = openerUserName;
+		this.performerLogin = performerLogin;
+		this.performerName = performerName;
 	}
 
 	public Integer getIdProcess() {
@@ -167,6 +178,38 @@ public class StepWorkLight {
 		this.idStepWork = idStepWork;
 	}
 
+	public String getOpenerUserLogin() {
+		return openerUserLogin;
+	}
+
+	public void setOpenerUserLogin(String openerUserLogin) {
+		this.openerUserLogin = openerUserLogin;
+	}
+
+	public String getOpenerUserName() {
+		return openerUserName;
+	}
+
+	public void setOpenerUserName(String openerUserName) {
+		this.openerUserName = openerUserName;
+	}
+
+	public String getPerformerLogin() {
+		return performerLogin;
+	}
+
+	public void setPerformerLogin(String performerLogin) {
+		this.performerLogin = performerLogin;
+	}
+
+	public String getPerformerName() {
+		return performerName;
+	}
+
+	public void setPerformerName(String performerName) {
+		this.performerName = performerName;
+	}
+
 	@Override
 	public String toString() {
 		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep
@@ -176,7 +219,9 @@ public class StepWorkLight {
 				+ decidedDate + ", performer=" + performer + ", deadlineTime="
 				+ deadlineTime + ", deadlineDate=" + deadlineDate + ", locked="
 				+ locked + ", lockedBy=" + lockedBy + ", idStepWork="
-				+ idStepWork + "]";
+				+ idStepWork + ", openerUserLogin=" + openerUserLogin
+				+ ", openerUserName=" + openerUserName + ", performerLogin="
+				+ performerLogin + ", performerName=" + performerName + "]";
 	}
 
 	@Override
@@ -204,7 +249,15 @@ public class StepWorkLight {
 		result = prime * result
 				+ ((openerUser == null) ? 0 : openerUser.hashCode());
 		result = prime * result
+				+ ((openerUserLogin == null) ? 0 : openerUserLogin.hashCode());
+		result = prime * result
+				+ ((openerUserName == null) ? 0 : openerUserName.hashCode());
+		result = prime * result
 				+ ((performer == null) ? 0 : performer.hashCode());
+		result = prime * result
+				+ ((performerLogin == null) ? 0 : performerLogin.hashCode());
+		result = prime * result
+				+ ((performerName == null) ? 0 : performerName.hashCode());
 		result = prime * result
 				+ ((reference == null) ? 0 : reference.hashCode());
 		result = prime * result
@@ -273,10 +326,30 @@ public class StepWorkLight {
 				return false;
 		} else if (!openerUser.equals(other.openerUser))
 			return false;
+		if (openerUserLogin == null) {
+			if (other.openerUserLogin != null)
+				return false;
+		} else if (!openerUserLogin.equals(other.openerUserLogin))
+			return false;
+		if (openerUserName == null) {
+			if (other.openerUserName != null)
+				return false;
+		} else if (!openerUserName.equals(other.openerUserName))
+			return false;
 		if (performer == null) {
 			if (other.performer != null)
 				return false;
 		} else if (!performer.equals(other.performer))
+			return false;
+		if (performerLogin == null) {
+			if (other.performerLogin != null)
+				return false;
+		} else if (!performerLogin.equals(other.performerLogin))
+			return false;
+		if (performerName == null) {
+			if (other.performerName != null)
+				return false;
+		} else if (!performerName.equals(other.performerName))
 			return false;
 		if (reference == null) {
 			if (other.reference != null)

@@ -52,11 +52,11 @@
 			</ui:include>
 		</rich:tab>
 
-		<rich:tab name="w_process_def_warning_tag"
-			label="#{msg.label_warnings}"
+		<rich:tab name="w_process_def_alarm_tag"
+			label="#{msg.label_alarms}"
 			rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}">
-			<ui:include src="tabs/wStepDefWarningTag.xhtml">
-				<ui:param name="action" value="WSTEPDEF_WARNINGTAG" />
+			<ui:include src="tabs/wStepDefAlarmTag.xhtml">
+				<ui:param name="action" value="WSTEPDEF_ALARMTAG" />
 			</ui:include>
 		</rich:tab>
 

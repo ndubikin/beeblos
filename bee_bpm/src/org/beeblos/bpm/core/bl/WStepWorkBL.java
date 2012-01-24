@@ -797,7 +797,7 @@ public class WStepWorkBL {
 	}
 	
 	public List<StepWorkLight> getWorkingStepListFinder(Integer processIdFilter, 
-			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, 
+			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
@@ -806,7 +806,7 @@ public class WStepWorkBL {
 	throws WStepWorkException {
 
 		return new WStepWorkDao().getWorkingStepListFinder(processIdFilter, stepIdFilter, 
-				stepTypeFilter, referenceFilter, initialArrivingDateFilter, 
+				stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 				finalArrivingDateFilter, estrictArrivingDateFilter, 
 				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 				initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 

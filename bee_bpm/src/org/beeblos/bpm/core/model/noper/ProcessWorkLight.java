@@ -13,13 +13,16 @@ public class ProcessWorkLight {
 	private String status;
 	private Date finished;
 	
+	// dml 20120124
+	private Integer idWork;
+	
 	public ProcessWorkLight() {
 		
 	}
 	
 	public ProcessWorkLight(Integer idProcess, String processName,
 			String workReference, String workComments, Integer liveSteps, Date started, String status,
-			Date finished) {
+			Date finished, Integer idWork) {
 		super();
 		this.idProcess = idProcess;
 		this.processName = processName;
@@ -29,6 +32,7 @@ public class ProcessWorkLight {
 		this.started = started;
 		this.status = status;
 		this.finished = finished;
+		this.idWork = idWork;
 	}
 
 	public Integer getIdProcess() {
@@ -95,13 +99,21 @@ public class ProcessWorkLight {
 		this.finished = finished;
 	}
 
+	public Integer getIdWork() {
+		return idWork;
+	}
+
+	public void setIdWork(Integer idWork) {
+		this.idWork = idWork;
+	}
+
 	@Override
 	public String toString() {
 		return "ProcessWorkLight [idProcess=" + idProcess + ", processName="
 				+ processName + ", workReference=" + workReference
 				+ ", workComments=" + workComments + ", liveSteps=" + liveSteps
 				+ ", started=" + started + ", status=" + status + ", finished="
-				+ finished + "]";
+				+ finished + ", idWork=" + idWork + "]";
 	}
 
 	@Override
@@ -112,15 +124,17 @@ public class ProcessWorkLight {
 				+ ((finished == null) ? 0 : finished.hashCode());
 		result = prime * result
 				+ ((idProcess == null) ? 0 : idProcess.hashCode());
+		result = prime * result + ((idWork == null) ? 0 : idWork.hashCode());
+		result = prime * result
+				+ ((liveSteps == null) ? 0 : liveSteps.hashCode());
 		result = prime * result
 				+ ((processName == null) ? 0 : processName.hashCode());
 		result = prime * result + ((started == null) ? 0 : started.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
-		result = prime * result + ((liveSteps == null) ? 0 : liveSteps.hashCode());
-		result = prime * result
-				+ ((workReference == null) ? 0 : workReference.hashCode());
 		result = prime * result
 				+ ((workComments == null) ? 0 : workComments.hashCode());
+		result = prime * result
+				+ ((workReference == null) ? 0 : workReference.hashCode());
 		return result;
 	}
 
@@ -143,6 +157,16 @@ public class ProcessWorkLight {
 				return false;
 		} else if (!idProcess.equals(other.idProcess))
 			return false;
+		if (idWork == null) {
+			if (other.idWork != null)
+				return false;
+		} else if (!idWork.equals(other.idWork))
+			return false;
+		if (liveSteps == null) {
+			if (other.liveSteps != null)
+				return false;
+		} else if (!liveSteps.equals(other.liveSteps))
+			return false;
 		if (processName == null) {
 			if (other.processName != null)
 				return false;
@@ -158,20 +182,15 @@ public class ProcessWorkLight {
 				return false;
 		} else if (!status.equals(other.status))
 			return false;
-		if (liveSteps == null) {
-			if (other.liveSteps != null)
+		if (workComments == null) {
+			if (other.workComments != null)
 				return false;
-		} else if (!liveSteps.equals(other.liveSteps))
+		} else if (!workComments.equals(other.workComments))
 			return false;
 		if (workReference == null) {
 			if (other.workReference != null)
 				return false;
 		} else if (!workReference.equals(other.workReference))
-			return false;
-		if (workComments == null) {
-			if (other.workComments != null)
-				return false;
-		} else if (!workComments.equals(other.workComments))
 			return false;
 		return true;
 	}

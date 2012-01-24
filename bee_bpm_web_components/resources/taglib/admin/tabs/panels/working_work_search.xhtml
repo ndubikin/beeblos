@@ -38,12 +38,24 @@
 			columnClasses="colStyle140px, colStyle480px, colStyle100px">
 			
 			<h:outputText value="#{msg.label_process_id}:" styleClass="firstLeftText"/>
-			<h:selectOneMenu id="production_user" 
-				value="#{workingProcessQueryBean.processIdFilter}"
-				style="width:400px; font-size:13px;	padding: 4px; ">
-				<f:selectItems
-					value="#{workingProcessQueryBean.wProcessesDef}" />
-			</h:selectOneMenu>
+			<h:panelGroup>
+				<h:selectOneMenu id="process_id" 
+					value="#{workingProcessQueryBean.processIdFilter}"
+					style="width:300px; font-size:13px;	padding: 4px; ">
+					<f:selectItems
+						value="#{workingProcessQueryBean.wProcessesDef}" />
+					<a4j:support ajaxSingle="true"  actionListener="#{workingProcessQueryBean.changeStep}"
+							event="onchange" reRender="step_id" />
+				</h:selectOneMenu>
+				<h:selectBooleanCheckbox
+					value="#{workingProcessQueryBean.onlyActiveWorkingProcessesFilter}">
+					<a4j:support
+						ajaxSingle="true" event="onclick"
+						reRender="process_id" />
+				</h:selectBooleanCheckbox>
+				<h:outputText value="#{msg.label_show_only_active_processes}"
+					style="margin-left:10px; font-weight:bold;" />			
+			</h:panelGroup>
 			<h:commandButton id="searchButton" value="#{msg.label_search}"
 				action="#{workingProcessQueryBean.searchProcessWork}"
 				style="width:100px;">
