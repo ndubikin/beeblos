@@ -539,22 +539,23 @@
 				<comment>fecha hora a la que se abrio</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="openerUser"
-			type="java.lang.Integer">
-			<column  name="opener_user">
-				<comment>usuario que lo abrio</comment>
-			</column>
-		</property>
 		<property generated="never" lazy="false" name="decidedDate"
 			type="timestamp">
 			<column length="0" name="decided_date" not-null="false">
 				<comment>fecha/hora a la que se resolvio</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="performer"
-			type="java.lang.Integer">
-			<column name="performer_user_id" />
+
+		<property generated="never" lazy="false" name="response"
+			type="string">
+			<column length="100" name="response" not-null="true"/>
 		</property>
+
+		<property generated="never" lazy="false" name="nextStepInstructions"
+			type="string">
+			<column length="100" name="instructions" not-null="true"/>
+		</property>
+
 		<property generated="never" lazy="false" name="assignedTime"
 			type="java.lang.Integer">
 			<column name="assigned_time">
@@ -646,6 +647,12 @@
 			column="insert_user" lazy="false" name="insertUser" fetch="join"/>
 		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
 			column="locked_by" lazy="false" name="lockedBy" fetch="join"/>
+
+		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
+			column="opener_user" lazy="false" name="openerUser" fetch="join"/>
+		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
+			column="performer_user_id" lazy="false" name="performer" fetch="join"/>
+
         <many-to-one name="wProcessWork" class="org.beeblos.bpm.core.model.WProcessWork" fetch="join" lazy="false">
             <column name="id_work" not-null="true">
                 <comment>Indica el id dado al work lanzado del que depende este paso</comment>

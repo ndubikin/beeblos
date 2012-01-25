@@ -1,5 +1,6 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static org.beeblos.bpm.core.util.Constants.PENDING;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
@@ -141,7 +142,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.processIdFilter = null;
 		this.stepIdFilter = null;
 		
-		this.stepTypeFilter = "ALL";
+		this.stepTypeFilter = PENDING;
 		
 		this.processNameFilter= "";
 

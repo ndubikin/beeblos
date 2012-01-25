@@ -6,23 +6,12 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-
-	<style type="text/css">
-.rich-calendar-input {
-	width: 80px;
-	font-size: 13px !important;
-	padding: 4px;
-}
-
-</style>
-
-<h:form>
-
-	<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}" 
-					reRender="cancel_button, save_button" />
-
-
-</h:form>
+	<h:form>
+	
+		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}" 
+						reRender="cancel_button, save_button" />
+	
+	</h:form>
 
 
 	<h:form id="w_process_def_main_tag_form">

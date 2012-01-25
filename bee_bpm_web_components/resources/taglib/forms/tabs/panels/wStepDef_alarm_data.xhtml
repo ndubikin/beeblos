@@ -6,14 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-<style type="text/css">
-.rich-calendar-input {
-	font-size: 13px !important;
-	width: 80px;
-	padding: 4px;
-}
-</style>
-
 	<h:form>
 
 		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wStepDefFormBean.changeReadOnlyToFalse}" 
@@ -26,6 +18,24 @@
 		<h:panelGrid width="100%" columns="2" style=" width : 620px; margin-left: 16px;"
 				columnClasses="colStyle480px, colStyle480px">
 
+			<h:panelGroup>
+				<h:outputText value="#{msg.label_engine_notification}:" />
+				<h:outputText value="#{(wStepDefFormBean.currentWStepDef.engineNotification ? 'Yes':'None')}" 
+					style="font-weight: bold;padding: 4px;" rendered="#{wStepDefFormBean.readOnly}"/>
+				<h:selectBooleanCheckbox value="#{wStepDefFormBean.currentWStepDef.engineNotification}"
+					rendered="#{!wStepDefFormBean.readOnly}"/>
+				<h:outputText value=" / " />							
+				<h:outputText value="#{msg.label_email_notification}:" />
+				<h:outputText value="#{(wStepDefFormBean.currentWStepDef.emailNotification ? 'Yes':'None')}" 
+					style="font-weight: bold;padding: 4px;" rendered="#{wStepDefFormBean.readOnly}"/>
+				<h:selectBooleanCheckbox value="#{wStepDefFormBean.currentWStepDef.emailNotification}"
+					rendered="#{!wStepDefFormBean.readOnly}"/>		
+			</h:panelGroup>
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
 			<h:outputText value="#{msg.label_worker}" styleClass="title_style" />
 			<h:outputText value="#{msg.label_tracker}" styleClass="title_style" />
 	
@@ -34,7 +44,7 @@
 		
 			<h:panelGroup>
 
-				<h:panelGrid width="50%" columns="2" style=" width : 390px; margin-left: 16px;"
+				<h:panelGrid width="50%" columns="2" style=" width : 390px;"
 					columnClasses="colStyle140px, colStyle250px">
 
 					<h:outputText value="#{msg.label_sent_step_notice}:" styleClass="firstLeftText" />
@@ -86,7 +96,7 @@
 			</h:panelGroup>
 
 			<h:panelGroup>
-				<h:panelGrid width="50%" columns="2" style=" width : 390px; margin-left: 16px;"
+				<h:panelGrid width="50%" columns="2" style=" width : 390px;"
 					columnClasses="colStyle140px, colStyle250px">
 		
 					<h:outputText value="#{msg.label_sent_step_notice}:" styleClass="firstLeftText" />

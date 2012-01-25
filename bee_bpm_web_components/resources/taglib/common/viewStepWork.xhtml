@@ -18,11 +18,11 @@
 		<h:panelGroup>
 			<h:outputText id="step_work_name"
 				value="#{wStepWorkFormBean.currentWStepWork.process.name}"
-				style="font-weight:bold; font-size:13px;	padding: 4px;" />
+				style="font-weight:bold; font-size:13px; padding: 4px;" />
 			<h:outputText value="#{msg.label_version}: " style="margin-left:10px; font-size:13px;	padding: 4px;"/>
 			<h:outputText id="process_work_version"
 				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.version}"
-				style="font-weight:bold; font-size:13px;	padding: 4px;" />
+				style="font-weight:bold; font-size:13px; padding: 4px;" />
 
 		</h:panelGroup>
 
@@ -33,12 +33,12 @@
 		<h:outputText value="#{msg.label_reference}: " />
 		<h:outputText id="process_work_reference"
 			value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.reference}"
-			style="font-weight:bold; font-size:13px;	padding: 4px;" />
+			style="font-weight:bold; font-size:13px; padding: 4px;" />
 
 		<h:outputText value="#{msg.label_comments}: " />
 		<h:outputText id="process_work_comments"
 			value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.comments}"
-			style="font-weight:bold; font-size:13px;	padding: 4px;" />
+			style="font-weight:bold; font-size:13px; padding: 4px;" />
 
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />
@@ -46,7 +46,7 @@
 		<h:outputText value="#{msg.label_arrived}: "/>
 		<h:outputText
 			value="#{wStepWorkFormBean.currentWStepWork.arrivingDate}"
-			style="font-weight:bold; font-size:13px;	padding: 4px;">
+			style="font-weight:bold; font-size:13px; padding: 4px;">
 			<f:convertDateTime pattern="#{msg.label_date_time_format}"
 				timeZone="#{wStepWorkFormBean.timeZone}" />
 		</h:outputText>
@@ -56,10 +56,12 @@
 			<h:outputText id="previous_step"
 				value="#{wStepWorkFormBean.currentWStepWork.previousStep.name}"
 				style="font-weight:bold; font-size:13px; padding: 4px;" />
-			<h:outputText value=" #{msg.label_by}: " style="margin-left:10px;"  rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser !=null}" />
+			<h:outputText value=" #{msg.label_by}: " style="margin-left:10px;"
+				rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser !=null}" />
 			<h:outputText id="insert_user"
 				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser}"
-				style="margin-left:10px; font-size:13px; padding: 4px;" rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser !=null}" />
+				style="font-weight:bold; margin-left:10px; font-size:13px; padding: 4px;"
+				rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser !=null}" />
 		</h:panelGroup>
 
 		<rich:spacer height="10" />
@@ -69,14 +71,16 @@
 		<h:panelGroup>
 			<h:outputText
 				value="#{wStepWorkFormBean.currentWStepWork.openedDate}"
-				style="font-size:13px;	padding: 4px;">
+				style="font-weight:bold; font-size:13px;	padding: 4px;">
 				<f:convertDateTime pattern="#{msg.label_date_time_format}"
 					timeZone="#{wStepWorkFormBean.timeZone}" />
 			</h:outputText>
-			<h:outputText value=" #{msg.label_by}: "  rendered="#{wStepWorkFormBean.currentWStepWork.openerUser !=null}" />
+			<h:outputText value=" #{msg.label_by}: "
+				rendered="#{wStepWorkFormBean.currentWStepWork.openerUser !=null}" />
 			<h:outputText id="opener_user"
-				value="#{wStepWorkFormBean.currentWStepWork.openerUser}"
-				style="font-size:13px;	padding: 4px;" rendered="#{wStepWorkFormBean.currentWStepWork.openerUser !=null}"/>
+				value="#{wStepWorkFormBean.currentWStepWork.openerUser.login}"
+				style="font-weight:bold; font-size:13px;	padding: 4px;"
+				rendered="#{wStepWorkFormBean.currentWStepWork.openerUser !=null}"/>
 		</h:panelGroup>
 
 
@@ -88,15 +92,23 @@
 		<h:panelGroup>
 			<h:outputText
 				value="#{wStepWorkFormBean.currentWStepWork.decidedDate}"
-				style="font-weight:bold; font-size:13px;	padding: 4px;">
+				style="font-weight:bold; font-size:13px; padding: 4px;">
 				<f:convertDateTime pattern="#{msg.label_date_time_format}"
 					timeZone="#{wStepWorkFormBean.timeZone}" />
 			</h:outputText>
-			<h:outputText value=" #{msg.label_by}: " rendered="#{wStepWorkFormBean.currentWStepWork.performer !=null}" />
+			<h:outputText value=" #{msg.label_by}: "
+				rendered="#{wStepWorkFormBean.currentWStepWork.performer !=null}" />
 			<h:outputText id="performer_user"
-				value="#{wStepWorkFormBean.currentWStepWork.performer} "
-				style="font-weight:bold; font-size:13px;padding: 4px;" rendered="#{wStepWorkFormBean.currentWStepWork.performer !=null}" />
+				value="#{wStepWorkFormBean.currentWStepWork.performer.login} "
+				style="font-weight:bold; font-size:13px;padding: 4px;"
+				rendered="#{wStepWorkFormBean.currentWStepWork.performer !=null}" />
 		</h:panelGroup>
+
+		<rich:spacer height="10"
+			rendered="#{wStepWorkFormBean.currentWStepWork.adminProcess}" />
+		<h:outputText value="#{msg.label_processed_by_administrator}"
+			style="font-weight:bold; font-size:13px; padding: 4px;"
+			rendered="#{wStepWorkFormBean.currentWStepWork.adminProcess}" />
 
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />
@@ -105,11 +117,13 @@
 		<h:panelGroup>
 			<h:outputText id="locker"
 				value="#{wStepWorkFormBean.currentWStepWork.lockedBy.name}"
-				style="font-size:13px;	padding: 4px;" />
-			<h:outputText value=" #{msg.label_since}: " rendered="#{wStepWorkFormBean.currentWStepWork.lockedSince !=null}" />
+				style="font-weight:bold; font-size:13px;	padding: 4px;" />
+			<h:outputText value=" #{msg.label_since}: "
+				rendered="#{wStepWorkFormBean.currentWStepWork.lockedSince !=null}" />
 			<h:outputText
 				value="#{wStepWorkFormBean.currentWStepWork.lockedSince}"
-				style="font-size:13px;	padding: 4px;" rendered="#{wStepWorkFormBean.currentWStepWork.lockedSince !=null}" >
+				style="font-weight:bold; font-size:13px;	padding: 4px;"
+				rendered="#{wStepWorkFormBean.currentWStepWork.lockedSince !=null}" >
 				<f:convertDateTime pattern="#{msg.label_date_time_format}"
 					timeZone="#{wStepWorkFormBean.timeZone}" />
 			</h:outputText>
@@ -118,6 +132,31 @@
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />
 
+		<h:outputText value="#{msg.label_received_instructions}: " 
+			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}"/>
+		<h:outputText
+			value="#{wStepWorkFormBean.currentWStepWork.userInstructions}"
+			style="font-weight:bold; font-size:13px; padding: 4px;" 
+			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}">
+		</h:outputText>
+
+		<rich:spacer height="10" 
+			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}"/>
+		<rich:spacer height="10" 
+			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}"/>
+
+		<h:outputText value="#{msg.label_sent_instructions}: " 
+			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}"/>
+		<h:outputText
+			value="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions}"
+			style="font-weight:bold; font-size:13px; padding: 4px;" 
+			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}">
+		</h:outputText>
+
+		<rich:spacer height="10" 
+			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}"/>
+		<rich:spacer height="10" 
+			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}"/>
 
 
 	</h:panelGrid>
@@ -125,7 +164,7 @@
 			<a4j:commandButton id="close_button_sr" value="#{msg.label_close}"
 				action="#{wStepWorkFormBean.cancel}"
 				onclick="javascript:Richfaces.hideModalPanel('mpViewStepWork')"
-				style="width:80px; height:24px;" />
+				style="width:80px; height:24px;"/>
 			<rich:spacer height="40" />	
 	</h:form>
 

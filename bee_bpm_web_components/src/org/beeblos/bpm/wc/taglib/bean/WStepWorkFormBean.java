@@ -121,6 +121,16 @@ public class WStepWorkFormBean extends CoreManagedBean {
 				currentWStepWork.setReminderTimeUnit(null);
 			}
 
+			if (currentWStepWork.getOpenerUser() != null
+					|| currentWStepWork.getOpenerUser().empty()) {
+				currentWStepWork.setOpenerUser(null);
+			}
+
+			if (currentWStepWork.getPerformer() != null
+					|| currentWStepWork.getPerformer().empty()) {
+				currentWStepWork.setPerformer(null);
+			}
+
 		}
 	}
 
@@ -161,6 +171,14 @@ public class WStepWorkFormBean extends CoreManagedBean {
 
 			if (currentWStepWork.getReminderTimeUnit() == null) {
 				currentWStepWork.setReminderTimeUnit(new WTimeUnit());
+			}
+
+			if (currentWStepWork.getOpenerUser() == null) {
+				currentWStepWork.setOpenerUser(new WUserDef(EMPTY_OBJECT));
+			}
+
+			if (currentWStepWork.getPerformer() == null) {
+				currentWStepWork.setPerformer(new WUserDef(EMPTY_OBJECT));
 			}
 
 		}
