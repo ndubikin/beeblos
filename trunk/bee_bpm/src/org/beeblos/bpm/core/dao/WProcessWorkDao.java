@@ -182,14 +182,14 @@ public class WProcessWorkDao {
 	}
 	
 	public List<ProcessWorkLight> getWorkingWorkListFinder(Integer idProcess, 
-			boolean onlyActiveWorksFilter, boolean onlyActiveWorkingProcessesFilter, 
+			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
 			Date initialStartedDateFilter, Date finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action) throws WProcessWorkException {
 
 		String filter = "";
 
-		filter = buildWorkingWorkFilter(idProcess, onlyActiveWorksFilter,
+		filter = buildWorkingWorkFilter(idProcess, workTypeFilter,
 				onlyActiveWorkingProcessesFilter, initialStartedDateFilter, finalStartedDateFilter,
 				estrictStartedDateFilter, initialFinishedDateFilter,
 				finalFinishedDateFilter, estrictFinishedDateFilter, filter);
@@ -208,7 +208,7 @@ public class WProcessWorkDao {
 	}
 
 	private String buildWorkingWorkFilter(Integer idProcess,
-			boolean onlyActiveWorksFilter, boolean onlyActiveWorkingProcessesFilter, 
+			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
 			Date initialStartedDateFilter,
 			Date finalStartedDateFilter, boolean estrictStartedDateFilter,
 			Date initialFinishedDateFilter, Date finalFinishedDateFilter,
@@ -221,12 +221,17 @@ public class WProcessWorkDao {
 			filter += " wpd.id = " + idProcess;
 		}
 		
-		if (onlyActiveWorksFilter) {
-			if (!"".equals(filter)) {
-				filter += " AND pw.end_time IS NULL ";
-			} else {
-				filter += " pw.end_time IS NULL ";
-
+		if (!"".equals(workTypeFilter) || !"ALL".equals(workTypeFilter)) {
+			if ("PROCESSING".equals(workTypeFilter)) {
+				if (!"".equals(filter)) {
+					filter += " AND ";
+				}
+				filter += " pw.end_time IS NULL ";				
+			} else if ("FINISHED".equals(workTypeFilter)){
+				if (!"".equals(filter)) {
+					filter += " AND ";
+				}
+				filter += " pw.end_time IS NOT NULL ";				
 			}
 		}
 		

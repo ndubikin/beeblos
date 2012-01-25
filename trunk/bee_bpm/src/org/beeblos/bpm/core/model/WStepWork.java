@@ -28,9 +28,6 @@ public class WStepWork implements java.io.Serializable {
 	private WStepDef previousStep;
 	private WStepDef currentStep;
 	
-	private Integer idObject;
-	private String idObjectType;
-	
 	// fields to link with user known properties about objects
 //	private String reference;
 //	private String comments; 
@@ -83,9 +80,6 @@ public class WStepWork implements java.io.Serializable {
 		this.version = step.version;
 		this.previousStep = step.previousStep;
 		this.currentStep = step.currentStep;
-		this.idObject = step.idObject;
-		this.idObjectType = step.idObjectType;
-
 		this.arrivingDate = step.arrivingDate;
 		this.openedDate = step.openedDate;
 		this.openerUser = step.openerUser;
@@ -111,8 +105,7 @@ public class WStepWork implements java.io.Serializable {
 
 
 	public WStepWork(Integer id, WProcessDef process, Integer version,
-			WStepDef previousStep, WStepDef currentStep, Integer idObject,
-			String idObjectType, String reference, String comments,
+			WStepDef previousStep, WStepDef currentStep, String reference, String comments,
 			Date arrivingDate, Date openedDate, WUserDef openerUser,
 			Date decidedDate, WUserDef performer, String response,
 			String nextStepInstructions, WTimeUnit timeUnit,
@@ -126,8 +119,6 @@ public class WStepWork implements java.io.Serializable {
 		this.version = version;
 		this.previousStep = previousStep;
 		this.currentStep = currentStep;
-		this.idObject = idObject;
-		this.idObjectType = idObjectType;
 		this.arrivingDate = arrivingDate;
 		this.openedDate = openedDate;
 		this.openerUser = openerUser;
@@ -241,23 +232,6 @@ public class WStepWork implements java.io.Serializable {
 	 */
 	public void setCurrentStep(WStepDef currentStep) {
 		this.currentStep = currentStep;
-	}
-
-
-	public Integer getIdObject() {
-		return this.idObject;
-	}
-
-	public void setIdObject(Integer idObject) {
-		this.idObject = idObject;
-	}
-
-	public String getIdObjectType() {
-		return this.idObjectType;
-	}
-
-	public void setIdObjectType(String idObjectType) {
-		this.idObjectType = idObjectType;
 	}
 
 	public Date getArrivingDate() {
@@ -559,10 +533,6 @@ public class WStepWork implements java.io.Serializable {
 		result = prime * result
 				+ ((decidedDate == null) ? 0 : decidedDate.hashCode());
 		result = prime * result
-				+ ((idObject == null) ? 0 : idObject.hashCode());
-		result = prime * result
-				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
-		result = prime * result
 				+ ((insertUser == null) ? 0 : insertUser.hashCode());
 		result = prime * result + (locked ? 1231 : 1237);
 		result = prime * result
@@ -649,16 +619,6 @@ public class WStepWork implements java.io.Serializable {
 			if (other.decidedDate != null)
 				return false;
 		} else if (!decidedDate.equals(other.decidedDate))
-			return false;
-		if (idObject == null) {
-			if (other.idObject != null)
-				return false;
-		} else if (!idObject.equals(other.idObject))
-			return false;
-		if (idObjectType == null) {
-			if (other.idObjectType != null)
-				return false;
-		} else if (!idObjectType.equals(other.idObjectType))
 			return false;
 		if (insertUser == null) {
 			if (other.insertUser != null)
@@ -761,9 +721,6 @@ public class WStepWork implements java.io.Serializable {
 				+ (previousStep != null ? "previousStep=" + previousStep + ", "
 						: "")
 				+ (currentStep != null ? "currentStep=" + currentStep + ", "
-						: "")
-				+ (idObject != null ? "idObject=" + idObject + ", " : "")
-				+ (idObjectType != null ? "idObjectType=" + idObjectType + ", "
 						: "")
 				+ (userInstructions != null ? "userInstructions="
 						+ userInstructions + ", " : "")

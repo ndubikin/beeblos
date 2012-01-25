@@ -1,4 +1,4 @@
-package org.beeblos.bpm.core.test.bl;
+
 
 
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
@@ -21,6 +21,7 @@ import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkAssignment;
 import org.beeblos.bpm.core.model.WTimeUnit;

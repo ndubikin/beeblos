@@ -1,8 +1,9 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
-import static org.beeblos.bpm.core.util.Constants.PENDING;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
+import static org.beeblos.bpm.core.util.Constants.PENDING;
+import static org.beeblos.bpm.core.util.Constants.PROCESSING;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGSTEPS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGWORKS_QUERY;
@@ -58,7 +59,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private Integer nWorkResults;
 	
 	private boolean onlyActiveWorkingProcessesFilter;
-	private boolean onlyActiveWorksFilter;
 	private String referenceFilter;
 	
 	// dml 20120124
@@ -113,6 +113,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	private boolean stepLocked;
 	private Integer stepLocker;
 	private WStepWork currentWStepWork;
+	
+	// dml 20120125
+	private String workTypeFilter;
 
 	public WorkingProcessQueryBean() {
 		super();
@@ -134,7 +137,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.nWorkResults = 0;
 				
 		this.onlyActiveWorkingProcessesFilter = true;
-		this.onlyActiveWorksFilter = true;
 		
 		this.referenceFilter = "";
 		this.idWorkFilter = 0;
@@ -143,6 +145,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.stepIdFilter = null;
 		
 		this.stepTypeFilter = PENDING;
+		
+		// dml 20120125
+		this.workTypeFilter = PROCESSING;
 		
 		this.processNameFilter= "";
 
@@ -261,14 +266,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	public void setOnlyActiveWorkingProcessesFilter(
 			boolean onlyActiveWorkingProcessesFilter) {
 		this.onlyActiveWorkingProcessesFilter = onlyActiveWorkingProcessesFilter;
-	}
-
-	public boolean isOnlyActiveWorksFilter() {
-		return onlyActiveWorksFilter;
-	}
-
-	public void setOnlyActiveWorksFilter(boolean onlyActiveWorksFilter) {
-		this.onlyActiveWorksFilter = onlyActiveWorksFilter;
 	}
 
 	public String getReferenceFilter() {
@@ -540,6 +537,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.currentWStepWork = currentWStepWork;
 	}
 
+	public String getWorkTypeFilter() {
+		return workTypeFilter;
+	}
+
+	public void setWorkTypeFilter(String workTypeFilter) {
+		this.workTypeFilter = workTypeFilter;
+	}
+
 	public Integer getIdStepWork() {
 		return idStepWork;
 	}
@@ -709,7 +714,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 
 			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessWorkBL()
-					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, onlyActiveWorkingProcessesFilter, 
+					.getWorkingWorkListFinder(processIdFilter, workTypeFilter, onlyActiveWorkingProcessesFilter, 
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
@@ -725,32 +730,6 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		}
 
 		return WORKINGWORKS_QUERY;
-		
-	}
-
-	public void reloadProcessWorkLightList(){
-
-		logger.debug("reloadProcessWorkLightList() - action: " + action);
-
-		try {
-
-			
-			
-			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessWorkBL()
-					.getWorkingWorkListFinder(processIdFilter, onlyActiveWorksFilter, onlyActiveWorkingProcessesFilter,
-							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
-							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
-							action);
-
-			nWorkResults = processWorkLightList.size();
-
-		} catch (WProcessWorkException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".reloadProcessWorkLightList() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
-		}
 		
 	}
 

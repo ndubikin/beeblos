@@ -2,8 +2,6 @@ package org.beeblos.bpm.core.model;
 
 // Generated Jan 20, 2012 7:08:40 PM by Hibernate Tools 3.4.0.CR1
 
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +29,10 @@ public class WProcessWork implements java.io.Serializable {
 	private Integer modUser;
 	private Date modDate;
 	
+	// dml 20120125
+	private Integer idObject;
+	private String idObjectType;
+		
 	private Set<WStepWork> steps = new HashSet<WStepWork>();
 	
 
@@ -62,7 +64,8 @@ public class WProcessWork implements java.io.Serializable {
 	public WProcessWork(WProcessStatus status, int idProcess,
 			Date startingTime, Integer startingType, Date endTime,
 			String reference, String comments, Integer insertUser, Date insertDate,
-			Integer modUser, Date modDate) {
+			Integer modUser, Date modDate, Integer idObject,
+			String idObjectType) {
 		this.status = status;
 		this.idProcess = idProcess;
 		this.startingTime = startingTime;
@@ -74,6 +77,8 @@ public class WProcessWork implements java.io.Serializable {
 		this.insertDate = insertDate;
 		this.modUser = modUser;
 		this.modDate = modDate;
+		this.idObject = idObject;
+		this.idObjectType = idObjectType;
 	}
 
 	public Integer getId() {
@@ -188,6 +193,22 @@ public class WProcessWork implements java.io.Serializable {
 		this.steps = steps;
 	}
 
+	public Integer getIdObject() {
+		return idObject;
+	}
+
+	public void setIdObject(Integer idObject) {
+		this.idObject = idObject;
+	}
+
+	public String getIdObjectType() {
+		return idObjectType;
+	}
+
+	public void setIdObjectType(String idObjectType) {
+		this.idObjectType = idObjectType;
+	}
+
 	@Override
 	public String toString() {
 		return "WProcessWork [id=" + id + ", version=" + version + ", status="
@@ -196,7 +217,8 @@ public class WProcessWork implements java.io.Serializable {
 				+ ", endTime=" + endTime + ", reference=" + reference
 				+ ", comments=" + comments + ", insertUser=" + insertUser
 				+ ", insertDate=" + insertDate + ", modUser=" + modUser
-				+ ", modDate=" + modDate + ", steps=" + steps + "]";
+				+ ", modDate=" + modDate + ", idObject=" + idObject
+				+ ", idObjectType=" + idObjectType + ", steps=" + steps + "]";
 	}
 
 	@Override
@@ -206,6 +228,11 @@ public class WProcessWork implements java.io.Serializable {
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((idObject == null) ? 0 : idObject.hashCode());
+		result = prime * result
+				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
 		result = prime * result + idProcess;
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
@@ -243,6 +270,21 @@ public class WProcessWork implements java.io.Serializable {
 			if (other.endTime != null)
 				return false;
 		} else if (!endTime.equals(other.endTime))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (idObject == null) {
+			if (other.idObject != null)
+				return false;
+		} else if (!idObject.equals(other.idObject))
+			return false;
+		if (idObjectType == null) {
+			if (other.idObjectType != null)
+				return false;
+		} else if (!idObjectType.equals(other.idObjectType))
 			return false;
 		if (idProcess != other.idProcess)
 			return false;
@@ -304,7 +346,9 @@ public class WProcessWork implements java.io.Serializable {
 		if (idProcess!= 0) return false;
 		if (reference!=null && ! "".equals(reference)) return false;		
 		if (comments!=null && ! "".equals(comments)) return false;
-		
+		if (idObject!=null && ! idObject.equals(0)) return false;
+		if (idObjectType!=null && ! "".equals(idObjectType)) return false;
+
 		return true;
 	}
 	

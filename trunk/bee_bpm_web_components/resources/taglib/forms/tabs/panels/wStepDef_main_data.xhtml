@@ -28,7 +28,7 @@
 				rendered="#{!wStepDefFormBean.readOnly}"/>
 			<h:outputText 
 				value="#{wStepDefFormBean.currentWStepDef.name}"
-				style="width:350px; font-size:13px;	padding: 4px;"
+				style="width:350px; font-size:13px;"
 				rendered="#{wStepDefFormBean.readOnly}"/>
 
 			<rich:spacer height="10" />
@@ -41,7 +41,7 @@
 				rendered="#{!wStepDefFormBean.readOnly}"/>
 			<h:outputText 
 				value="#{wStepDefFormBean.currentWStepDef.stepComments}"
-				style="width:350px; font-size:13px;	padding: 4px;"
+				style="width:350px; font-size:13px;"
 				rendered="#{wStepDefFormBean.readOnly}"/>
 			
 			<rich:spacer height="10" />
@@ -50,11 +50,11 @@
 			<h:outputText value="#{msg.label_instructions}:" styleClass="firstLeftText" />
 			<h:inputTextarea id="w_step_def_instructions"
 				value="#{wStepDefFormBean.currentWStepDef.instructions}"
-				style="width:350px; height: 60px; font-size:13px;	padding: 4px;"				
+				style="width:350px; height: 60px; font-size:13px; padding: 4px;"				
 				rendered="#{!wStepDefFormBean.readOnly}"/>
 			<h:outputText 
 				value="#{wStepDefFormBean.currentWStepDef.instructions}"
-				style="width:350px; font-size:13px;	padding: 4px;"
+				style="width:350px; font-size:13px;"
 				rendered="#{wStepDefFormBean.readOnly}"/>
 			
 			<rich:spacer height="10" />
@@ -124,7 +124,7 @@
 
 			<h:outputText value="#{msg.label_modifiable_at_runtime}:" styleClass="firstLeftText" />
 			<h:outputText value="#{(wStepDefFormBean.currentWStepDef.runtimeModifiable ? 'Yes':'None')}" 
-				style="font-weight: bold;padding: 4px;" rendered="#{wStepDefFormBean.readOnly}"/>
+				style="font-weight: bold;" rendered="#{wStepDefFormBean.readOnly}"/>
 			<h:selectBooleanCheckbox value="#{wStepDefFormBean.currentWStepDef.runtimeModifiable}"
 				rendered="#{!wStepDefFormBean.readOnly}"/>
 						

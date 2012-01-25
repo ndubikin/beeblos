@@ -29,7 +29,7 @@
 				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
 				value="#{wProcessDefFormBean.currentWProcessDef.name}"
-				style="width:350px; font-size:13px;	padding: 4px;"
+				style="width:350px; font-size:13px;"
 				rendered="#{wProcessDefFormBean.readOnly}"/>
 
 
@@ -45,7 +45,7 @@
 				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
 				value="#{wProcessDefFormBean.currentWProcessDef.comments}"
-				style="width:350px; font-size:13px;	padding: 4px;"
+				style="width:350px; font-size:13px;"
 				rendered="#{wProcessDefFormBean.readOnly}"/>
 
 			<rich:spacer height="10" />
@@ -56,14 +56,13 @@
 			<h:selectOneMenu id="fact_w_process_def_begin_step"
 				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.id}"
 				style="width:250px; height: 24px; font-size:13px;padding: 3px;"
-
 				rendered="#{!wProcessDefFormBean.readOnly}">
 				<f:selectItems value="#{wProcessDefFormBean.stepCombo}" 
 					/>
 			</h:selectOneMenu>
 			<h:outputText 
 				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.name}"
-				style="width:350px; font-size:13px;	padding: 4px;"
+				style="width:350px; font-size:13px;"
 				rendered="#{wProcessDefFormBean.readOnly}"/>
 			
 			<rich:spacer height="10" />
@@ -78,7 +77,7 @@
 				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
 				value="#{wProcessDefFormBean.currentWProcessDef.adminEmail}"
-				style="width:350px; font-size:13px;	padding: 4px;"
+				style="width:350px; font-size:13px;"
 				rendered="#{wProcessDefFormBean.readOnly}"/>				
 
 			<rich:spacer height="10" />
