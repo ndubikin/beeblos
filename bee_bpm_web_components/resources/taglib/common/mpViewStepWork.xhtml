@@ -6,7 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	
-	<rich:modalPanel  id="mpViewStepWork" width="500" height="400">
+	<rich:modalPanel  id="mpViewStepWork" width="650" height="400">
 	    <f:facet name="header">
 	        <h:panelGroup id="viewStepWorkTitlePanel">
 	            <h:outputText id="viewStepWorkTitle"  value="#{msg.label_step_work_information}"></h:outputText>
@@ -15,7 +15,7 @@
 		<f:facet name="controls">
 		    <h:panelGroup id="viewStepWorkInfo">
 		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_view_step_work"/>
-		        <rich:componentControl id="viewStepWorkControl" for="mpVIewStepWork" attachTo="hidelink_view_step_work" operation="hide" event="onclick"/>
+		        <rich:componentControl id="viewStepWorkControl" for="mpViewStepWork" attachTo="hidelink_view_step_work" operation="hide" event="onclick"/>
 		    </h:panelGroup>
 		</f:facet>
 
