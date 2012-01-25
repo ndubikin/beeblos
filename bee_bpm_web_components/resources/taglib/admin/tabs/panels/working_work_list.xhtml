@@ -21,6 +21,7 @@
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentProcessId}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PENDING"/>
               		<a4j:actionparam name="det4" assignTo="#{workingProcessQueryBean.idWorkFilter}" value="{idWork}"/>
+              		<a4j:actionparam name="det5" assignTo="#{workingProcessQueryBean.referenceFilter}" value="{workReference}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
               	<rich:menuItem ajaxSingle="false" submitMode="server">
@@ -40,22 +41,6 @@
             </rich:contextMenu>
             
 		</h:panelGrid>   
-
-		<h:panelGrid align="left">
-
-			<h:panelGroup>
-				<h:selectBooleanCheckbox
-					value="#{workingProcessQueryBean.onlyActiveWorksFilter}">
-					<a4j:support
-						action="#{workingProcessQueryBean.reloadProcessWorkLightList}"
-						ajaxSingle="true" event="onclick"
-						reRender="working_work_list_table" />
-				</h:selectBooleanCheckbox>
-				<h:outputText value="#{msg.label_show_only_active_works}"
-					style="margin-left:10px; font-weight:bold;" />			
-			</h:panelGroup>
-
-		</h:panelGrid>
 
 		<h:panelGrid width="100%" columns="1">
 

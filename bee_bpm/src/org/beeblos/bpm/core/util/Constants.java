@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class Constants {
 	
+	public static final String PROCESSING = "PROCESSING";
 	public static final String PENDING = "PENDING";
 
 	public static final String WORKINGPROCESS_QUERY = "WORKINGPROCESS_QUERY";

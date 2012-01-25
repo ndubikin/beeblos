@@ -42,9 +42,21 @@
 					target="#{workingProcessQueryBean.action}" />
 			</h:commandButton>
 
+			<h:outputText value="#{msg.label_status}:" styleClass="firstLeftText" />
+			<h:panelGroup>
+				<h:selectOneRadio id="work_type" value="#{workingProcessQueryBean.workTypeFilter}">
+ 					<f:selectItem id="all_works" itemLabel="#{msg.label_all}" 
+ 						itemValue="ALL" />
+					<f:selectItem id="processing_works" itemLabel="#{msg.label_processing}" 
+						itemValue="PROCESSING" />
+					<f:selectItem id="finished_works" itemLabel="#{msg.label_finished}" 
+						itemValue="FINISHED" />
+				</h:selectOneRadio>
+			</h:panelGroup>
+			<rich:spacer height="10" />
+
 			<h:outputText value="#{msg.label_started_date_from}:"
 				styleClass="firstLeftText" />
-
 			<h:panelGroup>
 
 				<rich:calendar id="initial_started_date"

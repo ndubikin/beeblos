@@ -34,7 +34,7 @@ public class WStepWorkDao {
 	
 	public Integer add(WStepWork stepw) throws WStepWorkException {
 		
-		logger.debug("add() WStepWork - Name: ["+stepw.getIdObjectType()+" "+stepw.getIdObject()+"]");
+		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+"]");
 		
 		try {
 
@@ -42,9 +42,9 @@ public class WStepWorkDao {
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkDao: add - Can't store stepw definition record "+ 
-					stepw.getIdObjectType()+" "+stepw.getIdObject()+" - "+ex.getMessage()+"\n"+ex.getCause() );
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepWorkException("WStepWorkDao: add - Can't store stepw definition record "+ 
-					stepw.getIdObjectType()+" "+stepw.getIdObject()+" - "+ex.getMessage()+"\n"+ex.getCause());
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
 
@@ -62,10 +62,10 @@ public class WStepWorkDao {
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkDao: update - Can't update stepw definition record "+ 
-					stepw.getIdObjectType()+" "+stepw.getIdObject()  +
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
 					" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
 			throw new WStepWorkException("WStepWorkDao: update - Can't update stepw definition record "+ 
-					stepw.getIdObjectType()+" "+stepw.getIdObject()  +
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
 					" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
@@ -75,7 +75,7 @@ public class WStepWorkDao {
 	
 	public void delete(WStepWork stepw) throws WStepWorkException {
 
-		logger.debug("delete() WStepWork - Name: ["+stepw.getIdObjectType()+" "+stepw.getIdObject()+"]");
+		logger.debug("delete() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+"]");
 		
 		try {
 
@@ -84,15 +84,15 @@ public class WStepWorkDao {
 			HibernateUtil.borrar(stepw);
 
 		} catch (HibernateException ex) {
-			logger.error("WStepWorkDao: delete - Can't delete proccess definition record "+ stepw.getIdObjectType()+" "+stepw.getIdObject() +
+			logger.error("WStepWorkDao: delete - Can't delete proccess definition record "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
 					" <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepWorkException("WStepWorkDao:  delete - Can't delete proccess definition record  "+ stepw.getIdObjectType()+" "+stepw.getIdObject() +
+			throw new WStepWorkException("WStepWorkDao:  delete - Can't delete proccess definition record  "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
 					" <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
 		} catch (WStepWorkException ex1) {
-			logger.error("WStepWorkDao: delete - Exception in deleting stepw rec "+ stepw.getIdObjectType()+" "+stepw.getIdObject() +
+			logger.error("WStepWorkDao: delete - Exception in deleting stepw rec "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
 					" <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
-			throw new WStepWorkException("WStepWorkDao: delete - Exception in deleting stepw rec "+ stepw.getIdObjectType()+" "+stepw.getIdObject() +
+			throw new WStepWorkException("WStepWorkDao: delete - Exception in deleting stepw rec "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
 					" <id = "+stepw.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
 
 		} 
@@ -705,7 +705,7 @@ public class WStepWorkDao {
 			tx.begin();
 
 			stepws = session
-				.createQuery("From WStepWork where process.id=? AND idObject=? and idObjectType=? ")
+				.createQuery("From WStepWork where process.id=? AND wProcessWork.idObject=? and wProcessWork.idObjectType=? ")
 				.setParameter(0, idProcess)
 				.setParameter(1, idObject)
 				.setParameter(2, idObjectType)
@@ -745,7 +745,7 @@ public class WStepWorkDao {
 			tx.begin();
 
 			stepws = session
-				.createQuery("From WStepWork where idObject=? and idObjectType=? order by process.id ")
+				.createQuery("From WStepWork where wProcessWork.idObject=? and wProcessWork.idObjectType=? order by process.id ")
 				.setParameter(0, idObject)
 				.setParameter(1, idObjectType)
 				.list();
@@ -786,7 +786,7 @@ public class WStepWorkDao {
 			tx.begin();
 
 			stepws = session
-				.createQuery("From WStepWork where idObject=? AND idObjectType=? AND decidedDate is NULL ")
+				.createQuery("From WStepWork where wProcessWork.idObject=? AND wProcessWork.idObjectType=? AND decidedDate is NULL ")
 				.setParameter(0, idObject)
 				.setParameter(1, idObjectType)
 				.list();
@@ -850,7 +850,7 @@ public class WStepWorkDao {
 				
 					
 					for (WStepWork sw: lsw) {
-						retorno.add(new StringPair(sw.getId(),sw.getIdObject()+"-"+sw.getIdObjectType().trim()));
+						retorno.add(new StringPair(sw.getId(),sw.getCurrentStep().getName()+"-"+sw.getwProcessWork().getReference()));
 					}
 				} else {
 					// nes  - si el select devuelve null entonces devuelvo null
@@ -889,7 +889,7 @@ public class WStepWorkDao {
 
 			int qtyActiveSteps = 
 					session
-						.createQuery("From WStepWork Where process.id=? AND idObject=? AND idObjectType=? ")
+						.createQuery("From WStepWork Where process.id=? AND wProcessWork.idObject=? AND wProcessWork.idObjectType=? ")
 						.setParameter(0, idProcess)
 						.setParameter(1, idObject)
 						.setParameter(2, idObjectType.trim())

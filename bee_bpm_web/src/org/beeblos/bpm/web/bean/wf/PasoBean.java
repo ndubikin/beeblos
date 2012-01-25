@@ -552,8 +552,6 @@ public class PasoBean  extends CoreManagedBean {
 		try {
 			
 			pasoActual= new WStepWorkBL().getStepWithLock(idStepWork, usuarioLogueado);
-			idObject = pasoActual.getIdObject();
-			idObjectType = pasoActual.getIdObjectType();
 			this.cargaRespuestasCombo();
 	
 		} catch (CantLockTheStepException e) {
@@ -780,9 +778,6 @@ public class PasoBean  extends CoreManagedBean {
 		newWorkItem.setPreviousStep( pasoActual.getCurrentStep() );
 		
 		newWorkItem.setCurrentStep( new WStepDefBL().getWStepDefByPK(route.getToStep().getId(), usuarioLogueado));
-		
-		newWorkItem.setIdObject(pasoActual.getIdObject());
-		newWorkItem.setIdObjectType(pasoActual.getIdObjectType());
 		
 		// nes 20120120 - agregado objeto wProcessWork
 		newWorkItem.getwProcessWork().setReference(pasoActual.getwProcessWork().getReference() );

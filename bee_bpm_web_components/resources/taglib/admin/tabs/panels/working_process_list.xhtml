@@ -19,6 +19,7 @@
                 	<b> Go to live works </b> {idProcess} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
                		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{idProcess}"/>
+              		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.workTypeFilter}" value="PROCESSING"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchStepWork}" submitMode="server">

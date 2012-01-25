@@ -44,7 +44,7 @@ public class WStepWorkBL {
 	
 	public Integer add(WStepWork stepw, Integer currentUser) throws WStepWorkException {
 		
-		logger.debug("add() WStepWork - Name: ["+stepw.getIdObjectType()+"-"+stepw.getIdObjectType()+"]");
+		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+"-"+stepw.getwProcessWork().getReference()+"]");
 		
 		// timestamp & trace info
 		stepw.setArrivingDate(new Date());
@@ -311,8 +311,8 @@ public class WStepWorkBL {
 			throw new WStepWorkException(message);
 		}
 		
-		Integer idObject = storedStep.getIdObject();
-		String idObjectType = storedStep.getIdObjectType();
+		Integer idObject = storedStep.getwProcessWork().getIdObject();
+		String idObjectType = storedStep.getwProcessWork().getIdObjectType();
 		
 		try {
 			
@@ -566,9 +566,6 @@ public class WStepWorkBL {
 		stepWork.setPreviousStep(null); // como no viene de ningún lado el previous es null
 		stepWork.setCurrentStep(process.getBeginStep());
 		
-		stepWork.setIdObject(idObject);
-		stepWork.setIdObjectType(idObjectType);
-		
 		stepWork.setArrivingDate(new Date());
 		
 		stepWork.setTimeUnit(stepDef.getTimeUnit());
@@ -619,9 +616,6 @@ public class WStepWorkBL {
 		
 		newStep.setCurrentStep(toStep);
 		newStep.setPreviousStep(storedStep.getCurrentStep());
-		
-		newStep.setIdObject(storedStep.getIdObject());
-		newStep.setIdObjectType(storedStep.getIdObjectType());
 		
 		newStep.setArrivingDate(now);
 		
@@ -712,7 +706,7 @@ public class WStepWorkBL {
 		}
 		
 		// Si no pertenecen al mismo objeto me vuelvo ...
-		if ( storedStep.getIdObject()!=idObject ) {
+		if ( storedStep.getwProcessWork().getIdObject()!=idObject ) {
 			String message = "The indicated step have a diferent object than indicated ("
 								+ idObject  +" - " + idObjectType
 								+ ")";

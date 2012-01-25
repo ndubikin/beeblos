@@ -498,6 +498,18 @@
         <property name="modDate" type="timestamp">
             <column name="mod_date" length="0" not-null="true" />
         </property>
+		<property generated="never" lazy="false" name="idObject"
+			type="java.lang.Integer">
+			<column name="id_object" not-null="true">
+				<comment>ID DEL OBJETO QUE ESTA EN ESTE PASO</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idObjectType"
+			type="string">
+			<column length="100" name="id_object_type" not-null="true">
+				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
+			</column>
+		</property>
         <many-to-one name="status" class="org.beeblos.bpm.core.model.WProcessStatus" fetch="join">
             <column name="id_status" not-null="true">
                 <comment>1-processing / 2 - paused / 3 - finished / 4 - foced end / 5 - others ( ver tabla w_status_type)</comment>
@@ -513,18 +525,6 @@
 		<property generated="never" lazy="false" name="version"
 			type="java.lang.Integer">
 			<column name="version" />
-		</property>
-		<property generated="never" lazy="false" name="idObject"
-			type="java.lang.Integer">
-			<column name="id_object" not-null="true">
-				<comment>ID DEL OBJETO QUE ESTA EN ESTE PASO</comment>
-			</column>
-		</property>
-		<property generated="never" lazy="false" name="idObjectType"
-			type="string">
-			<column length="100" name="id_object_type" not-null="true">
-				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
-			</column>
 		</property>
 
 		<property generated="never" lazy="false" name="arrivingDate"
@@ -548,12 +548,12 @@
 
 		<property generated="never" lazy="false" name="response"
 			type="string">
-			<column length="100" name="response" not-null="true"/>
+			<column length="20" name="response"/>
 		</property>
 
 		<property generated="never" lazy="false" name="nextStepInstructions"
 			type="string">
-			<column length="100" name="instructions" not-null="true"/>
+			<column length="255" name="instructions"/>
 		</property>
 
 		<property generated="never" lazy="false" name="assignedTime"
