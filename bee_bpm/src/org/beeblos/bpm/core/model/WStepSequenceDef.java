@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.model;
 
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
 /**
@@ -25,6 +27,15 @@ public class WStepSequenceDef implements java.io.Serializable {
 	}
 
 
+	public WStepSequenceDef(boolean createEmtpyObjects ){
+		super();
+		if ( createEmtpyObjects ) {
+			this.process=new WProcessDef( EMPTY_OBJECT );
+			this.fromStep=new WStepDef( EMPTY_OBJECT );
+			this.toStep=new WStepDef( EMPTY_OBJECT );
+			
+		}	
+	}
 
 
 

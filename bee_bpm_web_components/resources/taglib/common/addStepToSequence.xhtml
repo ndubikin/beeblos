@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form>
+
+		<h:panelGrid width="98%" columns="2"
+			columnClasses="colStyle100,colStyle250">
+
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_from_step}: " />
+			<h:inputText id="from_step"
+				value="#{wProcessDefFormBean.currentStepSequence.fromStep.id}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_to_step}: " />
+			<h:inputText id="to_step"
+				value="#{wProcessDefFormBean.currentStepSequence.toStep.id}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_is_enabled}:" />
+			<h:selectBooleanCheckbox value="#{wProcessDefFormBean.currentStepSequence.enabled}"/>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_after_all}:" />
+			<h:selectBooleanCheckbox value="#{wProcessDefFormBean.currentStepSequence.afterAll}"/>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+
+		<h:panelGroup>
+			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+				onclick="javascript:Richfaces.hideModalPanel('mpAddStepToSequence')"
+				style="width:80px; height:24px;" />
+			<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
+				actionListener="#{wProcessDefFormBean.addStepToSequence}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpAddStepToSequence');"
+				reRender="w_process_def_step_sequence_table, mpAddStepToSequence"
+				style="width:120px; margin-left: 10px; height:24px;" />
+		</h:panelGroup>
+
+	</h:form>
+</ui:composition>

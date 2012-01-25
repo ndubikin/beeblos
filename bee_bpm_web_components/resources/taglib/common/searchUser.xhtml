@@ -6,24 +6,12 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 <style>
-.top {
-	vertical-align: top;
-}
 
 .panelScroll {
 	height: 245px;
 	overflow: auto;
 }
 
-.colStyle1 {
-	margin: 0px;
-	text-align: left;
-}
-
-.colStyle2 {
-	margin: 0px;
-	text-align: right;
-}
 </style>
 
 	<h:form id="searchUser_form">  
@@ -57,7 +45,7 @@
 
 			<rich:spacer height="10" />
 
-			<h:panelGrid width="100%" columns="2" columnClasses="colStyle1,colStyle2">
+			<h:panelGrid width="100%" columns="2" columnClasses="colStyle100,colStyle250">
 				<h:panelGroup>
 					<h:selectBooleanCheckbox
 						value="#{userAndRoleSelectorBean.selectedAllUsers}">

@@ -18,6 +18,7 @@
 	<ui:include src="../common/mpDeleteWProcessUser.xhtml"/>
 	<ui:include src="../common/mpDeleteWStepRole.xhtml"/>
 	<ui:include src="../common/mpDeleteWStepUser.xhtml"/>
+	<ui:include src="../common/mpAddStepToSequence.xhtml"/>
 	<ui:include src="../common/mpEditWStepDef.xhtml">
 		<ui:param name="element_to_rerender" value="w_process_def_step_definition"/>
 	</ui:include>
@@ -54,6 +55,14 @@
 			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
 			<ui:include src="tabs/wProcessDefZoneTag.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_ZONETAG" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_step_sequence"
+			label="#{msg.label_step_sequence_list}"
+			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
+			<ui:include src="tabs/wProcessDefStepSequence.xhtml">
+				<ui:param name="action" value="WPROCESSDEF_STEPSEQUENCE" />
 			</ui:include>
 		</rich:tab>
 

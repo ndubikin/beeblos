@@ -17,20 +17,15 @@
 	<rich:spacer height="10" />
 
 	<fieldset class="demo_fieldset">
-		<legend class="demo_legend">#{msg.label_steps_referenced_by_this_proccess}</legend>
+		<legend class="demo_legend">#{msg.label_step_sequence_of_this_proccess}</legend>
 
-			<ui:include src="panels/wProcessDef_step_list.xhtml"></ui:include>
+		<ui:include src="panels/wProcessDef_step_sequence_add_new.xhtml" >
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+		<ui:include src="panels/wProcessDef_step_sequence_list.xhtml">
+			<ui:param name="action" value="${action}" />
+		</ui:include>
 
 	</fieldset>
 	
-	<fieldset class="demo_fieldset">
-		<legend class="demo_legend">#{msg.label_step_definition_and_permissions}</legend>
-
-		<h:panelGrid columns="2" styleClass="colStyle50_percent,colStyle50_percent">
-				<ui:include src="panels/wProcessDef_step_definition.xhtml"></ui:include>
-				<ui:include src="panels/wProcessDef_step_permissions.xhtml"></ui:include>
-		</h:panelGrid>
-
-	</fieldset>
-
 </ui:composition>
