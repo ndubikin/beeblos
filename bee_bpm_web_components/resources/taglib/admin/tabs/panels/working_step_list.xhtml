@@ -89,13 +89,18 @@
 						value="Working Step List ( #{workingProcessQueryBean.nStepResults} #{msg.label_results} )" />
 				</f:facet>
 
-				<rich:column sortBy="#{wps.idProcess}"
+				<rich:column sortBy="#{wps.idProcess} #{wps.idStep}"
 					style="width:5%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_proc_step}" />
 					</f:facet>
+					
+					<h:outputText value=" ! " style="color: red; font-weight:bold;"
+		            				rendered="#{wps.locked eq true and wps.lockedBy!=workingProcessQueryBean.currentUserId}"/>
+					<h:outputText value=" ! " style="color: green; font-weight:bold;"
+		            				rendered="#{wps.locked eq true and wps.lockedBy eq workingProcessQueryBean.currentUserId}"/>		            				
 					<h:outputText value="#{wps.idProcess}" />
-					<h:outputText value=" / " />
+					<h:outputText value=" # " />
 					<h:outputText value="#{wps.idStep}" />
 				</rich:column>
 

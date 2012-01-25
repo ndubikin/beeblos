@@ -89,12 +89,14 @@
 						value="Working Work List ( #{workingProcessQueryBean.nWorkResults} #{msg.label_results} )" />
 				</f:facet>
 
-				<rich:column sortBy="#{wpw.idProcess}"
+				<rich:column sortBy="#{wpw.idProcess} #{wpw.idWork}"
 					style="width:10px; text-align: left;">
 					<f:facet name="header">
-						<h:outputText value="#{msg.label_process_id}" />
+						<h:outputText value="#{msg.label_proc_work}" />
 					</f:facet>
 					<h:outputText value="#{wpw.idProcess}" />
+					<h:outputText value=" # " />
+					<h:outputText value="#{wpw.idWork}" />
 				</rich:column>
 
 				<rich:column sortBy="#{wpw.processName}"
