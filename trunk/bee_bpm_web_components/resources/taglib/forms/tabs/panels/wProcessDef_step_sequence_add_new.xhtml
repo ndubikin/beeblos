@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:form id="w_process_def_step_sequence_add_new${action}">
+	
+		<a4j:commandLink id="insert_step_to_sequence"
+			title="#{msg.label_add_new_step_to_sequence}"
+			style="margin-left: 18px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
+			tabindex="-1"
+			oncomplete="javascript:Richfaces.showModalPanel('mpAddStepToSequence')"
+			reRender="w_process_def_step_sequence_table"
+			rendered="#{contextoSeguridad.permiteCualquiera['530']}">
+			<h:graphicImage id="imgInsertar" value="/images/insertar.png" style="border:0;" />
+		</a4j:commandLink>
+
+
+	</h:form>
+
+</ui:composition>

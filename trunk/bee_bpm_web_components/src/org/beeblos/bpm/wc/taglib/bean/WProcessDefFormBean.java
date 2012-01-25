@@ -17,9 +17,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -27,6 +29,7 @@ import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
@@ -77,6 +80,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	private String strRoleList;
 	private String strUserList;
+	
+	// dml 20120125
+	private List<WStepSequenceDef> stepSequenceList; 
+	private WStepSequenceDef currentStepSequence;
 
 	public WProcessDefFormBean() {
 		super();
@@ -111,6 +118,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.readOnly = true;
 		this.attachment = new BeeblosAttachment();
 		this.documentLink = null;
+		
+		// dml 20120125
+		this.currentStepSequence = new WStepSequenceDef();
 
 		recoverNullObjects();
 
@@ -139,6 +149,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			if (currentWProcessDef != null) {
 
 				loadLSteps();
+				
+				loadStepSequenceList();
 
 			}
 
@@ -244,6 +256,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				currentWProcessUser.setUser(new WUserDef(EMPTY_OBJECT));
 			}
 
+		}
+		
+		if (currentStepSequence != null) {
+			
+			if (currentStepSequence.getProcess() == null) {
+				currentStepSequence.setProcess(new WProcessDef(EMPTY_OBJECT));
+			}
+			
+			if (currentStepSequence.getFromStep() == null) {
+				currentStepSequence.setFromStep(new WStepDef(EMPTY_OBJECT));
+			}
+			
+			if (currentStepSequence.getToStep() == null) {
+				currentStepSequence.setToStep(new WStepDef(EMPTY_OBJECT));
+			}
+			
 		}
 
 	}
@@ -447,10 +475,40 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				setlSteps(new WStepDefBL().getWStepDefs(this.currentId, 1));
 
 			}
-		} catch (WStepDefException e) {
-			e.printStackTrace();
+		} catch (WStepDefException ex1) {
+
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".loadLSteps() WStepDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+
 		}
 	}
+	
+	// dml 20120125
+	private void loadStepSequenceList(){
+		
+		try {
+
+			if (this.currentId != null && this.currentId != 0) {
+
+				setStepSequenceList(new WStepSequenceDefBL().getWProcessDefStepSequenceList(currentId, 1, getCurrentUserId()));
+
+			}
+			
+		} catch (WStepSequenceDefException ex1) {
+
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".loadStepSequenceList() WStepSequenceDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+
+		}
+		
+	}
+		
 
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
@@ -616,6 +674,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setStrUserList(String strUserList) {
 		this.strUserList = strUserList;
+	}
+
+	public List<WStepSequenceDef> getStepSequenceList() {
+		return stepSequenceList;
+	}
+
+	public void setStepSequenceList(List<WStepSequenceDef> stepSequenceList) {
+		this.stepSequenceList = stepSequenceList;
+	}
+
+	public WStepSequenceDef getCurrentStepSequence() {
+		return currentStepSequence;
+	}
+
+	public void setCurrentStepSequence(WStepSequenceDef currentStepSequence) {
+		this.currentStepSequence = currentStepSequence;
 	}
 
 	public WProcessRole getCurrentWProcessRole() {
@@ -889,6 +963,36 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.setModel();
 		wpdBL.update(this.currentWProcessDef, getCurrentUserId());
 		this.recoverNullObjects();
+	}
+	
+	// dml 20120125
+	public void addStepToSequence(){
+		
+		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
+		
+		try {
+
+			currentStepSequence.setProcess(currentWProcessDef);
+			currentStepSequence.setVersion(1);
+			
+			//NESTOR COMO INCLUYO LAS RESPONSES?
+			
+			wssdBL.add(currentStepSequence, getCurrentUserId());
+
+			setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
+			
+			loadStepSequenceList();
+		
+		} catch (WStepSequenceDefException e) {
+
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".addStepResponse() WStepSequenceDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+
+		}
+		
 	}
 
 	// PENDIENTE: metele un check que diga: "Show only selected roles"

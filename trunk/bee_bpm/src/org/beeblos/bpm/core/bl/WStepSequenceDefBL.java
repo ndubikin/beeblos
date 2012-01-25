@@ -104,6 +104,15 @@ public class WStepSequenceDefBL {
 	 
 	}	
 
+	// dml 20120125
+	public List<WStepSequenceDef> getWProcessDefStepSequenceList(
+			Integer idProcess, Integer version , Integer currentUser ) 
+	throws WStepSequenceDefException {
+
+		return new WStepSequenceDefDao().getWProcessDefStepSequenceList(idProcess, version);
+		
+	}
+	
 	public List<StringPair> getComboList(
 			Integer idProcess, Integer version,
 			String firstLineText, String blank )
