@@ -20,6 +20,7 @@ import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
@@ -254,7 +255,7 @@ public class WStepWorkBL {
 			Integer idStepWork, Integer idResponse, String comments, WRuntimeSettings runtimeSettings,
 			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser ) 
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
-			WStepLockedByAnotherUserException, WStepNotLockedException {
+			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException {
 	
 		Integer qtyNewRoutes=0;
 		
@@ -294,7 +295,7 @@ public class WStepWorkBL {
 	// devuelve 1 paso y lo deja lockeado
 	public WStepWork getStepWithLock (
 			Integer idStepWork, Integer currentUser ) 
-	throws WStepLockedByAnotherUserException,  CantLockTheStepException, WStepWorkException {
+	throws WStepLockedByAnotherUserException,  CantLockTheStepException, WStepWorkException, WUserDefException {
 	
 		WStepWork storedStep;
 		try {
@@ -429,11 +430,11 @@ public class WStepWorkBL {
 
 	}
 	
-	private void _setOpenInfo(Integer currentUser, WStepWork storedStep) {
+	private void _setOpenInfo(Integer currentUser, WStepWork storedStep) throws WUserDefException {
 		// set step opened date and user
 		if ( storedStep.getOpenedDate()==null ) {
 			storedStep.setOpenedDate(new Date());
-			storedStep.setOpenerUser(currentUser);
+			storedStep.setOpenerUser(new WUserDefBL().getWUserDefByPK(currentUser));
 		}
 	}
 	
@@ -478,7 +479,7 @@ public class WStepWorkBL {
 	
 	private Integer _executeProcessStep(
 			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork storedStep ) 
-	throws WStepWorkException, WStepSequenceDefException {
+	throws WStepWorkException, WStepSequenceDefException, WUserDefException {
 		
 		Integer qty=0;
 		Date now = new Date();
@@ -517,7 +518,7 @@ public class WStepWorkBL {
 	
 	private Integer _executeTurnBack (
 			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork storedStep ) 
-	throws WStepWorkException, WStepSequenceDefException {
+	throws WStepWorkException, WStepSequenceDefException, WUserDefException {
 		
 		Integer qty=0;
 		Date now = new Date();
@@ -542,12 +543,12 @@ public class WStepWorkBL {
 	
 	
 	private void _setCurrentStepToProcessed (
-			WStepWork storedStep, WRuntimeSettings runtimeSettings, Integer currentUser, Date now ) {
+			WStepWork storedStep, WRuntimeSettings runtimeSettings, Integer currentUser, Date now ) throws WUserDefException {
 		
 
 		
 		storedStep.setDecidedDate(now);
-		storedStep.setPerformer(currentUser);
+		storedStep.setPerformer(new WUserDefBL().getWUserDefByPK(currentUser));
 		
 		// timestamp
 

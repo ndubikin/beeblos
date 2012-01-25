@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
+import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
@@ -29,6 +30,7 @@ import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepWork;
@@ -141,7 +143,7 @@ public class PasoBean  extends CoreManagedBean {
 
 	// setea el paso en el que se va a trabajar
 	public void setPaso() 
-	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException {
+	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException, WUserDefException {
 
 		paginaProceso=PAGINA_PROCESO_DEFAULT;
 	
@@ -283,6 +285,13 @@ public class PasoBean  extends CoreManagedBean {
 			agregarMensaje("62",mensaje,params,FGPException.WARN);
 			logger.info(mensaje);
 			ret=null;
+		} catch (WUserDefException e) {
+			String mensaje = "Error al cargar un usuario ..."
+					+e.getMessage()+" - "+e.getCause();
+			String params[] = {mensaje + ",", "\nSi piensa que es un error, por favor anote los datos y avise al administrador del sistema ..." };		
+			agregarMensaje("62",mensaje,params,FGPException.WARN);
+			logger.info(mensaje);
+			ret=null;
 		}
 				
 		return ret;
@@ -404,6 +413,13 @@ public class PasoBean  extends CoreManagedBean {
 
 			String mensaje = "Esta tarea ya se ha procesado ..."
 				+e.getMessage()+" - "+e.getCause();
+			String params[] = {mensaje + ",", "\nSi piensa que es un error, por favor anote los datos y avise al administrador del sistema ..." };		
+			agregarMensaje("62",mensaje,params,FGPException.WARN);
+			logger.info(mensaje);
+			ret=null;
+		} catch (WUserDefException e) {
+			String mensaje = "Error al obtener usuario ..."
+					+e.getMessage()+" - "+e.getCause();
 			String params[] = {mensaje + ",", "\nSi piensa que es un error, por favor anote los datos y avise al administrador del sistema ..." };		
 			agregarMensaje("62",mensaje,params,FGPException.WARN);
 			logger.info(mensaje);
@@ -531,7 +547,7 @@ public class PasoBean  extends CoreManagedBean {
 	}
 
 	private void _setCurrentStepWork() 
-	throws WStepLockedByAnotherUserException, WStepWorkException, CantLockTheStepException {
+	throws WStepLockedByAnotherUserException, WStepWorkException, CantLockTheStepException, WUserDefException {
 		
 		try {
 			
@@ -549,6 +565,10 @@ public class PasoBean  extends CoreManagedBean {
 			idStepWork=0;
 			throw e;
 		} catch (WStepWorkException e) {
+			System.out.println("WStepWorkException:"+idStepWork);
+			idStepWork=0;
+			throw e;
+		} catch (WUserDefException e) {
 			System.out.println("WStepWorkException:"+idStepWork);
 			idStepWork=0;
 			throw e;
@@ -654,10 +674,10 @@ public class PasoBean  extends CoreManagedBean {
 	
 	}
 	
-	private void _setCurrentWorkitemToProcessed( Date now ) throws WStepWorkException {
+	private void _setCurrentWorkitemToProcessed( Date now ) throws WStepWorkException, WUserDefException {
 		
 		pasoActual.setDecidedDate(now);
-		pasoActual.setPerformer(usuarioLogueado);
+		pasoActual.setPerformer(new WUserDefBL().getWUserDefByPK(usuarioLogueado));
 		pasoActual.setLocked(false);
 		pasoActual.setLockedBy(null);
 		pasoActual.setLockedSince(null);

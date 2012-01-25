@@ -43,10 +43,10 @@ public class WStepWork implements java.io.Serializable {
 	
 	private Date arrivingDate;
 	private Date openedDate;
-	private Integer openerUser;
+	private WUserDef openerUser;
 	
 	private Date decidedDate;
-	private Integer performer;
+	private WUserDef performer;
 	
 	private String response;
 	private String nextStepInstructions;
@@ -113,8 +113,8 @@ public class WStepWork implements java.io.Serializable {
 	public WStepWork(Integer id, WProcessDef process, Integer version,
 			WStepDef previousStep, WStepDef currentStep, Integer idObject,
 			String idObjectType, String reference, String comments,
-			Date arrivingDate, Date openedDate, Integer openerUser,
-			Date decidedDate, Integer performer, String response,
+			Date arrivingDate, Date openedDate, WUserDef openerUser,
+			Date decidedDate, WUserDef performer, String response,
 			String nextStepInstructions, WTimeUnit timeUnit,
 			Integer assignedTime, Date deadlineDate, Date deadlineTime,
 			WTimeUnit reminderTimeUnit, Integer reminderTime,
@@ -276,11 +276,11 @@ public class WStepWork implements java.io.Serializable {
 		this.openedDate = openedDate;
 	}
 
-	public Integer getOpenerUser() {
+	public WUserDef getOpenerUser() {
 		return this.openerUser;
 	}
 
-	public void setOpenerUser(Integer openerUser) {
+	public void setOpenerUser(WUserDef openerUser) {
 		this.openerUser = openerUser;
 	}
 
@@ -292,11 +292,11 @@ public class WStepWork implements java.io.Serializable {
 		this.decidedDate = decidedDate;
 	}
 
-	public Integer getPerformer() {
+	public WUserDef getPerformer() {
 		return this.performer;
 	}
 
-	public void setPerformer(Integer performer) {
+	public void setPerformer(WUserDef performer) {
 		this.performer = performer;
 	}
 

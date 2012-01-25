@@ -15,6 +15,7 @@ import org.beeblos.bpm.core.error.AlreadyExistsRunningProcessException;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.wc.security.error.InyectorException;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.web.bean.wf.InyectorBean;
@@ -33,7 +34,7 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 	
 	public String cargarPasoWorkflow(
 			Integer idPasoProceso, Integer idObject, String idObjectType ) 
-	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException{
+	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException, WUserDefException{
 
 		String retorno=FAIL;
 
@@ -70,7 +71,7 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 	
 	public String desbloquearPasoWorkflow(
 			Integer idPasoProceso, Integer idObject, String idObjectType ) 
-	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException{
+	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException, WUserDefException{
 
 		String retorno=FAIL;
 
@@ -108,7 +109,7 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 	// nes 20101025
 	public String cargarPasoWorkflow(
 			Integer idObject, String idObjectType ) 
-	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException {
+	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException, WUserDefException {
 
 		String retorno=FAIL;
 		

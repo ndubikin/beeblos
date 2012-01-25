@@ -21,6 +21,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -169,6 +170,15 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			//throw new TareaException( mensaje );
 			retorno=FAIL;
 			
+		} catch (WUserDefException e) {
+
+			String mensaje = "No se puede cargar el usuario indicado ....\n";
+			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("61",mensaje,params,FGPException.WARN);
+			logger.info("cargarPaso: "+mensaje);
+			//throw new TareaException( mensaje );
+			
 		}
 
 		return retorno;
@@ -221,6 +231,15 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			//throw new TareaException( mensaje );
 			retorno=FAIL;
 			
+		} catch (WUserDefException e) {
+
+			String mensaje = "No se puede cargar el usuario indicado ....\n";
+			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("61",mensaje,params,FGPException.WARN);
+			logger.info("cargarPaso: "+mensaje);
+			//throw new TareaException( mensaje );
+			
 		}
 
 		return retorno;		
@@ -261,6 +280,15 @@ public class ConsultaTareaBean extends CoreManagedBean {
 		} catch (WStepWorkException e) {
 			
 			String mensaje = "No se puede cargar la tarea indicada ....\n";
+			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("61",mensaje,params,FGPException.WARN);
+			logger.info("cargarPaso: "+mensaje);
+			//throw new TareaException( mensaje );
+			
+		} catch (WUserDefException e) {
+
+			String mensaje = "No se puede cargar el usuario indicado ....\n";
 			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
 			String params[] = {mensaje};
 			agregarMensaje("61",mensaje,params,FGPException.WARN);
