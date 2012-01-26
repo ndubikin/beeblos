@@ -23,6 +23,8 @@ public class WUserDef implements java.io.Serializable {
 	private boolean active;
 	private int insertUser;
 	private Date insertDate;
+	private Integer modUser;
+	private Date modDate;
 	private WUseridmapper userMapper;
 
 	public WUserDef() {
@@ -91,7 +93,7 @@ public class WUserDef implements java.io.Serializable {
 	}
 
 	public int getInsertUser() {
-		return this.insertUser;
+		return insertUser;
 	}
 
 	public void setInsertUser(int insertUser) {
@@ -99,14 +101,28 @@ public class WUserDef implements java.io.Serializable {
 	}
 
 	public Date getInsertDate() {
-		return this.insertDate;
+		return insertDate;
 	}
 
 	public void setInsertDate(Date insertDate) {
 		this.insertDate = insertDate;
 	}
-	
-	
+
+	public Integer getModUser() {
+		return modUser;
+	}
+
+	public void setModUser(Integer modUser) {
+		this.modUser = modUser;
+	}
+
+	public Date getModDate() {
+		return modDate;
+	}
+
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
+	}
 
 	public WUseridmapper getUserMapper() {
 		return userMapper;
@@ -122,8 +138,12 @@ public class WUserDef implements java.io.Serializable {
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result + insertUser;
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((userMapper == null) ? 0 : userMapper.hashCode());
@@ -136,7 +156,7 @@ public class WUserDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WUserDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WUserDef other = (WUserDef) obj;
 		if (active != other.active)
@@ -146,15 +166,27 @@ public class WUserDef implements java.io.Serializable {
 				return false;
 		} else if (!email.equals(other.email))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (insertDate == null) {
+			if (other.insertDate != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser != other.insertUser)
 			return false;
 		if (login == null) {
 			if (other.login != null)
 				return false;
 		} else if (!login.equals(other.login))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -171,13 +203,11 @@ public class WUserDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WUserDef [" + (id != null ? "id=" + id + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
-				+ (login != null ? "login=" + login + ", " : "")
-				+ (email != null ? "email=" + email + ", " : "") + "active="
-				+ active + ", insertUser=" + insertUser + ", "
-				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ (userMapper != null ? "userMapper=" + userMapper : "") + "]";
+		return "WUserDef [id=" + id + ", name=" + name + ", login=" + login
+				+ ", email=" + email + ", active=" + active + ", insertUser="
+				+ insertUser + ", insertDate=" + insertDate + ", modUser="
+				+ modUser + ", modDate=" + modDate + ", userMapper="
+				+ userMapper + "]";
 	}
 
 	public boolean empty() {

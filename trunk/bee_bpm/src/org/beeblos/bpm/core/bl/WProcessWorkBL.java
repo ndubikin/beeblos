@@ -28,9 +28,9 @@ public class WProcessWorkBL {
 		
 		// timestamp & trace info
 		process.setInsertDate(new Date());
-		process.setModDate( DEFAULT_MOD_DATE);
+		process.setModDate( DEFAULT_MOD_DATE );
 		process.setInsertUser(currentUser);
-		process.setModUser(null);
+		process.setModUser(currentUser);
 		return new WProcessWorkDao().add(process);
 
 	}

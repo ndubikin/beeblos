@@ -23,6 +23,8 @@ public class WTrackWork implements java.io.Serializable {
 
 	private Date insertDate;
 	private Integer insertUser;
+	private Date modDate;
+	private Integer modUser;
 
 	private String comments;
 	private String userNotes;
@@ -139,6 +141,22 @@ public class WTrackWork implements java.io.Serializable {
 		this.insertUser = insertUser;
 	}
 
+	public Date getModDate() {
+		return modDate;
+	}
+
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
+	}
+
+	public Integer getModUser() {
+		return modUser;
+	}
+
+	public void setModUser(Integer modUser) {
+		this.modUser = modUser;
+	}
+
 	public String getComments() {
 		return comments;
 	}
@@ -157,13 +175,14 @@ public class WTrackWork implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WTrackWork [idObject=" + idObject + ", idObjectType="
-				+ idObjectType + ", process=" + process + ", version="
-				+ version + ", previousStep=" + previousStep + ", currentStep="
-				+ currentStep + ", response=" + response + ", adminProcess="
-				+ adminProcess + ", insertDate=" + insertDate + ", insertUser="
-				+ insertUser + ", comments=" + comments + ", userNotes="
-				+ userNotes + "]";
+		return "WTrackWork [id=" + id + ", idObject=" + idObject
+				+ ", idObjectType=" + idObjectType + ", process=" + process
+				+ ", version=" + version + ", previousStep=" + previousStep
+				+ ", currentStep=" + currentStep + ", response=" + response
+				+ ", adminProcess=" + adminProcess + ", insertDate="
+				+ insertDate + ", insertUser=" + insertUser + ", modDate="
+				+ modDate + ", modUser=" + modUser + ", comments=" + comments
+				+ ", userNotes=" + userNotes + "]";
 	}
 
 	@Override
@@ -183,6 +202,8 @@ public class WTrackWork implements java.io.Serializable {
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
 		result = prime * result
 				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result
 				+ ((previousStep == null) ? 0 : previousStep.hashCode());
 		result = prime * result + ((process == null) ? 0 : process.hashCode());
@@ -234,6 +255,16 @@ public class WTrackWork implements java.io.Serializable {
 			if (other.insertUser != null)
 				return false;
 		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (previousStep == null) {
 			if (other.previousStep != null)

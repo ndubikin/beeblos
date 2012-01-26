@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -27,10 +30,10 @@ public class WStepSequenceDefBL {
 				route.getProcess().getId()+"-ver:"+route.getVersion()+"-fromStepId:"+route.getFromStep().getId()+"]");
 		
 		// timestamp & trace info
-//		route.setFechaAlta(new Date());
-//		response.setFechaModificacion(DEFAULT_MOD_DATE);
-//		route.setUsuarioAlta(user);
-//		route.setUsuarioModificacion(user);
+		route.setInsertDate(new Date());
+		route.setModDate(DEFAULT_MOD_DATE);
+		route.setInsertUser(currentUser);
+		route.setModUser(currentUser);
 		return new WStepSequenceDefDao().add(route);
 
 	}
@@ -43,8 +46,8 @@ public class WStepSequenceDefBL {
 		if (!route.equals(new WStepSequenceDefDao().getWStepSequenceDefByPK(route.getId())) ) {
 
 			// timestamp & trace info
-//			route.setFechaModificacion(new Date());
-//			route.setUsuarioModificacion(user);
+			route.setModDate(new Date());
+			route.setModUser(currentUser);
 			new WStepSequenceDefDao().update(route);
 			
 		} else {

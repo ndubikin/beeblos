@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
 import java.util.Date;
 import java.util.List;
 
@@ -26,9 +28,9 @@ public class WUserDefBL {
 		
 		// timestamp & trace info
 		user.setInsertDate(new Date());
-//		user.setModDate(DEFAULT_MOD_DATE);
+		user.setModDate(DEFAULT_MOD_DATE );
 		user.setInsertUser(currentUser);
-//		user.setModUser(null);
+		user.setModUser(currentUser);
 		return new WUserDefDao().add(user);
 
 	}
@@ -41,8 +43,8 @@ public class WUserDefBL {
 		if (!user.equals(new WUserDefDao().getWUserDefByPK(user.getId())) ) {
 
 			// timestamp & trace info
-//			user.setModDate(new Date());
-//			user.setModUser(currentUser);
+			user.setModDate(new Date());
+			user.setModUser(currentUser);
 			new WUserDefDao().update(user);
 			
 		} else {

@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -26,10 +29,10 @@ public class WRoleDefBL {
 		logger.debug("add() WRoleDef - Name: ["+role.getName()+"]");
 		
 		// timestamp & trace info
-//		role.setInsertDate(new Date());
-//		role.setModDate(new Date());
-//		role.setInsertUser(user);
-//		role.setModUser(null);
+		role.setInsertDate(new Date());
+		role.setModDate( DEFAULT_MOD_DATE );
+		role.setInsertUser(user);
+		role.setModUser(user);
 		return new WRoleDefDao().add(role);
 
 	}
@@ -42,8 +45,8 @@ public class WRoleDefBL {
 		if (!role.equals(new WRoleDefDao().getWRoleDefByPK(role.getId())) ) {
 
 			// timestamp & trace info
-//			role.setModDate(new Date());
-//			role.setModUser(null);
+			role.setModDate(new Date());
+			role.setModUser(user);
 			new WRoleDefDao().update(role);
 			
 		} else {

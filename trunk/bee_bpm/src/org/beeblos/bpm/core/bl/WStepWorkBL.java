@@ -52,6 +52,7 @@ public class WStepWorkBL {
 		stepw.setArrivingDate(new Date());
 		stepw.setInsertUser( new WUserDef(currentUser) );
 		stepw.setModDate( DEFAULT_MOD_DATE);
+		stepw.setModUser(currentUser);
 		return new WStepWorkDao().add(stepw);
 
 	}

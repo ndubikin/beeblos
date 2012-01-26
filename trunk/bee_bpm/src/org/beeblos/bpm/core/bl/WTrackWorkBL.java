@@ -31,7 +31,8 @@ public class WTrackWorkBL {
 		// timestamp & trace info
 		trackw.setInsertDate(new Date());
 		trackw.setInsertUser(currentUser);
-//		trackw.setModDate( DEFAULT_MOD_DATE);
+		trackw.setModDate( DEFAULT_MOD_DATE );
+		trackw.setModUser(currentUser);
 		return new WTrackWorkDao().add(trackw);
 
 	}
@@ -40,6 +41,9 @@ public class WTrackWorkBL {
 			throws WTrackWorkException {
 
 		logger.debug("update() WTrackWork < id = " + trackw.getId() + ">");
+
+		trackw.setModDate( new Date() );
+		trackw.setModUser(currentUser);
 
 		if (!trackw
 				.equals(new WTrackWorkDao().getWTrackWorkByPK(trackw.getId()))) {
