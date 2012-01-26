@@ -14,6 +14,7 @@ import org.beeblos.bpm.core.dao.WProcessDefDao;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
@@ -22,6 +23,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
@@ -54,6 +56,33 @@ public class WStepWorkBL {
 
 	}
 	
+	
+	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
+	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
+	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUser) throws WStepWorkException, WProcessWorkException {
+		
+		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep-Work: ["+stepw.getCurrentStep().getName()+"-"+stepw.getwProcessWork().getReference()+"]");
+		
+		Integer workId;
+		
+		if ( work.getId()==null || work.getId()==0 ) {
+			
+			WProcessWorkBL wpbl = new WProcessWorkBL(); 
+			workId = wpbl.add(work, currentUser);
+			work = wpbl.getWProcessWorkByPK(workId	, currentUser); // recovers persisted work to assure all propreties are correctely loaded in the object
+			
+		} else {
+			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+work.getId()+")");
+		}
+		
+		stepw.setwProcessWork(work);
+		// timestamp & trace info
+		stepw.setArrivingDate(new Date());
+		stepw.setInsertUser( new WUserDef(currentUser) );
+		stepw.setModDate( DEFAULT_MOD_DATE);
+		return new WStepWorkDao().add(stepw);
+
+	}
 	
 	public void update(WStepWork stepw, Integer currentUser) throws WStepWorkException {
 		
@@ -295,11 +324,14 @@ public class WStepWorkBL {
 	// devuelve 1 paso y lo deja lockeado
 	public WStepWork getStepWithLock (
 			Integer idStepWork, Integer currentUser ) 
-	throws WStepLockedByAnotherUserException,  CantLockTheStepException, WStepWorkException, WUserDefException {
+	throws WStepLockedByAnotherUserException,  CantLockTheStepException, WStepWorkException {
 	
 		WStepWork storedStep;
+		
 		try {
+			
 			storedStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+			
 		} catch (WStepWorkException e) {
 			String message = "The indicated step ("
 				+ idStepWork
@@ -330,6 +362,15 @@ public class WStepWorkBL {
 					+ ") can't be locked ..." 
 					+ swe.getMessage() + " - "
 					+ swe.getCause();
+				logger.warn(message);
+				storedStep=null;
+				throw new CantLockTheStepException(message);
+		} catch (WUserDefException e) {
+			String message = "Current user indicated does not exist or have a problem ("
+					+ currentUser
+					+ ") The step can't be locked ..." 
+					+ e.getMessage() + " - "
+					+ e.getCause();
 				logger.warn(message);
 				storedStep=null;
 				throw new CantLockTheStepException(message);
