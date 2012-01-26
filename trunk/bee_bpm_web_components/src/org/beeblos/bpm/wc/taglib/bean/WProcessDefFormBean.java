@@ -985,8 +985,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 				wssdBL.update(currentStepSequence, getCurrentUserId());
 
-				setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
-			
 			} else {
 	
 				currentStepSequence.setProcess(currentWProcessDef);
@@ -996,10 +994,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				
 				wssdBL.add(currentStepSequence, getCurrentUserId());
 	
-				setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
-				
 			}
 		
+			setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
+			
 			loadStepSequenceList();
 			
 		} catch (WStepSequenceDefException e) {
