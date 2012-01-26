@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.model;
 
+import java.util.Date;
+
 //import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
 // Generated Nov 9, 2011 1:15:47 PM by Hibernate Tools 3.4.0.CR1
@@ -26,6 +28,11 @@ public class WRoleDef implements java.io.Serializable {
 	private String description;
 	private Integer idObject;
 	private String idObjectType;
+	
+	private Integer insertUser;
+	private Date insertDate;
+	private Integer modUser;
+	private Date modDate;
 
 	public WRoleDef() {
 	}
@@ -90,16 +97,44 @@ public class WRoleDef implements java.io.Serializable {
 	}
 
 
+	public Integer getInsertUser() {
+		return insertUser;
+	}
+
+	public void setInsertUser(Integer insertUser) {
+		this.insertUser = insertUser;
+	}
+
+	public Date getInsertDate() {
+		return insertDate;
+	}
+
+	public void setInsertDate(Date insertDate) {
+		this.insertDate = insertDate;
+	}
+
+	public Integer getModUser() {
+		return modUser;
+	}
+
+	public void setModUser(Integer modUser) {
+		this.modUser = modUser;
+	}
+
+	public Date getModDate() {
+		return modDate;
+	}
+
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
+	}
+
 	@Override
 	public String toString() {
-		return "WRoleDef ["
-				+ (id != null ? "id=" + id + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
-				+ (description != null ? "description=" + description + ", "
-						: "")
-				+ (idObject != null ? "idObject=" + idObject + ", " : "")
-				+ (idObjectType != null ? "idObjectType=" + idObjectType : "")
-				+ "]";
+		return "WRoleDef [name=" + name + ", description=" + description
+				+ ", idObject=" + idObject + ", idObjectType=" + idObjectType
+				+ ", insertUser=" + insertUser + ", insertDate=" + insertDate
+				+ ", modUser=" + modUser + ", modDate=" + modDate + "]";
 	}
 
 	@Override
@@ -108,11 +143,16 @@ public class WRoleDef implements java.io.Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((idObject == null) ? 0 : idObject.hashCode());
 		result = prime * result
 				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -123,18 +163,13 @@ public class WRoleDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WRoleDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WRoleDef other = (WRoleDef) obj;
 		if (description == null) {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
 			return false;
 		if (idObject == null) {
 			if (other.idObject != null)
@@ -145,6 +180,26 @@ public class WRoleDef implements java.io.Serializable {
 			if (other.idObjectType != null)
 				return false;
 		} else if (!idObjectType.equals(other.idObjectType))
+			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (name == null) {
 			if (other.name != null)

@@ -566,10 +566,6 @@ public class PasoBean  extends CoreManagedBean {
 			System.out.println("WStepWorkException:"+idStepWork);
 			idStepWork=0;
 			throw e;
-		} catch (WUserDefException e) {
-			System.out.println("WStepWorkException:"+idStepWork);
-			idStepWork=0;
-			throw e;
 		} 
 		
 		// setea el submit para hacer submit automatico del form de trabajo junto con el procesar ( o guardar )

@@ -2,6 +2,8 @@ package org.beeblos.bpm.core.model;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
+import java.util.Date;
+
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
 /**
@@ -22,6 +24,11 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private boolean enabled;
 	private boolean afterAll;
 	private String validResponses; // indicates a list of idResponse comma separated
+	
+	private Integer insertUser;
+	private Date insertDate;
+	private Integer modUser;
+	private Date modDate;
 
 	public WStepSequenceDef() {
 	}
@@ -209,9 +216,46 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+	public Integer getInsertUser() {
+		return insertUser;
+	}
+
+
+	public void setInsertUser(Integer insertUser) {
+		this.insertUser = insertUser;
+	}
+
+
+	public Date getInsertDate() {
+		return insertDate;
+	}
+
+
+	public void setInsertDate(Date insertDate) {
+		this.insertDate = insertDate;
+	}
+
+
+	public Integer getModUser() {
+		return modUser;
+	}
+
+
+	public void setModUser(Integer modUser) {
+		this.modUser = modUser;
+	}
+
+
+	public Date getModDate() {
+		return modDate;
+	}
+
+
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -220,6 +264,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((process == null) ? 0 : process.hashCode());
 		result = prime * result + ((toStep == null) ? 0 : toStep.hashCode());
 		result = prime * result
@@ -230,16 +280,13 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WStepSequenceDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WStepSequenceDef other = (WStepSequenceDef) obj;
 		if (afterAll != other.afterAll)
@@ -250,6 +297,26 @@ public class WStepSequenceDef implements java.io.Serializable {
 			if (other.fromStep != null)
 				return false;
 		} else if (!fromStep.equals(other.fromStep))
+			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (process == null) {
 			if (other.process != null)
@@ -276,16 +343,14 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "WStepSequenceDef [afterAll=" + afterAll + ", enabled="
-				+ enabled + ", fromStep=" + fromStep + ", id=" + id
-				+ ", process=" + process + ", toStep=" + toStep
-				+ ", validResponses=" + validResponses + ", version=" + version
-				+ "]";
+		return "WStepSequenceDef [id=" + id + ", process=" + process
+				+ ", version=" + version + ", fromStep=" + fromStep
+				+ ", toStep=" + toStep + ", enabled=" + enabled + ", afterAll="
+				+ afterAll + ", validResponses=" + validResponses
+				+ ", insertUser=" + insertUser + ", insertDate=" + insertDate
+				+ ", modUser=" + modUser + ", modDate=" + modDate + "]";
 	}
 
 

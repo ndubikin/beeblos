@@ -30,9 +30,9 @@ public class WStepDefBL {
 		
 		// timestamp & trace info
 		step.setInsertDate(new Date());
-		step.setModDate( DEFAULT_MOD_DATE);
+		step.setModDate( DEFAULT_MOD_DATE );
 		step.setInsertUser(currentUser);
-		step.setModUser(null);
+		step.setModUser(currentUser);
 		return new WStepDefDao().add(step);
 
 	}

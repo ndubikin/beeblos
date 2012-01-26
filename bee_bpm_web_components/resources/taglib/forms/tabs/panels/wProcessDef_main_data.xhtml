@@ -57,8 +57,7 @@
 				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.id}"
 				style="width:250px; height: 24px; font-size:13px;padding: 3px;"
 				rendered="#{!wProcessDefFormBean.readOnly}">
-				<f:selectItems value="#{wProcessDefFormBean.stepCombo}" 
-					/>
+				<f:selectItems value="#{wProcessDefFormBean.lStepCombo}" />
 			</h:selectOneMenu>
 			<h:outputText 
 				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.name}"

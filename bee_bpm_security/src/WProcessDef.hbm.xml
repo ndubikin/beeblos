@@ -155,6 +155,20 @@
 			type="string">
 			<column length="100" name="id_object_type" />
 		</property>
+		<property generated="never" lazy="false" name="insertDate"
+			type="timestamp">
+			<column length="0" name="insert_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WStepDef" table="w_step_def">
@@ -388,6 +402,20 @@
 		<property generated="never" lazy="false" name="name" type="string">
 			<column length="30" name="name" not-null="true" />
 		</property>
+		<property generated="never" lazy="false" name="insertDate"
+			type="timestamp">
+			<column length="0" name="insert_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WStepSequenceDef" table="w_step_sequence_def">
@@ -412,6 +440,20 @@
 		<property generated="never" lazy="false" name="version"
 			type="java.lang.Integer">
 			<column name="version" />
+		</property>
+		<property generated="never" lazy="false" name="insertDate"
+			type="timestamp">
+			<column length="0" name="insert_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
 		</property>
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
 			column="id_origin_step" lazy="false" name="fromStep" />
@@ -791,6 +833,12 @@
 		</property>
 		<one-to-one class="org.beeblos.bpm.core.model.WUseridmapper"
 			name="userMapper" />
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WUseridmapper" table="w_useridmapper">
@@ -862,6 +910,12 @@
 			<column  name="insert_user">
 				<comment>usuario que lo inserto</comment>
 			</column>
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
 		</property>
 		<property generated="never" lazy="false" name="userNotes"
 			type="string">

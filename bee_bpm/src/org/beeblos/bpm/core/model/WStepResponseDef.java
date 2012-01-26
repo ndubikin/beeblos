@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.model;
 
+import java.util.Date;
+
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
 /**
@@ -16,6 +18,11 @@ public class WStepResponseDef implements java.io.Serializable {
 	private Integer id;
 	private Integer respOrder;
 	private String name;
+	
+	private Integer insertUser;
+	private Date insertDate;
+	private Integer modUser;
+	private Date modDate;
 
 	public WStepResponseDef() {
 		super();
@@ -76,31 +83,83 @@ public class WStepResponseDef implements java.io.Serializable {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+	public Integer getInsertUser() {
+		return insertUser;
+	}
+
+	public void setInsertUser(Integer insertUser) {
+		this.insertUser = insertUser;
+	}
+
+	public Date getInsertDate() {
+		return insertDate;
+	}
+
+	public void setInsertDate(Date insertDate) {
+		this.insertDate = insertDate;
+	}
+
+	public Integer getModUser() {
+		return modUser;
+	}
+
+	public void setModUser(Integer modUser) {
+		this.modUser = modUser;
+	}
+
+	public Date getModDate() {
+		return modDate;
+	}
+
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((respOrder == null) ? 0 : respOrder.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WStepResponseDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WStepResponseDef other = (WStepResponseDef) obj;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -114,13 +173,11 @@ public class WStepResponseDef implements java.io.Serializable {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "WStepResponseDef [id=" + id + ", name=" + name + ", respOrder="
-				+ respOrder + "]";
+		return "WStepResponseDef [respOrder=" + respOrder + ", name=" + name
+				+ ", insertUser=" + insertUser + ", insertDate=" + insertDate
+				+ ", modUser=" + modUser + ", modDate=" + modDate + "]";
 	}
 
 	public boolean empty() {
