@@ -17,10 +17,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
@@ -456,12 +458,18 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private void loadStepCombo() {
 
 		try {
+			
+			setlStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL()
+					.getComboList("Select step...", null)));
 
-			setStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL()
-					.getComboList("Select...", null)));
+		} catch (WStepDefException ex1) {
 
-		} catch (WStepDefException e) {
-			e.printStackTrace();
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".loadStepCombo() WStepDefException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+
 		}
 	}
 
@@ -561,12 +569,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return java.util.TimeZone.getDefault();
 	}
 
-	public List<SelectItem> getStepCombo() {
+	public List<SelectItem> getlStepCombo() {
 		return lStepCombo;
 	}
 
-	public void setStepCombo(List<SelectItem> stepCombo) {
-		this.lStepCombo = stepCombo;
+	public void setlStepCombo(List<SelectItem> lStepCombo) {
+		this.lStepCombo = lStepCombo;
 	}
 
 	public List<WStepDef> getlSteps() {
@@ -966,23 +974,34 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	// dml 20120125
-	public void addStepToSequence(){
+	public void addAndUpdateStepSequence(){
 		
 		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
 		
 		try {
 
-			currentStepSequence.setProcess(currentWProcessDef);
-			currentStepSequence.setVersion(1);
+			if (currentStepSequence != null && currentStepSequence.getId() != null && 
+					currentStepSequence.getId() != 0) {
 			
-			//NESTOR COMO INCLUYO LAS RESPONSES?
-			
-			wssdBL.add(currentStepSequence, getCurrentUserId());
+				wssdBL.update(currentStepSequence, getCurrentUserId());
 
-			setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
+				setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
 			
-			loadStepSequenceList();
+			} else {
+	
+				currentStepSequence.setProcess(currentWProcessDef);
+				currentStepSequence.setVersion(1);
+				
+				//NESTOR COMO INCLUYO LAS RESPONSES?
+				
+				wssdBL.add(currentStepSequence, getCurrentUserId());
+	
+				setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
+				
+			}
 		
+			loadStepSequenceList();
+			
 		} catch (WStepSequenceDefException e) {
 
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -995,6 +1014,87 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
+	// dml 20120126
+	public void updateStepFromSequence(){
+		
+		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
+		
+		try {
+
+			if (currentStepSequence != null && currentStepSequence.getId() != null && 
+					currentStepSequence.getId() != 0) {
+			
+				wssdBL.update(currentStepSequence, getCurrentUserId());
+
+				setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
+			
+				loadStepSequenceList();
+		
+			}
+			
+		} catch (WStepSequenceDefException e) {
+
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateStepFromSequence() WStepSequenceDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+
+		}
+		
+	}
+	
+	public void deleteStepFromSequence(){
+		
+		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
+		
+		try {
+			
+			if (currentStepSequence != null && currentStepSequence.getId() != null){
+			
+				currentStepSequence = wssdBL.getWStepSequenceDefByPK(currentStepSequence.getId(), getCurrentUserId());
+						wssdBL.deleteRoute(currentStepSequence, getCurrentUserId() );
+
+				loadStepSequenceList();
+				
+			}		
+			
+		} catch (WStepSequenceDefException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".deleteStepFromSequence() WStepSequenceDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+		
+	}
+
+	public void loadStepFromSequence(){
+		
+		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
+		
+		try {
+
+			if (currentStepSequence != null && currentStepSequence.getId() != null && 
+					currentStepSequence.getId() != 0) {
+			
+				currentStepSequence = wssdBL.getWStepSequenceDefByPK(currentStepSequence.getId(), getCurrentUserId());
+
+			}
+			
+		} catch (WStepSequenceDefException e) {
+
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".loadStepFromSequence() WStepSequenceDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+
+		}
+		
+		
+	}
+	
 	// PENDIENTE: metele un check que diga: "Show only selected roles"
 	// PENDIENTE: email de CASTOR
 
