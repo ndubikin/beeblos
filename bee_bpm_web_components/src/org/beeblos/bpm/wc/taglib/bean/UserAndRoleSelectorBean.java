@@ -160,15 +160,8 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	//rrl 20120113
 	public String addWUserDefSelected() {
 
-		strUserString = "";
-		for (String s : selectedWUserDefList) {
-			strUserString += s + ",";
-		}
-		
-		// remove the last comma
-		if (strUserString.endsWith(",")) {
-			strUserString = strUserString.substring(0, strUserString.length() - 1);
-		}
+		// dml 20120127
+		strUserString = UtilsVs.castStringListToString(selectedWUserDefList, ",");
 		
 		return null;
 	}
@@ -221,16 +214,9 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	//rrl 20120112
 	public String addWRoleDefSelected() {
 
-		strRoleString = "";
-		for (String s : selectedWRoleDefList) {
-			strRoleString += s + ",";
-		}
-		
-		// remove the last comma
-		if (strRoleString.endsWith(",")) {
-			strRoleString = strRoleString.substring(0, strRoleString.length() - 1);
-		}
-		
+		// dml 20120127
+		strRoleString = UtilsVs.castStringListToString(selectedWRoleDefList, ",");
+
 		return null;
 	}
 

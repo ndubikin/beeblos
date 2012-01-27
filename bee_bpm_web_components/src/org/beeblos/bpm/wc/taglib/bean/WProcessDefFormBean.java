@@ -7,7 +7,9 @@ import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -31,9 +33,11 @@ import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
+import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -86,6 +90,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120125
 	private List<WStepSequenceDef> stepSequenceList; 
 	private WStepSequenceDef currentStepSequence;
+	
+	// dml 20120127
+	private List<SelectItem> currentStepResponseList;
+	private List<String> currentStepValidResponses;
 
 	public WProcessDefFormBean() {
 		super();
@@ -123,6 +131,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		// dml 20120125
 		this.currentStepSequence = new WStepSequenceDef();
+		
+		// dml 20120127
+		this.currentStepResponseList = null;
+		this.currentStepValidResponses = new ArrayList<String>();
 
 		recoverNullObjects();
 
@@ -216,6 +228,19 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 
 		}
+		
+		if (currentStepSequence != null) {
+
+			if ((currentStepSequence.getToStep() != null &&
+				currentStepSequence.getToStep().empty()) ||
+				currentStepSequence.getToStep().getId().equals(0)) {
+			
+				currentStepSequence.setToStep(null);
+			
+			}
+			
+		}
+
 	}
 
 	private void recoverNullObjects() {
@@ -700,6 +725,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.currentStepSequence = currentStepSequence;
 	}
 
+	public List<SelectItem> getCurrentStepResponseList() {
+		return currentStepResponseList;
+	}
+
+	public void setCurrentStepResponseList(List<SelectItem> currentStepResponseList) {
+		this.currentStepResponseList = currentStepResponseList;
+	}
+
+	public List<String> getCurrentStepValidResponses() {
+		return currentStepValidResponses;
+	}
+
+	public void setCurrentStepValidResponses(List<String> currentStepValidResponses) {
+		this.currentStepValidResponses = currentStepValidResponses;
+	}
+
 	public WProcessRole getCurrentWProcessRole() {
 		return currentWProcessRole;
 	}
@@ -980,7 +1021,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		try {
 
-			if (currentStepSequence != null && currentStepSequence.getId() != null && 
+			setModel();
+			
+			currentStepSequence.setValidResponses(UtilsVs.castStringListToString(currentStepValidResponses, "|"));
+
+			if (currentStepSequence.getId() != null && 
 					currentStepSequence.getId() != 0) {
 			
 				wssdBL.update(currentStepSequence, getCurrentUserId());
@@ -990,21 +1035,17 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				currentStepSequence.setProcess(currentWProcessDef);
 				currentStepSequence.setVersion(1);
 				
-				//NESTOR COMO INCLUYO LAS RESPONSES?
-				
 				wssdBL.add(currentStepSequence, getCurrentUserId());
 	
 			}
 		
-			setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
-			
-			loadStepSequenceList();
+			cleanStepSequence();
 			
 		} catch (WStepSequenceDefException e) {
 
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
-					".addStepResponse() WStepSequenceDefException ..." };
+					".addAndUpdateStepSequence() WStepSequenceDefException ..." };
 			agregarMensaje("203", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
 
@@ -1012,36 +1053,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
-	// dml 20120126
-	public void updateStepFromSequence(){
-		
-		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
-		
-		try {
-
-			if (currentStepSequence != null && currentStepSequence.getId() != null && 
-					currentStepSequence.getId() != 0) {
-			
-				wssdBL.update(currentStepSequence, getCurrentUserId());
-
-				setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
-			
-				loadStepSequenceList();
-		
-			}
-			
-		} catch (WStepSequenceDefException e) {
-
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".updateStepFromSequence() WStepSequenceDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-
-		}
-		
-	}
-	
 	public void deleteStepFromSequence(){
 		
 		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
@@ -1051,9 +1062,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			if (currentStepSequence != null && currentStepSequence.getId() != null){
 			
 				currentStepSequence = wssdBL.getWStepSequenceDefByPK(currentStepSequence.getId(), getCurrentUserId());
-						wssdBL.deleteRoute(currentStepSequence, getCurrentUserId() );
+						
+				wssdBL.deleteRoute(currentStepSequence, getCurrentUserId() );
 
-				loadStepSequenceList();
+				cleanStepSequence();
 				
 			}		
 			
@@ -1067,6 +1079,17 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
+	public void cleanStepSequence(){
+		
+		setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
+		
+		currentStepValidResponses.clear();
+		currentStepResponseList.clear();
+		
+		loadStepSequenceList();		
+		
+	}
+	
 	public void loadStepFromSequence(){
 		
 		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
@@ -1078,6 +1101,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 				currentStepSequence = wssdBL.getWStepSequenceDefByPK(currentStepSequence.getId(), getCurrentUserId());
 
+				recoverNullObjects();
+				
+				loadStepResponses();
+				
+				setCurrentStepValidResponses(UtilsVs.castStringToStringList(currentStepSequence.getValidResponses(), "|"));
+				
 			}
 			
 		} catch (WStepSequenceDefException e) {
@@ -1089,6 +1118,92 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			e.printStackTrace();
 
 		}
+		
+		
+	}
+	
+	// dml 20120127
+	public void changeFromStep(){
+		
+		currentStepResponseList.clear();
+		currentStepValidResponses.clear();
+		
+		loadStepResponses();	
+		
+	}
+	
+	// dml 20120127
+	public void loadStepResponses(){
+		
+		WStepDefBL wsdBL = new WStepDefBL();
+		WStepDef wsd = new WStepDef();
+		
+		try {
+			
+			if (currentStepSequence != null && currentStepSequence.getFromStep() != null && 
+					currentStepSequence.getFromStep().getId() != null &&
+					currentStepSequence.getFromStep().getId() != 0) {
+			
+				wsd = wsdBL.getWStepDefByPK(currentStepSequence.getFromStep().getId(), getCurrentUserId());
+				
+				currentStepResponseList = setToSelectItemConversor(wsd.getResponse());
+				
+			}
+			
+		} catch (WStepDefException e) {
+
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".loadStepResponses() WStepDefException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+
+		}
+
+	}
+	
+	// dml 20120127
+	public Integer getCurrentStepResponseListSize() { 
+		
+		return currentStepResponseList.size();
+		
+	}
+	
+	// dml 20120127
+	private List<SelectItem> setToSelectItemConversor(Set<WStepResponseDef> responseSet){
+		
+		List<SelectItem> outList = new ArrayList<SelectItem>();
+		WStepResponseDef wsrd = new WStepResponseDef();
+		
+		try {
+
+			Iterator<WStepResponseDef> responseIt = responseSet.iterator();
+			
+			while (responseIt.hasNext()) {
+				
+				wsrd = responseIt.next();
+				
+				outList.add(new SelectItem(wsrd.getId(), wsrd.getName()));
+				
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Error trying to convert Set<WStepResponseDef> to SelectItem:"
+								+e.getMessage()+" "+e.getCause()+" - "+e.getClass());
+			outList=null;
+		}
+		
+		return outList;
+		
+	}
+		
+	// dml 20120127
+	public String selectValidStepResponse(){
+		
+		// No eliminar este método, asi hace submit en Ajax y guarda selectedWRoleDefList
+		logger.debug("Item selected from selectedWRoleDefList");
+		
+		return null;
 		
 		
 	}

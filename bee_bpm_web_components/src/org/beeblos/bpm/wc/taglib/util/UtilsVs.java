@@ -3,6 +3,7 @@ package org.beeblos.bpm.wc.taglib.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
 
@@ -30,6 +31,38 @@ public class UtilsVs {
 			outList=null;
 		}
 		return outList;
+	}
+	
+	public static String castStringListToString(List<String> listString, String delimiter){
+		
+		String outputString = "";
+		
+		for (String s : listString) {
+			outputString += s + delimiter;
+		}
+		
+		// remove the last delimiter
+		if (outputString.endsWith(delimiter)) {
+			outputString = outputString.substring(0, outputString.length() - 1);
+		}
+		
+		return outputString;
+				
+	}
+	
+	public static List<String> castStringToStringList(String listString, String delimiter){
+		
+		List<String> outputListString = new ArrayList<String>();
+		
+	     StringTokenizer st = new StringTokenizer(listString, delimiter);
+	     while (st.hasMoreTokens()) {
+	         
+	    	 outputListString.add(st.nextToken());
+	    	 
+	     }
+		
+		return outputListString;
+				
 	}
 	
 	
