@@ -5,53 +5,103 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<h:form>
+<style>
 
-		<h:panelGrid width="98%" columns="2"
-			columnClasses="colStyle100,colStyle250">
+.panelScroll {
+	height: 245px;
+	overflow: auto;
+}
 
+</style>
 
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
+	<h:form id="add_and_edit_step_sequence">
 
-			<h:outputText value="#{msg.label_from_step}: " />
-			<h:selectOneMenu id="insert_from_step" 
-				value="#{wProcessDefFormBean.currentStepSequence.fromStep.id}"
-				style="width:200px; height: 24px; font-size:13px; padding: 3px;">
-				<f:selectItems
-					value="#{wProcessDefFormBean.lStepCombo}" />
-			</h:selectOneMenu>
+			<h:panelGrid width="98%" columns="2"
+				columnClasses="colStyle400,colStyle250">
 
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
+			<h:panelGroup>
+				<h:panelGrid width="98%" columns="2"
+					columnClasses="colStyle100,colStyle250">
+		
+					<rich:spacer height="10" />
+					<rich:spacer height="10" />
+		
+					<h:outputText value="#{msg.label_from_step}: " />
+					<h:selectOneMenu id="insert_from_step" 
+						value="#{wProcessDefFormBean.currentStepSequence.fromStep.id}"
+						style="width:200px; height: 24px; font-size:13px; padding: 3px;">
+						<f:selectItems
+							value="#{wProcessDefFormBean.lStepCombo}" />
+						<a4j:support ajaxSingle="true"  
+							actionListener="#{wProcessDefFormBean.changeFromStep}"
+							event="onchange" reRender="add_and_edit_step_sequence" />
+					</h:selectOneMenu>
+		
+					<rich:spacer height="10" />
+					<rich:spacer height="10" />
+		
+					<h:outputText value="#{msg.label_to_step}: " />
+					<h:selectOneMenu id="insert_to_step" 
+						value="#{wProcessDefFormBean.currentStepSequence.toStep.id}"
+						style="width:200px; height: 24px; font-size:13px; padding: 3px;">
+						<f:selectItems
+							value="#{wProcessDefFormBean.lStepCombo}" />
+					</h:selectOneMenu>
+		
+					<rich:spacer height="10" />
+					<rich:spacer height="10" />
+		
+					<h:outputText value="#{msg.label_is_enabled}:" />
+					<h:selectBooleanCheckbox value="#{wProcessDefFormBean.currentStepSequence.enabled}"/>
+		
+					<rich:spacer height="10" />
+					<rich:spacer height="10" />
+		
+					<h:outputText value="#{msg.label_after_all}:" />
+					<h:selectBooleanCheckbox value="#{wProcessDefFormBean.currentStepSequence.afterAll}"/>
+		
+					<rich:spacer height="10" />
+					<rich:spacer height="10" />
+		
+				</h:panelGrid>
+	
+			</h:panelGroup>
 
-			<h:outputText value="#{msg.label_to_step}: " />
-			<h:selectOneMenu id="insert_to_step" 
-				value="#{wProcessDefFormBean.currentStepSequence.toStep.id}"
-				style="width:200px; height: 24px; font-size:13px; padding: 3px;">
-				<f:selectItems
-					value="#{wProcessDefFormBean.lStepCombo}" />
-			</h:selectOneMenu>
+			<h:panelGroup>
 
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
-
-			<h:outputText value="#{msg.label_is_enabled}:" />
-			<h:selectBooleanCheckbox value="#{wProcessDefFormBean.currentStepSequence.enabled}"/>
-
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
-
-			<h:outputText value="#{msg.label_after_all}:" />
-			<h:selectBooleanCheckbox value="#{wProcessDefFormBean.currentStepSequence.afterAll}"/>
-
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
+				<rich:spacer height="10" />
+				<rich:panel id="from_step_possible_responses_panel" bodyClass="panelScroll"
+					style="width:200px; height: 150px;">
+					<f:facet name="header">
+	                	<h:outputText value="#{msg.label_select_responses}" />
+	            	</f:facet>
+					
+					<h:outputText value="#{msg.label_none}" 
+						rendered="#{wProcessDefFormBean.currentStepResponseList == null or
+							wProcessDefFormBean.currentStepResponseListSize == 0}"/>
+					
+					<h:selectManyCheckbox id="id_select_many_responses"
+						value="#{wProcessDefFormBean.currentStepValidResponses}"
+						layout="pageDirection"
+						rendered="#{wProcessDefFormBean.currentStepResponseList != null and
+							wProcessDefFormBean.currentStepResponseListSize != 0}">
+						<f:selectItems
+							value="#{wProcessDefFormBean.currentStepResponseList}" var="csr"
+							itemLabel="#{csr.label}" itemValue="#{csr.value}" />
+						<a4j:support
+							action="#{wProcessDefFormBean.selectValidStepResponse}"
+							ajaxSingle="true" event="onclick" />
+					</h:selectManyCheckbox>
+				</rich:panel>
+	
+			</h:panelGroup>
 
 		</h:panelGrid>
 
 		<h:panelGroup>
 			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+				actionListener="#{wProcessDefFormBean.cleanStepSequence}"
+				reRender="mpAddAndEditStepSequence"
 				onclick="javascript:Richfaces.hideModalPanel('mpAddAndEditStepSequence')"
 				style="width:80px; height:24px;" />
 			<a4j:commandButton id="ok_button_sr" value="#{msg.label_confirm}"
