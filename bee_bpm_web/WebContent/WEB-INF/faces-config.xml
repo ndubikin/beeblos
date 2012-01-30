@@ -154,6 +154,10 @@
    <to-view-id>/admin/workingStepQueryCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
+   <from-outcome>LOAD_WPROCESSWORK</from-outcome>
+   <to-view-id>/forms/wProcessWorkFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
    <from-outcome>LOAD_WPROCESSDEF</from-outcome>
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
   </navigation-case>

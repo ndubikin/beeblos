@@ -18,6 +18,7 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
+import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 
 public class WStepDefQueryBean extends CoreManagedBean {
 
@@ -101,51 +102,15 @@ public class WStepDefQueryBean extends CoreManagedBean {
 
 	public String loadWStepDefForm() {
 
-		String ret = "FAIL";
+		return new WStepDefUtil().loadWStepDefFormBean(id);
 
-		if (this.id != null){
-			
-			ValueExpression valueBinding = super
-					.getValueExpression("#{wStepDefFormBean}");
-
-			if (valueBinding != null) {
-
-				WStepDefFormBean wsdfb = 
-						(WStepDefFormBean) valueBinding
-							.getValue(super.getELContext());
-				wsdfb.init();
-				wsdfb.setCurrObjId(id);
-				wsdfb.loadObject(id);
-
-				ret = LOAD_WSTEPDEF;
-			
-			}
-		}
-
-		return ret;
 	}
 
 	// dml 20120110
 	public String createNewWStepDef() {
 
-		String ret = "FAIL";
-
-		ValueExpression valueBinding = super
-				.getValueExpression("#{wStepDefFormBean}");
-
-		if (valueBinding != null) {
-
-			WStepDefFormBean wsdfb = 
-					(WStepDefFormBean) valueBinding
-						.getValue(super.getELContext());
-			wsdfb.init();
-			wsdfb.initEmptyWStepDef();
-			
-			ret = CREATE_NEW_WSTEPDEF;
+		return new WStepDefUtil().createNewWStepDef();
 		
-		}
-
-		return ret;
 	}
 
 	public TimeZone getTimeZone() {

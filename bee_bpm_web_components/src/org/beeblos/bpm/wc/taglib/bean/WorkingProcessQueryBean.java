@@ -1,7 +1,5 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
-import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
-import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.PENDING;
 import static org.beeblos.bpm.core.util.Constants.PROCESSING;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
@@ -13,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.el.ValueExpression;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
@@ -39,6 +36,8 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
+import org.beeblos.bpm.wc.taglib.util.WProcessWorkUtil;
+import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepWorkUtil;
 
 public class WorkingProcessQueryBean extends CoreManagedBean {
@@ -116,6 +115,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	
 	// dml 20120125
 	private String workTypeFilter;
+	
+	// dml 20120130
+	private Integer idWork;
 
 	public WorkingProcessQueryBean() {
 		super();
@@ -545,6 +547,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.workTypeFilter = workTypeFilter;
 	}
 
+	public Integer getIdWork() {
+		return idWork;
+	}
+
+	public void setIdWork(Integer idWork) {
+		this.idWork = idWork;
+	}
+
 	public Integer getIdStepWork() {
 		return idStepWork;
 	}
@@ -626,79 +636,23 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	// dml 20120104
 	public String loadWProcessDefForm() {
 
-		String ret = "FAIL";
-
-		if (this.currentProcessId != null){
-			
-			ValueExpression valueBinding = super
-					.getValueExpression("#{wProcessDefFormBean}");
-
-			if (valueBinding != null) {
-
-				WProcessDefFormBean wpdfb = 
-						(WProcessDefFormBean) valueBinding
-							.getValue(super.getELContext());
-				wpdfb.init();
-				wpdfb.setCurrentId(currentProcessId);
-				wpdfb.loadCurrentWProcessDef(currentProcessId);
-
-				ret = LOAD_WPROCESSDEF;
-			
-			}
-		}
-
-		return ret;
+		// dml 20120130
+		return new WProcessDefUtil().loadWProcessDefFormBean(currentProcessId);
+		
 	}
 	
 	// dml 20120123
 	public String loadWStepDefForm() {
 
-		String ret = "FAIL";
-
-		if (this.idStep != null && this.idStep != 0){
-			
-			ValueExpression valueBinding = super
-					.getValueExpression("#{wStepDefFormBean}");
-
-			if (valueBinding != null) {
-
-				WStepDefFormBean wpdfb = 
-						(WStepDefFormBean) valueBinding
-							.getValue(super.getELContext());
-				wpdfb.init();
-				wpdfb.setCurrObjId(idStep);
-				wpdfb.loadObject(idStep);
-
-				ret = LOAD_WSTEPDEF;
-			
-			}
-		}
-
-		return ret;
+		return new WStepDefUtil().loadWStepDefFormBean(idStep);
+		
 	}
 	
 	//rrl 20120117
 	public String generateXmlWProcessDef() {
 
-		if (this.currentProcessId != null){
-			
-			ValueExpression valueBinding = super
-					.getValueExpression("#{wProcessDefFormBean}");
-
-			if (valueBinding != null) {
-
-				WProcessDefFormBean wpdfb = 
-						(WProcessDefFormBean) valueBinding
-							.getValue(super.getELContext());
-				wpdfb.init();
-				wpdfb.setCurrentId(currentProcessId);
-				wpdfb.loadCurrentWProcessDef(currentProcessId);
-				
-				wpdfb.generateXMLCurrentWProcessDef();
-			}
-		}
+		return new WProcessDefUtil().generateXmlWProcessDef(currentProcessId);
 		
-		return null;
 	}
 
 	// dml 20120124
@@ -946,7 +900,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	// dml 20120124
 	public void loadWStepWorkForm() {
 
-		new WStepWorkUtil().createNewWStepWorkFormBean(idStepWork);
+		new WStepWorkUtil().loadWStepWorkFormBean(idStepWork);
+
+	}
+
+	// dml 20120130
+	public String loadWProcessWorkForm() {
+
+		return new WProcessWorkUtil().loadWProcessWorkFormBean(idWork);
 
 	}
 

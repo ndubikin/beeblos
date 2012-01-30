@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
+
+	<rich:spacer height="20" />
+
+	<ui:include src="panels/wProcessWorkTitle.xhtml" />
+
+	<rich:spacer height="10" />
+
+	<h:panelGroup rendered="#{!wProcessWorkFormBean.pendingStepListEmpty}">
+		<fieldset class="demo_fieldset" >
+			<legend class="demo_legend">#{msg.label_wProcessWork_pending_steps}</legend>
+	
+			<ui:include src="panels/wProcessWork_pending_step_list.xhtml"/>
+		</fieldset>
+	</h:panelGroup>
+	
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">#{msg.label_wProcessWork_processed_steps}</legend>
+
+		<ui:include src="panels/wProcessWork_processed_step_list.xhtml"/>
+	</fieldset>
+
+</ui:composition>

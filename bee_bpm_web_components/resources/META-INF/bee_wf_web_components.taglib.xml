@@ -66,6 +66,11 @@
  </tag>
  
  <tag>
+  <tag-name>wProcessWorkForm</tag-name>
+  <source>/taglib/forms/wProcessWorkForm.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>wProcessDefForm</tag-name>
   <source>/taglib/forms/wProcessDefForm.xhtml</source>
  </tag>
@@ -79,7 +84,7 @@
   <tag-name>wStepDefForm</tag-name>
   <source>/taglib/forms/wStepDefForm.xhtml</source>
  </tag>
- 
+
  <tag>
   <tag-name>miCuenta</tag-name>
   <source>/taglib/micuenta/miCuenta.xhtml</source>

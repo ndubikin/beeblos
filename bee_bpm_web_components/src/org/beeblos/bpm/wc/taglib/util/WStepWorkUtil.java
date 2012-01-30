@@ -12,9 +12,9 @@ public class WStepWorkUtil extends CoreManagedBean {
 
 	}
 
-	public void createNewWStepWorkFormBean(Integer idStepWork) {
+	public void loadWStepWorkFormBean(Integer idStepWork) {
 
-		if (idStepWork != null){
+		if (idStepWork != null && idStepWork != 0){
 			
 			ValueExpression valueBinding = super
 					.getValueExpression("#{wStepWorkFormBean}");

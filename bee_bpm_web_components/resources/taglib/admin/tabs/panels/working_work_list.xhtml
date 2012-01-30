@@ -24,9 +24,9 @@
               		<a4j:actionparam name="det5" assignTo="#{workingProcessQueryBean.referenceFilter}" value="{workReference}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
-              	<rich:menuItem ajaxSingle="false" submitMode="server">
+              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessWorkForm}" submitMode="server">
                 	<b> Show history </b> {workReference} 
-                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
+              		<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idWork}" value="{idWork}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
