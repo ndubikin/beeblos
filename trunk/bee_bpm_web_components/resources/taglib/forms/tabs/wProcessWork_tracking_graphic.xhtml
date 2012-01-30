@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<script>
+	function PopupCenter(pageURL, title,w,h) {
+		var left = (screen.width/2)-(w/2);
+		var top = (screen.height/2)-(h/2);
+		var targetWin = window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+	} 
+</script>
+
+	<rich:spacer height="20" />
+
+	<ui:include src="panels/wProcessWorkTitle.xhtml" />
+
+	<rich:spacer height="10" />
+
+
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">WProcessWork Tracking Graphic</legend>
+
+		<div align="right">
+			<h:form>
+				<a4j:commandButton title="graphic_zoom"
+					image="/images/icons/zoomin.png" style="margin-left:2px;"
+					onclick="javascript:PopupCenter('panels/wProcessWork_step_work_graphic.jsf','graphic_zoom', 800, 600);"
+					rendered="#{not empty wProcessWorkFormBean.wStepWorkList}">
+				</a4j:commandButton>
+			</h:form>
+		</div>
+		
+		<rich:panel id="wProcessWork_graphic_panel">
+			<a4j:mediaOutput element="img" cacheable="false" session="false"
+				createContent="#{wProcessWorkFormBean.paint}"
+				value="#{wProcessWorkFormBean.wStepWorkList}"
+				rendered="#{not empty wProcessWorkFormBean.wStepWorkList}" />
+		</rich:panel>
+	</fieldset>
+
+
+</ui:composition>

@@ -83,6 +83,12 @@
  </managed-bean> 
  
   <managed-bean>
+  <managed-bean-name>wProcessWorkFormBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WProcessWorkFormBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean> 
+ 
+  <managed-bean>
   <managed-bean-name>wProcessDefFormBean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>

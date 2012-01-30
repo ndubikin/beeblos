@@ -243,6 +243,15 @@ public class WStepWorkBL {
 		
 	}
 	
+	//rrl 20110118: recupera los workitems de 1 objeto dado
+	public List<WStepWork> getStepListByIdWork(
+			Integer idWork, Integer currentUser) 
+	throws WProcessDefException, WStepDefException, WStepWorkException {
+		
+		return new WStepWorkDao().getStepListByIdWork(idWork, currentUser);
+		
+	}
+	
 	
 	/*
 	 ********************** MÉTODOS PARA TRABAJO DEL WORKFLOW  ****************************************

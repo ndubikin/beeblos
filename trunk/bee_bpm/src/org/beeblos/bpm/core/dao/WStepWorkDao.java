@@ -765,6 +765,44 @@ public class WStepWorkDao {
 		return stepws;
 	}
 	
+	// dml 20120130
+	@SuppressWarnings("unchecked")
+	public List<WStepWork> getStepListByIdWork(
+			Integer idWork, Integer currentUser ) 
+	throws WStepWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WStepWork> stepws = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			stepws = session
+				.createQuery("From WStepWork where wProcessWork.id = :idWork order by openedDate ")
+				.setParameter("idWork", idWork)
+				.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="WStepWorkDao: 005 getStepListByIdWork() - can't obtain stepw list - " +
+							ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(message );
+			throw new WStepWorkException(message);
+
+		}
+
+		return stepws;
+	}
+	
 	
 	
 	

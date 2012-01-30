@@ -1,16 +1,12 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
-import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
-import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
-import javax.el.ValueExpression;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
@@ -19,6 +15,7 @@ import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
+import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 public class WProcessDefQueryBean extends CoreManagedBean {
 
@@ -151,72 +148,6 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 		return WPROCESSDEF_QUERY;
 	}
-/*
-	// rrl 20110927 Sin cambiar de pagina inicializa la Factura del proveedor
-	public String inicializaFacturaProveedor() {
-
-		logger.debug("inicializaFacturaProveedor(): idFacprov=" + idFacprov);
-
-		ValueExpression valueBinding = super
-				.getValueExpression("#{fichaFacturaBean}");
-
-		if (valueBinding != null) {
-
-			FichaFacturaBean ffb = (FichaFacturaBean) valueBinding
-					.getValue(super.getELContext());
-			ffb.init();
-			ffb.setIdFacprov(this.idFacprov);
-			ffb.consultarFicha(this.idFacprov);
-
-			// NOTA NESTOR: NO VA NO SE DEBEN CREAR VARIABLES PARA MANEJAR ESTAS
-			// COSAS A MENOS Q NO HAYA OTRO REMEDIO
-			// ffb.setFacprovVisadaComentario(
-			// ffb.getFacturaProveedor().getFacprovVisadaComentario() ); // rrl
-			// 20110928 parar mostrar en el popup el comentario
-
-			ffb.setDepartamentoDfagEnabled(false); // rrl 20111107 Al hacer clic
-													// en el boton cambiar Dpto
-													// le pones enabled el combo
-													// Departamento
-
-		}
-
-		return null;
-	}
-
-	// rrl 20110831
-	public String editarFactura() {
-
-		String retorno = "FAIL";
-
-		ValueExpression valueBinding = super
-				.getValueExpression("#{fichaFacturaBean}");
-
-		if (valueBinding != null) {
-
-			FichaFacturaBean ffb = (FichaFacturaBean) valueBinding
-					.getValue(super.getELContext());
-			ffb.init();
-			ffb.setIdFacprov(this.idFacprov);
-			ffb.consultarFicha(this.idFacprov);
-
-			retorno = EDITAR_FACTURA;
-		}
-
-		return retorno;
-	}
-
-	// rrl 20111128
-	public String imprimirFacturasProveedor() {
-
-		if (listaFacturas != null && !listaFacturas.isEmpty()) {
-			ImpresorBean imp = new ImpresorBean();
-			imp.imprimirFacturasProveedor(listaFacturas);
-		}
-
-		return null;
-	}
-		*/
 
 	public Date getInitialInsertDateFilter() {
 		return initialInsertDateFilter;
@@ -299,75 +230,22 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	// dml 20120104
 	public String loadWProcessDefForm() {
 
-		String ret = "FAIL";
+		return new WProcessDefUtil().loadWProcessDefFormBean(id);
 
-		if (this.id != null){
-			
-			ValueExpression valueBinding = super
-					.getValueExpression("#{wProcessDefFormBean}");
-
-			if (valueBinding != null) {
-
-				WProcessDefFormBean wpdfb = 
-						(WProcessDefFormBean) valueBinding
-							.getValue(super.getELContext());
-				wpdfb.init();
-				wpdfb.setCurrentId(id);
-				wpdfb.loadCurrentWProcessDef(id);
-
-				ret = LOAD_WPROCESSDEF;
-			
-			}
-		}
-
-		return ret;
 	}
 	
 	//rrl 20120117
 	public String generateXmlWProcessDef() {
 
-		if (this.id != null){
-			
-			ValueExpression valueBinding = super
-					.getValueExpression("#{wProcessDefFormBean}");
-
-			if (valueBinding != null) {
-
-				WProcessDefFormBean wpdfb = 
-						(WProcessDefFormBean) valueBinding
-							.getValue(super.getELContext());
-				wpdfb.init();
-				wpdfb.setCurrentId(id);
-				wpdfb.loadCurrentWProcessDef(id);
-				
-				wpdfb.generateXMLCurrentWProcessDef();
-			}
-		}
+		return new WProcessDefUtil().generateXmlWProcessDef(this.id);
 		
-		return null;
 	}
 
 	// dml 20120110
 	public String createNewWProcessDef() {
 
-		String ret = "FAIL";
-
-		ValueExpression valueBinding = super
-				.getValueExpression("#{wProcessDefFormBean}");
-
-		if (valueBinding != null) {
-
-			WProcessDefFormBean wpdfb = 
-					(WProcessDefFormBean) valueBinding
-						.getValue(super.getELContext());
-			wpdfb.init();
-			wpdfb.initEmptyWProcessDef();
-			
-			ret = CREATE_NEW_WPROCESSDEF;
+		return new WProcessDefUtil().createNewWProcessDef();
 		
-		}
-
-		return ret;
 	}
 
 }

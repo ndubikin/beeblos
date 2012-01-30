@@ -172,12 +172,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		} catch (WProcessDefException ex1) {
 
-			logger.error("An error has happened trying to load the WProcessDef: "
-					+ this.currentId
-					+ " : "
-					+ ex1.getMessage()
-					+ " -"
-					+ ex1.getCause());
+			String message = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = {
+					message + ",",
+					".Error loading current WProcessDef ..."
+							+ currentWProcessDef.getId() };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+
+			logger.error(message);
+			
 		}
 
 	}
