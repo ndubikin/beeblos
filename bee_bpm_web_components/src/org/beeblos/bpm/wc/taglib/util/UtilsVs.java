@@ -54,13 +54,16 @@ public class UtilsVs {
 		
 		List<String> outputListString = new ArrayList<String>();
 		
-	     StringTokenizer st = new StringTokenizer(listString, delimiter);
-	     while (st.hasMoreTokens()) {
-	         
-	    	 outputListString.add(st.nextToken());
-	    	 
-	     }
-		
+		if ( listString!=null && !"".equals(listString)) {
+		     StringTokenizer st = new StringTokenizer(listString, delimiter);
+		     while (st.hasMoreTokens()) {
+		         
+		    	 outputListString.add(st.nextToken());
+		    	 
+		     }
+		} else {
+			outputListString=null;
+		}
 		return outputListString;
 				
 	}
