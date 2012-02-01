@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.util.Configuration;
+import org.beeblos.bpm.core.util.HibernateSessionParameters;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.security.UsuarioRol;
@@ -50,6 +51,9 @@ public class Login_x_Bean extends CoreManagedBean {
 
 	private String usuarioLogin = "";
 	private boolean logged;
+	
+	// dml 20120131
+	private HibernateSessionParameters hibernateSessionParameters;
 
 	private void construirContextoSeguridad(Usuario usuario) {
 
@@ -102,6 +106,9 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		// mrico 20110809
 		contextoSeguridad.setIdDepartamento(usuario.getIdDepto());
+		
+		// dml 20120131
+		contextoSeguridad.setHibernateParameters(HibernateSessionParameters.loadDefaultHibernateSessionParameters());
 		
 		getSession().setAttribute(SECURITY_CONTEXT, contextoSeguridad);
 				
@@ -384,6 +391,16 @@ public class Login_x_Bean extends CoreManagedBean {
 
 	public void setLogged(boolean logged) {
 		this.logged = logged;
+	}
+
+
+	public HibernateSessionParameters getHibernateSessionParameters() {
+		return hibernateSessionParameters;
+	}
+
+
+	public void setHibernateSessionParameters(HibernateSessionParameters hibernateSessionParameters) {
+		this.hibernateSessionParameters = hibernateSessionParameters;
 	}
 	
 	

@@ -7,20 +7,53 @@
 
 	<div>
 	
-		<h:outputText value="#{msg.label_process_work_tracking}: " 
-							styleClass="title_style" 
-							rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
-							style="margin-left: 32px; margin-bottom: 10px;"/>
+		<h:panelGrid columns="1">
+	
+			<h:panelGroup>
+			
+				<h:outputText value="#{msg.label_process}: " 
+									styleClass="title_style" 
+									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
+									style="margin-left: 32px; margin-bottom: 10px;"/>
+		
+				<h:outputText value="( #{wProcessWorkFormBean.currentWProcessWork.id} ) - " 
+									styleClass="title_style" 
+									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
+									style="margin-bottom: 10px;"/>
+									
+				<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.reference} - " 
+									styleClass="title_style" 
+									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
+									style="margin-bottom: 10px;"/>
+									
+				<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.comments}" 
+									styleClass="title_style" 
+									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
+									style="margin-bottom: 10px;"/>
+									
+			</h:panelGroup>
+		
+			<rich:spacer height="10" />
 
-		<h:outputText value="(#{wProcessWorkFormBean.currentWProcessWork.id} - " 
-							styleClass="title_style" 
-							rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
-							style="margin-bottom: 10px;"/>
-							
-		<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.reference})" 
-							styleClass="title_style" 
-							rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
-							style="margin-bottom: 10px;"/>
+			<h:panelGroup style=" margin-left: 32px;">
+
+				<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.idProcess} - " 
+									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
+									style="margin-left: 32px; margin-bottom: 10px;"/>
+									
+				<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.version} / " 
+									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
+									style="margin-bottom: 10px;"/>
+									
+				<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.id}" 
+									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
+									style="margin-bottom: 10px;"/>
+									
+				<rich:spacer height="10" />
+				
+			</h:panelGroup>
+		
+		</h:panelGrid>
 							
 	</div>
 		

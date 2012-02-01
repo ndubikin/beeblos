@@ -13,6 +13,24 @@
 
 	<h:form id="w_process_work_pending_steps_form${action}">
 
+		<h:panelGrid width="100%" columns="1">
+
+       		<rich:contextMenu attached="false" id="w_process_work_pending_steps_menu" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessWorkFormBean.loadWStepWorkForm}"
+            		oncomplete="javascript:Richfaces.showModalPanel('mpViewStepWork');"
+            		reRender="mpViewStepWork">
+                	<b> View Step Work </b> ( {idProcess}/{idStep} - {reference} ) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessWorkFormBean.idStepWork}" value="{idStepWork}"/>
+            	</rich:menuItem>
+            	<rich:menuSeparator />         
+             	<rich:menuItem ajaxSingle="false" action="#{wProcessWorkFormBean.loadWStepDefForm}" submitMode="server">
+                	<b> Edit step definition </b> ( {stepName} ) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessWorkFormBean.idStep}" value="{idStep}"/>
+            	</rich:menuItem>
+            </rich:contextMenu>
+        
+        </h:panelGrid>    
+            
 		<h:panelGrid width="90%" columns="1">
 
 			<rich:datascroller id="dseUp" for="w_process_work_pending_steps_table"
@@ -79,6 +97,15 @@
 							timeZone="#{wProcessWorkFormBean.timeZone}"/>
 	                </h:outputText>
 	            </rich:column>
+
+				<rich:componentControl event="onRowClick" for="w_process_work_pending_steps_menu"
+					operation="show">
+               		<f:param value="#{stepWork.process.id}" name="idProcess"/>
+               		<f:param value="#{stepWork.wProcessWork.id}" name="idStepWork"/>
+                	<f:param value="#{stepWork.currentStep.id}" name="idStep"/>
+                	<f:param value="#{stepWork.currentStep.name}" name="stepName"/>
+               		<f:param value="#{stepWork.wProcessWork.reference}" name="reference"/>
+				</rich:componentControl>
 
 			</rich:dataTable>
 

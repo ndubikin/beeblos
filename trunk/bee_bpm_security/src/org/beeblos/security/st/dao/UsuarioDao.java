@@ -1,14 +1,14 @@
 package org.beeblos.security.st.dao;
 
-import org.beeblos.bpm.core.model.noper.StringPair;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.model.noper.StringPair;
+import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.security.st.error.UsuarioException;
 import org.beeblos.security.st.model.Usuario;
-import org.beeblos.security.st.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

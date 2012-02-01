@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:form id="hibernate_parameters_form">
+
+
+		<h:panelGrid columns="3"
+			style=" width : auto; height : auto; padding-left: 15px;"
+			columnClasses="colStyle140px, colStyle480px, colStyle100px">
+
+			<h:outputText value="#{msg.label_driver_class}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="driver_class"
+				value="#{changeHibernateConfigurationBean.currentHibernateSessionParameters.connectionDriverClass}"
+				style="width:400px; font-size:13px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_password}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="password"
+				value="#{changeHibernateConfigurationBean.currentHibernateSessionParameters.connectionPassword}"
+				style="width:400px; font-size:13px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_url}:" styleClass="firstLeftText" />
+			<h:inputText id="url"
+				value="#{changeHibernateConfigurationBean.currentHibernateSessionParameters.connectionUrl}"
+				style="width:400px; font-size:13px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_username}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="username"
+				value="#{changeHibernateConfigurationBean.currentHibernateSessionParameters.connectionUsername}"
+				style="width:400px; font-size:13px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_default_catalog}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="default_catalog"
+				value="#{changeHibernateConfigurationBean.currentHibernateSessionParameters.connectionDefaultCatalog}"
+				style="width:400px; font-size:13px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<h:panelGroup>
+				<h:commandButton id="changeButton" value="#{msg.label_change}"
+					action="#{changeHibernateConfigurationBean.changeParameters}"
+					reRender="hibernate_parameters_form"
+					style="width:80px; margin-right:20px;" />
+				<a4j:commandButton id="defaultParametersButton"
+					value="#{msg.label_set_default_values}"
+					actionListener="#{changeHibernateConfigurationBean.setDefaultParameters}"
+					reRender="hibernate_parameters_form"
+					style="width:150px; margin-right:20px;" />
+			</h:panelGroup>
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+	</h:form>
+
+</ui:composition>
