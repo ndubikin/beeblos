@@ -2,6 +2,7 @@ package org.beeblos.bpm.core.util;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.ResourceBundle;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -25,13 +26,69 @@ public class HibernateUtil {
 
 	}
 
-	private static SessionFactory obtenerSessionFactory() {
+	private static SessionFactory obtenerSessionFactory()  
+			throws HibernateException {
 
 		if (sessionFactory == null) {
+			
+			ResourceBundle rb =  ResourceBundle.getBundle("hibernateDefaultConfiguration");
+			
+			Configuration conf = new Configuration().configure();
+			
+			conf.setProperty("hibernate.connection.driver_class", 
+					rb.getString("hibernate.connection.driver_class"));
+			
+			conf.setProperty("hibernate.connection.password", 
+					rb.getString("hibernate.connection.password"));
 
-			sessionFactory = new Configuration().configure()
-					.buildSessionFactory();
+			//url + default_catalog
+			conf.setProperty("hibernate.connection.url", 
+					rb.getString("hibernate.connection.url") + 
+					rb.getString("hibernate.connection.default_catalog"));
 
+			conf.setProperty("hibernate.connection.username", 
+					rb.getString("hibernate.connection.username"));
+
+			conf.setProperty("hibernate.connection.default_catalog", 
+					rb.getString("hibernate.connection.default_catalog"));
+
+			sessionFactory = conf.buildSessionFactory();
+				
+		}
+
+		return sessionFactory;
+
+	}
+
+	private static SessionFactory createNewSessionFactory(HibernateSessionParameters parameters) 
+			throws Exception {
+
+		if (sessionFactory == null) {
+			
+			Configuration conf = new Configuration().configure();
+
+			conf.setProperty("hibernate.connection.driver_class", 
+					parameters.getConnectionDriverClass());
+			conf.setProperty("hibernate.connection.password", 
+					parameters.getConnectionPassword());
+			
+			//url + default_catalog
+			conf.setProperty("hibernate.connection.url", 
+					parameters.getConnectionUrl() +
+					parameters.getConnectionDefaultCatalog());
+			conf.setProperty("hibernate.connection.username", 
+					parameters.getConnectionUsername());
+			conf.setProperty("hibernate.connection.default_catalog",
+					parameters.getConnectionDefaultCatalog());
+
+			try {
+				sessionFactory = conf.buildSessionFactory();
+
+			} catch (Throwable e){
+				
+				System.out.println("por fin");
+				
+			}
 		}
 
 		return sessionFactory;
@@ -48,6 +105,34 @@ public class HibernateUtil {
 			e.printStackTrace();
 			return null;
 		}
+
+	}
+	
+	// dml 20120131
+	public static Session getDefaultSession() {
+		
+		// nes - 20100809 - para que muestre el error correcto cuando no puede devolver
+		//       la session por algún motivo ...
+		try {
+			// sessionFactory is inicialized NULL value to bind the session to take the default one
+			sessionFactory = null;
+			
+			return obtenerSessionFactory().getCurrentSession();
+		} catch  (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+	
+	// dml 20120131
+	public static Session getNewSession(HibernateSessionParameters newParameters)
+			throws Exception{
+		
+		// nes - 20100809 - para que muestre el error correcto cuando no puede devolver
+		//       la session por algún motivo ...
+		sessionFactory = null;
+		return createNewSessionFactory(newParameters).getCurrentSession();
 
 	}
 	

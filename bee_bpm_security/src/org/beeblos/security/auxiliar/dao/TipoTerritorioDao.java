@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.security.auxiliar.error.TipoTerritorioException;
 import org.beeblos.security.auxiliar.model.TipoTerritorio;
-import org.beeblos.security.st.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 

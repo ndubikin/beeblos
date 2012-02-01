@@ -13,6 +13,10 @@
 
 	<rich:spacer height="10" />
 
+	<h:panelGroup>
+		<ui:include src="panels/wProcessWork_info_panel.xhtml"/>
+	</h:panelGroup>
+
 	<h:panelGroup rendered="#{!wProcessWorkFormBean.pendingStepListEmpty}">
 		<fieldset class="demo_fieldset" >
 			<legend class="demo_legend">#{msg.label_wProcessWork_pending_steps}</legend>

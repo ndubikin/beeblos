@@ -32,6 +32,8 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
+import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
+import org.beeblos.bpm.wc.taglib.util.WStepWorkUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
@@ -62,6 +64,10 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 	private String documentLink;
 	
 	private List<WStepWork> wStepWorkList;
+	
+	// dml 20120201
+	private Integer idStep;
+	private Integer idStepWork;
 
 	
 	
@@ -436,6 +442,22 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 		this.wStepWorkList = wStepWorkList;
 	}
 
+	public Integer getIdStep() {
+		return idStep;
+	}
+
+	public void setIdStep(Integer idStep) {
+		this.idStep = idStep;
+	}
+
+	public Integer getIdStepWork() {
+		return idStepWork;
+	}
+
+	public void setIdStepWork(Integer idStepWork) {
+		this.idStepWork = idStepWork;
+	}
+
 	// HZC:20110215, generar imagen de la tareas
 	// HZC:20110216, esto es diagrama gantt, se muestra tal como esta en la
 	// grilla de datos
@@ -562,5 +584,20 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 		return true;
 		
 	}
+	
+	// dml 20120201
+	public void loadWStepWorkForm() {
+
+		new WStepWorkUtil().loadWStepWorkFormBean(idStepWork);
+
+	}
+
+	// dml 20120201
+	public String loadWStepDefForm() {
+
+		return new WStepDefUtil().loadWStepDefFormBean(idStep);
+		
+	}
+
 
 }

@@ -115,6 +115,10 @@
   <source>/taglib/mantenimientos/pestanias/departamentoCrudCaratula.xhtml</source>
  </tag>
 
+ <tag>
+  <tag-name>changeHibernateParameters</tag-name>
+  <source>/taglib/admin/changeHibernateParameters.xhtml</source>
+ </tag>
 
 
 

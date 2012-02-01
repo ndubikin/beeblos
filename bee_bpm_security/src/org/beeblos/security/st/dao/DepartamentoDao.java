@@ -13,13 +13,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.model.noper.StringPair;
+import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.security.st.error.DepartamentoException;
 import org.beeblos.security.st.model.Departamento;
-import org.beeblos.security.st.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
-
-import org.beeblos.bpm.core.model.noper.StringPair;
 
 public class DepartamentoDao {
 

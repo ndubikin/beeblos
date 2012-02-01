@@ -2,6 +2,7 @@ package org.beeblos.bpm.wc.taglib.security;
 
 import java.io.Serializable;
 
+import org.beeblos.bpm.core.util.HibernateSessionParameters;
 import org.beeblos.security.st.model.Usuario;
 import org.beeblos.security.st.model.UsuarioFunciones;
 
@@ -42,6 +43,9 @@ public class ContextoSeguridad implements Serializable {
 	// rrl 20111108 Titulo principal que mostrar en pantalla cuando el usuario se conecta  
 	private String tituloPrincipal;
 	private String departamentoAbreviatura;
+	
+	// dml 20120131
+	private HibernateSessionParameters hibernateParameters;
 
 	
 	public ContextoSeguridad() {
@@ -251,6 +255,14 @@ public class ContextoSeguridad implements Serializable {
 
 	public void setDepartamentoAbreviatura(String departamentoAbreviatura) {
 		this.departamentoAbreviatura = departamentoAbreviatura;
+	}
+
+	public HibernateSessionParameters getHibernateParameters() {
+		return hibernateParameters;
+	}
+
+	public void setHibernateParameters(HibernateSessionParameters hibernateParameters) {
+		this.hibernateParameters = hibernateParameters;
 	}
 	
 
