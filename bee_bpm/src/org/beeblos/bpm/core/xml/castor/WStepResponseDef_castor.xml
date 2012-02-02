@@ -2,7 +2,7 @@
 <!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
                          "http://castor.org/mapping.dtd">
 <mapping>
-    <description xmlns="">Castor generated mapping file</description>
+    <description>Castor generated mapping file</description>
     
     <class name="org.beeblos.bpm.core.model.WStepResponseDef">
         <description>Default mapping for class org.beeblos.bpm.core.model.WStepResponseDef</description>
