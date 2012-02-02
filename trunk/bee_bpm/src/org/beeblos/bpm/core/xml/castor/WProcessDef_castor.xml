@@ -9,7 +9,7 @@
     <include href="WProcessRole_castor.xml" />
     
     <class name="org.beeblos.bpm.core.model.WProcessDef">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WProcessDef</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WProcessDef</description>
         <map-to/>
         <field name="modDate" type="java.util.Date">
             <bind-xml name="mod-date" node="element"/>

@@ -5,7 +5,7 @@
     <description xmlns="">Castor generated mapping file</description>
 
     <class name="org.beeblos.bpm.core.model.WRoleDef">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WRoleDef</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WRoleDef</description>
         <map-to/>
         <field name="idObject" type="java.lang.Integer">
             <bind-xml name="id-object" node="element"/>

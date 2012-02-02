@@ -5,7 +5,7 @@
     <description xmlns="">Castor generated mapping file</description>
     
     <class name="org.beeblos.bpm.core.model.WStepResponseDef">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WStepResponseDef</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WStepResponseDef</description>
         <map-to/>
         <field name="name" type="java.lang.String">
             <bind-xml name="name" node="element"/>
