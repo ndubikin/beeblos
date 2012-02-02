@@ -10,7 +10,7 @@
     <include href="WProcessRole_castor.xml" />
     
     <class name="org.beeblos.bpm.core.model.WStepDef">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WStepDef</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WStepDef</description>
         <map-to/>
         <field name="runtimeModifiable" type="boolean">
             <bind-xml name="runtime-modifiable" node="attribute"/>

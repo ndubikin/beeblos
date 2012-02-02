@@ -7,7 +7,7 @@
     <include href="WUserDef_castor.xml" />
     
     <class name="org.beeblos.bpm.core.model.WProcessUser">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WProcessUser</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WProcessUser</description>
         <map-to/>
         <field name="admin" type="boolean">
             <bind-xml name="admin" node="attribute"/>

@@ -7,7 +7,7 @@
     <include href="WRoleDef_castor.xml" />
     
     <class name="org.beeblos.bpm.core.model.WProcessRole">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WProcessRole</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WProcessRole</description>
         <map-to/>
         <field name="admin" type="boolean">
             <bind-xml name="admin" node="attribute"/>

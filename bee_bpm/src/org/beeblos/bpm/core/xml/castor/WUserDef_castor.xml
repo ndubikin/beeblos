@@ -7,7 +7,7 @@
     <include href="WUseridmapper_castor.xml" />
     
     <class name="org.beeblos.bpm.core.model.WUserDef">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WUserDef</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WUserDef</description>
         <map-to/>
         <field name="insertUser" type="int">
             <bind-xml name="insert-user" node="attribute"/>

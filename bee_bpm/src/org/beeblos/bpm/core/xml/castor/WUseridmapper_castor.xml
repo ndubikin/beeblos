@@ -5,7 +5,7 @@
     <description xmlns="">Castor generated mapping file</description>
     
     <class name="org.beeblos.bpm.core.model.WUseridmapper">
-        <description xmlns="">Default mapping for class org.beeblos.bpm.core.model.WUseridmapper</description>
+        <description>Default mapping for class org.beeblos.bpm.core.model.WUseridmapper</description>
         <map-to/>
         <field name="idUser" type="java.lang.Integer">
             <bind-xml name="id-user" node="element"/>
