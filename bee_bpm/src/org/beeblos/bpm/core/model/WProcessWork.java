@@ -18,7 +18,7 @@ public class WProcessWork implements java.io.Serializable {
 	private Integer id;
 	private int version;
 	private WProcessStatus status;
-	private int idProcess;
+	private WProcessDef process;
 	private Date startingTime;
 	private Integer startingType;
 	private Date endTime;
@@ -48,11 +48,11 @@ public class WProcessWork implements java.io.Serializable {
 		}	
 	}
 
-	public WProcessWork(WProcessStatus status, int idProcess,
+	public WProcessWork(WProcessStatus status, WProcessDef process,
 			Date startingTime, String reference, Integer insertUser,
 			Date insertDate, Integer modUser, Date modDate) {
 		this.status = status;
-		this.idProcess = idProcess;
+		this.process = process;
 		this.startingTime = startingTime;
 		this.reference = reference;
 		this.insertUser = insertUser;
@@ -61,13 +61,13 @@ public class WProcessWork implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
-	public WProcessWork(WProcessStatus status, int idProcess,
+	public WProcessWork(WProcessStatus status, WProcessDef process,
 			Date startingTime, Integer startingType, Date endTime,
 			String reference, String comments, Integer insertUser, Date insertDate,
 			Integer modUser, Date modDate, Integer idObject,
 			String idObjectType) {
 		this.status = status;
-		this.idProcess = idProcess;
+		this.process = process;
 		this.startingTime = startingTime;
 		this.startingType = startingType;
 		this.endTime = endTime;
@@ -105,12 +105,12 @@ public class WProcessWork implements java.io.Serializable {
 		this.status = status;
 	}
 
-	public int getIdProcess() {
-		return this.idProcess;
+	public WProcessDef getProcess() {
+		return process;
 	}
 
-	public void setIdProcess(int idProcess) {
-		this.idProcess = idProcess;
+	public void setProcess(WProcessDef process) {
+		this.process = process;
 	}
 
 	public Date getStartingTime() {
@@ -212,7 +212,7 @@ public class WProcessWork implements java.io.Serializable {
 	@Override
 	public String toString() {
 		return "WProcessWork [id=" + id + ", version=" + version + ", status="
-				+ status + ", idProcess=" + idProcess + ", startingTime="
+				+ status + ", process=" + process + ", startingTime="
 				+ startingTime + ", startingType=" + startingType
 				+ ", endTime=" + endTime + ", reference=" + reference
 				+ ", comments=" + comments + ", insertUser=" + insertUser
@@ -228,18 +228,17 @@ public class WProcessWork implements java.io.Serializable {
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((idObject == null) ? 0 : idObject.hashCode());
 		result = prime * result
 				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
-		result = prime * result + idProcess;
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
 		result = prime * result
 				+ ((insertUser == null) ? 0 : insertUser.hashCode());
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result + ((process == null) ? 0 : process.hashCode());
 		result = prime * result
 				+ ((reference == null) ? 0 : reference.hashCode());
 		result = prime * result
@@ -271,11 +270,6 @@ public class WProcessWork implements java.io.Serializable {
 				return false;
 		} else if (!endTime.equals(other.endTime))
 			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
 		if (idObject == null) {
 			if (other.idObject != null)
 				return false;
@@ -285,8 +279,6 @@ public class WProcessWork implements java.io.Serializable {
 			if (other.idObjectType != null)
 				return false;
 		} else if (!idObjectType.equals(other.idObjectType))
-			return false;
-		if (idProcess != other.idProcess)
 			return false;
 		if (insertDate == null) {
 			if (other.insertDate != null)
@@ -307,6 +299,11 @@ public class WProcessWork implements java.io.Serializable {
 			if (other.modUser != null)
 				return false;
 		} else if (!modUser.equals(other.modUser))
+			return false;
+		if (process == null) {
+			if (other.process != null)
+				return false;
+		} else if (!process.equals(other.process))
 			return false;
 		if (reference == null) {
 			if (other.reference != null)
@@ -343,7 +340,6 @@ public class WProcessWork implements java.io.Serializable {
 		if (id!=null && ! id.equals(0)) return false;
 		if (version != 0) return false;
 		if (status!=null && ! status.empty()) return false;		
-		if (idProcess!= 0) return false;
 		if (reference!=null && ! "".equals(reference)) return false;		
 		if (comments!=null && ! "".equals(comments)) return false;
 		if (idObject!=null && ! idObject.equals(0)) return false;
