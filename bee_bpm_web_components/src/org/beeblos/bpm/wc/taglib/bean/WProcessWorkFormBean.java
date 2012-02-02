@@ -70,7 +70,6 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 	// dml 20120202
 	private Date initialDateFilter;
 	private Date finalDateFilter;
-	
 
     public static WProcessWorkFormBean getCurrentInstance() {
         return (WProcessWorkFormBean) FacesContext.getCurrentInstance().getExternalContext()

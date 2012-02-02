@@ -6,6 +6,7 @@ import static org.beeblos.bpm.wc.taglib.util.Constantes.USE_SECURITY;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.USUARIO_PAGINA_INICIO_DEFAULT;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.WELCOME_PAGE;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Enumeration;
 
@@ -15,7 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.util.Configuration;
-import org.beeblos.bpm.core.util.HibernateSessionParameters;
+import org.beeblos.bpm.core.util.HibernateSession;
+import org.beeblos.bpm.core.util.HibernateSessionsUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.security.UsuarioRol;
@@ -36,6 +38,8 @@ import org.beeblos.security.st.model.Usuario;
 import org.beeblos.security.st.model.UsuarioFunciones;
 import org.beeblos.security.st.model.UsuarioLogin;
 import org.beeblos.security.st.model.UsuarioPerfiles;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
 
 
 public class Login_x_Bean extends CoreManagedBean {
@@ -53,7 +57,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	private boolean logged;
 	
 	// dml 20120131
-	private HibernateSessionParameters hibernateSessionParameters;
+	private HibernateSession hibernateSessionParameters;
 
 	private void construirContextoSeguridad(Usuario usuario) {
 
@@ -108,7 +112,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		contextoSeguridad.setIdDepartamento(usuario.getIdDepto());
 		
 		// dml 20120131
-		contextoSeguridad.setHibernateParameters(HibernateSessionParameters.loadDefaultHibernateSessionParameters());
+		contextoSeguridad.setHibernateParameters(HibernateSession.loadDefaultHibernateSessionParameters());
 		
 		getSession().setAttribute(SECURITY_CONTEXT, contextoSeguridad);
 				
@@ -394,12 +398,12 @@ public class Login_x_Bean extends CoreManagedBean {
 	}
 
 
-	public HibernateSessionParameters getHibernateSessionParameters() {
+	public HibernateSession getHibernateSessionParameters() {
 		return hibernateSessionParameters;
 	}
 
 
-	public void setHibernateSessionParameters(HibernateSessionParameters hibernateSessionParameters) {
+	public void setHibernateSessionParameters(HibernateSession hibernateSessionParameters) {
 		this.hibernateSessionParameters = hibernateSessionParameters;
 	}
 	

@@ -42,8 +42,8 @@
  </managed-bean>
 
  <managed-bean>
-  <managed-bean-name>changeHibernateConfigurationBean</managed-bean-name>
-  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.ChangeHibernateConfigurationBean</managed-bean-class>
+  <managed-bean-name>hibernateConfigurationBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.HibernateConfigurationBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
 
