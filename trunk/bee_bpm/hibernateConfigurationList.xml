@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<array-list>
+    <hibernate-session
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:java="http://java.sun.com" xsi:type="java:org.beeblos.bpm.core.util.HibernateSession">
+        <session-name>default</session-name>
+        <url>jdbc:mysql://localhost:3306/</url>
+        <password>root</password>
+        <driver-name>com.mysql.jdbc.Driver</driver-name>
+        <default-catalog>fbbva_gespro</default-catalog>
+        <username>root</username>
+    </hibernate-session>
+    <hibernate-session
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:java="http://java.sun.com" xsi:type="java:org.beeblos.bpm.core.util.HibernateSession">
+        <session-name>name</session-name>
+        <url>uri</url>
+        <password>pas</password>
+        <driver-name>driver</driver-name>
+        <default-catalog>catalogo</default-catalog>
+        <username>user</username>
+    </hibernate-session>
+</array-list>

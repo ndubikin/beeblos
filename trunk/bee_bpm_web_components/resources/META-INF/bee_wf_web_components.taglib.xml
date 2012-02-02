@@ -46,6 +46,11 @@
  </tag>
  
  <tag>
+  <tag-name>hibernateConfigurationCrudCaratula</tag-name>
+  <source>/taglib/def/tabs/hibernateConfigurationCrudCaratula.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>wProcessDefQuery</tag-name>
   <source>/taglib/def/wProcessDefQuery.xhtml</source>
  </tag>
@@ -114,13 +119,6 @@
   <tag-name>departamentoCrudCaratula</tag-name>
   <source>/taglib/mantenimientos/pestanias/departamentoCrudCaratula.xhtml</source>
  </tag>
-
- <tag>
-  <tag-name>changeHibernateParameters</tag-name>
-  <source>/taglib/admin/changeHibernateParameters.xhtml</source>
- </tag>
-
-
 
  <tag>
   <tag-name>territorio</tag-name>
