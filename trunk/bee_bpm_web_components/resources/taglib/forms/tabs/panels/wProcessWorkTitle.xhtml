@@ -16,7 +16,7 @@
 									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
 									style="margin-left: 32px; margin-bottom: 10px;"/>
 		
-				<h:outputText value="( #{wProcessWorkFormBean.currentWProcessWork.id} ) - " 
+				<h:outputText value="( #{wProcessWorkFormBean.currentWProcessWork.process.name} ) - " 
 									styleClass="title_style" 
 									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
 									style="margin-bottom: 10px;"/>
@@ -37,7 +37,7 @@
 
 			<h:panelGroup style=" margin-left: 32px;">
 
-				<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.idProcess} - " 
+				<h:outputText value="#{wProcessWorkFormBean.currentWProcessWork.process.id} - " 
 									rendered="#{wProcessWorkFormBean.currObjId!=null and wProcessWorkFormBean.currObjId!=0}"
 									style="margin-left: 32px; margin-bottom: 10px;"/>
 									

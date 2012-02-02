@@ -104,7 +104,7 @@ public class TestWStepWorkBL extends TestCase{
 						
 			iproc = processBL.add(process,1000);
 			
-			processWork.setIdProcess(iproc);
+			processWork.setProcess(process);
 			processWork.setVersion(1);
 			processWork.setStartingTime(new Date());
 			processWork.setReference("process work reference");

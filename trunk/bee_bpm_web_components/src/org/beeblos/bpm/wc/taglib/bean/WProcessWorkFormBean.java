@@ -1,5 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -8,22 +10,18 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
 
-import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessWorkBL;
-import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
-import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepWork;
@@ -68,9 +66,12 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 	// dml 20120201
 	private Integer idStep;
 	private Integer idStepWork;
+	
+	// dml 20120202
+	private Date initialDateFilter;
+	private Date finalDateFilter;
+	
 
-	
-	
     public static WProcessWorkFormBean getCurrentInstance() {
         return (WProcessWorkFormBean) FacesContext.getCurrentInstance().getExternalContext()
             .getRequestMap().get(MANAGED_BEAN_NAME);
@@ -94,6 +95,9 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 	
 		this.currObjId=null;
 		this.currentWProcessWork=null;
+		
+		this.initialDateFilter = null;
+		this.finalDateFilter = null;
 		
 		attachment = new BeeblosAttachment();
 
@@ -358,7 +362,7 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".loadWStepWorkList() WStepSequenceDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			agregarMensaje("208", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 
 		} catch (WProcessDefException ex1) {
@@ -366,7 +370,7 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".loadWStepWorkList() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			agregarMensaje("208", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 
 		} catch (WStepDefException ex1) {
@@ -374,7 +378,7 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
 					".loadWStepWorkList() WStepDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			agregarMensaje("208", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
 
 		}
@@ -458,13 +462,30 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 		this.idStepWork = idStepWork;
 	}
 
+	public Date getInitialDateFilter() {
+		return initialDateFilter;
+	}
+
+	public void setInitialDateFilter(Date initialDateFilter) {
+		this.initialDateFilter = initialDateFilter;
+	}
+
+	public Date getFinalDateFilter() {
+		return finalDateFilter;
+	}
+
+	public void setFinalDateFilter(Date finalDateFilter) {
+		this.finalDateFilter = finalDateFilter;
+	}
+
 	// HZC:20110215, generar imagen de la tareas
 	// HZC:20110216, esto es diagrama gantt, se muestra tal como esta en la
 	// grilla de datos
 	@SuppressWarnings("unchecked")
 	public void paint(OutputStream stream, Object object) throws IOException {
 		
-		List<WStepWork> workProcesses = (List<WStepWork>) object;
+		List<WStepWork> workProcesses = applyFilters((List<WStepWork>) object);
+		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		// int contNombreRepetidoFin = 1;
 		// int contNombreRepetidoPen = 1;
@@ -597,6 +618,56 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 
 		return new WStepDefUtil().loadWStepDefFormBean(idStep);
 		
+	}
+	
+	// dml 20120202
+	public List<WStepWork> applyFilters(List<WStepWork> graphicList){
+		
+		List<WStepWork> workProcesses = new ArrayList<WStepWork>();
+		
+		boolean onlyFinalDateFilter = false;
+		
+		if (initialDateFilter != null || finalDateFilter != null){
+		
+			if (initialDateFilter == null){
+				initialDateFilter = DEFAULT_MOD_DATE;
+				onlyFinalDateFilter = true;
+			}
+			
+			if (finalDateFilter == null){
+				finalDateFilter = new Date();
+			}
+			
+			for (WStepWork wsw : graphicList){
+				
+				if (wsw.getDecidedDate() == null && !onlyFinalDateFilter){
+					if (initialDateFilter.before(wsw.getArrivingDate())){
+						workProcesses.add(wsw);
+						continue;
+					}
+				} else if (wsw.getDecidedDate() == null && onlyFinalDateFilter) {
+					continue;
+				}
+				
+				if (initialDateFilter.before(wsw.getArrivingDate())){
+					
+					if (finalDateFilter.after(wsw.getDecidedDate())){
+						
+						workProcesses.add(wsw);
+						
+					}
+				
+				}
+			
+			}
+					
+			return workProcesses;
+
+		} else {
+			
+			return graphicList;
+			
+		}
 	}
 
 

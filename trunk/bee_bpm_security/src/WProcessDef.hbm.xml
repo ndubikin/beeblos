@@ -498,11 +498,6 @@
                 <comment>version</comment>
             </column>
         </version>
-        <property name="idProcess" type="int">
-            <column name="id_process" not-null="true">
-                <comment>process related</comment>
-            </column>
-        </property>
         <property name="startingTime" type="timestamp">
             <column name="starting_time" length="0" not-null="true">
                 <comment>the work was started at this date and time (UTC TIME)</comment>
@@ -552,6 +547,9 @@
 				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
 			</column>
 		</property>
+
+		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
+			column="id_process" lazy="false" name="process" fetch="join"/>
         <many-to-one name="status" class="org.beeblos.bpm.core.model.WProcessStatus" fetch="join">
             <column name="id_status" not-null="true">
                 <comment>1-processing / 2 - paused / 3 - finished / 4 - foced end / 5 - others ( ver tabla w_status_type)</comment>
