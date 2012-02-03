@@ -34,12 +34,12 @@ public class XMLGenerationUtil {
 		if (userTemplate != null && !"".equals(userTemplate)) {
 			templateWProcessDef = userTemplate;
 		} else {
-			templateWProcessDef = "castor/WProcessDef_castor.xml";
+			templateWProcessDef = "org/beeblos/bpm/core/util/castor/WProcessDef_castor.xml";
 		}
 
 		// runtime this point to WEB-INF/classes/castor
 		// eclipse environment points to ~/castor
-		templateWProcessDef = "castor/" + obj.getClass().getSimpleName()
+		templateWProcessDef = "org/beeblos/bpm/core/util/castor/" + obj.getClass().getSimpleName()
 				+ "_castor.xml";
 
 		try {

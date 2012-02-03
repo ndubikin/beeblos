@@ -36,7 +36,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	private Integer currentUserId;
 
 	private HibernateSession currentHibernateSession;
-
+	private List<HibernateSession> hibernateSessionList;
+	
 	private TimeZone timeZone;
 
 	private BeeblosAttachment attachment;
@@ -44,7 +45,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	
 	// dml 20120202
 	private String sessionName;
-	private List<HibernateSession> hibernateSessionList;
 	private Integer currentRow;
 	private String valueBtn;
 	private String messageStyle;
@@ -92,7 +92,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		this.currentHibernateSession = new HibernateSession();
 		this.currentRow=0;
 		
-		hibernateSessionList = this.gethibernateSessionList(); 
+		this.hibernateSessionList = new ArrayList<HibernateSession>();
+		this.loadHibernateSessionList(); 
 		
 		this.valueBtn="Save";
 		
@@ -193,7 +194,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 		 try {
 			
-			HibernateSessionsUtil.addConfiguration(currentHibernateSession);
+			 this.hibernateSessionList.add(currentHibernateSession);
+			 HibernateSessionsUtil.persistConfigurationList(this.hibernateSessionList);
 			
 			String message = setAddOkMessage(sessionName);
 			agregarMensaje(message);
@@ -348,17 +350,23 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<HibernateSession> gethibernateSessionList() {
+
+	// DAVID: LOS GETTER Y LOS SETTER NO PUEDEN TENER LÓGICAS COMPLEJAS.
+	// SIN EXCEPCIONES
+	// Y MUCHISIMO MENOS, PONER getHibernatexxxx  yotro método gethibernatexxxx
+	// 
+	public void loadHibernateSessionList() {
 		
 		setShowHeaderMessage(false);
 		setMessageStyle(normalMessageStyle());
 
-		List<HibernateSession> objectList = null;
+//		List<HibernateSession> objectList = null;
 		
 		try{
 			
-			objectList = (List<HibernateSession>) (HibernateSessionsUtil.getConfigurations());
+			this.hibernateSessionList = 
+					(List<HibernateSession>) 
+						(HibernateSessionsUtil.getConfigurationList());
 
 		} catch (MarshalException e) {
 
@@ -392,7 +400,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		} 
 		
-		return objectList;
+//		return objectList;
 
 	}
 
