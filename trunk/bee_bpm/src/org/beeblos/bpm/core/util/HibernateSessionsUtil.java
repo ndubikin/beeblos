@@ -21,7 +21,7 @@ public class HibernateSessionsUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<HibernateSession> getConfigurations()
+	public static List<HibernateSession> getConfigurationList()
 			throws MarshalException, ValidationException, FileNotFoundException {
 		
 		FileReader reader = new FileReader(hibernateConfigurationListXML);
@@ -35,7 +35,7 @@ public class HibernateSessionsUtil {
 
 	}
 
-	public static void setConfigurations(List<HibernateSession> hsl)
+	public static void persistConfigurationList(List<HibernateSession> hsl)
 			throws IOException, MarshalException, ValidationException {
 
 		FileWriter writer = new FileWriter(hibernateConfigurationListXML);
@@ -46,21 +46,22 @@ public class HibernateSessionsUtil {
 
 	}
 
-	public static void addConfiguration(HibernateSession hs)
-			throws MarshalException, ValidationException, IOException {
-
-		List<HibernateSession> hsl = getConfigurations();
-
-		hsl.add(hs);
-
-		setConfigurations(hsl);
-
-	}
+//	public static void addConfiguration(HibernateSession hs)
+//			throws MarshalException, ValidationException, IOException {
+//
+//		// LA LISTA YA TENES QUE TENERLA LEÍDA ...
+////		List<HibernateSession> hsl = getConfigurationList();
+//		
+//		hsl.add(hs);
+//
+//		persistConfigurationList(hsl);
+//
+//	}
 
 	public static void updateConfiguration(HibernateSession hs)
 			throws MarshalException, ValidationException, IOException {
 
-		List<HibernateSession> hsl = getConfigurations();
+		List<HibernateSession> hsl = getConfigurationList();
 		HibernateSession removeElement = null;
 
 		for (HibernateSession hibSess : hsl) {
@@ -77,14 +78,14 @@ public class HibernateSessionsUtil {
 
 		hsl.add(hs);
 
-		setConfigurations(hsl);
+		persistConfigurationList(hsl);
 
 	}
 
 	public static void deleteConfiguration(HibernateSession hs)
 			throws MarshalException, ValidationException, IOException {
 
-		List<HibernateSession> hsl = getConfigurations();
+		List<HibernateSession> hsl = getConfigurationList();
 
 		for (HibernateSession hibSess : hsl) {
 
@@ -97,7 +98,7 @@ public class HibernateSessionsUtil {
 
 		}
 
-		setConfigurations(hsl);
+		persistConfigurationList(hsl);
 
 	}
 
@@ -105,7 +106,7 @@ public class HibernateSessionsUtil {
 	public static HibernateSession getConfiguration(String sessionName)
 			throws MarshalException, ValidationException, FileNotFoundException{
 
-		List<HibernateSession> hsl = getConfigurations();
+		List<HibernateSession> hsl = getConfigurationList();
 
 		for (HibernateSession hibSess : hsl) {
 
@@ -128,7 +129,7 @@ public class HibernateSessionsUtil {
 
 		hsl.add(hs);
 
-		setConfigurations(hsl);
+		persistConfigurationList(hsl);
 
 	}
 
