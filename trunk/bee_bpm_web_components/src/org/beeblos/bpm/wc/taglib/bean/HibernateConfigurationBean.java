@@ -14,8 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.model.noper.DriverObject;
 import org.beeblos.bpm.core.util.DriverObjectUtil;
-import org.beeblos.bpm.core.util.HibernateSession;
-import org.beeblos.bpm.core.util.HibernateSessionsUtil;
+import org.beeblos.bpm.core.util.HibernateConfigurationParameters;
+import org.beeblos.bpm.core.util.HibernateConfigurationUtil;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -35,8 +35,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 	private Integer currentUserId;
 
-	private HibernateSession currentHibernateSession;
-	private List<HibernateSession> hibernateSessionList;
+	private HibernateConfigurationParameters currentHibernateConfigurationParameters;
+	private List<HibernateConfigurationParameters> hibernateConfigurationParametersList;
 	
 	private TimeZone timeZone;
 
@@ -49,6 +49,9 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	private String valueBtn;
 	private String messageStyle;
 	private String currentDriverName;
+	
+	// dml 20120203
+	private boolean recordIsLoaded;
 
 	
 	public static HibernateConfigurationBean getCurrentInstance() {
@@ -89,11 +92,13 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		logger.debug(" initProperties()");
 		
 		this.setSessionName("");
-		this.currentHibernateSession = new HibernateSession();
+		this.currentHibernateConfigurationParameters = new HibernateConfigurationParameters();
 		this.currentRow=0;
 		
-		this.hibernateSessionList = new ArrayList<HibernateSession>();
-		this.loadHibernateSessionList(); 
+		this.hibernateConfigurationParametersList = new ArrayList<HibernateConfigurationParameters>();
+		this.loadHibernateConfigurationParametersList(); 
+		
+		this.recordIsLoaded = false;
 		
 		this.valueBtn="Save";
 		
@@ -106,8 +111,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 		String returnValue = null; // always returns null because calls here are ajax
 		
-		if (currentHibernateSession.getSessionName() != null &&
-				!"".equals(currentHibernateSession.getSessionName())){
+		if (currentHibernateConfigurationParameters.getSessionName() != null &&
+				!"".equals(currentHibernateConfigurationParameters.getSessionName())){
 
 			if (this.getSessionName() != null && 
 					!"".equals(this.getSessionName())) {
@@ -139,7 +144,34 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		try {
 			
-			HibernateSessionsUtil.updateConfiguration(currentHibernateSession);
+			HibernateConfigurationParameters removeElement = null;
+			
+			for (HibernateConfigurationParameters hs: hibernateConfigurationParametersList){
+				
+				if (hs.getSessionName().equals(currentHibernateConfigurationParameters.getSessionName())){		
+					removeElement = hs;
+					break;	
+				}
+				
+			}
+			
+			if (removeElement != null) {
+				
+				this.hibernateConfigurationParametersList.remove(removeElement);
+				this.hibernateConfigurationParametersList.add(this.currentHibernateConfigurationParameters);
+				HibernateConfigurationUtil.persistConfigurationList(this.hibernateConfigurationParametersList);				
+				
+			} else {
+				
+				setMessageStyle(errorMessageStyle());
+				setShowHeaderMessage(true);
+				String message = "Element to update cannot be found: Method update in HibernateConfigurationBean: ";
+				String params[] = { message };
+				agregarMensaje("209", message, params, FGPException.WARN);
+				logger.error(message);				
+				
+			}
+			
 			
 			String message = setUpdateOkMessage();
 			agregarMensaje(message);
@@ -194,8 +226,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 		 try {
 			
-			 this.hibernateSessionList.add(currentHibernateSession);
-			 HibernateSessionsUtil.persistConfigurationList(this.hibernateSessionList);
+			 this.hibernateConfigurationParametersList.add(currentHibernateConfigurationParameters);
+			 HibernateConfigurationUtil.persistConfigurationList(this.hibernateConfigurationParametersList);
 			
 			String message = setAddOkMessage(sessionName);
 			agregarMensaje(message);
@@ -251,12 +283,12 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		try {
 			
-			String deletedHibernateSessionName = this.currentHibernateSession.getSessionName();
+			this.hibernateConfigurationParametersList.remove(this.currentHibernateConfigurationParameters);
 			
-			HibernateSessionsUtil.deleteConfiguration(currentHibernateSession);
+			HibernateConfigurationUtil.persistConfigurationList(hibernateConfigurationParametersList);
 			
 			// set ok message 
-			String message = getDeleteOkMessage(deletedHibernateSessionName); 
+			String message = getDeleteOkMessage(currentHibernateConfigurationParameters.getSessionName()); 
 			logger.info(message);
 			agregarMensaje(message);
 			setShowHeaderMessage(true);
@@ -310,8 +342,10 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 			try{
 				
-				currentHibernateSession = HibernateSessionsUtil.getConfiguration(sessionName);
+				currentHibernateConfigurationParameters = HibernateConfigurationUtil.getConfiguration(sessionName);
 
+				recordIsLoaded = true;
+				
 				modifyValueBtn();
 				
 			} catch (MarshalException e) {
@@ -351,28 +385,22 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	}
 	
 
-	// DAVID: LOS GETTER Y LOS SETTER NO PUEDEN TENER LÓGICAS COMPLEJAS.
-	// SIN EXCEPCIONES
-	// Y MUCHISIMO MENOS, PONER getHibernatexxxx  yotro método gethibernatexxxx
-	// 
-	public void loadHibernateSessionList() {
+	public void loadHibernateConfigurationParametersList() {
 		
 		setShowHeaderMessage(false);
 		setMessageStyle(normalMessageStyle());
 
-//		List<HibernateSession> objectList = null;
-		
 		try{
 			
-			this.hibernateSessionList = 
-					(List<HibernateSession>) 
-						(HibernateSessionsUtil.getConfigurationList());
+			this.hibernateConfigurationParametersList = 
+					(List<HibernateConfigurationParameters>) 
+						(HibernateConfigurationUtil.getConfigurationList());
 
 		} catch (MarshalException e) {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "MarshalException: Method gethibernateSessionList in HibernateConfigurationBean: "
+			String message = "MarshalException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "MarshalException" };
 			agregarMensaje("209", message, params, FGPException.WARN);
@@ -382,7 +410,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "ValidationException: Method gethibernateSessionList in HibernateConfigurationBean: "
+			String message = "ValidationException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "ValidationException" };
 			agregarMensaje("209", message, params, FGPException.WARN);
@@ -392,7 +420,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "IOException: Method gethibernateSessionList in HibernateConfigurationBean: "
+			String message = "IOException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", "FileNotFoundException" };
 			agregarMensaje("209", message, params, FGPException.WARN);
@@ -400,14 +428,12 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		} 
 		
-//		return objectList;
-
 	}
 
 
 
-	public void setHibernateSessionList(List<HibernateSession> hibernateSessionList) {
-		this.hibernateSessionList = hibernateSessionList;
+	public void setHibernateConfigurationParametersList(List<HibernateConfigurationParameters> hibernateConfigurationParametersList) {
+		this.hibernateConfigurationParametersList = hibernateConfigurationParametersList;
 	}
 
 	public String getSessionName() {
@@ -418,13 +444,13 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		this.sessionName = sessionName;
 	}
 
-	public HibernateSession getCurrentHibernateSession() {
-		return currentHibernateSession;
+	public HibernateConfigurationParameters getCurrentHibernateConfigurationParameters() {
+		return currentHibernateConfigurationParameters;
 	}
 
-	public void setCurrentHibernateSession(
-			HibernateSession currentHibernateSession) {
-		this.currentHibernateSession = currentHibernateSession;
+	public void setCurrentHibernateConfigurationParameters(
+			HibernateConfigurationParameters currentHibernateConfigurationParameters) {
+		this.currentHibernateConfigurationParameters = currentHibernateConfigurationParameters;
 	}
 
 	public void setCurrentRow(Integer currentRow) {
@@ -503,24 +529,32 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		this.currentDriverName = currentDriverName;
 	}
 
-	public List<HibernateSession> getHibernateSessionList() {
-		return hibernateSessionList;
+	public boolean isRecordIsLoaded() {
+		return recordIsLoaded;
+	}
+
+	public void setRecordIsLoaded(boolean recordIsLoaded) {
+		this.recordIsLoaded = recordIsLoaded;
+	}
+
+	public List<HibernateConfigurationParameters> getHibernateConfigurationParametersList() {
+		return hibernateConfigurationParametersList;
 	}
 
 	public void applyNewConfiguration() {
 
-		if (currentHibernateSession != null) {
+		if (currentHibernateConfigurationParameters != null) {
 
-			if (currentHibernateSession.getSessionName() != null &&
-					!"".equals(currentHibernateSession.getSessionName())){
+			if (currentHibernateConfigurationParameters.getSessionName() != null &&
+					!"".equals(currentHibernateConfigurationParameters.getSessionName())){
 
 				try {
-					HibernateUtil.getNewSession(currentHibernateSession);
+					HibernateUtil.getNewSession(currentHibernateConfigurationParameters);
 
 					ContextoSeguridad cs = (ContextoSeguridad) getSession()
 							.getAttribute(SECURITY_CONTEXT);
 					
-					cs.setHibernateParameters(currentHibernateSession);
+					cs.setHibernateConfigurationParameters(currentHibernateConfigurationParameters);
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -541,11 +575,12 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		}
 
 	}
-
+	
 	public void setDefaultConfiguration() {
 
-		new HibernateSession();
-		this.currentHibernateSession = HibernateSession.loadDefaultHibernateSessionParameters();
+		new HibernateConfigurationParameters();
+		this.currentHibernateConfigurationParameters = 
+				HibernateConfigurationParameters.loadDefaultHibernateConfigurationParameters();
 
 	}
 	
@@ -553,7 +588,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 		try {
 			
-			if(HibernateUtil.checkJDBCConnection(currentHibernateSession)) {
+			if(HibernateUtil.checkJDBCConnection(currentHibernateConfigurationParameters)) {
 				
 				String message = setGoodConfiguration();
 				agregarMensaje(message);
@@ -592,15 +627,15 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	}
 	
 	private String setUpdateOkMessage() {
-		return "HibernateSession name:[ "+this.sessionName+" ] was updated correctly";
+		return "HibernateConfigurationParameters name:[ "+this.sessionName+" ] was updated correctly";
 	}
 	
 	private String setAddOkMessage(String name) {
-		return "HibernateSession name:[ "+name+" ] was added correctly";
+		return "HibernateConfigurationParameters name:[ "+name+" ] was added correctly";
 	}
 	
 	private String getDeleteOkMessage(String name) {
-		return "HibernateSession name:[ "+name+" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
+		return "HibernateConfigurationParameters name:[ "+name+" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
 	}
 	
 	private String setGoodConfiguration() {
@@ -623,4 +658,11 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 	}
 	
+	// dml 20120203
+	public boolean getFormIsEmpty(){
+		
+		return this.currentHibernateConfigurationParameters.empty();
+		
+	}
+
 }

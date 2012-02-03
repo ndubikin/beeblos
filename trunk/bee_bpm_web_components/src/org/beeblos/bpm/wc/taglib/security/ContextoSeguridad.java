@@ -2,7 +2,7 @@ package org.beeblos.bpm.wc.taglib.security;
 
 import java.io.Serializable;
 
-import org.beeblos.bpm.core.util.HibernateSession;
+import org.beeblos.bpm.core.util.HibernateConfigurationParameters;
 import org.beeblos.security.st.model.Usuario;
 import org.beeblos.security.st.model.UsuarioFunciones;
 
@@ -45,7 +45,7 @@ public class ContextoSeguridad implements Serializable {
 	private String departamentoAbreviatura;
 	
 	// dml 20120131
-	private HibernateSession hibernateParameters;
+	private HibernateConfigurationParameters hibernateConfigurationParameters;
 
 	
 	public ContextoSeguridad() {
@@ -257,12 +257,12 @@ public class ContextoSeguridad implements Serializable {
 		this.departamentoAbreviatura = departamentoAbreviatura;
 	}
 
-	public HibernateSession getHibernateParameters() {
-		return hibernateParameters;
+	public HibernateConfigurationParameters getHibernateConfigurationParameters() {
+		return hibernateConfigurationParameters;
 	}
 
-	public void setHibernateParameters(HibernateSession hibernateParameters) {
-		this.hibernateParameters = hibernateParameters;
+	public void setHibernateConfigurationParameters(HibernateConfigurationParameters hibernateConfigurationParameters) {
+		this.hibernateConfigurationParameters = hibernateConfigurationParameters;
 	}
 	
 

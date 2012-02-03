@@ -66,7 +66,7 @@ public class HibernateUtil {
 	}
 
 	private static SessionFactory createNewSessionFactory(
-			HibernateSession parameters) throws Exception {
+			HibernateConfigurationParameters parameters) throws Exception {
 
 		if (sessionFactory == null) {
 
@@ -133,7 +133,7 @@ public class HibernateUtil {
 	}
 
 	// dml 20120131
-	public static Session getNewSession(HibernateSession newParameters)
+	public static Session getNewSession(HibernateConfigurationParameters newParameters)
 			throws Exception {
 
 		// nes - 20100809 - para que muestre el error correcto cuando no puede
@@ -144,7 +144,7 @@ public class HibernateUtil {
 
 	}
 
-	public static boolean checkJDBCConnection(HibernateSession hSession)
+	public static boolean checkJDBCConnection(HibernateConfigurationParameters hSession)
 			throws ClassNotFoundException, SQLException {
 
 		boolean ret = false;

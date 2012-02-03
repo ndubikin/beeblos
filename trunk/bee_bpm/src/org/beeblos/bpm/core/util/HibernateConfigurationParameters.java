@@ -2,7 +2,7 @@ package org.beeblos.bpm.core.util;
 
 import java.util.ResourceBundle;
 
-public class HibernateSession {
+public class HibernateConfigurationParameters {
 
 	private String sessionName;
 	private String driverName;
@@ -11,11 +11,11 @@ public class HibernateSession {
 	private String url;
 	private String defaultCatalog;
 
-	public HibernateSession() {
+	public HibernateConfigurationParameters() {
 
 	}
 
-	public HibernateSession(String sessionName, String driverName,
+	public HibernateConfigurationParameters(String sessionName, String driverName,
 			String password, String username,
 			String url, String defaultCatalog) {
 		super();
@@ -27,12 +27,12 @@ public class HibernateSession {
 		this.defaultCatalog = defaultCatalog;
 	}
 
-	public static HibernateSession loadDefaultHibernateSessionParameters() {
+	public static HibernateConfigurationParameters loadDefaultHibernateConfigurationParameters() {
 
 		ResourceBundle rb = ResourceBundle
 				.getBundle("hibernateDefaultConfiguration");
 
-		return new HibernateSession("default",
+		return new HibernateConfigurationParameters("default",
 				rb.getString("hibernate.connection.driver_class"),
 				rb.getString("hibernate.connection.password"),
 				rb.getString("hibernate.connection.username"),
@@ -91,7 +91,7 @@ public class HibernateSession {
 
 	@Override
 	public String toString() {
-		return "HibernateSession [sessionName=" + sessionName + ", driverName="
+		return "HibernateConfigurationParameters [sessionName=" + sessionName + ", driverName="
 				+ driverName + ", password=" + password + ", username="
 				+ username + ", url=" + url + ", defaultCatalog="
 				+ defaultCatalog + "]";
@@ -123,7 +123,7 @@ public class HibernateSession {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HibernateSession other = (HibernateSession) obj;
+		HibernateConfigurationParameters other = (HibernateConfigurationParameters) obj;
 		if (defaultCatalog == null) {
 			if (other.defaultCatalog != null)
 				return false;
@@ -157,5 +157,16 @@ public class HibernateSession {
 		return true;
 	}
 
+	public boolean empty() {
+
+		if (sessionName!=null && ! "".equals(sessionName)) return false;
+		if (driverName!=null && ! "".equals(driverName)) return false;
+		if (password!=null && ! "".equals(password)) return false;
+		if (username!=null && ! "".equals(username)) return false;
+		if (url!=null && ! "".equals(url)) return false;
+		if (defaultCatalog!=null && ! "".equals(defaultCatalog)) return false;
+		
+		return true;
+	}
 
 }
