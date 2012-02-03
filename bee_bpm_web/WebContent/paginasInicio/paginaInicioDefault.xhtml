@@ -7,6 +7,33 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 <ui:composition>
-HOLA!!!
+
+	<rich:panel style=" margin-left: 32px; width: 25%;">
+
+		<f:facet name="header">#{msg.label_hibernate_session_information}</f:facet>
+
+		<h:panelGrid  columns="2"
+			style=" margin-left: 16px;"
+			columnClasses="colStyle100px, colStyle140px">
+
+			<h:outputText value="#{msg.label_session_name}:"	
+				styleClass="labelForm" style="text-align : right; font-weight:bold;"/>
+			<h:outputText id="sessionName"
+				value="#{login_x_Bean.hibernateConfigurationParameters.sessionName}"/>
+
+			<h:outputText value="#{msg.label_url}:"	
+				styleClass="labelForm" style="text-align : right; font-weight:bold;"/>
+			<h:outputText id="url"
+				value="#{login_x_Bean.hibernateConfigurationParameters.url}"/>
+
+			<h:outputText value="#{msg.label_default_catalog}:"	
+				styleClass="labelForm" style="text-align : right; font-weight:bold;"/>
+			<h:outputText id="defaultCatalog"
+				value="#{login_x_Bean.hibernateConfigurationParameters.defaultCatalog}"/>
+
+		</h:panelGrid>
+
+	</rich:panel>
+
 </ui:composition>
 </html>
