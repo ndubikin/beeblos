@@ -23,7 +23,13 @@ public class UtilJavaToXML {
 		String ret = null;
 
 		try {
-
+			
+			File file = new File(template);
+			System.out.println("------------------------------------------------------------------------------");
+			System.out.println("------>>>"+file.getAbsolutePath());
+			System.out.println("------------------------------------------------------------------------------");
+			file=null;
+			
 			StringWriter writer = new StringWriter();
 			Marshaller marshaller = new Marshaller(writer);
 
