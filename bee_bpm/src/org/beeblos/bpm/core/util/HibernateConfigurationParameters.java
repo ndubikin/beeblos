@@ -1,6 +1,5 @@
 package org.beeblos.bpm.core.util;
 
-import java.util.ResourceBundle;
 
 public class HibernateConfigurationParameters {
 
@@ -27,20 +26,6 @@ public class HibernateConfigurationParameters {
 		this.url = url;
 		this.defaultCatalog = defaultCatalog;
 		this.defaultConfiguration = defaultConfiguration;
-	}
-
-	public static HibernateConfigurationParameters loadDefaultHibernateConfigurationParameters() {
-
-		ResourceBundle rb = ResourceBundle
-				.getBundle("hibernateDefaultConfiguration");
-
-		return new HibernateConfigurationParameters("default",
-				rb.getString("hibernate.connection.driver_class"),
-				rb.getString("hibernate.connection.password"),
-				rb.getString("hibernate.connection.username"),
-				rb.getString("hibernate.connection.url"),
-				rb.getString("hibernate.connection.default_catalog"), true);
-
 	}
 
 	public String getSessionName() {

@@ -21,6 +21,11 @@
  </tag>
 
  <tag>
+  <tag-name>mpChangeHibernateConfiguration</tag-name>
+  <source>/taglib/common/mpChangeHibernateConfiguration.xhtml</source>
+ </tag>
+
+ <tag>
   <tag-name>mpSearchRole</tag-name>
   <source>/taglib/common/mpSearchRole.xhtml</source>
  </tag>

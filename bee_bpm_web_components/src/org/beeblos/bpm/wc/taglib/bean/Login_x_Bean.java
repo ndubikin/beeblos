@@ -70,7 +70,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	private String newSessionName;
 	private String messageStyle;
 	
-	private void construirContextoSeguridad(Usuario usuario) {
+	private void construirContextoSeguridad(Usuario usuario) throws MarshalException, ValidationException, FileNotFoundException {
 
 		ContextoSeguridad contextoSeguridad = new ContextoSeguridad(usuario);
 
@@ -124,7 +124,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		// dml 20120131
 		contextoSeguridad.
-			setHibernateConfigurationParameters(HibernateConfigurationParameters.loadDefaultHibernateConfigurationParameters());
+			setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
 		
 		getSession().setAttribute(SECURITY_CONTEXT, contextoSeguridad);
 				
@@ -141,7 +141,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	}
 
 
-	public String setPaginaInicio(Integer idDepartamento, Integer idUsuario ) {
+	public String setPaginaInicio(Integer idDepartamento, Integer idUsuario ) throws MarshalException, ValidationException, FileNotFoundException {
 		// rrl 20110902
 		// Segun el departamento al que pertenece el usuario se carga dinamicamente el welcome.xhtml
 		
@@ -169,8 +169,8 @@ public class Login_x_Bean extends CoreManagedBean {
 		} 
 		
 		// dml 20120203
-		this.setHibernateConfigurationParameters(HibernateConfigurationParameters.loadDefaultHibernateConfigurationParameters());
-		currentSessionName = hibernateConfigurationParameters.getSessionName();
+		this.setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
+		newSessionName = currentSessionName = hibernateConfigurationParameters.getSessionName();
 		
 		return urlPaginaInicioDpto;
 	}
@@ -298,7 +298,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	}
 
 	
-	public String login() {
+	public String login() throws MarshalException, ValidationException, FileNotFoundException {
 
 		setShowHeaderMessage(false); // nes 20101230
 		String retorno = "FAIL";
@@ -564,7 +564,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 				setMessageStyle(errorMessageStyle());
 				setShowHeaderMessage(true);
-				String message = "MarshalException: Method getHibernateConfigurationList in Login_x_Bean: "
+				String message = "MarshalException: Method changeHibernateConfiguration in Login_x_Bean: "
 									+ e.getMessage() + " - " + e.getCause();
 				agregarMensaje(message);
 				logger.error(message);
@@ -573,7 +573,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 				setMessageStyle(errorMessageStyle());
 				setShowHeaderMessage(true);
-				String message = "ValidationException: Method getHibernateConfigurationList in Login_x_Bean: "
+				String message = "ValidationException: Method changeHibernateConfiguration in Login_x_Bean: "
 									+ e.getMessage() + " - " + e.getCause();
 				agregarMensaje(message);
 				logger.error(message);
@@ -582,7 +582,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 				setMessageStyle(errorMessageStyle());
 				setShowHeaderMessage(true);
-				String message = "FileNotFoundException: Method getHibernateConfigurationList in Login_x_Bean: "
+				String message = "FileNotFoundException: Method changeHibernateConfiguration in Login_x_Bean: "
 									+ e.getMessage() + " - " + e.getCause();
 				agregarMensaje(message);
 				logger.error(message);
@@ -606,7 +606,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "MarshalException: Method getHibernateConfigurationList in Login_x_Bean: "
+			String message = "MarshalException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);
@@ -615,7 +615,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "ValidationException: Method getHibernateConfigurationList in Login_x_Bean: "
+			String message = "ValidationException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);
@@ -624,7 +624,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "FileNotFoundException: Method getHibernateConfigurationList in Login_x_Bean: "
+			String message = "FileNotFoundException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);
@@ -645,7 +645,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "MarshalException: Method getHibernateConfigurationList in Login_x_Bean: "
+			String message = "MarshalException: Method reRenderInformation in Login_x_Bean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);
@@ -654,7 +654,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "ValidationException: Method getHibernateConfigurationList in Login_x_Bean: "
+			String message = "ValidationException: Method reRenderInformation in Login_x_Bean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);
@@ -663,7 +663,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "FileNotFoundException: Method getHibernateConfigurationList in Login_x_Bean: "
+			String message = "FileNotFoundException: Method reRenderInformation in Login_x_Bean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);
