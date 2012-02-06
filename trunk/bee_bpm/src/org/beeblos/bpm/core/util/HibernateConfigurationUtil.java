@@ -65,6 +65,25 @@ public class HibernateConfigurationUtil {
 
 	}
 	
+	public static HibernateConfigurationParameters getDefaultConfiguration()
+			throws MarshalException, ValidationException, FileNotFoundException{
+
+		List<HibernateConfigurationParameters> hcpl = getConfigurationList();
+
+		for (HibernateConfigurationParameters hibSess : hcpl) {
+
+			if (hibSess.isDefaultConfiguration()) {
+
+				return hibSess;
+
+			}
+
+		}
+
+		return null;
+
+	}
+	
 	public static void addFirstConfiguration(HibernateConfigurationParameters hcp)
 			throws MarshalException, ValidationException, IOException {
 

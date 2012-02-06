@@ -68,8 +68,10 @@
 									<a4j:support event="onchange"
 										reRender="save_button, cancel_button" />
 								</h:inputText>
-								<h:commandButton id="check_button" value="#{msg.label_check_configuration}"
-									style="margin-left: 16px; width: 120px;" action="#{hibernateConfigurationBean.checkConfiguration}"/>
+								<h:commandLink id="set_default" value="#{msg.label_set_as_default_configuration}"
+									style="margin-left: 16px; width: 120px;" 
+									action="#{hibernateConfigurationBean.setDefaultConfiguration}"
+									reRender="hibernate_sessions_table"/>
 							</h:panelGroup>
 							
 							<h:outputText value="#{msg.label_driver_name}:"
@@ -133,13 +135,12 @@
 								<a4j:support event="onchange"
 									reRender="save_button, cancel_button" />
 							</h:inputText>
-
 							<rich:spacer width="10" />
 
 							<rich:spacer width="10" />
 							<rich:spacer width="10" />								
 							
-							<h:panelGrid columns="3" style="margin: -4px;">
+							<h:panelGrid columns="4" style="margin: -4px;">
 
 								<h:commandButton id="cancel_button" value="#{msg.label_cancel}"
 									style="width:120px; align: left;"
@@ -156,6 +157,9 @@
 									action="#{hibernateConfigurationBean.delete}"
 									onclick="return confirmDelete('#{msg.label_are_you_sure_to_delete_the_session}','#{hibernateConfigurationBean.currentHibernateConfigurationParameters.sessionName}');" />
 
+								<h:commandButton id="check_button" value="#{msg.label_check_configuration}"
+									style="margin-left: 16px; width: 120px;"
+									action="#{hibernateConfigurationBean.checkConfiguration}"/>
 							</h:panelGrid>
 
 						</h:panelGrid>
@@ -179,7 +183,14 @@
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_session_name}" />
 									</f:facet>
-									<h:outputText value="#{hs.sessionName}" />
+									<h:outputText value="#{hs.sessionName}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.sessionName}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+									<h:outputText id="is_default" value="*" style="color: red; font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+									<rich:toolTip value="#{msg.label_default_configuration}" for="is_default"/>
 								</rich:column>
 
 								<rich:column sortBy="#{hs.driverName}"
@@ -187,7 +198,11 @@
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_driver_name}" />
 									</f:facet>
-									<h:outputText value="#{hs.driverName}" />
+									<h:outputText value="#{hs.driverName}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.driverName}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
 								</rich:column>
 
 								<rich:column sortBy="#{hs.username}"
@@ -195,7 +210,11 @@
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_username}" />
 									</f:facet>
-									<h:outputText value="#{hs.username}" />
+									<h:outputText value="#{hs.username}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.username}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
 								</rich:column>
 
 								<rich:column sortBy="#{hs.url}"
@@ -203,7 +222,11 @@
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_url}" />
 									</f:facet>
-									<h:outputText value="#{hs.url}" />
+									<h:outputText value="#{hs.url}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.url}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
 								</rich:column>
 
 								<rich:column sortBy="#{hs.defaultCatalog}"
@@ -211,7 +234,11 @@
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_default_catalog}" />
 									</f:facet>
-									<h:outputText value="#{hs.defaultCatalog}" />
+									<h:outputText value="#{hs.defaultCatalog}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.defaultCatalog}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
 								</rich:column>
 
 							</rich:dataTable>

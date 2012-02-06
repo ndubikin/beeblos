@@ -10,14 +10,15 @@ public class HibernateConfigurationParameters {
 	private String username;
 	private String url;
 	private String defaultCatalog;
+	private boolean defaultConfiguration;
 
 	public HibernateConfigurationParameters() {
 
 	}
 
 	public HibernateConfigurationParameters(String sessionName, String driverName,
-			String password, String username,
-			String url, String defaultCatalog) {
+			String password, String username, String url, String defaultCatalog,
+			boolean defaultConfiguration) {
 		super();
 		this.sessionName = sessionName;
 		this.driverName = driverName;
@@ -25,6 +26,7 @@ public class HibernateConfigurationParameters {
 		this.username = username;
 		this.url = url;
 		this.defaultCatalog = defaultCatalog;
+		this.defaultConfiguration = defaultConfiguration;
 	}
 
 	public static HibernateConfigurationParameters loadDefaultHibernateConfigurationParameters() {
@@ -37,7 +39,7 @@ public class HibernateConfigurationParameters {
 				rb.getString("hibernate.connection.password"),
 				rb.getString("hibernate.connection.username"),
 				rb.getString("hibernate.connection.url"),
-				rb.getString("hibernate.connection.default_catalog"));
+				rb.getString("hibernate.connection.default_catalog"), true);
 
 	}
 
@@ -89,12 +91,21 @@ public class HibernateConfigurationParameters {
 		this.defaultCatalog = defaultCatalog;
 	}
 
+	public boolean isDefaultConfiguration() {
+		return defaultConfiguration;
+	}
+
+	public void setDefaultConfiguration(boolean defaultConfiguration) {
+		this.defaultConfiguration = defaultConfiguration;
+	}
+
 	@Override
 	public String toString() {
-		return "HibernateConfigurationParameters [sessionName=" + sessionName + ", driverName="
-				+ driverName + ", password=" + password + ", username="
-				+ username + ", url=" + url + ", defaultCatalog="
-				+ defaultCatalog + "]";
+		return "HibernateConfigurationParameters [sessionName=" + sessionName
+				+ ", driverName=" + driverName + ", password=" + password
+				+ ", username=" + username + ", url=" + url
+				+ ", defaultCatalog=" + defaultCatalog
+				+ ", defaultConfiguration=" + defaultConfiguration + "]";
 	}
 
 	@Override
@@ -103,6 +114,7 @@ public class HibernateConfigurationParameters {
 		int result = 1;
 		result = prime * result
 				+ ((defaultCatalog == null) ? 0 : defaultCatalog.hashCode());
+		result = prime * result + (defaultConfiguration ? 1231 : 1237);
 		result = prime * result
 				+ ((driverName == null) ? 0 : driverName.hashCode());
 		result = prime * result
@@ -128,6 +140,8 @@ public class HibernateConfigurationParameters {
 			if (other.defaultCatalog != null)
 				return false;
 		} else if (!defaultCatalog.equals(other.defaultCatalog))
+			return false;
+		if (defaultConfiguration != other.defaultConfiguration)
 			return false;
 		if (driverName == null) {
 			if (other.driverName != null)
