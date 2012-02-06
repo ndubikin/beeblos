@@ -838,8 +838,10 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				stepMessage += " of this process";
 			} 
 			
-			return UtilsVs
+			List <SelectItem> l = UtilsVs
 					.castStringPairToSelectitem(new WStepDefBL().getComboList(processIdFilter, 1, stepMessage, ""));
+			
+			return l;
 			
 		} catch (WProcessDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();

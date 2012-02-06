@@ -48,7 +48,7 @@ public class HibernateUtil {
 			// url + default_catalog
 			conf.setProperty(
 					"hibernate.connection.url",
-					rb.getString("hibernate.connection.url")
+					rb.getString("hibernate.connection.url") + "/"
 							+ rb.getString("hibernate.connection.default_catalog"));
 
 			conf.setProperty("hibernate.connection.username",
@@ -66,7 +66,7 @@ public class HibernateUtil {
 	}
 
 	private static SessionFactory createNewSessionFactory(
-			HibernateConfigurationParameters parameters) throws Exception {
+			HibernateConfigurationParameters parameters){
 
 		if (sessionFactory == null) {
 
@@ -78,21 +78,15 @@ public class HibernateUtil {
 					parameters.getPassword());
 
 			// url + default_catalog
-			conf.setProperty("hibernate.connection.url", parameters.getUrl()
+			conf.setProperty("hibernate.connection.url", parameters.getUrl() + "/"
 					+ parameters.getDefaultCatalog());
 			conf.setProperty("hibernate.connection.username",
 					parameters.getUsername());
 			conf.setProperty("hibernate.connection.default_catalog",
 					parameters.getDefaultCatalog());
 
-			try {
-				sessionFactory = conf.buildSessionFactory();
+				sessionFactory = conf.buildSessionFactory();				
 
-			} catch (Throwable e) {
-
-				System.out.println("por fin");
-
-			}
 		}
 
 		return sessionFactory;
@@ -134,13 +128,28 @@ public class HibernateUtil {
 
 	// dml 20120131
 	public static Session getNewSession(HibernateConfigurationParameters newParameters)
-			throws Exception {
+			throws ClassNotFoundException, SQLException {
 
 		// nes - 20100809 - para que muestre el error correcto cuando no puede
 		// devolver
 		// la session por algún motivo ...
 		sessionFactory = null;
-		return createNewSessionFactory(newParameters).getCurrentSession();
+		
+		if (checkJDBCConnection(newParameters)) {
+
+			try {
+				return createNewSessionFactory(newParameters).getCurrentSession();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+
+		} else {
+			
+			return null;
+			
+		}
+		
 
 	}
 

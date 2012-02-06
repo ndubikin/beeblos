@@ -126,8 +126,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
 			String message = "Cannot insert an empty session name ";
-			String params[] = { message + ",", "FileNotFoundException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 			
 		}
@@ -166,8 +165,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				setMessageStyle(errorMessageStyle());
 				setShowHeaderMessage(true);
 				String message = "Element to update cannot be found: Method update in HibernateConfigurationBean: ";
-				String params[] = { message };
-				agregarMensaje("209", message, params, FGPException.WARN);
+				agregarMensaje(message);
 				logger.error(message);				
 				
 			}
@@ -185,8 +183,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "MarshalException: Method update in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "MarshalException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} catch (ValidationException e) {
@@ -195,8 +192,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "ValidationException: Method update in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "ValidationException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} catch (IOException e) {
@@ -205,8 +201,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "IOException: Method update in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "IOException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} 
@@ -241,8 +236,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				setShowHeaderMessage(true);
 				String message = "MarshalException: Method add in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "MarshalException" };
-				agregarMensaje("209", message, params, FGPException.WARN);
+				agregarMensaje(message);
 				logger.error(message);
 
 			} catch (ValidationException e) {
@@ -251,8 +245,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				setShowHeaderMessage(true);
 				String message = "ValidationException: Method add in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "ValidationException" };
-				agregarMensaje("209", message, params, FGPException.WARN);
+				agregarMensaje(message);
 				logger.error(message);
 
 			} catch (IOException e) {
@@ -261,8 +254,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				setShowHeaderMessage(true);
 				String message = "IOException: Method add in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "IOException" };
-				agregarMensaje("209", message, params, FGPException.WARN);
+				agregarMensaje(message);
 				logger.error(message);
 
 			} 
@@ -301,8 +293,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "MarshalException: Method delete in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "MarshalException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} catch (ValidationException e) {
@@ -311,8 +302,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "ValidationException: Method delete in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "ValidationException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} catch (IOException e) {
@@ -321,8 +311,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "IOException: Method delete in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "IOException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} 
@@ -354,8 +343,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				setShowHeaderMessage(true);
 				String message = "MarshalException: Method loadRecord in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "MarshalException" };
-				agregarMensaje("209", message, params, FGPException.WARN);
+				agregarMensaje(message);
 				logger.error(message);
 
 			} catch (ValidationException e) {
@@ -364,18 +352,16 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				setShowHeaderMessage(true);
 				String message = "ValidationException: Method loadRecord in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "ValidationException" };
-				agregarMensaje("209", message, params, FGPException.WARN);
+				agregarMensaje(message);
 				logger.error(message);
 
 			} catch (FileNotFoundException e) {
 
 				setMessageStyle(errorMessageStyle());
 				setShowHeaderMessage(true);
-				String message = "IOException: Method loadRecord in HibernateConfigurationBean: "
+				String message = "FileNotFoundException: Method loadRecord in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "FileNotFoundException" };
-				agregarMensaje("209", message, params, FGPException.WARN);
+				agregarMensaje(message);
 				logger.error(message);
 
 			} 
@@ -402,8 +388,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "MarshalException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "MarshalException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} catch (ValidationException e) {
@@ -412,8 +397,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "ValidationException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "ValidationException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} catch (FileNotFoundException e) {
@@ -422,8 +406,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			String message = "IOException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "FileNotFoundException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 
 		} 
@@ -541,51 +524,11 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		return hibernateConfigurationParametersList;
 	}
 
-	public void applyNewConfiguration() {
-
-		if (currentHibernateConfigurationParameters != null) {
-
-			if (currentHibernateConfigurationParameters.getSessionName() != null &&
-					!"".equals(currentHibernateConfigurationParameters.getSessionName())){
-
-				try {
-					HibernateUtil.getNewSession(currentHibernateConfigurationParameters);
-
-					ContextoSeguridad cs = (ContextoSeguridad) getSession()
-							.getAttribute(SECURITY_CONTEXT);
-					
-					cs.setHibernateConfigurationParameters(currentHibernateConfigurationParameters);
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			} else {
-
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
-				String message = "Cannot insert an empty session name ";
-				String params[] = { message + ",", "FileNotFoundException" };
-				agregarMensaje("209", message, params, FGPException.WARN);
-				logger.error(message);
-
-			}
-					
-		}
-
-	}
-	
-	public void setDefaultConfiguration() {
-
-		new HibernateConfigurationParameters();
-		this.currentHibernateConfigurationParameters = 
-				HibernateConfigurationParameters.loadDefaultHibernateConfigurationParameters();
-
-	}
-	
 	public void checkConfiguration(){
 		
+		setShowHeaderMessage(false);
+		setMessageStyle(normalMessageStyle());
+
 		try {
 			
 			if(HibernateUtil.checkJDBCConnection(currentHibernateConfigurationParameters)) {
@@ -596,6 +539,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 			} else {
 				
+				setMessageStyle(errorMessageStyle());
 				String message = setWrongConfiguration();
 				agregarMensaje(message);
 				setShowHeaderMessage(true);
@@ -607,18 +551,20 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setMessageStyle(errorMessageStyle());
 			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "ClassNotFoundException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			agregarMensaje(message);
 			logger.error(message);
 			setShowHeaderMessage(true);
 
 		} catch (SQLException e) {
 
 			setMessageStyle(errorMessageStyle());
-			String message = "SQLException: Method checkConfiguration in HibernateConfigurationBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "SQLException" };
-			agregarMensaje("209", message, params, FGPException.WARN);
+			String message= "SQLException: Method checkConfiguration in HibernateConfigurationBean: ";
+			if (e.getErrorCode() == 0){
+				message+="It is imposible to connect with this URL";
+			} else if (e.getErrorCode() == 1045){
+				message+="The user/password are incorrect";
+			}
+			agregarMensaje(message);
 			logger.error(message);
 			setShowHeaderMessage(true);
 
@@ -646,6 +592,10 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		return "This is a WRONG session configuration. It cannot connect with the database";
 	}
 	
+	private String getUpdatedDefaultConfiguration() {
+		return "This is now the default configuration";
+	}
+	
 	public ArrayList<DriverObject> driverNameAutocomplete(
 			Object input) {
 
@@ -665,4 +615,62 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 	}
 
+	// dml 20120206
+	public void setDefaultConfiguration() {
+
+		setShowHeaderMessage(false);
+		setMessageStyle(normalMessageStyle());
+
+		for (HibernateConfigurationParameters hs: hibernateConfigurationParametersList){
+			
+			if (hs.getSessionName().equals(currentHibernateConfigurationParameters.getSessionName())){		
+				hs.setDefaultConfiguration(true);
+			}
+			else {
+				hs.setDefaultConfiguration(false);
+			}
+		}
+			
+		try{
+				
+			HibernateConfigurationUtil.persistConfigurationList(hibernateConfigurationParametersList);
+				
+			String message = getUpdatedDefaultConfiguration(); 
+			logger.info(message);
+			agregarMensaje(message);
+			setShowHeaderMessage(true);
+
+		} catch (MarshalException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "MarshalException: Method setDefaultConfiguration in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (ValidationException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "ValidationException: Method setDefaultConfiguration in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (IOException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "IOException: Method setDefaultConfiguration in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} 
+
+		
+	}
+
 }
+
