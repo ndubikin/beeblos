@@ -274,19 +274,31 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		String returnValue = null; // always returns null because calls are ajax
 
 		try {
+			 
+			if (currentHibernateConfigurationParameters.isDefaultConfiguration()){
 			
-			this.hibernateConfigurationParametersList.remove(this.currentHibernateConfigurationParameters);
-			
-			HibernateConfigurationUtil.persistConfigurationList(hibernateConfigurationParametersList);
-			
-			// set ok message 
-			String message = getDeleteOkMessage(currentHibernateConfigurationParameters.getSessionName()); 
-			logger.info(message);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+				setMessageStyle(errorMessageStyle());
+				setShowHeaderMessage(true);
+				String message = " It is not possible to delete the default configuration. ";
+				agregarMensaje(message);
+				logger.error(message);				
+				
+			} else {
 
-			_reset();
+				this.hibernateConfigurationParametersList.remove(this.currentHibernateConfigurationParameters);
+			
+				HibernateConfigurationUtil.persistConfigurationList(hibernateConfigurationParametersList);
+				
+				// set ok message 
+				String message = getDeleteOkMessage(currentHibernateConfigurationParameters.getSessionName()); 
+				logger.info(message);
+				agregarMensaje(message);
+				setShowHeaderMessage(true);
+	
+				_reset();
 
+			}
+			
 		} catch (MarshalException e) {
 
 			setMessageStyle(errorMessageStyle());

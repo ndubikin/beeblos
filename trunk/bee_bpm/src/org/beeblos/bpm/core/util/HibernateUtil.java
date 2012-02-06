@@ -1,13 +1,15 @@
 package org.beeblos.bpm.core.util;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ResourceBundle;
 
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,32 +32,26 @@ public class HibernateUtil {
 	}
 
 	private static SessionFactory obtenerSessionFactory()
-			throws HibernateException {
+			throws HibernateException, MarshalException, ValidationException, FileNotFoundException {
 
 		if (sessionFactory == null) {
 
-			ResourceBundle rb = ResourceBundle
-					.getBundle("hibernateDefaultConfiguration");
-
 			Configuration conf = new Configuration().configure();
 
+			HibernateConfigurationParameters parameters = HibernateConfigurationUtil.getDefaultConfiguration();
+			
 			conf.setProperty("hibernate.connection.driver_class",
-					rb.getString("hibernate.connection.driver_class"));
-
+					parameters.getDriverName());
 			conf.setProperty("hibernate.connection.password",
-					rb.getString("hibernate.connection.password"));
+					parameters.getPassword());
 
 			// url + default_catalog
-			conf.setProperty(
-					"hibernate.connection.url",
-					rb.getString("hibernate.connection.url") + "/"
-							+ rb.getString("hibernate.connection.default_catalog"));
-
+			conf.setProperty("hibernate.connection.url", parameters.getUrl() + "/"
+					+ parameters.getDefaultCatalog());
 			conf.setProperty("hibernate.connection.username",
-					rb.getString("hibernate.connection.username"));
-
+					parameters.getUsername());
 			conf.setProperty("hibernate.connection.default_catalog",
-					rb.getString("hibernate.connection.default_catalog"));
+					parameters.getDefaultCatalog());
 
 			sessionFactory = conf.buildSessionFactory();
 

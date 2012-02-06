@@ -4,13 +4,14 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
 
 <ui:composition>
 
 		<h:messages  style="#{Login_x_Bean.messageStyle}"/>
 
-		<ui:include src="../common/mpChangeHibernateConfiguration.xhtml"/>
+		<beecomp:mpChangeHibernateConfiguration />
 
 
 		<h:outputText value="#{msg.label_connected_with}:"	
@@ -31,11 +32,10 @@
 			value="#{login_x_Bean.hibernateConfigurationParameters.defaultCatalog}"
 			style="font-weight:bold; font-size: 12px;"/>
 
-		<a4j:commandButton id="change_hibernate_configuration"
+		<a4j:commandLink id="change_hibernate_configuration"
 			style="font-size: 12px; margin-left:15px;"
 			value="#{msg.label_change}"
 			title="#{msg.label_change_configuration}"
-			actionListener="#{login_x_Bean.updateNames}"
 			onclick="javascript:Richfaces.showModalPanel('mpChangeHibernateConfiguration');"
 			reRender="sessionName, url, defaultCatalog"/>
 
