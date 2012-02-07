@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.util;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -22,14 +23,22 @@ public class HibernateConfigurationUtil {
 
 	@SuppressWarnings("unchecked")
 	public static List<HibernateConfigurationParameters> getConfigurationList()
-			throws MarshalException, ValidationException, FileNotFoundException {
+			throws MarshalException, ValidationException {
 		
-		FileReader reader = new FileReader(hibernateConfigurationListXML);
-
+		FileReader reader;
 		List<HibernateConfigurationParameters> hcpl = new ArrayList<HibernateConfigurationParameters>();
+		try {
+			
+			reader = new FileReader(hibernateConfigurationListXML);
 
-		hcpl = (List<HibernateConfigurationParameters>) Unmarshaller.unmarshal(hcpl.getClass(),
+			hcpl = (List<HibernateConfigurationParameters>) Unmarshaller.unmarshal(hcpl.getClass(),
 				reader);
+
+		} catch (FileNotFoundException e) {
+			
+			new File(hibernateConfigurationListXML);
+			
+		}
 
 		return hcpl;
 

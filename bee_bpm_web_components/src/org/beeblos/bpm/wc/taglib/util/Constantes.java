@@ -6,6 +6,10 @@ import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
 
 public class Constantes {
 	
+	// dml 20120207
+	public static final String GO_TO_LOGIN = "GO_TO_LOGIN";
+	public static final String SAVE_CONF_FAIL = "SAVE_CONF_FAIL";
+	
 	public static final String CODIGO_PAIS_DEFECTO = "ES";
 	public static final String NOMBRE_PAIS_DEFECTO = "España";
 	public static final String ID_PAIS_GENERICO = "99"; 

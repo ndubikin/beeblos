@@ -1,6 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static org.beeblos.bpm.wc.taglib.util.Constantes.GO_TO_LOGIN;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.NOM_APLICACION;
+import static org.beeblos.bpm.wc.taglib.util.Constantes.SAVE_CONF_FAIL;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.TITULO_PRINCIPAL_DEFAULT;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.USE_SECURITY;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.USUARIO_PAGINA_INICIO_DEFAULT;
@@ -63,7 +65,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	private boolean logged;
 	
 	// dml 20120131
-	private HibernateConfigurationParameters hibernateConfigurationParameters;
+	private HibernateConfigurationParameters hibernateConfigurationParameters = new HibernateConfigurationParameters();
 	
 	// dml 20120206
 	private String currentSessionName;
@@ -487,15 +489,6 @@ public class Login_x_Bean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
-		} catch (FileNotFoundException e) {
-
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
-			String message = "FileNotFoundException: Method getHibernateConfigurationList in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
 		}
 		
 		return result;
@@ -672,4 +665,161 @@ public class Login_x_Bean extends CoreManagedBean {
 
 	}
 	
+	// dml 20120207
+	public boolean getHibernateConfigurationXMLHasDefault() {
+		
+		try {
+
+			return (HibernateConfigurationUtil.getDefaultConfiguration() != null ? true : false);
+			
+		} catch (MarshalException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "MarshalException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (ValidationException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "ValidationException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (FileNotFoundException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "FileNotFoundException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		}
+
+		return true;
+		
+	}
+	
+	// dml 20120207
+	public void resetHibernateConfigurationParametersObject(){
+		
+		setShowHeaderMessage(false);
+		setMessageStyle(normalMessageStyle());
+
+		hibernateConfigurationParameters = new HibernateConfigurationParameters();
+		
+	}
+	
+	// dml 20120207
+	public String saveDefaultConfiguration(){
+		
+		setShowHeaderMessage(false);
+		setMessageStyle(normalMessageStyle());
+
+		hibernateConfigurationParameters.setDefaultConfiguration(true);
+		
+		checkConfiguration();
+
+		try {
+		
+			HibernateConfigurationUtil.addFirstConfiguration(hibernateConfigurationParameters);
+		
+			return GO_TO_LOGIN;
+			
+		} catch (MarshalException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "MarshalException: Method saveDefaultConfiguration in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (ValidationException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "ValidationException: Method saveDefaultConfiguration in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (FileNotFoundException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "FileNotFoundException: Method saveDefaultConfiguration in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (IOException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "IOException: Method saveDefaultConfiguration in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		}
+		
+		return SAVE_CONF_FAIL;
+
+	}
+	
+	// dml 20120207
+	public void checkConfiguration(){
+		
+		setShowHeaderMessage(false);
+		setMessageStyle(normalMessageStyle());
+
+		try {
+			
+			if(HibernateUtil.checkJDBCConnection(hibernateConfigurationParameters)) {
+				
+				String message = "Configuration OK";
+				agregarMensaje(message);
+				setShowHeaderMessage(true);
+
+			} else {
+				
+				setMessageStyle(errorMessageStyle());
+				String message = "Wrong configuration";
+				agregarMensaje(message);
+				setShowHeaderMessage(true);
+				
+			}
+			
+		} catch (ClassNotFoundException e) {
+
+			setMessageStyle(errorMessageStyle());
+			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+			setShowHeaderMessage(true);
+
+		} catch (SQLException e) {
+
+			setMessageStyle(errorMessageStyle());
+			String message= "SQLException: Method checkConfiguration in HibernateConfigurationBean: ";
+			if (e.getErrorCode() == 0){
+				message+="It is imposible to connect with this URL";
+			} else if (e.getErrorCode() == 1045){
+				message+="The user/password are incorrect";
+			}
+			agregarMensaje(message);
+			logger.error(message);
+			setShowHeaderMessage(true);
+
+		}
+		
+	}
+
 }

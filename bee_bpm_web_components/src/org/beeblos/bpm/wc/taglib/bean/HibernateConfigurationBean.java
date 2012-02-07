@@ -412,15 +412,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
-		} catch (FileNotFoundException e) {
-
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
-			String message = "IOException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
 		} 
 		
 	}

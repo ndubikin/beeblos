@@ -104,6 +104,10 @@
   <source>/taglib/general/pestanias/paneles/loginForm.xhtml</source>
  </tag>
  <tag>
+  <tag-name>firstHibernateConfigurationForm</tag-name>
+  <source>/taglib/general/pestanias/paneles/firstHibernateConfigurationForm.xhtml</source>
+ </tag>
+ <tag>
   <tag-name>usuarioCrudCaratula</tag-name>
   <source>/taglib/mantenimientos/pestanias/usuarioCrudCaratula.xhtml</source>
  </tag>
