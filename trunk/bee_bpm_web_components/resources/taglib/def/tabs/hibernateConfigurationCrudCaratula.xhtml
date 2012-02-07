@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -33,13 +34,15 @@
 
 		<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages"
 			var="msg" />
+
+		<ui:include src="../../common/mpSetDefaultNotValidHibConf.xhtml"/>
+
 		<h:form>
 
 			<a4j:jsFunction name="loadRecord" action="#{hibernateConfigurationBean.loadRecord}"
 				reRender="exceptionsPnl, session_name, driver_name, username, password, url, default_catalog, delete_button, cancel_button, save_button">
 				<a4j:actionparam name="param1" assignTo="#{hibernateConfigurationBean.sessionName}" />
 			</a4j:jsFunction>
-
 
 			<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true"
 				reRender="delete_button, cancel_button, save_button" />
@@ -68,10 +71,11 @@
 									<a4j:support event="onchange"
 										reRender="save_button, cancel_button" />
 								</h:inputText>
-								<h:commandLink id="set_default" value="#{msg.label_set_as_default_configuration}"
+								<a4j:commandLink id="set_default" value="#{msg.label_set_as_default_configuration}"
 									style="margin-left: 16px; width: 120px;" 
-									action="#{hibernateConfigurationBean.setDefaultConfiguration}"
-									reRender="hibernate_sessions_table"/>
+									actionListener="#{hibernateConfigurationBean.isValidConfiguration}"
+									oncomplete="if(#{!hibernateConfigurationBean.validHibernateConfiguration and hibernateConfigurationBean.recordIsLoaded}) {javascript:Richfaces.showModalPanel('mpSetDefaultNotValidHibConf')}" 
+									reRender="frmHibernateConfigurationHeader, mpSetDefaultNotValidHibConf"/>
 							</h:panelGroup>
 							
 							<h:outputText value="#{msg.label_driver_name}:"
@@ -183,12 +187,12 @@
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_session_name}" />
 									</f:facet>
+									<h:outputText id="is_default" value="*" style="color: red; font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
 									<h:outputText value="#{hs.sessionName}" 
 										rendered="#{!hs.defaultConfiguration}"/>
 									<h:outputText value="#{hs.sessionName}" 
 										style="font-weight:bold;"
-										rendered="#{hs.defaultConfiguration}"/>
-									<h:outputText id="is_default" value="*" style="color: red; font-weight:bold;"
 										rendered="#{hs.defaultConfiguration}"/>
 									<rich:toolTip value="#{msg.label_default_configuration}" for="is_default"/>
 								</rich:column>
