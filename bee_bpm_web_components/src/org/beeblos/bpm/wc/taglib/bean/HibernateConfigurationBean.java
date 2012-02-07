@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,8 +53,10 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	
 	// dml 20120203
 	private boolean recordIsLoaded;
-
 	
+	// dml 20120207
+	private boolean validHibernateConfiguration;
+		
 	public static HibernateConfigurationBean getCurrentInstance() {
 		return (HibernateConfigurationBean) FacesContext
 				.getCurrentInstance().getExternalContext().getRequestMap()
@@ -99,6 +102,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		this.loadHibernateConfigurationParametersList(); 
 		
 		this.recordIsLoaded = false;
+			
+		this.validHibernateConfiguration = false;
 		
 		this.valueBtn="Save";
 		
@@ -523,6 +528,14 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		this.recordIsLoaded = recordIsLoaded;
 	}
 
+	public boolean isValidHibernateConfiguration() {
+		return validHibernateConfiguration;
+	}
+
+	public void setValidHibernateConfiguration(boolean validHibernateConfiguration) {
+		this.validHibernateConfiguration = validHibernateConfiguration;
+	}
+
 	public List<HibernateConfigurationParameters> getHibernateConfigurationParametersList() {
 		return hibernateConfigurationParametersList;
 	}
@@ -617,13 +630,53 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		return this.currentHibernateConfigurationParameters.empty();
 		
 	}
-
+	
 	// dml 20120206
-	public void setDefaultConfiguration() {
+	public void isValidConfiguration(){
 
 		setShowHeaderMessage(false);
 		setMessageStyle(normalMessageStyle());
+		
+		if (recordIsLoaded){
+		
+			validHibernateConfiguration = false;
+			
+			try {
+	
+				if (validHibernateConfiguration = HibernateUtil.checkJDBCConnection(currentHibernateConfigurationParameters)) {
+					
+					changeDefaultConfiguration();
+					
+				}
+	
+			} catch (ClassNotFoundException e) {
+	
+				String message = "ClassNotFoundException: Method isValidConfiguration in HibernateConfigurationBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				logger.error(message);
+	
+			} catch (SQLException e) {
+	
+				String message= "SQLException: Method isValidConfiguration in HibernateConfigurationBean: ";
+				if (e.getErrorCode() == 0){
+					message+="It is imposible to connect with this URL";
+				} else if (e.getErrorCode() == 1045){
+					message+="The user/password are incorrect";
+				}
+				logger.error(message);
+	
+			}
+			
+		}
+			
+	}
 
+	// dml 20120206
+	public void changeDefaultConfiguration() {
+
+		setShowHeaderMessage(false);
+		setMessageStyle(normalMessageStyle());
+		
 		for (HibernateConfigurationParameters hs: hibernateConfigurationParametersList){
 			
 			if (hs.getSessionName().equals(currentHibernateConfigurationParameters.getSessionName())){		
@@ -633,9 +686,9 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				hs.setDefaultConfiguration(false);
 			}
 		}
-			
+
 		try{
-				
+			
 			HibernateConfigurationUtil.persistConfigurationList(hibernateConfigurationParametersList);
 				
 			String message = getUpdatedDefaultConfiguration(); 
@@ -668,10 +721,9 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			String message = "IOException: Method setDefaultConfiguration in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
-			logger.error(message);
-
-		} 
-
+			logger.error(message);		
+		}
+			
 		
 	}
 
