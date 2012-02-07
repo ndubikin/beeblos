@@ -129,6 +129,16 @@
    <redirect/>
   </navigation-case>
   <navigation-case>
+   <from-outcome>GO_TO_LOGIN</from-outcome>
+   <to-view-id>/login.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>SAVE_CONF_FAIL</from-outcome>
+   <to-view-id>/login.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
    <from-outcome>CONSULTA_USUARIO_LOGIN</from-outcome>
    <to-view-id>/general/consultaUsuarioLogin.xhtml</to-view-id>
    <redirect/>

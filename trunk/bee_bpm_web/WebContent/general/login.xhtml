@@ -18,8 +18,12 @@
 				color: red;
 			}
 		</style>
-		<beecomp:loginForm />
-
+		<h:panelGroup rendered="#{login_x_Bean.hibernateConfigurationXMLHasDefault}">
+			<beecomp:loginForm />
+		</h:panelGroup>
+		<h:panelGroup rendered="#{!login_x_Bean.hibernateConfigurationXMLHasDefault}">
+			<beecomp:firstHibernateConfigurationForm />
+		</h:panelGroup>
 	</ui:define>
 </ui:composition>
 </html>
