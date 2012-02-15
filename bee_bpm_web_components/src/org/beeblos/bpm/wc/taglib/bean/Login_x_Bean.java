@@ -124,9 +124,18 @@ public class Login_x_Bean extends CoreManagedBean {
 		// mrico 20110809
 		contextoSeguridad.setIdDepartamento(usuario.getIdDepto());
 		
-		// dml 20120131
-		contextoSeguridad.
-			setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
+		
+		// dml 20120215
+//		HibernateConfigurationParameters hcp = HibernateUtil.loadDefaultParameters();
+		// if the configuration.properties parameters are valid theme are loaded as default
+//		if (hcp != null && !hcp.hasEmptyFields()) {
+//			contextoSeguridad.setHibernateConfigurationParameters(hcp);
+//		} else {
+			// if they are not, the default xml configuration will be loaded
+//			contextoSeguridad.
+//				setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
+//		}
+		
 		
 		getSession().setAttribute(SECURITY_CONTEXT, contextoSeguridad);
 				
@@ -170,8 +179,8 @@ public class Login_x_Bean extends CoreManagedBean {
 			
 		} 
 		
-		// dml 20120203
-		this.setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
+		// dml 20120215
+		setAnyDefaultConfiguration();
 		newSessionName = currentSessionName = hibernateConfigurationParameters.getSessionName();
 		
 		return urlPaginaInicioDpto;
@@ -501,6 +510,7 @@ public class Login_x_Bean extends CoreManagedBean {
 			try {
 				
 				try {
+					hibernateConfigurationParameters.setSessionName(newSessionName);
 					
 					if (HibernateUtil.getNewSession(hibernateConfigurationParameters) != null){
 					
@@ -513,6 +523,11 @@ public class Login_x_Bean extends CoreManagedBean {
 						
 					} else {
 						
+						hibernateConfigurationParameters = HibernateConfigurationUtil.
+								getConfiguration(currentSessionName);			
+						if (hibernateConfigurationParameters == null) {				
+							setAnyDefaultConfiguration();				
+						}
 						newSessionName = currentSessionName;
 						
 						setMessageStyle(errorMessageStyle());
@@ -525,7 +540,11 @@ public class Login_x_Bean extends CoreManagedBean {
 
 				} catch (ClassNotFoundException e) {
 
-					hibernateConfigurationParameters = HibernateConfigurationUtil.getConfiguration(currentSessionName);
+					hibernateConfigurationParameters = HibernateConfigurationUtil.
+							getConfiguration(currentSessionName);			
+					if (hibernateConfigurationParameters == null) {				
+						setAnyDefaultConfiguration();				
+					}
 					newSessionName = currentSessionName;
 
 					setMessageStyle(errorMessageStyle());
@@ -537,7 +556,11 @@ public class Login_x_Bean extends CoreManagedBean {
 
 				} catch (SQLException e) {
 
-					hibernateConfigurationParameters = HibernateConfigurationUtil.getConfiguration(currentSessionName);
+					hibernateConfigurationParameters = HibernateConfigurationUtil.
+							getConfiguration(currentSessionName);			
+					if (hibernateConfigurationParameters == null) {				
+						setAnyDefaultConfiguration();				
+					}
 					newSessionName = currentSessionName;
 
 					setMessageStyle(errorMessageStyle());
@@ -591,7 +614,10 @@ public class Login_x_Bean extends CoreManagedBean {
 		try {
 			
 			hibernateConfigurationParameters = HibernateConfigurationUtil.
-					getConfiguration(currentSessionName);
+					getConfiguration(currentSessionName);			
+			if (hibernateConfigurationParameters == null) {				
+				setAnyDefaultConfiguration();				
+			}
 			
 			newSessionName = currentSessionName;
 			
@@ -669,8 +695,25 @@ public class Login_x_Bean extends CoreManagedBean {
 	public boolean getHibernateConfigurationXMLHasDefault() {
 		
 		try {
-
-			return (HibernateConfigurationUtil.getDefaultConfiguration() != null ? true : false);
+			
+			HibernateConfigurationParameters defaultConfig = HibernateUtil.loadDefaultParameters();
+			
+			// dml 20120215
+			if (defaultConfig != null && !defaultConfig.hasEmptyFields() && 
+					defaultConfigurationInitIsCorrect(defaultConfig)){
+				
+				return true;
+				
+			} else if (((defaultConfig = HibernateConfigurationUtil.getDefaultConfiguration()) != null) &&
+					defaultConfigurationInitIsCorrect(defaultConfig)) {
+				
+				return true;
+				
+			} else {
+				
+				return false;
+				
+			}
 			
 		} catch (MarshalException e) {
 
@@ -818,6 +861,72 @@ public class Login_x_Bean extends CoreManagedBean {
 			logger.error(message);
 			setShowHeaderMessage(true);
 
+		}
+		
+	}
+
+	// dml 20120215
+	public boolean defaultConfigurationInitIsCorrect(HibernateConfigurationParameters defaultConfig){
+		
+		setShowHeaderMessage(false);
+		setMessageStyle(normalMessageStyle());
+
+		try {
+			
+			if(HibernateUtil.checkJDBCConnection(defaultConfig)) {
+				
+				return true;
+
+			} else {
+				
+				return false;
+				
+			}
+			
+		} catch (ClassNotFoundException e) {
+
+			setMessageStyle(errorMessageStyle());
+			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+			setShowHeaderMessage(true);
+			return false;
+
+		} catch (SQLException e) {
+
+			setMessageStyle(errorMessageStyle());
+			String message= "SQLException: Method checkConfiguration in HibernateConfigurationBean: ";
+			if (e.getErrorCode() == 0){
+				message+="It is imposible to connect with this URL";
+			} else if (e.getErrorCode() == 1045){
+				message+="The user/password are incorrect";
+			}
+			agregarMensaje(message);
+			logger.error(message);
+			setShowHeaderMessage(true);
+			return false;
+
+		}
+		
+	}
+
+	// dml 20120215
+	private void setAnyDefaultConfiguration() throws MarshalException, ValidationException, FileNotFoundException{
+		
+		hibernateConfigurationParameters = HibernateUtil.loadDefaultParameters();
+		
+		// if the configuration.properties parameters are valid theme are loaded as default
+		if (this.hibernateConfigurationParameters != null && 
+				!this.hibernateConfigurationParameters.hasEmptyFields()) {
+			
+			this.hibernateConfigurationParameters.setSessionName("(configuration.properties)");
+			
+		// if they are not, the default xml configuration will be loaded
+		} else {
+			
+			this.setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
+			
 		}
 		
 	}

@@ -15,6 +15,16 @@ public class HibernateConfigurationParameters {
 
 	}
 
+	public HibernateConfigurationParameters(String driverName,
+			String password, String username, String url, String defaultCatalog) {
+		super();
+		this.driverName = driverName;
+		this.password = password;
+		this.username = username;
+		this.url = url;
+		this.defaultCatalog = defaultCatalog;
+	}
+
 	public HibernateConfigurationParameters(String sessionName, String driverName,
 			String password, String username, String url, String defaultCatalog,
 			boolean defaultConfiguration) {
@@ -166,6 +176,18 @@ public class HibernateConfigurationParameters {
 		if (defaultCatalog!=null && ! "".equals(defaultCatalog)) return false;
 		
 		return true;
+	}
+	
+	// dml 20120215
+	public boolean hasEmptyFields() {
+		
+		if (driverName==null || "".equals(driverName)) return true;
+		if (password==null || "".equals(password)) return true;
+		if (username==null || "".equals(username)) return true;
+		if (url==null || "".equals(url)) return true;
+		if (defaultCatalog==null || "".equals(defaultCatalog)) return true;		
+		
+		return false;
 	}
 
 }
