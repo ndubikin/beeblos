@@ -7,6 +7,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
@@ -26,6 +27,8 @@ public class HibernateUtil {
 	private static SessionFactory sessionFactory;
 	private static Session session;
 	private static Transaction tx;
+	
+	private static HibernateConfigurationParameters parameters;
 
 	public HibernateUtil() {
 
@@ -35,10 +38,18 @@ public class HibernateUtil {
 			throws HibernateException, MarshalException, ValidationException, FileNotFoundException {
 
 		if (sessionFactory == null) {
-
+			
 			Configuration conf = new Configuration().configure();
+			
+			// trying to load the configuration.properties configuration
+			parameters = loadDefaultParameters();
 
-			HibernateConfigurationParameters parameters = HibernateConfigurationUtil.getDefaultConfiguration();
+			// if it is not possible, it is loaded the default config of the xml file
+			if (parameters == null || parameters.hasEmptyFields()) {
+
+				parameters = HibernateConfigurationUtil.getDefaultConfiguration();
+				
+			}
 			
 			conf.setProperty("hibernate.connection.driver_class",
 					parameters.getDriverName());
@@ -59,6 +70,30 @@ public class HibernateUtil {
 
 		return sessionFactory;
 
+	}
+	
+	public static HibernateConfigurationParameters loadDefaultParameters(){
+		
+		ResourceBundle rb = org.beeblos.bpm.core.util.Configuration.getConfigurationRepositoryResourceBundle();
+		
+		HibernateConfigurationParameters parameters = new HibernateConfigurationParameters();
+		
+		try {
+		
+			parameters.setDriverName(rb.getString("bee_bpm_core.hibernate.connection.driver_class"));
+			parameters.setPassword(rb.getString("bee_bpm_core.hibernate.connection.password"));
+			parameters.setUrl(rb.getString("bee_bpm_core.hibernate.connection.url"));
+			parameters.setUsername(rb.getString("bee_bpm_core.hibernate.connection.username"));
+			parameters.setDefaultCatalog(rb.getString("bee_bpm_core.hibernate.connection.default_catalog"));
+		
+		} catch (Exception e){
+			
+			e.printStackTrace();
+			return null;
+			
+		}
+		
+		return parameters;
 	}
 
 	private static SessionFactory createNewSessionFactory(
