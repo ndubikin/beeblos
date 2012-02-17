@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK;
 
@@ -10,7 +11,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.dao.WProcessDefDao;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
@@ -23,6 +23,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
@@ -62,11 +63,16 @@ public class WStepWorkBL {
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
 	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUser) throws WStepWorkException, WProcessWorkException {
 		
-		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep-Work: ["+stepw.getCurrentStep().getName()+"-"+stepw.getwProcessWork().getReference()+"]");
+		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"]");
 		
 		Integer workId;
 		
 		if ( work.getId()==null || work.getId()==0 ) {
+			
+			// dml 20120217
+			if (work.getStatus() == null) {
+				work.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
+			}
 			
 			WProcessWorkBL wpbl = new WProcessWorkBL(); 
 			workId = wpbl.add(work, currentUser);

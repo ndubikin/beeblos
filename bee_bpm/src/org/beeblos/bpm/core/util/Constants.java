@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class Constants {
 	
+	public static final Integer DEFAULT_PROCESS_STATUS = 1;
+
 	public static final String LOAD_WPROCESSWORK = "LOAD_WPROCESSWORK";
 
 	public static final String PROCESSING = "PROCESSING";
