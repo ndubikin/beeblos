@@ -8,10 +8,18 @@ package org.beeblos.bpm.core.model;
  */
 public class WProcessStatus implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String name;
 
 	public WProcessStatus() {
+	}
+	
+	public WProcessStatus(Integer id) {
+		this.id=id;
 	}
 
 	public WProcessStatus(boolean createEmpyyObjects) {
