@@ -312,6 +312,20 @@
         <property name="expiredUserNotice" type="boolean">
             <column name="expired_user_notice" not-null="true" />
         </property>
+        
+         <property name="customValidation" type="boolean">
+            <column name="custom_validation" not-null="true" />
+        </property>
+		<property generated="never" lazy="false" name="customValidationRefClass"
+			type="string">
+			<column name="custom_validation_ref_class" />
+		</property>
+		<property generated="never" lazy="false" name="customValidationMethod"
+			type="string">
+			<column name="custom_validation_method" />
+		</property>
+        
+        
 
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" name="timeUnit">
