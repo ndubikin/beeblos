@@ -65,6 +65,11 @@ public class WStepDef implements java.io.Serializable {
 	Set<WStepRole> rolesRelated=new HashSet<WStepRole>();
 	Set<WStepUser> usersRelated=new HashSet<WStepUser>();
 	
+	// dml 20120217
+	private boolean customValidation;
+	private String customValidationRefClass;
+	private String customValidationMethod;
+
 	// dml 20120113
 	private Date insertDate;
 	private Integer insertUser;
@@ -367,6 +372,15 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
+		result = prime * result + (customValidation ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((customValidationMethod == null) ? 0
+						: customValidationMethod.hashCode());
+		result = prime
+				* result
+				+ ((customValidationRefClass == null) ? 0
+						: customValidationRefClass.hashCode());
 		result = prime * result + (deadlineAdminNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
@@ -423,7 +437,7 @@ public class WStepDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WStepDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WStepDef other = (WStepDef) obj;
 		if (arrivingAdminNotice != other.arrivingAdminNotice)
@@ -434,6 +448,19 @@ public class WStepDef implements java.io.Serializable {
 			if (other.assignedTime != null)
 				return false;
 		} else if (!assignedTime.equals(other.assignedTime))
+			return false;
+		if (customValidation != other.customValidation)
+			return false;
+		if (customValidationMethod == null) {
+			if (other.customValidationMethod != null)
+				return false;
+		} else if (!customValidationMethod.equals(other.customValidationMethod))
+			return false;
+		if (customValidationRefClass == null) {
+			if (other.customValidationRefClass != null)
+				return false;
+		} else if (!customValidationRefClass
+				.equals(other.customValidationRefClass))
 			return false;
 		if (deadlineAdminNotice != other.deadlineAdminNotice)
 			return false;
@@ -555,67 +582,35 @@ public class WStepDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WStepDef ["
-				+ (id != null ? "id=" + id + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
-				+ (idDept != null ? "idDept=" + idDept + ", " : "")
-				+ (idPhase != null ? "idPhase=" + idPhase + ", " : "")
-				+ (instructions != null ? "instructions=" + instructions + ", "
-						: "")
-				+ (stepComments != null ? "stepComments=" + stepComments + ", "
-						: "")
-				+ (idListZone != null ? "idListZone=" + idListZone + ", " : "")
-				+ (idWorkZone != null ? "idWorkZone=" + idWorkZone + ", " : "")
-				+ (idAdditionalZone != null ? "idAdditionalZone="
-						+ idAdditionalZone + ", " : "")
-				+ (submitForm != null ? "submitForm=" + submitForm + ", " : "")
-				+ (timeUnit != null ? "timeUnit=" + timeUnit + ", " : "")
-				+ (assignedTime != null ? "assignedTime=" + assignedTime + ", "
-						: "")
-				+ (deadlineDate != null ? "deadlineDate=" + deadlineDate + ", "
-						: "")
-				+ (deadlineTime != null ? "deadlineTime=" + deadlineTime + ", "
-						: "")
-				+ (reminderTimeUnit != null ? "reminderTimeUnit="
-						+ reminderTimeUnit + ", " : "")
-				+ (reminderTime != null ? "reminderTime=" + reminderTime + ", "
-						: "")
-				+ "runtimeModifiable="
-				+ runtimeModifiable
-				+ ", sentAdminNotice="
-				+ sentAdminNotice
-				+ ", arrivingAdminNotice="
-				+ arrivingAdminNotice
-				+ ", deadlineAdminNotice="
-				+ deadlineAdminNotice
-				+ ", reminderAdminNotice="
-				+ reminderAdminNotice
-				+ ", expiredAdminNotice="
-				+ expiredAdminNotice
-				+ ", sentUserNotice="
-				+ sentUserNotice
-				+ ", arrivingUserNotice="
-				+ arrivingUserNotice
-				+ ", deadlineUserNotice="
-				+ deadlineUserNotice
-				+ ", reminderUserNotice="
-				+ reminderUserNotice
-				+ ", expiredUserNotice="
-				+ expiredUserNotice
-				+ ", emailNotification="
-				+ emailNotification
-				+ ", engineNotification="
-				+ engineNotification
-				+ ", "
-				+ (response != null ? "response=" + response + ", " : "")
-				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated + ", "
-						: "")
-				+ (usersRelated != null ? "usersRelated=" + usersRelated + ", "
-						: "")
-				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
-				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser : "") + "]";
+		return "WStepDef [id=" + id + ", name=" + name + ", idDept=" + idDept
+				+ ", idPhase=" + idPhase + ", instructions=" + instructions
+				+ ", stepComments=" + stepComments + ", idListZone="
+				+ idListZone + ", idWorkZone=" + idWorkZone
+				+ ", idAdditionalZone=" + idAdditionalZone + ", submitForm="
+				+ submitForm + ", timeUnit=" + timeUnit + ", assignedTime="
+				+ assignedTime + ", deadlineDate=" + deadlineDate
+				+ ", deadlineTime=" + deadlineTime + ", reminderTimeUnit="
+				+ reminderTimeUnit + ", reminderTime=" + reminderTime
+				+ ", runtimeModifiable=" + runtimeModifiable
+				+ ", sentAdminNotice=" + sentAdminNotice
+				+ ", arrivingAdminNotice=" + arrivingAdminNotice
+				+ ", deadlineAdminNotice=" + deadlineAdminNotice
+				+ ", reminderAdminNotice=" + reminderAdminNotice
+				+ ", expiredAdminNotice=" + expiredAdminNotice
+				+ ", sentUserNotice=" + sentUserNotice
+				+ ", arrivingUserNotice=" + arrivingUserNotice
+				+ ", deadlineUserNotice=" + deadlineUserNotice
+				+ ", reminderUserNotice=" + reminderUserNotice
+				+ ", expiredUserNotice=" + expiredUserNotice
+				+ ", emailNotification=" + emailNotification
+				+ ", engineNotification=" + engineNotification + ", response="
+				+ response + ", rolesRelated=" + rolesRelated
+				+ ", usersRelated=" + usersRelated + ", customValidation="
+				+ customValidation + ", customValidationRefClass="
+				+ customValidationRefClass + ", customValidationMethod="
+				+ customValidationMethod + ", insertDate=" + insertDate
+				+ ", insertUser=" + insertUser + ", modDate=" + modDate
+				+ ", modUser=" + modUser + "]";
 	}
 
 
@@ -660,6 +655,9 @@ public class WStepDef implements java.io.Serializable {
 		if (deadlineDate!=null ) return false;
 		if (deadlineTime!=null ) return false;
 		
+		if (customValidationRefClass!=null && ! "".equals(customValidationRefClass)) return false;
+		if (customValidationMethod!=null && ! "".equals(customValidationMethod)) return false;
+
 		return true;
 	}
 
@@ -830,6 +828,30 @@ public class WStepDef implements java.io.Serializable {
 	// dml 20120110
 	public void addResponse( WStepResponseDef wStepResponseDef ) {
 		response.add(wStepResponseDef);
+	}
+
+	public boolean isCustomValidation() {
+		return customValidation;
+	}
+
+	public void setCustomValidation(boolean customValidation) {
+		this.customValidation = customValidation;
+	}
+
+	public String getCustomValidationRefClass() {
+		return customValidationRefClass;
+	}
+
+	public void setCustomValidationRefClass(String customValidationRefClass) {
+		this.customValidationRefClass = customValidationRefClass;
+	}
+
+	public String getCustomValidationMethod() {
+		return customValidationMethod;
+	}
+
+	public void setCustomValidationMethod(String customValidationMethod) {
+		this.customValidationMethod = customValidationMethod;
 	}
 
 }
