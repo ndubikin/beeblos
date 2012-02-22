@@ -1049,5 +1049,18 @@ public class WStepDefFormBean extends CoreManagedBean {
 		wsdBL.update(currentWStepDef, getCurrentUserId());
 		this.recoverNullObjects();
 	}
-	
+
+	// dml 20120222
+	public void resetCustomValidation(){
+
+		if (!currentWStepDef.isCustomValidation()) {
+			
+			currentWStepDef.setCustomValidationRefClass(null);
+			currentWStepDef.setCustomValidationMethod(null);
+			currentWStepDef.setBackingBean(false);
+			
+		}
+
+	}
+
 }

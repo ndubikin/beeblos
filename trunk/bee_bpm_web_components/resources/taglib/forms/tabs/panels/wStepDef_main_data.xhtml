@@ -15,8 +15,8 @@
 
 	<h:form id="w_step_def_main_data_form">
 
-		<h:panelGrid width="100%" columns="2" style=" width : 620px; margin-left: 16px;"
-			columnClasses="colStyle140px, colStyle480px">
+		<h:panelGrid width="100%" columns="2" style=" width : 680px; margin-left: 16px;"
+			columnClasses="colStyle200px, colStyle480px">
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -128,6 +128,102 @@
 			<h:selectBooleanCheckbox value="#{wStepDefFormBean.currentWStepDef.runtimeModifiable}"
 				rendered="#{!wStepDefFormBean.readOnly}"/>
 						
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_custom_validation}:"
+				styleClass="firstLeftText" />
+			<h:selectBooleanCheckbox id="custom_validation"
+				value="#{wStepDefFormBean.currentWStepDef.customValidation}"
+				rendered="#{!wStepDefFormBean.readOnly}">
+				<a4j:support ajaxSingle="true" event="onclick" reRender="w_step_def_main_data_form" 
+					action="#{wStepDefFormBean.resetCustomValidation}"/>
+			</h:selectBooleanCheckbox>
+			<h:outputText 
+				value="#{(wStepDefFormBean.currentWStepDef.customValidation) ? 'Yes' : 'None'}"
+				style="font-weight: bold;" 
+				rendered="#{wStepDefFormBean.readOnly}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_custom_validation_reference_class}:"
+				styleClass="firstLeftText"
+				rendered="#{wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:inputText id="custom_validation_reference_class"
+				value="#{wStepDefFormBean.currentWStepDef.customValidationRefClass}"
+				style="width:350px; font-size:13px; padding: 4px;"
+				rendered="#{!wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.customValidationRefClass}"
+				style="width:350px; font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_custom_validation_method}:"
+				styleClass="firstLeftText"
+				rendered="#{wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:inputText id="custom_validation_method"
+				value="#{wStepDefFormBean.currentWStepDef.customValidationMethod}"
+				style="width:350px; font-size:13px; padding: 4px;"
+				rendered="#{!wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.customValidationMethod}"
+				style="width:350px; font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_backing_bean}:"
+				styleClass="firstLeftText"
+				rendered="#{wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:selectBooleanCheckbox id="backing_bean"
+				value="#{wStepDefFormBean.currentWStepDef.backingBean}"
+				rendered="#{!wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:outputText 
+				value="#{(wStepDefFormBean.currentWStepDef.backingBean) ? 'Yes' : 'None'}"
+				style="font-weight: bold;" 
+				rendered="#{wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<h:panelGroup>
+				<h:outputText value="#{msg.label_created_by}: " />
+				<h:outputText id="fact_w_process_def_insert_user"
+					value="#{wStepDefFormBean.currentWStepDef.insertUser} " />
+				<h:outputText value="#{msg.label_the} " />
+				<h:outputText
+					value="#{wStepDefFormBean.currentWStepDef.insertDate}">
+					<f:convertDateTime pattern="#{msg.label_date_format}"
+						timeZone="#{wStepDefFormBean.timeZone}" />
+				</h:outputText>
+			</h:panelGroup>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<h:panelGroup>
+				<h:outputText value="#{msg.label_last_modification}: "
+					styleClass="firstLeftText" />
+				<h:outputText id="fact_w_process_def_mod_user"
+					value="#{wStepDefFormBean.currentWStepDef.modUser} " />
+				<h:outputText value="#{msg.label_the} " styleClass="firstLeftText" />
+				<h:outputText
+					value="#{wStepDefFormBean.currentWStepDef.modDate}">
+					<f:convertDateTime pattern="#{msg.label_date_format}"
+						timeZone="#{wStepDefFormBean.timeZone}" />
+				</h:outputText>
+			</h:panelGroup>
+
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 			

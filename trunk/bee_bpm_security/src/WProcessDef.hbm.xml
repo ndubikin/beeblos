@@ -324,6 +324,9 @@
 			type="string">
 			<column name="custom_validation_method" />
 		</property>
+        <property name="backingBean" type="boolean">
+            <column name="backing_bean" not-null="true" />
+        </property>
         
         
 
