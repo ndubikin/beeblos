@@ -493,6 +493,11 @@ table.doctable td {
 	margin: 0px;
 }
 
+.colStyle200px {
+	width: 200px;
+	margin: 0px;
+}
+
 .colStyle250px {
 	width: 250px;
 	margin: 0px;

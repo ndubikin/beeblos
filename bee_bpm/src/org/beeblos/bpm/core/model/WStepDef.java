@@ -69,6 +69,7 @@ public class WStepDef implements java.io.Serializable {
 	private boolean customValidation;
 	private String customValidationRefClass;
 	private String customValidationMethod;
+	private boolean backingBean;
 
 	// dml 20120113
 	private Date insertDate;
@@ -372,6 +373,7 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
+		result = prime * result + (backingBean ? 1231 : 1237);
 		result = prime * result + (customValidation ? 1231 : 1237);
 		result = prime
 				* result
@@ -448,6 +450,8 @@ public class WStepDef implements java.io.Serializable {
 			if (other.assignedTime != null)
 				return false;
 		} else if (!assignedTime.equals(other.assignedTime))
+			return false;
+		if (backingBean != other.backingBean)
 			return false;
 		if (customValidation != other.customValidation)
 			return false;
@@ -608,9 +612,9 @@ public class WStepDef implements java.io.Serializable {
 				+ ", usersRelated=" + usersRelated + ", customValidation="
 				+ customValidation + ", customValidationRefClass="
 				+ customValidationRefClass + ", customValidationMethod="
-				+ customValidationMethod + ", insertDate=" + insertDate
-				+ ", insertUser=" + insertUser + ", modDate=" + modDate
-				+ ", modUser=" + modUser + "]";
+				+ customValidationMethod + ", backingBean=" + backingBean
+				+ ", insertDate=" + insertDate + ", insertUser=" + insertUser
+				+ ", modDate=" + modDate + ", modUser=" + modUser + "]";
 	}
 
 
@@ -661,8 +665,6 @@ public class WStepDef implements java.io.Serializable {
 		return true;
 	}
 
-
-	
 	public Set<WStepRole> getRolesRelated() {
 		return rolesRelated;
 	}
@@ -852,6 +854,14 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setCustomValidationMethod(String customValidationMethod) {
 		this.customValidationMethod = customValidationMethod;
+	}
+
+	public boolean isBackingBean() {
+		return backingBean;
+	}
+
+	public void setBackingBean(boolean backingBean) {
+		this.backingBean = backingBean;
 	}
 
 }
