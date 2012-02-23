@@ -94,7 +94,7 @@
 
 
 
-	<class name="org.beeblos.security.st.model.WUserEmailAccounts" table="w_user_email_accounts">
+	<class name="org.beeblos.bpm.core.model.WUserEmailAccounts" table="w_user_email_accounts">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
