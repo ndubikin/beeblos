@@ -23,6 +23,8 @@
 	<ui:include src="../common/mpEditWStepDef.xhtml">
 		<ui:param name="element_to_rerender" value="w_process_def_step_definition"/>
 	</ui:include>
+
+	<ui:include src="../common/mpSearchEmail.xhtml"/>
 	
 	<rich:tabPanel switchType="server" height="540px"
 		selectedTab="#{componentNavigator.currentComponent.activeTab}"
@@ -64,6 +66,14 @@
 			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
 			<ui:include src="tabs/wProcessDefStepSequence.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_STEPSEQUENCE" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_notifications"
+			label="#{msg.label_notifications}"
+			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
+			<ui:include src="tabs/wProcessDefNotifications.xhtml">
+				<ui:param name="action" value="WPROCESSDEF_NOTIFICATIONS" />
 			</ui:include>
 		</rich:tab>
 

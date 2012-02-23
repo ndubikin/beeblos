@@ -19,14 +19,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
-import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
+import org.beeblos.bpm.core.bl.WUserEmailAccountsBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
-import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.error.WUserEmailAccountsException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
@@ -36,8 +36,8 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.WUserEmailAccounts;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
-import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -94,6 +94,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120127
 	private List<SelectItem> currentStepResponseList;
 	private List<String> currentStepValidResponses;
+	
+	// dml 20120223
+	private WUserEmailAccounts currentWUEA;
+	private List<WUserEmailAccounts> wUserEmailAccountsList;
 
 	public WProcessDefFormBean() {
 		super();
@@ -135,6 +139,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		// dml 20120127
 		this.currentStepResponseList = null;
 		this.currentStepValidResponses = new ArrayList<String>();
+		
+		// dml 20120223
+		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
 
 		recoverNullObjects();
 
@@ -165,7 +172,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				loadLSteps();
 				
 				loadStepSequenceList();
+				
+				//dml 20120223
+				if (currentWProcessDef.getwUserEmailAccounts() != null){
+				
+					this.currentWUEA = currentWProcessDef.getwUserEmailAccounts();
 
+				}
 			}
 
 			recoverNullObjects(); // <<<<<<<< IMPORTANT >>>>>>>>>>>
@@ -760,6 +773,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.currentWProcessUser = currentWProcessUser;
 	}
 
+	public WUserEmailAccounts getCurrentWUEA() {
+		return currentWUEA;
+	}
+
+	public void setCurrentWUEA(WUserEmailAccounts currentWUEA) {
+		this.currentWUEA = currentWUEA;
+	}
+
+	public List<WUserEmailAccounts> getwUserEmailAccountsList() {
+		return wUserEmailAccountsList;
+	}
+
+	public void setwUserEmailAccountsList(List<WUserEmailAccounts> wUserEmailAccountsList) {
+		this.wUserEmailAccountsList = wUserEmailAccountsList;
+	}
+
 	public void deleteWProcessRole() {
 
 		if (currentWProcessDef != null
@@ -1223,4 +1252,61 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// }
 	// }
 	// }
+	
+	// dml 20120223
+	public void detachEmail() {
+
+		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
+		
+		this.currentWProcessDef.setwUserEmailAccounts(null);
+		
+		try {
+			
+			persistCurrentObject();
+			
+		} catch (WProcessDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+
+	}
+	
+	
+	public void addEmailAccount(){
+		
+		if (currentWUEA.getId() != null) {
+			
+			try {
+				currentWUEA = new WUserEmailAccountsBL().getWUserEmailAccountsByPK(currentWUEA.getId());
+
+				this.currentWProcessDef.setwUserEmailAccounts(currentWUEA);
+				
+				persistCurrentObject();
+
+			} catch (WUserEmailAccountsException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WProcessDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+			
+	}
+	
+	public void searchEmails(){
+		
+		try {
+			wUserEmailAccountsList = new WUserEmailAccountsBL().getWUserEmailAccountsList();
+		} catch (WUserEmailAccountsException e) {
+
+			e.printStackTrace();
+		}
+		
+	}
+
+	
+	
+	
 }

@@ -1,13 +1,14 @@
-package org.beeblos.security.st.bl;
+package org.beeblos.bpm.core.bl;
+
 
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.dao.WUserEmailAccountsDao;
+import org.beeblos.bpm.core.error.WUserEmailAccountsException;
+import org.beeblos.bpm.core.model.WUserEmailAccounts;
 import org.beeblos.bpm.core.model.noper.StringPair;
-import org.beeblos.security.st.dao.WUserEmailAccountsDao;
-import org.beeblos.security.st.error.WUserEmailAccountsException;
-import org.beeblos.security.st.model.WUserEmailAccounts;
 
 public class WUserEmailAccountsBL {
 

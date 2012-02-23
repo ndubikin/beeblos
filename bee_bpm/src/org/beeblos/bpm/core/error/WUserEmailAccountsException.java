@@ -1,7 +1,5 @@
-/**
- * 
- */
-package org.beeblos.security.st.error;
+package org.beeblos.bpm.core.error;
+
 
 public class WUserEmailAccountsException extends Exception {
 

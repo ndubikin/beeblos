@@ -74,6 +74,11 @@
 		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"
 			column="id_begin"  name="beginStep" fetch="join" lazy="false"/>
 
+		<many-to-one class="org.beeblos.bpm.core.model.WUserEmailAccounts"
+			lazy="false" name="wUserEmailAccounts">
+			<column name="id_system_email"/>
+		</many-to-one>
+
 		<set cascade="all" name="rolesRelated" sort="unsorted"
 			table="w_process_role"  lazy="false" >
 			<key column="id_process" />

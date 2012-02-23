@@ -1,7 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
-import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.PASS_PHRASE;
 
 import java.util.ArrayList;
@@ -15,17 +15,17 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.bl.WUserEmailAccountsBL;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.error.WUserEmailAccountsException;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.WUserEmailAccounts;
 import org.beeblos.bpm.core.util.DesEncrypter;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.Constantes;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
-import org.beeblos.security.st.bl.WUserEmailAccountsBL;
-import org.beeblos.security.st.error.WUserEmailAccountsException;
-import org.beeblos.security.st.model.WUserEmailAccounts;
 
 public class WUserEmailAccountsBean extends CoreManagedBean {
 

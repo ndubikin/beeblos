@@ -58,6 +58,9 @@ public class WProcessDef implements java.io.Serializable {
 	private WTimeUnit totalTimeUnit;
 	private String globalDeadlineDate;
 	
+	// dml 20120223
+	private WUserEmailAccounts wUserEmailAccounts;
+	
 
 	public WProcessDef() {
 		super();
@@ -68,6 +71,7 @@ public class WProcessDef implements java.io.Serializable {
 		super();
 		if ( createEmtpyObjects ) {
 			this.beginStep=new WStepDef( EMPTY_OBJECT );
+			this.wUserEmailAccounts = new WUserEmailAccounts(EMPTY_OBJECT);
 			
 		}	
 	}
@@ -283,6 +287,16 @@ public class WProcessDef implements java.io.Serializable {
 	}
 
 
+	public WUserEmailAccounts getwUserEmailAccounts() {
+		return wUserEmailAccounts;
+	}
+
+
+	public void setwUserEmailAccounts(WUserEmailAccounts wUserEmailAccounts) {
+		this.wUserEmailAccounts = wUserEmailAccounts;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -298,6 +312,7 @@ public class WProcessDef implements java.io.Serializable {
 				* result
 				+ ((globalDeadlineDate == null) ? 0 : globalDeadlineDate
 						.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime
 				* result
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
@@ -305,12 +320,6 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((idListZone == null) ? 0 : idListZone.hashCode());
 		result = prime * result
 				+ ((idWorkZone == null) ? 0 : idWorkZone.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((productionDate == null) ? 0 : productionDate.hashCode());
@@ -324,6 +333,10 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((totalTimeUnit == null) ? 0 : totalTimeUnit.hashCode());
 		result = prime * result
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
+		result = prime
+				* result
+				+ ((wUserEmailAccounts == null) ? 0 : wUserEmailAccounts
+						.hashCode());
 		return result;
 	}
 
@@ -358,6 +371,11 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!globalDeadlineDate.equals(other.globalDeadlineDate))
 			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
 		if (idAdditionalZone == null) {
 			if (other.idAdditionalZone != null)
 				return false;
@@ -372,26 +390,6 @@ public class WProcessDef implements java.io.Serializable {
 			if (other.idWorkZone != null)
 				return false;
 		} else if (!idWorkZone.equals(other.idWorkZone))
-			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser == null) {
-			if (other.insertUser != null)
-				return false;
-		} else if (!insertUser.equals(other.insertUser))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -428,6 +426,11 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!usersRelated.equals(other.usersRelated))
 			return false;
+		if (wUserEmailAccounts == null) {
+			if (other.wUserEmailAccounts != null)
+				return false;
+		} else if (!wUserEmailAccounts.equals(other.wUserEmailAccounts))
+			return false;
 		return true;
 	}
 
@@ -444,7 +447,8 @@ public class WProcessDef implements java.io.Serializable {
 				+ ", productionDate=" + productionDate + ", productionUser="
 				+ productionUser + ", totalTime=" + totalTime
 				+ ", totalTimeUnit=" + totalTimeUnit + ", globalDeadlineDate="
-				+ globalDeadlineDate + "]";
+				+ globalDeadlineDate + ", wUserEmailAccounts="
+				+ wUserEmailAccounts + "]";
 	}
 	
 

@@ -1,4 +1,4 @@
-package org.beeblos.security.st.dao;
+package org.beeblos.bpm.core.dao;
 
 // Generado 25-nov-2010 12:52:05 con Hibernate Tools 3.3.0.GA
 
@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.WUserEmailAccountsException;
+import org.beeblos.bpm.core.model.WUserEmailAccounts;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
-import org.beeblos.security.st.error.WUserEmailAccountsException;
-import org.beeblos.security.st.model.WUserEmailAccounts;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 

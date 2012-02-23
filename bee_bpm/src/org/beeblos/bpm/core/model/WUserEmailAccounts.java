@@ -1,9 +1,5 @@
-package org.beeblos.security.st.model;
+package org.beeblos.bpm.core.model;
 
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
-
-import org.beeblos.bpm.core.model.WTimeUnit;
-import org.beeblos.bpm.core.model.WUserDef;
 
 public class WUserEmailAccounts implements java.io.Serializable{
 

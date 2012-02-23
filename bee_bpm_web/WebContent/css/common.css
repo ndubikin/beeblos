@@ -513,6 +513,11 @@ table.doctable td {
 	margin: 0px;
 }
 
+.colStyle600px {
+	width: 600px;
+	margin: 0px;
+}
+
 /*
 *
 * CALENDAR INPUT COMMON STYLE
