@@ -46,6 +46,11 @@
  </tag>
  
  <tag>
+  <tag-name>wUserEmailAccountsCrudCaratula</tag-name>
+  <source>/taglib/def/tabs/wUserEmailAccountsCrudCaratula.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>wTimeUnitCrudCaratula</tag-name>
   <source>/taglib/def/tabs/wTimeUnitCrudCaratula.xhtml</source>
  </tag>
