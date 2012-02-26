@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessWorkDao;
 import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 
@@ -24,13 +25,16 @@ public class WProcessWorkBL {
 	
 	public Integer add(WProcessWork process, Integer currentUser) throws WProcessWorkException {
 		
-		logger.debug("add() WProcessWork - Name: ["+process.getReference()+"]");
+		logger.debug("add() WProcessWork - Name: ["+process.getId()+"]");
 		
 		// timestamp & trace info
 		process.setInsertDate(new Date());
 		process.setModDate( DEFAULT_MOD_DATE );
 		process.setInsertUser(currentUser);
 		process.setModUser(currentUser);
+		if ( process.getStatus()==null ) {
+			process.setStatus(new WProcessStatus(1));
+		}
 		return new WProcessWorkDao().add(process);
 
 	}
