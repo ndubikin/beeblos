@@ -34,7 +34,7 @@ public class WStepWorkDao {
 	
 	public Integer add(WStepWork stepw) throws WStepWorkException {
 		
-		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+"]");
+		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getId()+"]");
 		
 		try {
 
