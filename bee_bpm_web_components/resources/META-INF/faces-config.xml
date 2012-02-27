@@ -13,7 +13,6 @@
   </component-extension>
  </component>
 
-
 	<managed-bean>
 		<managed-bean-name>userAndRoleSelectorBean</managed-bean-name>
 		<managed-bean-class>org.beeblos.bpm.wc.taglib.bean.UserAndRoleSelectorBean</managed-bean-class>

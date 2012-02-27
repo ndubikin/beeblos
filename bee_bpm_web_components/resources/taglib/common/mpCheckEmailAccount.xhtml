@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpCheckEmailAccount" width="450" height="150">
+	    <f:facet name="header">
+	        <h:panelGroup id="checkEmailAccountTitlePanel">
+	            <h:outputText id="checkEmailAccountTitle"  value="#{msg.label_check_account}"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="checkEmailAccount">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_check_email_accounts"/>
+		        <rich:componentControl id="checkEmailAccountControl" attachTo="hidelink_check_email_accounts" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+		<ui:include src="checkEmailAccount.xhtml"/>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -21,6 +22,9 @@ import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.bl.WUserEmailAccountsBL;
+import org.beeblos.bpm.core.email.bl.EnviarEmailBL;
+import org.beeblos.bpm.core.email.model.Email;
+import org.beeblos.bpm.core.error.EnviarEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
@@ -98,6 +102,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120223
 	private WUserEmailAccounts currentWUEA;
 	private List<WUserEmailAccounts> wUserEmailAccountsList;
+	private String checkingEmailAccount;
+	
+	// dml 20120227
+	private String messageStyle;
 
 	public WProcessDefFormBean() {
 		super();
@@ -139,6 +147,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		// dml 20120127
 		this.currentStepResponseList = null;
 		this.currentStepValidResponses = new ArrayList<String>();
+		this.checkingEmailAccount = "";
 		
 		// dml 20120223
 		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
@@ -789,6 +798,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.wUserEmailAccountsList = wUserEmailAccountsList;
 	}
 
+	public String getCheckingEmailAccount() {
+		return checkingEmailAccount;
+	}
+
+	public void setCheckingEmailAccount(String checkingEmailAccount) {
+		this.checkingEmailAccount = checkingEmailAccount;
+	}
+
+	public String getMessageStyle() {
+		return messageStyle;
+	}
+
+	public void setMessageStyle(String messageStyle) {
+		this.messageStyle = messageStyle;
+	}
+
 	public void deleteWProcessRole() {
 
 		if (currentWProcessDef != null
@@ -1241,7 +1266,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	// PENDIENTE: metele un check que diga: "Show only selected roles"
-	// PENDIENTE: email de CASTOR
+	// PENDIENTE: checkEmail de CASTOR
 
 	// public void setNewBeginStep() {
 	// if ( this.currentWProcessDef!=null ) {
@@ -1256,6 +1281,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120223
 	public void detachEmail() {
 
+		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
+		
 		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
 		
 		this.currentWProcessDef.setwUserEmailAccounts(null);
@@ -1265,14 +1293,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			persistCurrentObject();
 			
 		} catch (WProcessDefException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			messageStyle=errorMessageStyle();
+			setShowHeaderMessage(true);
+			String message = "WProcessDefException: Method detachEmail in WRoleDefBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", "WProcessDefException" };
+			agregarMensaje("203", message, params, FGPException.WARN);
+			logger.error(message);
+
 		}		
 
 	}
 	
 	
 	public void addEmailAccount(){
+		
+		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
 		
 		if (currentWUEA.getId() != null) {
 			
@@ -1284,17 +1322,32 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				persistCurrentObject();
 
 			} catch (WUserEmailAccountsException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+				messageStyle=errorMessageStyle();
+				setShowHeaderMessage(true);
+				String message = "WUserEmailAccountsException: Method addEmailAccount in WRoleDefBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "WUserEmailAccountsException" };
+				agregarMensaje("203", message, params, FGPException.WARN);
+				logger.error(message);
+
 			} catch (WProcessDefException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+				messageStyle=errorMessageStyle();
+				setShowHeaderMessage(true);
+				String message = "WProcessDefException: Method addEmailAccount in WRoleDefBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "WProcessDefException" };
+				agregarMensaje("203", message, params, FGPException.WARN);
+				logger.error(message);
+
 			}
 			
 		}
 			
 	}
 	
+	// dml 20120224
 	public void searchEmails(){
 		
 		try {
@@ -1305,8 +1358,127 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 		
 	}
+	
+	// dml 20120224
+	public void resetCheckAccount(){
+		
+		this.checkingEmailAccount = "";
+		
+	}
+	
+	// dml 20120227
+	public void checkEmailAccount(){
+		
+		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
+		
+		Email email = new Email();
+		
+		if (currentWUEA != null){
+			
+			email = setEmailParameters();
+			
+			try {
+		
+				enviar(email);
+				
+				String message = "The email has been sent";
+				agregarMensaje(message);
+				setShowHeaderMessage(true);
+		
+			} catch (EnviarEmailException e) {
+		
+				messageStyle=errorMessageStyle();
+				setShowHeaderMessage(true);
+				String message = "EnviarEmailException: Method checkEmailAccount in WRoleDefBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "EnviarEmailException" };
+				agregarMensaje("203", message, params, FGPException.WARN);
+				logger.error(message);
+		
+			}
+			
+		}
 
+		this.checkingEmailAccount = "";
+		
+	}
 	
+	private Email setEmailParameters(){
+
+		Email checkingEmail = new Email();
+		
+		checkingEmail.setFrom(currentWUEA.getEmail());
+		checkingEmail.setIdFrom(currentWUEA.getId());
+		
+		checkingEmail.setTo(checkingEmailAccount);
+		checkingEmail.setCc(currentWUEA.getEmail());
+		checkingEmail.setSubject("Checking email account");
+		checkingEmail.setBodyText("The email account "+currentWUEA.getEmail()+" has a valid configuration.");
+		checkingEmail.setPwd(currentWUEA.getOutputPassword());
+		
+		return checkingEmail;	
+		
+
+		
+	}
 	
+	public void enviar(Email email) throws EnviarEmailException{
+		
+		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
+		
+		try{
+
+			//valida la lista de correos destinatarios separados [,;]
+			email.getListaTo().clear();
+			email.getListaCC().clear();
+			
+			Pattern p = Pattern.compile("[,;]");
+	        // Split input with the pattern
+			
+	        String[] resultTo= p.split(email.getTo());
+	        String[] resultCC = p.split(email.getCc());
+	        
+	        for(String to: resultTo){
+	        	if(!"".equals(to)){
+	        		email.getListaTo().add(to);
+	        	}
+	        }
+	        for(String cc: resultCC){
+	        	if(!"".equals(cc)){
+	        	email.getListaCC().add(cc);
+	        	}
+	        }
+			
+//			verificarAutenticacionUsuarioEmisor(null);
+			
+			EnviarEmailBL bl = new EnviarEmailBL();	
+			//Mail contendra ficheros adjuntos
+			//Limpiar ficheros del email 
+			email.getFiles().clear();
+			
+			email.setContextPath( CONTEXTPATH ); // setea el path de la app por si el email es html para obtener los ficheros locales
+
+			//rrl 20110803 por defecto TRUE pero no siempre p.e: en Ficha Proyecto en la pestaña Documentacion el usuario elije (Si / No) 
+//			email.setGuardarEnBeeblos(true); // nes 20110429
+			bl.enviar(email);
+			
+		// implementar exception propio	de envio de correo
+		}catch (EnviarEmailException e) {
+			//HZC:20110408, aqui puede suceder dos cosas q falle el enviar o guardar en repositorio
+			
+			messageStyle=errorMessageStyle();
+			setShowHeaderMessage(true);
+			String message = "EnviarEmailException: Method enviar in WRoleDefBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", "EnviarEmailException" };
+			agregarMensaje("203", message, params, FGPException.WARN);
+			logger.error(message);
+			throw new EnviarEmailException( message );
+
+		}
 	
+	}
+
 }
