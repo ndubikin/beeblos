@@ -11,7 +11,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.wc.auxiliar.model.UploadedFile;
+import org.beeblos.bpm.core.util.File;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.richfaces.component.html.HtmlFileUpload;
 import org.richfaces.event.UploadEvent;
@@ -23,7 +23,7 @@ import org.richfaces.model.UploadItem;
  */
 public class FileUploadBean extends CoreManagedBean {
 	private static final long serialVersionUID = -7411311691524646787L;
-	private ArrayList<UploadedFile> files = new ArrayList<UploadedFile>();
+	private ArrayList<File> files = new ArrayList<File>();
     private int MAX_UPLOADS_AVAILABLE = 1000;
     private int uploadsAvailable = MAX_UPLOADS_AVAILABLE;
     private boolean autoUpload = true;
@@ -76,14 +76,14 @@ public class FileUploadBean extends CoreManagedBean {
 
     	
     	 UploadItem item = event.getUploadItem();
-    	 UploadedFile file = new UploadedFile();
+    	 File file = new File();
     	 
     	 try{
     	 
     	 file.setName(item.getFileName());
     	 //file.setMime(item.getContentType());
     	 
-    	 /*Get UploadedFile Data*/
+    	 /*Get File Data*/
     	 if ( item.isTempFile() ) {
     	 
 	    	 //byte[] fileInBytes = new byte[(int)item.getFile().length()];
@@ -125,7 +125,7 @@ public class FileUploadBean extends CoreManagedBean {
     //rrl 20110802 - nes 20111103
     public void addByteArrayAsFileAttachment(byte[] buffer, String nameFile) {
     	
-		UploadedFile file = new UploadedFile();
+		File file = new File();
 
 		file.setLoadedInMemory(true);
 		file.setAbsolutePath(null);
@@ -148,11 +148,11 @@ public class FileUploadBean extends CoreManagedBean {
         return System.currentTimeMillis();
     }
     
-    public ArrayList<UploadedFile> getFiles() {
+    public ArrayList<File> getFiles() {
         return files;
     }
 
-    public void setFiles(ArrayList<UploadedFile> files) { 
+    public void setFiles(ArrayList<File> files) { 
         this.files = files;
     }
 

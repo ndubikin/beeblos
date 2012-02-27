@@ -1,12 +1,34 @@
 package org.beeblos.bpm.core.util;
 
 import static org.beeblos.bpm.core.util.Resourceutil.getIntegerProperty;
+import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
 
 import java.util.Date;
 
 
 public class Constants {
 	
+	public static final String ID_PERMISO_VER_DOCUMENTOS_PRIVADOS = getStringProperty("ver.documentos.privados");
+	public static final String LISTA_DOCCLASSID_PRIVADAS = getStringProperty("lista.docclass.privadas.docclassId");
+
+	public static String BEEBLOS_PROTOCOL = getStringProperty("repository.protocol");
+	public static String BEEBLOS_IP = getStringProperty("repository.ip");
+	public static Integer BEEBLOS_PORT = getIntegerProperty("repository.port");
+	public static String BEEBLOS_USER = getStringProperty("repository.user");
+	public static String BEEBLOS_PWD = getStringProperty("repository.pwd");
+
+	public static String BEEBLOS_SERVLET = BEEBLOS_PROTOCOL+"://"
+			+BEEBLOS_IP + (BEEBLOS_PORT!=null?":"+BEEBLOS_PORT:"")
+			+getStringProperty("repository.servlet");
+
+	public static String BEEBLOS_DEFAULT_REPOSITORY_ID=getStringProperty("repository.repositoryId");
+	public static final String DEFAULT_ENCODING="UTF-8";
+
+	public static final String TRAZA_ENVIO_EMAIL = "TRAZA_ENVIO_EMAIL";
+	public static final String REPORTE = "reporte";
+	public static final String EMAIL_MASIVO = "emailMasivo";
+	public static final String TRUE = "true"; // HZC 20101229
+
 	public static final Integer DEFAULT_PROCESS_STATUS = 1;
 
 	public static final String LOAD_WPROCESSWORK = "LOAD_WPROCESSWORK";
