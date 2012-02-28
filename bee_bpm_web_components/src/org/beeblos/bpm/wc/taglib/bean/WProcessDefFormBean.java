@@ -216,12 +216,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		System.out.println(">>>>>>>>>> Castor XML starting the process Marshall");
 		
-		String templateWProcessDef = "/home/u097/workspace/bee_bpm/src/org/beeblos/bpm/core/xml/castor/WProcessDef_castor.xml";
+		String xmlTemplatesPath = "/home/u097/workspace/bee_bpm/src/org/beeblos/bpm/core/xml/castor/WProcessDef_castor.xml";
+		
+		// path pointing to folder "castor" in webapps/appname/castor ( or in WebContent/castor in eclipse environment ) 
+//		String xmlTemplatesPath = getSession().getServletContext().getRealPath("/")+"xmlTemplates";
+//		xmlTemplatesPath+="castor/"+currentWProcessDef.getClass().getSimpleName()+"_castor.xml";		
 
     	HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 			
 		try{
-			String contenidoXML = UtilJavaToXML.toXML(currentWProcessDef, templateWProcessDef);
+			String contenidoXML = UtilJavaToXML.toXML(currentWProcessDef, xmlTemplatesPath);
 			
 			if (contenidoXML != null) {
 				
