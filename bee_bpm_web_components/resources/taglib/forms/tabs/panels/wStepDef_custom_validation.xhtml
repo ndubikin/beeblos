@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<h:form id="w_step_def_custom_validation">
+
+		<h:panelGrid width="98%" columns="2" style=" width : 650px; margin-left: 16px;"
+			columnClasses="colStyle200px, colStyle480px">
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_custom_validation}:"
+				styleClass="firstLeftText" />
+			<h:selectBooleanCheckbox id="custom_validation"
+				value="#{wStepDefFormBean.currentWStepDef.customValidation}"
+				rendered="#{!wStepDefFormBean.readOnly}">
+				<a4j:support ajaxSingle="true" event="onclick" reRender="w_step_def_custom_validation" 
+					action="#{wStepDefFormBean.resetCustomValidation}"/>
+			</h:selectBooleanCheckbox>
+			<h:outputText 
+				value="#{(wStepDefFormBean.currentWStepDef.customValidation) ? 'Yes' : 'None'}"
+				style="font-weight: bold;" 
+				rendered="#{wStepDefFormBean.readOnly}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_custom_validation_reference_class}:"
+				styleClass="firstLeftText"
+				rendered="#{wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:inputText id="custom_validation_reference_class"
+				value="#{wStepDefFormBean.currentWStepDef.customValidationRefClass}"
+				style="width:350px; font-size:13px; padding: 4px;"
+				rendered="#{!wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.customValidationRefClass}"
+				style="width:350px; font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_custom_validation_method}:"
+				styleClass="firstLeftText"
+				rendered="#{wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:inputText id="custom_validation_method"
+				value="#{wStepDefFormBean.currentWStepDef.customValidationMethod}"
+				style="width:350px; font-size:13px; padding: 4px;"
+				rendered="#{!wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.customValidationMethod}"
+				style="width:350px; font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_backing_bean}:"
+				styleClass="firstLeftText"
+				rendered="#{wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:selectBooleanCheckbox id="backing_bean"
+				value="#{wStepDefFormBean.currentWStepDef.backingBean}"
+				rendered="#{!wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>
+			<h:outputText 
+				value="#{(wStepDefFormBean.currentWStepDef.backingBean) ? 'Yes' : 'None'}"
+				style="font-weight: bold;" 
+				rendered="#{wStepDefFormBean.readOnly and wStepDefFormBean.currentWStepDef.customValidation}"/>				
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+			
+			<rich:spacer height="10" />
+			<h:panelGroup>
+				<a4j:commandButton id="edit_button" value="#{msg.label_edit}"
+					actionListener="#{wStepDefFormBean.changeReadOnlyToFalse}"
+					reRender="w_step_def_custom_validation"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{wStepDefFormBean.readOnly}"/>
+			
+				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
+					action="#{wStepDefFormBean.cancel}"
+					reRender="w_step_def_custom_validation"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{!wStepDefFormBean.readOnly}"/>
+
+				<a4j:commandButton id="update_button" value="#{msg.label_update}"
+					actionListener="#{wStepDefFormBean.update}"
+					reRender="w_step_def_custom_validation"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wStepDefFormBean.readOnly and (wStepDefFormBean.currObjId != null) and (wStepDefFormBean.currObjId != 0)}"/>
+
+				<h:commandButton id="save_continue_button" value="#{msg.label_save}"
+					actionListener="#{wStepDefFormBean.save_continue}"
+					reRender="w_step_def_custom_validation"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wStepDefFormBean.readOnly and ((wStepDefFormBean.currObjId == null) or (wStepDefFormBean.currObjId == 0))}"/>
+
+			</h:panelGroup>
+			
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+		
+	</h:form>
+	
+</ui:composition>

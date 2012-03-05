@@ -42,10 +42,10 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	private String wueaEmail; 
 	private WUserEmailAccounts currentWUEA;
 	
-	private ArrayList<WUserEmailAccounts> wueaList = new ArrayList<WUserEmailAccounts>();
+	private List<WUserEmailAccounts> wueaList = new ArrayList<WUserEmailAccounts>();
 
 	//dml 20120223
-	private ArrayList<WUserEmailAccounts> wueaListByUser = new ArrayList<WUserEmailAccounts>();
+	private List<WUserEmailAccounts> wueaListByUser = new ArrayList<WUserEmailAccounts>();
 		
 	private Integer idUser;
 	private List<SelectItem> wUserDefList = new ArrayList<SelectItem>();
@@ -66,6 +66,12 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	private String staticOutputPassword;
 	private boolean outputPasswordEditable;
 	private boolean outputPasswordChanged;
+	
+	//dml 20120305
+	private String emailFilter;
+	private String nameFilter;
+	
+	private String valueBtn;
 	
 	
 	public WUserEmailAccountsBean() {
@@ -102,6 +108,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		
 		loadWUserEmailAccountsLists();
 		
+		this.valueBtn="Add";
 		
 		
 	}
@@ -145,6 +152,11 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		//rrl 20120201
 		outputPasswordEditable = false;
 		outputPasswordChanged = false;
+		
+		// dml 20120305
+		this.emailFilter = "";
+		this.nameFilter = "";
+		this.valueBtn="Add";
 		
 	}
 	
@@ -194,6 +206,8 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 			try {
 				currentWUEA = new WUserEmailAccountsBL().getWUserEmailAccountsByPK(id);
 				
+				this.valueBtn="Save";
+				
 				//rrl 20120201
 				staticOutputPassword = currentWUEA.getOutputPassword();
 				if (staticOutputPassword!=null && !"".equals(staticOutputPassword.trim())) {
@@ -209,6 +223,12 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 				e.printStackTrace();
 			}
 		} 
+	}
+	
+	public void cancel(){
+		
+		_reset();
+		
 	}
 	
 	// si tiene id es actualización, si no lo tiene es alta ...
@@ -654,7 +674,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	/**
 	 * @return the wueaList
 	 */
-	public ArrayList<WUserEmailAccounts> getWueaList() {
+	public List<WUserEmailAccounts> getWueaList() {
 		
 		//recargaListaUsuario();
 		return wueaList;
@@ -664,16 +684,16 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	/**
 	 * @param wueaList the wueaList to set
 	 */
-	public void setWueaList(ArrayList<WUserEmailAccounts> wueaList) {
+	public void setWueaList(List<WUserEmailAccounts> wueaList) {
 		this.wueaList = wueaList;
 	}
 
 
-	public ArrayList<WUserEmailAccounts> getWueaListByUser() {
+	public List<WUserEmailAccounts> getWueaListByUser() {
 		return wueaListByUser;
 	}
 
-	public void setWueaListByUser(ArrayList<WUserEmailAccounts> wueaListByUser) {
+	public void setWueaListByUser(List<WUserEmailAccounts> wueaListByUser) {
 		this.wueaListByUser = wueaListByUser;
 	}
 
@@ -750,6 +770,30 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		this.outputPasswordChanged = outputPasswordChanged;
 	}
 	
+	public String getEmailFilter() {
+		return emailFilter;
+	}
+
+	public void setEmailFilter(String emailFilter) {
+		this.emailFilter = emailFilter;
+	}
+
+	public String getNameFilter() {
+		return nameFilter;
+	}
+
+	public void setNameFilter(String nameFilter) {
+		this.nameFilter = nameFilter;
+	}
+
+	public String getValueBtn() {
+		return valueBtn;
+	}
+
+	public void setValueBtn(String valueBtn) {
+		this.valueBtn = valueBtn;
+	}
+
 	public String changePassword() {
 		
 		outputPasswordEditable = true;
@@ -787,6 +831,36 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		return null;
 		
 	}	
+	
+	public void searchWUserEmailAccounts(){
+		
+		try {
+			
+			this.wueaList = new WUserEmailAccountsBL()
+					.wUserEmailAccountsFinder(nameFilter, emailFilter);		
+				 		
+		} catch (WUserEmailAccountsException e) {
+			logger.error("Ocurrio Un Error: No debe " 
+					+ e.getMessage() + " : " + e.getCause());
+		
+			String params[] = {this.currentWUEA.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
+				+ e.getMessage() + " : " + e.getCause() };
+			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
+		}
+
+	}
+	
+	public Integer getWUAEListSize(){
+		
+		if (this.wueaList != null) {
+			
+			return this.wueaList.size();
+			
+		}
+		
+		return null;
+		
+	}
 
 
 }

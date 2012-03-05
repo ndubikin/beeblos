@@ -23,6 +23,15 @@
 		
 			<h:panelGrid id="emailContentPanel" width="90%" columns="3" columnClasses="colStyleF1,colStyleF2">
 			
+				<rich:spacer height="10" />
+				<rich:spacer height="10" />
+				<rich:spacer height="10" />
+	
+				<h:outputText value="#{msg.label_account_name}: " />
+				<h:inputText id="account_name_search"
+					value="#{wProcessDefFormBean.emailNameFilter}"
+					style="width:200px; font-size:13px;	padding: 4px;" />
+	
 				<h:panelGrid id="emailButtonPanel" columns="2">
 					<a4j:commandButton id="cancel_email_search" value="#{msg.label_cancel}" 
 						reRender="w_process_def_notifications_form" onclick="javascript:Richfaces.hideModalPanel('mpSearchEmail');" 
@@ -32,6 +41,10 @@
 						reRender="#{email_list_form}"
 						style="width: 120px; margin-left: 5px;" />						
 				</h:panelGrid>					 
+
+				<rich:spacer height="10" />
+				<rich:spacer height="10" />
+				<rich:spacer height="10" />
 
 			</h:panelGrid>
 			
@@ -69,7 +82,7 @@
         		var="email" width="98%" columnClasses="center"
         		rows="10" reRender="dseUp,dseDown" style="margin-left: 5px;">
             <f:facet name="header">
-                <h:outputText value="Consulta de Proveedores ( #{consultaProveedorBean.nResultados} #{msg.label_results} )"/>
+                <h:outputText value="Email search ( #{wProcessDefFormBean.wUserEmailAccountsListResults} #{msg.label_results} )"/>
             </f:facet>
             
             <rich:column sortBy="#{email.email}" style="text-align: left;"> 

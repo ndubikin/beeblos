@@ -3,6 +3,7 @@ package org.beeblos.bpm.wc.taglib.util;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
+import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import javax.el.ValueExpression;
 
@@ -16,7 +17,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 
 	}
 
-	public String createNewWProcessDef() {
+	public String createNewWProcessDef(String returnStatement) {
 
 		String ret = FAIL;
 
@@ -29,6 +30,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 					.getValue(super.getELContext());
 			wpdfb.init();
 			wpdfb.initEmptyWProcessDef();
+			wpdfb.setReturnStatement(WPROCESSDEF_QUERY);
 
 			ret = CREATE_NEW_WPROCESSDEF;
 

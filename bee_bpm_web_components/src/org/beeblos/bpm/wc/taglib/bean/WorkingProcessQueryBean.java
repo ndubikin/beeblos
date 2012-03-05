@@ -658,7 +658,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	// dml 20120124
 	public String createNewWProcessDef() {
 
-		return new WProcessDefUtil().createNewWProcessDef();
+		return new WProcessDefUtil().createNewWProcessDef("");
 	}
 	
 	public String searchProcessWork(){
