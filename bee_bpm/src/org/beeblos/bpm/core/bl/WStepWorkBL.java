@@ -318,6 +318,7 @@ public class WStepWorkBL {
 		if ( !idResponse.equals(TURNBACK) ) {
 
 			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, storedStep);
+			
 		} else {
 
 			qtyNewRoutes = _executeTurnBack(runtimeSettings, currentUser, storedStep);
@@ -564,6 +565,10 @@ public class WStepWorkBL {
 				
 				this.add(newStep, currentUser);
 				
+				// DAVID: AGREGAR ENVIO DE EMAIL
+				if ( newStep.getCurrentStep().isEmailNotification() ) {
+					_emailNotifications(newStep);
+				}
 			}
 		}
 		
@@ -730,6 +735,25 @@ public class WStepWorkBL {
 		
 	}
 	
+	// email notifications related to a new step generation
+	// step arrived!!
+	private void _emailNotifications( WStepWork newStep ) {
+		
+		if ( newStep.getCurrentStep().isArrivingAdminNotice()) {
+			// avisar al administrador ( o a los administradores )
+			// hay que considerar usuarios explicitos y roles
+			// y para los roles obviamente hay que avisar a cada usuario perteneciente
+			// al rol
+		}
+		
+		if ( newStep.getCurrentStep().isArrivingUserNotice() ) {
+			
+			// avisar a los usuarios y roles definidos
+			
+		}
+		
+		
+	}
 	// chequea que dentro si la ruta está dentro de las respuestas indicadas ...
 	private boolean _hasInValidResponseList (
 			String validResponses, Set<WStepResponseDef> responses) {
