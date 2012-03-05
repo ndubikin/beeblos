@@ -567,7 +567,7 @@ public class WStepWorkBL {
 				
 				// DAVID: AGREGAR ENVIO DE EMAIL
 				if ( newStep.getCurrentStep().isEmailNotification() ) {
-					_emailNotifications(newStep);
+					_emailNotificationArrivingStep(newStep);
 				}
 			}
 		}
@@ -737,7 +737,7 @@ public class WStepWorkBL {
 	
 	// email notifications related to a new step generation
 	// step arrived!!
-	private void _emailNotifications( WStepWork newStep ) {
+	private void _emailNotificationArrivingStep( WStepWork newStep ) {
 		
 		if ( newStep.getCurrentStep().isArrivingAdminNotice()) {
 			// avisar al administrador ( o a los administradores )
