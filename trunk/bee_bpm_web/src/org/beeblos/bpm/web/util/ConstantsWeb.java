@@ -1,6 +1,5 @@
 package org.beeblos.bpm.web.util;
 
-import static org.beeblos.bpm.core.util.Resourceutil.getIntegerProperty;
 
 public class ConstantsWeb {
 
