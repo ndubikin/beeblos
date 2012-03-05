@@ -315,6 +315,72 @@ public class WUserEmailAccountsDao {
 
 	}
 
+	public List<WUserEmailAccounts> wUserEmailAccountsFinder(String nameFilter, String emailFilter)
+			throws WUserEmailAccountsException {
+
+		List<WUserEmailAccounts> result = null;
+		// List<StringPair> result = new ArrayList<StringPair>(10);
+
+		
+		String query="SELECT *  " + getSelectPhrase();
+		String order = " ORDER BY wuea.name ";
+		String filter = "";
+		if (nameFilter != null && !"".equals(nameFilter)) {
+			filter = "WHERE wuea.name LIKE '%"+nameFilter+"%' " ;
+		}
+		if (emailFilter != null && !"".equals(emailFilter)) {
+			if ("".equals(filter)) {
+				filter += " WHERE ";
+			} else {
+				filter += " OR ";
+			}
+			filter += " wuea.email LIKE '%"+emailFilter+"%' " ;
+		}
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		org.hibernate.Query q = null;
+		
+		query += filter + order;
+		
+		System.out.println("QUERY: "+query);
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			q = session.createSQLQuery(query).addEntity("WUserEmailAccounts", WUserEmailAccounts.class);
+			
+			result = q.list();
+
+
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WUserEmailAccountsDao: wUserEmailAccountsFinder - Cannot get the finder list: "
+					+ nameFilter
+					+ " - "
+					+ ex.getMessage()
+					+ " does not exist");
+			throw new WUserEmailAccountsException(
+					"The WUserEmailAccounts with name: " + nameFilter + " - "
+							+ ex.getMessage() + " does not exist");
+
+		}
+
+		return result;
+	}
+
+	private String getSelectPhrase() {
+		String query="FROM w_user_email_accounts wuea ";
+		return query;
+	}
+	
 	public boolean duplicatedNameVerification(String instanceName, Integer id)
 			throws WUserEmailAccountsException {
 

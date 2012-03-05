@@ -1,15 +1,11 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
-import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WSTEPDEF;
-import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.WSTEPDEF_QUERY;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
-
-import javax.el.ValueExpression;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WStepDefBL;
@@ -109,7 +105,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 	// dml 20120110
 	public String createNewWStepDef() {
 
-		return new WStepDefUtil().createNewWStepDef();
+		return new WStepDefUtil().createNewWStepDef(WSTEPDEF_QUERY);
 		
 	}
 

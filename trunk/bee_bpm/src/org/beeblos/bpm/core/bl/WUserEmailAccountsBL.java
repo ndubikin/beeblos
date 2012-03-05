@@ -118,7 +118,13 @@ public class WUserEmailAccountsBL {
 				.getWUserEmailAccountsListByUser(idSpecifiUser);
 	}
 
-	private void _consistencyDataControl(WUserEmailAccounts instance)
+	public List<WUserEmailAccounts> wUserEmailAccountsFinder(String nameFilter, String emailFilter)
+			throws WUserEmailAccountsException {
+		WUserEmailAccountsDao wUserEmailAccountsDao = new WUserEmailAccountsDao();
+		return wUserEmailAccountsDao.wUserEmailAccountsFinder(nameFilter, emailFilter);
+	}
+
+    private void _consistencyDataControl(WUserEmailAccounts instance)
 			throws WUserEmailAccountsException {
 
 		String nombreTmp = instance.getName();

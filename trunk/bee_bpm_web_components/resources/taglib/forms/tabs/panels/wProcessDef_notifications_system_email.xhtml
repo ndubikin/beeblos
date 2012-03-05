@@ -6,14 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	
-	<h:form>
-	
-		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}" 
-						reRender="cancel_button, save_button" />
-	
-	</h:form>
-
 	<h:form id="w_process_def_notifications_form">
 
 		<a4j:jsFunction name="sendEmailRow"
@@ -24,8 +16,8 @@
 				assignTo="#{wProcessDefFormBean.currentWUEA.id}" />
 		</a4j:jsFunction>
 
-		<h:panelGrid width="98%" columns="2" style=" width : 740px;"
-			columnClasses="colStyle140px, colStyle600px">
+		<h:panelGrid width="98%" columns="2" style=" width : 740px; margin-left: 16px;"
+			columnClasses="colStyle200px, colStyle600px">
 			
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -44,7 +36,7 @@
 						onclick="javascript:Richfaces.showModalPanel('mpSearchEmail');"
 						image="/images/extender.png" style="margin-left:0px;" />
 					<rich:toolTip for="search_emails_button"
-						value="#{msg.label_search_system_email}" />
+						value="#{msg.label_select_an_email_account}" />
 	
 					<a4j:commandButton id="detach_email_button"
 						action="#{wProcessDefFormBean.detachEmail}"
@@ -54,14 +46,14 @@
 					<rich:toolTip for="detach_email_button"
 						value="#{msg.label_detach_email}" />
 
-					<a4j:commandButton value="check_account"
+					<a4j:commandButton id="check_account"
 						onclick="javascript:Richfaces.showModalPanel('mpCheckEmailAccount');"
 						reRender="w_process_def_notifications_form" 
 						image="/images/email.png"
 						rendered="#{wProcessDefFormBean.currentWUEA.id != null and wProcessDefFormBean.currentWUEA.id != 0}"
 						style="margin-left: 5px;"/>
 					<rich:toolTip for="check_account"
-						value="#{msg.label_check_account}" />
+						value="#{msg.label_check_email_account}" />
 						
 				</h:panelGroup>
 	

@@ -6,8 +6,6 @@ import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
 
 import javax.el.ValueExpression;
 
-import org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean;
-import org.beeblos.bpm.wc.taglib.bean.WProcessWorkFormBean;
 import org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean;
 
 public class WStepDefUtil extends CoreManagedBean {
@@ -18,7 +16,7 @@ public class WStepDefUtil extends CoreManagedBean {
 
 	}
 
-	public String createNewWStepDef() {
+	public String createNewWStepDef(String returnStatement) {
 
 		String ret = FAIL;
 
@@ -31,6 +29,7 @@ public class WStepDefUtil extends CoreManagedBean {
 					.getValue(super.getELContext());
 			wsdfb.init();
 			wsdfb.initEmptyWStepDef();
+			wsdfb.setReturnStatement(returnStatement);
 
 			ret = CREATE_NEW_WSTEPDEF;
 
@@ -64,6 +63,5 @@ public class WStepDefUtil extends CoreManagedBean {
 
 		return ret;
 	}
-	
 
 }

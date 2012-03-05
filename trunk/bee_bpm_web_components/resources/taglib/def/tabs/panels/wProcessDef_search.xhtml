@@ -33,6 +33,29 @@
 				style="width:400px; font-size:12px;	padding: 4px;" />
 			<rich:spacer height="10" />
 
+		</h:panelGrid>
+
+		<h:panelGroup>
+			<a4j:outputPanel styleClass="viewFilters" id="look">
+				<rich:effect for="look" event="onclick" type="Fade" params="delay:0.0, duration:0.1" disableDefault="true"/>
+				<rich:effect for="look" event="onclick" type="BlindDown" targetId="filters" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="filters"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="hide2"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<h:outputText escape="false" value="#{msg.label_more_search_filters}" />
+			</a4j:outputPanel>
+	
+			<a4j:outputPanel id="hide2" styleClass="viewFilters" style="display:none">
+				<rich:effect for="hide2" event="onclick" type="BlindUp" targetId="filters" params="id:'filters', duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Appear" targetId="look" params="delay:0.2, duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Fade" targetId="hide2" params="delay:0.0, duration:0.2" />
+				<h:outputText style="padding-right:5px" value="#{msg.label_hide}"/>
+			</a4j:outputPanel>
+		 </h:panelGroup>
+
+		<h:panelGrid columns="3" id="filters" 
+			style=" width : auto; height : auto; padding-left: 15px; display:none;"
+			columnClasses="colStyle140px, colStyle480px, colStyle100px">
+
 			<h:outputText value="#{msg.label_list_zone}:"
 				styleClass="firstLeftText" />
 			<h:inputText id="list_zone"

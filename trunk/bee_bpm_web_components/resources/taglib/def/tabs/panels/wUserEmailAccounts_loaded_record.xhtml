@@ -1,0 +1,215 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<h:panelGrid columns="3"
+		style=" width : auto; height : auto; padding-left: 15px;"
+		columnClasses="colStyle200px, colStyle400px, colStyle200px">
+		
+									
+		<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
+		<h:panelGroup>
+			<h:inputHidden id="hddIdUce" value="#{wUserEmailAccountsBean.id}">
+				<a4j:support ajaxSingle="false"  action="#{wUserEmailAccountsBean.loadCurrentWUserEmailAccounts}"
+					event="onchange" reRender="w_user_email_account_form, w_user_email_accounts_table, name, saveButton, deleteButton" />
+			</h:inputHidden>
+			<h:inputText id="name" value="#{wUserEmailAccountsBean.currentWUEA.name}"
+				required="false"  style="width:250px"/>
+		</h:panelGroup>
+		
+		<rich:spacer width="10" />
+		
+		<h:outputText value="#{msg.label_owner}" styleClass="labelForm" />
+		<h:selectOneMenu id="owner_name" 
+			value="#{wUserEmailAccountsBean.currentWUEA.wUserDef.id}"
+			style="width:250px;"
+			disabled="#{wUserEmailAccountsBean.id != null and wUserEmailAccountsBean.id != 0}">
+			<f:selectItems
+				value="#{wUserEmailAccountsBean.wUserDefList}" />
+		</h:selectOneMenu>
+
+		<rich:spacer width="10" />
+
+		<h:outputText value="#{msg.label_email}" styleClass="labelForm" />
+		<h:panelGroup>
+			<h:inputText id="email" value="#{wUserEmailAccountsBean.currentWUEA.email}"
+				required="false"  style="width:250px"/>
+		</h:panelGroup>
+
+		<h:panelGroup>
+		<rich:spacer width="10" />
+
+		<a4j:commandButton id="saveButton" value="#{wUserEmailAccountsBean.valueBtn}" reRender="w_user_email_account_form"
+			action="#{wUserEmailAccountsBean.save}"/>			
+				
+		<rich:spacer width="10" />	
+		<a4j:commandButton id="cancelButton" value="#{msg.label_cancel}" reRender="w_user_email_account_form"
+			action="#{wUserEmailAccountsBean.cancel}"/>			
+				
+		<rich:spacer width="10" />	
+		<h:commandButton id="deleteButton" value="#{msg.label_delete}" 
+			actionListener="#{wUserEmailAccountsBean.delete}" onclick="return confirm()"
+			disabled="#{wUserEmailAccountsBean.id == null or wUserEmailAccountsBean.id == 0}"/>						
+								
+		</h:panelGroup>	
+		
+		<rich:spacer width="10" />
+		<rich:spacer width="10" />	
+		<rich:spacer width="10" />	
+		
+		<h:panelGroup>
+		
+			<a4j:outputPanel styleClass="viewFilters" id="look">
+				<rich:effect for="look" event="onclick" type="Fade" params="delay:0.0, duration:0.1" disableDefault="true"/>
+				<rich:effect for="look" event="onclick" type="BlindDown" targetId="filtros" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="filtros"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="hide2"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<h:outputText escape="false" value="#{msg.label_show_configuration}" />
+			</a4j:outputPanel>
+		
+			<a4j:outputPanel id="hide2" styleClass="viewFilters" style="display:none">
+				<rich:effect for="hide2" event="onclick" type="BlindUp" targetId="filtros" params="id:'filtros', duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Appear" targetId="look" params="delay:0.2, duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Fade" targetId="hide2" params="delay:0.0, duration:0.2" />
+				<h:outputText style="padding-right:5px" value="#{msg.label_hide_configuration}"/>
+			</a4j:outputPanel>
+		 </h:panelGroup>
+ 
+	</h:panelGrid>
+
+	<h:panelGrid id="filtros" columns="1" style="width : auto; height : auto; padding-left: 15px; display:none;" >
+		<h:panelGrid id="generales" columns="3" columnClasses="colStyle1,colStyle2B,colStyle3" >
+			
+			<h:outputText value="#{msg.label_user_default_account}" styleClass="labelForm" />
+			<h:selectBooleanCheckbox id="isPrefer" value="#{wUserEmailAccountsBean.currentWUEA.userDefaultAccount}"
+				required="false"  style="text-align:left"/>	
+			<rich:spacer height="10" />
+			
+			<h:outputText value="#{msg.label_reply_to}" styleClass="labelForm" />
+			<h:inputText id="reply_to" value="#{wUserEmailAccountsBean.currentWUEA.replyTo}"
+				required="false"  style=" width:250px"/>	
+			<rich:spacer height="10" />
+						
+		</h:panelGrid>
+		
+		<fieldset id="input" class="demo_fieldset" >
+			<legend class="demo_legend"  >#{msg.label_input_server}</legend>
+			<div>
+			<h:panelGrid columns="4" columnClasses ="colStyle1,colStyle2,colStyle4,colStyle5" width="100%">			
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
+				<h:inputText id="input_name_service" value="#{wUserEmailAccountsBean.currentWUEA.inputServerName}"
+					required="false"  style="width:180px"/>
+					
+				<rich:spacer height="10" />
+				<rich:spacer height="10" />	
+			
+				<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
+				<h:inputText id="input_port" value="#{wUserEmailAccountsBean.currentWUEA.inputPort}"
+					required="false"  style="width:50px"/>
+					
+				<h:outputText value="#{msg.label_type}" styleClass="labelForm" />
+				<h:inputText id="input_server_type" value="#{wUserEmailAccountsBean.currentWUEA.inputServerType}"
+					required="false"  style="width:50px"/>		
+					
+				<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
+				<h:inputText id="input_security" value="#{wUserEmailAccountsBean.currentWUEA.connectionSecurity}"
+						required="false"  style="width:150px"/>	
+					
+				<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
+				<h:inputText id="input_ident_method" value="#{wUserEmailAccountsBean.currentWUEA.identificationMethod}"
+					required="false"  style="width:150px"/>			
+	
+			</h:panelGrid>
+			</div>
+		</fieldset>	
+		
+		<rich:spacer width="10" />
+		
+		<fieldset id="salida" class="demo_fieldset" >	 
+			<legend class="demo_legend">#{msg.label_output_server}</legend>
+			<div>
+				<h:panelGrid columns="4" columnClasses ="colStyle1,colStyle2,colStyle4,colStyle5" width="100%">
+					
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
+				<h:inputText id="output_server_name" value="#{wUserEmailAccountsBean.currentWUEA.outputServer}"
+					required="false"  style="width:180px"/>
+					
+				<rich:spacer height="10" />	
+				<rich:spacer height="10" />		
+					
+				<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
+				<h:inputText id="output_port" value="#{wUserEmailAccountsBean.currentWUEA.outputPort}"
+					required="false"  style="width:50px"/>
+					
+				<rich:spacer height="10" />	
+				<rich:spacer height="10" />		
+			
+				<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
+					
+				<h:selectOneMenu id="seguridadSal" value="#{wUserEmailAccountsBean.currentWUEA.outputConnectionSecurity}" style="width:150px">
+					<f:selectItems value="#{wUserEmailAccountsBean.securityList}" />
+				</h:selectOneMenu>	
+										
+				<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
+				<h:inputText id="id_method" value="#{wUserEmailAccountsBean.currentWUEA.identificationMethod}"
+					required="false"  style="width:150px"/>		
+												
+				<h:outputText value="#{msg.label_usuario}" styleClass="labelForm" />
+				<h:inputText id="output_user" value="#{wUserEmailAccountsBean.currentWUEA.outputUserName}"
+					required="false"  style="width:150px"/>
+					
+				<h:outputText value="#{msg.label_output_password}" styleClass="labelForm" />
+				<h:panelGroup id="output_password_panel">
+					<h:inputSecret id="output_password" value="#{wUserEmailAccountsBean.currentWUEA.outputPassword}"
+						readonly="#{wUserEmailAccountsBean.outputPasswordEditable?'false':'true'}"
+						required="false" style="width:150px">
+	            		<a4j:support event="onchange" ajaxSingle="true" action="#{wUserEmailAccountsBean.changeOutputPassword}"/>
+					</h:inputSecret>
+					<a4j:commandButton id="changePasswordButton" value="#{msg.label_new_password}"
+						rendered="#{!wUserEmailAccountsBean.outputPasswordEditable}"
+						oncomplete="onsubmitChangePasswordButton();"
+						style="margin-left: 10px;"/>			
+				</h:panelGroup>
+			
+			</h:panelGrid>	
+			</div>
+		</fieldset>
+		<fieldset id="input" class="demo_fieldset" >
+			<legend class="demo_legend"  >#{msg.label_signature_fields}</legend>
+			<div>
+				<h:panelGrid id="signature" columns="3" columnClasses="colStyle1,colStyle2B,colStyle3" >
+
+					<h:outputText id="txt_signature" value="#{msg.label_signature_txt}" styleClass="labelForm"/>
+					<h:inputTextarea id="txt_signature_text" value="#{wUserEmailAccountsBean.currentWUEA.signatureTxt}"
+						required="false" style="width:600px; height:150px;"/>			
+					<rich:spacer id="spcFirmaTexto" height="10"/>
+					
+					<h:outputText id="html_signature" value="#{msg.label_firma_html}" styleClass="labelForm"/>
+			        <h:panelGroup id="signature_html_control">
+						<rich:editor id="html_signature_text" configuration="#{editorBean.currentConfiguration}" 
+									 width="600" height="150" viewMode="#{editorBean.viewMode}" 
+									 value="#{wUserEmailAccountsBean.currentWUEA.signatureHtml}" >
+						</rich:editor>
+			
+			               <h:panelGrid columns="1">
+			                   <h:selectOneRadio value="#{editorBean.viewMode}">
+			                       <f:selectItem itemLabel="displaying HTML" itemValue="visual" />
+			                       <f:selectItem itemLabel="HTML text" itemValue="source" />
+			                       <a4j:support event="onclick" reRender="html_signature_text, signature_html_control" requestDelay="500"
+			                           eventsQueue="settingsQueue" similarityGroupingId="settings" />
+			                   </h:selectOneRadio>
+			               </h:panelGrid>
+					</h:panelGroup>
+					<rich:spacer id="spcFirmaHtml" height="10"/>
+					
+				</h:panelGrid>
+			
+			</div>
+			</fieldset>
+	</h:panelGrid>
+
+</ui:composition>

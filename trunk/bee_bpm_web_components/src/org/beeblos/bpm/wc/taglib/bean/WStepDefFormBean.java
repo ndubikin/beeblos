@@ -3,6 +3,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WSTEPDEF;
+import static org.beeblos.bpm.core.util.Constants.WSTEPDEF_QUERY;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -73,6 +74,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private boolean readOnly; // help to view to know when is in edit mode and when in display mode
 	private String strRoleList; // property to pass current role list ids to popup
 	private String strUserList; // property to pass current role list ids to popup
+	
+	// dml 20120305
+	private String returnStatement;
 
 	public WStepDefFormBean() {		
 		super();
@@ -114,6 +118,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 		attachment = new BeeblosAttachment();
 		documentLink=null; 
+		returnStatement= "";
 		
 		this.setReadOnly(true); // backing bean handle object in read-only mode by default
 
@@ -231,6 +236,13 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	public String cancel(){
 		
+		if (returnStatement.equals(WSTEPDEF_QUERY)){
+			
+			_reset();
+			return WSTEPDEF_QUERY;
+			
+		}
+		
 		Integer id= this.currObjId;
 		_reset();
 		this.currObjId=id;
@@ -270,6 +282,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			try {
 				
 				result = add();
+				result = _defineReturn();
 				_reset();
 				
 			} catch (WStepDefException e) {
@@ -801,6 +814,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.strRoleList = strRoleList;
 	}
 
+	public String getReturnStatement() {
+		return returnStatement;
+	}
+
+	public void setReturnStatement(String returnStatement) {
+		this.returnStatement = returnStatement;
+	}
+
 	public void deleteWStepUser(){
 		
 		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
@@ -1061,6 +1082,16 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 		}
 
+	}
+
+	// nes 20120203
+	private String _defineReturn() {
+
+		String ret = returnStatement;
+		returnStatement="";
+		
+		return ret;
+		
 	}
 
 }
