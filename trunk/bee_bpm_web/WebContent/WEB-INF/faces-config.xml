@@ -37,6 +37,11 @@
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
  <managed-bean>
+  <managed-bean-name>wEmailTemplatesBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WEmailTemplatesBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+ <managed-bean>
   <managed-bean-name>wTimeUnitBean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WTimeUnitBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>

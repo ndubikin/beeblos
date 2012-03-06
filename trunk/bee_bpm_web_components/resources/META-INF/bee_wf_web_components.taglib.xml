@@ -51,6 +51,11 @@
  </tag>
  
  <tag>
+  <tag-name>wEmailTemplatesCrudCaratula</tag-name>
+  <source>/taglib/def/wEmailTemplatesCrudCaratula.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>wTimeUnitCrudCaratula</tag-name>
   <source>/taglib/def/tabs/wTimeUnitCrudCaratula.xhtml</source>
  </tag>

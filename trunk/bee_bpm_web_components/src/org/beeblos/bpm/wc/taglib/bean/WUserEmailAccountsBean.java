@@ -38,8 +38,6 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 //	private Usuario usuario;
 	
 	private Integer id; // el tipo de sancion q estoy editando en caso de hacerlo 
-	private String wueaName; 
-	private String wueaEmail; 
 	private WUserEmailAccounts currentWUEA;
 	
 	private List<WUserEmailAccounts> wueaList = new ArrayList<WUserEmailAccounts>();
@@ -99,9 +97,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		this.currentWUEA.setwUserDef(getCurrentUser());
 		
 		this.id=0;
-		this.wueaName=null;
-		this.wueaEmail=null;
-		
+
 		this.disableDeleteButton=true;
 		this.disableSaveButton = true;
 
@@ -129,9 +125,6 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		this.currentWUEA.setFormat("Text");  // rrl 20110727 //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
 		this.currentWUEA.setwUserDef(getCurrentUser());
 		this.id=0;
-		
-		this.wueaName=null;
-		this.wueaEmail=null;
 		
 /*		try {
 			this.wueaList = (ArrayList<WUserEmailAccounts>) new WUserEmailAccountsBL()
@@ -703,32 +696,6 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	public void setWueaListByUser(List<WUserEmailAccounts> wueaListByUser) {
 		this.wueaListByUser = wueaListByUser;
 	}
-
-	/**
-	 * @return the wueaName
-	 */
-	public String getName() {
-		return wueaName;
-	}
-
-
-	/**
-	 * @param wueaName the wueaName to set
-	 */
-	public void setWueaName(String wueaName) {
-		this.wueaName = wueaName;
-	}
-
-
-	public void setWueaEmail(String wueaEmail) {
-		this.wueaEmail = wueaEmail;
-	}
-
-
-	public String getWueaEmail() {
-		return wueaEmail;
-	}
-
 	
 	public List<String> getFormatList() {
 		
@@ -853,6 +820,9 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 			
 			this.wueaList = new WUserEmailAccountsBL()
 					.wUserEmailAccountsFinder(nameFilter, emailFilter);		
+			
+			addNewEmailMode = false;
+			this.id = 0;
 				 		
 		} catch (WUserEmailAccountsException e) {
 			logger.error("Ocurrio Un Error: No debe " 
@@ -865,7 +835,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 
 	}
 	
-	public Integer getWUAEListSize(){
+	public Integer getWueaListSize(){
 		
 		if (this.wueaList != null) {
 			

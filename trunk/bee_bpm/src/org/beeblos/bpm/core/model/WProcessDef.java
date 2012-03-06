@@ -61,6 +61,10 @@ public class WProcessDef implements java.io.Serializable {
 	// dml 20120223
 	private WUserEmailAccounts wUserEmailAccounts;
 	
+	// dml 20120306
+	private WEmailTemplates arrivingAdminNoticeTemplate;
+	private WEmailTemplates arrivingUserNoticeTemplate;
+	
 
 	public WProcessDef() {
 		super();
@@ -72,6 +76,8 @@ public class WProcessDef implements java.io.Serializable {
 		if ( createEmtpyObjects ) {
 			this.beginStep=new WStepDef( EMPTY_OBJECT );
 			this.wUserEmailAccounts = new WUserEmailAccounts(EMPTY_OBJECT);
+			this.arrivingAdminNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
+			this.arrivingUserNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
 			
 		}	
 	}
@@ -297,6 +303,28 @@ public class WProcessDef implements java.io.Serializable {
 	}
 
 
+	public WEmailTemplates getArrivingAdminNoticeTemplate() {
+		return arrivingAdminNoticeTemplate;
+	}
+
+
+	public void setArrivingAdminNoticeTemplate(
+			WEmailTemplates arrivingAdminNoticeTemplate) {
+		this.arrivingAdminNoticeTemplate = arrivingAdminNoticeTemplate;
+	}
+
+
+	public WEmailTemplates getArrivingUserNoticeTemplate() {
+		return arrivingUserNoticeTemplate;
+	}
+
+
+	public void setArrivingUserNoticeTemplate(
+			WEmailTemplates arrivingUserNoticeTemplate) {
+		this.arrivingUserNoticeTemplate = arrivingUserNoticeTemplate;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -304,6 +332,14 @@ public class WProcessDef implements java.io.Serializable {
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result
 				+ ((adminEmail == null) ? 0 : adminEmail.hashCode());
+		result = prime
+				* result
+				+ ((arrivingAdminNoticeTemplate == null) ? 0
+						: arrivingAdminNoticeTemplate.hashCode());
+		result = prime
+				* result
+				+ ((arrivingUserNoticeTemplate == null) ? 0
+						: arrivingUserNoticeTemplate.hashCode());
 		result = prime * result
 				+ ((beginStep == null) ? 0 : beginStep.hashCode());
 		result = prime * result
@@ -355,6 +391,18 @@ public class WProcessDef implements java.io.Serializable {
 			if (other.adminEmail != null)
 				return false;
 		} else if (!adminEmail.equals(other.adminEmail))
+			return false;
+		if (arrivingAdminNoticeTemplate == null) {
+			if (other.arrivingAdminNoticeTemplate != null)
+				return false;
+		} else if (!arrivingAdminNoticeTemplate
+				.equals(other.arrivingAdminNoticeTemplate))
+			return false;
+		if (arrivingUserNoticeTemplate == null) {
+			if (other.arrivingUserNoticeTemplate != null)
+				return false;
+		} else if (!arrivingUserNoticeTemplate
+				.equals(other.arrivingUserNoticeTemplate))
 			return false;
 		if (beginStep == null) {
 			if (other.beginStep != null)
@@ -448,7 +496,9 @@ public class WProcessDef implements java.io.Serializable {
 				+ productionUser + ", totalTime=" + totalTime
 				+ ", totalTimeUnit=" + totalTimeUnit + ", globalDeadlineDate="
 				+ globalDeadlineDate + ", wUserEmailAccounts="
-				+ wUserEmailAccounts + "]";
+				+ wUserEmailAccounts + ", arrivingAdminNoticeTemplate="
+				+ arrivingAdminNoticeTemplate + ", arrivingUserNoticeTemplate="
+				+ arrivingUserNoticeTemplate + "]";
 	}
 	
 
@@ -465,6 +515,10 @@ public class WProcessDef implements java.io.Serializable {
 		if (idAdditionalZone!=null && ! "".equals(idAdditionalZone)) return false;
 		if (adminEmail!=null && ! "".equals(adminEmail)) return false;
 		
+		// dml 20120306
+		if (arrivingAdminNoticeTemplate!=null && ! arrivingAdminNoticeTemplate.empty()) return false;
+		if (arrivingUserNoticeTemplate!=null && ! arrivingUserNoticeTemplate.empty()) return false;
+
 		return true;
 	}
 	

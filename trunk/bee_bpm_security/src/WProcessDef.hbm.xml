@@ -78,6 +78,18 @@
 			lazy="false" name="wUserEmailAccounts">
 			<column name="id_system_email"/>
 		</many-to-one>
+		
+		<!-- dml 20120306 -->
+		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
+			lazy="false" name="arrivingAdminNoticeTemplate">
+			<column name="id_arriving_admin_notice_template"/>
+		</many-to-one>
+
+		<!-- dml 20120306 -->
+		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
+			lazy="false" name="arrivingUserNoticeTemplate">
+			<column name="id_arriving_user_notice_template"/>
+		</many-to-one>
 
 		<set cascade="all" name="rolesRelated" sort="unsorted"
 			table="w_process_role"  lazy="false" >
