@@ -73,6 +73,9 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	
 	private String valueBtn;
 	
+	//dml 20120206
+	private boolean addNewEmailMode;
+	
 	
 	public WUserEmailAccountsBean() {
 
@@ -109,6 +112,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		loadWUserEmailAccountsLists();
 		
 		this.valueBtn="Add";
+		this.addNewEmailMode=false;
 		
 		
 	}
@@ -157,7 +161,10 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		this.emailFilter = "";
 		this.nameFilter = "";
 		this.valueBtn="Add";
-		
+
+		//dml 20120306
+		this.addNewEmailMode=false;
+
 	}
 	
 	// dml 20120223
@@ -794,6 +801,14 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		this.valueBtn = valueBtn;
 	}
 
+	public boolean isAddNewEmailMode() {
+		return addNewEmailMode;
+	}
+
+	public void setAddNewEmailMode(boolean addNewEmailMode) {
+		this.addNewEmailMode = addNewEmailMode;
+	}
+
 	public String changePassword() {
 		
 		outputPasswordEditable = true;
@@ -859,6 +874,13 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		}
 		
 		return null;
+		
+	}
+	
+	//dml 20120306
+	public void changeFormMode(){
+		
+		this.addNewEmailMode=true;
 		
 	}
 
