@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
@@ -29,6 +30,7 @@ import org.beeblos.bpm.core.bl.WUserEmailAccountsBL;
 import org.beeblos.bpm.core.email.bl.EnviarEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.error.EnviarEmailException;
+import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
@@ -36,6 +38,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.WUserEmailAccountsException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
+import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
@@ -117,6 +120,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	// dml 20120305
 	private String returnStatement;
+	
+	// dml 20120306
+	private Integer arrivingNoticeUserTemplateId;
+	private Integer arrivingNoticeAdminTemplateId;
 
 	public WProcessDefFormBean() {
 		super();
@@ -162,6 +169,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		this.emailNameFilter = "";
 		this.returnStatement = "";
+
+		// dml 20120306
+		this.arrivingNoticeUserTemplateId = 0;
+		this.arrivingNoticeAdminTemplateId = 0;
 		
 		// dml 20120223
 		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
@@ -206,6 +217,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			recoverNullObjects(); // <<<<<<<< IMPORTANT >>>>>>>>>>>
 
+			// dml 20120306
+			loadEmailTemplateVariables();
+			
 		} catch (WProcessDefException ex1) {
 
 			String message = ex1.getMessage() + " - " + ex1.getCause();
@@ -291,6 +305,20 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				currentWProcessDef.setBeginStep(null);
 			}
 
+			// dml 20120306
+			if (currentWProcessDef.getArrivingUserNoticeTemplate() != null
+					&& (currentWProcessDef.getArrivingUserNoticeTemplate().empty()
+							|| currentWProcessDef.getArrivingUserNoticeTemplate().getId() == 0)) {
+				currentWProcessDef.setArrivingUserNoticeTemplate(null);
+			}
+
+			// dml 20120306
+			if (currentWProcessDef.getArrivingAdminNoticeTemplate() != null
+					&& (currentWProcessDef.getArrivingAdminNoticeTemplate().empty()
+							|| currentWProcessDef.getArrivingAdminNoticeTemplate().getId() == 0)) {
+				currentWProcessDef.setArrivingAdminNoticeTemplate(null);
+			}
+
 		}
 		
 		if (currentStepSequence != null) {
@@ -321,6 +349,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			if (currentWProcessDef.getUsersRelated() == null) {
 				currentWProcessDef.setUsersRelated(new HashSet<WProcessUser>());
+			}
+
+			// dml 20120306
+			if (currentWProcessDef.getArrivingUserNoticeTemplate() == null) {
+				currentWProcessDef.setArrivingUserNoticeTemplate(new WEmailTemplates());
+			}
+
+			// dml 20120306
+			if (currentWProcessDef.getArrivingAdminNoticeTemplate() == null) {
+				currentWProcessDef.setArrivingAdminNoticeTemplate(new WEmailTemplates());
 			}
 
 		}
@@ -467,6 +505,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		try {
 
+			// dml 20120306
+			setEmailTemplatesInObject();
+
 			setModel(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
 
 			this.currentId = wpdBL.add(currentWProcessDef,
@@ -520,6 +561,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		WProcessDefBL wpdBL = new WProcessDefBL();
 
 		try {
+			
+			// dml 20120306
+			setEmailTemplatesInObject();
 
 			setModel();
 
@@ -551,7 +595,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		return ret;
 	}
-
+	
 	private void loadStepCombo() {
 
 		try {
@@ -884,6 +928,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setReturnStatement(String returnStatement) {
 		this.returnStatement = returnStatement;
+	}
+
+	public Integer getArrivingNoticeUserTemplateId() {
+		return arrivingNoticeUserTemplateId;
+	}
+
+	public void setArrivingNoticeUserTemplateId(
+			Integer arrivingNoticeUserTemplateId) {
+		this.arrivingNoticeUserTemplateId = arrivingNoticeUserTemplateId;
+	}
+
+	public Integer getArrivingNoticeAdminTemplateId() {
+		return arrivingNoticeAdminTemplateId;
+	}
+
+	public void setArrivingNoticeAdminTemplateId(
+			Integer arrivingNoticeAdminTemplateId) {
+		this.arrivingNoticeAdminTemplateId = arrivingNoticeAdminTemplateId;
 	}
 
 	public void deleteWProcessRole() {
@@ -1548,4 +1610,58 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return ret;
 		
 	}
+
+	// dml 20120306
+	public List<SelectItem> getArrivingNoticeEmailTemplatesCombo() {
+		
+		try {
+			
+			return UtilsVs.castStringPairToSelectitem(new WEmailTemplatesBL().getComboList("Select ...", null));
+		
+		} catch (WEmailTemplatesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new ArrayList<SelectItem>();
+		
+	}
+	
+	// dml 20120306
+	private void setEmailTemplatesInObject(){
+		
+		// primero para comparar si hay cambios en alguno de los campos tengo q ver si son null y ponerlos a cero
+		// para que no salte en caso de que vengan vacios de BD
+		if (this.currentWProcessDef.getArrivingUserNoticeTemplate().getId() == null) {
+			this.currentWProcessDef.getArrivingUserNoticeTemplate().setId(new Integer(0));
+		}
+		
+		if (this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId() == null) {
+			this.currentWProcessDef.getArrivingAdminNoticeTemplate().setId(new Integer(0));
+		}
+		
+		// para que no de problemas al cambiar directamente el id del objeto tengo que crear uno nuevo
+		// y volverle a pasar el de la vista para que funcione biene 
+		if ( !this.currentWProcessDef.getArrivingUserNoticeTemplate().getId()
+				.equals(arrivingNoticeUserTemplateId)){
+			this.currentWProcessDef.setArrivingUserNoticeTemplate(new WEmailTemplates());
+			this.currentWProcessDef.getArrivingUserNoticeTemplate().setId(arrivingNoticeUserTemplateId);
+		}
+		
+		if (!this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId()
+				.equals(arrivingNoticeAdminTemplateId)) {
+			this.currentWProcessDef.setArrivingAdminNoticeTemplate(new WEmailTemplates());
+			this.currentWProcessDef.getArrivingAdminNoticeTemplate().setId(arrivingNoticeAdminTemplateId);
+		}
+		
+	}
+
+	// dml 20120306
+	private void loadEmailTemplateVariables(){
+		
+		arrivingNoticeUserTemplateId = this.currentWProcessDef.getArrivingUserNoticeTemplate().getId();
+		arrivingNoticeAdminTemplateId = this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId();
+
+	}
+
 }

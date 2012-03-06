@@ -21,7 +21,13 @@
 	<rich:spacer height="10" />
 
 	<fieldset class="demo_fieldset">
+		<legend class="demo_legend"  >#{msg.label_system_email}</legend>
 		<ui:include src="panels/wProcessDef_notifications_system_email.xhtml"/>
+	</fieldset>
+
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend"  >#{msg.label_template}</legend>
+		<ui:include src="panels/wProcessDef_notifications_email_templates.xhtml"/>
 	</fieldset>
 
 </ui:composition>

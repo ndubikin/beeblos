@@ -503,6 +503,11 @@ table.doctable td {
 	margin: 0px;
 }
 
+.colStyle300px {
+	width: 300px;
+	margin: 0px;
+}
+
 .colStyle400px {
 	width: 400px;
 	margin: 0px;
