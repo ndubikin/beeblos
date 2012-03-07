@@ -22,8 +22,10 @@
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{idStepWork}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
-           		<rich:menuItem ajaxSingle="false" style="{styleIsAlive}">
+           		<rich:menuItem ajaxSingle="false" style="{styleIsAlive}"
+           			action="#{workingProcessQueryBean.processWStepWork}">
                 	<b> Process Step </b> ( {idProcess}/{idStep} - {reference} )
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{idStepWork}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
            		<rich:menuItem ajaxSingle="false" style="{styleIsAlive}">

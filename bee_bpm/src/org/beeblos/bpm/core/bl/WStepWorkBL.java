@@ -5,6 +5,7 @@ import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +13,11 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
+import org.beeblos.bpm.core.dao.WUserRoleDao;
+import org.beeblos.bpm.core.email.bl.EnviarEmailBL;
+import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
+import org.beeblos.bpm.core.error.EnviarEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
@@ -22,14 +27,18 @@ import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
+import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.WUserEmailAccounts;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
@@ -735,25 +744,194 @@ public class WStepWorkBL {
 		
 	}
 	
+	//NOTA: VOLVER A PONER ESTE MÉTODO COMO PRIVADO CUANDO SE ACABE DE PROBAR
 	// email notifications related to a new step generation
 	// step arrived!!
-	private void _emailNotificationArrivingStep( WStepWork newStep ) {
+	public void _emailNotificationArrivingStep( WStepWork newStep ) {
 		
+		//LO PRIMERO QUE VOY A HACER ES COMPONER LA PARTE DEL EMAIL QUE CONOZCO, PARA ESO OBTENGO EL PROCESO
+		//QUE ESTARÁ RELACIONADO CON ESTE STEP DEL QUE NECESITO VARIOS DATOS
+		WProcessDef process = newStep.getwProcessWork().getProcess();
+		
+		//CREO EL EMAIL DIRECTAMENTE CON LA LLAMADA A UN METODO PRIVADO QUE CARGA TODOS LOS VALORES QUE
+		//NECESITARA PARA SU ENVIO MENOS LA LISTA "TO" QUE SE HARÁ DESPUES
+		Email email = this._buildEmail(process.getwUserEmailAccounts(), 
+				"Execute ProcessStep: "+newStep.getId()+" / "+newStep.getVersion());
+				
 		if ( newStep.getCurrentStep().isArrivingAdminNotice()) {
-			// avisar al administrador ( o a los administradores )
-			// hay que considerar usuarios explicitos y roles
-			// y para los roles obviamente hay que avisar a cada usuario perteneciente
-			// al rol
+
+			
+			System.out.println("ADMIN EMAIL TEMPLATE: ");
+			email.setBodyText(process.getArrivingAdminNoticeTemplate().getTemplate());
+			//ESTE MÉTODO PRIVADO SERÁ EL ENCARGADO DE OBTENER TODAS LAS CUENTAS DE EMAIL SIN REPETIR
+			//EL SEGUNDO ATRIBUTO INDICA SI LAS CUENTAS SERÁN DE ADMINISTRADORES (true) O DE USUARIOS NORMALES (false)
+			email.setListaTo(this.getReplyEmailAccounts(newStep, true));
+			
+			this._sendEmail(email);
+			
+			
 		}
 		
 		if ( newStep.getCurrentStep().isArrivingUserNotice() ) {
-			
 			// avisar a los usuarios y roles definidos
+			
+			System.out.println("USER EMAIL TEMPLATE: ");
+			email.setBodyText(process.getArrivingUserNoticeTemplate().getTemplate());
+			//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
+			email.setListaTo(this.getReplyEmailAccounts(newStep, false));
+			
+			this._sendEmail(email);
+
+		}
+		
+			
+	}
+	
+	// dml 20120307
+	private void _sendEmail(Email email) {
+	
+		//ESTAMOS IMPRIMIENDO POR PANTALLA EN VEZ DE ENVIAR EMAILS PORQUE NO TENEMOS TANTAS DIRECCIONES
+		//PERO EL CODIGO COMENTADO DEBAJO FUNCIONA BIEN, POR LO MENOS PARA ENVIAR UN EMAIL A UNA LISTA
+		//CON UN SOLO "TO". SI LOS BOOLEAN PARA ENVIAR EMAIL A ADMIN/USERS ESTAN DESACTIVADOS O BIEN
+		//NO EXISTE NINGUN ADMIN NI NINGUN USUARIO NORMAL ASOCIADO AL WSTEPDEF NO SE IMPRIMIRA NADA
+		//YA QUE LA LISTA SERÁ VACÍA, Y EN CASO DE ENVIAR TAMPOCO DEBIDO A LA COMPROBACIÓN
+		System.out.println("REPLY TO: ");
+		for (String emails : email.getListaTo()) {
+			
+			System.out.println(emails+", ");
 			
 		}
 		
+		/*	try {
+			
+			if (email.getListaTo().size() > 0) {
+				new EnviarEmailBL().enviar(email);
+			}
+		} catch (EnviarEmailException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
 		
 	}
+	
+	// dml 20120307
+	private Email _buildEmail(WUserEmailAccounts sendFrom, String emailSubject) {
+		
+		Email email = new Email();
+		
+		email.setFrom(sendFrom.getEmail());
+		email.setIdFrom(sendFrom.getId());
+		email.setPwd(sendFrom.getOutputPassword());
+		
+		email.setSubject(emailSubject);
+		
+		return email;
+		
+	}
+	
+	// dml 20120307
+	private ArrayList<String> getReplyEmailAccounts(WStepWork step, boolean isAdmin){
+		
+		ArrayList<String> replyEmailList = new ArrayList<String>();
+		
+		//PRIMERO METEMOS EN LA LISTA DE REPLY TODOS LOS EMAILS DE LOS USUARIOS RELACIONADOS CON
+		//ESTE PASO (COMPROBANDO SI EL WSTEPUSER ES ADMIN O NO)
+		//SOLO SE INCLUIRAN EMAILS QUE NO SE HAYAN METIDO PREVIAMENTE. SI EXISTEN DOS USUARIOS
+		//CON EL MISMO EMAIL SOLO SE ENVIARÁ UNA COPIA DEL MISMO
+		if (step.getCurrentStep() != null){
+			
+			if (step.getCurrentStep().getUsersRelated() != null
+					&& step.getCurrentStep().getUsersRelated().size() > 0) {
+				
+				for (WStepUser wsu : step.getCurrentStep().getUsersRelated()){
+					
+					//SI QUEREMOS IMPRIMIR ADMIN Y VIENE UN USER NORMAL PASAMOS ITERACION
+					if (isAdmin != wsu.isAdmin()) {
+						continue;
+					}
+					
+					//COMPROBAMOS QUE EXISTEN USUARIO E EMAIL Y QUE NO ESTA REPETIDO
+					if (this._existsAndNotRepeatEmail(wsu.getUser(), replyEmailList)){
+					
+						replyEmailList.add(wsu.getUser().getEmail());
+							
+					}					
+				}			
+			}
+			
+			//OBTENEMOS TODOS LOS ROLES DE UN WSTEPDEF, Y DE EL OBTENEMOS TODOS LOS USUARIOS
+			//QUE TIENEN EL MISMO, Y SOBRE CADA UNO HACEMOS EL MISMO PROCESO DE ANTES, SI NO
+			//ESTA SU EMAIL EN LA LISTA LO INCLUIMOS
+			if (step.getCurrentStep().getRolesRelated() != null
+					&& step.getCurrentStep().getRolesRelated().size() > 0) {
+				
+				for (WStepRole wsr : step.getCurrentStep().getRolesRelated()) {
+					
+					//SI QUEREMOS IMPRIMIR ADMIN Y VIENE UN USER NORMAL PASAMOS ITERACION
+					if (isAdmin != wsr.isAdmin()) {
+						continue;
+					}
+					
+					//CON ESTE METODO PRIVADO "GETROLESUSERS" OBTENEMOS DIRECTAMENTE LA LISTA
+					//DE USUARIOS RELACIONADOS CON UN ROLE MEDIANTE LA TABLA W_USER_ROLE
+					for (WUserDef user : this._getRoleUsers(wsr)) {
+						
+						//COMPROBAMOS QUE EXISTEN USUARIO E EMAIL Y QUE NO ESTA REPETIDO
+						if (this._existsAndNotRepeatEmail(user, replyEmailList)){
+						
+							replyEmailList.add(user.getEmail());
+								
+						}					
+					}
+				}
+			}	
+		}
+		
+		return replyEmailList;
+		
+	}
+	
+	// dml 20120307
+	private boolean _existsAndNotRepeatEmail(WUserDef user, ArrayList<String> replyEmailList){
+		
+		if (user.getEmail() != null
+				&& !"".equals(user.getEmail())){
+		
+			if (!replyEmailList.contains(user.getEmail())){
+				
+				return true;
+				
+			}
+		}	
+		
+		return false;
+		
+	}
+	
+	// dml 20120307
+	private List<WUserDef> _getRoleUsers(WStepRole stepRole){
+		
+		List<WUserDef> roleUsers = new ArrayList<WUserDef>();
+		
+		if (stepRole != null
+				&& stepRole.getRole() != null
+				&& stepRole.getRole().getId() != null) {
+			
+			try {
+					
+				roleUsers = new WUserRoleDao().getWUserDefByRole(stepRole.getRole().getId(), null);
+				
+			} catch (WUserDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return roleUsers;
+		
+	}
+	
 	// chequea que dentro si la ruta está dentro de las respuestas indicadas ...
 	private boolean _hasInValidResponseList (
 			String validResponses, Set<WStepResponseDef> responses) {
