@@ -912,5 +912,19 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return new WProcessWorkUtil().loadWProcessWorkFormBean(idWork);
 
 	}
+	//NOTA: ELIMINAR ESTE METODO SI NO SE VA A LLAMAR DESDE EL CONTEXTUAL DE UN WSTEPWORK A ESTE MÉTODO
+	// dml 20120307
+	public void processWStepWork(){
+		
+		try {
+			currentWStepWork = new WStepWorkBL().getWStepWorkByPK(this.idStepWork, getCurrentUserId());
+		} catch (WStepWorkException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		new WStepWorkBL()._emailNotificationArrivingStep(currentWStepWork);
+		
+	}
 
 }
