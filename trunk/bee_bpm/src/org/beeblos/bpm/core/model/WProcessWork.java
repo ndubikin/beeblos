@@ -16,9 +16,11 @@ public class WProcessWork implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private int version;
 	private WProcessStatus status;
+
 	private WProcessDef process;
+	private int version;
+	
 	private Date startingTime;
 	private Integer startingType;
 	private Date endTime;
@@ -28,13 +30,8 @@ public class WProcessWork implements java.io.Serializable {
 	private Date insertDate;
 	private Integer modUser;
 	private Date modDate;
-	
-	// dml 20120125
 	private Integer idObject;
 	private String idObjectType;
-		
-	private Set<WStepWork> steps = new HashSet<WStepWork>();
-	
 
 	public WProcessWork() {
 		super();
@@ -185,14 +182,6 @@ public class WProcessWork implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
-	public Set<WStepWork> getSteps() {
-		return steps;
-	}
-
-	public void setSteps(Set<WStepWork> steps) {
-		this.steps = steps;
-	}
-
 	public Integer getIdObject() {
 		return idObject;
 	}
@@ -218,7 +207,7 @@ public class WProcessWork implements java.io.Serializable {
 				+ ", comments=" + comments + ", insertUser=" + insertUser
 				+ ", insertDate=" + insertDate + ", modUser=" + modUser
 				+ ", modDate=" + modDate + ", idObject=" + idObject
-				+ ", idObjectType=" + idObjectType + ", steps=" + steps + "]";
+				+ ", idObjectType=" + idObjectType + "]";
 	}
 
 	@Override
@@ -246,7 +235,7 @@ public class WProcessWork implements java.io.Serializable {
 		result = prime * result
 				+ ((startingType == null) ? 0 : startingType.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
-		result = prime * result + ((steps == null) ? 0 : steps.hashCode());
+
 		result = prime * result + version;
 		return result;
 	}
@@ -325,11 +314,6 @@ public class WProcessWork implements java.io.Serializable {
 				return false;
 		} else if (!status.equals(other.status))
 			return false;
-		if (steps == null) {
-			if (other.steps != null)
-				return false;
-		} else if (!steps.equals(other.steps))
-			return false;
 		if (version != other.version)
 			return false;
 		return true;
@@ -347,6 +331,5 @@ public class WProcessWork implements java.io.Serializable {
 
 		return true;
 	}
-	
-	
+
 }
