@@ -57,15 +57,17 @@
 					</div>
 				</fieldset>
 	
-				<fieldset class="demo_fieldset">
-					<legend class="demo_legend">WEmailTemplates loaded record</legend>
-					<div>
-						<ui:include src="panels/wEmailTemplates_loaded_record.xhtml">
-							<ui:param name="action" value="${action}" />
-						</ui:include>
-					</div>
-				</fieldset>
-				
+				<h:panelGroup
+					rendered="#{wEmailTemplatesBean.addNewEmailMode or (wEmailTemplatesBean.id != null and wEmailTemplatesBean.id != 0)}">
+					<fieldset class="demo_fieldset">
+						<legend class="demo_legend">WEmailTemplates loaded record</legend>
+						<div>
+							<ui:include src="panels/wEmailTemplates_loaded_record.xhtml">
+								<ui:param name="action" value="${action}" />
+							</ui:include>
+						</div>
+					</fieldset>
+				</h:panelGroup>
 			</h:panelGroup>
 			
 		</h:panelGrid>

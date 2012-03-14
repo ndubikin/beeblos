@@ -15,22 +15,32 @@
 
 	<h:form id="w_step_def_notifications_form">
 
-		<h:panelGrid width="100%" columns="2" style=" width : 620px; margin-left: 16px;"
+		<h:panelGrid width="98%" columns="2" style=" width : 960px; margin-left: 16px;"
 				columnClasses="colStyle480px, colStyle480px">
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 
+			<h:outputText value="#{msg.label_worker}" styleClass="title_style" />
+			<h:outputText value="#{msg.label_tracker}" styleClass="title_style" />
+	
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
 			<h:panelGroup>
 
-				<h:panelGrid width="50%" columns="2" style=" width : 450px;"
+				<h:panelGrid width="50%" columns="2" style=" width : 480px;"
 					columnClasses="colStyle200px, colStyle250px">
 
-					<h:outputText value="#{msg.label_user_arriving_notice_template}:" styleClass="firstLeftText" />
+					<h:outputText value="#{msg.label_arriving_notice_template}:" styleClass="firstLeftText" />
+					<h:outputText value="#{wProcessDefFormBean.arrivingNoticeUserTemplateName}" style="font-weight: bold;padding: 4px;" 
+						rendered="#{wProcessDefFormBean.readOnly and wProcessDefFormBean.arrivingNoticeUserTemplateId != null}"/>
+					<h:outputText value="None" style="font-weight: bold;padding: 4px;" 
+						rendered="#{wProcessDefFormBean.readOnly and wProcessDefFormBean.arrivingNoticeUserTemplateId == null}"/>
 					<h:selectOneMenu id="arriving_user_template" 
 						value="#{wProcessDefFormBean.arrivingNoticeUserTemplateId}"
 						style="width:200px; font-size:12px;	padding: 4px;" 
-						disabled="#{wProcessDefFormBean.readOnly}">
+						rendered="#{!wProcessDefFormBean.readOnly}">
 						<f:selectItems
 							value="#{wProcessDefFormBean.arrivingNoticeEmailTemplatesCombo}" />
 					</h:selectOneMenu>
@@ -42,14 +52,18 @@
 			</h:panelGroup>
 
 			<h:panelGroup>
-				<h:panelGrid width="50%" columns="2" style=" width : 450px;"
+				<h:panelGrid width="50%" columns="2" style=" width : 480px;"
 					columnClasses="colStyle200px, colStyle250px">
 		
-					<h:outputText value="#{msg.label_admin_arriving_notice_template}:" styleClass="firstLeftText" />
+					<h:outputText value="#{msg.label_arriving_notice_template}:" styleClass="firstLeftText" />
+					<h:outputText value="#{wProcessDefFormBean.arrivingNoticeAdminTemplateName}" style="font-weight: bold;padding: 4px;" 
+						rendered="#{wProcessDefFormBean.readOnly and wProcessDefFormBean.arrivingNoticeAdminTemplateId != null}"/>
+					<h:outputText value="None" style="font-weight: bold;padding: 4px;" 
+						rendered="#{wProcessDefFormBean.readOnly and wProcessDefFormBean.arrivingNoticeAdminTemplateId == null}"/>
 					<h:selectOneMenu id="arriving_admin_template" 
 						value="#{wProcessDefFormBean.arrivingNoticeAdminTemplateId}"
 						style="width:200px; font-size:12px;	padding: 4px;" 
-						disabled="#{wProcessDefFormBean.readOnly}">
+						rendered="#{!wProcessDefFormBean.readOnly}">
 						<f:selectItems
 							value="#{wProcessDefFormBean.arrivingNoticeEmailTemplatesCombo}" />
 					</h:selectOneMenu>

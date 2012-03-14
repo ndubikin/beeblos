@@ -57,14 +57,17 @@
 					</div>
 				</fieldset>
 	
-				<fieldset class="demo_fieldset">
-					<legend class="demo_legend">WUserEmailAccounts loaded record</legend>
-					<div>
-						<ui:include src="panels/wUserEmailAccounts_loaded_record.xhtml">
-							<ui:param name="action" value="${action}" />
-						</ui:include>
-					</div>
-				</fieldset>
+				<h:panelGroup 
+					rendered="#{wUserEmailAccountsBean.addNewEmailMode or (wUserEmailAccountsBean.id != null and wUserEmailAccountsBean.id != 0)}">
+					<fieldset class="demo_fieldset">
+						<legend class="demo_legend">Adding new email template</legend>
+						<div>
+							<ui:include src="panels/wUserEmailAccounts_loaded_record.xhtml">
+								<ui:param name="action" value="${action}" />
+							</ui:include>
+						</div>
+					</fieldset>
+				</h:panelGroup>
 				
 			</h:panelGroup>
 			

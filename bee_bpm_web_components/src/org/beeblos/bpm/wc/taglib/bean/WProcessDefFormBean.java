@@ -1616,7 +1616,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		try {
 			
-			return UtilsVs.castStringPairToSelectitem(new WEmailTemplatesBL().getComboList("Select ...", null));
+			return UtilsVs.castStringPairToSelectitem(new WEmailTemplatesBL().getComboList("Select a template", null));
 		
 		} catch (WEmailTemplatesException e) {
 			// TODO Auto-generated catch block
@@ -1661,6 +1661,38 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		arrivingNoticeUserTemplateId = this.currentWProcessDef.getArrivingUserNoticeTemplate().getId();
 		arrivingNoticeAdminTemplateId = this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId();
+
+	}
+	
+	// dml 20120314
+	public String getArrivingNoticeUserTemplateName(){
+		
+		try {
+			
+			return new WEmailTemplatesBL().getWEmailTemplatesByPK(arrivingNoticeUserTemplateId).getName();
+		
+		} catch (WEmailTemplatesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+
+	// dml 20120314
+	public String getArrivingNoticeAdminTemplateName(){
+		
+		try {
+			
+			return new WEmailTemplatesBL().getWEmailTemplatesByPK(arrivingNoticeAdminTemplateId).getName();
+		
+		} catch (WEmailTemplatesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 
 	}
 
