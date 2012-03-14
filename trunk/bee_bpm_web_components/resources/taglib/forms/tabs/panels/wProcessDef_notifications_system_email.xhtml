@@ -17,55 +17,52 @@
 		</a4j:jsFunction>
 
 		<h:panelGrid width="98%" columns="2" style=" width : 740px; margin-left: 16px;"
-			columnClasses="colStyle200px, colStyle600px">
+			columnClasses="colStyle200px, colStyle480px">
 			
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 			
 			<h:outputText value="#{msg.label_system_email}:" styleClass="firstLeftText" />
 			
-			<h:panelGroup>
-
-				<h:panelGroup id="email_buttons">
-				
-					<h:inputText id="email"
-						value="#{wProcessDefFormBean.currentWUEA.email}"
-						style="width:350px; font-size:13px;	padding: 4px;"/>
+			<h:panelGroup id="email_buttons">
 			
-					<a4j:commandButton id="search_emails_button"
-						onclick="javascript:Richfaces.showModalPanel('mpSearchEmail');"
-						image="/images/extender.png" style="margin-left:0px;" />
-					<rich:toolTip for="search_emails_button"
-						value="#{msg.label_select_an_email_account}" />
-	
-					<a4j:commandButton id="detach_email_button"
-						action="#{wProcessDefFormBean.detachEmail}"
-						reRender="w_process_def_notifications_form" image="/images/cerrar.png"
-						style="margin-left:5px;"
-						rendered="#{wProcessDefFormBean.currentWUEA.id != null and wProcessDefFormBean.currentWUEA.id != 0}" />
-					<rich:toolTip for="detach_email_button"
-						value="#{msg.label_detach_email}" />
+				<h:inputText id="email"
+					value="#{wProcessDefFormBean.currentWUEA.email}"
+					style="width:350px; font-size:13px;	padding: 4px;"/>
+		
+				<a4j:commandButton id="search_emails_button"
+					onclick="javascript:Richfaces.showModalPanel('mpSearchEmail');"
+					image="/images/extender.png" style="margin-left:0px;" />
+				<rich:toolTip for="search_emails_button"
+					value="#{msg.label_select_an_email_account}" />
 
-					<a4j:commandButton id="check_account"
-						onclick="javascript:Richfaces.showModalPanel('mpCheckEmailAccount');"
-						reRender="w_process_def_notifications_form" 
-						image="/images/email.png"
-						rendered="#{wProcessDefFormBean.currentWUEA.id != null and wProcessDefFormBean.currentWUEA.id != 0}"
-						style="margin-left: 5px;"/>
-					<rich:toolTip for="check_account"
-						value="#{msg.label_check_email_account}" />
-						
-				</h:panelGroup>
-	
-				<h:panelGroup id="email_name">
-					<h:outputText value="#{wProcessDefFormBean.currentWUEA.name}"
-						rendered="#{wProcessDefFormBean.currentWUEA.name != null}"
-						style="margin-left: 10px; font-weight:bold;" />
-					<h:outputText value="#{msg.label_no_attached_email}"
-						rendered="#{wProcessDefFormBean.currentWUEA.name == null}"
-						style="margin-left: 10px; color:red;" />
-				</h:panelGroup>
+				<a4j:commandButton id="detach_email_button"
+					action="#{wProcessDefFormBean.detachEmail}"
+					reRender="w_process_def_notifications_form" image="/images/cerrar.png"
+					style="margin-left:5px;"
+					rendered="#{wProcessDefFormBean.currentWUEA.id != null and wProcessDefFormBean.currentWUEA.id != 0}" />
+				<rich:toolTip for="detach_email_button"
+					value="#{msg.label_detach_email}" />
 
+				<a4j:commandButton id="check_account"
+					onclick="javascript:Richfaces.showModalPanel('mpCheckEmailAccount');"
+					reRender="w_process_def_notifications_form" 
+					image="/images/email.png"
+					rendered="#{wProcessDefFormBean.currentWUEA.id != null and wProcessDefFormBean.currentWUEA.id != 0}"
+					style="margin-left: 5px;"/>
+				<rich:toolTip for="check_account"
+					value="#{msg.label_check_email_account}" />
+					
+			</h:panelGroup>
+	
+			<rich:spacer height="10" />
+			<h:panelGroup id="email_name">
+				<h:outputText value="#{wProcessDefFormBean.currentWUEA.name}"
+					rendered="#{wProcessDefFormBean.currentWUEA.name != null}"
+					style="margin-left: 10px; font-weight:bold;" />
+				<h:outputText value="#{msg.label_no_attached_email}"
+					rendered="#{wProcessDefFormBean.currentWUEA.name == null}"
+					style="margin-left: 10px; color:red;" />
 			</h:panelGroup>
 
 			<rich:spacer height="10" />
@@ -76,7 +73,7 @@
 				<h:outputText value="#{msg.label_you_should_configure_this_parameter_before_using_it}"
 					rendered="#{wProcessDefFormBean.currentWUEA.id != null and wProcessDefFormBean.currentWUEA.id != 0 and (wProcessDefFormBean.currentWUEA.outputPassword == null or wProcessDefFormBean.currentWUEA.outputPassword == '')}"
 					style="margin-left: 10px; font-weight:bold; color:red;" />
-				</h:panelGroup>
+			</h:panelGroup>
 
 			
 		</h:panelGrid>

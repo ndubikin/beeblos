@@ -206,7 +206,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 			try {
 				currentWUEA = new WUserEmailAccountsBL().getWUserEmailAccountsByPK(id);
 				
-				this.valueBtn="Save";
+				this.valueBtn="Update";
 				
 				//rrl 20120201
 				staticOutputPassword = currentWUEA.getOutputPassword();

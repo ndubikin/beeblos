@@ -17,7 +17,7 @@
 			
 			 <a4j:support event="onRowClick" reRender="w_user_email_account_form" action="#{wUserEmailAccountsBean.loadCurrentWUserEmailAccounts}">
 	              	<a4j:actionparam name="value" value="#{wuea.id}" assignTo="#{wUserEmailAccountsBean.id}"/>
-	              </a4j:support>	
+	         </a4j:support>	
 			
 			<f:facet name="header">
 				<h:outputText value="#{msg.label_user_email_accounts} (#{wUserEmailAccountsBean.wueaListSize} #{msg.label_results})" />
@@ -68,6 +68,21 @@
 		
 		<h:inputHidden id="sessionId" value="#{wUserEmailAccountsBean.currentSession}"/>
 		
+		<h:panelGrid columns="1"
+			style=" width : auto; height : auto; padding-left: 15px;"
+			columnClasses="colStyle200px"
+			rendered="#{!wUserEmailAccountsBean.addNewEmailMode and (wUserEmailAccountsBean.id == null or wUserEmailAccountsBean.id == 0)}">
+			
+			<a4j:commandLink id="new_email_account"
+				title="#{msg.label_add_new_email_account}"
+				actionListener="#{wUserEmailAccountsBean.changeFormMode}"
+				reRender="w_user_email_account_form">
+				<h:graphicImage id="imgInsertar" value="/images/insertar.png"
+					style="border:0;" />
+			</a4j:commandLink>
+				
+		</h:panelGrid>		
+	
 	</h:panelGrid>
 		
 </ui:composition>

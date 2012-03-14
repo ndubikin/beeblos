@@ -4,6 +4,7 @@ import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
@@ -16,7 +17,14 @@ import org.beeblos.bpm.core.bl.WEmailTemplateGroupsBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
 import org.beeblos.bpm.core.error.WEmailTemplateGroupsException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
+import org.beeblos.bpm.core.model.WEmailTemplateGroups;
 import org.beeblos.bpm.core.model.WEmailTemplates;
+import org.beeblos.bpm.core.model.WRoleDef;
+import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepRole;
+import org.beeblos.bpm.core.model.WStepUser;
+import org.beeblos.bpm.core.model.WTimeUnit;
+import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.Constantes;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -111,6 +119,32 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 
 	}
 	
+	// SET EMTPY OBJECTS OF CURRENT OBJECT TO NULL TO AVOID PROBLEMS
+	// WITH HIBERNATE RELATIONS AND CASCADES
+	private void setModel() {
+		
+		if(currentWUET != null){
+			
+			if ( currentWUET.getwEmailTemplateGroup() != null && 
+					currentWUET.getwEmailTemplateGroup().getId() == 0 ) {
+				currentWUET.setwEmailTemplateGroup( null );
+			}
+			
+		}
+	}
+	
+	// CREATE NULL PROPERTIES OF OBJECT TYPE TO AVOID PROBLEMS
+	// WITH VIEW AND ITS REFERENES TO THESE OBJECTS ...
+	private void recoverNullObjects(){
+		
+		if(currentWUET != null){
+			
+			if ( currentWUET.getwEmailTemplateGroup() == null ) {
+				currentWUET.setwEmailTemplateGroup( new WEmailTemplateGroups() );
+			}
+		}
+
+	}
 	// dml 20120223
 	public void loadWEmailTemplatesLists(){
 		
@@ -119,6 +153,8 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 			this.wuetList = (ArrayList<WEmailTemplates>) new WEmailTemplatesBL()
 					.getWEmailTemplatesList();				
 				 		
+			recoverNullObjects();
+
 		} catch (WEmailTemplatesException e) {
 			logger.error("Ocurrio Un Error: No debe " 
 					+ e.getMessage() + " : " + e.getCause());
@@ -154,6 +190,7 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 				actualizar(); //rrl 20120201
 			} else {
 				agregar();  //rrl 20120201
+				recoverNullObjects();
 			}
 			_reset();
 		}
@@ -193,9 +230,13 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 			savedUCE.setTemplate(currentWUET.getTemplate());		
 			savedUCE.setMobileTemplate(currentWUET.getMobileTemplate());
 			
+			setModel();
+
 			new WEmailTemplatesBL()
 							.update(savedUCE, this.idUser);
 					
+			recoverNullObjects();
+
 			retorno=Constantes.SUCCESS_UCE;
 
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
@@ -225,7 +266,11 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 
 		try {
 			
+			setModel();
+
 			uceBL.add(currentWUET, idUser);
+			
+			recoverNullObjects();
 			
 			retorno=Constantes.SUCCESS_UCE;
 			
@@ -460,14 +505,16 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 	}
 
 	// nes - esto está en estudio ...
-	public void loadCurrentWEmailTemplates(){
+	public void loadCurrentWEmailTemplate(){
 		
 		System.out.println("------------->>>>>>>>< cargar current tipo de sancion:"+id);
 		if (id!=null && id!=0) {
 			try {
 				currentWUET = new WEmailTemplatesBL().getWEmailTemplatesByPK(id);
 				
-				this.valueBtn="Save";
+				recoverNullObjects();
+				
+				this.valueBtn="Update";
 				
 			} catch (WEmailTemplatesException e) {
 				// TODO Auto-generated catch block
