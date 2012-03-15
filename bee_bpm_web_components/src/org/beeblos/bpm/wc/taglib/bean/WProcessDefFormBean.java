@@ -122,9 +122,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private String returnStatement;
 	
 	// dml 20120306
-	private Integer arrivingNoticeUserTemplateId;
-	private Integer arrivingNoticeAdminTemplateId;
-
+	private WEmailTemplates arrivingUserNoticeTemplate;
+	private WEmailTemplates arrivingAdminNoticeTemplate;
+	
+	private List<SelectItem> arrivingNoticeEmailTemplatesCombo = new ArrayList<SelectItem>();
+	
 	public WProcessDefFormBean() {
 		super();
 		init();
@@ -171,8 +173,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.returnStatement = "";
 
 		// dml 20120306
-		this.arrivingNoticeUserTemplateId = 0;
-		this.arrivingNoticeAdminTemplateId = 0;
+		this.arrivingUserNoticeTemplate = new WEmailTemplates();
+		this.arrivingAdminNoticeTemplate = new WEmailTemplates();
+		
+		loadArrivingNoticeEmailTemplatesCombo();
 		
 		// dml 20120223
 		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
@@ -353,12 +357,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			// dml 20120306
 			if (currentWProcessDef.getArrivingUserNoticeTemplate() == null) {
-				currentWProcessDef.setArrivingUserNoticeTemplate(new WEmailTemplates());
+				currentWProcessDef.setArrivingUserNoticeTemplate(new WEmailTemplates(EMPTY_OBJECT));
 			}
 
 			// dml 20120306
 			if (currentWProcessDef.getArrivingAdminNoticeTemplate() == null) {
-				currentWProcessDef.setArrivingAdminNoticeTemplate(new WEmailTemplates());
+				currentWProcessDef.setArrivingAdminNoticeTemplate(new WEmailTemplates(EMPTY_OBJECT));
 			}
 
 		}
@@ -930,22 +934,31 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.returnStatement = returnStatement;
 	}
 
-	public Integer getArrivingNoticeUserTemplateId() {
-		return arrivingNoticeUserTemplateId;
+	public WEmailTemplates getArrivingUserNoticeTemplate() {
+		return arrivingUserNoticeTemplate;
 	}
 
-	public void setArrivingNoticeUserTemplateId(
-			Integer arrivingNoticeUserTemplateId) {
-		this.arrivingNoticeUserTemplateId = arrivingNoticeUserTemplateId;
+	public void setArrivingUserNoticeTemplate(
+			WEmailTemplates arrivingUserNoticeTemplate) {
+		this.arrivingUserNoticeTemplate = arrivingUserNoticeTemplate;
 	}
 
-	public Integer getArrivingNoticeAdminTemplateId() {
-		return arrivingNoticeAdminTemplateId;
+	public WEmailTemplates getArrivingAdminNoticeTemplate() {
+		return arrivingAdminNoticeTemplate;
 	}
 
-	public void setArrivingNoticeAdminTemplateId(
-			Integer arrivingNoticeAdminTemplateId) {
-		this.arrivingNoticeAdminTemplateId = arrivingNoticeAdminTemplateId;
+	public void setArrivingAdminNoticeTemplate(
+			WEmailTemplates arrivingAdminNoticeTemplate) {
+		this.arrivingAdminNoticeTemplate = arrivingAdminNoticeTemplate;
+	}
+
+	public List<SelectItem> getArrivingNoticeEmailTemplatesCombo() {
+		return arrivingNoticeEmailTemplatesCombo;
+	}
+
+	public void setArrivingNoticeEmailTemplatesCombo(
+			List<SelectItem> arrivingNoticeEmailTemplatesCombo) {
+		this.arrivingNoticeEmailTemplatesCombo = arrivingNoticeEmailTemplatesCombo;
 	}
 
 	public void deleteWProcessRole() {
@@ -1612,18 +1625,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	// dml 20120306
-	public List<SelectItem> getArrivingNoticeEmailTemplatesCombo() {
+	private void loadArrivingNoticeEmailTemplatesCombo() {
 		
 		try {
 			
-			return UtilsVs.castStringPairToSelectitem(new WEmailTemplatesBL().getComboList("Select a template", null));
+			arrivingNoticeEmailTemplatesCombo = UtilsVs.castStringPairToSelectitem(new WEmailTemplatesBL().getComboList("Select a template", null));
 		
 		} catch (WEmailTemplatesException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return new ArrayList<SelectItem>();
 		
 	}
 	
@@ -1641,17 +1652,17 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 		
 		// para que no de problemas al cambiar directamente el id del objeto tengo que crear uno nuevo
-		// y volverle a pasar el de la vista para que funcione biene 
+		// y volverle a pasar el de la vista para que funcione bien 
 		if ( !this.currentWProcessDef.getArrivingUserNoticeTemplate().getId()
-				.equals(arrivingNoticeUserTemplateId)){
+				.equals(arrivingUserNoticeTemplate.getId())){
 			this.currentWProcessDef.setArrivingUserNoticeTemplate(new WEmailTemplates());
-			this.currentWProcessDef.getArrivingUserNoticeTemplate().setId(arrivingNoticeUserTemplateId);
+			this.currentWProcessDef.getArrivingUserNoticeTemplate().setId(arrivingUserNoticeTemplate.getId());
 		}
 		
 		if (!this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId()
-				.equals(arrivingNoticeAdminTemplateId)) {
+				.equals(arrivingAdminNoticeTemplate.getId())) {
 			this.currentWProcessDef.setArrivingAdminNoticeTemplate(new WEmailTemplates());
-			this.currentWProcessDef.getArrivingAdminNoticeTemplate().setId(arrivingNoticeAdminTemplateId);
+			this.currentWProcessDef.getArrivingAdminNoticeTemplate().setId(arrivingAdminNoticeTemplate.getId());
 		}
 		
 	}
@@ -1659,41 +1670,28 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120306
 	private void loadEmailTemplateVariables(){
 		
-		arrivingNoticeUserTemplateId = this.currentWProcessDef.getArrivingUserNoticeTemplate().getId();
-		arrivingNoticeAdminTemplateId = this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId();
+		WEmailTemplatesBL wetBL = new WEmailTemplatesBL();
+		
+		try {
+			if (this.currentWProcessDef.getArrivingUserNoticeTemplate() != null
+					&& this.currentWProcessDef.getArrivingUserNoticeTemplate().getId() != null) {
+				arrivingUserNoticeTemplate = wetBL.getWEmailTemplatesByPK(this.currentWProcessDef.getArrivingUserNoticeTemplate().getId());
+			} else {
+				arrivingUserNoticeTemplate = new WEmailTemplates();
+			}
+
+			if (this.currentWProcessDef.getArrivingAdminNoticeTemplate() != null
+					&& this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId() != null) {
+				arrivingAdminNoticeTemplate = wetBL.getWEmailTemplatesByPK(this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId());
+			} else {
+				arrivingAdminNoticeTemplate = new WEmailTemplates();
+			}
+			
+		} catch (WEmailTemplatesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	
-	// dml 20120314
-	public String getArrivingNoticeUserTemplateName(){
-		
-		try {
-			
-			return new WEmailTemplatesBL().getWEmailTemplatesByPK(arrivingNoticeUserTemplateId).getName();
-		
-		} catch (WEmailTemplatesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-		
-	}
-
-	// dml 20120314
-	public String getArrivingNoticeAdminTemplateName(){
-		
-		try {
-			
-			return new WEmailTemplatesBL().getWEmailTemplatesByPK(arrivingNoticeAdminTemplateId).getName();
-		
-		} catch (WEmailTemplatesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-
-	}
-
 }
