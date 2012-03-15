@@ -26,17 +26,17 @@ import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
-import org.beeblos.bpm.core.bl.WUserEmailAccountsBL;
-import org.beeblos.bpm.core.email.bl.EnviarEmailBL;
+import org.beeblos.bpm.core.bl.WEmailAccountBL;
+import org.beeblos.bpm.core.email.bl.SendEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
-import org.beeblos.bpm.core.error.EnviarEmailException;
+import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.error.WUserEmailAccountsException;
+import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -47,7 +47,7 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.WUserEmailAccounts;
+import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
@@ -107,9 +107,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private List<String> currentStepValidResponses;
 	
 	// dml 20120223
-	private WUserEmailAccounts currentWUEA;
-	private List<WUserEmailAccounts> wUserEmailAccountsList;
-	private Integer wUserEmailAccountsListResults;
+	private WEmailAccount currEmailAccount;
+	private List<WEmailAccount> wEmailAccountList;
+	private Integer wEmailAccountListResults;
 	private String checkingEmailAccount;
 	
 	// dml 20120227
@@ -179,7 +179,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		loadArrivingNoticeEmailTemplatesCombo();
 		
 		// dml 20120223
-		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
+		this.setCurrEmailAccount(new WEmailAccount(EMPTY_OBJECT));
 
 		recoverNullObjects();
 
@@ -212,9 +212,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				loadStepSequenceList();
 				
 				//dml 20120223
-				if (currentWProcessDef.getwUserEmailAccounts() != null){
+				if (currentWProcessDef.getSystemEmailAccount() != null){
 				
-					this.currentWUEA = currentWProcessDef.getwUserEmailAccounts();
+					this.currEmailAccount = currentWProcessDef.getSystemEmailAccount();
 
 				}
 			}
@@ -877,29 +877,29 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.currentWProcessUser = currentWProcessUser;
 	}
 
-	public WUserEmailAccounts getCurrentWUEA() {
-		return currentWUEA;
+	public WEmailAccount getCurrEmailAccount() {
+		return currEmailAccount;
 	}
 
-	public void setCurrentWUEA(WUserEmailAccounts currentWUEA) {
-		this.currentWUEA = currentWUEA;
+	public void setCurrEmailAccount(WEmailAccount currEmailAccount) {
+		this.currEmailAccount = currEmailAccount;
 	}
 
-	public List<WUserEmailAccounts> getwUserEmailAccountsList() {
-		return wUserEmailAccountsList;
+	public List<WEmailAccount> getwEmailAccountList() {
+		return wEmailAccountList;
 	}
 
-	public void setwUserEmailAccountsList(List<WUserEmailAccounts> wUserEmailAccountsList) {
-		this.wUserEmailAccountsList = wUserEmailAccountsList;
+	public void setwEmailAccountList(List<WEmailAccount> wEmailAccountList) {
+		this.wEmailAccountList = wEmailAccountList;
 	}
 
-	public Integer getwUserEmailAccountsListResults() {
-		return wUserEmailAccountsListResults;
+	public Integer getwEmailAccountListResults() {
+		return wEmailAccountListResults;
 	}
 
-	public void setwUserEmailAccountsListResults(
-			Integer wUserEmailAccountsListResults) {
-		this.wUserEmailAccountsListResults = wUserEmailAccountsListResults;
+	public void setwEmailAccountListResults(
+			Integer wEmailAccountListResults) {
+		this.wEmailAccountListResults = wEmailAccountListResults;
 	}
 
 	public String getCheckingEmailAccount() {
@@ -1431,9 +1431,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
 		
-		this.setCurrentWUEA(new WUserEmailAccounts(EMPTY_OBJECT));
+		this.setCurrEmailAccount(new WEmailAccount(EMPTY_OBJECT));
 		
-		this.currentWProcessDef.setwUserEmailAccounts(null);
+		this.currentWProcessDef.setSystemEmailAccount(null);
 		
 		try {
 			
@@ -1459,22 +1459,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
 		
-		if (currentWUEA.getId() != null) {
+		if (currEmailAccount.getId() != null) {
 			
 			try {
-				currentWUEA = new WUserEmailAccountsBL().getWUserEmailAccountsByPK(currentWUEA.getId());
+				currEmailAccount = new WEmailAccountBL().getWEmailAccountByPK(currEmailAccount.getId());
 
-				this.currentWProcessDef.setwUserEmailAccounts(currentWUEA);
+				this.currentWProcessDef.setSystemEmailAccount(currEmailAccount);
 				
 				persistCurrentObject();
 
-			} catch (WUserEmailAccountsException e) {
+			} catch (WEmailAccountException e) {
 
 				messageStyle=errorMessageStyle();
 				setShowHeaderMessage(true);
-				String message = "WUserEmailAccountsException: Method addEmailAccount in WRoleDefBean: "
+				String message = "WEmailAccountException: Method addEmailAccount in WRoleDefBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WUserEmailAccountsException" };
+				String params[] = { message + ",", "WEmailAccountException" };
 				agregarMensaje("203", message, params, FGPException.WARN);
 				logger.error(message);
 
@@ -1499,10 +1499,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		try {
 			
-			wUserEmailAccountsList = new WUserEmailAccountsBL().wUserEmailAccountsFinder(emailNameFilter, emailNameFilter);
+			wEmailAccountList = new WEmailAccountBL().wEmailAccountFinder(emailNameFilter, emailNameFilter);
 
-			setwUserEmailAccountsListResults(wUserEmailAccountsList.size());
-		} catch (WUserEmailAccountsException e) {
+			setwEmailAccountListResults(wEmailAccountList.size());
+		} catch (WEmailAccountException e) {
 
 			e.printStackTrace();
 		}
@@ -1524,7 +1524,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		Email email = new Email();
 		
-		if (currentWUEA != null){
+		if (currEmailAccount != null){
 			
 			email = setEmailParameters();
 			
@@ -1536,13 +1536,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				agregarMensaje(message);
 				setShowHeaderMessage(true);
 		
-			} catch (EnviarEmailException e) {
+			} catch (SendEmailException e) {
 		
 				messageStyle=errorMessageStyle();
 				setShowHeaderMessage(true);
-				String message = "EnviarEmailException: Method checkEmailAccount in WRoleDefBean: "
+				String message = "SendEmailException: Method checkEmailAccount in WRoleDefBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "EnviarEmailException" };
+				String params[] = { message + ",", "SendEmailException" };
 				agregarMensaje("203", message, params, FGPException.WARN);
 				logger.error(message);
 		
@@ -1558,14 +1558,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		Email checkingEmail = new Email();
 		
-		checkingEmail.setFrom(currentWUEA.getEmail());
-		checkingEmail.setIdFrom(currentWUEA.getId());
+		checkingEmail.setFrom(currEmailAccount.getEmail());
+		checkingEmail.setIdFrom(currEmailAccount.getId());
 		
 		checkingEmail.setTo(checkingEmailAccount);
-		checkingEmail.setCc(currentWUEA.getEmail());
+		checkingEmail.setCc(currEmailAccount.getEmail());
 		checkingEmail.setSubject("Checking email account");
-		checkingEmail.setBodyText("The email account "+currentWUEA.getEmail()+" has a valid configuration.");
-		checkingEmail.setPwd(currentWUEA.getOutputPassword());
+		checkingEmail.setBodyText("The email account "+currEmailAccount.getEmail()+" has a valid configuration.");
+		checkingEmail.setPwd(currEmailAccount.getOutputPassword());
 		
 		return checkingEmail;	
 		
@@ -1573,7 +1573,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 	
-	public void enviar(Email email) throws EnviarEmailException{
+	public void enviar(Email email) throws SendEmailException{
 		
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
@@ -1599,7 +1599,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	        	}
 	        }
 			
-			EnviarEmailBL bl = new EnviarEmailBL();	
+			SendEmailBL bl = new SendEmailBL();	
 			//Mail contendra ficheros adjuntos
 			//Limpiar ficheros del email 
 			email.getFiles().clear();

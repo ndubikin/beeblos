@@ -13,14 +13,14 @@
 			onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 			onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"				
 			rows="5" styleClass="table" 
-			value="#{wUserEmailAccountsBean.wueaList}" var="wuea" >
+			value="#{wEmailAccountBean.emailAccountList}" var="wuea" >
 			
-			 <a4j:support event="onRowClick" reRender="w_user_email_account_form" action="#{wUserEmailAccountsBean.loadCurrentWUserEmailAccounts}">
-	              	<a4j:actionparam name="value" value="#{wuea.id}" assignTo="#{wUserEmailAccountsBean.id}"/>
+			 <a4j:support event="onRowClick" reRender="w_user_email_account_form" action="#{wEmailAccountBean.loadCurrentWEmailAccount}">
+	              	<a4j:actionparam name="value" value="#{wuea.id}" assignTo="#{wEmailAccountBean.id}"/>
 	         </a4j:support>	
 			
 			<f:facet name="header">
-				<h:outputText value="#{msg.label_user_email_accounts} (#{wUserEmailAccountsBean.wueaListSize} #{msg.label_results})" />
+				<h:outputText value="#{msg.label_user_email_accounts} (#{wEmailAccountBean.emailAccountListSize} #{msg.label_results})" />
 			</f:facet>
 	
 	          	<rich:column  style="width:10%; text-align: left;"> 
@@ -66,16 +66,16 @@
 	
 		<rich:spacer height="10" />
 		
-		<h:inputHidden id="sessionId" value="#{wUserEmailAccountsBean.currentSession}"/>
+		<h:inputHidden id="sessionId" value="#{wEmailAccountBean.currentSession}"/>
 		
 		<h:panelGrid columns="1"
 			style=" width : auto; height : auto; padding-left: 15px;"
 			columnClasses="colStyle200px"
-			rendered="#{!wUserEmailAccountsBean.addNewEmailMode and (wUserEmailAccountsBean.id == null or wUserEmailAccountsBean.id == 0)}">
+			rendered="#{!wEmailAccountBean.addNewEmailMode and (wEmailAccountBean.id == null or wEmailAccountBean.id == 0)}">
 			
 			<a4j:commandLink id="new_email_account"
 				title="#{msg.label_add_new_email_account}"
-				actionListener="#{wUserEmailAccountsBean.changeFormMode}"
+				actionListener="#{wEmailAccountBean.changeFormMode}"
 				reRender="w_user_email_account_form">
 				<h:graphicImage id="imgInsertar" value="/images/insertar.png"
 					style="border:0;" />

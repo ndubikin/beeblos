@@ -19,6 +19,7 @@ import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
@@ -912,19 +913,31 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return new WProcessWorkUtil().loadWProcessWorkFormBean(idWork);
 
 	}
+	
+	
 	//NOTA: ELIMINAR ESTE METODO SI NO SE VA A LLAMAR DESDE EL CONTEXTUAL DE UN WSTEPWORK A ESTE MÉTODO
 	// dml 20120307
-	public void processWStepWork(){
-		
-		try {
-			currentWStepWork = new WStepWorkBL().getWStepWorkByPK(this.idStepWork, getCurrentUserId());
-		} catch (WStepWorkException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		new WStepWorkBL()._emailNotificationArrivingStep(currentWStepWork);
-		
-	}
+//	public void processWStepWork(){
+//		
+//		try {
+//			currentWStepWork = new WStepWorkBL().getWStepWorkByPK(this.idStepWork, getCurrentUserId());
+//		} catch (WStepWorkException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		if ( currentWStepWork.getCurrentStep().isEmailNotification()  ) {
+//			try {
+//				new WStepWorkBL()._emailNotificationArrivingStep(currentWStepWork,"");
+//			} catch (SendEmailException e) {
+//				logger.info("SendEmailException: there is not possible sending email notification to users involved");
+//			} catch (Exception e) {
+//				logger.info("Exception: there is not possible sending email notification to users involved");
+//			}
+//		}
+//		
+//		
+//	}
 
 }

@@ -11,15 +11,15 @@
 		columnClasses="colStyle140px, colStyle480px, colStyle100px">
 		
 		<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
-		<h:inputText id="name_filter" value="#{wUserEmailAccountsBean.nameFilter}"
+		<h:inputText id="name_filter" value="#{wEmailAccountBean.nameFilter}"
 			style="width:400px; font-size:12px;	padding: 4px;" />
 		<h:commandButton id="searchButton" value="#{msg.label_search}"
-			action="#{wUserEmailAccountsBean.searchWUserEmailAccounts}"
+			action="#{wEmailAccountBean.searchWEmailAccount}"
 			style="width:100px; margin-left:30px;"
 			reRender="w_user_email_account_form"/>
 
 		<h:outputText value="#{msg.label_email}:" styleClass="firstLeftText" />
-		<h:inputText id="email_filter" value="#{wUserEmailAccountsBean.emailFilter}"
+		<h:inputText id="email_filter" value="#{wEmailAccountBean.emailFilter}"
 			style="width:400px; font-size:12px;	padding: 4px;" />
 		<rich:spacer height="10" />
 
