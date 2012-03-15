@@ -15,11 +15,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WUserDefBL;
-import org.beeblos.bpm.core.bl.WUserEmailAccountsBL;
+import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.error.WUserEmailAccountsException;
+import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.WUserEmailAccounts;
+import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.util.DesEncrypter;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.Constantes;
@@ -27,23 +27,23 @@ import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
-public class WUserEmailAccountsBean extends CoreManagedBean {
+public class WEmailAccountBean extends CoreManagedBean {
 
 	private static final long serialVersionUID = -4021524365949197101L;
 
-	private static final Log logger = LogFactory.getLog(WUserEmailAccountsBean.class);
+	private static final Log logger = LogFactory.getLog(WEmailAccountBean.class);
 	
 
 	
 //	private Usuario usuario;
 	
 	private Integer id; // el tipo de sancion q estoy editando en caso de hacerlo 
-	private WUserEmailAccounts currentWUEA;
+	private WEmailAccount currEmailAccount;
 	
-	private List<WUserEmailAccounts> wueaList = new ArrayList<WUserEmailAccounts>();
+	private List<WEmailAccount> emailAccountList = new ArrayList<WEmailAccount>();
 
 	//dml 20120223
-	private List<WUserEmailAccounts> wueaListByUser = new ArrayList<WUserEmailAccounts>();
+	private List<WEmailAccount> emailAccountListByUser = new ArrayList<WEmailAccount>();
 		
 	private Integer idUser;
 	private List<SelectItem> wUserDefList = new ArrayList<SelectItem>();
@@ -75,7 +75,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	private boolean addNewEmailMode;
 	
 	
-	public WUserEmailAccountsBean() {
+	public WEmailAccountBean() {
 
 		super();
 		ContextoSeguridad cs = (ContextoSeguridad) getSession().getAttribute(
@@ -92,9 +92,9 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	
 	private void _init() {
 		
-		this.currentWUEA = new WUserEmailAccounts(EMPTY_OBJECT);
-		this.currentWUEA.setFormat("Text");  // rrl 20110727 //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
-		this.currentWUEA.setwUserDef(getCurrentUser());
+		this.currEmailAccount = new WEmailAccount(EMPTY_OBJECT);
+		this.currEmailAccount.setFormat("Text");  // rrl 20110727 //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
+		this.currEmailAccount.setwUserDef(getCurrentUser());
 		
 		this.id=0;
 
@@ -105,7 +105,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		outputPasswordEditable = false;
 		outputPasswordChanged = false;
 		
-		loadWUserEmailAccountsLists();
+		loadWEmailAccountLists();
 		
 		this.valueBtn="Add";
 		this.addNewEmailMode=false;
@@ -121,27 +121,27 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		
 		this.idUser = cs.getUsuario().getIdUsuario();
 		
-		this.currentWUEA = new WUserEmailAccounts(EMPTY_OBJECT);
-		this.currentWUEA.setFormat("Text");  // rrl 20110727 //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
-		this.currentWUEA.setwUserDef(getCurrentUser());
+		this.currEmailAccount = new WEmailAccount(EMPTY_OBJECT);
+		this.currEmailAccount.setFormat("Text");  // rrl 20110727 //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
+		this.currEmailAccount.setwUserDef(getCurrentUser());
 		this.id=0;
 		
 /*		try {
-			this.wueaList = (ArrayList<WUserEmailAccounts>) new WUserEmailAccountsBL()
-				.getWUserEmailAccountsListByUser(this.idUser);
+			this.emailAccountList = (ArrayList<WEmailAccount>) new WEmailAccountBL()
+				.getWEmailAccountListByUser(this.idUser);
 
 				 		
-		} catch (WUserEmailAccountsException e) {
+		} catch (WEmailAccountException e) {
 			logger.error("Ocurrio Un Error: No debe " 
 					+ e.getMessage() + " : " + e.getCause());
 		
-			String params[] = {this.currentWUEA.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
+			String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
 				+ e.getMessage() + " : " + e.getCause() };
 			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
 		}
 	*/
 		// dml 20120223
-		loadWUserEmailAccountsLists();
+		loadWEmailAccountLists();
 		
 		this.disableDeleteButton=true;
 		this.disableSaveButton = true;
@@ -161,21 +161,21 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	}
 	
 	// dml 20120223
-	public void loadWUserEmailAccountsLists(){
+	public void loadWEmailAccountLists(){
 		
 		try {
 			
-			this.wueaListByUser = (ArrayList<WUserEmailAccounts>) new WUserEmailAccountsBL()
-				.getWUserEmailAccountsListByUser(this.idUser);
+			this.emailAccountListByUser = (ArrayList<WEmailAccount>) new WEmailAccountBL()
+				.getWEmailAccountListByUser(this.idUser);
 
-			this.wueaList = (ArrayList<WUserEmailAccounts>) new WUserEmailAccountsBL()
-					.getWUserEmailAccountsList();				
+			this.emailAccountList = (ArrayList<WEmailAccount>) new WEmailAccountBL()
+					.getWEmailAccountList();				
 				 		
-		} catch (WUserEmailAccountsException e) {
+		} catch (WEmailAccountException e) {
 			logger.error("Ocurrio Un Error: No debe " 
 					+ e.getMessage() + " : " + e.getCause());
 		
-			String params[] = {this.currentWUEA.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
+			String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
 				+ e.getMessage() + " : " + e.getCause() };
 			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
 		}
@@ -192,24 +192,24 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 			this.disableDeleteButton=true;
 		} else {
 			//this.disableSaveButton=true;
-			wueaList=null;
+			emailAccountList=null;
 			
 		}
 		_reset();
 	}
 	
 	// nes - esto está en estudio ...
-	public void loadCurrentWUserEmailAccounts(){
+	public void loadCurrentWEmailAccount(){
 		
 		System.out.println("------------->>>>>>>>< cargar current tipo de sancion:"+id);
 		if (id!=null && id!=0) {
 			try {
-				currentWUEA = new WUserEmailAccountsBL().getWUserEmailAccountsByPK(id);
+				currEmailAccount = new WEmailAccountBL().getWEmailAccountByPK(id);
 				
 				this.valueBtn="Update";
 				
 				//rrl 20120201
-				staticOutputPassword = currentWUEA.getOutputPassword();
+				staticOutputPassword = currEmailAccount.getOutputPassword();
 				if (staticOutputPassword!=null && !"".equals(staticOutputPassword.trim())) {
 					outputPasswordChanged = false;
 					outputPasswordEditable = false;
@@ -218,7 +218,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 					outputPasswordEditable = true;
 				}
 				
-			} catch (WUserEmailAccountsException e) {
+			} catch (WEmailAccountException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -238,9 +238,9 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		if (idUser==null || idUser==0) {
 			//martin - 20100930
 			logger.error("Ocurrio Un Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario [ Nombre: "
-					+ this.currentWUEA.getName());
+					+ this.currEmailAccount.getName());
 			
-			String params[] = {this.currentWUEA.getName() + ",", "Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario." }; // nes 20101013				
+			String params[] = {this.currEmailAccount.getName() + ",", "Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario." }; // nes 20101013				
 			agregarMensaje("211",null,params,FGPException.ERROR);	
 		} else { 
 			
@@ -266,25 +266,25 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 			// uce.setUsuario(usuario); COMENTARIO: no es necesario hacer el set porque no se cambia el usuario
 
 			// como no lo tengo lo leo
-			WUserEmailAccounts savedUCE = new WUserEmailAccountsBL()
-							.getWUserEmailAccountsByPK(id);
+			WEmailAccount savedUCE = new WEmailAccountBL()
+							.getWEmailAccountByPK(id);
 			
 			
-			savedUCE.setName(currentWUEA.getName());
-			savedUCE.setEmail(currentWUEA.getEmail());
-			savedUCE.setReplyTo(currentWUEA.getReplyTo());
-//			savedUCE.setUceTextoDeLaFirma(currentWUEA.getUceTextoDeLaFirma());    //rrl 20110727 Campo no se utiliza
+			savedUCE.setName(currEmailAccount.getName());
+			savedUCE.setEmail(currEmailAccount.getEmail());
+			savedUCE.setReplyTo(currEmailAccount.getReplyTo());
+//			savedUCE.setUceTextoDeLaFirma(currEmailAccount.getUceTextoDeLaFirma());    //rrl 20110727 Campo no se utiliza
 			
 //			//HZC:11012011, cifrar la contrasenia
 //		    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
-//			savedUCE.setContraseniaSalida(encrypter.encrypt(currentWUEA.getContraseniaSalida()));
+//			savedUCE.setContraseniaSalida(encrypter.encrypt(currEmailAccount.getContraseniaSalida()));
 			
 			//rrl 20120102
 			if (outputPasswordChanged) {
 				
-				if (currentWUEA.getOutputPassword()!=null && !"".equals(currentWUEA.getOutputPassword())) {
+				if (currEmailAccount.getOutputPassword()!=null && !"".equals(currEmailAccount.getOutputPassword())) {
 				    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
-					savedUCE.setOutputPassword(encrypter.encrypt(currentWUEA.getOutputPassword()));
+					savedUCE.setOutputPassword(encrypter.encrypt(currEmailAccount.getOutputPassword()));
 				} else {
 					savedUCE.setOutputPassword(null);
 				}
@@ -292,50 +292,50 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 				savedUCE.setOutputPassword(staticOutputPassword);
 			}
 			
-			savedUCE.setFormat(currentWUEA.getFormat());   //rrl 20110727 Campo no se utiliza  //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
+			savedUCE.setFormat(currEmailAccount.getFormat());   //rrl 20110727 Campo no se utiliza  //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
 			
 			//rrl 20110727 Campo no se utiliza
 			// Rellena el texto de la firma con el tipo Texto/Html
-//			if (currentWUEA.getFormato().equals("Texto")) {
+//			if (currEmailAccount.getFormato().equals("Texto")) {
 //				savedUCE.setUceFirmaAdjuntaHtml(null);
-//				savedUCE.setUceFirmaAdjuntaTxt(currentWUEA.getUceFirmaAdjuntaTxt());
+//				savedUCE.setUceFirmaAdjuntaTxt(currEmailAccount.getUceFirmaAdjuntaTxt());
 //			} else {
-//				savedUCE.setUceFirmaAdjuntaHtml(currentWUEA.getUceFirmaAdjuntaHtml());
+//				savedUCE.setUceFirmaAdjuntaHtml(currEmailAccount.getUceFirmaAdjuntaHtml());
 //				savedUCE.setUceFirmaAdjuntaTxt(null);
 //			}
 			
-			savedUCE.setSignatureTxt(currentWUEA.getSignatureTxt());
-			savedUCE.setSignatureHtml(currentWUEA.getSignatureHtml());
+			savedUCE.setSignatureTxt(currEmailAccount.getSignatureTxt());
+			savedUCE.setSignatureHtml(currEmailAccount.getSignatureHtml());
 				
-			savedUCE.setIdentificationMethod(currentWUEA.getIdentificationMethod());
-			savedUCE.setOutputIdentificationMethod(currentWUEA.getOutputIdentificationMethod());
-			savedUCE.setInputServerName(currentWUEA.getInputServerName());
-			savedUCE.setOutputServerName(currentWUEA.getOutputServerName());
-			savedUCE.setOutputUserName(currentWUEA.getOutputUserName());
-			savedUCE.setUserDefaultAccount(currentWUEA.isUserDefaultAccount());
-			savedUCE.setInputPort(currentWUEA.getInputPort());
-			savedUCE.setOutputPort(currentWUEA.getOutputPort());
-			savedUCE.setConnectionSecurity(currentWUEA.getConnectionSecurity());
-			savedUCE.setOutputConnectionSecurity(currentWUEA.getOutputConnectionSecurity());
-			savedUCE.setInputServerType(currentWUEA.getInputServerType());
+			savedUCE.setIdentificationMethod(currEmailAccount.getIdentificationMethod());
+			savedUCE.setOutputIdentificationMethod(currEmailAccount.getOutputIdentificationMethod());
+			savedUCE.setInputServerName(currEmailAccount.getInputServerName());
+			savedUCE.setOutputServerName(currEmailAccount.getOutputServerName());
+			savedUCE.setOutputUserName(currEmailAccount.getOutputUserName());
+			savedUCE.setUserDefaultAccount(currEmailAccount.isUserDefaultAccount());
+			savedUCE.setInputPort(currEmailAccount.getInputPort());
+			savedUCE.setOutputPort(currEmailAccount.getOutputPort());
+			savedUCE.setConnectionSecurity(currEmailAccount.getConnectionSecurity());
+			savedUCE.setOutputConnectionSecurity(currEmailAccount.getOutputConnectionSecurity());
+			savedUCE.setInputServerType(currEmailAccount.getInputServerType());
 		
 			
-			new WUserEmailAccountsBL()
+			new WEmailAccountBL()
 							.update(savedUCE, this.idUser);
 					
 			retorno=Constantes.SUCCESS_UCE;
 
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
-		} catch (WUserEmailAccountsException e) {
+		} catch (WEmailAccountException e) {
 
 			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Actualizar el WUserEmailAccounts: [ id = " 
-					+ this.currentWUEA.getId() + " ; Nombre: "
-					+ this.currentWUEA.getName()
+			logger.error("Ocurrio Un Error al tratar de Actualizar el WEmailAccount: [ id = " 
+					+ this.currEmailAccount.getId() + " ; Nombre: "
+					+ this.currEmailAccount.getName()
 					+"] "	+ e.getMessage() + " : " + e.getCause());
 			
-			String params[] = {this.currentWUEA.getId() + ",", "Error al actualizar WUserEmailAccounts "+e.getMessage()+"\n"+e.getCause() }; // nes 20101013				
+			String params[] = {this.currEmailAccount.getId() + ",", "Error al actualizar WEmailAccount "+e.getMessage()+"\n"+e.getCause() }; // nes 20101013				
 			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);		
 			
 		}
@@ -348,50 +348,50 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 
 		String retorno = FAIL;
 
-		WUserEmailAccountsBL uceBL = new WUserEmailAccountsBL();
+		WEmailAccountBL uceBL = new WEmailAccountBL();
 
 		try {
 
 			// if it is adding the new email account from the CRUD...
-/*			if (currentWUEA.getwUserDef() != null) {
+/*			if (currEmailAccount.getwUserDef() != null) {
 				
 				// nes 20101013
-				currentWUEA.setwUserDef(new WUserDefBL().getWUserDefByPK(this.idUser));
+				currEmailAccount.setwUserDef(new WUserDefBL().getWUserDefByPK(this.idUser));
 
 			}
 */			
 			// rrl 20110727 Campo no se utiliza
 			// Rellena el texto de la firma con el tipo Texto/Html
-//			if (currentWUEA.getFormato().equals("Texto")) {
-//				currentWUEA.setUceFirmaAdjuntaHtml(null);
+//			if (currEmailAccount.getFormato().equals("Texto")) {
+//				currEmailAccount.setUceFirmaAdjuntaHtml(null);
 //			} else {
-//				currentWUEA.setUceFirmaAdjuntaTxt(null);
+//				currEmailAccount.setUceFirmaAdjuntaTxt(null);
 //			}
 
 			//rrl 20120201
-			if (currentWUEA.getOutputPassword()!=null && !"".equals(currentWUEA.getOutputPassword())) {
+			if (currEmailAccount.getOutputPassword()!=null && !"".equals(currEmailAccount.getOutputPassword())) {
 			    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
-				String contraseniaSalida = encrypter.encrypt(currentWUEA.getOutputPassword());
-				currentWUEA.setOutputPassword(contraseniaSalida);
+				String contraseniaSalida = encrypter.encrypt(currEmailAccount.getOutputPassword());
+				currEmailAccount.setOutputPassword(contraseniaSalida);
 			} else {
-				currentWUEA.setOutputPassword(null);
+				currEmailAccount.setOutputPassword(null);
 			}
 			
-			uceBL.add(currentWUEA, idUser);
+			uceBL.add(currEmailAccount, idUser);
 			
 			retorno=Constantes.SUCCESS_UCE;
 			
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
 			
-		} catch (WUserEmailAccountsException ex2) {
+		} catch (WEmailAccountException ex2) {
 
 			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Agregar el WUserEmailAccounts: [Nombre: " 
-					+ this.currentWUEA.getName()
+			logger.error("Ocurrio Un Error al tratar de Agregar el WEmailAccount: [Nombre: " 
+					+ this.currEmailAccount.getName()
 					+"] "	+ ex2.getMessage() + " : " + ex2.getCause());
 			
-			String params[] = {this.currentWUEA.getName().toString(), "Error al Agregar WUserEmailAccounts "
+			String params[] = {this.currEmailAccount.getName().toString(), "Error al Agregar WEmailAccount "
 						+ex2.getMessage()+"\n"+ex2.getCause() };	// nes 20101013			
 			agregarMensaje("211",ex2.getMessage(),params,FGPException.ERROR);	
 		
@@ -399,10 +399,10 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 /*		} catch (WUserDefException ex3) {
 
 			logger.error("Ocurrio Un Error al tratar de cargar el WUserDef: [Nombre: " 
-					+ this.currentWUEA.getName()
+					+ this.currEmailAccount.getName()
 					+"] "	+ ex3.getMessage() + " : " + ex3.getCause());
 			
-			String params[] = {this.currentWUEA.getName().toString(), "Error al Agregar WUserEmailAccounts "
+			String params[] = {this.currEmailAccount.getName().toString(), "Error al Agregar WEmailAccount "
 						+ex3.getMessage()+"\n"+ex3.getCause() };	// nes 20101013			
 			agregarMensaje("211",ex3.getMessage(),params,FGPException.ERROR);	
 */		} 
@@ -442,26 +442,26 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 
 		String retorno = FAIL;
 
-		WUserEmailAccountsBL uceBL = new WUserEmailAccountsBL();
+		WEmailAccountBL uceBL = new WEmailAccountBL();
 		
 		try {
 
-			currentWUEA = uceBL.getWUserEmailAccountsByPK(id);
+			currEmailAccount = uceBL.getWEmailAccountByPK(id);
 			
-			uceBL.delete(currentWUEA, this.idUser);
+			uceBL.delete(currEmailAccount, this.idUser);
 			retorno = Constantes.SUCCESS_UCE;
 			_reset();
 			recargaListaUsuario(); 
 			
-		} catch (WUserEmailAccountsException e) {
+		} catch (WEmailAccountException e) {
 
 			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de delete el WUserEmailAccounts: [ id = " 
-					+ this.currentWUEA.getId() + " ; Nombre: "
-					+ this.currentWUEA.getName()
+			logger.error("Ocurrio Un Error al tratar de delete el WEmailAccount: [ id = " 
+					+ this.currEmailAccount.getId() + " ; Nombre: "
+					+ this.currEmailAccount.getName()
 					+"] "	+ e.getMessage() + " : " + e.getCause());
 			
-			String params[] = {this.currentWUEA.getId() + ",", "Error al delete WUserEmailAccounts "
+			String params[] = {this.currEmailAccount.getId() + ",", "Error al delete WEmailAccount "
 					+e.getMessage()+"\n"+e.getCause() }; // nes 20101013				
 			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);			
 		}
@@ -472,21 +472,21 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 
 	
 	/**
-	 * @return the currentWUEA
+	 * @return the currEmailAccount
 	 */
-	public WUserEmailAccounts getCurrentWUEA() {
-		if (currentWUEA == null) {
-			currentWUEA = new WUserEmailAccounts(EMPTY_OBJECT);
+	public WEmailAccount getCurrEmailAccount() {
+		if (currEmailAccount == null) {
+			currEmailAccount = new WEmailAccount(EMPTY_OBJECT);
 		}
-		return currentWUEA;
+		return currEmailAccount;
 	}
 
 
 	/**
-	 * @param currentWUEA the currentWUEA to set
+	 * @param currEmailAccount the currEmailAccount to set
 	 */
-	public void setCurrentWUEA(WUserEmailAccounts currentWUEA) {
-		this.currentWUEA = currentWUEA;
+	public void setCurrEmailAccount(WEmailAccount currEmailAccount) {
+		this.currEmailAccount = currEmailAccount;
 	}
 
 
@@ -506,35 +506,35 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	// COMENTARIO : ESTO NO SE PARA Q SERIA PERO EN PPIO NO VA ...
 //	
 //	public Integer getIdUser() {
-//		return getWUserEmailAccounts().getUsuario().getIdUser();
+//		return getWEmailAccount().getUsuario().getIdUser();
 //	}
 //	
 //	public void setIdUser(Integer id) {
-//		getWUserEmailAccounts().getUsuario().setIdUser(id);
+//		getWEmailAccount().getUsuario().setIdUser(id);
 //	}
 //
 //	public Integer getId() {
-//		return getWUserEmailAccounts().getId();
+//		return getWEmailAccount().getId();
 //	}
 //	
-//	public void setIdWUserEmailAccounts(Integer id) {
-//		getWUserEmailAccounts().setIdWUserEmailAccounts(id);
+//	public void setIdWEmailAccount(Integer id) {
+//		getWEmailAccount().setIdWEmailAccount(id);
 //	}
 
 	public void changeUsuario() {
 
 //		try {
-//			this.wueaList = (ArrayList<WUserEmailAccounts>) new WUserEmailAccountsBL()
-//				.getWUserEmailAccountsListByUser(this.idUser);
+//			this.emailAccountList = (ArrayList<WEmailAccount>) new WEmailAccountBL()
+//				.getWEmailAccountListByUser(this.idUser);
 
 		//dml 20120223
-		loadWUserEmailAccountsLists();
+		loadWEmailAccountLists();
 			
-/*		} catch (WUserEmailAccountsException e) {
+/*		} catch (WEmailAccountException e) {
 			logger.error("Ocurrio Un Error: No debe " 
 					+ e.getMessage() + " : " + e.getCause());
 		
-			String params[] = {this.currentWUEA.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
+			String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
 				+ e.getMessage() + " : " + e.getCause() };
 			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
 		}
@@ -552,9 +552,9 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 
 	public boolean isDisableDeleteButton() {
 		
-		logger.debug("isDisableDeleteButton:IdWUserEmailAccounts = " + this.currentWUEA.getName());
+		logger.debug("isDisableDeleteButton:IdWEmailAccount = " + this.currEmailAccount.getName());
 		
-		if( isEmpty(this.currentWUEA.getId()) || this.currentWUEA.getId() == 0){ // nes 20100927
+		if( isEmpty(this.currEmailAccount.getId()) || this.currEmailAccount.getId() == 0){ // nes 20100927
 			setDisableDeleteButton(true);
 		}else{
 			setDisableDeleteButton(false);
@@ -565,7 +565,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 	
 	public boolean isDisableSaveButton() {
 		
-		logger.debug("isDisableSaveButton:IdWUserEmailAccounts = " + this.currentWUEA.getName());
+		logger.debug("isDisableSaveButton:IdWEmailAccount = " + this.currEmailAccount.getName());
 		
 		if( isEmpty(this.id) || this.id == 0){ // nes 20101119
 			this.disableSaveButton = true;
@@ -645,7 +645,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 				logger.error("Ocurrio Un Error al tratar de get la lista de usuarios:" 
 							+ e.getMessage() + " : " + e.getCause());
 				
-				String params[] = {this.currentWUEA.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
+				String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
 						+ e.getMessage() + " : " + e.getCause() };		
 				agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
 			}
@@ -672,29 +672,29 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 
 
 	/**
-	 * @return the wueaList
+	 * @return the emailAccountList
 	 */
-	public List<WUserEmailAccounts> getWueaList() {
+	public List<WEmailAccount> getEmailAccountList() {
 		
 		//recargaListaUsuario();
-		return wueaList;
+		return emailAccountList;
 	}
 
 
 	/**
-	 * @param wueaList the wueaList to set
+	 * @param emailAccountList the emailAccountList to set
 	 */
-	public void setWueaList(List<WUserEmailAccounts> wueaList) {
-		this.wueaList = wueaList;
+	public void setEmailAccountList(List<WEmailAccount> emailAccountList) {
+		this.emailAccountList = emailAccountList;
 	}
 
 
-	public List<WUserEmailAccounts> getWueaListByUser() {
-		return wueaListByUser;
+	public List<WEmailAccount> getEmailAccountListByUser() {
+		return emailAccountListByUser;
 	}
 
-	public void setWueaListByUser(List<WUserEmailAccounts> wueaListByUser) {
-		this.wueaListByUser = wueaListByUser;
+	public void setEmailAccountListByUser(List<WEmailAccount> emailAccountListByUser) {
+		this.emailAccountListByUser = emailAccountListByUser;
 	}
 	
 	public List<String> getFormatList() {
@@ -780,7 +780,7 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		
 		outputPasswordEditable = true;
 		outputPasswordChanged = true;
-		currentWUEA.setOutputPassword(null);
+		currEmailAccount.setOutputPassword(null);
 		
 		return null;
 	}
@@ -814,32 +814,32 @@ public class WUserEmailAccountsBean extends CoreManagedBean {
 		
 	}	
 	
-	public void searchWUserEmailAccounts(){
+	public void searchWEmailAccount(){
 		
 		try {
 			
-			this.wueaList = new WUserEmailAccountsBL()
-					.wUserEmailAccountsFinder(nameFilter, emailFilter);		
+			this.emailAccountList = new WEmailAccountBL()
+					.wEmailAccountFinder(nameFilter, emailFilter);		
 			
 			addNewEmailMode = false;
 			this.id = 0;
 				 		
-		} catch (WUserEmailAccountsException e) {
+		} catch (WEmailAccountException e) {
 			logger.error("Ocurrio Un Error: No debe " 
 					+ e.getMessage() + " : " + e.getCause());
 		
-			String params[] = {this.currentWUEA.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
+			String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
 				+ e.getMessage() + " : " + e.getCause() };
 			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
 		}
 
 	}
 	
-	public Integer getWueaListSize(){
+	public Integer getEmailAccountListSize(){
 		
-		if (this.wueaList != null) {
+		if (this.emailAccountList != null) {
 			
-			return this.wueaList.size();
+			return this.emailAccountList.size();
 			
 		}
 		

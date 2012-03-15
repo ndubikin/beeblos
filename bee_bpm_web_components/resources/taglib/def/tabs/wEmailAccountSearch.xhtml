@@ -15,7 +15,7 @@
 	<h:form id="w_user_email_account_form">
 
 		
-<a4j:jsFunction name="onsubmitChangePasswordButton" action="#{wUserEmailAccountsBean.changePassword}" reRender="output_password_panel" /> 
+<a4j:jsFunction name="onsubmitChangePasswordButton" action="#{wEmailAccountBean.changePassword}" reRender="output_password_panel" /> 
 		
 		
 		<h:panelGrid id="exceptionsPnl"  rendered="#{exceptionBean.renderMessage}">
@@ -42,27 +42,27 @@
 				<fieldset class="demo_fieldset">
 					<legend class="demo_legend">Enter the search data</legend>
 					<div>
-						<ui:include src="panels/wUserEmailAccounts_search.xhtml">
+						<ui:include src="panels/wEmailAccount_search.xhtml">
 							<ui:param name="action" value="${action}" />
 						</ui:include>
 					</div>
 				</fieldset>
 	
 				<fieldset class="demo_fieldset">
-					<legend class="demo_legend">WUserEmailAccounts list</legend>
+					<legend class="demo_legend">WEmailAccount list</legend>
 					<div>
-						<ui:include src="panels/wUserEmailAccounts_list.xhtml">
+						<ui:include src="panels/wEmailAccount_list.xhtml">
 							<ui:param name="action" value="${action}" />
 						</ui:include>
 					</div>
 				</fieldset>
 	
 				<h:panelGroup 
-					rendered="#{wUserEmailAccountsBean.addNewEmailMode or (wUserEmailAccountsBean.id != null and wUserEmailAccountsBean.id != 0)}">
+					rendered="#{wEmailAccountBean.addNewEmailMode or (wEmailAccountBean.id != null and wEmailAccountBean.id != 0)}">
 					<fieldset class="demo_fieldset">
 						<legend class="demo_legend">Adding new email template</legend>
 						<div>
-							<ui:include src="panels/wUserEmailAccounts_loaded_record.xhtml">
+							<ui:include src="panels/wEmailAccount_loaded_record.xhtml">
 								<ui:param name="action" value="${action}" />
 							</ui:include>
 						</div>

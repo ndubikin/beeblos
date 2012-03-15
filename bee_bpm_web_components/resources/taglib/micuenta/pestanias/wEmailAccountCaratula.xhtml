@@ -117,7 +117,7 @@
 		<h:form id="w_user_email_account_form">
 
 		
-<a4j:jsFunction name="onsubmitChangePasswordButton" action="#{wUserEmailAccountsBean.changePassword}" reRender="output_password_panel" /> 
+<a4j:jsFunction name="onsubmitChangePasswordButton" action="#{wEmailAccountBean.changePassword}" reRender="output_password_panel" /> 
 		
 		
 			<h:panelGrid id="exceptionsPnl"  rendered="#{exceptionBean.renderMessage}">
@@ -142,11 +142,11 @@
 											
 				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 				<h:panelGroup>
-					<h:inputHidden id="hddIdUce" value="#{wUserEmailAccountsBean.id}">
-						<a4j:support ajaxSingle="false"  action="#{wUserEmailAccountsBean.loadCurrentWUserEmailAccounts}"
+					<h:inputHidden id="hddIdUce" value="#{wEmailAccountBean.id}">
+						<a4j:support ajaxSingle="false"  action="#{wEmailAccountBean.loadCurrentWEmailAccount}"
 							event="onchange" reRender="w_user_email_account_form, w_user_email_accounts_table, name, saveButton, deleteButton" />
 					</h:inputHidden>
-					<h:inputText id="name" value="#{wUserEmailAccountsBean.currentWUEA.name}"
+					<h:inputText id="name" value="#{wEmailAccountBean.currEmailAccount.name}"
 						required="false"  style="width:250px"/>
 				</h:panelGroup>
 				
@@ -154,18 +154,18 @@
 				
 				<h:outputText value="#{msg.label_email}" styleClass="labelForm" />
 				<h:panelGroup>
-					<h:inputText id="email" value="#{wUserEmailAccountsBean.currentWUEA.email}"
+					<h:inputText id="email" value="#{wEmailAccountBean.currEmailAccount.email}"
 						required="false"  style="width:250px"/>
 				</h:panelGroup>
 				<h:panelGroup>
 				<rich:spacer width="10" />
 	
 				<a4j:commandButton id="saveButton" value="#{msg.label_save}" reRender="w_user_email_account_form"
-					action="#{wUserEmailAccountsBean.save}"/>			
+					action="#{wEmailAccountBean.save}"/>			
 						
 				<rich:spacer width="10" />	
 				<h:commandButton id="deleteButton" value="#{msg.label_delete}" 
-					actionListener="#{wUserEmailAccountsBean.delete}" onclick="return confirm()"/>						
+					actionListener="#{wEmailAccountBean.delete}" onclick="return confirm()"/>						
 										
 				</h:panelGroup>	
 				
@@ -196,17 +196,17 @@
 			<h:panelGrid id="generales" columns="3" columnClasses="colStyle1,colStyle2B,colStyle3" >
 				
 				<h:outputText value="#{msg.label_user_default_account}" styleClass="labelForm" />
-				<h:selectBooleanCheckbox id="isPrefer" value="#{wUserEmailAccountsBean.currentWUEA.userDefaultAccount}"
+				<h:selectBooleanCheckbox id="isPrefer" value="#{wEmailAccountBean.currEmailAccount.userDefaultAccount}"
 					required="false"  style="text-align:left"/>	
 				<rich:spacer height="10" />
 				
 				<h:outputText value="#{msg.label_reply_to}" styleClass="labelForm" />
-				<h:inputText id="reply_to" value="#{wUserEmailAccountsBean.currentWUEA.replyTo}"
+				<h:inputText id="reply_to" value="#{wEmailAccountBean.currEmailAccount.replyTo}"
 					required="false"  style=" width:250px"/>	
 				<rich:spacer height="10" />
 				
 				<h:outputText id="txt_signature" value="#{msg.label_signature_txt}" styleClass="labelForm"/>
-				<h:inputTextarea id="txt_signature_text" value="#{wUserEmailAccountsBean.currentWUEA.signatureTxt}"
+				<h:inputTextarea id="txt_signature_text" value="#{wEmailAccountBean.currEmailAccount.signatureTxt}"
 					required="false" style="width:600px; height:150px;"/>			
 				<rich:spacer id="spcFirmaTexto" height="10"/>
 				
@@ -214,7 +214,7 @@
 	            <h:panelGroup id="signature_html_control">
 					<rich:editor id="html_signature_text" configuration="#{editorBean.currentConfiguration}" 
 								 width="600" height="150" viewMode="#{editorBean.viewMode}" 
-								 value="#{wUserEmailAccountsBean.currentWUEA.signatureHtml}" >
+								 value="#{wEmailAccountBean.currEmailAccount.signatureHtml}" >
 					</rich:editor>
 
 	                <h:panelGrid columns="1">
@@ -235,26 +235,26 @@
 				<div>
 				<h:panelGrid columns="4" columnClasses ="colStyle1,colStyle2,colStyle4,colStyle5" width="100%">			
 					<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
-					<h:inputText id="input_name_service" value="#{wUserEmailAccountsBean.currentWUEA.inputServerName}"
+					<h:inputText id="input_name_service" value="#{wEmailAccountBean.currEmailAccount.inputServerName}"
 						required="false"  style="width:180px"/>
 						
 					<rich:spacer height="10" />
 					<rich:spacer height="10" />	
 				
 					<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
-					<h:inputText id="input_port" value="#{wUserEmailAccountsBean.currentWUEA.inputPort}"
+					<h:inputText id="input_port" value="#{wEmailAccountBean.currEmailAccount.inputPort}"
 						required="false"  style="width:50px"/>
 						
 					<h:outputText value="#{msg.label_type}" styleClass="labelForm" />
-					<h:inputText id="input_server_type" value="#{wUserEmailAccountsBean.currentWUEA.inputServerType}"
+					<h:inputText id="input_server_type" value="#{wEmailAccountBean.currEmailAccount.inputServerType}"
 						required="false"  style="width:50px"/>		
 						
 					<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
-					<h:inputText id="input_security" value="#{wUserEmailAccountsBean.currentWUEA.connectionSecurity}"
+					<h:inputText id="input_security" value="#{wEmailAccountBean.currEmailAccount.connectionSecurity}"
 							required="false"  style="width:150px"/>	
 						
 					<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
-					<h:inputText id="input_ident_method" value="#{wUserEmailAccountsBean.currentWUEA.identificationMethod}"
+					<h:inputText id="input_ident_method" value="#{wEmailAccountBean.currEmailAccount.identificationMethod}"
 						required="false"  style="width:150px"/>			
 		
 				</h:panelGrid>
@@ -269,14 +269,14 @@
 					<h:panelGrid columns="4" columnClasses ="colStyle1,colStyle2,colStyle4,colStyle5" width="100%">
 						
 					<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
-					<h:inputText id="output_server_name" value="#{wUserEmailAccountsBean.currentWUEA.outputServer}"
+					<h:inputText id="output_server_name" value="#{wEmailAccountBean.currEmailAccount.outputServer}"
 						required="false"  style="width:180px"/>
 						
 					<rich:spacer height="10" />	
 					<rich:spacer height="10" />		
 						
 					<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
-					<h:inputText id="output_port" value="#{wUserEmailAccountsBean.currentWUEA.outputPort}"
+					<h:inputText id="output_port" value="#{wEmailAccountBean.currEmailAccount.outputPort}"
 						required="false"  style="width:50px"/>
 						
 					<rich:spacer height="10" />	
@@ -284,27 +284,27 @@
 				
 					<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
 						
-					<h:selectOneMenu id="seguridadSal" value="#{wUserEmailAccountsBean.currentWUEA.outputConnectionSecurity}" style="width:150px">
-						<f:selectItems value="#{wUserEmailAccountsBean.securityList}" />
+					<h:selectOneMenu id="seguridadSal" value="#{wEmailAccountBean.currEmailAccount.outputConnectionSecurity}" style="width:150px">
+						<f:selectItems value="#{wEmailAccountBean.securityList}" />
 					</h:selectOneMenu>	
 											
 					<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
-					<h:inputText id="id_method" value="#{wUserEmailAccountsBean.currentWUEA.identificationMethod}"
+					<h:inputText id="id_method" value="#{wEmailAccountBean.currEmailAccount.identificationMethod}"
 						required="false"  style="width:150px"/>		
 													
 					<h:outputText value="#{msg.label_usuario}" styleClass="labelForm" />
-					<h:inputText id="output_user" value="#{wUserEmailAccountsBean.currentWUEA.outputUserName}"
+					<h:inputText id="output_user" value="#{wEmailAccountBean.currEmailAccount.outputUserName}"
 						required="false"  style="width:150px"/>
 						
 					<h:outputText value="#{msg.label_output_password}" styleClass="labelForm" />
 					<h:panelGroup id="output_password_panel">
-						<h:inputSecret id="output_password" value="#{wUserEmailAccountsBean.currentWUEA.outputPassword}"
-							readonly="#{wUserEmailAccountsBean.outputPasswordEditable?'false':'true'}"
+						<h:inputSecret id="output_password" value="#{wEmailAccountBean.currEmailAccount.outputPassword}"
+							readonly="#{wEmailAccountBean.outputPasswordEditable?'false':'true'}"
 							required="false" style="width:150px">
-		            		<a4j:support event="onchange" ajaxSingle="true" action="#{wUserEmailAccountsBean.changeOutputPassword}"/>
+		            		<a4j:support event="onchange" ajaxSingle="true" action="#{wEmailAccountBean.changeOutputPassword}"/>
 						</h:inputSecret>
 						<a4j:commandButton id="changePasswordButton" value="#{msg.label_new_password}"
-							rendered="#{!wUserEmailAccountsBean.outputPasswordEditable}"
+							rendered="#{!wEmailAccountBean.outputPasswordEditable}"
 							oncomplete="onsubmitChangePasswordButton();"
 							style="margin-left: 10px;"/>			
 					</h:panelGroup>
@@ -322,10 +322,10 @@
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 								
 				rows="5" styleClass="table" 
-				value="#{wUserEmailAccountsBean.wueaListByUser}" var="wuea" >
+				value="#{wEmailAccountBean.emailAccountListByUser}" var="wuea" >
 				
-				 <a4j:support event="onRowClick" reRender="w_user_email_account_form" action="#{wUserEmailAccountsBean.loadCurrentWUserEmailAccounts}">
-                	<a4j:actionparam name="value" value="#{wuea.id}" assignTo="#{wUserEmailAccountsBean.id}"/>
+				 <a4j:support event="onRowClick" reRender="w_user_email_account_form" action="#{wEmailAccountBean.loadCurrentWEmailAccount}">
+                	<a4j:actionparam name="value" value="#{wuea.id}" assignTo="#{wEmailAccountBean.id}"/>
                 </a4j:support>	
 				
 				<f:facet name="header">
@@ -368,7 +368,7 @@
 		
 			<rich:spacer height="10" />
 			
-			<h:inputHidden id="sessionId" value="#{wUserEmailAccountsBean.currentSession}"/>
+			<h:inputHidden id="sessionId" value="#{wEmailAccountBean.currentSession}"/>
 		
 		</rich:panel>
 	</h:form>

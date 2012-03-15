@@ -75,14 +75,14 @@
             <h:outputText value="#{pages}" />
         </rich:datascroller>
 
-        <rich:dataTable id="emails_table" value="#{wProcessDefFormBean.wUserEmailAccountsList}" 
+        <rich:dataTable id="emails_table" value="#{wProcessDefFormBean.wEmailAccountList}" 
         		onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 				onRowClick="return sendEmailRow('#{email.id}');"			 			
         		var="email" width="98%" columnClasses="center"
         		rows="10" reRender="dseUp,dseDown" style="margin-left: 5px;">
             <f:facet name="header">
-                <h:outputText value="Email search ( #{wProcessDefFormBean.wUserEmailAccountsListResults} #{msg.label_results} )"/>
+                <h:outputText value="Email search ( #{wProcessDefFormBean.wEmailAccountListResults} #{msg.label_results} )"/>
             </f:facet>
             
             <rich:column sortBy="#{email.email}" style="text-align: left;"> 
@@ -146,7 +146,7 @@
 		<rich:spacer height="125" />
         
 		<h:outputText value="Insert the search parameters and click the Search Button" 
-		              rendered="#{empty wProcessDefFormBean.wUserEmailAccountsList}" styleClass="firstLeftText"/>								 
+		              rendered="#{empty wProcessDefFormBean.wEmailAccountList}" styleClass="firstLeftText"/>								 
 
 	</fieldset>
 </h:form>
