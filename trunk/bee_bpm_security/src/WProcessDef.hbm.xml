@@ -74,8 +74,8 @@
 		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"
 			column="id_begin"  name="beginStep" fetch="join" lazy="false"/>
 
-		<many-to-one class="org.beeblos.bpm.core.model.WUserEmailAccounts"
-			lazy="false" name="wUserEmailAccounts">
+		<many-to-one class="org.beeblos.bpm.core.model.WEmailAccount"
+			lazy="false" name="systemEmailAccount">
 			<column name="id_system_email"/>
 		</many-to-one>
 		
