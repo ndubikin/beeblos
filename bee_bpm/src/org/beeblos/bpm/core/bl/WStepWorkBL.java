@@ -5,8 +5,10 @@ import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
+import static org.beeblos.bpm.core.util.Constants.WRITE_EMAIL_TO_FILESYSTEM;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -21,10 +23,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.dao.WUserRoleDao;
-import org.beeblos.bpm.core.email.bl.EnviarEmailBL;
+import org.beeblos.bpm.core.email.bl.SendEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
-import org.beeblos.bpm.core.error.EnviarEmailException;
+import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
@@ -44,7 +46,7 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.WUserEmailAccounts;
+import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
@@ -103,8 +105,20 @@ public class WStepWorkBL {
 		stepw.setArrivingDate(new Date());
 		stepw.setInsertUser( new WUserDef(currentUser) );
 		stepw.setModDate( DEFAULT_MOD_DATE);
-		return new WStepWorkDao().add(stepw);
+		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
+		
+		// nes 20120315 
+		if ( stepw.getCurrentStep().isEmailNotification()  ) {
+			try {
+				_emailNotificationArrivingStep(stepw, "");
+			} catch (SendEmailException e) {
+				logger.info("SendEmailException: there is not possible sending email notification to users involved");
+			} catch (Exception e) {
+				logger.info("Exception: there is not possible sending email notification to users involved");
+			}
+		}
 
+		return idGeneratedStep;
 	}
 	
 	public void update(WStepWork stepw, Integer currentUser) throws WStepWorkException {
@@ -609,42 +623,6 @@ public class WStepWorkBL {
 		
 		// TODO: urgentemente definir transaccion aquí ...
 		
-/*		
- * 		DML 20120308 - ESTE ES EL RECORRIDO GEMELO AL FOR DE ABAJO QUE FUNCIONABA BIEN EN PASOBEAN, 
- * 		CREO QUE SON SIMILARES PERO LO DEJO AQUÍ POR SI ACASO. 
- * 
-		if ( routes.size()==0 ) { // no next steps - this tree ends here ...
-			
-			ret = false; // tree finished ...
-
-		} else {
-			
-			for ( WStepSequenceDef route: routes) { // for each route
-				
-				if ( route.getToStep()!=null ) {
-					
-					if ( ( route.getValidResponses()!=null && 
-								route.getValidResponses().contains(idResponse.toString().trim()+"|") ) 
-							||
-							route.isAfterAll() ) {
-
-						_setNextStep(route, currentUser, runtimeSettings, currentStep, isAdminProcess);
-						ret=true;
-						
-					}
-					
-					
-				} else { // this route points to end tree - no action required ...
-
-					// if ret arrives here with false, all ok; 
-					// if ret arrives here with true it indicates there are another valid routes for this step
-					// but no action is required
-					
-				}
-				
-			}
-		}
-*/		
 		// dml 20120308 - Esto pasa de hacerse en PasoBean por lo que
 		// se realizaba tanto si es TurnBack como si no a realizarse solo en este _executeProcessStep
 		for (WStepSequenceDef seq: lnextSteps ) {
@@ -670,10 +648,14 @@ public class WStepWorkBL {
 				this.add(newStep, currentUser);
 				
 				// dml 20120308 - si esta la opcion activa enviamos emails a los users/roles indicados
-				if ( newStep.getCurrentStep().isEmailNotification() ) {
-					
-					_emailNotificationArrivingStep(newStep);
-				
+				if ( newStep.getCurrentStep().isEmailNotification()  ) {		
+					try {
+						_emailNotificationArrivingStep(newStep, "");
+					} catch (SendEmailException e) {
+						logger.info("SendEmailException: there is not possible sending email notification to users involved");
+					} catch (Exception e) {
+						logger.info("Exception: there is not possible sending email notification to users involved");
+					}
 				}
 			}
 		}
@@ -709,18 +691,23 @@ public class WStepWorkBL {
 		_setNewStep(newStep, storedStep, toStep, runtimeSettings, currentUser, now, isAdminProcess );
 		
 		this.add(newStep, currentUser);
+
+		_setCurrentStepToProcessed( storedStep, runtimeSettings, currentUser, now, idResponse );
+		
+		this.update(storedStep, currentUser);
 	
-		// dml 20120308 - si esta la opcion activa enviamos emails a los users/roles indicados
+		// send email notification to users related
 		if ( newStep.getCurrentStep().isEmailNotification() ) {
 			
-			_emailNotificationArrivingStep(newStep);
+			try {
+				_emailNotificationArrivingStep(newStep, "");
+			} catch (SendEmailException e) {
+				logger.info("SendEmailException: there is not possible sending email notification to users involved");
+			} catch (Exception e) {
+				logger.info("Exception: there is not possible sending email notification to users involved");
+			}
 		
 		}
-
-		// dml 20120308 - a diferencia del método de PasoBean gemelo a este, en el método es donde se cargan
-		// los nuevos datos del storedStep y es en este propio metodo donde se hace el update
-		_setCurrentStepToProcessed( storedStep, runtimeSettings, currentUser, now, idResponse );
-		this.update(storedStep, currentUser);
 		
 		return qty;
 	}
@@ -890,42 +877,42 @@ public class WStepWorkBL {
 		
 	}
 	
-	//NOTA: VOLVER A PONER ESTE MÉTODO COMO PRIVADO CUANDO SE ACABE DE PROBAR
-	// email notifications related to a new step generation
-	// step arrived!!
-	public void _emailNotificationArrivingStep( WStepWork newStep ) {
-		
-		//LO PRIMERO QUE VOY A HACER ES COMPONER LA PARTE DEL EMAIL QUE CONOZCO, PARA ESO OBTENGO EL PROCESO
-		//QUE ESTARÁ RELACIONADO CON ESTE STEP DEL QUE NECESITO VARIOS DATOS
-		WProcessDef process = newStep.getwProcessWork().getProcess();
-		
-		//CREO EL EMAIL DIRECTAMENTE CON LA LLAMADA A UN METODO PRIVADO QUE CARGA TODOS LOS VALORES QUE
-		//NECESITARA PARA SU ENVIO MENOS LA LISTA "TO" QUE SE HARÁ DESPUES
-		Email email = this._buildEmail(process.getwUserEmailAccounts(), 
-				"Execute ProcessStep: "+newStep.getId()+" / "+newStep.getVersion());
-				
-		
-		
-		if ( newStep.getCurrentStep().isArrivingAdminNotice()) {
 
+	private void _emailNotificationArrivingStep( WStepWork stepWork, String subject ) throws SendEmailException {
+		
+		if ( ! stepWork.getCurrentStep().isArrivingAdminNotice() && 
+				! stepWork.getCurrentStep().isArrivingUserNotice()) return; 
+
+		WProcessDef process = stepWork.getwProcessWork().getProcess();
+		
+		if ( process == null ) {
+			logger.error("there is trying to send an email and process arrives null ...");
+			return;
+		}
+
+		Email emailMessage = 
+			this._buildEmail(
+				process.getSystemEmailAccount(), 
+				( subject==null || "".equals(subject)?"":subject ) );
+		
+		if ( stepWork.getCurrentStep().isArrivingAdminNotice() ) {
 			
 			System.out.println("ADMIN EMAIL TEMPLATE: ");
 			
-			if (process != null 
-					&& process.getArrivingAdminNoticeTemplate() != null) {
+			if ( process.getArrivingAdminNoticeTemplate() != null ) {
 			
-				String templateWithObjectData = this._buildTemplate(process.getArrivingAdminNoticeTemplate().getTemplate(), newStep);
+				String templateWithObjectData = this._buildTemplate(process.getArrivingAdminNoticeTemplate().getTemplate(), stepWork);
 			
-				email.setBodyText(templateWithObjectData);
+				emailMessage.setBodyText(templateWithObjectData);
 				
 				//ESTE MÉTODO PRIVADO SERÁ EL ENCARGADO DE OBTENER TODAS LAS CUENTAS DE EMAIL SIN REPETIR
 				//EL SEGUNDO ATRIBUTO INDICA SI LAS CUENTAS SERÁN DE ADMINISTRADORES (true) O DE USUARIOS NORMALES (false)
-				email.setListaTo(this.getReplyEmailAccounts(newStep, true));
+				emailMessage.setListaTo(this.getEmailAccountList(stepWork, true));
 				
-				this._sendEmail(email);
+				this._sendEmail(emailMessage);
 				
 			} else {
-				System.out.println("NO HAY ADMIN TEMPLATE ASOCIADO AL PROCESO!!");
+				logger.error("there is no template associated to process or step to send email to tracker ...");
 			}
 			
 			
@@ -933,7 +920,7 @@ public class WStepWorkBL {
 		
 		
 		
-		if ( newStep.getCurrentStep().isArrivingUserNotice() ) {
+		if ( stepWork.getCurrentStep().isArrivingUserNotice() ) {
 			// avisar a los usuarios y roles definidos
 			
 			System.out.println("USER EMAIL TEMPLATE: ");
@@ -941,18 +928,18 @@ public class WStepWorkBL {
 			if (process != null 
 					&& process.getArrivingUserNoticeTemplate() != null) {
 			
-				String templateWithObjectData = this._buildTemplate(process.getArrivingUserNoticeTemplate().getTemplate(), newStep);
+				String templateWithObjectData = this._buildTemplate(process.getArrivingUserNoticeTemplate().getTemplate(), stepWork);
 			
-				email.setBodyText(templateWithObjectData);
+				emailMessage.setBodyText(templateWithObjectData);
 	
 				
 				//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
-				email.setListaTo(this.getReplyEmailAccounts(newStep, false));
+				emailMessage.setListaTo(this.getEmailAccountList(stepWork, false));
 				
-				this._sendEmail(email);
+				this._sendEmail(emailMessage);
 
 			} else {
-				System.out.println("NO HAY USER TEMPLATE ASOCIADO AL PROCESO!!");
+				logger.error("there is no template associated to process or step to send email to Worker ...");
 			}
 
 		}
@@ -960,28 +947,16 @@ public class WStepWorkBL {
 			
 	}
 	
-	// dml 20120307
-	private void _sendEmail(Email email) {
-	
-		//ESTAMOS IMPRIMIENDO POR PANTALLA EN VEZ DE ENVIAR EMAILS PORQUE NO TENEMOS TANTAS DIRECCIONES
-		//PERO EL CODIGO COMENTADO DEBAJO FUNCIONA BIEN, POR LO MENOS PARA ENVIAR UN EMAIL A UNA LISTA
-		//CON UN SOLO "TO". SI LOS BOOLEAN PARA ENVIAR EMAIL A ADMIN/USERS ESTAN DESACTIVADOS O BIEN
-		//NO EXISTE NINGUN ADMIN NI NINGUN USUARIO NORMAL ASOCIADO AL WSTEPDEF NO SE IMPRIMIRA NADA
-		//YA QUE LA LISTA SERÁ VACÍA, Y EN CASO DE ENVIAR TAMPOCO DEBIDO A LA COMPROBACIÓN
-		System.out.println("REPLY TO: ");
-		for (String emails : email.getListaTo()) {
-			
-			System.out.println(emails+", ");
-			
-		}
-		
+
+	private void _sendEmail(Email email) throws SendEmailException {
+
 		try {
 			
 			if (email.getListaTo().size() > 0) {
 				
-				if (Resourceutil.getStringProperty("email.to.filesystem").equals("No")){
+				if ( ! WRITE_EMAIL_TO_FILESYSTEM ) {
 				
-					new EnviarEmailBL().enviar(email);
+					new SendEmailBL().enviar(email);
 				
 				} else {
 					
@@ -990,28 +965,34 @@ public class WStepWorkBL {
 				}
 			}
 	
-		} catch (EnviarEmailException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SendEmailException e) {
+			String message=
+					"(_sendEmail) Error sending email:"
+							+e.getMessage()+" - "+e.getCause()+" - "+e.getClass();
+			logger.error(message);
+			throw e;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message=
+					"(_sendEmail) Error sending email:"
+							+e.getMessage()+" - "+e.getCause()+" - "+e.getClass();
+			logger.error(message);
+			throw new SendEmailException( message  );
 		}
 		
 	}
 	
 	// dml 20120307
-	private Email _buildEmail(WUserEmailAccounts sendFrom, String emailSubject) {
+	private Email _buildEmail(WEmailAccount senderEmailAccount, String emailSubject) {
 		
-		Email email = new Email();
+		Email emailMessage = new Email();
 		
-		email.setFrom(sendFrom.getEmail());
-		email.setIdFrom(sendFrom.getId());
-		email.setPwd(sendFrom.getOutputPassword());
+		emailMessage.setFrom(senderEmailAccount.getEmail());
+		emailMessage.setIdFrom(senderEmailAccount.getId());
+		emailMessage.setPwd(senderEmailAccount.getOutputPassword());
 		
-		email.setSubject(emailSubject);
+		emailMessage.setSubject(emailSubject);
 		
-		return email;
+		return emailMessage;
 		
 	}
 	
@@ -1125,7 +1106,9 @@ public class WStepWorkBL {
 		
 		path += "notificationEmail"+sdf.format(new Date())+".txt"; 
 		
-		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
+		File f = new File(path);
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
+		System.out.println(">>>>>>> email will be writing in: "+f.getAbsolutePath() );
 		
 		bufferedWriter.append("SEND FROM: \n");
 		bufferedWriter.append(" -> " + email.getFrom()+"\n");
@@ -1148,70 +1131,66 @@ public class WStepWorkBL {
 		
 	}
 	
-	// dml 20120307
-	private ArrayList<String> getReplyEmailAccounts(WStepWork step, boolean isAdmin){
+	private ArrayList<String> getEmailAccountList(WStepWork stepWork, boolean isAdmin){
 		
-		ArrayList<String> replyEmailList = new ArrayList<String>();
+		ArrayList<String> emailList = new ArrayList<String>();
 		
-		//PRIMERO METEMOS EN LA LISTA DE REPLY TODOS LOS EMAILS DE LOS USUARIOS RELACIONADOS CON
-		//ESTE PASO (COMPROBANDO SI EL WSTEPUSER ES ADMIN O NO)
-		//SOLO SE INCLUIRAN EMAILS QUE NO SE HAYAN METIDO PREVIAMENTE. SI EXISTEN DOS USUARIOS
-		//CON EL MISMO EMAIL SOLO SE ENVIARÁ UNA COPIA DEL MISMO
-		if (step.getCurrentStep() != null){
+		if (stepWork.getCurrentStep() != null){
 			
-			if (step.getCurrentStep().getUsersRelated() != null
-					&& step.getCurrentStep().getUsersRelated().size() > 0) {
-				
-				for (WStepUser wsu : step.getCurrentStep().getUsersRelated()){
-					
-					//SI QUEREMOS IMPRIMIR ADMIN Y VIENE UN USER NORMAL PASAMOS ITERACION
-					if (isAdmin != wsu.isAdmin()) {
-						continue;
-					}
-					
-					//COMPROBAMOS QUE EXISTEN USUARIO E EMAIL Y QUE NO ESTA REPETIDO
-					if (this._existsAndNotRepeatEmail(wsu.getUser(), replyEmailList)){
-					
-						replyEmailList.add(wsu.getUser().getEmail());
-							
-					}					
-				}			
-			}
-			
-			//OBTENEMOS TODOS LOS ROLES DE UN WSTEPDEF, Y DE EL OBTENEMOS TODOS LOS USUARIOS
-			//QUE TIENEN EL MISMO, Y SOBRE CADA UNO HACEMOS EL MISMO PROCESO DE ANTES, SI NO
-			//ESTA SU EMAIL EN LA LISTA LO INCLUIMOS
-			if (step.getCurrentStep().getRolesRelated() != null
-					&& step.getCurrentStep().getRolesRelated().size() > 0) {
-				
-				for (WStepRole wsr : step.getCurrentStep().getRolesRelated()) {
-					
-					//SI QUEREMOS IMPRIMIR ADMIN Y VIENE UN USER NORMAL PASAMOS ITERACION
-					if (isAdmin != wsr.isAdmin()) {
-						continue;
-					}
-					
-					//CON ESTE METODO PRIVADO "GETROLESUSERS" OBTENEMOS DIRECTAMENTE LA LISTA
-					//DE USUARIOS RELACIONADOS CON UN ROLE MEDIANTE LA TABLA W_USER_ROLE
-					for (WUserDef user : this._getRoleUsers(wsr)) {
-						
-						//COMPROBAMOS QUE EXISTEN USUARIO E EMAIL Y QUE NO ESTA REPETIDO
-						if (this._existsAndNotRepeatEmail(user, replyEmailList)){
-						
-							replyEmailList.add(user.getEmail());
-								
-						}					
-					}
-				}
-			}	
+			getUsersRelatedEmailList(stepWork, isAdmin, emailList);
+
+			getRoleRelatedEmailList(stepWork, isAdmin, emailList);	
 		}
 		
-		return replyEmailList;
+		return emailList;
 		
+	}
+
+	private void getRoleRelatedEmailList(WStepWork stepWork, boolean isAdmin,
+			ArrayList<String> emailList) {
+		if (stepWork.getCurrentStep().getRolesRelated() != null
+				&& stepWork.getCurrentStep().getRolesRelated().size() > 0) {
+			
+			for (WStepRole wsr : stepWork.getCurrentStep().getRolesRelated()) {
+				
+				if (isAdmin != wsr.isAdmin()) {
+					continue;
+				}
+				
+				for (WUserDef user : this._getRoleUsers(wsr)) {
+					
+					if (this._checkForRepeatedEmailAdress(user, emailList)){
+
+						emailList.add(user.getEmail());
+							
+					}					
+				}
+			}
+		}
+	}
+
+	private void getUsersRelatedEmailList(WStepWork stepWork, boolean isAdmin,
+			ArrayList<String> emailList) {
+		if (stepWork.getCurrentStep().getUsersRelated() != null
+				&& stepWork.getCurrentStep().getUsersRelated().size() > 0) {
+			
+			for (WStepUser wsu : stepWork.getCurrentStep().getUsersRelated()){
+				
+				if (isAdmin != wsu.isAdmin()) {
+					continue;
+				}
+				
+				if (this._checkForRepeatedEmailAdress(wsu.getUser(), emailList)){
+				
+					emailList.add(wsu.getUser().getEmail());
+						
+				}					
+			}			
+		}
 	}
 	
 	// dml 20120307
-	private boolean _existsAndNotRepeatEmail(WUserDef user, ArrayList<String> replyEmailList){
+	private boolean _checkForRepeatedEmailAdress(WUserDef user, ArrayList<String> replyEmailList){
 		
 		if (user.getEmail() != null
 				&& !"".equals(user.getEmail())){

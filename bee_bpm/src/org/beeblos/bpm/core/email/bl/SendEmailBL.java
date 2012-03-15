@@ -28,20 +28,20 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.WUserEmailAccountsBL;
+import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.email.util.HtmlBodyModel;
 import org.beeblos.bpm.core.email.util.ImageManagerModel;
 import org.beeblos.bpm.core.email.util.LocalImageManager;
-import org.beeblos.bpm.core.error.EnviarEmailException;
-import org.beeblos.bpm.core.error.WUserEmailAccountsException;
-import org.beeblos.bpm.core.model.WUserEmailAccounts;
+import org.beeblos.bpm.core.error.SendEmailException;
+import org.beeblos.bpm.core.error.WEmailAccountException;
+import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.util.DesEncrypter;
 import org.beeblos.bpm.core.util.File;
 
-public class EnviarEmailBL{
+public class SendEmailBL{
 	
-	private static final Log logger = LogFactory.getLog(EnviarEmailBL.class);
+	private static final Log logger = LogFactory.getLog(SendEmailBL.class);
 	
 	// NES 20110419 - PASADO A CONSTANTES
 //	private static final String TRAZA_ENVIO_EMAIL = "TRAZA_ENVIO_EMAIL";
@@ -75,17 +75,17 @@ public class EnviarEmailBL{
 
 	Session javamailSession;	//HZC:20110407
 	
-	static WUserEmailAccounts wUserEmailAccounts;
+	static WEmailAccount wEmailAccount;
 
 	
 	
-	public EnviarEmailBL(){
+	public SendEmailBL(){
 	}
 	
 	
 	// envio de 1 email
 	//rrl 20111130 cambio el void por el Integer del docid de guardar en Beeblos 
-	public Integer enviar(Email email) throws EnviarEmailException {
+	public Integer enviar(Email email) throws SendEmailException {
 
 		Integer result = null;  //rrl 20111130
 		
@@ -109,11 +109,11 @@ public class EnviarEmailBL{
 		}catch (MessagingException e){
 			String mensaje = "MessagingException: enviar: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		} catch (Exception e) {
 			String mensaje = "Exception; enviar: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		}
 		
 		return result;
@@ -123,7 +123,7 @@ public class EnviarEmailBL{
 
 	// Compone el elemento de tipo MimeMessage ( javax.mail.internet ) a partir del objeto "email" nuestro
 	// que tiene la info para componerlo
-	public void envioMasivo(Email email) throws EnviarEmailException{
+	public void envioMasivo(Email email) throws SendEmailException{
 		
 		logger.info("--->>> envioMasivo: cantidad:["+email.getListaTo().size()+"]");
 
@@ -156,11 +156,11 @@ public class EnviarEmailBL{
 		} catch (MissingResourceException e) {
 			String mensaje = "MissingResourceException: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		} catch (Exception e) {
-			String mensaje = "EnviarEmailException: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
+			String mensaje = "SendEmailException: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		}
 		
 	}
@@ -219,28 +219,28 @@ public class EnviarEmailBL{
 
 	// crea el java mail session a partir de los parámetros de la cuenta de email 
 	// elegida por el usuario ( cuenta, server, puerto, tipo de autenticación, usuario, passwd, etc )
-	private void createJavaMailSession(Email email) throws EnviarEmailException {
+	private void createJavaMailSession(Email email) throws SendEmailException {
 		
-		//instanciamos WUserEmailAccountsBL(usuario de app)
-		WUserEmailAccountsBL wUserEmailAccountsBL = new WUserEmailAccountsBL();
+		//instanciamos WEmailAccountBL(usuario de app)
+		WEmailAccountBL wEmailAccountBL = new WEmailAccountBL();
 		
 		try {
-			//obtenemos propiedades de wUserEmailAccounts
-			wUserEmailAccounts = wUserEmailAccountsBL.getWUserEmailAccountsByPK(email.getIdFrom());
-		} catch (WUserEmailAccountsException ucee) {
-			logger.error("init(): No se pudo obtener WUserEmailAccounts");
+			//obtenemos propiedades de wEmailAccount
+			wEmailAccount = wEmailAccountBL.getWEmailAccountByPK(email.getIdFrom());
+		} catch (WEmailAccountException ucee) {
+			logger.error("init(): No se pudo obtener WEmailAccount");
 		}		
 		
-		properties.put("mail.smtp.host", wUserEmailAccounts.getOutputServer());
-        properties.put("mail.smtp.starttls.enable", wUserEmailAccounts.getOutputConnectionSecurity().equalsIgnoreCase("starttls")?"true":"false");
-		properties.put("mail.smtp.port", wUserEmailAccounts.getOutputPort());
-		properties.put("mail.smtp.mail.sender", wUserEmailAccounts.getEmail());//q puede ser cualquier email
-		properties.put("mail.smtp.user", wUserEmailAccounts.getOutputUserName()); //usuario validado para enviar mail
+		properties.put("mail.smtp.host", wEmailAccount.getOutputServer());
+        properties.put("mail.smtp.starttls.enable", wEmailAccount.getOutputConnectionSecurity().equalsIgnoreCase("starttls")?"true":"false");
+		properties.put("mail.smtp.port", wEmailAccount.getOutputPort());
+		properties.put("mail.smtp.mail.sender", wEmailAccount.getEmail());//q puede ser cualquier email
+		properties.put("mail.smtp.user", wEmailAccount.getOutputUserName()); //usuario validado para enviar mail
 		properties.put("mail.smtp.auth", "true");
 		javamailSession = Session.getInstance(properties);//HZC:20110407
 	}
 	
-	private void seteaDatosComunes(Email email, MimeMessage message) throws EnviarEmailException
+	private void seteaDatosComunes(Email email, MimeMessage message) throws SendEmailException
 			 {
 		/*HZC:20110209, el tema de la lista o Alias es propio de quien envia el correo o mailList */
 		/*en caso de tratarse de lista setear alias al from*/
@@ -248,16 +248,16 @@ public class EnviarEmailBL{
 		try {
 		message.setFrom(
 				new InternetAddress(
-						wUserEmailAccounts.getReplyTo(),
+						wEmailAccount.getReplyTo(),
 						//rrl 20110721 Mostrar el "from" del email con este formato: nombre de cuenta [email] - nes 20110721: getUceDireccionDeRespuesta
-//						wUserEmailAccounts.getUceNombre() + "["+ wUserEmailAccounts.getUceDireccionDeRespuesta() +"]") ); 
+//						wEmailAccount.getUceNombre() + "["+ wEmailAccount.getUceDireccionDeRespuesta() +"]") ); 
 					
 						//mrico 20110831 - Se pone solo el nombre, ya que el gestor de correo ya pondra la direccion a contituacion
-						wUserEmailAccounts.getName()) ); 
+						wEmailAccount.getName()) ); 
 						
-//						"".equals(email.getTo())? wUserEmailAccounts.getUceEmail():email.getTo()) );
+//						"".equals(email.getTo())? wEmailAccount.getUceEmail():email.getTo()) );
 						//mrico 20110608 No hay que poner el TO sino el remitente
-//						"".equals(email.getFrom())? wUserEmailAccounts.getUceEmail():email.getFrom()) );
+//						"".equals(email.getFrom())? wEmailAccount.getUceEmail():email.getFrom()) );
 		
 
         for(String cc: email.getListaCC()){
@@ -279,18 +279,18 @@ public class EnviarEmailBL{
 		}catch (MessagingException e){
 			String mensaje = "seteaDatosComunes: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		} catch (UnsupportedEncodingException e) {
 			String mensaje = "seteaDatosComunes: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		}
 	}
 
 	private void grabaLoggerInfoEmailEnviado(Email email) {
 		//HZC:20110308, informar en background sobre el estatus del envio
 		//HZC:20110308, por el momento se informara de los destinatarios(solo email) enviados
-//						logger.info("EnviarEmailBL: envio masivo sincrono: destinatarios enviados:" +messagePart.toString());
+//						logger.info("SendEmailBL: envio masivo sincrono: destinatarios enviados:" +messagePart.toString());
 		
 		StringBuffer sb = new StringBuffer();
 		logger.info("inicio destinatarios enviados:" + sb.toString());
@@ -301,7 +301,7 @@ public class EnviarEmailBL{
 	}
 
 	private void componeBodyEInsertaAdjuntos(Email email, MimeMessage message) 
-	throws EnviarEmailException	{
+	throws SendEmailException	{
 		// composición del mensaje en sí. Dependiendo de si es HTML o solo texto se configura de una forma u otra
 
 		try {
@@ -364,12 +364,12 @@ public class EnviarEmailBL{
 		} catch (MessagingException e){
 			String mensaje = "componeBodyEInsertaAdjuntos: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		} catch (Exception e){
 			String mensaje = "componeBodyEInsertaAdjuntos: Exception: Error ("+ e.getClass().getName()+"): "+ e.getMessage() +" - "+e.getCause();
 			e.printStackTrace();
 			logger.error( mensaje );
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 
 		}
 	}
@@ -383,17 +383,17 @@ public class EnviarEmailBL{
 
 		if (isHtmlFormatted) {
 
-//	        if (wUserEmailAccounts.getUceFirmaAdjuntaHtml()!=null && !"".equals(wUserEmailAccounts.getUceFirmaAdjuntaHtml())) {
-//	        	insertaFirma = "<tbody><br><br>" + wUserEmailAccounts.getUceFirmaAdjuntaHtml() + "</tbody>";
+//	        if (wEmailAccount.getUceFirmaAdjuntaHtml()!=null && !"".equals(wEmailAccount.getUceFirmaAdjuntaHtml())) {
+//	        	insertaFirma = "<tbody><br><br>" + wEmailAccount.getUceFirmaAdjuntaHtml() + "</tbody>";
 //	        	anyFirma = true;
-//	        } else if (wUserEmailAccounts.getUceFirmaAdjuntaTxt()!=null && !"".equals(wUserEmailAccounts.getUceFirmaAdjuntaTxt())) {
-//	        	insertaFirma = "<tbody><br><br>" + wUserEmailAccounts.getUceFirmaAdjuntaTxt().replaceAll("(\r\n|\n)", "<br>") + "</tbody>";
+//	        } else if (wEmailAccount.getUceFirmaAdjuntaTxt()!=null && !"".equals(wEmailAccount.getUceFirmaAdjuntaTxt())) {
+//	        	insertaFirma = "<tbody><br><br>" + wEmailAccount.getUceFirmaAdjuntaTxt().replaceAll("(\r\n|\n)", "<br>") + "</tbody>";
 //	        	anyFirma = true;
 //	        }
 //	        
 //	        if (anyFirma = true) {
 				BodyPart bp = new MimeBodyPart();
-				bp.setContent( wUserEmailAccounts.getSignatureHtml(), "text/html" );
+				bp.setContent( wEmailAccount.getSignatureHtml(), "text/html" );
 			    multipart.addBodyPart(bp); // agrega el body al email
 //	        }
 	        
@@ -410,11 +410,11 @@ public class EnviarEmailBL{
 			}
 	        
 			
-	        if (wUserEmailAccounts.getSignatureTxt()!=null && !"".equals(wUserEmailAccounts.getSignatureTxt())) {
-	        	insertaFirma += wUserEmailAccounts.getSignatureTxt();
+	        if (wEmailAccount.getSignatureTxt()!=null && !"".equals(wEmailAccount.getSignatureTxt())) {
+	        	insertaFirma += wEmailAccount.getSignatureTxt();
 	        	anyFirma = true;
 	        } else {
-	        	insertaFirma += wUserEmailAccounts.getSignatureHtml();				
+	        	insertaFirma += wEmailAccount.getSignatureHtml();				
 	        	anyFirma = true;
 	        }
 			
@@ -469,7 +469,7 @@ public class EnviarEmailBL{
 		return null;
 	}
 
-	private void enviaEmail(Email email, MimeMessage message) throws EnviarEmailException
+	private void enviaEmail(Email email, MimeMessage message) throws SendEmailException
 			 {
 
 		try {
@@ -481,7 +481,7 @@ public class EnviarEmailBL{
 				pwd = encrypter.decrypt(email.getPwd());	
 				if(pwd == null) {
 					logger.debug("Error en las credenciales cifradas de la cuenta de correo");
-					throw new EnviarEmailException("Error en las credenciales cifradas de la cuenta de correo");
+					throw new SendEmailException("Error en las credenciales cifradas de la cuenta de correo");
 				}
 			} catch (Exception e) {
 			}
@@ -494,7 +494,7 @@ public class EnviarEmailBL{
 			String mensaje = "enviaEmail: Error al intentar enviar el email :"+e.getClass()+" - "+e.getMessage()+" - "+e.getCause();
 			logger.error( mensaje );
 			e.printStackTrace();
-			throw new EnviarEmailException( mensaje );
+			throw new SendEmailException( mensaje );
 		}
 
 	}
@@ -526,7 +526,7 @@ public class EnviarEmailBL{
 			attachmentPart.setHeader("Content-Type" , file.getMime());
 
 		} catch (IOException e) {
-			String mensaje="EnviarEmailBL: setAttachment:Ocurrio Un Error al intentar recuperar el fichero: ["+file.getAbsolutePath()+"] " 
+			String mensaje="SendEmailBL: setAttachment:Ocurrio Un Error al intentar recuperar el fichero: ["+file.getAbsolutePath()+"] " 
 			+ e.getMessage() + " : " + e.getCause()+" "+e.getClass().toString();
 
 			logger.error(mensaje);
@@ -542,7 +542,7 @@ public class EnviarEmailBL{
 
 	
 	//HZC:20110407, desencriptar la clave para testear la cuenta email
-	public void testCredenciales(Email email) throws EnviarEmailException{
+	public void testCredenciales(Email email) throws SendEmailException{
 		createJavaMailSession(email);
 		try{
 		    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
@@ -551,7 +551,7 @@ public class EnviarEmailBL{
 		    	pwd = encrypter.decrypt(email.getPwd());	//HZC:20110407
 		    	if(pwd == null) {
 		    		logger.debug("Error en las credenciales cifradas de la cuenta de correo");
-		    		throw new EnviarEmailException("Error en las credenciales cifradas de la cuenta de correo");
+		    		throw new SendEmailException("Error en las credenciales cifradas de la cuenta de correo");
 		    	}
 			} catch (Exception e) {
 			}
@@ -564,13 +564,13 @@ public class EnviarEmailBL{
 			
 		} catch (NoSuchProviderException nspe) {
 			logger.error("Error: "+ nspe.getMessage());
-			throw new EnviarEmailException("Error: "+ nspe.getMessage());
+			throw new SendEmailException("Error: "+ nspe.getMessage());
 		} catch (MessagingException me) {
 			logger.error("Error: "+ me.getMessage());
-			throw new EnviarEmailException("Error: "+ me.getMessage());
+			throw new SendEmailException("Error: "+ me.getMessage());
 		} catch (Exception e) {
 			logger.error("Error: "+ e.getMessage());
-			throw new EnviarEmailException("Error: "+ e.getMessage());
+			throw new SendEmailException("Error: "+ e.getMessage());
 		}
 	}			
 

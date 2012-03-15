@@ -8,6 +8,9 @@ import java.util.Date;
 
 public class Constants {
 	
+	
+	public static final boolean WRITE_EMAIL_TO_FILESYSTEM = getStringProperty("email.to.filesystem","no").equals("yes");
+	
 	public static final String PROCESS_STEP = "PROCESS_STEP"; // dml 20120308
 	public static final String TURNBACK_STEP = "TURNBACK_STEP"; // dml 20120308
 

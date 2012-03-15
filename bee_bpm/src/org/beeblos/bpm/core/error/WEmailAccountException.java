@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.error;
 
 
-public class WUserEmailAccountsException extends Exception {
+public class WEmailAccountException extends Exception {
 
 	/**
 	 * 
@@ -11,14 +11,14 @@ public class WUserEmailAccountsException extends Exception {
 	/**
 	 * 
 	 */
-	public WUserEmailAccountsException() {
+	public WEmailAccountException() {
 		
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public WUserEmailAccountsException(String arg0) {
+	public WEmailAccountException(String arg0) {
 		super(arg0);
 		
 	}
@@ -26,7 +26,7 @@ public class WUserEmailAccountsException extends Exception {
 	/**
 	 * @param arg0
 	 */
-	public WUserEmailAccountsException(Throwable arg0) {
+	public WEmailAccountException(Throwable arg0) {
 		super(arg0);
 		
 	}
@@ -35,7 +35,7 @@ public class WUserEmailAccountsException extends Exception {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public WUserEmailAccountsException(String arg0, Throwable arg1) {
+	public WEmailAccountException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 		
 	}

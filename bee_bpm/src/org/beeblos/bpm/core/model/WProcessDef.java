@@ -59,7 +59,7 @@ public class WProcessDef implements java.io.Serializable {
 	private String globalDeadlineDate;
 	
 	// dml 20120223
-	private WUserEmailAccounts wUserEmailAccounts;
+	private WEmailAccount systemEmailAccount;
 	
 	// dml 20120306
 	private WEmailTemplates arrivingAdminNoticeTemplate;
@@ -75,7 +75,7 @@ public class WProcessDef implements java.io.Serializable {
 		super();
 		if ( createEmtpyObjects ) {
 			this.beginStep=new WStepDef( EMPTY_OBJECT );
-			this.wUserEmailAccounts = new WUserEmailAccounts(EMPTY_OBJECT);
+			this.systemEmailAccount = new WEmailAccount(EMPTY_OBJECT);
 			this.arrivingAdminNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
 			this.arrivingUserNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
 			
@@ -293,13 +293,13 @@ public class WProcessDef implements java.io.Serializable {
 	}
 
 
-	public WUserEmailAccounts getwUserEmailAccounts() {
-		return wUserEmailAccounts;
+	public WEmailAccount getSystemEmailAccount() {
+		return systemEmailAccount;
 	}
 
 
-	public void setwUserEmailAccounts(WUserEmailAccounts wUserEmailAccounts) {
-		this.wUserEmailAccounts = wUserEmailAccounts;
+	public void setSystemEmailAccount(WEmailAccount systemEmailAccount) {
+		this.systemEmailAccount = systemEmailAccount;
 	}
 
 
@@ -371,7 +371,7 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
 		result = prime
 				* result
-				+ ((wUserEmailAccounts == null) ? 0 : wUserEmailAccounts
+				+ ((systemEmailAccount == null) ? 0 : systemEmailAccount
 						.hashCode());
 		return result;
 	}
@@ -474,10 +474,10 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!usersRelated.equals(other.usersRelated))
 			return false;
-		if (wUserEmailAccounts == null) {
-			if (other.wUserEmailAccounts != null)
+		if (systemEmailAccount == null) {
+			if (other.systemEmailAccount != null)
 				return false;
-		} else if (!wUserEmailAccounts.equals(other.wUserEmailAccounts))
+		} else if (!systemEmailAccount.equals(other.systemEmailAccount))
 			return false;
 		return true;
 	}
@@ -495,8 +495,8 @@ public class WProcessDef implements java.io.Serializable {
 				+ ", productionDate=" + productionDate + ", productionUser="
 				+ productionUser + ", totalTime=" + totalTime
 				+ ", totalTimeUnit=" + totalTimeUnit + ", globalDeadlineDate="
-				+ globalDeadlineDate + ", wUserEmailAccounts="
-				+ wUserEmailAccounts + ", arrivingAdminNoticeTemplate="
+				+ globalDeadlineDate + ", systemEmailAccount="
+				+ systemEmailAccount + ", arrivingAdminNoticeTemplate="
 				+ arrivingAdminNoticeTemplate + ", arrivingUserNoticeTemplate="
 				+ arrivingUserNoticeTemplate + "]";
 	}
