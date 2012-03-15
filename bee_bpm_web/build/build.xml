@@ -13,22 +13,36 @@
         <include name="**/*.jar"/>
       </fileset>	    
     </classpath>-->
-
+	
 	<path id="libraries">
 	    <pathelement path="${binFolder}"/>
+		<filelist files="${bpmCore_jar},${bpmSecurity_jar},${bpmCommonWebComponent_jar}"/>
 		<fileset dir="../WebContent/WEB-INF/lib" includes="*.jar" />
 		<fileset dir="/home/nestor/sw/tools/apache-tomcat-6/lib" includes="*.jar" />
 	</path>
 
+	<target name="clean">
+
+		<delete dir="${binFolder}"/>
+		<delete dir="${distFolder}"/>
+		<delete dir="${webAppFolder}"/>
+
+		<mkdir dir="${binFolder}" />
+		<mkdir dir="${distFolder}"/>
+		
+ 	</target>		  
+
 	
 	<target name="compile">
 	    <javac srcdir="${srcFolder}" destdir="classes" classpathref="libraries"/>
-  	</target>		  
+		<fileset dir="${binFolder}"/>
+ 	</target>		  
 	
 	<target name="jar" depends="compile" description="">
 		 <jar destfile="${distFolder}/${jarName}"
 	         basedir="${binFolder}"
 		 	includes="**/*.class, **/*.xml, **/*.properties, **/*.menu"
+		 	excludes="**/.*"
 	         />
 	</target>
 	<target name="deploy" depends="jar">
@@ -36,23 +50,28 @@
 		<delete dir="${webAppFolder}"/>
 		<mkdir dir="${webAppFolder}" />
 
-
 		<copy todir="${webAppFolder}" flatten="false" overwrite="yes"> 
-				<fileset  dir="../WebContent"  includes="**" />
+				<fileset  dir="../WebContent"  includes="**" excludes="**/.*"/>
 		</copy>
 
 		<delete dir="${webAppFolder}/WEB-INF/classes"/>
 			
-		<copy file="${jarName}" todir="${webAppFolder}/WEB-INF/lib" />
-		<copy file="${commonUserJarName}" todir="${webAppFolder}/WEB-INF/lib" />
-		<copy file="${bdcJarName}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${distFolder}/${jarName}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${bpmCore_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${bpmSecurity_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${bpmCommonWebComponent_jar}" todir="${webAppFolder}/WEB-INF/lib" />
 		<copy file="${hibernateConfigName}" todir="${webAppFolder}/WEB-INF/classes" />		
 		<copy file="${log4jName}" todir="${webAppFolder}/WEB-INF/classes" />	
 		<copy file="${configurationName}" todir="${webAppFolder}/WEB-INF/classes" />		
 		<copy file="${camposBuscadorName}" todir="${webAppFolder}/WEB-INF/classes" />
-		
 
-		
+	</target>
+	
+	<target name="war" depends="deploy">
+		<war destfile="${distFolder}/${warName}" webxml="${webAppFolder}/WEB-INF/web.xml">
+			<fileset dir="${webAppFolder}"/>
+
+		</war>
 	</target>
 	
 </project>
