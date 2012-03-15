@@ -94,7 +94,7 @@
 
 
 
-	<class name="org.beeblos.bpm.core.model.WUserEmailAccounts" table="w_user_email_accounts">
+	<class name="org.beeblos.bpm.core.model.WEmailAccount" table="w_user_email_accounts">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -147,7 +147,7 @@
 		</property>
 		<property generated="never" lazy="false" name="inputServerName"
 			type="string">
-			<column length="100" name="input_server_name" />
+			<column  name="input_server_name" />
 		</property>
 		<property generated="never" lazy="false" name="inputPort"
 			type="java.lang.Integer">
@@ -155,30 +155,30 @@
 		</property>
 		<property generated="never" lazy="false" name="connectionSecurity"
 			type="string">
-			<column length="20" name="connection_security" not-null="true">
+			<column   name="connection_security" not-null="true">
 				<comment>None, SATRTTLS or SSL/TLS</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="identificationMethod"
 			type="string">
-			<column length="20" name="identification_method" not-null="true">
+			<column   name="identification_method" not-null="true">
 				<comment>Insecure transmited password,  encode password, kergeros/GSSAPI, NTLM</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="format" type="string">
-			<column length="10" name="format" >
+			<column   name="format" >
 				<comment>Text, HTML</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="outputServerName"
 			type="string">
-			<column length="100" name="output_server_name">
+			<column  name="output_server_name">
 				<comment>Output server name</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="outputServer"
 			type="string">
-			<column length="100" name="output_server">
+			<column  name="output_server">
 				<comment>output server id . for example: smtp.softpoint.org</comment>
 			</column>
 		</property>
@@ -190,7 +190,7 @@
 		</property>
 		<property generated="never" lazy="false"
 			name="outputConnectionSecurity" type="string">
-			<column length="10" name="output_connection_security">
+			<column   name="output_connection_security">
 				<comment>None, STARTTLS, SSL/TLS</comment>
 			</column>
 		</property>
