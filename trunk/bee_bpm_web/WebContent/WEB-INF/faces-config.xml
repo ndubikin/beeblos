@@ -32,8 +32,8 @@
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
  <managed-bean>
-  <managed-bean-name>wUserEmailAccountsBean</managed-bean-name>
-  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WUserEmailAccountsBean</managed-bean-class>
+  <managed-bean-name>wEmailAccountBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.WEmailAccountBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
  <managed-bean>
