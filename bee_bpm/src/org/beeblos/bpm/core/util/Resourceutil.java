@@ -35,6 +35,34 @@ public class Resourceutil {
 		return ret;
 	}
 
+	// dml 20120315
+	public static String getStringPropertyEmailTemplate(String pk, String defaultValue) {
+		String ret = null;
+		ret = getStringPropertyEmailTemplate(pk);
+		if (ret == null && defaultValue != null)
+			return defaultValue;
+		return ret;
+	}
+
+	// dml 20120315
+	public static String getStringPropertyEmailTemplate(String pk) {
+		String ret = null;
+		try {
+
+			ret = Configuration.getEmailTemplatePropertiesHelperResourceBundle().getString(pk);
+
+		} catch (Exception e) {
+
+			System.out
+					.println(">>>>>>>>>>>>>>>>>>>>>> ERROR LEYENDO PROPIEDAD : ["
+							+ pk
+							+ "] del emailTemplatePropertiesHelper.properties ...!!!!!!!!!!!!!");
+			e.printStackTrace();
+
+		}
+		return ret;
+	}
+
 	public static Integer getIntegerProperty(String pk, Integer defaultValue) {
 		Integer ret = null;
 		ret = getIntegerProperty(pk);

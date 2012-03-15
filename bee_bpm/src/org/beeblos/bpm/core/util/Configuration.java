@@ -37,4 +37,16 @@ public class Configuration {
 		
 	}
 
+	public static ResourceBundle getEmailTemplatePropertiesHelperResourceBundle() {
+		
+		try {
+
+			ResourceBundle rb =  ResourceBundle.getBundle("emailTemplatePropertiesHelper");
+			return rb;
+		} catch (Exception e) {
+			logger.error("---->>> ERROR : CAN'T READ RESOURCE BUNDLE [emailTemplatePropertiesHelper.properties]");
+			logger.error("error: "+e.getClass()+" -- "+e.getMessage()+" -- "+e.getLocalizedMessage()+" -- "+e.getCause());
+		}
+		return null;
+	}
 }
