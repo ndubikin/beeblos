@@ -1,6 +1,6 @@
 package org.beeblos.bpm.core.error;
 
-public class EnviarEmailException extends Exception {
+public class SendEmailException extends Exception {
 
 	/**
 	 * 
@@ -10,20 +10,20 @@ public class EnviarEmailException extends Exception {
 	/**
 	 * 
 	 */
-	public EnviarEmailException() {
+	public SendEmailException() {
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public EnviarEmailException(String arg0) {
+	public SendEmailException(String arg0) {
 		super(arg0);
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public EnviarEmailException(Throwable arg0) {
+	public SendEmailException(Throwable arg0) {
 		super(arg0);
 	}
 
@@ -31,7 +31,7 @@ public class EnviarEmailException extends Exception {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public EnviarEmailException(String arg0, Throwable arg1) {
+	public SendEmailException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 

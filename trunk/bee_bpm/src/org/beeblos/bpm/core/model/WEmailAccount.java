@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.model;
 
 
-public class WUserEmailAccounts implements java.io.Serializable{
+public class WEmailAccount implements java.io.Serializable{
 
 	private static final long serialVersionUID = 1L;
 
@@ -30,11 +30,11 @@ public class WUserEmailAccounts implements java.io.Serializable{
 	private String outputPassword;
 	private String idExchange;
  
-	public WUserEmailAccounts() {
+	public WEmailAccount() {
 
 	}
 
-	public WUserEmailAccounts(boolean createEmtpyObjects ){
+	public WEmailAccount(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
 			this.wUserDef = new WUserDef();
@@ -44,7 +44,7 @@ public class WUserEmailAccounts implements java.io.Serializable{
 
 	
 	
-	public WUserEmailAccounts(Integer id, WUserDef wUserDef, String name,
+	public WEmailAccount(Integer id, WUserDef wUserDef, String name,
 			boolean userDefaultAccount, String email, String replyTo,
 			String signatureText, String signatureTxt, String signatureHtml,
 			String signatureFile, String inputServerType,
@@ -373,7 +373,7 @@ public class WUserEmailAccounts implements java.io.Serializable{
 
 	@Override
 	public String toString() {
-		return "WUserEmailAccounts [id=" + id + ", wUserDef=" + wUserDef
+		return "WEmailAccount [id=" + id + ", wUserDef=" + wUserDef
 				+ ", name=" + name + ", userDefaultAccount="
 				+ userDefaultAccount + ", email=" + email + ", replyTo="
 				+ replyTo + ", signatureText=" + signatureText
@@ -461,7 +461,7 @@ public class WUserEmailAccounts implements java.io.Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		WUserEmailAccounts other = (WUserEmailAccounts) obj;
+		WEmailAccount other = (WEmailAccount) obj;
 		if (connectionSecurity == null) {
 			if (other.connectionSecurity != null)
 				return false;
