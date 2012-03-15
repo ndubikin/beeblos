@@ -22,15 +22,12 @@ public class WStepWork implements java.io.Serializable {
 	
 	private WProcessWork wProcessWork;
 	
+	// TODO - QUITAR ESTAS DOS PROPIEDADES Q YA LAS TENEMOS EN WPROCESSWORK
 	private WProcessDef process;
 	private Integer version;
 	
 	private WStepDef previousStep;
 	private WStepDef currentStep;
-	
-	// fields to link with user known properties about objects
-//	private String reference;
-//	private String comments; 
 	
 	private String userInstructions;
 	private String userNotes;
