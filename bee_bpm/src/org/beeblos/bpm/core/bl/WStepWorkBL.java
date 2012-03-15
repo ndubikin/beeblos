@@ -6,8 +6,12 @@ import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,8 +21,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.dao.WUserRoleDao;
+import org.beeblos.bpm.core.email.bl.EnviarEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
+import org.beeblos.bpm.core.error.EnviarEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
@@ -969,16 +975,28 @@ public class WStepWorkBL {
 			
 		}
 		
-		/*	try {
+		try {
 			
 			if (email.getListaTo().size() > 0) {
-				new EnviarEmailBL().enviar(email);
+				
+				if (Resourceutil.getStringProperty("email.to.filesystem").equals("No")){
+				
+					new EnviarEmailBL().enviar(email);
+				
+				} else {
+					
+					this._buildFile(email);
+					
+				}
 			}
+	
 		} catch (EnviarEmailException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		*/
 		
 	}
 	
@@ -1095,6 +1113,37 @@ public class WStepWorkBL {
 			}
 		
 		return null;
+		
+		
+	}
+	
+	private void _buildFile(Email email) throws IOException{
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd_hh_mm_ss");
+		
+		String path = Resourceutil.getStringProperty("email.path.server", "");
+		
+		path += "notificationEmail"+sdf.format(new Date())+".txt"; 
+		
+		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
+		
+		bufferedWriter.append("SEND FROM: \n");
+		bufferedWriter.append(" -> " + email.getFrom()+"\n");
+		
+		bufferedWriter.append("\nSEND TO: \n");
+		for (String to: email.getListaTo()){
+			bufferedWriter.append(" -> " + to+"\n");
+		}
+
+		bufferedWriter.append("\nSUBJECT: \n");
+		bufferedWriter.append(" -> " + email.getSubject()+"\n");
+
+		bufferedWriter.append("\nBODY MESSAGE: \n");
+		bufferedWriter.append(" -> " + email.getBodyText()+"\n");
+
+		bufferedWriter.flush();
+		
+		System.out.println(" - Email NO enviado, creado en la ruta: " + path);
 		
 		
 	}
