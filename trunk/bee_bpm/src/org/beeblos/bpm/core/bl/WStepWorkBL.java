@@ -6,6 +6,8 @@ import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.beeblos.bpm.core.model.WUserEmailAccounts;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
+import org.beeblos.bpm.core.util.Resourceutil;
 
 
 
@@ -895,29 +898,56 @@ public class WStepWorkBL {
 		Email email = this._buildEmail(process.getwUserEmailAccounts(), 
 				"Execute ProcessStep: "+newStep.getId()+" / "+newStep.getVersion());
 				
+		
+		
 		if ( newStep.getCurrentStep().isArrivingAdminNotice()) {
 
 			
 			System.out.println("ADMIN EMAIL TEMPLATE: ");
-			email.setBodyText(process.getArrivingAdminNoticeTemplate().getTemplate());
-			//ESTE MÉTODO PRIVADO SERÁ EL ENCARGADO DE OBTENER TODAS LAS CUENTAS DE EMAIL SIN REPETIR
-			//EL SEGUNDO ATRIBUTO INDICA SI LAS CUENTAS SERÁN DE ADMINISTRADORES (true) O DE USUARIOS NORMALES (false)
-			email.setListaTo(this.getReplyEmailAccounts(newStep, true));
 			
-			this._sendEmail(email);
+			if (process != null 
+					&& process.getArrivingAdminNoticeTemplate() != null) {
+			
+				String templateWithObjectData = this._buildTemplate(process.getArrivingAdminNoticeTemplate().getTemplate(), newStep);
+			
+				email.setBodyText(templateWithObjectData);
+				
+				//ESTE MÉTODO PRIVADO SERÁ EL ENCARGADO DE OBTENER TODAS LAS CUENTAS DE EMAIL SIN REPETIR
+				//EL SEGUNDO ATRIBUTO INDICA SI LAS CUENTAS SERÁN DE ADMINISTRADORES (true) O DE USUARIOS NORMALES (false)
+				email.setListaTo(this.getReplyEmailAccounts(newStep, true));
+				
+				this._sendEmail(email);
+				
+			} else {
+				System.out.println("NO HAY ADMIN TEMPLATE ASOCIADO AL PROCESO!!");
+			}
 			
 			
 		}
+		
+		
 		
 		if ( newStep.getCurrentStep().isArrivingUserNotice() ) {
 			// avisar a los usuarios y roles definidos
 			
 			System.out.println("USER EMAIL TEMPLATE: ");
-			email.setBodyText(process.getArrivingUserNoticeTemplate().getTemplate());
-			//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
-			email.setListaTo(this.getReplyEmailAccounts(newStep, false));
+
+			if (process != null 
+					&& process.getArrivingUserNoticeTemplate() != null) {
 			
-			this._sendEmail(email);
+				String templateWithObjectData = this._buildTemplate(process.getArrivingUserNoticeTemplate().getTemplate(), newStep);
+			
+				email.setBodyText(templateWithObjectData);
+	
+				
+				//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
+				email.setListaTo(this.getReplyEmailAccounts(newStep, false));
+				
+				this._sendEmail(email);
+
+			} else {
+				System.out.println("NO HAY USER TEMPLATE ASOCIADO AL PROCESO!!");
+			}
 
 		}
 		
@@ -964,6 +994,108 @@ public class WStepWorkBL {
 		email.setSubject(emailSubject);
 		
 		return email;
+		
+	}
+	
+	// dml 20120315
+	private String _buildTemplate(String template, WStepWork wsw){
+		
+		System.out.println("TEMPLATE ANTES DE SUSTITUIR: "+ template);
+		
+		String pattern = ""; 
+		String objectData = "";
+		
+		
+		while (template.contains("{")){
+			
+			pattern = template.substring(template.indexOf("{"),template.indexOf("}")+1);
+			
+			objectData = Resourceutil.getStringPropertyEmailTemplate(pattern, pattern.replace("{", "¿").replace("}", "?"));
+			
+			if (!objectData.contains("¿")){
+
+				String tempData = this._getData(wsw, objectData);
+				if (tempData != null) {
+			
+					objectData = "'"+tempData+"'";
+
+				} else {
+					
+					objectData = pattern.replace("{", "¿").replace("}", "?");
+					
+				}
+			}	
+			// dml 20120315 - si no encontramos el patron lo dejamos como viene
+			template = template.replace(pattern, objectData);
+				
+		}
+		
+		System.out.println("TEMPLATE DESPUES DE SUSTITUIR: "+ template);
+		
+		return template;
+		
+	}
+	
+	private String _getData(WStepWork wsw, String data){
+		
+		try {
+
+			if (data.contains(".")
+					&& data.substring(0, data.indexOf(".")).equals("WStepWork")){
+				
+				data = data.substring(data.indexOf(".")+1);
+			
+				Class cls = Class.forName(wsw.getClass().getName());
+							
+				Method m = cls.getMethod("get"+data.substring(0, data.indexOf(".")), new Class[0]);
+				
+				//Primero obtenemos el objeto de primer nivel del WStepWork y ahora iteramos
+				Object res = m.invoke(wsw, new Object[0]);
+				
+				while (data.contains(".")) {
+					
+					data = data.substring(data.indexOf(".")+1);
+					
+					cls = Class.forName(res.getClass().getName());
+					
+					if (data.contains(".")){
+						m = cls.getMethod("get"+data.substring(0, data.indexOf(".")), new Class[0]);
+						res = m.invoke(res, new Object[0]);
+					} else {
+						m = cls.getMethod("get"+data, new Class[0]);
+						res = m.invoke(res, new Object[0]);
+						break;
+					}
+				}
+
+				return res.toString();
+
+			} else {
+				System.out.println("CLASE NO CORRESPONDE!");
+			}
+									
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+		
+		return null;
+		
 		
 	}
 	
