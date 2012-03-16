@@ -41,10 +41,10 @@ public class Configuration {
 		
 		try {
 
-			ResourceBundle rb =  ResourceBundle.getBundle("emailTemplatePropertiesHelper");
+			ResourceBundle rb =  ResourceBundle.getBundle("email_field_mapping");
 			return rb;
 		} catch (Exception e) {
-			logger.error("---->>> ERROR : CAN'T READ RESOURCE BUNDLE [emailTemplatePropertiesHelper.properties]");
+			logger.error("---->>> ERROR : CAN'T READ RESOURCE BUNDLE [email_field_mapping.properties]");
 			logger.error("error: "+e.getClass()+" -- "+e.getMessage()+" -- "+e.getLocalizedMessage()+" -- "+e.getCause());
 		}
 		return null;
