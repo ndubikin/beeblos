@@ -56,7 +56,7 @@ public class Resourceutil {
 			System.out
 					.println(">>>>>>>>>>>>>>>>>>>>>> ERROR LEYENDO PROPIEDAD : ["
 							+ pk
-							+ "] del emailTemplatePropertiesHelper.properties ...!!!!!!!!!!!!!");
+							+ "] del email_field_mapping.properties ...!!!!!!!!!!!!!");
 			e.printStackTrace();
 
 		}

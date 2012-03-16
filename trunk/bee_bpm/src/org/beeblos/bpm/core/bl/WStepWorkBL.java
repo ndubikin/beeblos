@@ -1009,14 +1009,16 @@ public class WStepWorkBL {
 			
 			pattern = template.substring(template.indexOf("{"),template.indexOf("}")+1);
 			
-			objectData = Resourceutil.getStringPropertyEmailTemplate(pattern, pattern.replace("{", "¿").replace("}", "?"));
+			objectData = 
+					Resourceutil.getStringPropertyEmailTemplate(pattern, pattern.replace("{", "¿").replace("}", "?"));
 			
 			if (!objectData.contains("¿")){
 
 				String tempData = this._getData(wsw, objectData);
+				
 				if (tempData != null) {
 			
-					objectData = "'"+tempData+"'";
+					objectData = tempData;
 
 				} else {
 					
