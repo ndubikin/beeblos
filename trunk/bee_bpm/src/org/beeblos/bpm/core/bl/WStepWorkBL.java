@@ -346,6 +346,7 @@ public class WStepWorkBL {
 		} else if ( typeOfProcess.equals(TURNBACK_STEP) ) {
 
 			_executeTurnBack(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
+			qtyNewRoutes=1;
 			
 		}
 		
