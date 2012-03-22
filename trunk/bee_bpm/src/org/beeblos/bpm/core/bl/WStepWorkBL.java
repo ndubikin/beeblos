@@ -108,16 +108,7 @@ public class WStepWorkBL {
 		stepw.setModDate( DEFAULT_MOD_DATE);
 		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
 		
-		// nes 20120315 
-		if ( stepw.getCurrentStep().isEmailNotification()  ) {
-			try {
-				_emailNotificationArrivingStep(stepw, "");
-			} catch (SendEmailException e) {
-				logger.info("SendEmailException: there is not possible sending email notification to users involved");
-			} catch (Exception e) {
-				logger.info("Exception: there is not possible sending email notification to users involved");
-			}
-		}
+		_sendEmailNotification(stepw);
 
 		return idGeneratedStep;
 	}
@@ -334,63 +325,27 @@ public class WStepWorkBL {
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
 			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, WStepAlreadyProcessedException {
 
+		Date now = new Date();
 		Integer qtyNewRoutes=0;
 
-
-		// dml 20120308 - añadido proveniente de PasoBean y que no existia en la lógica de esta operación.
 		this.checkLock(idStepWork, currentUser, false); // verifies the user has the step locked before process it ...
 
-		// dml 20120308 - añadido proveniente de PasoBean y que no existia en la lógica de esta operación.
 		this.checkStatus(idStepWork, currentUser, false); // verifies step is process pending at this time ...
-		
-		
-		// dml 20120308 - añadido proveniente de PasoBean. Recargamos el storesStep completo mediante el idStepWork
-		// que le pasamos desde el PasoBean
-		WStepWork storedStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 
-		// dml 20120308 - este método lo comento ya que se realiza (al igual que las dos llamadas a métodos
-		// privados de abajo que provenian del PasoBean) tanto desde _executeProcessStep(...) como desde
-		// _executeTurnBack(...)
-/*		List<WStepSequenceDef> routes 
-						= new WStepSequenceDefBL()
-									.getWStepSequenceDefs(
-											storedStep.getProcess().getId(), // process
-											storedStep.getVersion(), 		 // version
-											storedStep.getCurrentStep().getId(), // current step id
-											currentUser);			
-*/		
-
-		// dml 20120308 - SE HACE ESTA LLAMADA EN EL _executeProcessStep y desde el _executeTurnBack 
-		// (metodo _setCurrentStepToProcessed)
-		//_setCurrentWorkitemToProcessed( storedStep, idResponse, currentUser );
+		// reload current step from database
+		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 		
-		// dml 20120308 - La llamada a este método ya se obvia ya que dentro del _executeProcessStep
-		// hacemos el bucle de creación de newStep que se realizaba en este mismo llamando al método
-		// _setNextStep(...) y desde el _executeTurnBack al igual con el "new WStepWork()"
-		//_startNewWorkitems( routes, idResponse , currentUser, runtimeSettings, storedStep, isAdminProcess); 
-
+		// set current workitem to processed status
+		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
 		
-		/* dml 20120308 - Lógica previa a traer toda la lógica existente en PasoBean para procesar un WStepWork
-
-		// 1 - validar que el step esté activo y no haya sido tocado por nadie en el interín
-		WStepWork storedStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
-		
-		_checkPreProcessStepWork(idStepWork, currentUser, idObject, idObjectType, storedStep); // step is active an is not processed nor blocked by another
-
-		// 2 - validar que la respuesta esté dentro de las válidas
-		_checkValidResponse(idStepWork, idResponse, storedStep);
-		
-		// 3 - validar que el usuario es válido para realizar la tarea ...( ver si vale la pena )
-		 */	
-
-		
+		// insert new steps 
 		if ( typeOfProcess.equals(PROCESS_STEP) ) {
 
-			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, storedStep, idResponse, isAdminProcess);
+			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
 			
 		} else if ( typeOfProcess.equals(TURNBACK_STEP) ) {
 
-			qtyNewRoutes = _executeTurnBack(runtimeSettings, currentUser, storedStep, idResponse, isAdminProcess);
+			_executeTurnBack(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
 			
 		}
 		
@@ -605,101 +560,75 @@ public class WStepWorkBL {
 	}
 	
 	private Integer _executeProcessStep(
-			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork storedStep, 
-			Integer idResponse, boolean isAdminProcess ) 
+			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
+			Integer idResponse, boolean isAdminProcess, Date now ) 
 	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException {
 		
 		Integer qty=0;
-		Date now = new Date();
-		WStepWork newStep = new WStepWork();
+
+		// create an emty object to build new steps
+		WStepWork newStepWork = new WStepWork();
 		
-		// 4 - carga secuencia siguiente (rutas salientes desde el currentStep
-		List<WStepSequenceDef> lnextSteps = 
-				new WStepSequenceDefBL()
-					.getWStepSequenceDefs(
-							storedStep.getProcess().getId(), 
-							storedStep.getVersion(), 
-							storedStep.getCurrentStep().getId(),
-							currentUser);
+		// load routes from current step
+		List<WStepSequenceDef> routes = new WStepSequenceDefBL()
+												.getWStepSequenceDefs(
+														currentStepWork.getProcess().getId(), 
+														currentStepWork.getVersion(), 
+														currentStepWork.getCurrentStep().getId(),
+														currentUser);
 		
 		// TODO: urgentemente definir transaccion aquí ...
 		
-		// dml 20120308 - Esto pasa de hacerse en PasoBean por lo que
-		// se realizaba tanto si es TurnBack como si no a realizarse solo en este _executeProcessStep
-		for (WStepSequenceDef seq: lnextSteps ) {
-			if (seq.isAfterAll() 
-					// dml 20120308 - he cambiado esta comprobacion por la original ya que me parece que no
-					// realizan lo mismo (la que esta debajo), y que funcionaba bien
-					//|| _hasInValidResponseList(seq.getValidResponses(), storedStep.getCurrentStep().getResponse()) ){
-					|| (seq.getValidResponses()!=null 
-						&& seq.getValidResponses().contains(idResponse.toString().trim()+"|") ) ){
+		if ( routes.size()==0 ) { // no next steps - this tree ends here ...
+			
+			qty = 0; // tree finished ...
+		
+		} else {
+		
+			// process each route ( generates a new step for each new valid route )
+			for (WStepSequenceDef route: routes ) {
 				
-				// dml 20120308 - si entra por aquí suma uno a esto, que debe ser el sustituto 
-				// de devolver true o false del método gemelo que había en PasoBean
-				qty++;
-				
-				// dml 20120308 - ¿Por qué se ponia aquí el newStep a NULL?
-				//newStep=null;
-				
-				// dml 20120308 - Reciclado el método que existía en esta clase pero añadiendo la lógica de su
-				// gemelo que existía en PasoBean, añadiendo sus variables y rellenando también algunas que estaban
-				// en este método y no en PasoBean. Explicacion en su interior
-				_setNewStep(newStep, storedStep, seq.getToStep(), runtimeSettings, currentUser, now, isAdminProcess );
-				
-				this.add(newStep, currentUser);
-				
-				// dml 20120308 - si esta la opcion activa enviamos emails a los users/roles indicados
-				if ( newStep.getCurrentStep().isEmailNotification()  ) {		
-					try {
-						_emailNotificationArrivingStep(newStep, "");
-					} catch (SendEmailException e) {
-						logger.info("SendEmailException: there is not possible sending email notification to users involved");
-					} catch (Exception e) {
-						logger.info("Exception: there is not possible sending email notification to users involved");
+				if ( route.getToStep()!=null ) {
+					
+					if (route.isAfterAll() 
+							|| (route.getValidResponses()!=null 
+								&& route.getValidResponses().contains(idResponse.toString().trim()+"|") ) ) {
+	
+						qty++;
+						
+						_setNewWorkingStepAndInsertRec(runtimeSettings,
+								currentUser, currentStepWork, isAdminProcess,
+								now, newStepWork, route);
+						
+						_sendEmailNotification(newStepWork);
 					}
+				} else {
+					// this route points to end tree - no action required ...
+
+					// if ret arrives here with false, all ok; 
+					// if ret arrives here with true it indicates there are another valid routes for this step
+					// but no action is required
 				}
 			}
 		}
 		
-		// dml 20120308 - a diferencia del método de PasoBean gemelo a este, en el método es donde se cargan
-		// los nuevos datos del storedStep y es en este propio metodo donde se hace el update
-		// Esta llamada a este método en PasoBean se hacia antes del for, pero no tiene consecuencias
-		// realizarlo aquí ya que no interfiere con el bucle al no tratar la misma variable (storedStep VS newStep)
-		_setCurrentStepToProcessed( storedStep, runtimeSettings, currentUser, now, idResponse );
-		this.update(storedStep, currentUser);
-		
 		return qty;
 		
 	}
-	
-	private Integer _executeTurnBack (
-			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork storedStep, 
-			Integer idResponse, boolean isAdminProcess ) 
-	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException {
-		
-		Integer qty=0;
-		Date now = new Date();
 
-		WStepWork newStep = new WStepWork();
-		WStepDef toStep = storedStep.getPreviousStep();
+	private void _setNewWorkingStepAndInsertRec(
+			WRuntimeSettings runtimeSettings, Integer currentUser,
+			WStepWork currentStepWork, boolean isAdminProcess, Date now,
+			WStepWork newStepWork, WStepSequenceDef route)
+			throws WStepDefException, WStepWorkException {
 		
+		_setNewStep(newStepWork, currentStepWork, route.getToStep(), runtimeSettings, currentUser, now, isAdminProcess );
 		
-		// TODO: urgentemente definir transaccion aquí ...
-	
-		qty++;
-		
-		// dml 20120308 - aquí como si es turnBack es donde se le mete como nuevo paso un new WStepWork()
-		_setNewStep(newStep, storedStep, toStep, runtimeSettings, currentUser, now, isAdminProcess );
-		
-		this.add(newStep, currentUser);
+		this.add(newStepWork, currentUser);
+	}
 
-		_setCurrentStepToProcessed( storedStep, runtimeSettings, currentUser, now, idResponse );
-		
-		this.update(storedStep, currentUser);
-	
-		// send email notification to users related
-		if ( newStep.getCurrentStep().isEmailNotification() ) {
-			
+	private void _sendEmailNotification(WStepWork newStep) {
+		if ( newStep.getCurrentStep().isEmailNotification()  ) {		
 			try {
 				_emailNotificationArrivingStep(newStep, "");
 			} catch (SendEmailException e) {
@@ -707,46 +636,26 @@ public class WStepWorkBL {
 			} catch (Exception e) {
 				logger.info("Exception: there is not possible sending email notification to users involved");
 			}
-		
 		}
-		
-		return qty;
 	}
 	
+	private void _executeTurnBack (
+			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
+			Integer idResponse, boolean isAdminProcess, Date now ) 
+	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException {
+
+		WStepWork newStep = new WStepWork();
+		
+		// TODO: urgentemente definir transaccion aquí ...
+
+		_setNewStep(newStep, currentStepWork, currentStepWork.getPreviousStep(), runtimeSettings, currentUser, now, isAdminProcess );
+		
+		this.add(newStep, currentUser);
 	
-	private void _setCurrentStepToProcessed (
-			WStepWork storedStep, WRuntimeSettings runtimeSettings, 
-			Integer currentUser, Date now, Integer idResponse ) 
-	throws WUserDefException {
-		
-		// dml 20120308 - añadi estos 3 sets que estaban en PasoBean
-		storedStep.setLocked(false);
-		storedStep.setLockedBy(null);
-		storedStep.setLockedSince(null);
-		
-		// dml 20120307 cambie esta linea por la siguiente ya que si no fuera asi daria error antes en el bean
-		// Esto no estaba en este método, esta traido de PasoBean
-		//if ( lRespuestasCombo!= null && lRespuestasCombo.size()>0 ) { // nes 20121222
-		if ( idResponse != null && idResponse != 0 ) { // nes 20121222
-			storedStep.setResponse(idResponse.toString());
-		} else {
-			storedStep.setResponse("no responses list");
-		}
-
-		
-		storedStep.setDecidedDate(now);
-		//dml 20120308 - comente la que estaba en este metodo y le puse la que estaba en el metodo de PasoBean
-		//storedStep.setPerformer(new WUserDefBL().getWUserDefByPK(currentUser));
-		storedStep.setPerformer(new WUserDef(currentUser));// nes 20120126
-		
-		// timestamp
-
-		storedStep.setModUser(currentUser);
-		storedStep.setModDate(now);
-		
-		
+		_sendEmailNotification(newStep);
 		
 	}
+	
 
 	private void _setStepWork(Integer idObject, String idObjectType,
 			Integer currentUser, WProcessDef process, WStepDef stepDef,
@@ -764,29 +673,6 @@ public class WStepWorkBL {
 		stepWork.setReminderTimeUnit(stepDef.getReminderTimeUnit());
 		stepWork.setReminderTime(stepDef.getReminderTime());
 		
-		// indico las asignaciones que tenga este paso
-//		WStepWorkAssignment swa = new WStepWorkAssignment();
-//		
-//		for (WStepAssignedDef assigned: stepDef.getAssigned()){
-//			
-//			
-//			if (assigned.getAssignedToObject().equals(ROLE)){
-//				swa.setIdAssignedRole(new Integer(assigned.getAssignedTo()));
-//				swa.setIdAssignedUser(null);
-//			} else {
-//				swa.setIdAssignedRole(null);
-//				swa.setIdAssignedUser(assigned.getAssignedTo());
-//			}
-//			
-//			// timestamp
-//			swa.setInsertDate(now);
-//			swa.setModDate(now);
-//			swa.setInsertUser(currentUser);
-//			swa.setModUser(currentUser);
-//			
-//			stepWork.getAssignedTo().add(swa);
-//		}
-		
 		stepWork.setOpenedDate(null);
 		stepWork.setOpenerUser(null);
 		stepWork.setDecidedDate(null);
@@ -800,81 +686,56 @@ public class WStepWorkBL {
 
 	
 	private void _setNewStep (
-			WStepWork newStep, WStepWork storedStep, WStepDef toStep,  
+			WStepWork newStepWork, WStepWork currentStepWork, WStepDef toStepDef,  
 			WRuntimeSettings runtimeSettings, Integer currentUser, Date now, 
 			boolean isAdminProcess ) 
 	throws WStepDefException {
 
-		// dml 20120308 - Cambiada la instrucción por la que había en PasoBean
-		newStep.setCurrentStep(new WStepDefBL().getWStepDefByPK(toStep.getId(), currentUser));
-		//newStep.setCurrentStep(toStep);
-		newStep.setPreviousStep(storedStep.getCurrentStep());
+		// set from y to step definitions in work object
+		//newStepWork.setCurrentStep(new WStepDefBL().getWStepDefByPK(toStepDef.getId(), currentUser));
+		newStepWork.setCurrentStep( toStepDef );
+		newStepWork.setPreviousStep(currentStepWork.getCurrentStep());
 		
-		newStep.setArrivingDate(now);
-		
-		// dml 20120308 - Nuevas intrucciones añadidas de su método gemelo PasoBean
-		newStep.setAdminProcess(isAdminProcess);
-		newStep.setProcess( storedStep.getProcess() );
-		newStep.setVersion( storedStep.getVersion() );
-		newStep.setPreviousStep( storedStep.getCurrentStep() );
-		newStep.setwProcessWork(storedStep.getwProcessWork());
-		// put user instructions to next step
-		if ( newStep.isSendUserNotesToNextStep() ) {
-			newStep.setUserInstructions(storedStep.getUserNotes());
+		newStepWork.setArrivingDate(now);
+		newStepWork.setAdminProcess(isAdminProcess);
+		newStepWork.setProcess( currentStepWork.getProcess() );
+		newStepWork.setVersion( currentStepWork.getVersion() );
+
+		newStepWork.setwProcessWork(currentStepWork.getwProcessWork());
+
+		// put run time user instructions to next step
+		if ( newStepWork.isSendUserNotesToNextStep() ) {
+			newStepWork.setUserInstructions(currentStepWork.getUserNotes());
 		}
 		
 		
 		// si se permiten modificar estos valores en runtime se toman del runtimeSettings, si no de la
 		// propia definición del paso ...
-		if (newStep.getCurrentStep().isRuntimeModifiable()) {
-			newStep.setTimeUnit(runtimeSettings.getTimeUnit());
-			newStep.setAssignedTime(runtimeSettings.getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
-			newStep.setDeadlineDate(runtimeSettings.getDeadlineDate()); // fecha de deadline de la tarea
-			newStep.setDeadlineTime(runtimeSettings.getDeadlineTime()); // hora de deadline de la tarea  ( si no hay fecha se asume que la hora es la hora del día arrivingDate)
-			newStep.setReminderTimeUnit(runtimeSettings.getReminderTimeUnit());
-			newStep.setReminderTime(runtimeSettings.getReminderTime());			
+		if (newStepWork.getCurrentStep().isRuntimeModifiable()) {
+			newStepWork.setTimeUnit(runtimeSettings.getTimeUnit());
+			newStepWork.setAssignedTime(runtimeSettings.getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
+			newStepWork.setDeadlineDate(runtimeSettings.getDeadlineDate()); // fecha de deadline de la tarea
+			newStepWork.setDeadlineTime(runtimeSettings.getDeadlineTime()); // hora de deadline de la tarea  ( si no hay fecha se asume que la hora es la hora del día arrivingDate)
+			newStepWork.setReminderTimeUnit(runtimeSettings.getReminderTimeUnit());
+			newStepWork.setReminderTime(runtimeSettings.getReminderTime());			
 		} else {
-			newStep.setTimeUnit(newStep.getCurrentStep().getTimeUnit());
-			newStep.setAssignedTime(newStep.getCurrentStep().getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
-			newStep.setDeadlineDate(newStep.getCurrentStep().getDeadlineDate()); // fecha de deadline de la tarea
-			newStep.setDeadlineTime(newStep.getCurrentStep().getDeadlineTime()); // hora de deadline de la tarea  ( si no hay fecha se asume que la hora es la hora del día arrivingDate)
-			newStep.setReminderTimeUnit(newStep.getCurrentStep().getReminderTimeUnit());
-			newStep.setReminderTime(newStep.getCurrentStep().getReminderTime());
+			newStepWork.setTimeUnit(newStepWork.getCurrentStep().getTimeUnit());
+			newStepWork.setAssignedTime(newStepWork.getCurrentStep().getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
+			newStepWork.setDeadlineDate(newStepWork.getCurrentStep().getDeadlineDate()); // fecha de deadline de la tarea
+			newStepWork.setDeadlineTime(newStepWork.getCurrentStep().getDeadlineTime()); // hora de deadline de la tarea  ( si no hay fecha se asume que la hora es la hora del día arrivingDate)
+			newStepWork.setReminderTimeUnit(newStepWork.getCurrentStep().getReminderTimeUnit());
+			newStepWork.setReminderTime(newStepWork.getCurrentStep().getReminderTime());
 		}
 		
-		// indico las asignaciones que tenga este paso
-//		WStepWorkAssignment swa = new WStepWorkAssignment();
-//		
-//		for (WStepAssignedDef assigned: newStep.getCurrentStep().getAssigned()){
-//
-//			if (assigned.getAssignedToObject().equals(ROLE)){
-//				swa.setIdAssignedRole(new Integer(assigned.getAssignedTo()));
-//				swa.setIdAssignedUser(null);
-//			} else {
-//				swa.setIdAssignedRole(null);
-//				swa.setIdAssignedUser(assigned.getAssignedTo());
-//			}
-//			
-//			// timestamp
-//			swa.setInsertDate(now);
-//			swa.setModDate(now);
-//			swa.setInsertUser(currentUser);
-//			swa.setModUser(currentUser);
-//			
-//			newStep.getAssignedTo().add(swa);
-//		}
-		
-		newStep.setOpenedDate(null);
-		newStep.setOpenerUser(null);
-		newStep.setDecidedDate(null);
-		newStep.setPerformer(null);
+		newStepWork.setOpenedDate(null);
+		newStepWork.setOpenerUser(null);
+		newStepWork.setDecidedDate(null);
+		newStepWork.setPerformer(null);
 		
 		// timestamp
-		newStep.setInsertUser( new WUserDef(currentUser) );
-		newStep.setModUser(currentUser);
-		newStep.setModDate(now);
-		
-		
+		newStepWork.setInsertUser( new WUserDef(currentUser) );
+		newStepWork.setModUser(currentUser);
+		newStepWork.setModDate(now);
 		
 	}
 	
@@ -1291,212 +1152,27 @@ public class WStepWorkBL {
 		}
 	}
 	
-	// dml 20120308 - Método de la antigua lógica de processStep cuya llamada se ha comentado al traer la nueva
-	// lógica de PasoBean que funcionaba
-	private void _checkPreProcessStepWork(
-			Integer idStepWork, Integer currentUser, Integer idObject, String idObjectType, WStepWork storedStep ) 
-	throws WStepWorkException, WStepLockedByAnotherUserException, WStepNotLockedException {
-		// Si no está bloqueado aviso y me vuelvo ...
-		if ( !storedStep.isLocked() ) {
-			String message = "The indicated step ("
-								+ idStepWork
-								+ ") must be locked before proccess it ..." ;
-			logger.debug(message);
-			throw new WStepNotLockedException(message);
-		}
+
+	private void _setCurrentWorkitemToProcessed( WStepWork currentStep, Integer idResponse, 
+			Date now, Integer currentUser) throws WStepWorkException {
 		
-		// Si está bloqueado por otro usuario aviso y me vuelvo ...
-		if ( !storedStep.getLockedBy().getId().equals(currentUser) ) { // nes 20111218
-			String message = "The indicated step ("
-								+ idStepWork
-								+ ") is locked by another user:"
-								+ storedStep.getLockedBy()
-								+ " since: "+ storedStep.getLockedSince();
-			logger.debug(message);
-			throw new WStepLockedByAnotherUserException(message);
-		}
-	}
-	
-	// dml 20120308 - Método de la antigua lógica de processStep cuya llamada se ha comentado al traer la nueva
-	// lógica de PasoBean que funcionaba
-	private void _checkValidResponse(
-			Integer idStepWork, Integer idResponse, String isTurnBack,	WStepWork storedStep)
-	throws WStepWorkException {
-		
-		Boolean validResponse=false;
-		if ( isTurnBack.equals(TURNBACK_STEP) ) {
-			validResponse=true;
-		} else {
-			for (WStepResponseDef response: storedStep.getCurrentStep().getResponse()) {
-				if (response.getId()==idResponse) { validResponse=true; break; } 
-			}
-		}
-		if ( !validResponse ) {
-				String message = "The indicated response ("
-					+ idResponse
-					+ ") for step :"
-					+ idStepWork
-					+ " is invalid ...";
-				
-				//PONERLOG
-				throw new WStepWorkException(message);
-		}
-	}
-	
-	// dml 20120308 - Método heredado INTEGRO de PasoBean, el cual se ha tomado como referencia para completar
-	// su GEMELO que existía en esta clase y es el que se va a usar con las modificaciones que requeria.
-	// Una vez comprobado que la nueva lógica creada funciona se puede borrar.
-	private void _setCurrentWorkitemToProcessed( WStepWork stored, Integer idResponse, 
-			Integer currentUser) throws WStepWorkException {
-		
-		stored.setDecidedDate( new Date() );
-		stored.setPerformer(new WUserDef(currentUser));// nes 20120126
-		stored.setLocked(false);
-		stored.setLockedBy(null);
-		stored.setLockedSince(null);
-		// dml 20120307 cambie esta linea por la siguiente ya que si no fuera asi daria error antes en el bean
-		//if ( lRespuestasCombo!= null && lRespuestasCombo.size()>0 ) { // nes 20121222
+		currentStep.setDecidedDate( now );
+		currentStep.setPerformer(new WUserDef(currentUser));// nes 20120126
+		currentStep.setLocked(false);
+		currentStep.setLockedBy(null);
+		currentStep.setLockedSince(null);
+
 		if ( idResponse != null && idResponse != 0 ) { // nes 20121222
-			stored.setResponse(idResponse.toString());
+			currentStep.setResponse(idResponse.toString());
 		} else {
-			stored.setResponse("no responses list");
+			currentStep.setResponse("no responses list");
 		}
 		
-		new WStepWorkBL().update(stored, currentUser); // actualiza el paso actual a "ejecutado" y lo desbloquea
+		new WStepWorkBL().update(currentStep, currentUser); // actualiza el paso actual a "ejecutado" y lo desbloquea
 		
 	}
 	
 	
-	// dml 20120308 - Método heredado INTEGRO de PasoBean, el cual se ha tomado como referencia para completar
-	// su GEMELO que existía en esta clase y es el que se va a usar con las modificaciones que requeria.
-	// Una vez comprobado que la nueva lógica creada funciona se puede borrar.
-	private boolean _startNewWorkitems( 
-			List<WStepSequenceDef> routes, Integer idResponse , Integer currentUser, 
-			WRuntimeSettings runtimeSettings, WStepWork currentStep, boolean isAdminProcess) 
-	throws WStepDefException, WStepWorkException {
-
-		boolean ret = false;
-		
-		if ( routes.size()==0 ) { // no next steps - this tree ends here ...
-		
-			ret = false; // tree finished ...
-
-		} else {
-			
-			for ( WStepSequenceDef route: routes) { // for each route
-				
-				if ( route.getToStep()!=null ) {
-					
-					if ( ( route.getValidResponses()!=null && 
-								route.getValidResponses().contains(idResponse.toString().trim()+"|") ) 
-							||
-							route.isAfterAll() ) {
-
-						_setNextStep(route, currentUser, runtimeSettings, currentStep, isAdminProcess);
-						ret=true;
-						
-					}
-					
-					
-				} else { // this route points to end tree - no action required ...
-
-					// if ret arrives here with false, all ok; 
-					// if ret arrives here with true it indicates there are another valid routes for this step
-					// but no action is required
-					
-				}
-				
-			}
-			
-			
-		}
-		
-		return ret;
-	}
-
-	// dml 20120308 - Método heredado INTEGRO de PasoBean, el cual se ha tomado como referencia para completar
-	// su GEMELO que existía en esta clase y es el que se va a usar con las modificaciones que requeria.
-	// Una vez comprobado que la nueva lógica creada funciona se puede borrar.
-	private void _setNextStep( WStepSequenceDef route, Integer currentUser,
-			WRuntimeSettings rS, WStepWork currentStep, boolean isAdminProcess)
-			throws WStepDefException, WStepWorkException {
-
-		WStepWork newWorkItem;
-		
-		newWorkItem = new WStepWork();
-		
-		newWorkItem.setAdminProcess( isAdminProcess );
-		
-		newWorkItem.setProcess( currentStep.getProcess() );
-		newWorkItem.setVersion( currentStep.getVersion() );
-		newWorkItem.setPreviousStep( currentStep.getCurrentStep() );
-		
-		newWorkItem.setCurrentStep( new WStepDefBL().getWStepDefByPK(route.getToStep().getId(), currentUser));
-		
-		// nes 20120126
-		newWorkItem.setwProcessWork(currentStep.getwProcessWork());
-		
-		// nes 20120126 - esto pasó al objeto WProcessWork por lo q no hay q actualizarlo ...
-//		newWorkItem.setIdObject(pasoActual.getPro.getIdObject());
-//		newWorkItem.setIdObjectType(pasoActual.getIdObjectType());
-//		
-//		newWorkItem.setReference(pasoActual.getReference() );
-//		newWorkItem.setComments(pasoActual.getComments() );
-		newWorkItem.setArrivingDate( new Date() );
-		
-		// put user instructions to next step
-		if ( currentStep.isSendUserNotesToNextStep() ) {
-			newWorkItem.setUserInstructions(currentStep.getUserNotes());
-		}
-		
-//					newWorkItem.setOpenedDate = pasoActual.openedDate;
-//					newWorkItem.openerUser = pasoActual.openerUser;
-//					newWorkItem.decidedDate = pasoActual.decidedDate;
-//					newWorkItem.performer = pasoActual.performer;
-//					newWorkItem.response = pasoActual.response;
-//					newWorkItem.nextStepInstructions = pasoActual.nextStepInstructions;
-
-		// this values may be changed by user ( depending permissions and security )
-		newWorkItem.setTimeUnit( ( rS.getTimeUnit()==null? newWorkItem.getTimeUnit(): rS.getTimeUnit()) );
-		newWorkItem.setAssignedTime( ( rS.getAssignedTime()==null? newWorkItem.getAssignedTime(): rS.getAssignedTime()) );
-		newWorkItem.setDeadlineDate( ( rS.getDeadlineDate()==null? newWorkItem.getDeadlineDate(): rS.getDeadlineDate()) );
-		newWorkItem.setDeadlineTime( ( rS.getDeadlineTime()==null? newWorkItem.getDeadlineTime(): rS.getDeadlineTime()) );
-		newWorkItem.setReminderTimeUnit( ( rS.getReminderTimeUnit()==null? newWorkItem.getReminderTimeUnit(): rS.getReminderTimeUnit()) );
-		newWorkItem.setReminderTime( ( rS.getReminderTime()==null? newWorkItem.getReminderTime(): rS.getReminderTime()) );
-
-
-		
-//					newWorkItem.locked = pasoActual.locked;
-//					newWorkItem.lockedBy = pasoActual.lockedBy;
-//					newWorkItem.lockedSince = pasoActual.lockedSince;
-
-		// TODO: HAY QUE DEJAR LA POSIBILIDAD QUE ASIGNEN ESTE PASO A 1 USUARIO O ROL O GRUPO DETERMINADO EN TIEMPO
-		// DE EJECUCIÓN ( PODRIA SER UNA REASIGNACIÓN O PODRIA SER UNA REDIRECCIÓN 
-//					newWorkItem.setAssignedTo( this.assignedTo );
-
-//					newWorkItem.setAssignedTo( newWorkItem.getCurrentStep().getAssigned() );
-		
-//					newWorkItem.insertUser = pasoActual.insertUser;
-//					newWorkItem.modDate = pasoActual.modDate;
-//					newWorkItem.modUser = pasoActual.modUser;		
-		
-
-		try {
-			
-			new WStepWorkBL().add(newWorkItem, currentUser);
-
-		} catch (WStepWorkException e) {
-			
-			String mensaje = "_setNextStep: Error al intentar generar el nuevo paso : "
-				+e.getMessage()+" - "+e.getCause();
-			logger.error(mensaje);
-			throw new WStepWorkException( mensaje );
-		
-		}
-		
-		
-	}
-
 	//rrl 20101216
 	// recupera los workitems activos de 1 proceso (mapa)
 	// llegó el: es una fecha
