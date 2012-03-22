@@ -10,6 +10,7 @@ public class Constants {
 	
 	
 	public static final boolean WRITE_EMAIL_TO_FILESYSTEM = getStringProperty("email.to.filesystem","no").equals("yes");
+	public static final String EMAIL_DEFAULT_SUBJECT = getStringProperty("email.default.subject");
 	
 	public static final String PROCESS_STEP = "PROCESS_STEP"; // dml 20120308
 	public static final String TURNBACK_STEP = "TURNBACK_STEP"; // dml 20120308
@@ -27,7 +28,7 @@ public class Constants {
 			+BEEBLOS_IP + (BEEBLOS_PORT!=null?":"+BEEBLOS_PORT:"")
 			+getStringProperty("repository.servlet");
 
-	public static String BEEBLOS_DEFAULT_REPOSITORY_ID=getStringProperty("repository.repositoryId");
+//	public static String BEEBLOS_DEFAULT_REPOSITORY_ID=getStringProperty("repository.repositoryId");
 	public static final String DEFAULT_ENCODING="UTF-8";
 
 	public static final String TRAZA_ENVIO_EMAIL = "TRAZA_ENVIO_EMAIL";

@@ -6,6 +6,7 @@ import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
 import static org.beeblos.bpm.core.util.Constants.WRITE_EMAIL_TO_FILESYSTEM;
+import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -888,6 +889,10 @@ public class WStepWorkBL {
 		if ( process == null ) {
 			logger.error("there is trying to send an email and process arrives null ...");
 			return;
+		}
+		
+		if ( subject==null || "".equals(subject) ) {
+			subject=EMAIL_DEFAULT_SUBJECT;
 		}
 
 		Email emailMessage = 
