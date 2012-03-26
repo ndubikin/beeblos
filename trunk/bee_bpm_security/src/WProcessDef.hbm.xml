@@ -475,6 +475,10 @@
 			type="java.lang.Integer">
 			<column name="version" />
 		</property>
+		<property generated="never" lazy="false" name="name"
+			type="string">
+			<column length="255" name="name"/>
+		</property>
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
 			<column length="0" name="insert_date" not-null="true" />

@@ -108,11 +108,29 @@ public class WStepSequenceDefBL {
 	}	
 
 	// dml 20120125
-	public List<WStepSequenceDef> getWProcessDefStepSequenceList(
+	public List<WStepSequenceDef> getWStepSequenceDefList(
 			Integer idProcess, Integer version , Integer currentUser ) 
 	throws WStepSequenceDefException {
 
-		return new WStepSequenceDefDao().getWProcessDefStepSequenceList(idProcess, version);
+		return new WStepSequenceDefDao().getWStepSequenceDefList(idProcess, version);
+		
+	}
+	
+	// dml 20120323
+	public List<WStepSequenceDef> getWStepSequenceDefListByFromStep(
+			Integer idFromStep, Integer idProcess, Integer currentUser ) 
+	throws WStepSequenceDefException {
+
+		return new WStepSequenceDefDao().getWStepSequenceDefListByFromStep(idFromStep, idProcess);
+		
+	}
+	
+	// dml 20120323
+	public List<WStepSequenceDef> getWStepSequenceDefListByToStep(
+			Integer idToStep, Integer idProcess, Integer currentUser ) 
+	throws WStepSequenceDefException {
+
+		return new WStepSequenceDefDao().getWStepSequenceDefListByToStep(idToStep, idProcess);
 		
 	}
 	

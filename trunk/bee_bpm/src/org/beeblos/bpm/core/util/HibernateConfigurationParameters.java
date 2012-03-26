@@ -9,6 +9,7 @@ public class HibernateConfigurationParameters {
 	private String username;
 	private String url;
 	private String defaultCatalog;
+	private String dialect;
 	private boolean defaultConfiguration;
 
 	public HibernateConfigurationParameters() {
@@ -16,18 +17,20 @@ public class HibernateConfigurationParameters {
 	}
 
 	public HibernateConfigurationParameters(String driverName,
-			String password, String username, String url, String defaultCatalog) {
+			String password, String username, String url, String defaultCatalog,
+			String dialect) {
 		super();
 		this.driverName = driverName;
 		this.password = password;
 		this.username = username;
 		this.url = url;
 		this.defaultCatalog = defaultCatalog;
+		this.dialect = dialect;
 	}
 
 	public HibernateConfigurationParameters(String sessionName, String driverName,
 			String password, String username, String url, String defaultCatalog,
-			boolean defaultConfiguration) {
+			String dialect, boolean defaultConfiguration) {
 		super();
 		this.sessionName = sessionName;
 		this.driverName = driverName;
@@ -35,6 +38,7 @@ public class HibernateConfigurationParameters {
 		this.username = username;
 		this.url = url;
 		this.defaultCatalog = defaultCatalog;
+		this.dialect = dialect;
 		this.defaultConfiguration = defaultConfiguration;
 	}
 
@@ -86,6 +90,14 @@ public class HibernateConfigurationParameters {
 		this.defaultCatalog = defaultCatalog;
 	}
 
+	public String getDialect() {
+		return dialect;
+	}
+
+	public void setDialect(String dialect) {
+		this.dialect = dialect;
+	}
+
 	public boolean isDefaultConfiguration() {
 		return defaultConfiguration;
 	}
@@ -99,7 +111,7 @@ public class HibernateConfigurationParameters {
 		return "HibernateConfigurationParameters [sessionName=" + sessionName
 				+ ", driverName=" + driverName + ", password=" + password
 				+ ", username=" + username + ", url=" + url
-				+ ", defaultCatalog=" + defaultCatalog
+				+ ", defaultCatalog=" + defaultCatalog + ", dialect=" + dialect
 				+ ", defaultConfiguration=" + defaultConfiguration + "]";
 	}
 
@@ -110,6 +122,7 @@ public class HibernateConfigurationParameters {
 		result = prime * result
 				+ ((defaultCatalog == null) ? 0 : defaultCatalog.hashCode());
 		result = prime * result + (defaultConfiguration ? 1231 : 1237);
+		result = prime * result + ((dialect == null) ? 0 : dialect.hashCode());
 		result = prime * result
 				+ ((driverName == null) ? 0 : driverName.hashCode());
 		result = prime * result
@@ -137,6 +150,11 @@ public class HibernateConfigurationParameters {
 		} else if (!defaultCatalog.equals(other.defaultCatalog))
 			return false;
 		if (defaultConfiguration != other.defaultConfiguration)
+			return false;
+		if (dialect == null) {
+			if (other.dialect != null)
+				return false;
+		} else if (!dialect.equals(other.dialect))
 			return false;
 		if (driverName == null) {
 			if (other.driverName != null)
@@ -186,6 +204,7 @@ public class HibernateConfigurationParameters {
 		if (username==null || "".equals(username)) return true;
 		if (url==null || "".equals(url)) return true;
 		if (defaultCatalog==null || "".equals(defaultCatalog)) return true;		
+		if (dialect==null || "".equals(dialect)) return true;		
 		
 		return false;
 	}

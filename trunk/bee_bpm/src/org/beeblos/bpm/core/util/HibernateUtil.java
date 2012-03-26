@@ -61,8 +61,11 @@ public class HibernateUtil {
 					+ parameters.getDefaultCatalog());
 			conf.setProperty("hibernate.connection.username",
 					parameters.getUsername());
-			conf.setProperty("hibernate.connection.default_catalog",
+			conf.setProperty("hibernate.default_catalog",
 					parameters.getDefaultCatalog());
+			
+			conf.setProperty("hibernate.dialect",
+					parameters.getDialect());
 
 			sessionFactory = conf.buildSessionFactory();
 
@@ -85,6 +88,7 @@ public class HibernateUtil {
 			parameters.setUrl(rb.getString("bee_bpm_core.hibernate.connection.url"));
 			parameters.setUsername(rb.getString("bee_bpm_core.hibernate.connection.username"));
 			parameters.setDefaultCatalog(rb.getString("bee_bpm_core.hibernate.connection.default_catalog"));
+			parameters.setDialect(rb.getString("bee_bpm_core.hibernate.connection.dialect"));
 		
 		} catch (Exception e){
 			
@@ -113,7 +117,10 @@ public class HibernateUtil {
 					+ parameters.getDefaultCatalog());
 			conf.setProperty("hibernate.connection.username",
 					parameters.getUsername());
-			conf.setProperty("hibernate.connection.default_catalog",
+			conf.setProperty("hibernate.default_catalog",
+					parameters.getDefaultCatalog());
+			
+			conf.setProperty("hibernate.dialect",
 					parameters.getDefaultCatalog());
 
 				sessionFactory = conf.buildSessionFactory();				

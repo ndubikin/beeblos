@@ -28,7 +28,13 @@
 
 		<h:panelGrid columns="2" styleClass="colStyle50_percent,colStyle50_percent">
 				<ui:include src="panels/wProcessDef_step_definition.xhtml"></ui:include>
-				<ui:include src="panels/wProcessDef_step_permissions.xhtml"></ui:include>
+				<h:panelGroup>
+					<ui:include src="panels/wProcessDef_step_permissions_responses.xhtml"></ui:include>
+					<ui:include src="panels/wProcessDef_step_permissions_roles.xhtml"></ui:include>
+					<ui:include src="panels/wProcessDef_step_permissions_users.xhtml"></ui:include>
+					<ui:include src="panels/wProcessDef_step_permissions_outgoing_routes.xhtml"></ui:include>
+					<ui:include src="panels/wProcessDef_step_permissions_incoming_routes.xhtml"></ui:include>
+				</h:panelGroup>
 		</h:panelGrid>
 
 	</fieldset>

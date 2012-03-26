@@ -19,7 +19,23 @@
 	<fieldset class="demo_fieldset">
 		<legend class="demo_legend">#{msg.label_step_responses}</legend>
 
-		<ui:include src="panels/wStepDef_responses_list.xhtml">
+		<ui:include src="panels/wStepDef_responses_response_list.xhtml">
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+	</fieldset>
+
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">#{msg.label_outgoing_routes}</legend>
+
+		<ui:include src="panels/wStepDef_responses_outgoing_route_list.xhtml">
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+	</fieldset>
+
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">#{msg.label_incoming_routes}</legend>
+
+		<ui:include src="panels/wStepDef_responses_incoming_route_list.xhtml">
 			<ui:param name="action" value="${action}" />
 		</ui:include>
 	</fieldset>

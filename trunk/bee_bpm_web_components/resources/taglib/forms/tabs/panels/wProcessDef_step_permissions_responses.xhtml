@@ -8,8 +8,10 @@
 	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
 
 
-	<h:form id="w_process_def_step_permissions" style="margin-left: 16px;">
+	<h:form id="w_process_def_step_permissions_responses" style="margin-left: 16px;">
 	
+		<rich:spacer height="20px"/>
+
 		<h:panelGrid width="100%" columns="1">
 
        		<rich:contextMenu attached="false" id="w_process_def_step_response_menu" submitMode="ajax">
@@ -27,26 +29,17 @@
  	           	</rich:menuItem>
             </rich:contextMenu>
             
-		</h:panelGrid>
-
-		<h:panelGrid width="100%" columns="1">
-		
-			<h:outputText value="#{msg.label_this_step_do_not_have_responses_defined}" 
-				styleClass="firstLeftText"
-				rendered="#{wStepDefFormBean.responseSize == 0}"/>
-		
-
 			<rich:dataTable id="w_process_def_step_response_table"
 				value="#{wStepDefFormBean.responseList}"
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-				var="response" width="20%" columnClasses="center" rows="10"
-				rendered="#{wStepDefFormBean.responseSize != 0}">
+				var="response" width="100%" columnClasses="center" rows="5"
+				rendered="#{wStepDefFormBean.responseSize gt 0}">
 				
 				<f:facet name="header">
-					<h:outputText value="#{msg.label_step_responses}(#{wStepDefFormBean.responseSize} #{msg.label_results})" />
+					<h:outputText value="#{msg.label_step_responses}" />
 				</f:facet>
-
+	
 				<rich:column sortBy="#{response.name}"
 					style="width:250px; text-align: left;">
 					<f:facet name="header">
@@ -54,27 +47,30 @@
 					</f:facet>
 					<h:outputText value="#{response.name}" />
 				</rich:column>
-
+	
 				<rich:componentControl event="onRowClick" for="w_process_def_step_response_menu"
 					operation="show">
-               		<f:param value="#{response.id}" name="currentRowId"/>
- 				</rich:componentControl>
-
-		</rich:dataTable>
-
-		<rich:spacer height="10px"/>
-
-		<a4j:commandLink id="insert_step_response"
-			title="#{msg.label_add_new_responses_to_this_step}"
-			rendered="#{contextoSeguridad.permiteCualquiera['530']}"
-			onclick="javascript:Richfaces.showModalPanel('mpAddStepResponse');"
-			reRender="w_process_def_step_response_table">
-			<h:graphicImage id="imgInsertar" value="/images/insertar.png"
-				style="border:0;" />
-		</a4j:commandLink>
-
-	</h:panelGrid>
+	           		<f:param value="#{response.id}" name="currentRowId"/>
+				</rich:componentControl>
 	
+			</rich:dataTable>
+	
+			<h:outputText value="#{msg.label_no_responses_for_this_step}" 
+						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.responseSize eq 0}"
+						style="font-weight: bold;"/>
+	
+			<rich:spacer height="10px"/>
+	
+			<a4j:commandLink id="insert_step_response"
+				title="#{msg.label_add_new_responses_to_this_step}"
+				rendered="#{contextoSeguridad.permiteCualquiera['530'] and wStepDefFormBean.currentWStepDef != null}"
+				onclick="javascript:Richfaces.showModalPanel('mpAddStepResponse');"
+				reRender="w_process_def_step_response_table">
+				<h:graphicImage id="imgInsertar" value="/images/insertar.png"
+					style="border:0;" />
+			</a4j:commandLink>
+
+		</h:panelGrid>
 
 	</h:form>
 

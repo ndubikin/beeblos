@@ -748,7 +748,7 @@ public class PasoBean  extends CoreManagedBean {
 				new WStepSequenceDef(
 						pasoActual.getProcess(), pasoActual.getVersion(), 
 						pasoActual.getCurrentStep(), pasoActual.getPreviousStep(), 
-						true, true, null);
+						true, true, null, "");
 
 			_setNextStep(now, route, sentBack);
 

@@ -29,7 +29,8 @@
 					<h:outputText value="#{msg.label_from_step}: " />
 					<h:selectOneMenu id="insert_from_step" 
 						value="#{wProcessDefFormBean.currentStepSequence.fromStep.id}"
-						style="width:200px; height: 24px; font-size:13px; padding: 3px;">
+						style="width:200px; height: 24px; font-size:13px; padding: 3px;"
+						disabled="#{wProcessDefFormBean.stepOutgoings}">
 						<f:selectItems
 							value="#{wProcessDefFormBean.lStepCombo}" />
 						<a4j:support ajaxSingle="true"  
@@ -43,7 +44,8 @@
 					<h:outputText value="#{msg.label_to_step}: " />
 					<h:selectOneMenu id="insert_to_step" 
 						value="#{wProcessDefFormBean.currentStepSequence.toStep.id}"
-						style="width:200px; height: 24px; font-size:13px; padding: 3px;">
+						style="width:200px; height: 24px; font-size:13px; padding: 3px;"
+						disabled="#{wProcessDefFormBean.stepIncomings}">
 						<f:selectItems
 							value="#{wProcessDefFormBean.lStepCombo}" />
 					</h:selectOneMenu>
@@ -113,7 +115,7 @@
 			<a4j:commandButton id="update_button_sr" value="#{msg.label_update}"
 				actionListener="#{wProcessDefFormBean.addAndUpdateStepSequence}"
 				oncomplete="javascript:Richfaces.hideModalPanel('mpAddAndEditStepSequence');"
-				reRender="w_process_def_step_sequence_table, mpAddAndEditStepSequence"
+				reRender="w_process_def_step_sequence_table, w_process_def_step_permissions_outgoing_routes_form, mpAddAndEditStepSequence"
 				style="width:120px; margin-left: 10px; height:24px;"
 				rendered="#{wProcessDefFormBean.currentStepSequence.id != null}"/>
 		</h:panelGroup>

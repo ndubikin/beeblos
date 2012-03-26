@@ -17,16 +17,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
+import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.bl.WTimeUnitBL;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
+import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WTimeUnit;
 import org.beeblos.bpm.core.model.WUserDef;
@@ -77,7 +80,17 @@ public class WStepDefFormBean extends CoreManagedBean {
 	
 	// dml 20120305
 	private String returnStatement;
-
+	
+	// dml 20120323
+	private List<WStepSequenceDef> outgoingRoutes;
+	private Integer outgoingRoutesSize;
+	private List<WStepSequenceDef> incomingRoutes;
+	private Integer incomingRoutesSize;
+	
+	// dml 20120326
+	private Integer currentWProcessDefId;
+	//private Integer 
+	
 	public WStepDefFormBean() {		
 		super();
 		
@@ -89,7 +102,13 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		setShowHeaderMessage(false);  
 		
-		lWTimeUnit=loadWTimeUnitForCombo();
+		this.loadWTimeUnitForCombo();
+		
+		// dml 20120323
+		this.loadOutgoingRouteList();
+		
+		// dml 20120323
+		this.loadIncomingRouteList();
 		
 		_reset();
 	}
@@ -98,6 +117,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public void initEmptyWStepDef() {
 
 		currObjId = null;
+		currentWProcessDefId = null;
 		
 		currentWStepDef = new WStepDef(EMPTY_OBJECT);
 		
@@ -418,6 +438,12 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 			recoverNullObjects();
 			
+			// dml 20120323
+			this.loadOutgoingRouteList();
+
+			// dml 20120323
+			this.loadIncomingRouteList();
+			
 		} catch (WStepDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
@@ -697,13 +723,57 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 
-	private List<SelectItem> loadWTimeUnitForCombo(){
+	// dml 20120323
+	private ArrayList<WStepSequenceDef> loadOutgoingRouteList() {
 		
-		List<SelectItem> ltu=null;
+		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
 		
 		try {
 			
-			ltu = UtilsVs
+			outgoingRoutes = wssBL.getWStepSequenceDefListByFromStep(this.currObjId, currentWProcessDefId, getCurrentUserId());
+
+			if (outgoingRoutes != null){
+				outgoingRoutesSize = outgoingRoutes.size();
+			} else {
+				outgoingRoutesSize = 0;
+			}
+			
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return null;
+	}
+	
+	// dml 20120323
+	private ArrayList<WStepSequenceDef> loadIncomingRouteList() {
+		
+		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
+		
+		try {
+
+			incomingRoutes = wssBL.getWStepSequenceDefListByToStep(this.currObjId, currentWProcessDefId, getCurrentUserId());
+
+			if (incomingRoutes != null){
+				incomingRoutesSize = incomingRoutes.size();
+			} else {
+				incomingRoutesSize = 0;
+			}
+			
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return null;
+	}
+	
+	private void loadWTimeUnitForCombo(){
+		
+		try {
+			
+			lWTimeUnit = UtilsVs
 					.castStringPairToSelectitem(
 					new WTimeUnitBL().getComboList("Select time unit","") );
 			
@@ -715,22 +785,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 			ex1.printStackTrace();
 		}
 
-		return ltu;
 	}
 	
-	public String getStrRoleList() {
-		
-		String strRoleList="";
-		if ( currentWStepDef.getRolesRelated()!=null ) {
-			for ( WStepRole sr: this.currentWStepDef.getRolesRelated()) {
-				strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+sr.getRole().getId();
-			}
-		}
-		
-		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
-		return strRoleList;
-	}
-
 	public boolean isReadOnly() {
 		return readOnly;
 	}
@@ -776,7 +832,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public void setCurrentStepUser(WStepUser currentWStepUser) {
 		this.currentWStepUser = currentWStepUser;
 	}
-	
+	/*
 	public List<WStepUser> getUsersRelatedList(){
 		
 		List<WStepUser> url= new ArrayList<WStepUser>();
@@ -791,7 +847,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return url;
 		
 	}
-
+*/
+	
 	public String getStrUserList() {
 		
 		strUserList="";
@@ -810,6 +867,19 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.strUserList = strUserList;
 	}
 
+	public String getStrRoleList() {
+		
+		String strRoleList="";
+		if ( currentWStepDef.getRolesRelated()!=null ) {
+			for ( WStepRole sr: this.currentWStepDef.getRolesRelated()) {
+				strRoleList+=(strRoleList!=null && !"".equals(strRoleList)?",":"")+sr.getRole().getId();
+			}
+		}
+		
+		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
+		return strRoleList;
+	}
+
 	public void setStrRoleList(String strRoleList) {
 		this.strRoleList = strRoleList;
 	}
@@ -820,6 +890,46 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	public void setReturnStatement(String returnStatement) {
 		this.returnStatement = returnStatement;
+	}
+
+	public List<WStepSequenceDef> getOutgoingRoutes() {
+		return outgoingRoutes;
+	}
+
+	public void setOutgoingRoutes(List<WStepSequenceDef> outgoingRoutes) {
+		this.outgoingRoutes = outgoingRoutes;
+	}
+
+	public Integer getOutgoingRoutesSize() {
+		return outgoingRoutesSize;
+	}
+
+	public void setOutgoingRoutesSize(Integer outgoingRoutesSize) {
+		this.outgoingRoutesSize = outgoingRoutesSize;
+	}
+
+	public List<WStepSequenceDef> getIncomingRoutes() {
+		return incomingRoutes;
+	}
+
+	public void setIncomingRoutes(List<WStepSequenceDef> incomingRoutes) {
+		this.incomingRoutes = incomingRoutes;
+	}
+
+	public Integer getIncomingRoutesSize() {
+		return incomingRoutesSize;
+	}
+
+	public void setIncomingRoutesSize(Integer incomingRoutesSize) {
+		this.incomingRoutesSize = incomingRoutesSize;
+	}
+
+	public Integer getCurrentWProcessDefId() {
+		return currentWProcessDefId;
+	}
+
+	public void setCurrentWProcessDefId(Integer currentWProcessDefId) {
+		this.currentWProcessDefId = currentWProcessDefId;
 	}
 
 	public void deleteWStepUser(){
@@ -1093,5 +1203,5 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return ret;
 		
 	}
-
+	
 }

@@ -325,7 +325,7 @@ public class WStepSequenceDefDao {
 
 	// dml 20120125
 	@SuppressWarnings("unchecked")
-	public List<WStepSequenceDef> getWProcessDefStepSequenceList(
+	public List<WStepSequenceDef> getWStepSequenceDefList(
 			Integer idProcess, Integer version ) 
 	throws WStepSequenceDefException {
 
@@ -353,24 +353,135 @@ public class WStepSequenceDefDao {
 			if (tx != null)
 				tx.rollback();
 			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWProcessDefStepSequenceList() - can't obtain stepSeq list - " +
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefList() - can't obtain stepSeq list - " +
 					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWProcessDefStepSequenceList() - can't obtain stepSeq list: "
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefList() - can't obtain stepSeq list: "
 					+ ex.getMessage()+"\n"+ex.getCause());
 
 		} catch (Exception e) {
 			if (tx != null)
 				tx.rollback();
 			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWProcessDefStepSequenceList() - Ex - can't obtain stepSeq list - " +
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefList() - Ex - can't obtain stepSeq list - " +
 					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWProcessDefStepSequenceList() - Ex - can't obtain stepSeq list: "
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefList() - Ex - can't obtain stepSeq list: "
 					+ e.getMessage()+"\n"+e.getCause());
 		}
 
 		return stepSeqs;
 	}
 
+	// dml 20120323
+	public List<WStepSequenceDef> getWStepSequenceDefListByFromStep(
+			Integer idFromStep, Integer idProcess ) 
+	throws WStepSequenceDefException {
+	
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WStepSequenceDef> stepSeqs = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			if (idProcess != null && !idProcess.equals(0)) {
+				stepSeqs = session
+								.createQuery("FROM WStepSequenceDef WHERE fromStep.id = ? and process.id=? ORDER BY fromStep.id")
+								.setParameter(0, idFromStep)
+								.setParameter(1, idProcess)
+								.list();
+			} else {
+				stepSeqs = session
+						.createQuery("FROM WStepSequenceDef WHERE fromStep.id = ? ORDER BY fromStep.id")
+						.setParameter(0, idFromStep)
+						.list();
+			}
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			ex.printStackTrace();
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - can't obtain stepSeq list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - can't obtain stepSeq list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list - " +
+					e.getMessage()+"\n"+e.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list: "
+					+ e.getMessage()+"\n"+e.getCause());
+		}
+
+		return stepSeqs;
+
+	}
+	
+	// dml 20120323
+	public List<WStepSequenceDef> getWStepSequenceDefListByToStep(
+			Integer idToStep, Integer idProcess) 
+	throws WStepSequenceDefException {
+	
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WStepSequenceDef> stepSeqs = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			if (idProcess != null) {
+				stepSeqs = session
+								.createQuery("FROM WStepSequenceDef WHERE toStep.id = ? and process.id=? ORDER BY toStep.id")
+								.setParameter(0, idToStep)
+								.setParameter(1, idProcess)
+								.list();
+			} else {
+				stepSeqs = session
+						.createQuery("FROM WStepSequenceDef WHERE toStep.id = ? ORDER BY toStep.id")
+						.setParameter(0, idToStep)
+						.list();
+			}
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			ex.printStackTrace();
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - can't obtain stepSeq list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - can't obtain stepSeq list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list - " +
+					e.getMessage()+"\n"+e.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list: "
+					+ e.getMessage()+"\n"+e.getCause());
+		}
+
+		return stepSeqs;
+
+	}
+	
+	
 	// nes 20101217
 	// returns a list with step names
 	@SuppressWarnings("unchecked")
