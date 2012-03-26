@@ -102,6 +102,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private List<WStepSequenceDef> stepSequenceList; 
 	private WStepSequenceDef currentStepSequence;
 	
+	// dml 20120323
+	private List<WStepSequenceDef> outgoingRoutes;
+	private List<WStepSequenceDef> incomingRoutes;
+	private Integer outgoingRoutesSize;
+	private Integer incomingRoutesSize;
+	
 	// dml 20120127
 	private List<SelectItem> currentStepResponseList;
 	private List<String> currentStepValidResponses;
@@ -126,6 +132,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private WEmailTemplates arrivingAdminNoticeTemplate;
 	
 	private List<SelectItem> arrivingNoticeEmailTemplatesCombo = new ArrayList<SelectItem>();
+	
+	// dml 20120326
+	private Integer currentStepId;
+	private boolean stepOutgoings;
+	private boolean stepIncomings;
 	
 	public WProcessDefFormBean() {
 		super();
@@ -185,7 +196,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		HelperUtil.recreateBean("documentacionBean",
 				"com.softpoint.taglib.common.DocumentacionBean");
-
+		
+		this.stepOutgoings = false;
+		this.stepIncomings = false;
+		
 	}
 
 	// load an Object in currentWProcessDef
@@ -646,8 +660,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			if (this.currentId != null && this.currentId != 0) {
 
-				setStepSequenceList(new WStepSequenceDefBL().getWProcessDefStepSequenceList(currentId, 1, getCurrentUserId()));
+				// dml 20120326 NOTA: LA VERSION ESTA HARDCODEADA A 1
+				setStepSequenceList(new WStepSequenceDefBL().getWStepSequenceDefList(currentId, 1, getCurrentUserId()));
 
+				// dml 20120326
+				this.stepOutgoings = false;
+				this.stepIncomings = false;
+				
 			}
 			
 		} catch (WStepSequenceDefException ex1) {
@@ -661,8 +680,55 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 		
 	}
+/*
+	// dml 20120323
+	private ArrayList<WStepSequenceDef> loadOutgoingRoutesList() {
 		
+		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
+		
+		this.stepOutgoings = true;
+		
+		try {
 
+			outgoingRoutes = wssBL.getWStepSequenceDefListByFromStep(currentStepSequence.getId(), this.currentId, getCurrentUserId());
+
+			if (outgoingRoutes != null){
+				outgoingRoutesSize = outgoingRoutes.size();
+			} else {
+				outgoingRoutesSize = 0;
+			}
+			
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return null;
+	}
+	
+	// dml 20120323
+	private ArrayList<WStepSequenceDef> loadIncomingRoutesList() {
+		
+		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
+		
+		try {
+
+			incomingRoutes = wssBL.getWStepSequenceDefListByToStep(currentStepSequence.getId(), this.currentId, getCurrentUserId());
+
+			if (incomingRoutes != null){
+				incomingRoutesSize = incomingRoutes.size();
+			} else {
+				incomingRoutesSize = 0;
+			}
+			
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return null;
+	}
+*/
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
 	}
@@ -837,6 +903,38 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.stepSequenceList = stepSequenceList;
 	}
 
+	public List<WStepSequenceDef> getOutgoingRoutes() {
+		return outgoingRoutes;
+	}
+
+	public void setOutgoingRoutes(List<WStepSequenceDef> outgoingRoutes) {
+		this.outgoingRoutes = outgoingRoutes;
+	}
+
+	public List<WStepSequenceDef> getIncomingRoutes() {
+		return incomingRoutes;
+	}
+
+	public void setIncomingRoutes(List<WStepSequenceDef> incomingRoutes) {
+		this.incomingRoutes = incomingRoutes;
+	}
+
+	public Integer getOutgoingRoutesSize() {
+		return outgoingRoutesSize;
+	}
+
+	public void setOutgoingRoutesSize(Integer outgoingRoutesSize) {
+		this.outgoingRoutesSize = outgoingRoutesSize;
+	}
+
+	public Integer getIncomingRoutesSize() {
+		return incomingRoutesSize;
+	}
+
+	public void setIncomingRoutesSize(Integer incomingRoutesSize) {
+		this.incomingRoutesSize = incomingRoutesSize;
+	}
+
 	public WStepSequenceDef getCurrentStepSequence() {
 		return currentStepSequence;
 	}
@@ -959,6 +1057,30 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void setArrivingNoticeEmailTemplatesCombo(
 			List<SelectItem> arrivingNoticeEmailTemplatesCombo) {
 		this.arrivingNoticeEmailTemplatesCombo = arrivingNoticeEmailTemplatesCombo;
+	}
+
+	public Integer getCurrentStepId() {
+		return currentStepId;
+	}
+
+	public void setCurrentStepId(Integer currentStepId) {
+		this.currentStepId = currentStepId;
+	}
+
+	public boolean isStepOutgoings() {
+		return stepOutgoings;
+	}
+
+	public void setStepOutgoings(boolean stepOutgoings) {
+		this.stepOutgoings = stepOutgoings;
+	}
+
+	public boolean isStepIncomings() {
+		return stepIncomings;
+	}
+
+	public void setStepIncomings(boolean stepIncomings) {
+		this.stepIncomings = stepIncomings;
 	}
 
 	public void deleteWProcessRole() {
@@ -1245,6 +1367,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 			cleanStepSequence();
 			
+			loadStepFromSequence();
+			
 		} catch (WStepSequenceDefException e) {
 
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -1287,10 +1411,50 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
 		
-		currentStepValidResponses.clear();
-		currentStepResponseList.clear();
+		if (currentStepValidResponses != null && currentStepValidResponses.size() != 0) {
+			currentStepValidResponses.clear();
+		}
+		if (currentStepResponseList != null && currentStepResponseList.size() != 0) {
+			currentStepResponseList.clear();
+		}
 		
 		loadStepSequenceList();		
+		
+	}
+	
+	// dml 20120326
+	public void loadInfoForNewStepSequenceOutgoing(){
+		
+		this.stepOutgoings = true;
+		
+		this.currentStepSequence.getFromStep().setId(currentStepId);
+		
+	}
+	
+	// dml 20120326
+	public void loadInfoForNewStepSequenceIncoming(){
+		
+		this.stepIncomings = true;
+		
+		this.currentStepSequence.getToStep().setId(currentStepId);
+		
+	}
+	
+	// dml 20120326
+	public void loadStepFromSequenceProcessOutgoing(){
+		
+		this.stepOutgoings = true;
+		
+		loadStepFromSequence();
+		
+	}
+	
+	// dml 20120326
+	public void loadStepFromSequenceProcessIncoming(){
+		
+		this.stepIncomings = true;
+		
+		loadStepFromSequence();
 		
 	}
 	
@@ -1308,7 +1472,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				recoverNullObjects();
 				
 				loadStepResponses();
-				
+								
 				setCurrentStepValidResponses(UtilsVs.castStringToStringList(currentStepSequence.getValidResponses(), "|"));
 				
 			}
@@ -1329,8 +1493,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20120127
 	public void changeFromStep(){
 		
-		currentStepResponseList.clear();
-		currentStepValidResponses.clear();
+		if (currentStepResponseList != null && currentStepResponseList.size() != 0) {
+			currentStepResponseList.clear();
+		}
+
+		if (currentStepValidResponses != null && currentStepValidResponses.size() != 0) {
+			currentStepValidResponses.clear();
+		}
 		
 		loadStepResponses();	
 		

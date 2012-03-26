@@ -17,12 +17,12 @@
 
        		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessDefForm}" submitMode="server">
-                	<b> Load WProcessDef</b> {currentRowId} 
+                	<b> Load Process Def</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.generateXmlWProcessDef}" submitMode="server">
-                	<b> Generate WProcessDef to XML</b> {currentRowId} 
+                	<b> Generate Process Def to XML</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>
             </rich:contextMenu>
@@ -58,7 +58,7 @@
 				reRender="dseUp,dseDown" style="margin-left: 16px;">
 				<f:facet name="header">
 					<h:outputText
-						value="WProcessDef List ( #{wProcessDefQueryBean.nResults} #{msg.label_results} )" />
+						value="#{msg.label_process_def_list} ( #{wProcessDefQueryBean.nResults} #{msg.label_results} )" />
 				</f:facet>
 
 				<rich:column sortBy="#{wpd.id}"

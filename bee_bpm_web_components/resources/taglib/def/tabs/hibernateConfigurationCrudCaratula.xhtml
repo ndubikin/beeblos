@@ -40,7 +40,7 @@
 		<h:form>
 
 			<a4j:jsFunction name="loadRecord" action="#{hibernateConfigurationBean.loadRecord}"
-				reRender="exceptionsPnl, session_name, driver_name, username, password, url, default_catalog, delete_button, cancel_button, save_button">
+				reRender="exceptionsPnl, session_name, driver_name, dialect, username, password, url, default_catalog, delete_button, cancel_button, save_button">
 				<a4j:actionparam name="param1" assignTo="#{hibernateConfigurationBean.sessionName}" />
 			</a4j:jsFunction>
 
@@ -54,7 +54,7 @@
 
 				<rich:panel style="width:100%">
 					<f:facet name="header">
-						<h:outputText value="Hibernate Configuration" styleClass="labelFormBold" />
+						<h:outputText value="#{msg.label_hibernate_configuration}" styleClass="labelFormBold" />
 					</f:facet>
 
 					<h:form id="frmHibernateConfigurationHeader">
@@ -101,6 +101,33 @@
 										reRender="driver_name">
 										<f:setPropertyActionListener value="#{driver.driverName}"
 											target="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.driverName}" />
+									</a4j:support>
+								</rich:suggestionbox>
+							</h:panelGroup>
+											
+							<h:outputText value="#{msg.label_dialect}:"
+								styleClass="labelForm" />
+							<h:panelGroup>
+								<h:inputText id="dialect"
+									value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.dialect}"
+									style="width:400px; font-size:13px;	padding: 4px;" >
+									<a4j:support event="onchange"
+										reRender="save_button, cancel_button" />
+								</h:inputText>
+	
+								<rich:suggestionbox
+									suggestionAction="#{hibernateConfigurationBean.dialectNameAutocomplete}"
+									var="dialect" for="dialect"
+									fetchValue="#{dialect.dialectValue}" minChars="2"
+									width="400" height="100">
+									<h:column>
+										<h:outputText value="#{dialect.dialectValue}" />
+									</h:column>
+				
+									<a4j:support ajaxSingle="true" event="onselect"
+										reRender="dialect">
+										<f:setPropertyActionListener value="#{dialect.dialectName}"
+											target="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.dialect}" />
 									</a4j:support>
 								</rich:suggestionbox>
 							</h:panelGroup>
@@ -183,7 +210,7 @@
 								</f:facet>
 
 								<rich:column sortBy="#{hs.sessionName}"
-									style="width:30px; text-align: left;">
+									style="width:10%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_session_name}" />
 									</f:facet>
@@ -198,7 +225,7 @@
 								</rich:column>
 
 								<rich:column sortBy="#{hs.driverName}"
-									style="width:150px; text-align: left;">
+									style="width:20%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_driver_name}" />
 									</f:facet>
@@ -209,8 +236,20 @@
 										rendered="#{hs.defaultConfiguration}"/>
 								</rich:column>
 
+								<rich:column sortBy="#{hs.dialect}"
+									style="width:20%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_dialect}" />
+									</f:facet>
+									<h:outputText value="#{hs.dialect}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.dialect}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+								</rich:column>
+
 								<rich:column sortBy="#{hs.username}"
-									style="width:150px; text-align: left;">
+									style="width:10%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_username}" />
 									</f:facet>
@@ -222,7 +261,7 @@
 								</rich:column>
 
 								<rich:column sortBy="#{hs.url}"
-									style="width:30px; text-align: left;">
+									style="width:20%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_url}" />
 									</f:facet>
@@ -234,7 +273,7 @@
 								</rich:column>
 
 								<rich:column sortBy="#{hs.defaultCatalog}"
-									style="width:30px; text-align: left;">
+									style="width:20%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_default_catalog}" />
 									</f:facet>

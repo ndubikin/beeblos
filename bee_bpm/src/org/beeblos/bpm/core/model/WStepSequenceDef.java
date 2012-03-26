@@ -19,6 +19,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private Integer id;
 	private WProcessDef process;
 	private Integer version;
+	private String name;
 	private WStepDef fromStep;
 	private WStepDef toStep;
 	private boolean enabled;
@@ -48,7 +49,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 	public WStepSequenceDef(Integer id, WProcessDef process, Integer version,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
-			boolean afterAll, String validResponses) {
+			boolean afterAll, String validResponses, String name) {
 		super();
 		this.id = id;
 		this.process = process;
@@ -58,11 +59,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.enabled = enabled;
 		this.afterAll = afterAll;
 		this.validResponses = validResponses;
+		this.name = name;
 	}
 
 	public WStepSequenceDef(WProcessDef process, Integer version,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
-			boolean afterAll, String validResponses) {
+			boolean afterAll, String validResponses, String name) {
 		super();
 	
 		this.process = process;
@@ -72,6 +74,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.enabled = enabled;
 		this.afterAll = afterAll;
 		this.validResponses = validResponses;
+		this.name = name;
 	}
 
 
@@ -103,6 +106,16 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.version = version;
 	}
 
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 
 	/**
@@ -264,12 +277,8 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((process == null) ? 0 : process.hashCode());
 		result = prime * result + ((toStep == null) ? 0 : toStep.hashCode());
 		result = prime * result
@@ -298,25 +307,15 @@ public class WStepSequenceDef implements java.io.Serializable {
 				return false;
 		} else if (!fromStep.equals(other.fromStep))
 			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!insertDate.equals(other.insertDate))
+		} else if (!id.equals(other.id))
 			return false;
-		if (insertUser == null) {
-			if (other.insertUser != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!insertUser.equals(other.insertUser))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
+		} else if (!name.equals(other.name))
 			return false;
 		if (process == null) {
 			if (other.process != null)
@@ -346,11 +345,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 	@Override
 	public String toString() {
 		return "WStepSequenceDef [id=" + id + ", process=" + process
-				+ ", version=" + version + ", fromStep=" + fromStep
-				+ ", toStep=" + toStep + ", enabled=" + enabled + ", afterAll="
-				+ afterAll + ", validResponses=" + validResponses
-				+ ", insertUser=" + insertUser + ", insertDate=" + insertDate
-				+ ", modUser=" + modUser + ", modDate=" + modDate + "]";
+				+ ", version=" + version + ", name=" + name + ", fromStep="
+				+ fromStep + ", toStep=" + toStep + ", enabled=" + enabled
+				+ ", afterAll=" + afterAll + ", validResponses="
+				+ validResponses + ", insertUser=" + insertUser
+				+ ", insertDate=" + insertDate + ", modUser=" + modUser
+				+ ", modDate=" + modDate + "]";
 	}
 
 

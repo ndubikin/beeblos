@@ -14,13 +14,13 @@
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefFormBean.loadStepFromSequence}"
             		oncomplete="javascript:Richfaces.showModalPanel('mpAddAndEditStepSequence');"
             		reRender="mpAddAndEditStepSequence">
-                	<b> Edit step </b> {stepFromSequenceId} 
+                	<b> Edit route </b> {stepFromSequenceId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentStepSequence.id}" value="{stepFromSequenceId}"/>
 	           	</rich:menuItem>
            		<rich:menuItem ajaxSingle="true" action="#{wProcessDefFormBean.loadStepFromSequence}"
            			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteStepFromSequence');"
            			reRender="mpDeleteStepFromSequence">
-                	<b> Delete step </b> {stepFromSequenceId} 
+                	<b> Delete route </b> {stepFromSequenceId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentStepSequence.id}" value="{stepFromSequenceId}"/>
  	           	</rich:menuItem>
             </rich:contextMenu>
@@ -37,7 +37,7 @@
 				reRender="dseDown" style="margin-left: 16px;">
 
 				<f:facet name="header">
-					<h:outputText value="WProcessDef Step Sequence List" />
+					<h:outputText value="Process Def Step Sequence List" />
 				</f:facet>
 
 				<rich:column sortBy="#{stepFromSequence.id}"

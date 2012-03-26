@@ -40,7 +40,7 @@
 		
 			<h:panelGroup>
 				<fieldset class="demo_fieldset">
-					<legend class="demo_legend">Enter the search data</legend>
+					<legend class="demo_legend">#{msg.label_search_data}</legend>
 					<div>
 						<ui:include src="panels/wEmailAccount_search.xhtml">
 							<ui:param name="action" value="${action}" />
@@ -49,7 +49,7 @@
 				</fieldset>
 	
 				<fieldset class="demo_fieldset">
-					<legend class="demo_legend">WEmailAccount list</legend>
+					<legend class="demo_legend">#{msg.label_email_account_list}</legend>
 					<div>
 						<ui:include src="panels/wEmailAccount_list.xhtml">
 							<ui:param name="action" value="${action}" />
@@ -60,7 +60,7 @@
 				<h:panelGroup 
 					rendered="#{wEmailAccountBean.addNewEmailMode or (wEmailAccountBean.id != null and wEmailAccountBean.id != 0)}">
 					<fieldset class="demo_fieldset">
-						<legend class="demo_legend">Adding new email template</legend>
+						<legend class="demo_legend">#{msg.label_email_account_loaded_record}</legend>
 						<div>
 							<ui:include src="panels/wEmailAccount_loaded_record.xhtml">
 								<ui:param name="action" value="${action}" />

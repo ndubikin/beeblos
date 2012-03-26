@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
+
+
+	<h:form id="w_step_def_incoming_routes" style="margin-left: 16px;">
+	
+		<h:panelGrid width="100%" columns="1">
+		
+			<h:outputText value="#{msg.label_this_step_do_not_have_incoming_routes}" 
+				styleClass="firstLeftText"
+				rendered="#{wStepDefFormBean.incomingRoutesSize == 0}"/>
+		
+
+			<rich:dataTable id="w_step_def_incoming_routes_table"
+				value="#{wStepDefFormBean.incomingRoutes}"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				var="route" width="60%" columnClasses="center" rows="10"
+				rendered="#{wStepDefFormBean.incomingRoutesSize != 0}">
+				
+				<f:facet name="header">
+					<h:outputText value="#{msg.label_incoming_routes} (#{wStepDefFormBean.incomingRoutesSize} #{msg.label_results})" />
+                 <rich:columnGroup>
+                      <rich:column rowspan="2">
+                          <h:outputText value="#{msg.label_process}" />
+                      </rich:column>
+                      <rich:column colspan="6">
+                          <h:outputText value="#{msg.label_route}" />
+                      </rich:column>
+                       <rich:column breakBefore="true">
+                          <h:outputText value="#{msg.label_id}" />
+                      </rich:column>
+                      <rich:column>
+                          <h:outputText value="#{msg.label_version}" />
+                      </rich:column>
+                      <rich:column>
+                          <h:outputText value="#{msg.label_name}" />
+                      </rich:column>
+                      <rich:column>
+                          <h:outputText value="#{msg.label_from_step}" />
+                      </rich:column>
+                      <rich:column>
+                          <h:outputText value="#{msg.label_is_enabled}" />
+                      </rich:column>
+                      <rich:column>
+                          <h:outputText value="#{msg.label_after_all}" />
+                      </rich:column>
+                   
+                  </rich:columnGroup>
+				</f:facet>
+
+				<rich:column sortBy="#{route.process.name}"
+					style="width:20%; text-align: left;">
+					<h:outputText value="#{route.process.id} / " />
+					<h:outputText value="#{route.process.name}" />
+				</rich:column>
+
+				<rich:column style="width:5%; text-align: left;">
+					<h:outputText value="#{route.id}"/>
+				</rich:column>
+
+				<rich:column style="width:5%; text-align: left;">
+					<h:outputText value="#{route.version}"/>
+				</rich:column>
+
+				<rich:column style="width:20%; text-align: left;">
+					<h:outputText value="#{route.name}"/>
+				</rich:column>
+
+				<rich:column style="width:40%; text-align: left;">
+					<h:outputText value="(#{route.fromStep.id} / "
+						rendered="#{route.fromStep.id != null}"/>
+					<h:outputText value="#{route.fromStep.name})"
+						rendered="#{route.fromStep.id != null}" />
+				</rich:column>
+
+				<rich:column style="width:5%; text-align: left;">
+					<h:outputText value="#{(route.enabled ? 'Yes':'None')}"/>
+				</rich:column>
+
+				<rich:column style="width:5%; text-align: left;">
+					<h:outputText value="#{(route.afterAll ? 'Yes':'None')}"/>
+				</rich:column>
+
+				<rich:componentControl event="onRowClick" for="w_step_def_incoming_routes_menu"
+					operation="show">
+               		<f:param value="#{route.id}" name="currentRowId"/>
+ 				</rich:componentControl>
+
+			</rich:dataTable>
+	
+			<rich:spacer height="10px"/>
+
+		</h:panelGrid>
+	
+	</h:form>
+
+</ui:composition>

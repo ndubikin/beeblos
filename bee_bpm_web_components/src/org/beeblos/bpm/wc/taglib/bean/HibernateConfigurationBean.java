@@ -8,19 +8,19 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
+import org.beeblos.bpm.core.model.noper.DialectObject;
 import org.beeblos.bpm.core.model.noper.DriverObject;
+import org.beeblos.bpm.core.util.DialectObjectUtil;
 import org.beeblos.bpm.core.util.DriverObjectUtil;
 import org.beeblos.bpm.core.util.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.util.HibernateConfigurationUtil;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
@@ -46,10 +46,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	
 	// dml 20120202
 	private String sessionName;
-	private Integer currentRow;
 	private String valueBtn;
 	private String messageStyle;
-	private String currentDriverName;
 	
 	// dml 20120203
 	private boolean recordIsLoaded;
@@ -96,7 +94,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 		this.setSessionName("");
 		this.currentHibernateConfigurationParameters = new HibernateConfigurationParameters();
-		this.currentRow=0;
 		
 		this.hibernateConfigurationParametersList = new ArrayList<HibernateConfigurationParameters>();
 		this.loadHibernateConfigurationParametersList(); 
@@ -444,15 +441,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		this.currentHibernateConfigurationParameters = currentHibernateConfigurationParameters;
 	}
 
-	public void setCurrentRow(Integer currentRow) {
-		this.currentRow = currentRow;
-	}
-
-	public Integer getCurrentRow() {
-		return currentRow;
-	}
-
-
 	public void setValueBtn(String valueBtn) {
 		this.valueBtn = valueBtn;
 	}
@@ -510,14 +498,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	public TimeZone getTimeZone() {
 		// Si se pone GMT+1 pone mal el dia
 		return java.util.TimeZone.getDefault();
-	}
-
-	public String getCurrentDriverName() {
-		return currentDriverName;
-	}
-
-	public void setCurrentDriverName(String currentDriverName) {
-		this.currentDriverName = currentDriverName;
 	}
 
 	public boolean isRecordIsLoaded() {
@@ -619,6 +599,19 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		ArrayList<DriverObject> result = null;
 
 		result = (ArrayList<DriverObject>) DriverObjectUtil.searchDriverArray(driverNameInput);
+
+		return result;
+		
+	}
+	
+	// dml 20120323
+	public ArrayList<DialectObject> dialectNameAutocomplete(
+			Object input) {
+
+		String dialectNameInput = (String) input;
+		ArrayList<DialectObject> result = null;
+
+		result = (ArrayList<DialectObject>) DialectObjectUtil.searchDialectArray(dialectNameInput);
 
 		return result;
 		

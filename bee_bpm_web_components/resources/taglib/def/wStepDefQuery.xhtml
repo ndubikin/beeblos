@@ -10,7 +10,7 @@
 		selectedTab="#{componentNavigator.currentComponent.activeTab}"
 		valueChangeListener="#{componentNavigator.tabPanelSwitched}">
 
-		<rich:tab name="w_step_def_main_search" label="WStepDef Search">
+		<rich:tab name="w_step_def_main_search" label="#{msg.label_step_def_search}">
 			<a4j:support event="ontabenter" ajaxSingle="true"
 				action="#{wStepDefQueryBean.searchWStepDefs}"
 				reRender="w_step_def_list_table">

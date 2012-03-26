@@ -17,7 +17,7 @@
 
        		<rich:contextMenu attached="false" id="w_step_def_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{wStepDefQueryBean.loadWStepDefForm}" submitMode="server">
-                	<b> Load WStepDef</b> {currentRowId} 
+                	<b> Load Step Def</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wStepDefQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>
             </rich:contextMenu>
@@ -53,7 +53,7 @@
 				reRender="dseUp,dseDown" style="margin-left: 16px;">
 				<f:facet name="header">
 					<h:outputText
-						value="WStepDef List ( #{wStepDefQueryBean.nResults} #{msg.label_results} )" />
+						value="#{msg.label_step_def_list} ( #{wStepDefQueryBean.nResults} #{msg.label_results} )" />
 				</f:facet>
 
 				<rich:column sortBy="#{wsd.id}"
