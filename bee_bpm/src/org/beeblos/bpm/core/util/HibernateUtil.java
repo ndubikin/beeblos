@@ -67,6 +67,11 @@ public class HibernateUtil {
 			conf.setProperty("hibernate.dialect",
 					parameters.getDialect());
 
+			conf.setProperty("show_sql",
+					(parameters.isShowSQL()) ? "true":"false");
+			conf.setProperty("format_sql",
+					(parameters.isFormatSQL()) ? "true":"false");
+
 			sessionFactory = conf.buildSessionFactory();
 
 		}
@@ -89,6 +94,8 @@ public class HibernateUtil {
 			parameters.setUsername(rb.getString("bee_bpm_core.hibernate.connection.username"));
 			parameters.setDefaultCatalog(rb.getString("bee_bpm_core.hibernate.connection.default_catalog"));
 			parameters.setDialect(rb.getString("bee_bpm_core.hibernate.connection.dialect"));
+			parameters.setShowSQL(rb.getString("bee_bpm_core.hibernate.showSQL").equals("true") ? true : false);
+			parameters.setShowSQL(rb.getString("bee_bpm_core.hibernate.formatSQL").equals("true") ? true : false);
 		
 		} catch (Exception e){
 			
@@ -122,6 +129,11 @@ public class HibernateUtil {
 			
 			conf.setProperty("hibernate.dialect",
 					parameters.getDefaultCatalog());
+
+			conf.setProperty("show_sql",
+					(parameters.isShowSQL()) ? "true":"false");
+			conf.setProperty("format_sql",
+					(parameters.isFormatSQL()) ? "true":"false");
 
 				sessionFactory = conf.buildSessionFactory();				
 
