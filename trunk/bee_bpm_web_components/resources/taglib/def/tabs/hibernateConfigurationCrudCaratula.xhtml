@@ -40,7 +40,7 @@
 		<h:form>
 
 			<a4j:jsFunction name="loadRecord" action="#{hibernateConfigurationBean.loadRecord}"
-				reRender="exceptionsPnl, session_name, driver_name, dialect, username, password, url, default_catalog, delete_button, cancel_button, save_button">
+				reRender="exceptionsPnl, session_name, driver_name, dialect, username, password, url, default_catalog, show_sql, format_sql, delete_button, cancel_button, save_button">
 				<a4j:actionparam name="param1" assignTo="#{hibernateConfigurationBean.sessionName}" />
 			</a4j:jsFunction>
 
@@ -166,11 +166,21 @@
 								<a4j:support event="onchange"
 									reRender="save_button, cancel_button" />
 							</h:inputText>
-							<rich:spacer width="10" />
+
+							<h:outputText value="#{msg.label_show_sql}:"
+								styleClass="labelForm" />
+							<h:selectBooleanCheckbox id="show_sql"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.showSQL}"/>
+
+							<h:outputText value="#{msg.label_format_sql}:"
+								styleClass="labelForm" />
+							<h:selectBooleanCheckbox id="format_sql"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.formatSQL}"/>
 
 							<rich:spacer width="10" />
+							<rich:spacer width="10" />
+
 							<rich:spacer width="10" />								
-							
 							<h:panelGrid columns="4" style="margin: -4px;">
 
 								<h:commandButton id="cancel_button" value="#{msg.label_cancel}"
@@ -261,7 +271,7 @@
 								</rich:column>
 
 								<rich:column sortBy="#{hs.url}"
-									style="width:20%; text-align: left;">
+									style="width:15%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_url}" />
 									</f:facet>
@@ -273,7 +283,7 @@
 								</rich:column>
 
 								<rich:column sortBy="#{hs.defaultCatalog}"
-									style="width:20%; text-align: left;">
+									style="width:15%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_default_catalog}" />
 									</f:facet>
@@ -282,6 +292,20 @@
 									<h:outputText value="#{hs.defaultCatalog}" 
 										style="font-weight:bold;"
 										rendered="#{hs.defaultConfiguration}"/>
+								</rich:column>
+
+								<rich:column style="width:5%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_show_sql}" />
+									</f:facet>
+									<h:outputText value="#{(hs.showSQL ? 'Yes':'None')}"/>
+								</rich:column>
+
+								<rich:column style="width:5%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_format_sql}" />
+									</f:facet>
+									<h:outputText value="#{(hs.formatSQL ? 'Yes':'None')}"/>
 								</rich:column>
 
 							</rich:dataTable>

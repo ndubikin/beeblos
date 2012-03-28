@@ -36,6 +36,12 @@
 						value="#{login_x_Bean.hibernateConfigurationParameters.driverName}"
 						style="width:250px; font-size:13px;	padding: 4px;" />
 
+					<h:outputText value="#{msg.label_dialect}:"
+						styleClass="labelForm" />
+					<h:inputText id="dialect"
+						value="#{login_x_Bean.hibernateConfigurationParameters.dialect}"
+						style="width:250px; font-size:13px;	padding: 4px;" />
+
 					<h:outputText value="#{msg.label_username}:" styleClass="labelForm" />
 					<h:inputText id="username"
 						value="#{login_x_Bean.hibernateConfigurationParameters.username}"
@@ -57,7 +63,17 @@
 						value="#{login_x_Bean.hibernateConfigurationParameters.defaultCatalog}"
 						style="width:250px; font-size:13px;	padding: 4px;" />
 
-					<rich:spacer width="10" />
+					<h:outputText value="#{msg.label_show_sql}:"
+						styleClass="labelForm" />
+					<h:selectBooleanCheckbox id="show_sql"
+						value="#{login_x_Bean.hibernateConfigurationParameters.showSQL}"/>
+
+					<h:outputText value="#{msg.label_format_sql}:"
+						styleClass="labelForm" />
+					<h:selectBooleanCheckbox id="format_sql"
+						value="#{login_x_Bean.hibernateConfigurationParameters.formatSQL}"/>
+
+						<rich:spacer width="10" />
 					<rich:spacer width="10" />
 
 				</h:panelGrid>
