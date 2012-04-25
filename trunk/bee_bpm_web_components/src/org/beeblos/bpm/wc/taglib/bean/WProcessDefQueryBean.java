@@ -59,7 +59,8 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		
 		logger.debug("WProcessDefQueryBean._init()");
 
-		this.wProcessDefList = new ArrayList<WProcessDef>();
+		// dml 20120416
+		this.searchWProcessDefs();
 
 		this.nResults = 0;
 		
@@ -138,7 +139,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			wProcessDefList = (ArrayList<WProcessDef>) new WProcessDefBL()
 					.getProcessListByFinder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
 							nameFilter, commentsFilter, listZoneFilter, workZoneFilter, additionalZoneFilter, 
-							getCurrentUserId(), true);
+							getCurrentUserId(), true, action);
 
 			nResults = wProcessDefList.size();
 

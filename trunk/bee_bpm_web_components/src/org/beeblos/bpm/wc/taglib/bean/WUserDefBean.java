@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -78,6 +80,8 @@ public class WUserDefBean extends CoreManagedBean {
 	private String valueBtn;
 	
 	private String messageStyle;
+	
+	private List<WRoleDef> userRelatedRoles;
 
 	
 	public WUserDefBean() {
@@ -317,6 +321,29 @@ public class WUserDefBean extends CoreManagedBean {
 		return objectList;
 	}
 
+	public void search() {
+		
+		setShowHeaderMessage(false);
+		messageStyle=normalMessageStyle();
+
+		try {
+
+			userList = 
+					new WUserDefBL()
+						.getWUserDefListByFinder(this.getCurrentWUserDef());
+			
+		} catch (WUserDefException e) {
+			
+			userList=null;
+			
+			logger
+				.warn("WUserDefException: Error trying to load user list "
+						+ e.getMessage()+" - "+e.getCause());
+
+		}
+		
+	}
+
 	public void setwUserDefList(List<WUserDef> wUserDefList) {
 		this.userList = wUserDefList;
 	}
@@ -389,6 +416,14 @@ public class WUserDefBean extends CoreManagedBean {
 		this.messageStyle = messageStyle;
 	}
 
+	public List<WRoleDef> getUserRelatedRoles() {
+		return userRelatedRoles;
+	}
+
+	public void setUserRelatedRoles(List<WRoleDef> userRelatedRoles) {
+		this.userRelatedRoles = userRelatedRoles;
+	}
+
 	public void setCurrentUserId(){
 		
 		ContextoSeguridad cs = (ContextoSeguridad) getSession().getAttribute(
@@ -410,6 +445,43 @@ public class WUserDefBean extends CoreManagedBean {
 	
 	private String getDeleteOkMessage(String name) {
 		return "WUserDef id:[ "+this.id+" ] with name:[ "+ name +" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
+	}
+	
+	// dml 20120425
+	public void loadWRoleDefList(){
+		
+		if (this.id != null
+				&& !this.id.equals(0)){
+			
+			try {
+				
+				userRelatedRoles = new WRoleDefBL().getWRoleDefListByUser(this.id);
+			
+			} catch (WUserDefException e) {
+
+				userRelatedRoles=null;
+				
+				logger
+					.warn("WUserDefException: Error trying to load role list "
+							+ e.getMessage()+" - "+e.getCause());
+
+			}
+			
+			
+		}
+		
+	}
+	
+	// dml 20120425
+	public boolean isUserRelatedRolesEmpty(){
+		
+		if (userRelatedRoles != null
+				&& userRelatedRoles.size() == 0){
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 	
 	

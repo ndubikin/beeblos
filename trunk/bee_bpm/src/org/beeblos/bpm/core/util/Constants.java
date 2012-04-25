@@ -105,5 +105,9 @@ public class Constants {
 	public static final String LAST_W_STEP_DEF_ADDED = "LAST_W_STEP_DEF_ADDED";	
 	public static final String LAST_W_STEP_DEF_MODIFIED = "LAST_W_STEP_DEF_MODIFIED";
 
+	// dml 20120416
+	public static final String LAST_W_PROCESS_DEF_ADDED = "LAST_W_PROCESS_DEF_ADDED";	
+	public static final String LAST_W_PROCESS_DEF_MODIFIED = "LAST_W_PROCESS_DEF_MODIFIED";
+
 	
 }
