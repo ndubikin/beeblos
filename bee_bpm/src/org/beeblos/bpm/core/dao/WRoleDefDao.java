@@ -302,5 +302,63 @@ public class WRoleDefDao {
 		return new WUserRoleDao().getWUserDefIdByRole(idRole);
 	}
 	
+	public List<WRoleDef> getWRoleDefListByUser( Integer idUser ) throws WUserDefException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		org.hibernate.Query q = null;
+
+		List<WRoleDef> roles = null;
+		
+		String query="SELECT * " + getSelectPhrase();
+		String filter = getFilter(idUser);
+		String order = " ORDER BY r.name ";
+
+		query += filter+order;
+		
+		System.out.println("QUERY: "+query);
+		
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			q = session
+					.createSQLQuery(query)
+					.addEntity("WRoleDef", WRoleDef.class);
+			
+			roles = q.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WUserDefDao: getWUserDefByRole() - can't obtain user list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WUserDefException("WUserDefDao: getWUserDefByRole() - can't obtain user list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		return roles;
+	}
+
+	private String getSelectPhrase() {
+		String query="FROM w_role_def r ";
+		query +="left join w_user_role wur on r.id=wur.id_role ";
+		return query;
+	}
+	
+	private String getFilter(Integer idUser) {
+		
+		String filter = " WHERE wur.id_user = "+ idUser;
+		
+		return filter;
+	}
+
+	
 }
 	

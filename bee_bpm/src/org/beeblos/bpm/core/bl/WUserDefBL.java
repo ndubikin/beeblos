@@ -120,6 +120,12 @@ public class WUserDefBL {
 		return new WUserDefDao().getWUserDefIdByRole(idRole);
 	}
 	
+	// dml 20120423
+	public List<WUserDef> getWUserDefListByFinder( WUserDef wUserDef ) throws WUserDefException {
+
+		return new WUserDefDao().getWUserDefListByFinder( wUserDef );
+	}
+	
 	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )

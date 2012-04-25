@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.dao;
 
+import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_ADDED;
+import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_MODIFIED;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -320,7 +323,7 @@ public class WProcessDefDao {
 	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
-			Integer userId, boolean isAdmin ) 
+			Integer userId, boolean isAdmin, String action ) 
 					throws WProcessDefException {
 
 			org.hibernate.Session session = null;
@@ -360,7 +363,7 @@ public class WProcessDefDao {
 			System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
 
 			// builds full query phrase
-			query += filter+getSQLOrder();
+			query += filter+getSQLOrder(action);
 
 			System.out.println(" ---->>>>>>>>>> FULL query:["+query+"]");
 			System.out.println(" ---->>>>>>>>>> userId: "+userId);
@@ -598,14 +601,29 @@ public class WProcessDefDao {
 		
 	}
 
-
-
-	private String getSQLOrder() {
-	
-		return " ORDER BY wpd.insert_date ";
+	// dml 20120416
+	private String getSQLOrder(String action) {
+		
+		String ret = "";
+		
+		if (action==null || action.equals("")) {
+			
+			ret = "";
+			
+		} else if (action.equals(LAST_W_PROCESS_DEF_ADDED)) {
+			
+			ret = " ORDER by wpd.insert_date DESC ";
+			
+		} else if (action.equals(LAST_W_PROCESS_DEF_MODIFIED)) {
+			
+			ret = " ORDER by wpd.mod_date DESC ";
+			
+		}
+		
+		return ret;
 		
 	}
-	
+
 	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyActiveWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action) 

@@ -101,26 +101,15 @@ public class WProcessDefBL {
 	
 	}	
 	
-	/*	
-	public List<WProcessDef> finder(Date initialInsertDateFilter, Date finalInsertDateFilter, 
-			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
-			String listZoneFilter, String workZoneFilter, String additinalZoneFilter)
-	throws WProcessDefException {
-		 
-		return new WProcessDefDao().finder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
-				nameFilter, commentFilter, listZoneFilter, workZoneFilter, additinalZoneFilter);
-
-	}
-*/	
 	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
-			Integer userId, boolean isAdmin ) 
+			Integer userId, boolean isAdmin, String action ) 
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getProcessListByFinder(initialInsertDateFilter, finalInsertDateFilter, 
 				strictInsertDateFilter, nameFilter, commentFilter, listZoneFilter, 
-				workZoneFilter, additinalZoneFilter, userId, isAdmin);
+				workZoneFilter, additinalZoneFilter, userId, isAdmin, action);
 
 	}
 

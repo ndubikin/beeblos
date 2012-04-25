@@ -9,7 +9,10 @@ import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -227,13 +230,142 @@ public class WUserDefDao {
 		return new WUserRoleDao().getWUserDefIdByRole(idRole);
 	}
 	
+	// dml 20120425
+	public List<WUserDef> getWUserDefListByFinder(WUserDef wUserDef) throws WUserDefException{
+		
+		String filter = getSQLFilter(wUserDef);
+		
+		filter = (( filter != null && !"".equals(filter)) ? " WHERE "+filter:"");
+
+		String query = _buildQuery(filter);
+
+		return getWUserDefListByFinder(query);
+	}
+
+	// dml 20120425
+	private String getSQLFilter (WUserDef wUserDef) {
+
+		String filter="";
+		
+		if (wUserDef != null) {
+			
+			if ( wUserDef.getName()!=null && !"".equals(wUserDef.getName())) {
+				if ( filter ==null || !"".equals(filter)) {
+					filter +=" AND ";
+				}
+				filter +=" wud.name LIKE '%"+wUserDef.getName()+"%' ";
+			}
+			
+			if ( wUserDef.getLogin()!=null && !"".equals(wUserDef.getLogin())) {
+				if ( filter ==null || !"".equals(filter)) {
+					filter +=" AND ";
+				}
+				filter +=" wud.login LIKE '%"+wUserDef.getLogin()+"%' ";
+			}
+			
+			if ( wUserDef.getEmail()!=null && !"".equals(wUserDef.getEmail())) {
+				if ( filter ==null || !"".equals(filter)) {
+					filter +=" AND ";
+				}
+				filter +=" wud.email LIKE '%"+wUserDef.getEmail()+"%' ";
+			}
+			
+		}
+		
+		return filter;
+	}
+
+	// dml 20120425
+	private String _buildQuery(String filter) {
+
+		String tmpQuery = "SELECT ";
+		tmpQuery += " wud.id, ";
+		tmpQuery += " wud.name, ";
+		tmpQuery += " wud.login, ";
+		tmpQuery += " wud.email ";
+
+		tmpQuery += " FROM w_user_def wud ";
+		
+		tmpQuery += filter;
+
+		tmpQuery += " ORDER BY wud.mod_date ";
+
+		logger.debug("------>> getWUserDefByFinder -> query:" + tmpQuery + "<<-------");
+
+		System.out.println("QUERY:" + tmpQuery);
+
+		return tmpQuery;
+	}
+
+	// dml 20120425
+	public List<WUserDef> getWUserDefListByFinder(String query)
+			throws WUserDefException {
+
+		WUserDef wud;
+		
+		Session session = null;
+		Transaction tx = null;
+
+		List<Object[]> result = null;
+		List<WUserDef> ret = new ArrayList<WUserDef>();
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			Hibernate.initialize(result);
+
+			result = session.createSQLQuery(query).list();
+
+			tx.commit();
+
+			if (result != null) {
+
+				for (Object irObj : result) {
+
+					Object[] cols = (Object[]) irObj;
+					
+					wud = new WUserDef();
+
+					wud.setId((cols[0] != null ? new Integer(
+							cols[0].toString()) : null));
+					wud.setName(cols[1] != null ? cols[1].toString() : "");
+					wud.setLogin(cols[2] != null ? cols[2].toString() : "");
+					wud.setEmail(cols[3] != null ? cols[3].toString() : "");					
+					
+					ret.add(wud);
+				}
+
+			} else {
+				// Si el select devuelve null entonces devuelvo null
+				ret = null;
+			}
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("Exception WUserDefDao: getWUserDefByFinder() - can't obtain user list - "
+					+ ex.getMessage()
+					+ "\n"
+					+ ex.getLocalizedMessage()
+					+ " \n"
+					+ ex.getCause());
+			throw new WUserDefException(ex);
+
+		}
+
+		return ret;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String firstLineText, String blank )
 	throws WUserDefException {
 		 
 			List<WUserDef> lwpd = null;
-			List<StringPair> retorno = new ArrayList<StringPair>(10);
+			List<StringPair> ret = new ArrayList<StringPair>(10);
 			
 			org.hibernate.Session session = null;
 			org.hibernate.Transaction tx = null;
@@ -253,28 +385,28 @@ public class WUserDefDao {
 					// inserta los extras
 					if ( firstLineText!=null && !"".equals(firstLineText) ) {
 						if ( !firstLineText.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
+							ret.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
 						} else {
-							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+							ret.add(new StringPair(null," ")); // deja la primera línea en blanco ...
 						}
 					}
 					
 					if ( blank!=null && !"".equals(blank) ) {
 						if ( !blank.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
+							ret.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
 						} else {
-							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+							ret.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
 						}
 					}
 					
 				
 					
 					for (WUserDef wpd: lwpd) {
-						retorno.add(new StringPair(wpd.getId(),wpd.getName()));
+						ret.add(new StringPair(wpd.getId(),wpd.getName()));
 					}
 				} else {
 					// nes  - si el select devuelve null entonces devuelvo null
-					retorno=null;
+					ret=null;
 				}
 				
 				
@@ -286,22 +418,10 @@ public class WUserDefDao {
 						+ex.getMessage()+"\n"+ex.getCause());
 			} catch (Exception e) {}
 
-			return retorno;
+			return ret;
 
 
 	}
 
-	
-	
-	private String getSQLOrder(String order) {
-
-		if ( order==null || "".equals(order) ) {
-			return " ORDER BY name ";	
-		} else {
-			return " ORDER BY "+order+" ";
-		}
-		
-		
-	}
 }
 	

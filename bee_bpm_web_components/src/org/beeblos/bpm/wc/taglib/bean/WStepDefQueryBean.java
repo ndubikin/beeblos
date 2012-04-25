@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.faces.event.ActionEvent;
+
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.error.WStepDefException;
@@ -51,7 +53,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 		
 		logger.debug("WStepDefQueryBean._init()");
 
-		this.wStepDefList = new ArrayList<WStepDef>();
+		wStepDefList = new ArrayList<WStepDef>();
 
 		this.nResults = 0;
 		
@@ -66,7 +68,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			.recreateBean(
 					"wStepDefFormBean", "org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean");
 	}
-
+	
 	public String searchWStepDefs() {
 
 		logger.debug("searchWStepDefs() - action: " + action);

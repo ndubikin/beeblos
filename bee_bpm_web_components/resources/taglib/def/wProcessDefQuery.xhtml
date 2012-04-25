@@ -12,12 +12,36 @@
 
 		<rich:tab name="wProcessDefQuery" label="#{msg.label_process_def_search}">
 			<a4j:support event="ontabenter" ajaxSingle="true"
-				action="#{wProcessDefBean.searchWProcessDefs}"
+				action="#{wProcessDefQueryBean.searchWProcessDefs}"
 				reRender="w_process_def_list_table">
 				<a4j:actionparam name="valor" value=""
-					assignTo="#{wProcessDefBean.action}" />
+					assignTo="#{wProcessDefQueryBean.action}" />
 			</a4j:support>
 			<ui:include src="tabs/wProcessDefSearch.xhtml" />
+		</rich:tab>
+
+		<rich:tab name="w_process_def_last_modified_search" label="Last Modified">
+			<a4j:support event="ontabenter" ajaxSingle="true"
+				action="#{wProcessDefQueryBean.searchWProcessDefs}"
+				reRender="w_process_def_list_table">
+				<a4j:actionparam name="value" value="LAST_W_PROCESS_DEF_MODIFIED"
+					assignTo="#{wProcessDefQueryBean.action}" />
+			</a4j:support>
+			<ui:include src="tabs/wProcessDefSearch.xhtml" >
+					<ui:param name="action" value="LAST_W_PROCESS_DEF_MODIFIED"/>		
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_last_added_search" label="Last Added">
+			<a4j:support event="ontabenter" ajaxSingle="true"
+				action="#{wProcessDefQueryBean.searchWProcessDefs}"
+				reRender="w_process_def_list_table">
+				<a4j:actionparam name="value" value="LAST_W_PROCESS_DEF_ADDED"
+					assignTo="#{wProcessDefQueryBean.action}" />
+			</a4j:support>
+			<ui:include src="tabs/wProcessDefSearch.xhtml" >
+					<ui:param name="action" value="LAST_W_PROCESS_DEF_ADDED"/>		
+			</ui:include>
 		</rich:tab>
 
 	</rich:tabPanel>

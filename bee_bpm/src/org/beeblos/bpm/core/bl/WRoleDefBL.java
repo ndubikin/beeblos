@@ -121,5 +121,12 @@ public class WRoleDefBL {
 
 	}
 
+	// dml 20120425
+	public List<WRoleDef> getWRoleDefListByUser( Integer idUser ) throws WUserDefException {
+		
+		return new WRoleDefDao().getWRoleDefListByUser(idUser);
+
+	}
+
 }
 	

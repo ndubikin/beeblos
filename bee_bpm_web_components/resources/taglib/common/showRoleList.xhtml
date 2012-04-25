@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<style>
+
+.panelScroll {
+	height: 245px;
+	overflow: auto;
+}
+
+.rich-datascr-button{
+   	width:40px;
+   	font-size:95%;
+}
+</style>
+
+	<h:form id="user_related_roles_form">
+	
+		<h:panelGrid columns="1" width="300">
+		
+			<h:outputText id="no_roles" 
+				value="#{msg.label_there_are_not_roles_related}" 
+				rendered="#{wUserDefBean.userRelatedRolesEmpty}"/>
+			
+	        <rich:dataTable id="user_related_roles_table" headerClass="columnStyle"  
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'" width="80%" 
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'" 
+				styleClass="table" value="#{wUserDefBean.userRelatedRoles}"
+	       		rows="5" reRender="dseUp,dseDown" style="margin-left: 16px;"
+	       		rendered="#{!wUserDefBean.userRelatedRolesEmpty}"
+				var="wud">
+				
+	            <f:facet name="header">
+	                <h:outputText value="#{msg.label_role_list}"/>
+	            </f:facet>
+	
+				<rich:column width="20%">
+					<f:facet name="header"><h:outputText value="#{msg.label_id}" /></f:facet>
+					<h:outputText id="role_id" value="#{wud.id}" />
+				</rich:column>
+				
+				<rich:column width="80%">
+					<f:facet name="header"><h:outputText value="#{msg.label_name}" /></f:facet>
+					<h:outputText id="role_name" value="#{wud.name}" />
+				</rich:column>
+				
+	        </rich:dataTable>
+			
+	        <rich:datascroller  id="dseDown" 
+	        		for="user_related_roles_table" maxPages="10"  
+					reRender="user_related_roles_form" renderIfSinglePage="false"
+					pageIndexVar="pageIndex" pagesVar="pages">
+	 			
+	 			<f:facet name="first">
+		                   <h:outputText value="1..." />
+	            </f:facet>
+	 			<f:facet name="last">
+		                   <h:outputText value="...#{pages}" />
+	            </f:facet>
+	            <f:facet name="first_disabled">
+		                   <h:outputText value="1..." />
+	            </f:facet>
+	 			<f:facet name="last_disabled">
+		                   <h:outputText value="... #{pages}" />
+	            </f:facet>
+	            <h:outputText value="#{pages}" />
+	        </rich:datascroller>
+
+			<rich:spacer height="10" />
+	
+			<a4j:commandButton id="close_button" value="#{msg.label_close}"
+				onclick="javascript:Richfaces.hideModalPanel('mpShowRoleList');"
+				style="width:80px; height:24px; margin-left:90px;" />
+
+		</h:panelGrid>
+
+	        
+	</h:form>
+
+</ui:composition>
