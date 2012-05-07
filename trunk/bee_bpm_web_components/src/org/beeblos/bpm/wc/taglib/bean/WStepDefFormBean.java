@@ -832,7 +832,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public void setCurrentStepUser(WStepUser currentWStepUser) {
 		this.currentWStepUser = currentWStepUser;
 	}
-	/*
+	
 	public List<WStepUser> getUsersRelatedList(){
 		
 		List<WStepUser> url= new ArrayList<WStepUser>();
@@ -847,7 +847,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return url;
 		
 	}
-*/
+
 	
 	public String getStrUserList() {
 		

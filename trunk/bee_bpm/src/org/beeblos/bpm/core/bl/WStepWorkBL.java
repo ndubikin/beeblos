@@ -319,7 +319,7 @@ public class WStepWorkBL {
 
 	// procesa 1 paso - devuelve la cantidad de nuevas rutas lanzadas ... ( workitems generados ... )
 	public Integer processStep (
-			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
+			WStepWork currentStep, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
 			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUser,
 			boolean isAdminProcess, String typeOfProcess) 
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
@@ -328,12 +328,12 @@ public class WStepWorkBL {
 		Date now = new Date();
 		Integer qtyNewRoutes=0;
 
-		this.checkLock(idStepWork, currentUser, false); // verifies the user has the step locked before process it ...
+		this.checkLock(currentStep.getId(), currentUser, false); // verifies the user has the step locked before process it ...
 
-		this.checkStatus(idStepWork, currentUser, false); // verifies step is process pending at this time ...
+		this.checkStatus(currentStep.getId(), currentUser, false); // verifies step is process pending at this time ...
 
 		// reload current step from database
-		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+		//WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 		
 		// set current workitem to processed status
 		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
@@ -705,14 +705,17 @@ public class WStepWorkBL {
 		newStepWork.setwProcessWork(currentStepWork.getwProcessWork());
 
 		// put run time user instructions to next step
-		if ( newStepWork.isSendUserNotesToNextStep() ) {
+		if ( currentStepWork.isSendUserNotesToNextStep() ) {
 			newStepWork.setUserInstructions(currentStepWork.getUserNotes());
 		}
-		
+		// dml 20120507 - NOTA IMPORTANTE
+		// se ha cambiado tanto la comparacion del if de arriba como los valores del runtime de abajo que
+		// se asignan al nuevo paso ya que antes no se cogian los valores del "currentStepWork", sino que se cogian
+		// del "newStepWork" que no existia nada, estaba mal
 		
 		// si se permiten modificar estos valores en runtime se toman del runtimeSettings, si no de la
 		// propia definición del paso ...
-		if (newStepWork.getCurrentStep().isRuntimeModifiable()) {
+		if (currentStepWork.getCurrentStep().isRuntimeModifiable()) {
 			newStepWork.setTimeUnit(runtimeSettings.getTimeUnit());
 			newStepWork.setAssignedTime(runtimeSettings.getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
 			newStepWork.setDeadlineDate(runtimeSettings.getDeadlineDate()); // fecha de deadline de la tarea
@@ -720,12 +723,12 @@ public class WStepWorkBL {
 			newStepWork.setReminderTimeUnit(runtimeSettings.getReminderTimeUnit());
 			newStepWork.setReminderTime(runtimeSettings.getReminderTime());			
 		} else {
-			newStepWork.setTimeUnit(newStepWork.getCurrentStep().getTimeUnit());
-			newStepWork.setAssignedTime(newStepWork.getCurrentStep().getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
-			newStepWork.setDeadlineDate(newStepWork.getCurrentStep().getDeadlineDate()); // fecha de deadline de la tarea
-			newStepWork.setDeadlineTime(newStepWork.getCurrentStep().getDeadlineTime()); // hora de deadline de la tarea  ( si no hay fecha se asume que la hora es la hora del día arrivingDate)
-			newStepWork.setReminderTimeUnit(newStepWork.getCurrentStep().getReminderTimeUnit());
-			newStepWork.setReminderTime(newStepWork.getCurrentStep().getReminderTime());
+			newStepWork.setTimeUnit(currentStepWork.getCurrentStep().getTimeUnit());
+			newStepWork.setAssignedTime(currentStepWork.getCurrentStep().getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
+			newStepWork.setDeadlineDate(currentStepWork.getCurrentStep().getDeadlineDate()); // fecha de deadline de la tarea
+			newStepWork.setDeadlineTime(currentStepWork.getCurrentStep().getDeadlineTime()); // hora de deadline de la tarea  ( si no hay fecha se asume que la hora es la hora del día arrivingDate)
+			newStepWork.setReminderTimeUnit(currentStepWork.getCurrentStep().getReminderTimeUnit());
+			newStepWork.setReminderTime(currentStepWork.getCurrentStep().getReminderTime());
 		}
 		
 		newStepWork.setOpenedDate(null);
