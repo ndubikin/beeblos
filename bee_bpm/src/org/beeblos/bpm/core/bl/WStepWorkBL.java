@@ -705,7 +705,7 @@ public class WStepWorkBL {
 		newStepWork.setwProcessWork(currentStepWork.getwProcessWork());
 
 		// put run time user instructions to next step
-		if ( newStepWork.isSendUserNotesToNextStep() ) {
+		if ( currentStepWork.isSendUserNotesToNextStep() ) {
 			newStepWork.setUserInstructions(currentStepWork.getUserNotes());
 		}
 		
