@@ -704,10 +704,11 @@ public class WStepWorkBL {
 
 		newStepWork.setwProcessWork(currentStepWork.getwProcessWork());
 
-		// put run time user instructions from current step to next step
-		if ( currentStepWork.isSendUserNotesToNextStep() ) {
+		// put run time user instructions to next step
+		if ( newStepWork.isSendUserNotesToNextStep() ) {
 			newStepWork.setUserInstructions(currentStepWork.getUserNotes());
 		}
+		
 		
 		// si se permiten modificar estos valores en runtime se toman del runtimeSettings, si no de la
 		// propia definición del paso ...
@@ -1085,9 +1086,7 @@ public class WStepWorkBL {
 			
 			try {
 					
-				roleUsers = 
-						new WUserRoleDao()
-							.getWUserDefByRole(stepRole.getRole().getId(), null);
+				roleUsers = new WUserRoleDao().getWUserDefByRole(stepRole.getRole().getId(), null);
 				
 			} catch (WUserDefException e) {
 				// TODO Auto-generated catch block
