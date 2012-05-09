@@ -1,6 +1,8 @@
 package org.beeblos.bpm.core.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 //import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
@@ -29,12 +31,16 @@ public class WRoleDef implements java.io.Serializable {
 	private Integer idObject;
 	private String idObjectType;
 	
+	// MANY2MANY
+	Set<WUserRole> usersRelated=new HashSet<WUserRole>();
+
 	private Integer insertUser;
 	private Date insertDate;
 	private Integer modUser;
 	private Date modDate;
 
 	public WRoleDef() {
+		super();
 	}
 
 	public WRoleDef(boolean createEmtpyObjects ){
@@ -44,6 +50,10 @@ public class WRoleDef implements java.io.Serializable {
 //		}	
 	}
 	
+	public WRoleDef(Integer id) {
+		this.id = id;
+	}
+
 	public WRoleDef(String name) {
 		this.name = name;
 	}
@@ -97,6 +107,14 @@ public class WRoleDef implements java.io.Serializable {
 	}
 
 
+	public Set<WUserRole> getUsersRelated() {
+		return usersRelated;
+	}
+
+	public void setUsersRelated(Set<WUserRole> usersRelated) {
+		this.usersRelated = usersRelated;
+	}
+
 	public Integer getInsertUser() {
 		return insertUser;
 	}
@@ -131,8 +149,9 @@ public class WRoleDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WRoleDef [name=" + name + ", description=" + description
-				+ ", idObject=" + idObject + ", idObjectType=" + idObjectType
+		return "WRoleDef [id=" + id + ", name=" + name + ", description="
+				+ description + ", idObject=" + idObject + ", idObjectType="
+				+ idObjectType + ", usersRelated=" + usersRelated
 				+ ", insertUser=" + insertUser + ", insertDate=" + insertDate
 				+ ", modUser=" + modUser + ", modDate=" + modDate + "]";
 	}
@@ -206,6 +225,11 @@ public class WRoleDef implements java.io.Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (usersRelated == null) {
+			if (other.usersRelated != null)
+				return false;
+		} else if (!usersRelated.equals(other.usersRelated))
+			return false;
 		return true;
 	}		
 	
@@ -220,6 +244,14 @@ public class WRoleDef implements java.io.Serializable {
 		if (idObjectType!=null && ! "".equals(idObjectType)) return false;		
 		
 		return true;
+	}
+
+	// dml 20120508
+	public void addUser( WUserDef user, boolean active, Integer insertUser ) {
+		WUserRole wur = new WUserRole(active, insertUser, new Date());
+		wur.setRole(this);
+		wur.setUser(user);
+		usersRelated.add(wur);
 	}
 	
 }

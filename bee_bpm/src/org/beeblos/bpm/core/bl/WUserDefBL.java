@@ -121,9 +121,9 @@ public class WUserDefBL {
 	}
 	
 	// dml 20120423
-	public List<WUserDef> getWUserDefListByFinder( WUserDef wUserDef ) throws WUserDefException {
+	public List<WUserDef> getWUserDefList( WUserDef wUserDef ) throws WUserDefException {
 
-		return new WUserDefDao().getWUserDefListByFinder( wUserDef );
+		return new WUserDefDao().getWUserDefList( wUserDef );
 	}
 	
 	
