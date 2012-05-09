@@ -31,6 +31,8 @@
 </style>
 
 		<ui:include src="../../common/mpShowRoleList.xhtml"/>
+		<ui:include src="../../common/mpAddRoleToUser.xhtml"/>
+		<ui:include src="../../common/mpDeleteRoleFromUser.xhtml"/>
 
 		<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />
 <h:form>
@@ -108,7 +110,6 @@
 				
 				       		<rich:contextMenu attached="false" id="w_user_def_list_menu" submitMode="ajax">
 				            	<rich:menuItem ajaxSingle="false"
-				            		action="#{wUserDefBean.loadWRoleDefList}" 
 									oncomplete="javascript:Richfaces.showModalPanel('mpShowRoleList');"
 									reRender="mpShowRoleList">
 				                	<b> Show roles </b>({currentRowId}) 
@@ -118,7 +119,6 @@
 				            
 						</h:panelGrid>   
 										
-
 						<rich:panel style="width:100%">
 
 							<rich:dataTable id="wUserDefTable" width="98%"

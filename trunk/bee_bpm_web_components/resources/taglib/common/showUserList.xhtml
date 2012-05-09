@@ -18,20 +18,20 @@
 }
 </style>
 
-	<h:form id="user_related_roles_form">
+	<h:form id="role_related_users_form">
 	
 		<h:panelGrid columns="3" width="100%" style="width : auto; height : auto; padding-left: 15px;" 
 				columnClasses="colStyle50px,colStyle200px,colStyle50px">
 
-			<h:outputText value="#{msg.label_user}:" />
+			<h:outputText value="#{msg.label_role}:" />
 			<h:inputText id="role" 
-				value="#{wUserDefBean.currentWUserDef.name}" 
+				value="#{wRoleDefBean.currentWRoleDef.name}" 
 				style="width:200px; font-size:13px;	padding: 4px;"
 				disabled="true"/>			
-			<a4j:commandLink id="add_role_to_user"
-				title="#{msg.label_add_new_role}"
+			<a4j:commandLink id="add_user_to_role"
+				title="#{msg.label_add_new_user}"
 				reRender="mpAddRole"
-				oncomplete="javascript:Richfaces.showModalPanel('mpAddRoleToUser');">
+				oncomplete="javascript:Richfaces.showModalPanel('mpAddUserToRole');">
 				<h:graphicImage id="imgInsertar" value="/images/insertar.png"
 					style="border:0;" />
 		</a4j:commandLink>
@@ -42,52 +42,52 @@
 
 			<rich:spacer height="10" />
 			<h:outputText id="no_roles" 
-				value="#{msg.label_there_are_not_roles_related}" 
-				rendered="#{wUserDefBean.userRelatedRolesEmpty}"/>
+				value="#{msg.label_there_are_not_users_related}" 
+				rendered="#{wRoleDefBean.roleRelatedUsersEmpty}"/>
 			<h:panelGroup
-		       	rendered="#{!wUserDefBean.userRelatedRolesEmpty}">
+		       	rendered="#{!wRoleDefBean.roleRelatedUsersEmpty}">
 			
-	      		<rich:contextMenu attached="false" id="user_related_roles_menu" submitMode="ajax">
+	      		<rich:contextMenu attached="false" id="role_related_users_menu" submitMode="ajax">
 					<rich:menuItem ajaxSingle="false" 
-						oncomplete="javascript:Richfaces.showModalPanel('mpDeleteRoleFromUser');"
-						reRender="mpDeleteRoleFromUser">
-						<b> Remove role </b>(id: {idRole}) 
-						<a4j:actionparam name="det" assignTo="#{wUserDefBean.currentRoleId}" value="{idRole}"/>
+						oncomplete="javascript:Richfaces.showModalPanel('mpDeleteUserFromRole');"
+						reRender="mpDeleteUserFromRole">
+						<b> Remove user </b>(id: {idUser}) 
+						<a4j:actionparam name="det" assignTo="#{wRoleDefBean.currentWUserId}" value="{idUser}"/>
 					</rich:menuItem>
 	 	   		</rich:contextMenu>
 
-		        <rich:dataTable id="user_related_roles_table" headerClass="columnStyle"  
+		        <rich:dataTable id="role_related_users_table" headerClass="columnStyle"  
 					onRowMouseOver="this.style.backgroundColor='#F1F1F1'" width="100%" 
 					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'" 
-					styleClass="table" value="#{wUserDefBean.rolesRelated}"
+					styleClass="table" value="#{wRoleDefBean.usersRelated}"
 		       		rows="5" reRender="dseUp,dseDown"
-					var="wud">
+					var="wrd">
 					
 		            <f:facet name="header">
-		                <h:outputText value="#{msg.label_role_list}"/>
+		                <h:outputText value="#{msg.label_user_list}"/>
 		            </f:facet>
 		
 					<rich:column width="20%">
 						<f:facet name="header"><h:outputText value="#{msg.label_id}" /></f:facet>
-						<h:outputText id="role_id" value="#{wud.role.id}" />
+						<h:outputText id="role_id" value="#{wrd.user.id}" />
 					</rich:column>
 					
 					<rich:column width="80%">
 						<f:facet name="header"><h:outputText value="#{msg.label_name}" /></f:facet>
-						<h:outputText id="role_name" value="#{wud.role.name}" />
+						<h:outputText id="user_name" value="#{wrd.user.name}" />
 					</rich:column>
 					
-					<rich:componentControl event="onRowClick" for="user_related_roles_menu"
+					<rich:componentControl event="onRowClick" for="role_related_users_menu"
 						operation="show">
-	               		<f:param value="#{wud.role.id}" name="idRole"/>
-	               		<f:param value="#{wud.role.name}" name="roleName"/>
+	               		<f:param value="#{wrd.user.id}" name="idUser"/>
+	               		<f:param value="#{wrd.user.name}" name="userName"/>
 					</rich:componentControl>
 	
 		        </rich:dataTable>
 				
 		        <rich:datascroller  id="dseDown" 
-		        		for="user_related_roles_table" maxPages="10"  
-						reRender="user_related_roles_form" renderIfSinglePage="false"
+		        		for="role_related_users_table" maxPages="10"  
+						reRender="role_related_users_form" renderIfSinglePage="false"
 						pageIndexVar="pageIndex" pagesVar="pages">
 		 			
 		 			<f:facet name="first">
@@ -114,7 +114,7 @@
 	
 			<rich:spacer height="10" />
 			<a4j:commandButton id="close_button" value="#{msg.label_close}"
-				onclick="javascript:Richfaces.hideModalPanel('mpShowRoleList');"
+				onclick="javascript:Richfaces.hideModalPanel('mpShowUserList');"
 				style="width:80px; height:24px; margin-left:60px;" />
 			<rich:spacer height="10" />
 

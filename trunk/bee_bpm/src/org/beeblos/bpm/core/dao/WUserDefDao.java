@@ -231,7 +231,7 @@ public class WUserDefDao {
 	}
 	
 	// dml 20120425
-	public List<WUserDef> getWUserDefListByFinder(WUserDef wUserDef) throws WUserDefException{
+	public List<WUserDef> getWUserDefList(WUserDef wUserDef) throws WUserDefException{
 		
 		String filter = getSQLFilter(wUserDef);
 		
@@ -239,7 +239,7 @@ public class WUserDefDao {
 
 		String query = _buildQuery(filter);
 
-		return getWUserDefListByFinder(query);
+		return getWUserDefList(query);
 	}
 
 	// dml 20120425
@@ -298,7 +298,7 @@ public class WUserDefDao {
 	}
 
 	// dml 20120425
-	public List<WUserDef> getWUserDefListByFinder(String query)
+	public List<WUserDef> getWUserDefList(String query)
 			throws WUserDefException {
 
 		WUserDef wud;

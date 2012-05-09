@@ -186,6 +186,25 @@
 		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
 			<column  name="mod_user" />
 		</property>
+
+		<set cascade="all" name="usersRelated" sort="unsorted"
+			table="w_user_role"  lazy="false" >
+			<key column="id_role" />
+			<composite-element class="org.beeblos.bpm.core.model.WUserRole">
+				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
+					column="id_user" cascade="none" lazy="false" />
+				<property name="active"	type="java.lang.Boolean">
+					<column name="active"/>
+				</property>
+		        <property name="insertUser" type="java.lang.Integer">
+		            <column name="insert_user" />
+		        </property>
+		        <property name="insertDate" type="timestamp">
+		            <column name="insert_date" length="0" not-null="true" />
+		        </property>
+			</composite-element>
+		</set>
+
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WStepDef" table="w_step_def">
@@ -867,14 +886,31 @@
 			type="timestamp">
 			<column length="0" name="insert_date" not-null="true" />
 		</property>
-		<one-to-one class="org.beeblos.bpm.core.model.WUseridmapper"
-			name="userMapper" />
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
 			<column length="0" name="mod_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
 			<column  name="mod_user" />
 		</property>
+
+		<set cascade="all" name="rolesRelated" sort="unsorted"
+			table="w_user_role"  lazy="false" >
+			<key column="id_user" />
+			<composite-element class="org.beeblos.bpm.core.model.WUserRole">
+				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
+					column="id_role" cascade="none" lazy="false" />
+				<property name="active"	type="java.lang.Boolean">
+					<column name="active"/>
+				</property>
+		        <property name="insertUser" type="java.lang.Integer">
+		            <column name="insert_user" />
+		        </property>
+		        <property name="insertDate" type="timestamp">
+		            <column name="insert_date" length="0" not-null="true" />
+		        </property>
+			</composite-element>
+		</set>
+
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WUseridmapper" table="w_useridmapper">
@@ -896,6 +932,7 @@
 			type="string">
 			<column length="75" name="external_user_id" />
 		</property>
+
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WTrackWork" table="w_track_work">

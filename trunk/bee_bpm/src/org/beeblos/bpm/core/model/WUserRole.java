@@ -18,8 +18,7 @@ public class WUserRole implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Integer id;
-	private WUseridmapper user;
+	private WUserDef user;
 	private WRoleDef role;
 	private boolean active;
 	private int insertUser;
@@ -32,13 +31,13 @@ public class WUserRole implements java.io.Serializable {
 	public WUserRole(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
-			this.user=new WUseridmapper( EMPTY_OBJECT );
+			this.user=new WUserDef( EMPTY_OBJECT );
 			this.role = new WRoleDef( EMPTY_OBJECT );
 
 		}	
 	}
 
-	public WUserRole(WUseridmapper user, WRoleDef role, boolean active, int insertUser,
+	public WUserRole(WUserDef user, WRoleDef role, boolean active, int insertUser,
 			Date insertDate) {
 		this.user = user;
 		this.role = role;
@@ -47,21 +46,17 @@ public class WUserRole implements java.io.Serializable {
 		this.insertDate = insertDate;
 	}
 
-	public Integer getId() {
-		return this.id;
+	public WUserRole(boolean active, int insertUser, Date insertDate) {
+		this.active = active;
+		this.insertUser = insertUser;
+		this.insertDate = insertDate;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-
-
-	public WUseridmapper getUser() {
+	public WUserDef getUser() {
 		return user;
 	}
 
-	public void setUser(WUseridmapper user) {
+	public void setUser(WUserDef user) {
 		this.user = user;
 	}
 
@@ -133,8 +128,7 @@ public class WUserRole implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WUserRole [" + (id != null ? "id=" + id + ", " : "")
-				+ (user != null ? "user=" + user + ", " : "")
+		return "WUserRole [" + (user != null ? "user=" + user + ", " : "")
 				+ (role != null ? "role=" + role + ", " : "") + "active="
 				+ active + ", insertUser=" + insertUser + ", "
 				+ (insertDate != null ? "insertDate=" + insertDate : "") + "]";
@@ -142,7 +136,6 @@ public class WUserRole implements java.io.Serializable {
 
 	public boolean empty() {
 
-		if (id!=null && ! id.equals(0)) return false;
 		if (user!=null && ! user.empty()) return false;
 		if (role!=null && ! role.empty()) return false;
 		

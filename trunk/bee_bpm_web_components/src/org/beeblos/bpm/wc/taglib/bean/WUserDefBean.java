@@ -1,17 +1,23 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.WUserRole;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
+import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 
 
@@ -81,8 +87,9 @@ public class WUserDefBean extends CoreManagedBean {
 	
 	private String messageStyle;
 	
-	private List<WRoleDef> userRelatedRoles;
-
+	private List<WUserRole> rolesRelated;	// dml 20120508
+	
+	private Integer currentRoleId;	// dml 20120426
 	
 	public WUserDefBean() {
 		
@@ -108,7 +115,12 @@ public class WUserDefBean extends CoreManagedBean {
 		this.setId(0);
 		this.currentWUserDef = new WUserDef();
 		this.currentRow=0;
+		
+		this.rolesRelated = new ArrayList<WUserRole>(); // dml 20120508
+		
 		userList = this.getwUserDefList(); 
+		
+		this.currentRoleId = 0;
 		
 		this.valueBtn="Save";
 		
@@ -186,6 +198,9 @@ public class WUserDefBean extends CoreManagedBean {
 			
 			Integer newId = new WUserDefBL().add(this.currentWUserDef, this.getCurrentUserId());
 			
+			// dml 20120508
+			this.loadRolesRelated();
+
 			String message = setAddOkMessage(newId);
 			agregarMensaje(message);
 			setShowHeaderMessage(true);
@@ -278,6 +293,9 @@ public class WUserDefBean extends CoreManagedBean {
 						new WUserDefBL()
 							.getWUserDefByPK( this.id, this.getCurrentUserId() );
 
+				// dml 20120508
+				this.loadRolesRelated();
+
 				modifyValueBtn();
 				
 			} catch (WUserDefException e) {
@@ -291,6 +309,17 @@ public class WUserDefBean extends CoreManagedBean {
 
 			}
 		
+		}
+
+	}
+	
+	// dml 20120508
+	private void loadRolesRelated(){
+
+		// dml 20120508
+		if (this.currentWUserDef != null){
+			this.rolesRelated.clear();
+			this.rolesRelated.addAll(currentWUserDef.getRolesRelated());
 		}
 
 	}
@@ -330,7 +359,7 @@ public class WUserDefBean extends CoreManagedBean {
 
 			userList = 
 					new WUserDefBL()
-						.getWUserDefListByFinder(this.getCurrentWUserDef());
+						.getWUserDefList(this.getCurrentWUserDef());
 			
 		} catch (WUserDefException e) {
 			
@@ -416,12 +445,20 @@ public class WUserDefBean extends CoreManagedBean {
 		this.messageStyle = messageStyle;
 	}
 
-	public List<WRoleDef> getUserRelatedRoles() {
-		return userRelatedRoles;
+	public List<WUserRole> getRolesRelated() {
+		return rolesRelated;
 	}
 
-	public void setUserRelatedRoles(List<WRoleDef> userRelatedRoles) {
-		this.userRelatedRoles = userRelatedRoles;
+	public void setRolesRelated(List<WUserRole> rolesRelated) {
+		this.rolesRelated = rolesRelated;
+	}
+
+	public Integer getCurrentRoleId() {
+		return currentRoleId;
+	}
+
+	public void setCurrentRoleId(Integer currentRoleId) {
+		this.currentRoleId = currentRoleId;
 	}
 
 	public void setCurrentUserId(){
@@ -446,37 +483,12 @@ public class WUserDefBean extends CoreManagedBean {
 	private String getDeleteOkMessage(String name) {
 		return "WUserDef id:[ "+this.id+" ] with name:[ "+ name +" ] was deleted by user:[ " + this.getCurrentUserId() +" ]";
 	}
-	
-	// dml 20120425
-	public void loadWRoleDefList(){
-		
-		if (this.id != null
-				&& !this.id.equals(0)){
-			
-			try {
-				
-				userRelatedRoles = new WRoleDefBL().getWRoleDefListByUser(this.id);
-			
-			} catch (WUserDefException e) {
 
-				userRelatedRoles=null;
-				
-				logger
-					.warn("WUserDefException: Error trying to load role list "
-							+ e.getMessage()+" - "+e.getCause());
-
-			}
-			
-			
-		}
-		
-	}
-	
 	// dml 20120425
 	public boolean isUserRelatedRolesEmpty(){
 		
-		if (userRelatedRoles != null
-				&& userRelatedRoles.size() == 0){
+		if (this.currentWUserDef.getRolesRelated() != null
+				&& this.currentWUserDef.getRolesRelated().size() == 0){
 			return true;
 		} else {
 			return false;
@@ -484,5 +496,88 @@ public class WUserDefBean extends CoreManagedBean {
 		
 	}
 	
+	// dml 20120426
+	public List<SelectItem> getRoleComboList(){
+		
+		List<SelectItem> roleList = null;
+		
+		try {
+			
+			roleList = UtilsVs.castStringPairToSelectitem(new WRoleDefBL().getComboList(null, null));
+			
+		} catch (WRoleDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (roleList == null){
+			roleList = new ArrayList<SelectItem>();
+		}
+		
+		return roleList;
+		
+	}
+	
+	// dml 20120426
+	public void addRoleToUser(){
+		
+		if (this.currentRoleId != null
+				&& !this.currentRoleId.equals(0)){
+			
+			try {
+				
+				WRoleDef wrd = new WRoleDefBL().getWRoleDefByPK(this.currentRoleId, this.getCurrentUserId());
+				
+				this.currentWUserDef.addRole(wrd, true, this.getCurrentUserId());
+			
+				new WUserDefBL().update(currentWUserDef, this.getCurrentUserId());
+				
+				// dml 20120508
+				this.loadRecord();
+
+			} catch (WRoleDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WUserDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
+	// dml 20120426
+	public void removeRoleFromUser(){
+		
+		if (this.currentRoleId != null
+				&& !this.currentRoleId.equals(0)){
+			
+			for (WUserRole wur : currentWUserDef.getRolesRelated()){
+				
+				if (wur.getRole().getId().equals(currentRoleId)){
+					
+					currentWUserDef.getRolesRelated().remove(wur);
+					break;
+					
+				}
+				
+			}
+			
+			try {
+				
+				new WUserDefBL().update(currentWUserDef, this.getCurrentUserId());
+				
+			} catch (WUserDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			// dml 20120508
+			this.loadRecord();
+
+		}
+		
+	}
 	
 }

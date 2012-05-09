@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpShowUserList" width="350" height="350">
+	    <f:facet name="header">
+	        <h:panelGroup id="showUserListTitlePanel">
+	            <h:outputText id="showUserListTitle"  value="#{msg.label_user_list}"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="showUserListInfo">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_show_user_list"/>
+		        <rich:componentControl id="showUserListControl" for="mpShowUserList" attachTo="hidelink_show_user_list" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+		<ui:include src="showUserList.xhtml"/>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	
