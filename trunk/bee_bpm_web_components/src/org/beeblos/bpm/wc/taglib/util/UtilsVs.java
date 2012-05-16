@@ -37,16 +37,22 @@ public class UtilsVs {
 		
 		String outputString = "";
 		
-		for (String s : listString) {
-			outputString += s + delimiter;
-		}
+		if (listString != null){
+			
+			for (String s : listString) {
+				outputString += s + delimiter;
+			}
+			
+			// remove the last delimiter
+			if (outputString.endsWith(delimiter)) {
+				outputString = outputString.substring(0, outputString.length() - 1);
+			}
+			
+			return outputString;
 		
-		// remove the last delimiter
-		if (outputString.endsWith(delimiter)) {
-			outputString = outputString.substring(0, outputString.length() - 1);
+		} else {
+			return null;
 		}
-		
-		return outputString;
 				
 	}
 	
