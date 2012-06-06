@@ -128,7 +128,7 @@ public class HibernateUtil {
 					parameters.getDefaultCatalog());
 			
 			conf.setProperty("hibernate.dialect",
-					parameters.getDefaultCatalog());
+					parameters.getDialect());
 
 			conf.setProperty("show_sql",
 					(parameters.isShowSQL()) ? "true":"false");
