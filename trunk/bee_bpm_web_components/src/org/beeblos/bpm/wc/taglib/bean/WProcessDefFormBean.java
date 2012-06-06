@@ -351,6 +351,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 		}
 
+		// dml 20120606 - if this field is an empty string, it will be set null in the DB
+		if ( currentWProcessDef.getIdListZone()!=null
+				&& "".equals(currentWProcessDef.getIdListZone().trim())) {
+			currentWProcessDef.setIdListZone( null );
+		}			
+
+		// dml 20120606 - if this field is an empty string, it will be set null in the DB
+		if ( currentWProcessDef.getIdWorkZone()!=null
+				&& "".equals(currentWProcessDef.getIdWorkZone().trim()) ) {
+			currentWProcessDef.setIdWorkZone( null );
+		}			
+
+		// dml 20120606 - if this field is an empty string, it will be set null in the DB
+		if ( currentWProcessDef.getIdAdditionalZone()!=null
+				&& "".equals(currentWProcessDef.getIdAdditionalZone().trim()) ) {
+			currentWProcessDef.setIdAdditionalZone( null );
+		}			
+
 	}
 
 	private void recoverNullObjects() {
