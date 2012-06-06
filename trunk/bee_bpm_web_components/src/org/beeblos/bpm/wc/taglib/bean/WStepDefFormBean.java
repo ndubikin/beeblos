@@ -178,6 +178,25 @@ public class WStepDefFormBean extends CoreManagedBean {
 					currentWStepDef.getUsersRelated().size()==0 ) {
 				currentWStepDef.setUsersRelated( null );
 			}			
+			
+			// dml 20120606 - if this field is an empty string, it will be set null in the DB
+			if ( currentWStepDef.getIdListZone()!=null
+					&& "".equals(currentWStepDef.getIdListZone().trim())) {
+				currentWStepDef.setIdListZone( null );
+			}			
+
+			// dml 20120606 - if this field is an empty string, it will be set null in the DB
+			if ( currentWStepDef.getIdWorkZone()!=null
+					&& "".equals(currentWStepDef.getIdWorkZone().trim()) ) {
+				currentWStepDef.setIdWorkZone( null );
+			}			
+
+			// dml 20120606 - if this field is an empty string, it will be set null in the DB
+			if ( currentWStepDef.getIdAdditionalZone()!=null
+					&& "".equals(currentWStepDef.getIdAdditionalZone().trim()) ) {
+				currentWStepDef.setIdAdditionalZone( null );
+			}			
+
 		}
 	}
 	

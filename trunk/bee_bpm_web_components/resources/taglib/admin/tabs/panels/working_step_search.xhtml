@@ -23,7 +23,7 @@
 					style="width:300px; font-size:13px;	padding: 4px; ">
 					<f:selectItems
 						value="#{workingProcessQueryBean.wProcessesDef}" />
-					<a4j:support ajaxSingle="true"  actionListener="#{workingProcessQueryBean.changeStep}"
+					<a4j:support ajaxSingle="true"
 							event="onchange" reRender="step_id" />
 				</h:selectOneMenu>
 				<h:selectBooleanCheckbox

@@ -18,7 +18,8 @@
 				styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_id_list_zone"
 				value="#{wStepDefFormBean.currentWStepDef.idListZone}"
-				readonly="true" style="width:480px; font-size:13px;	padding: 4px;" />
+				disabled="#{wStepDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -27,7 +28,8 @@
 				styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_id_work_zone"
 				value="#{wStepDefFormBean.currentWStepDef.idWorkZone}"
-				readonly="true" style="width:480px; font-size:13px;	padding: 4px;" />
+				disabled="#{wStepDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -36,7 +38,39 @@
 				styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_id_additional_zone"
 				value="#{wStepDefFormBean.currentWStepDef.idAdditionalZone}"
-				readonly="true" style="width:480px; font-size:13px;	padding: 4px;" />
+				disabled="#{wStepDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<h:panelGroup>
+				<a4j:commandButton id="edit_button" value="#{msg.label_edit}"
+					actionListener="#{wStepDefFormBean.changeReadOnlyToFalse}"
+					reRender="w_process_def_steps_tag_form"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{wStepDefFormBean.readOnly}"/>
+			
+				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
+					action="#{wStepDefFormBean.cancel}"
+					reRender="w_process_def_steps_tag_form"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{!wStepDefFormBean.readOnly}"/>
+
+				<a4j:commandButton id="update_button" value="#{msg.label_update}"
+					actionListener="#{wStepDefFormBean.update}"
+					reRender="w_process_def_steps_tag_form"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wStepDefFormBean.readOnly and (wStepDefFormBean.currObjId != null) and (wStepDefFormBean.currObjId != 0)}"/>
+
+				<h:commandButton id="save_continue_button" value="#{msg.label_save}"
+					actionListener="#{wStepDefFormBean.save_continue}"
+					reRender="w_process_def_steps_tag_form"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wStepDefFormBean.readOnly and ((wStepDefFormBean.currObjId == null) or (wStepDefFormBean.currObjId == 0))}"/>
+
+			</h:panelGroup>
 
 		</h:panelGrid>
 		
