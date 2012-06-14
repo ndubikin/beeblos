@@ -475,6 +475,44 @@ table.doctable td {
 	margin: 0px;
 }
 
+.column05percent {
+	width: 5%;
+}
+.column10percent {
+	width: 10%;
+}
+.column15percent {
+	width: 15%;
+}
+
+.column20percent {
+	width: 20%;
+}
+.column25percent {
+	width: 25%;
+}
+.column30percent {
+	width: 30%;
+}
+.column50percent {
+	width: 50%;
+}
+.column60percent {
+	width: 60%;
+}
+.column65percent {
+	width: 65%;
+}
+.column70percent {
+	width: 70%;
+}.column75percent {
+	width: 75%;
+}
+.column80percent {
+	width: 80%;
+}
+
+
 .colStyle10px {
 	width: 10px;
 }
