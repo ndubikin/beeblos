@@ -55,7 +55,7 @@
 
 					<h:form id="frmWTimeUnitHeader">
 
-						<h:panelGrid columns="2" style=" width:50%">
+						<h:panelGrid columns="2" >
 
 							<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 							<h:inputText id="name_id"
@@ -92,47 +92,44 @@
 
 						<rich:spacer height="10" />
 
-						<rich:panel style="width:100%">
+						<rich:dataTable id="wTimeUnitTable" width="98%"
+							onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+							onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+							onRowClick="return loadRecord('#{wtu.id}');"
+							rows="5" styleClass="table" value="#{wTimeUnitBean.timeUnitList}"
+							var="wtu">
+							
+							<f:facet name="header">
+								<h:outputText value="#{msg.label_system_defined_times}" />
+							</f:facet>
 
-							<rich:dataTable id="wTimeUnitTable" width="98%"
-								onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
-								onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-								onRowClick="return loadRecord('#{wtu.id}');"
-								rows="5" styleClass="table" value="#{wTimeUnitBean.timeUnitList}"
-								var="wtu">
-								
+							<rich:column sortBy="#{wtu.id}"
+								style="width:30px; text-align: left;">
 								<f:facet name="header">
-									<h:outputText value="#{msg.label_system_defined_times}" />
+									<h:outputText value="#{msg.label_id}" />
 								</f:facet>
+								<h:outputText value="#{wtu.id}" />
+							</rich:column>
+							<rich:column sortBy="#{wtu.name}"
+								style="width:150px; text-align: left;">
+								<f:facet name="header">
+									<h:outputText value="#{msg.label_name}" />
+								</f:facet>
+								<h:outputText value="#{wtu.name}" />
+							</rich:column>
+							<rich:column sortBy="#{wtu.conversion}"
+								style="width:150px; text-align: left;">
+								<f:facet name="header">
+									<h:outputText value="#{msg.label_conversion}" />
+								</f:facet>
+								<h:outputText value="#{wtu.conversion}" />
+							</rich:column>
+							
+						</rich:dataTable>
 
-								<rich:column sortBy="#{wtu.id}"
-									style="width:30px; text-align: left;">
-									<f:facet name="header">
-										<h:outputText value="#{msg.label_id}" />
-									</f:facet>
-									<h:outputText value="#{wtu.id}" />
-								</rich:column>
-								<rich:column sortBy="#{wtu.name}"
-									style="width:150px; text-align: left;">
-									<f:facet name="header">
-										<h:outputText value="#{msg.label_name}" />
-									</f:facet>
-									<h:outputText value="#{wtu.name}" />
-								</rich:column>
-								<rich:column sortBy="#{wtu.conversion}"
-									style="width:150px; text-align: left;">
-									<f:facet name="header">
-										<h:outputText value="#{msg.label_conversion}" />
-									</f:facet>
-									<h:outputText value="#{wtu.conversion}" />
-								</rich:column>
-								
-							</rich:dataTable>
+						<rich:spacer height="10" />
+						<rich:datascroller for="wTimeUnitTable" maxPages="10" />
 
-							<rich:spacer height="10" />
-							<rich:datascroller for="wTimeUnitTable" maxPages="10" />
-
-						</rich:panel>
 					</h:form>
 				</rich:panel>
 
