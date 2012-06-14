@@ -69,6 +69,7 @@ public class WStepDef implements java.io.Serializable {
 	private boolean customValidation;
 	private String customValidationRefClass;
 	private String customValidationMethod;
+	private String customSaveMethod;
 	private boolean backingBean;
 
 	// dml 20120113
@@ -381,6 +382,10 @@ public class WStepDef implements java.io.Serializable {
 						: customValidationMethod.hashCode());
 		result = prime
 				* result
+				+ ((customSaveMethod == null) ? 0
+						: customSaveMethod.hashCode());
+		result = prime
+				* result
 				+ ((customValidationRefClass == null) ? 0
 						: customValidationRefClass.hashCode());
 		result = prime * result + (deadlineAdminNotice ? 1231 : 1237);
@@ -460,6 +465,13 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!customValidationMethod.equals(other.customValidationMethod))
 			return false;
+
+		if (customSaveMethod == null) {
+			if (other.customSaveMethod != null)
+				return false;
+		} else if (!customSaveMethod.equals(other.customSaveMethod))
+			return false;
+
 		if (customValidationRefClass == null) {
 			if (other.customValidationRefClass != null)
 				return false;
@@ -612,7 +624,9 @@ public class WStepDef implements java.io.Serializable {
 				+ ", usersRelated=" + usersRelated + ", customValidation="
 				+ customValidation + ", customValidationRefClass="
 				+ customValidationRefClass + ", customValidationMethod="
-				+ customValidationMethod + ", backingBean=" + backingBean
+				+ customValidationMethod 
+				+ ", customSaveMethod=" + customSaveMethod +
+				", backingBean=" + backingBean
 				+ ", insertDate=" + insertDate + ", insertUser=" + insertUser
 				+ ", modDate=" + modDate + ", modUser=" + modUser + "]";
 	}
@@ -661,6 +675,7 @@ public class WStepDef implements java.io.Serializable {
 		
 		if (customValidationRefClass!=null && ! "".equals(customValidationRefClass)) return false;
 		if (customValidationMethod!=null && ! "".equals(customValidationMethod)) return false;
+		if (customSaveMethod!=null && ! "".equals(customSaveMethod)) return false;
 
 		return true;
 	}
@@ -854,6 +869,14 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setCustomValidationMethod(String customValidationMethod) {
 		this.customValidationMethod = customValidationMethod;
+	}
+
+	public String getCustomSaveMethod() {
+		return customSaveMethod;
+	}
+
+	public void setCustomSaveMethod(String customSaveMethod) {
+		this.customSaveMethod = customSaveMethod;
 	}
 
 	public boolean isBackingBean() {

@@ -123,27 +123,27 @@ public class TestWStepWorkBL extends TestCase{
 			
 			// cargo la ruta
 			// presupongo que existen los step con id 800 y 20
-			WStepSequenceDef route1 = new WStepSequenceDef(process,version1,paso10,paso20, true, true, null);
+//			WStepSequenceDef route1 = new WStepSequenceDef(process,version1,paso10,paso20, true, true, null);
+//			
+//			WStepSequenceDef route2 = new WStepSequenceDef(process,version1,paso20,paso24, true, false, null);
+//			WStepSequenceDef route3 = new WStepSequenceDef(process,version1,paso20,paso30, true, true , null);
+//
+//			WStepSequenceDef route4 = new WStepSequenceDef(process,version1,paso24,paso40, true, true, null);
+//			WStepSequenceDef route5 = new WStepSequenceDef(process,version1,paso30,paso50, true, false, null);
+//
+//			WStepSequenceDef route6 = new WStepSequenceDef(process,version1,paso40,null, true, false, null);
+//			WStepSequenceDef route7 = new WStepSequenceDef(process,version1,paso40,paso90, true, false, null);
+//			WStepSequenceDef route8 = new WStepSequenceDef(process,version1,paso50,paso90, true, true, null);			
 			
-			WStepSequenceDef route2 = new WStepSequenceDef(process,version1,paso20,paso24, true, false, null);
-			WStepSequenceDef route3 = new WStepSequenceDef(process,version1,paso20,paso30, true, true , null);
 
-			WStepSequenceDef route4 = new WStepSequenceDef(process,version1,paso24,paso40, true, true, null);
-			WStepSequenceDef route5 = new WStepSequenceDef(process,version1,paso30,paso50, true, false, null);
-
-			WStepSequenceDef route6 = new WStepSequenceDef(process,version1,paso40,null, true, false, null);
-			WStepSequenceDef route7 = new WStepSequenceDef(process,version1,paso40,paso90, true, false, null);
-			WStepSequenceDef route8 = new WStepSequenceDef(process,version1,paso50,paso90, true, true, null);			
-			
-
-			iroute = routeBL.add(route3,1000);
-			iroute = routeBL.add(route7,1000);
-			iroute = routeBL.add(route5,1000);
-			iroute = routeBL.add(route8,1000);
-			iroute = routeBL.add(route4,1000);
-			iroute = routeBL.add(route1,1000);
-			iroute = routeBL.add(route6,1000);
-			iroute = routeBL.add(route2,1000);
+//			iroute = routeBL.add(route3,1000);
+//			iroute = routeBL.add(route7,1000);
+//			iroute = routeBL.add(route5,1000);
+//			iroute = routeBL.add(route8,1000);
+//			iroute = routeBL.add(route4,1000);
+//			iroute = routeBL.add(route1,1000);
+//			iroute = routeBL.add(route6,1000);
+//			iroute = routeBL.add(route2,1000);
 			
 			// hago unas verificaciones mínimas para asegurarme que mas o menos quedaron bien
 			// las precondiciones:

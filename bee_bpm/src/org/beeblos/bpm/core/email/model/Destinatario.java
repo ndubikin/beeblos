@@ -5,6 +5,11 @@ import java.io.Serializable;
 
 public class Destinatario implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String email;
 	private String nombre;
 	private String apellidos;
