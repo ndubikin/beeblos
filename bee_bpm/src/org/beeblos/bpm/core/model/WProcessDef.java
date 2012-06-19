@@ -27,6 +27,8 @@ public class WProcessDef implements java.io.Serializable {
 	private String idWorkZone; // pag que define la zona de trabajo
 	private String idAdditionalZone; // pag que define la zona de ayuda ( info adicional )
 	
+	private String idProcessorStep; // dml 20120619
+	
 	/*
 	 * DESIGN AND TEST TIME FEATURE
 	 * At design time the designer can define a list of roles and users that may interact
@@ -173,6 +175,16 @@ public class WProcessDef implements java.io.Serializable {
 
 
 	
+	public String getIdProcessorStep() {
+		return idProcessorStep;
+	}
+
+
+	public void setIdProcessorStep(String idProcessorStep) {
+		this.idProcessorStep = idProcessorStep;
+	}
+
+
 	public Set<WProcessRole> getRolesRelated() {
 		return rolesRelated;
 	}
@@ -352,6 +364,9 @@ public class WProcessDef implements java.io.Serializable {
 		result = prime
 				* result
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
+		result = prime
+				* result
+				+ ((idProcessorStep == null) ? 0 : idProcessorStep.hashCode());
 		result = prime * result
 				+ ((idListZone == null) ? 0 : idListZone.hashCode());
 		result = prime * result
@@ -429,6 +444,11 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!idAdditionalZone.equals(other.idAdditionalZone))
 			return false;
+		if (idProcessorStep == null) {
+			if (other.idProcessorStep != null)
+				return false;
+		} else if (!idProcessorStep.equals(other.idProcessorStep))
+			return false;
 		if (idListZone == null) {
 			if (other.idListZone != null)
 				return false;
@@ -484,18 +504,15 @@ public class WProcessDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WProcessDef [id=" + id + ", name=" + name + ", comments="
-				+ comments + ", beginStep=" + beginStep + ", idListZone="
-				+ idListZone + ", idWorkZone=" + idWorkZone
-				+ ", idAdditionalZone=" + idAdditionalZone + ", rolesRelated="
-				+ rolesRelated + ", usersRelated=" + usersRelated
-				+ ", insertDate=" + insertDate + ", insertUser=" + insertUser
-				+ ", modDate=" + modDate + ", modUser=" + modUser
-				+ ", adminEmail=" + adminEmail + ", active=" + active
-				+ ", productionDate=" + productionDate + ", productionUser="
-				+ productionUser + ", totalTime=" + totalTime
-				+ ", totalTimeUnit=" + totalTimeUnit + ", globalDeadlineDate="
-				+ globalDeadlineDate + ", systemEmailAccount="
+		return "WProcessDef [id=" + id + ", name=" + name + ", comments=" + comments
+				+ ", beginStep=" + beginStep + ", idListZone=" + idListZone + ", idWorkZone="
+				+ idWorkZone + ", idAdditionalZone=" + idAdditionalZone + ", idProcessorStep="
+				+ idProcessorStep + ", rolesRelated=" + rolesRelated + ", usersRelated="
+				+ usersRelated + ", insertDate=" + insertDate + ", insertUser=" + insertUser
+				+ ", modDate=" + modDate + ", modUser=" + modUser + ", adminEmail=" + adminEmail
+				+ ", active=" + active + ", productionDate=" + productionDate + ", productionUser="
+				+ productionUser + ", totalTime=" + totalTime + ", totalTimeUnit=" + totalTimeUnit
+				+ ", globalDeadlineDate=" + globalDeadlineDate + ", systemEmailAccount="
 				+ systemEmailAccount + ", arrivingAdminNoticeTemplate="
 				+ arrivingAdminNoticeTemplate + ", arrivingUserNoticeTemplate="
 				+ arrivingUserNoticeTemplate + "]";
@@ -518,6 +535,9 @@ public class WProcessDef implements java.io.Serializable {
 		// dml 20120306
 		if (arrivingAdminNoticeTemplate!=null && ! arrivingAdminNoticeTemplate.empty()) return false;
 		if (arrivingUserNoticeTemplate!=null && ! arrivingUserNoticeTemplate.empty()) return false;
+
+		// dml 20120619
+		if (idProcessorStep!=null && ! "".equals(idProcessorStep)) return false;
 
 		return true;
 	}

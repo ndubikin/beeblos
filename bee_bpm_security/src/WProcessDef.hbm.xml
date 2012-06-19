@@ -36,6 +36,11 @@
 					para el step processor.</comment>
 			</column>
 		</property>
+
+		<property generated="never" lazy="false" name="idProcessorStep" type="string">
+			<column length="255" name="id_processor_step"  />
+		</property>
+
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
 			<column length="0" name="insert_date"  />
@@ -256,6 +261,11 @@
 					step processor... Default esta en la tabla w_proceso</comment>
 			</column>
 		</property>
+
+		<property generated="never" lazy="false" name="idDefaultProcessor" type="string">
+			<column length="255" name="id_default_processor"  />
+		</property>
+
 		<property generated="never" lazy="false" name="submitForm"
 			type="string">
 			<column length="255" name="submit_form">
