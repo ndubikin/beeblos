@@ -32,6 +32,8 @@ public class WStepDef implements java.io.Serializable {
 	private String idWorkZone;
 	private String idAdditionalZone;
 	
+	private String idDefaultProcessor; // dml 20120619
+	
 	private String submitForm; // instruccion para submit
 	
 	private WTimeUnit timeUnit;
@@ -175,6 +177,14 @@ public class WStepDef implements java.io.Serializable {
 
 
 
+
+	public String getIdDefaultProcessor() {
+		return idDefaultProcessor;
+	}
+
+	public void setIdDefaultProcessor(String idDefaultProcessor) {
+		this.idDefaultProcessor = idDefaultProcessor;
+	}
 
 	public String getSubmitForm() {
 		return submitForm;
@@ -402,6 +412,9 @@ public class WStepDef implements java.io.Serializable {
 		result = prime
 				* result
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
+		result = prime
+				* result
+				+ ((idDefaultProcessor == null) ? 0 : idDefaultProcessor.hashCode());
 		result = prime * result + ((idDept == null) ? 0 : idDept.hashCode());
 		result = prime * result
 				+ ((idListZone == null) ? 0 : idListZone.hashCode());
@@ -510,6 +523,11 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!idAdditionalZone.equals(other.idAdditionalZone))
 			return false;
+		if (idDefaultProcessor == null) {
+			if (other.idDefaultProcessor != null)
+				return false;
+		} else if (!idDefaultProcessor.equals(other.idDefaultProcessor))
+			return false;
 		if (idDept == null) {
 			if (other.idDept != null)
 				return false;
@@ -611,6 +629,7 @@ public class WStepDef implements java.io.Serializable {
 				+ ", sentAdminNotice=" + sentAdminNotice
 				+ ", arrivingAdminNotice=" + arrivingAdminNotice
 				+ ", deadlineAdminNotice=" + deadlineAdminNotice
+				+ ", idDefaultProcessor=" + idDefaultProcessor
 				+ ", reminderAdminNotice=" + reminderAdminNotice
 				+ ", expiredAdminNotice=" + expiredAdminNotice
 				+ ", sentUserNotice=" + sentUserNotice
@@ -664,8 +683,8 @@ public class WStepDef implements java.io.Serializable {
 		if (idListZone!=null && ! "".equals(idListZone)) return false;
 		if (idWorkZone!=null && ! "".equals(idWorkZone)) return false;
 		if (idAdditionalZone!=null && ! "".equals(idAdditionalZone)) return false;
-		
-		if (idAdditionalZone!=null && ! "".equals(idAdditionalZone)) return false;
+
+		if (idDefaultProcessor!=null && ! "".equals(idDefaultProcessor)) return false;
 
 		if (timeUnit!=null && ! timeUnit.empty()) return false;
 		if (reminderTimeUnit!=null && ! reminderTimeUnit.empty()) return false;
