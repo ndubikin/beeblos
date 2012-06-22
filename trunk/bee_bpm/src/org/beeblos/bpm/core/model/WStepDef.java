@@ -71,9 +71,11 @@ public class WStepDef implements java.io.Serializable {
 	private boolean customValidation;
 	private String customValidationRefClass;
 	private String customValidationMethod;
-	private String customSaveMethod;
 	private boolean backingBean;
 
+	private String customSaveMethod;
+	private String customSaveRefClass;
+	
 	// dml 20120113
 	private Date insertDate;
 	private Integer insertUser;
@@ -398,6 +400,10 @@ public class WStepDef implements java.io.Serializable {
 				* result
 				+ ((customValidationRefClass == null) ? 0
 						: customValidationRefClass.hashCode());
+		result = prime
+				* result
+				+ ((customSaveRefClass == null) ? 0
+						: customSaveRefClass.hashCode());
 		result = prime * result + (deadlineAdminNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
@@ -490,6 +496,12 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!customValidationRefClass
 				.equals(other.customValidationRefClass))
+			return false;
+		if (customSaveRefClass == null) {
+			if (other.customSaveRefClass != null)
+				return false;
+		} else if (!customSaveRefClass
+				.equals(other.customSaveRefClass))
 			return false;
 		if (deadlineAdminNotice != other.deadlineAdminNotice)
 			return false;
@@ -616,38 +628,29 @@ public class WStepDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WStepDef [id=" + id + ", name=" + name + ", idDept=" + idDept
-				+ ", idPhase=" + idPhase + ", instructions=" + instructions
-				+ ", stepComments=" + stepComments + ", idListZone="
-				+ idListZone + ", idWorkZone=" + idWorkZone
-				+ ", idAdditionalZone=" + idAdditionalZone + ", submitForm="
-				+ submitForm + ", timeUnit=" + timeUnit + ", assignedTime="
-				+ assignedTime + ", deadlineDate=" + deadlineDate
-				+ ", deadlineTime=" + deadlineTime + ", reminderTimeUnit="
-				+ reminderTimeUnit + ", reminderTime=" + reminderTime
-				+ ", runtimeModifiable=" + runtimeModifiable
-				+ ", sentAdminNotice=" + sentAdminNotice
-				+ ", arrivingAdminNotice=" + arrivingAdminNotice
-				+ ", deadlineAdminNotice=" + deadlineAdminNotice
-				+ ", idDefaultProcessor=" + idDefaultProcessor
-				+ ", reminderAdminNotice=" + reminderAdminNotice
-				+ ", expiredAdminNotice=" + expiredAdminNotice
-				+ ", sentUserNotice=" + sentUserNotice
-				+ ", arrivingUserNotice=" + arrivingUserNotice
-				+ ", deadlineUserNotice=" + deadlineUserNotice
-				+ ", reminderUserNotice=" + reminderUserNotice
-				+ ", expiredUserNotice=" + expiredUserNotice
-				+ ", emailNotification=" + emailNotification
-				+ ", engineNotification=" + engineNotification + ", response="
-				+ response + ", rolesRelated=" + rolesRelated
-				+ ", usersRelated=" + usersRelated + ", customValidation="
-				+ customValidation + ", customValidationRefClass="
-				+ customValidationRefClass + ", customValidationMethod="
-				+ customValidationMethod 
-				+ ", customSaveMethod=" + customSaveMethod +
-				", backingBean=" + backingBean
-				+ ", insertDate=" + insertDate + ", insertUser=" + insertUser
-				+ ", modDate=" + modDate + ", modUser=" + modUser + "]";
+		return "WStepDef [id=" + id + ", name=" + name + ", idDept=" + idDept + ", idPhase="
+				+ idPhase + ", instructions=" + instructions + ", stepComments=" + stepComments
+				+ ", idListZone=" + idListZone + ", idWorkZone=" + idWorkZone
+				+ ", idAdditionalZone=" + idAdditionalZone + ", idDefaultProcessor="
+				+ idDefaultProcessor + ", submitForm=" + submitForm + ", timeUnit=" + timeUnit
+				+ ", assignedTime=" + assignedTime + ", deadlineDate=" + deadlineDate
+				+ ", deadlineTime=" + deadlineTime + ", reminderTimeUnit=" + reminderTimeUnit
+				+ ", reminderTime=" + reminderTime + ", runtimeModifiable=" + runtimeModifiable
+				+ ", sentAdminNotice=" + sentAdminNotice + ", arrivingAdminNotice="
+				+ arrivingAdminNotice + ", deadlineAdminNotice=" + deadlineAdminNotice
+				+ ", reminderAdminNotice=" + reminderAdminNotice + ", expiredAdminNotice="
+				+ expiredAdminNotice + ", sentUserNotice=" + sentUserNotice
+				+ ", arrivingUserNotice=" + arrivingUserNotice + ", deadlineUserNotice="
+				+ deadlineUserNotice + ", reminderUserNotice=" + reminderUserNotice
+				+ ", expiredUserNotice=" + expiredUserNotice + ", emailNotification="
+				+ emailNotification + ", engineNotification=" + engineNotification + ", response="
+				+ response + ", rolesRelated=" + rolesRelated + ", usersRelated=" + usersRelated
+				+ ", customValidation=" + customValidation + ", customValidationRefClass="
+				+ customValidationRefClass + ", customValidationMethod=" + customValidationMethod
+				+ ", backingBean=" + backingBean + ", customSaveMethod=" + customSaveMethod
+				+ ", customSaveRefClass=" + customSaveRefClass + ", insertDate=" + insertDate
+				+ ", insertUser=" + insertUser + ", modDate=" + modDate + ", modUser=" + modUser
+				+ "]";
 	}
 
 
@@ -694,7 +697,9 @@ public class WStepDef implements java.io.Serializable {
 		
 		if (customValidationRefClass!=null && ! "".equals(customValidationRefClass)) return false;
 		if (customValidationMethod!=null && ! "".equals(customValidationMethod)) return false;
+
 		if (customSaveMethod!=null && ! "".equals(customSaveMethod)) return false;
+		if (customSaveRefClass!=null && ! "".equals(customSaveRefClass)) return false;
 
 		return true;
 	}
@@ -896,6 +901,14 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setCustomSaveMethod(String customSaveMethod) {
 		this.customSaveMethod = customSaveMethod;
+	}
+
+	public String getCustomSaveRefClass() {
+		return customSaveRefClass;
+	}
+
+	public void setCustomSaveRefClass(String customSaveRefClass) {
+		this.customSaveRefClass = customSaveRefClass;
 	}
 
 	public boolean isBackingBean() {
