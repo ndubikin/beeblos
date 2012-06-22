@@ -197,6 +197,24 @@ public class WStepDefFormBean extends CoreManagedBean {
 				currentWStepDef.setIdAdditionalZone( null );
 			}			
 
+			// dml 20120622 - if this field is an empty string, it will be set null in the DB
+			if ( currentWStepDef.getIdDefaultProcessor()!=null
+					&& "".equals(currentWStepDef.getIdDefaultProcessor().trim()) ) {
+				currentWStepDef.setIdDefaultProcessor( null );
+			}			
+
+			// dml 20120622 - if this field is an empty string, it will be set null in the DB
+			if ( currentWStepDef.getCustomSaveMethod()!=null
+					&& "".equals(currentWStepDef.getCustomSaveMethod().trim()) ) {
+				currentWStepDef.setCustomSaveMethod( null );
+			}			
+
+			// dml 20120622 - if this field is an empty string, it will be set null in the DB
+			if ( currentWStepDef.getCustomSaveRefClass()!=null
+					&& "".equals(currentWStepDef.getCustomSaveRefClass().trim()) ) {
+				currentWStepDef.setCustomSaveRefClass( null );
+			}			
+
 		}
 	}
 	

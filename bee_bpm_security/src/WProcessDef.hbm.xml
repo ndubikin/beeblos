@@ -374,6 +374,10 @@
 			type="string">
 			<column name="custom_save_method" />
 		</property>		
+		<property generated="never" lazy="false" name="customSaveRefClass"
+			type="string">
+			<column name="custom_save_ref_class" />
+		</property>
         <property name="backingBean" type="boolean">
             <column name="backing_bean"  />
         </property>

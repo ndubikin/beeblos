@@ -14,6 +14,26 @@
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 
+			<h:outputText value="#{msg.label_custom_save_method}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_save_method"
+				value="#{wStepDefFormBean.currentWStepDef.customSaveMethod}"
+				disabled="#{wStepDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_custom_save_reference_class}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_custom_save_reference_class"
+				value="#{wStepDefFormBean.currentWStepDef.customSaveRefClass}"
+				disabled="#{wStepDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
 			<h:outputText value="#{msg.label_custom_validation}:"
 				styleClass="firstLeftText" />
 			<h:selectBooleanCheckbox id="custom_validation"

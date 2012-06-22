@@ -44,6 +44,16 @@
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 
+			<h:outputText value="#{msg.label_default_processor}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_id_default_processor"
+				value="#{wStepDefFormBean.currentWStepDef.idDefaultProcessor}"
+				disabled="#{wStepDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
 			<rich:spacer height="10" />
 			<h:panelGroup>
 				<a4j:commandButton id="edit_button" value="#{msg.label_edit}"
