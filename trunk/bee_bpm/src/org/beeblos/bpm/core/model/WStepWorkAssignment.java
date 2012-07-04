@@ -16,10 +16,10 @@ public class WStepWorkAssignment implements java.io.Serializable {
 	 * 1 role )
 	 * In a loop case when the step goes to another step and return to this step 
 	 * there must be not a problem because the reference is between step-work ( workitem ) 
-	 * and this entity, so 1 and only 1 manual assignement is supported for a concrete
+	 * and this entity, so 1 and only 1 manual assignment is supported for a concrete
 	 * workitem.
-	 * The field "active" may be drive the possibility of have more than 1 assignement and
-	 * user must set the active reassignement...
+	 * The field "active" may be drive the possibility of have more than 1 assignment and
+	 * user must set the active reassignment...
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
