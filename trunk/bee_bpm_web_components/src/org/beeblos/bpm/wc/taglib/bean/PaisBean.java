@@ -340,7 +340,6 @@ public class PaisBean extends CoreManagedBean {
 	public boolean isDisableBtnBorrar() {
 		
 		logger.debug("isDisableBtnBorrar:IdPais = " + this.getPaisNombre());
-		System.out.println("isDisableBtnBorrar:IdPais = " + this.getPaisNombre());
 		
 		if( this.pais.getIdPais().isEmpty() || this.pais.getIdPais()!= null || !this.pais.getIdPais().equals("")){
 			setDisableBtnBorrar(true);

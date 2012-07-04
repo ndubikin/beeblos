@@ -253,7 +253,6 @@ public class MonedaBean extends CoreManagedBean {
 	public boolean isDisableBtnBorrar() {
 		//nes 20100927
 		logger.debug("isDisableBtnBorrar:IdMoneda = " + this.moneda.getMonedaNombre());
-		System.out.println("isDisableBtnBorrar:IdMoneda = " + this.moneda.getMonedaNombre());
 		
 		if( isEmpty(this.moneda.getIdMoneda())){ // nes 20100927
 			setDisableBtnBorrar(true);
