@@ -230,7 +230,7 @@ public class WStepWorkDao {
 		query +=statusHQLFilter; // add status filter defined before ...
 		query += " ORDER BY w.arriving_date DESC ";
 	
-		System.out.println(query);
+		logger.debug("-->>> getStepListByUser: "+query);
 		
 		try {
 
@@ -353,20 +353,20 @@ public class WStepWorkDao {
 		
 		filter = (( filter != null && !"".equals(filter)) ? " WHERE ":"") + filter;
 		
-		System.out.println(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
-		System.out.println(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
-		System.out.println(" ---->>>>>>>>>> filter:["+filter+"]");
-		
+		logger.debug(" ---->>>>>>>>>> userFilter:["+userFilter+"]"
+				+"\n ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]"
+				+"\n ---->>>>>>>>>> filter:["+filter+"]");
+	
 		// load base query phrase
 		String query = getBaseQuery( isAdmin, userId );
 		
-		System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
+		logger.debug(" ---->>>>>>>>>> base query:["+query+"]");
 
 		// builds full query phrase
 		query += filter+getSQLOrder();
 
-		System.out.println(" ---->>>>>>>>>> FULL query:["+query+"]");
-		System.out.println(" ---->>>>>>>>>> userId: "+userId);
+		logger.debug(" ---->>>>>>>>>> FULL query:["+query+"]"
+					+"\n ---->>>>>>>>>> userId: "+userId);
 
 		
 		try {
@@ -484,7 +484,7 @@ public class WStepWorkDao {
 
 		query += filter+getOrder();
 
-		System.out.println("------------>>>"+query);
+		logger.debug("------------>>> getStepListByProcess: "+query);
 
 		
 		try {
@@ -1269,7 +1269,7 @@ public class WStepWorkDao {
 			}
 		}
 
-		System.out.println("QUERY FILTER:" + filter);
+		logger.debug("QUERY FILTER:" + filter);
 
 		return filter;
 	}
@@ -1312,7 +1312,7 @@ public class WStepWorkDao {
 		logger.debug("------>> getWorkingProcessStepListByFinder -> query:" + tmpQuery
 				+ "<<-------");
 
-		System.out.println("QUERY:" + tmpQuery);
+		logger.debug("QUERY:" + tmpQuery);
 
 		return tmpQuery;
 	}
