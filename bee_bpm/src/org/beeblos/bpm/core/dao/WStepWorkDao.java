@@ -358,7 +358,7 @@ public class WStepWorkDao {
 		System.out.println(" ---->>>>>>>>>> filter:["+filter+"]");
 		
 		// load base query phrase
-		String query = getBaseQuery( isAdmin );
+		String query = getBaseQuery( isAdmin, userId );
 		
 		System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
 
@@ -442,23 +442,22 @@ public class WStepWorkDao {
 	private String getRequiredFilter ( Integer userId, boolean isAdmin ) {
 		
 		String reqFilter = " ( ( wsr.id_role in ";
-		reqFilter +="(select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId ) OR  ";
-		reqFilter +=" ( wsu.id_user =:userId ) OR  ";
+		reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
 		reqFilter +=" ( wswa.id_role in ";
-		reqFilter +="(select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId )) OR  ";
-		reqFilter +=" ( wswa.id_user =:userId )  ) ) ";
+		reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
+		reqFilter +=" ( wswa.id_user =:userId ) ) ";
 		
 		return reqFilter;
 		
 	}
 	
 	
-	private String getBaseQuery(boolean isAdmin) {
+	private String getBaseQuery(boolean isAdmin, Integer userId) {
 		
 		String baseQueryTmp="SELECT * FROM w_step_work w ";
 		baseQueryTmp +="left join w_step_def wsd on w.id_current_step=wsd.id ";
 		baseQueryTmp +="left join w_step_role wsr on wsd.id=wsr.id_step ";
-		baseQueryTmp +="left join w_step_user wsu on wsd.id=wsu.id_step ";
+		baseQueryTmp +="left join w_step_user wsu on wsd.id=wsu.id_step AND wsu.id_user = " + userId + " ";
 		baseQueryTmp +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";	
 		
 		return baseQueryTmp;
