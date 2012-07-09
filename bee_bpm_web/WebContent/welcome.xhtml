@@ -5,21 +5,21 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
-	
+
 <ui:composition template="/templates/main.xhtml">
-	<ui:define name="title">Welcome to Beeblos BPM System</ui:define>
+	<ui:define name="title">Welcome... Welcome to Beeblos BPM System</ui:define>
 	<ui:define name="body">
-	
+
 	<style>
 	central {
 		width: 75%;
 	}
-	
+
 	listaVerticalDerecha {
-		width: 25%;	
+		width: 25%;
 	}
-	
-	
+
+
 	.main {
     vertical-align: top;
      align: right;
@@ -28,20 +28,20 @@
     vertical-align: top;
     align: left;
     }
-     
+
 </style>
-		
-	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />		
-		
+
+	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />
+
 		<rich:panel>
-		
+
 			<p></p>
 			<h:outputText value="BeeWf 0.0.10"/>
 
 			<ui:include src="/common/errorPanel.xhtml"/>
-		
+
 			<ui:include src="#{contextoSeguridad.usuarioPaginaInicio}" />
-			
+
 		</rich:panel>
 
 
