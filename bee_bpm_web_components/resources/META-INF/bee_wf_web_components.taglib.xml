@@ -46,11 +46,6 @@
  </tag>
  
  <tag>
-  <tag-name>wEmailAccountCrudCaratula</tag-name>
-  <source>/taglib/def/wEmailAccountCrudCaratula.xhtml</source>
- </tag>
- 
- <tag>
   <tag-name>wEmailTemplatesCrudCaratula</tag-name>
   <source>/taglib/def/wEmailTemplatesCrudCaratula.xhtml</source>
  </tag>
@@ -144,5 +139,9 @@
   <source>/taglib/common/territorio.xhtml</source>
  </tag>
  
+ <tag>
+  <tag-name>misCuentasCorreoCaratula</tag-name>
+  <source>/taglib/micuenta/pestanias/misCuentasCorreoCaratula.xhtml</source>
+ </tag>
  
 </facelet-taglib>

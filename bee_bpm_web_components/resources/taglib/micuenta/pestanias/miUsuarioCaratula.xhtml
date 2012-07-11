@@ -76,17 +76,17 @@
 			<h:outputText value="#{msg.label_login_user}" styleClass="labelForm" />
 			<h:outputText id="loginuser" value="#{miUsuarioBean.currentUsuario.usuarioLogin}"/>
 				
-			<h:outputText value="#{msg.label_nombres}" styleClass="labelForm" />
+			<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 			<h:inputText id="nombres" value="#{miUsuarioBean.currentUsuario.nombres}"
 				required="false"  style="width:300px"/>
 				
-			<h:outputText value="#{msg.label_apellidos}" styleClass="labelForm" />
+			<h:outputText value="#{msg.label_last_name}" styleClass="labelForm" />
 			<h:inputText id="apellidos" value="#{miUsuarioBean.currentUsuario.apellidos}"
 				required="false"  style="width:300px"/>
 	
 			<rich:spacer height="10" /><rich:spacer height="10" />
 				
-			<h:outputText value="#{msg.label_userpass}" styleClass="labelForm"/>
+			<h:outputText value="#{msg.label_password}" styleClass="labelForm"/>
 			<h:panelGroup>
 				<h:inputSecret id="pass" value="#{miUsuarioBean.password}" 
 					style="width:200px">
@@ -95,7 +95,7 @@
 				<rich:message for="pass" />
 			</h:panelGroup>
 				
-			<h:outputText value="#{msg.label_confirmarContrasenia}" styleClass="labelForm"/>
+			<h:outputText value="#{msg.label_confirm_password}" styleClass="labelForm"/>
 			<h:panelGroup>
 				<h:inputSecret id="passConfirmation" value="#{miUsuarioBean.passwordConfirmation}" 
 					style="width:200px">
@@ -109,9 +109,9 @@
 			<h:inputHidden id="hddIdUser" value="#{miUsuarioBean.idUsuario}"/>
 				
 			<h:panelGrid columns="2">	
-				<h:commandButton id="btnGuardar" value="#{msg.label_guardar}"
+				<h:commandButton id="btnGuardar" value="#{msg.label_save}"
 					actionListener="#{miUsuarioBean.guardar}" />
-				<h:commandButton id="btnCancelar" value="#{msg.label_cancelar}"
+				<h:commandButton id="btnCancelar" value="#{msg.label_cancel}"
 					actionListener="#{miUsuarioBean.reset}" />
 			</h:panelGrid>
 
