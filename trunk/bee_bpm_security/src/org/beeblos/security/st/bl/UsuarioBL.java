@@ -3,6 +3,8 @@ import org.beeblos.bpm.core.model.noper.StringPair;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
+
 import org.beeblos.security.st.dao.UsuarioDao;
 import org.beeblos.security.st.error.UsuarioException;
 import org.beeblos.security.st.model.Usuario;
@@ -81,7 +83,18 @@ public class UsuarioBL {
 
 	}
 	
-	public List<StringPair> obtenerUsuariosParaCombo( 
+	//rrl 20120710
+//	public List<StringPair> obtenerUsuariosParaCombo( 
+//			String textoPrimeraLinea, String separacion) 
+//	throws UsuarioException {
+//
+//		UsuarioDao usuarioCuentasEmailDao = new UsuarioDao();
+//		return usuarioCuentasEmailDao.obtenerUsuariosParaCombo(textoPrimeraLinea, separacion);
+//
+//	}
+
+	//rrl 20120710
+	public List<SelectItem> obtenerUsuariosParaCombo( 
 			String textoPrimeraLinea, String separacion) 
 	throws UsuarioException {
 
