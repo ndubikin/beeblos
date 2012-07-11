@@ -1,0 +1,276 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+
+		<h:form id="frm_miUsuarioCuentasEmail">
+		
+<a4j:jsFunction name="onsubmitBtnModificarContrasenia" action="#{miUsuarioCuentasEmailBean.modificarContrasenia}" reRender="panelContraseniaSalida" /> 
+		
+			<h:panelGrid id="exceptionsPnl"  rendered="#{exceptionBean.renderMessage}">
+				<rich:dataTable value="#{exceptionBean.exceptionList}" var="exp" >
+		            <rich:column> 
+		                <f:facet name="header">	                    
+		                </f:facet>	           
+		                <h:graphicImage value="#{exp.imagePath}" />  	                     
+		            </rich:column>
+		            <rich:column> 
+		                <f:facet name="header">
+		                    <h:outputText value="#{msg.label_message}"/>
+		                </f:facet>
+		                <h:outputText value="#{exp.code} "/>
+		                <h:outputText value="#{exp.message}"/>
+		            </rich:column>	            
+		            				
+				</rich:dataTable>
+			</h:panelGrid>
+
+			<h:panelGrid columns="3" width="60%" >
+											
+				<h:outputText value="#{msg.label_user}" styleClass="labelForm" rendered="${accion eq 'GENERIC_CRUD'}" />
+				<h:selectOneMenu id="usuarios" value="#{miUsuarioCuentasEmailBean.idUsuario}" style="width:250px" rendered="${accion eq 'GENERIC_CRUD'}">
+					<f:selectItems value="#{miUsuarioCuentasEmailBean.listaUsuarios}" />
+					<a4j:support ajaxSingle="false" action="#{miUsuarioCuentasEmailBean.recargaListaUsuario}"
+						event="onchange" reRender="frm_miUsuarioCuentasEmail, usuarioCuentasEmailTable, btnGuardar, btnBorrar, hddIdUce">
+						<a4j:actionparam name="det" assignTo="#{miUsuarioCuentasEmailBean.accion}" value="${accion}"/>						
+					</a4j:support>
+				</h:selectOneMenu>
+				<rich:spacer width="10" rendered="${accion eq 'GENERIC_CRUD'}" />
+											
+				<h:outputText value="#{msg.label_user_name}" styleClass="labelForm" />
+				<h:panelGroup>
+					<h:inputHidden id="hddIdUce" value="#{miUsuarioCuentasEmailBean.idUsuarioCuentasEmail}">
+						<a4j:support ajaxSingle="false"  action="#{miUsuarioCuentasEmailBean.cargarCurrentUsuarioCuentasEmail}"
+							event="onchange" reRender="frm_miUsuarioCuentasEmail,usuarioCuentasEmailTable, nombre, btnGuardar, btnBorrar" />
+					</h:inputHidden>
+					<h:inputText id="nombre" value="#{miUsuarioCuentasEmailBean.currentUCE.uceNombre}"
+						required="false"  style="width:250px"/>
+				</h:panelGroup>
+				
+				<rich:spacer width="10" />
+				
+				<h:outputText value="#{msg.label_email_account}" styleClass="labelForm" />
+				<h:panelGroup>
+					<h:inputText id="dir" value="#{miUsuarioCuentasEmailBean.currentUCE.uceEmail}"
+						required="false"  style="width:250px"/>
+				</h:panelGroup>
+				<h:panelGroup>
+				<rich:spacer width="10" />
+	
+				<a4j:commandButton id="btnGuardar" value="#{msg.label_save}" reRender="frm_miUsuarioCuentasEmail"
+					action="#{miUsuarioCuentasEmailBean.guardar}"/>			
+						
+				<rich:spacer width="10" />	
+				<h:commandButton id="btnBorrar" value="#{msg.label_delete}" 
+					actionListener="#{miUsuarioCuentasEmailBean.borra}" onclick="return confirmar()"/>						
+										
+				</h:panelGroup>	
+				
+		<rich:spacer width="10" />
+		<rich:spacer width="10" />	
+				
+		<h:panelGroup>
+		
+			<a4j:outputPanel styleClass="viewFilters" id="look">
+				<rich:effect for="look" event="onclick" type="Fade" params="delay:0.0, duration:0.1" disableDefault="true"/>
+				<rich:effect for="look" event="onclick" type="BlindDown" targetId="filtros" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="filtros"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="hide2"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<h:outputText escape="false" value="#{msg.label_show_configuration}" />
+			</a4j:outputPanel>
+
+			<a4j:outputPanel id="hide2" styleClass="viewFilters" style="display:none">
+				<rich:effect for="hide2" event="onclick" type="BlindUp" targetId="filtros" params="id:'filtros', duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Appear" targetId="look" params="delay:0.2, duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Fade" targetId="hide2" params="delay:0.0, duration:0.2" />
+				<h:outputText style="padding-right:5px" value="#{msg.label_hide_configuration}"/>
+			</a4j:outputPanel>
+		 </h:panelGroup>
+		 
+		</h:panelGrid>
+
+		<h:panelGrid id="filtros" columns="1" style="width:100%; display:none;" >
+			<h:panelGrid id="generales" columns="3" columnClasses="column20percent,column70percent,column10percent" >
+				
+				<h:outputText value="#{msg.label_preferred_account}" styleClass="labelForm" />
+				<h:selectBooleanCheckbox id="isPrefer" value="#{miUsuarioCuentasEmailBean.currentUCE.preferida}"
+					required="false"  style="text-align:left"/>	
+				<rich:spacer height="10" />
+				
+				<h:outputText value="#{msg.label_email_response}" styleClass="labelForm" />
+				<h:inputText id="dirResp" value="#{miUsuarioCuentasEmailBean.currentUCE.uceDireccionDeRespuesta}"
+					required="false"  style=" width:250px"/>	
+				<rich:spacer height="10" />
+				
+				<h:outputText id="lblFirmaTexto" value="#{msg.label_signature_text}" styleClass="labelForm"/>
+				<h:inputTextarea id="txtFirmaTexto" value="#{miUsuarioCuentasEmailBean.currentUCE.uceFirmaAdjuntaTxt}"
+					required="false" style="width:600px; height:150px;"/>			
+				<rich:spacer id="spcFirmaTexto" height="10"/>
+				
+				<h:outputText id="lblFirmaHtml" value="#{msg.label_signature_html}" styleClass="labelForm"/>
+	            <h:panelGroup id="controlsFirmaHtml">
+					<rich:editor id="txtFirmaHtml" configuration="#{editorBean.currentConfiguration}" 
+								 width="600" height="150" viewMode="#{editorBean.viewMode}" 
+								 value="#{miUsuarioCuentasEmailBean.currentUCE.uceFirmaAdjuntaHtml}" >
+					</rich:editor>
+
+	                <h:panelGrid columns="1">
+	                    <h:selectOneRadio value="#{editorBean.viewMode}">
+	                        <f:selectItem itemLabel="#{msg.label_view_html}" itemValue="visual" />
+	                        <f:selectItem itemLabel="#{msg.label_view_code_html}" itemValue="source" />
+	                        <a4j:support event="onclick" reRender="txtFirmaHtml,controlsFirmaHtml" requestDelay="500"
+	                            eventsQueue="settingsQueue" similarityGroupingId="settings" />
+	                    </h:selectOneRadio>
+	                </h:panelGrid>
+				</h:panelGroup>
+				<rich:spacer id="spcFirmaHtml" height="10"/>
+				
+			</h:panelGrid>
+			
+			<fieldset id="entrada" class="demo_fieldset" >
+				<legend class="demo_legend"  >#{msg.label_input_server}</legend>
+				<div>
+				<h:panelGrid columns="4" columnClasses ="column20percent,column25percent,column20percent,column35percent" width="100%">			
+					<h:outputText value="#{msg.label_output_server_name}" styleClass="labelForm" />
+					<h:inputText id="nombreServEnt" value="#{miUsuarioCuentasEmailBean.currentUCE.nombreDelServidorEntrada}"
+						required="false"  style="width:180px"/>
+						
+					<rich:spacer height="10" />
+					<rich:spacer height="10" />	
+				
+					<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
+					<h:inputText id="puertoEnt" value="#{miUsuarioCuentasEmailBean.currentUCE.puertoEntrada}"
+						required="false"  style="width:50px"/>
+						
+					<h:outputText value="#{msg.label_type}" styleClass="labelForm" />
+					<h:inputText id="tipoServEnt" value="#{miUsuarioCuentasEmailBean.currentUCE.tipoServidorEntrada}"
+						required="false"  style="width:50px"/>		
+						
+					<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
+					<h:inputText id="seguridadEnt" value="#{miUsuarioCuentasEmailBean.currentUCE.seguridadConexion}"
+							required="false"  style="width:150px"/>	
+						
+					<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
+					<h:inputText id="metIdEnt" value="#{miUsuarioCuentasEmailBean.currentUCE.metodoIdentificacion}"
+						required="false"  style="width:150px"/>			
+		
+				</h:panelGrid>
+				</div>
+			</fieldset>	
+			
+			<rich:spacer width="10" />
+			
+			<fieldset id="salida" class="demo_fieldset" >	 
+				<legend class="demo_legend">#{msg.label_output_server}</legend>
+				<div>
+					<h:panelGrid columns="4" columnClasses ="column20percent,column25percent,column20percent,column35percent" width="100%">
+						
+					<h:outputText value="#{msg.label_input_server_name}" styleClass="labelForm" />
+					<h:inputText id="nombreServSal" value="#{miUsuarioCuentasEmailBean.currentUCE.nombreServidorDeSalida}"
+						required="false"  style="width:180px"/>
+						
+					<rich:spacer height="10" />	
+					<rich:spacer height="10" />		
+						
+					<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
+					<h:inputText id="puertoSal" value="#{miUsuarioCuentasEmailBean.currentUCE.puertoSalida}"
+						required="false"  style="width:50px"/>
+						
+					<rich:spacer height="10" />	
+					<rich:spacer height="10" />		
+				
+					<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
+						
+					<h:selectOneMenu id="seguridadSal" value="#{miUsuarioCuentasEmailBean.currentUCE.seguridadDeLaConexionSalida}" style="width:150px">
+						<f:selectItems value="#{miUsuarioCuentasEmailBean.listaSeguridad}" />
+					</h:selectOneMenu>	
+											
+					<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
+					<h:inputText id="metIdSal" value="#{miUsuarioCuentasEmailBean.currentUCE.metodoIdentificacionSalida}"
+						required="false"  style="width:150px"/>		
+													
+					<h:outputText value="#{msg.label_output_user_name}" styleClass="labelForm" />
+					<h:inputText id="usuarioSal" value="#{miUsuarioCuentasEmailBean.currentUCE.nombreUsuarioSalida}"
+						required="false"  style="width:150px"/>
+						
+					<h:outputText value="#{msg.label_output_password}" styleClass="labelForm" />
+					<h:panelGroup id="panelContraseniaSalida">
+						<h:inputSecret id="passSal" value="#{miUsuarioCuentasEmailBean.currentUCE.contraseniaSalida}"
+							readonly="#{miUsuarioCuentasEmailBean.editableContraseniaSalida?'false':'true'}"
+							required="false" style="width:150px">
+		            		<a4j:support event="onchange" ajaxSingle="true" action="#{miUsuarioCuentasEmailBean.cambiarContraseniaSalida}"/>
+						</h:inputSecret>
+						<a4j:commandButton id="btnModificarContrasenia" value="#{msg.label_new_password}"
+							rendered="#{!miUsuarioCuentasEmailBean.editableContraseniaSalida}"
+							oncomplete="onsubmitBtnModificarContrasenia();"
+							style="margin-left: 10px;"/>			
+					</h:panelGroup>
+				
+				</h:panelGrid>	
+				</div>
+			</fieldset>
+		</h:panelGrid>
+
+		<rich:spacer height="10" />
+
+		<rich:panel style="width:98%">
+			<rich:dataTable id="usuarioCuentasEmailTable" width="70%" 
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+								
+				rows="5" styleClass="table" 
+				value="#{miUsuarioCuentasEmailBean.listaUce}" var="uce" >
+				
+				 <a4j:support event="onRowClick" reRender="frm_miUsuarioCuentasEmail" action="#{miUsuarioCuentasEmailBean.cargarCurrentUsuarioCuentasEmail}">
+                	<a4j:actionparam name="valor" value="#{uce.idUce}" assignTo="#{miUsuarioCuentasEmailBean.idUsuarioCuentasEmail}"/>
+                </a4j:support>	
+				
+				<f:facet name="header">
+					<h:outputText value="#{msg.label_user_email_accounts}" />
+				</f:facet>
+
+	           	<rich:column  style="width:30px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_id}"/>
+	                </f:facet>
+	                <h:outputText value="#{uce.idUce}"/>
+	            </rich:column> 
+	            
+	            <rich:column  style="width:30px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_preferred_account}"/>
+	                </f:facet>
+	                <h:outputText value="#{uce.preferida ? msg.label_si : msg.label_no}"/>
+	            </rich:column> 
+	            
+	           	<rich:column  style="width:200px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_account_name}"/>
+	                </f:facet>
+	                <h:outputText value="#{uce.uceNombre}"/>
+	            </rich:column>
+	            	             
+	            <rich:column  style="width:200px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_email_account}"/>
+	                </f:facet>
+	                <h:outputText value="#{uce.uceEmail}"/>
+	            </rich:column>  
+			</rich:dataTable>
+			
+			<rich:spacer height="10" />
+			
+			<rich:datascroller for="usuarioCuentasEmailTable" maxPages="10"  
+				reRender="frm_miUsuarioCuentasEmail"/>
+		
+			<rich:spacer height="10" />
+			
+			<h:inputHidden id="sessionId" value="#{miUsuarioCuentasEmailBean.currentSession}"/>
+		
+		</rich:panel>
+	</h:form>
+      
+</ui:composition>

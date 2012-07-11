@@ -2,8 +2,6 @@ package org.beeblos.bpm.wc.taglib.bean.micuenta;
 
 import static org.beeblos.bpm.core.util.Constants.PASS_PHRASE;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
-import static org.beeblos.bpm.wc.taglib.util.Constantes.SUCCESS_UCE;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +13,17 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.util.DesEncrypter;
-import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
-import org.beeblos.bpm.wc.taglib.util.Constantes;
-import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+
 import org.beeblos.security.st.bl.UsuarioBL;
 import org.beeblos.security.st.bl.UsuarioCuentasEmailBL;
 import org.beeblos.security.st.error.UsuarioCuentasEmailException;
 import org.beeblos.security.st.error.UsuarioException;
 import org.beeblos.security.st.model.UsuarioCuentasEmail;
-
+import org.beeblos.bpm.core.util.DesEncrypter;
+import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
+import org.beeblos.bpm.wc.taglib.util.Constantes;
+import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
+import org.beeblos.bpm.wc.taglib.util.FGPException;
 
 public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 
@@ -60,6 +57,13 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 	
 	private String currentSession;
 	
+	//rrl 20120201
+	private String contraseniaSalidaEstatica;
+	private boolean editableContraseniaSalida;
+	private boolean cambiadoContraseniaSalida;
+	
+	//rrl 20120612
+	private String accion; // la accion para la pantalla p.e: GENERIC_CRUD
 
 	
 	public MiUsuarioCuentasEmailBean() {
@@ -88,6 +92,10 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		
 		this.disableBtnBorrar=true;
 		this.disableBtnGuardar = true;
+
+		//rrl 20120201
+		editableContraseniaSalida = false;
+		cambiadoContraseniaSalida = false;
 		
 		
 		try {
@@ -113,8 +121,12 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		
 		ContextoSeguridad cs = (ContextoSeguridad) getSession().getAttribute(
 				SECURITY_CONTEXT);
-		
-		this.idUsuario = cs.getUsuario().getIdUsuario();
+
+		//rrl 20120612 El idUsuario es seleccionado por un COMBO cuando accion es GENERIC_CRUD 
+		if (accion==null || accion.equals("")) {
+			this.idUsuario = cs.getUsuario().getIdUsuario();
+		}
+		accion = "";
 		
 		this.currentUCE = new UsuarioCuentasEmail();
 		this.currentUCE.setFormato("Texto");  // rrl 20110727 //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
@@ -140,6 +152,10 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		
 		this.disableBtnBorrar=true;
 		this.disableBtnGuardar = true;
+		
+		//rrl 20120201
+		editableContraseniaSalida = false;
+		cambiadoContraseniaSalida = false;
 		
 	}
 	
@@ -167,6 +183,17 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		if (idUsuarioCuentasEmail!=null && idUsuarioCuentasEmail!=0) {
 			try {
 				currentUCE = new UsuarioCuentasEmailBL().obtenerUsuarioCuentasEmailPorPK(idUsuarioCuentasEmail);
+				
+				//rrl 20120201
+				contraseniaSalidaEstatica = currentUCE.getContraseniaSalida();
+				if (contraseniaSalidaEstatica!=null && !"".equals(contraseniaSalidaEstatica.trim())) {
+					cambiadoContraseniaSalida = false;
+					editableContraseniaSalida = false;
+				} else {
+					cambiadoContraseniaSalida = true;
+					editableContraseniaSalida = true;
+				}
+				
 			} catch (UsuarioCuentasEmailException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -176,8 +203,7 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 	
 	// si tiene id es actualización, si no lo tiene es alta ...
 	// nes 20101013 - cambié la firma - debe devolver String ...
-	public void guardar() {
-		//String retorno=FAIL;
+	public String guardar() {
 		
 		if (idUsuario==null || idUsuario==0) {
 			//martin - 20100930
@@ -189,16 +215,15 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		} else { 
 			
 			if (idUsuarioCuentasEmail!=null && idUsuarioCuentasEmail!=0) {
-				//retorno = 
-				actualizar();
+				actualizar(); //rrl 20120201
 			} else {
-				//retorno = 
-				agregar();
+				agregar();  //rrl 20120201
 			}
 			_reset();
 			recargaListaUsuario();
 		}
-		//return retorno;
+		
+		return null;
 	}
 		
 	// nes 20101013 - cambié la firma - debe devolver String ...
@@ -220,9 +245,22 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 			savedUCE.setUceDireccionDeRespuesta(currentUCE.getUceDireccionDeRespuesta());
 //			savedUCE.setUceTextoDeLaFirma(currentUCE.getUceTextoDeLaFirma());    //rrl 20110727 Campo no se utiliza
 			
-			//HZC:11012011, cifrar la contrasenia
-		    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
-			savedUCE.setContraseniaSalida(encrypter.encrypt(currentUCE.getContraseniaSalida()));
+//			//HZC:11012011, cifrar la contrasenia
+//		    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
+//			savedUCE.setContraseniaSalida(encrypter.encrypt(currentUCE.getContraseniaSalida()));
+			
+			//rrl 20120102
+			if (cambiadoContraseniaSalida) {
+				
+				if (currentUCE.getContraseniaSalida()!=null && !"".equals(currentUCE.getContraseniaSalida())) {
+				    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
+					savedUCE.setContraseniaSalida(encrypter.encrypt(currentUCE.getContraseniaSalida()));
+				} else {
+					savedUCE.setContraseniaSalida(null);
+				}
+			} else {
+				savedUCE.setContraseniaSalida(contraseniaSalidaEstatica);
+			}
 			
 			savedUCE.setFormato(currentUCE.getFormato());   //rrl 20110727 Campo no se utiliza  //TODO: OJO !! En la BBDD este campo está como IS NOT NULL si se va ha quitar
 			
@@ -255,7 +293,7 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 			new UsuarioCuentasEmailBL()
 							.actualizar(savedUCE);
 					
-			retorno=SUCCESS_UCE;
+			retorno=Constantes.SUCCESS_UCE;
 
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
@@ -296,10 +334,19 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 //			} else {
 //				currentUCE.setUceFirmaAdjuntaTxt(null);
 //			}
+
+			//rrl 20120201
+			if (currentUCE.getContraseniaSalida()!=null && !"".equals(currentUCE.getContraseniaSalida())) {
+			    DesEncrypter encrypter = new DesEncrypter(PASS_PHRASE);
+				String contraseniaSalida = encrypter.encrypt(currentUCE.getContraseniaSalida());
+				currentUCE.setContraseniaSalida(contraseniaSalida);
+			} else {
+				currentUCE.setContraseniaSalida(null);
+			}
 			
 			uceBL.agregar(currentUCE);
 			
-			retorno=SUCCESS_UCE;
+			retorno=Constantes.SUCCESS_UCE;
 			
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
@@ -360,7 +407,7 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 			currentUCE = uceBL.obtenerUsuarioCuentasEmailPorPK(idUsuarioCuentasEmail);
 			
 			uceBL.borrar(currentUCE);
-			retorno = SUCCESS_UCE;
+			retorno = Constantes.SUCCESS_UCE;
 			_reset();
 			recargaListaUsuario(); 
 			
@@ -590,9 +637,9 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 	/**
 	 * @param idUsuario the idUsuario to set
 	 */
-//	public void setIdUsuario(Integer idUsuario) {
-//		this.idUsuario = idUsuario;
-//	}
+	public void setIdUsuario(Integer idUsuario) {
+		this.idUsuario = idUsuario;
+	}
 
 	/**
 	 * @return the idUsuario
@@ -616,8 +663,8 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		if (this.listaUsuarios==null || this.listaUsuarios.size()==0) {
 			
 			try {
-				this.listaUsuarios = UtilsVs.castStringPairToSelectitem( new UsuarioBL()
-												.obtenerUsuariosParaCombo("Seleccionar ...", null) );
+				this.listaUsuarios = new UsuarioBL()
+												.obtenerUsuariosParaCombo("Seleccionar ...", null);
 			} catch (UsuarioException e) {
 				
 				logger.error("Ocurrio Un Error al tratar de obtener la lista de usuarios:" 
@@ -703,15 +750,66 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		return listaFormatos;
 	}
 	
-	public List<String> getListaSeguridad() {
+	//rrl 20120201
+	public List<SelectItem> getListaSeguridad() {
 		
-		List<String> listaSeguridad = new ArrayList<String>();
+		List<SelectItem> listaSeguridad = new ArrayList<SelectItem>();
 		
-		listaSeguridad.add("none");
-		listaSeguridad.add("STARTTLS");
-		listaSeguridad.add("SSL/TLS");
-				
+		listaSeguridad.add(new SelectItem("none", "NONE"));
+		listaSeguridad.add(new SelectItem("STARTTLS", "STARTTLS"));
+		listaSeguridad.add(new SelectItem("SSL/TLS", "SSL/TLS"));
+		
 		return listaSeguridad;
+	}
+	
+	//rrl 20120201
+	public String getContraseniaSalidaEstatica() {
+		return contraseniaSalidaEstatica;
+	}
+
+	public void setContraseniaSalidaEstatica(String contraseniaSalidaEstatica) {
+		this.contraseniaSalidaEstatica = contraseniaSalidaEstatica;
+	}
+
+	public boolean isEditableContraseniaSalida() {
+		return editableContraseniaSalida;
+	}
+
+	public void setEditableContraseniaSalida(boolean editableContraseniaSalida) {
+		this.editableContraseniaSalida = editableContraseniaSalida;
+	}
+
+	public boolean isCambiadoContraseniaSalida() {
+		return cambiadoContraseniaSalida;
+	}
+
+	public void setCambiadoContraseniaSalida(boolean cambiadoContraseniaSalida) {
+		this.cambiadoContraseniaSalida = cambiadoContraseniaSalida;
+	}
+	
+	public String modificarContrasenia() {
+		
+		editableContraseniaSalida = true;
+		cambiadoContraseniaSalida = true;
+		currentUCE.setContraseniaSalida(null);
+		
+		return null;
+	}
+	
+	public String cambiarContraseniaSalida() {
+		
+		cambiadoContraseniaSalida = true;
+		
+		return null;
+	}
+
+	//rrl 20120612
+	public String getAccion() {
+		return accion;
+	}
+
+	public void setAccion(String accion) {
+		this.accion = accion;
 	}
 	
 
