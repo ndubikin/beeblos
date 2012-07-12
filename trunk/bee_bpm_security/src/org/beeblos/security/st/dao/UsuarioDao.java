@@ -3,8 +3,6 @@ package org.beeblos.security.st.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.model.SelectItem;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.model.noper.StringPair;
@@ -266,58 +264,12 @@ public class UsuarioDao {
 		return usuarios;
 	}
 	
-//	public List<StringPair> obtenerUsuariosParaCombo(
-//			String textoPrimeraLinea, String separacion )
-//	throws UsuarioException {
-//		 
-//			List<Usuario> ltmp = null;
-//			List<StringPair> retorno = new ArrayList<StringPair>();
-//
-//			ltmp=obtenerUsuarios();
-//
-//			if (ltmp!=null) {
-//				
-//				// inserta los extras
-//				if ( textoPrimeraLinea!=null && !"".equals(textoPrimeraLinea) ) {
-//					if ( !textoPrimeraLinea.equals("BLANCO") ) {
-//						retorno.add(new StringPair(null,textoPrimeraLinea));  // deja la primera línea con lo q venga
-//					} else {
-//						retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
-//					}
-//				}
-//				
-//				if ( separacion!=null && !"".equals(separacion) ) {
-//					if ( !separacion.equals("BLANCO") ) {
-//						retorno.add(new StringPair(null,separacion));  // deja la separación línea con lo q venga
-//					} else {
-//						retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
-//					}
-//				}
-//							
-//				
-//				for (Usuario u: ltmp) {
-//					retorno.add(new StringPair(u.getIdUsuario(),u.getUsuarioLogin()));
-//				}
-//				
-//			} else {
-//
-//				retorno=null;
-//			
-//			}
-//				
-//				
-//			return retorno;
-//
-//	}
-	
-
-	//rrl 20120710
-	public List<SelectItem> obtenerUsuariosParaCombo(
+	public List<StringPair> obtenerUsuariosParaCombo(
 			String textoPrimeraLinea, String separacion )
 	throws UsuarioException {
 		 
 			List<Usuario> ltmp = null;
-			List<SelectItem> retorno = new ArrayList<SelectItem>();
+			List<StringPair> retorno = new ArrayList<StringPair>();
 
 			ltmp=obtenerUsuarios();
 
@@ -326,23 +278,23 @@ public class UsuarioDao {
 				// inserta los extras
 				if ( textoPrimeraLinea!=null && !"".equals(textoPrimeraLinea) ) {
 					if ( !textoPrimeraLinea.equals("BLANCO") ) {
-						retorno.add(new SelectItem(null,textoPrimeraLinea));  // deja la primera línea con lo q venga
+						retorno.add(new StringPair(null,textoPrimeraLinea));  // deja la primera línea con lo q venga
 					} else {
-						retorno.add(new SelectItem(null," ")); // deja la primera línea en blanco ...
+						retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
 					}
 				}
 				
 				if ( separacion!=null && !"".equals(separacion) ) {
 					if ( !separacion.equals("BLANCO") ) {
-						retorno.add(new SelectItem(null,separacion));  // deja la separación línea con lo q venga
+						retorno.add(new StringPair(null,separacion));  // deja la separación línea con lo q venga
 					} else {
-						retorno.add(new SelectItem(null," ")); // deja la separacion con linea en blanco ...
+						retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
 					}
 				}
 							
 				
 				for (Usuario u: ltmp) {
-					retorno.add(new SelectItem(u.getIdUsuario(),u.getUsuarioLogin()));
+					retorno.add(new StringPair(u.getIdUsuario(),u.getUsuarioLogin()));
 				}
 				
 			} else {
@@ -355,7 +307,6 @@ public class UsuarioDao {
 			return retorno;
 
 	}
-	
 	
 	public boolean verificarNombreDuplicado(
 			String usuarioLogin, Integer idUsuario) 
