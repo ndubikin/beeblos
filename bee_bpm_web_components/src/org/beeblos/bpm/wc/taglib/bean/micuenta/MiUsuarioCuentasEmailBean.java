@@ -24,6 +24,7 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.Constantes;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
+import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
 public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 
@@ -663,8 +664,9 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		if (this.listaUsuarios==null || this.listaUsuarios.size()==0) {
 			
 			try {
-				this.listaUsuarios = new UsuarioBL()
-												.obtenerUsuariosParaCombo("Seleccionar ...", null);
+				this.listaUsuarios = UtilsVs.castStringPairToSelectitem( new UsuarioBL()
+												.obtenerUsuariosParaCombo("Seleccionar ...", null));
+				
 			} catch (UsuarioException e) {
 				
 				logger.error("Ocurrio Un Error al tratar de obtener la lista de usuarios:" 

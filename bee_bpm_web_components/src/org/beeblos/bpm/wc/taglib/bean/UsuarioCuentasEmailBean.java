@@ -542,12 +542,9 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 		if (this.listaUsuarios==null || this.listaUsuarios.size()==0) {
 			
 			try {
-				//rrl 20120710
-//				this.listaUsuarios = UtilsVs.castStringPairToSelectitem( new UsuarioBL()
-//												.obtenerUsuariosParaCombo("Seleccionar ...", null) );
+				this.listaUsuarios = UtilsVs.castStringPairToSelectitem( new UsuarioBL()
+												.obtenerUsuariosParaCombo("Seleccionar ...", null) );
 				
-				this.listaUsuarios = new UsuarioBL()
-											.obtenerUsuariosParaCombo("Seleccionar ...", null);
 			} catch (UsuarioException e) {
 				
 				logger.error("Ocurrio Un Error al tratar de obtener la lista de usuarios:" 
