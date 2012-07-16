@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WStepWork;
@@ -1279,7 +1277,7 @@ public class WStepWorkDao {
 		String tmpQuery = "SELECT ";
 		tmpQuery += " sw.id_process, ";
 		tmpQuery += " sw.id_current_step, ";
-		tmpQuery += " step.name, ";
+		tmpQuery += " step.name step_name, ";
 		tmpQuery += " sw.arriving_date, ";
 		tmpQuery += " sw.opened_date, ";
 		tmpQuery += " sw.opener_user, ";
@@ -1292,9 +1290,9 @@ public class WStepWorkDao {
 		tmpQuery += " sw.locked_by, ";
 		tmpQuery += " sw.id, ";
 		tmpQuery += " opener.login, ";
-		tmpQuery += " opener.name, ";
+		tmpQuery += " opener.name opener_name, ";
 		tmpQuery += " performer.login, ";
-		tmpQuery += " performer.name ";
+		tmpQuery += " performer.name performer_name ";
 
 		tmpQuery += " FROM w_step_work sw ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
