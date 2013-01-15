@@ -365,9 +365,7 @@ public class WProcessDefDao {
 			// builds full query phrase
 			query += filter+getSQLOrder(action);
 
-			System.out.println(" ---->>>>>>>>>> FULL query:["+query+"]");
-			System.out.println(" ---->>>>>>>>>> userId: "+userId);
-
+			logger.debug(" ---->>>>>>>>>> FULL query:["+query+"] ---->>>>>>>>>> userId: "+userId);
 			
 			try {
 
