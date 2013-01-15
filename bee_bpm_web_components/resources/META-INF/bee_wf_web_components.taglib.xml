@@ -46,6 +46,11 @@
  </tag>
  
  <tag>
+  <tag-name>wEmailAccountCrudCaratula</tag-name>
+  <source>/taglib/def/wEmailAccountCrudCaratula.xhtml</source>
+ </tag>
+ 
+ <tag>
   <tag-name>wEmailTemplatesCrudCaratula</tag-name>
   <source>/taglib/def/wEmailTemplatesCrudCaratula.xhtml</source>
  </tag>

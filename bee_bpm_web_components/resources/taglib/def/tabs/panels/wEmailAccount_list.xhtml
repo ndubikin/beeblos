@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<h:panelGrid columns="1"
+		style=" width : 100%; height : auto;">
+			
+		<rich:dataTable id="w_user_email_accounts_table" width="75%" align="center"
+			onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+			onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"				
+			rows="5" styleClass="table" 
+			value="#{wEmailAccountBean.emailAccountList}" var="wuea" >
+			
+			 <a4j:support event="onRowClick" reRender="w_user_email_account_form" action="#{wEmailAccountBean.loadCurrentWEmailAccount}">
+	              	<a4j:actionparam name="value" value="#{wuea.id}" assignTo="#{wEmailAccountBean.id}"/>
+	         </a4j:support>	
+			
+			<f:facet name="header">
+				<h:outputText value="#{msg.label_user_email_accounts} (#{wEmailAccountBean.emailAccountListSize} #{msg.label_results})" />
+			</f:facet>
+	
+	          	<rich:column  style="width:10%; text-align: left;"> 
+	               <f:facet name="header">
+	                   <h:outputText value="#{msg.label_id}"/>
+	               </f:facet>
+	               <h:outputText value="#{wuea.id}"/>
+	           </rich:column> 
+	           
+	          	<rich:column  style="width:20%; text-align: left;"> 
+	               <f:facet name="header">
+	                   <h:outputText value="#{msg.label_owner}"/>
+	               </f:facet>
+	               <h:outputText value="#{wuea.wUserDef.name}"/>
+	           </rich:column> 
+	           
+	           <rich:column  style="width:10%; text-align: left;"> 
+	               <f:facet name="header">
+	                   <h:outputText value="#{msg.label_is_default_account}"/>
+	               </f:facet>
+	               <h:outputText value="#{wuea.userDefaultAccount ? msg.label_yes : msg.label_no}"/>
+	           </rich:column> 
+	           
+	          	<rich:column  style="width:30%; text-align: left;"> 
+	               <f:facet name="header">
+	                   <h:outputText value="#{msg.label_name}"/>
+	               </f:facet>
+	               <h:outputText value="#{wuea.name}"/>
+	           </rich:column>
+	           	             
+	           <rich:column  style="width:30%; text-align: left;"> 
+	               <f:facet name="header">
+	                   <h:outputText value="#{msg.label_email}"/>
+	               </f:facet>
+	               <h:outputText value="#{wuea.email}"/>
+	           </rich:column>  
+		</rich:dataTable>
+		
+		<rich:spacer height="10" />
+		
+		<rich:datascroller for="w_user_email_accounts_table" maxPages="10"  
+			reRender="w_user_email_account_form"/>
+	
+		<rich:spacer height="10" />
+		
+		<h:inputHidden id="sessionId" value="#{wEmailAccountBean.currentSession}"/>
+		
+		<h:panelGrid columns="1"
+			style=" width : auto; height : auto; padding-left: 15px;"
+			columnClasses="colStyle200px"
+			rendered="#{!wEmailAccountBean.addNewEmailMode and (wEmailAccountBean.id == null or wEmailAccountBean.id == 0)}">
+			
+			<a4j:commandLink id="new_email_account"
+				title="#{msg.label_add_new_email_account}"
+				actionListener="#{wEmailAccountBean.changeFormMode}"
+				reRender="w_user_email_account_form">
+				<h:graphicImage id="imgInsertar" value="/images/insertar.png"
+					style="border:0;" />
+			</a4j:commandLink>
+				
+		</h:panelGrid>		
+	
+	</h:panelGrid>
+		
+</ui:composition>
