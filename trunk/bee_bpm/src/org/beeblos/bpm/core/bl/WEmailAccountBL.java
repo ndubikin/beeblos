@@ -27,20 +27,11 @@ public class WEmailAccountBL {
 		_consistencyDataControl(instance);
 		_noRedundancyControl(instance);
 
-		WEmailAccountDao wEmailAccountDao = new WEmailAccountDao();
-
 		if (instance.isUserDefaultAccount()) {
-			WEmailAccount previusDefaultAccount = wEmailAccountDao
-					.getDefaultAccount(instance.getwUserDef().getId());
-			if (previusDefaultAccount != null) {
-
-				previusDefaultAccount.setUserDefaultAccount(false);
-
-				wEmailAccountDao.update(previusDefaultAccount);
-			}
+			_checkDefaultEmailAccountConsistency(instance);
 		}
-
-		return wEmailAccountDao.add(instance);
+		
+		return new WEmailAccountDao().add(instance);
 
 	}
 
@@ -49,26 +40,38 @@ public class WEmailAccountBL {
 
 		logger.debug("WEmailAccountBL:update()");
 
-		WEmailAccountDao wEmailAccountDao = new WEmailAccountDao();
-
 		_consistencyDataControl(instance);
 		_noRedundancyUpdateControl(instance);
 
 		if (instance.isUserDefaultAccount()) {
-			WEmailAccount previusDefaultAccount = wEmailAccountDao
-					.getDefaultAccount(instance.getwUserDef().getId());
-
-			if (previusDefaultAccount != null
-					&& instance.getId() != previusDefaultAccount.getId()) {
-
-				previusDefaultAccount.setUserDefaultAccount(false);
-
-				wEmailAccountDao.update(previusDefaultAccount);
-			}
+			_checkDefaultEmailAccountConsistency(instance);
 		}
 
 		new WEmailAccountDao().update(instance);
 
+	}
+
+	private void _checkDefaultEmailAccountConsistency(WEmailAccount instance)
+			throws WEmailAccountException {
+		
+		WEmailAccountDao wea = new WEmailAccountDao();
+		
+		List<WEmailAccount> previusDefaultAccountList = wea
+				.getDefaultAccountList(instance.getwUserDef().getId());
+
+		for (WEmailAccount pea: previusDefaultAccountList) {
+			
+			if ( pea.isUserDefaultAccount() ) {
+
+				pea.setUserDefaultAccount(false);
+
+				wea.update(pea);
+			}
+			
+		}
+		
+
+		
 	}
 
 	public void delete(WEmailAccount instance, Integer idCurrentUser)
