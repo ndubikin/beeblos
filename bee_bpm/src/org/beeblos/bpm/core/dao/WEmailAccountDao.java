@@ -457,5 +457,44 @@ public class WEmailAccountDao {
 		return result;
 
 	}
+	
+	public List<WEmailAccount> getDefaultAccountList(Integer idUser)
+			throws WEmailAccountException {
+
+		List<WEmailAccount> result = null;
+		// List<StringPair> result = new ArrayList<StringPair>(10);
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			if (idUser != null) {
+
+				result = (List<WEmailAccount>) session
+						.createQuery(
+								"From WEmailAccount wuea WHERE wuea.wUserDef.id= ? AND wuea.userDefaultAccount = true order by  wuea.userDefaultAccount desc, wuea.email asc")
+						.setInteger(0, idUser).list();
+
+			}
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String message = "An error has ocurred while obtaining the WEmailAccount Combo list"
+					+ " - " + ex.getMessage() + " ; " + ex.getCause();
+			logger.error(message);
+			throw new WEmailAccountException(message);
+		} catch (Exception e) {
+		}
+
+		return result;
+
+	}	
 
 }
