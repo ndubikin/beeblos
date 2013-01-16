@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- @author: sgurin  -->
-<project name="bee_bpm_core" default="jar">
+<project name="sptrac_components" default="jar">
 
 	<property file="build.properties"/>
 	<description>
@@ -20,16 +20,21 @@
 	</path>
 
 	
-	<target name="compile">
+	<!--	<target name="compile">
 	    <javac srcdir="${srcFolder}" destdir="${binFolder}" classpathref="libraries"/>
+		<copy todir="taglib" flatten="false" overwrite="yes"> 
+				<fileset  dir="${resourcesFolder}"  includes="**" />
+		</copy>		
 
-  	</target>		  
+  	</target> -->		  
 	
-	<target name="jar" depends="compile" description="">
+	<target name="jar"  description="">
+		<copy todir="taglib" flatten="false" overwrite="yes"> 
+				<fileset  dir="${resourcesFolder}"  includes="**" />
+		</copy>	
 		 <jar destfile="${distFolder}/${jarName}"
 	         basedir="${binFolder}"
-	         includes="**/*.class, **/*.xml, **/*.properties"
-		 	 excludes="**/hibernate.cfg.xml"
+	         includes="**"
 	         />
 	</target>
 
