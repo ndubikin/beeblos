@@ -124,5 +124,11 @@ public class WProcessDefBL {
 		
 	}
 
+	// dml 20130129
+	public boolean userIsProcessAdmin(Integer userId, Integer processId) throws WProcessDefException{
+		
+		return new WProcessDefDao().userIsProcessAdmin(userId, processId);
+		
+	}
 }
 	

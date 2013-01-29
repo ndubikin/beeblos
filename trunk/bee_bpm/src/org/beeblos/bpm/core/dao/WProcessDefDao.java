@@ -813,7 +813,60 @@ public class WProcessDefDao {
 
 		return returnList;
 	}
+	
+	// dml 20130129
+	public boolean userIsProcessAdmin(Integer userId, Integer processId)
+			throws WProcessDefException {
 
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		String result = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			String query = " SELECT ";
+			query += " IF (" + userId + " IN ";
+			query += " (SELECT id_user FROM w_process_user WHERE id_process = " + processId
+					+ " AND admin=true )";
+			query += " OR ";
+			query += " (SELECT COUNT(*) FROM w_process_role pr LEFT JOIN w_user_role ur ON pr.id_role=ur.id_role";
+			query += " WHERE pr.admin = true AND ur.id_user= " + userId
+					+ " ), 'YES','NO' ) as ADMINISTRATOR ";
+
+			result = (String) session.createSQLQuery(query).uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDefDao: userIsProcessAdmin() - can't obtain process list - "
+					+ ex.getMessage() + "\n" + ex.getCause());
+			throw new WProcessDefException(
+					"WProcessDefDao: userIsProcessAdmin() - can't obtain process list: "
+							+ ex.getMessage() + "\n" + ex.getCause());
+
+		}
+
+		if (result != null && !"".equals(result)) {
+			if (result.equals("YES")) {
+				return true;
+			} else if (result.equals("NO")) {
+				return false;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+	}
 
 }
 	
