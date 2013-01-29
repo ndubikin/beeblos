@@ -2,17 +2,20 @@ package org.beeblos.bpm.core.test.bl;
 
 
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.noper.StringPair;
 import org.junit.Test;
 
 
@@ -42,7 +45,6 @@ public class TestWStepDefBL extends TestCase{
 		}
 		
 		@Test
-		
 		public void testAgregarWStepDef() {
 			
 			try {
@@ -140,6 +142,21 @@ public class TestWStepDefBL extends TestCase{
 				
 		}		
 		
-	
+		@Test
+		public void testSearchAdminProcessUserSteps() {
+			
+			try {
+				
+				List<StringPair> list = new WStepDefBL().getComboList(69, 1, 1000, false, null, null);
+				
+				System.out.println("CORRECT");
+			
+			} catch (WProcessDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}
+
 		
 }

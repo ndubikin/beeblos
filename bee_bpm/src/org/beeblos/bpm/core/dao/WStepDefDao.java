@@ -411,6 +411,106 @@ public class WStepDefDao {
 
 	}
 
+	// returns a list with step names
+	// dml 20130129
+	@SuppressWarnings("unchecked")
+	public List<StringPair> getComboList(
+			Integer idProcess, Integer version, Integer userId, boolean userIsProcessAdmin, boolean allItems, 
+			String firstLineText, String blank )
+	throws WProcessDefException {
+		 
+			List<Object> lwsd = null;
+			List<StringPair> retorno = new ArrayList<StringPair>(10);
+			
+			org.hibernate.Session session = null;
+			org.hibernate.Transaction tx = null;
+
+			try {
+
+				session = HibernateUtil.obtenerSession();
+				tx = session.getTransaction();
+				tx.begin();
+				
+				String query = "SELECT DISTINCT (s.id), s.name, s.step_comments ";
+				query += " FROM w_step_def s ";
+				query += " LEFT OUTER JOIN w_step_role wsr ON s.id = wsr.id_step ";
+				query += " LEFT OUTER JOIN w_step_user wsu ON s.id = wsu.id_step ";
+				query += " WHERE s.id IN ";
+				query += " (SELECT DISTINCT id_origin_step FROM w_step_sequence_def ws WHERE ws.id_process = " 
+							+ idProcess + " AND ws.version = " + version + " ) ";
+
+				// dml 20130129
+				if (userId != null
+						&& !userId.equals(0)
+						&& (!userIsProcessAdmin 
+						|| (userIsProcessAdmin && !allItems))) {
+					
+					query +=" AND ( wsr.id_role IN (SELECT wur.id_role FROM w_user_role wur WHERE wur.id_user = " + userId + " ) ";
+					query +=" OR (wsu.id_user = " + userId + " ) ) ";
+					
+				}
+				
+				query += " ORDER BY s.name ";
+/*
+				lwsd = session
+						.createSQLQuery("SELECT DISTINCT w.id, w.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? AND ws.version=? AND w.id = ws.fromStep.id ORDER BY w.name")
+						.setParameter(0, idProcess)
+						.setParameter(1, version)
+						.list();
+*/
+				
+				lwsd = session
+						.createSQLQuery(query)  
+						.list();
+
+				if (lwsd!=null) {
+					
+					// inserta los extras
+					if ( firstLineText!=null && !"".equals(firstLineText) ) {
+						if ( !firstLineText.equals("WHITESPACE") ) {
+							retorno.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
+						} else {
+							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+						}
+					}
+					
+					if ( blank!=null && !"".equals(blank) ) {
+						if ( !blank.equals("WHITESPACE") ) {
+							retorno.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
+						} else {
+							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+						}
+					}
+					
+					String nombrePaso="";
+					for (Object wsd: lwsd) {
+						Object [] cols= (Object []) wsd;
+						
+						nombrePaso=(cols[1]!=null ? cols[1].toString().trim():"") +" "+(cols[2]!=null ? cols[2].toString().trim():""); 
+						
+						retorno.add(new StringPair(
+										(cols[0]!=null ? new Integer(cols[0].toString()):null),
+										nombrePaso ) );
+					}
+				} else {
+					// nes  - si el select devuelve null entonces devuelvo null
+					retorno=null;
+				}
+				
+				
+			} catch (HibernateException ex) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+"\n"+ex.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			} catch (Exception e) {}
+
+			return retorno;
+
+
+	}
+
 	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
 			String instructionsFilter, Integer userId, boolean isAdmin, String action ) 
 	throws WStepDefException {

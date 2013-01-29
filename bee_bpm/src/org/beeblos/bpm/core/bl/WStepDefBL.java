@@ -122,6 +122,20 @@ public class WStepDefBL {
 		
 	}
 
+	// dml 20130129 - new combo method with userId and allItems
+	public List<StringPair> getComboList(
+			Integer idProcess, Integer version, Integer userId, boolean allItems, 
+			String firstLineText, String blank )
+	throws WProcessDefException {
+		
+		// dml 20130129 - checking if the user is process admin
+		boolean userIsProcessAdmin = new WProcessDefBL().userIsProcessAdmin(userId, idProcess);
+
+		return new WStepDefDao().getComboList(idProcess, version, userId, userIsProcessAdmin, allItems, 
+				firstLineText, blank);
+		
+	}
+
 	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
 			String instructionsFilter, Integer userId, boolean isAdmin, String action ) 
 	throws WStepDefException {
