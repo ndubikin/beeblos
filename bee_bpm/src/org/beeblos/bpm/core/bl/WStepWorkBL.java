@@ -234,16 +234,17 @@ public class WStepWorkBL {
 		
 	}
 
-	public List<WStepWork> getStepListByProcess (
+	public List<WStepWork> getWorkStepListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
 			Date arrivingDate, Date openedDate,	Date deadlineDate, String filtroInstruccionesYNombrePaso  ) 
 	throws WStepWorkException {
 		
 		return new WStepWorkDao()
-						.getStepListByProcess(idProcess, idCurrentStep, status,
-												userId, isAdmin, 
-													arrivingDate, openedDate, deadlineDate, filtroInstruccionesYNombrePaso);
+						.getWorkStepListByProcess(
+								idProcess, idCurrentStep, status,
+								userId, isAdmin, arrivingDate, openedDate, 
+								deadlineDate, filtroInstruccionesYNombrePaso);
 		
 	}
 	

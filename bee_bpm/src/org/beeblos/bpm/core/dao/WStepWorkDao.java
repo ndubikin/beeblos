@@ -317,7 +317,7 @@ public class WStepWorkDao {
 	// NEW METHOD WITH ALL FILTERS ...
 	
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getStepListByProcess (
+	public List<WStepWork> getWorkStepListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
 			Date arrivingDate, Date openedDate,	Date deadlineDate, String instructionsAndReferenceFilter  ) 
@@ -408,8 +408,11 @@ public class WStepWorkDao {
 						+ e.getMessage()+"\n"+e.getCause());	
 			}
 			
+			// nes 20130221 - si es admin van todos, no se filtra por usuario ...
 			// set userId
-			q.setInteger("userId",userId);
+			if (!isAdmin) {
+				q.setInteger("userId",userId);
+			}
 			
 			// retrieve list
 			stepws = q.list();
@@ -439,12 +442,15 @@ public class WStepWorkDao {
 
 	private String getRequiredFilter ( Integer userId, boolean isAdmin ) {
 		
-		String reqFilter = " ( ( wsr.id_role in ";
-		reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
-		reqFilter +=" ( wswa.id_role in ";
-		reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
-		reqFilter +=" ( wswa.id_user =:userId ) ) ";
-		
+		String reqFilter=""; // para las queries no se puede devolver null, hay que devolver ""
+		// nes 20130221 - if isAdmin doesn't filter result ...
+		if (!isAdmin) {
+			reqFilter = " ( ( wsr.id_role in ";
+			reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
+			reqFilter +=" ( wswa.id_role in ";
+			reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
+			reqFilter +=" ( wswa.id_user =:userId ) ) ";
+		}
 		return reqFilter;
 		
 	}
