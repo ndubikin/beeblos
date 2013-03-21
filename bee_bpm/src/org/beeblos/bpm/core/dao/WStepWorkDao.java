@@ -320,7 +320,8 @@ public class WStepWorkDao {
 	public List<WStepWork> getWorkStepListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
-			Date arrivingDate, Date openedDate,	Date deadlineDate, String instructionsAndReferenceFilter  ) 
+			Date arrivingDate, Date openedDate,	Date deadlineDate, 
+			String commentsAndReferenceFilter  ) 
 	throws WStepWorkException {
 
 		org.hibernate.Session session = null;
@@ -340,7 +341,7 @@ public class WStepWorkDao {
 		// the String directly in the string filter.
 		// Date parameters must be added to hibernate query in the try / catch clause below
 		String userFilter = " (" + 
-							getSQLFilter(idProcess, idCurrentStep, status, arrivingDate, openedDate, deadlineDate, instructionsAndReferenceFilter ) +
+							getSQLFilter(idProcess, idCurrentStep, status, arrivingDate, openedDate, deadlineDate, commentsAndReferenceFilter ) +
 							" ) ";
 		
 		String requiredFilter = getRequiredFilter(userId, isAdmin);
@@ -360,8 +361,14 @@ public class WStepWorkDao {
 		
 		logger.debug(" ---->>>>>>>>>> base query:["+query+"]");
 
+		
+		// dml 20130321 - añadido el "group by" para que la consulta no repita resultados en el caso de que el "userId" tenga
+		// más de un perfil asociado al mismo paso
+		query += filter + getSQLGroupBy();
+		
 		// builds full query phrase
-		query += filter+getSQLOrder();
+//		query += filter+getSQLOrder();
+		query += getSQLOrder();
 
 		logger.debug(" ---->>>>>>>>>> FULL query:["+query+"]"
 					+"\n ---->>>>>>>>>> userId: "+userId);
@@ -459,6 +466,7 @@ public class WStepWorkDao {
 	private String getBaseQuery(boolean isAdmin, Integer userId) {
 		
 		String baseQueryTmp="SELECT * FROM w_step_work w ";
+		baseQueryTmp +="left join w_process_work wpw on w.id_work=wpw.id "; // dml 20130321 - para filtro por instructions (nextStepInstructions en el objeto asociado wProcessWork) y reference
 		baseQueryTmp +="left join w_step_def wsd on w.id_current_step=wsd.id ";
 		baseQueryTmp +="left join w_step_role wsr on wsd.id=wsr.id_step ";
 		baseQueryTmp +="left join w_step_user wsu on wsd.id=wsu.id_step AND wsu.id_user = " + userId + " ";
@@ -591,7 +599,7 @@ public class WStepWorkDao {
 	
 	private String getSQLFilter(Integer idProcess, Integer idCurrentStep,
 			String status,	Date arrivingDate, Date openedDate,	Date deadlineDate,
-			String instructionsAndReferenceFilter ) {
+			String commentsAndReferenceFilter) {
 
 		String filter="";
 		
@@ -656,14 +664,14 @@ public class WStepWorkDao {
 
 		}
 
-		// dml 20111220
-		if ( instructionsAndReferenceFilter!=null && !"".equals(instructionsAndReferenceFilter) ) {
+		// dml 20130321 - cambiado a comments y reference que es a lo que realmente se refiere
+		if ( commentsAndReferenceFilter!=null && !"".equals(commentsAndReferenceFilter) ) {
 
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter +=" ( w.instructions LIKE '%"+instructionsAndReferenceFilter+"%' ";
-			filter +=" OR w.reference LIKE '%"+instructionsAndReferenceFilter+"%' ) ";
+			filter +=" ( wpw.comments LIKE '%"+commentsAndReferenceFilter+"%' ";
+			filter +=" OR wpw.reference LIKE '%"+commentsAndReferenceFilter+"%' ) ";
 
 		}
 		
@@ -678,7 +686,13 @@ public class WStepWorkDao {
 		
 	}
 	
-	
+	// dml 20130321 - añadido el "group by" para que la consulta no repita resultados en el caso de que el "userId" tenga
+	// más de un perfil asociado al mismo paso
+	private String getSQLGroupBy() {
+
+		return " GROUP BY w.id ";
+		
+	}
 	
 	private String getSQLOrder() {
 
