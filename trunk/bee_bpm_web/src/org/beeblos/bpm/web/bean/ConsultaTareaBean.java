@@ -44,7 +44,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 	private List<SelectItem> lPasosValidos= new ArrayList<SelectItem>();
 	private Integer version;
 	private Integer idPasoSeleccionado;
-	private String filtroInstruccionesYReferencia;
+	private String filtroComentariosYReferencia;
 
 	private Integer idObject; // id del objeto correspondiente al paso
 	private String idObjectType; // tipo del objeto del paso corriente
@@ -82,8 +82,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 		//dml 20111219
 		this.lPasosValidos = new ArrayList<SelectItem>();
 		this.setIdPasoSeleccionado(null);
-		this.filtroInstruccionesYReferencia = "";
-		
+		this.filtroComentariosYReferencia = "";
 		
 		//rrl: 20101222
 		try {
@@ -323,10 +322,10 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			
 			lTareas = (ArrayList<WStepWork>)
 							new WStepWorkBL()
-									.getStepListByProcess(
+									.getWorkStepListByProcess(
 											idProceso, idPasoSeleccionado, ALIVE, usuarioLogueado, 
 											false, procesoFechaLlegado, procesoFechaRevisado,
-											proyectoFechaLimite,filtroInstruccionesYReferencia);
+											proyectoFechaLimite,filtroComentariosYReferencia);
 			
 			nResultados = lTareas.size(); // martin - 20101221
 
@@ -360,7 +359,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			// nes 20110913 HARDCODE
 			lTareasDepto4 = (ArrayList<WStepWork>)
 									new WStepWorkBL()
-										.getStepListByProcess( null, 400, ALIVE, usuarioLogueado, false, null, null, null, "");
+										.getWorkStepListByProcess( null, 400, ALIVE, usuarioLogueado, false, null, null, null, "");
 										
 			nResultadosDepto4 = lTareasDepto4.size(); // martin - 20101221
 
@@ -573,13 +572,13 @@ public class ConsultaTareaBean extends CoreManagedBean {
 
 	}
 
-	public String getFiltroInstruccionesYReferencia() {
-		return filtroInstruccionesYReferencia;
+	public String getFiltroComentariosYReferencia() {
+		return filtroComentariosYReferencia;
 	}
 
-	public void setFiltroInstruccionesYReferencia(
-			String filtroInstruccionesYReferencia) {
-		this.filtroInstruccionesYReferencia = filtroInstruccionesYReferencia;
+	public void setFiltroComentariosYReferencia(
+			String filtroComentariosYReferencia) {
+		this.filtroComentariosYReferencia = filtroComentariosYReferencia;
 	}
 	
 	public String getLockedSinceDateInString(Date date){
