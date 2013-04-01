@@ -607,14 +607,14 @@ public class WStepWorkDao {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter +=" id_process= "+idProcess;
+			filter +=" w.id_process= "+idProcess;
 		}
 
 		if ( idCurrentStep!=null && idCurrentStep > 0) {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter +=" id_current_step= "+idCurrentStep;
+			filter +=" w.id_current_step= "+idCurrentStep;
 		}
 
 		if ( status!=null && !"".equals(status) ) {
@@ -624,7 +624,7 @@ public class WStepWorkDao {
 					filter +=" AND ";
 				}
 
-				filter +=" decided_date IS NOT NULL ";
+				filter +=" w.decided_date IS NOT NULL ";
 
 			} else { // ALIVE
 				
@@ -632,7 +632,7 @@ public class WStepWorkDao {
 					filter +=" AND ";
 				}
 
-				filter +=" decided_date IS NULL ";
+				filter +=" w.decided_date IS NULL ";
 			}
 				
 		}
@@ -642,7 +642,7 @@ public class WStepWorkDao {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter+=" arriving_date>=:arrivingdateFrom AND arriving_date<=:arrivingdateTo";
+			filter+=" w.arriving_date>=:arrivingdateFrom AND w.arriving_date<=:arrivingdateTo";
 
 		}
 		
@@ -651,7 +651,7 @@ public class WStepWorkDao {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter+=" opened_date>=:openeddateFrom AND opened_date<=:openeddateTo";
+			filter+=" w.opened_date>=:openeddateFrom AND w.opened_date<=:openeddateTo";
 
 		}
 		
@@ -660,7 +660,7 @@ public class WStepWorkDao {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter+=" deadline_date>=:deadlinedateFrom AND deadline_date<=:deadlinedateTo";
+			filter+=" w.deadline_date>=:deadlinedateFrom AND w.deadline_date<=:deadlinedateTo";
 
 		}
 
@@ -682,7 +682,7 @@ public class WStepWorkDao {
 
 	private String getOrder() {
 
-		return " ORDER BY deadlineDate, deadlineTime DESC ";
+		return " ORDER BY w.deadlineDate, w.deadlineTime DESC ";
 		
 	}
 	
