@@ -1,7 +1,5 @@
 package org.beeblos.bpm.core.model;
 
-// Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
-
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
 import java.util.Date;
@@ -19,8 +17,17 @@ public class WProcessDef implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private String name;
+	
+	private WProcess process;
+	private Integer version;
+	
+	private boolean active;
+	
+	private Date productionDate;
+	private Integer productionUser;
+	
 	private String comments;
+	
 	private WStepDef beginStep;
 	
 	private String idListZone; // pag que define la lista de seleccion de steps
@@ -28,34 +35,10 @@ public class WProcessDef implements java.io.Serializable {
 	private String idAdditionalZone; // pag que define la zona de ayuda ( info adicional )
 	
 	private String idProcessorStep; // dml 20120619
-	
-	/*
-	 * DESIGN AND TEST TIME FEATURE
-	 * At design time the designer can define a list of roles and users that may interact
-	 * with the workflow. This info is only to effects to simplify and control the screen
-	 * presentation for users and roles that can be assigned to a step or a task ...
-	 * 
-	 */
-	
-	// MANY2MANY
-	Set<WProcessRole> rolesRelated=new HashSet<WProcessRole>();
-	Set<WProcessUser> usersRelated=new HashSet<WProcessUser>();
-//	Set<WRoleDef> adminRoles=new HashSet<WRoleDef>();
-//	Set<WUserDef> adminUsers=new HashSet<WUserDef>();
-	
-	
-	private Date insertDate;
-	private Integer insertUser;
-	private Date modDate;
-	private Integer modUser;
-	
+
 	// dml 20120105
 	private String adminEmail;
-	
-	// dml 20120118
-	private boolean active;
-	private Date productionDate;
-	private Integer productionUser;
+
 	private Integer totalTime;
 	private WTimeUnit totalTimeUnit;
 	private String globalDeadlineDate;
@@ -66,8 +49,16 @@ public class WProcessDef implements java.io.Serializable {
 	// dml 20120306
 	private WEmailTemplates arrivingAdminNoticeTemplate;
 	private WEmailTemplates arrivingUserNoticeTemplate;
+		
+	private Date insertDate;
+	private Integer insertUser;
+	private Date modDate;
+	private Integer modUser;
 	
-
+	// MANY2MANY
+	Set<WProcessRole> rolesRelated=new HashSet<WProcessRole>();
+	Set<WProcessUser> usersRelated=new HashSet<WProcessUser>();
+	
 	public WProcessDef() {
 		super();
 	}
@@ -76,7 +67,10 @@ public class WProcessDef implements java.io.Serializable {
 	public WProcessDef(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
-			this.beginStep=new WStepDef( EMPTY_OBJECT );
+			
+			this.process = new WProcess();
+
+			this.beginStep = new WStepDef( EMPTY_OBJECT );
 			this.systemEmailAccount = new WEmailAccount(EMPTY_OBJECT);
 			this.arrivingAdminNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
 			this.arrivingUserNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
@@ -84,20 +78,20 @@ public class WProcessDef implements java.io.Serializable {
 		}	
 	}
 	
-	public WProcessDef(String name, String comments, WStepDef beginStep,
+	public WProcessDef(String comments, WStepDef beginStep,
 			Date fechaAlta, Date fechaModificacion) {
-		this.name = name;
+
 		this.comments = comments;
 		this.beginStep = beginStep;
 		this.insertDate = fechaAlta;
 		this.modDate = fechaModificacion;
 	}
 
-	public WProcessDef(String name, String comments, WStepDef beginStep,
+	public WProcessDef(String comments, WStepDef beginStep,
 			String idListZone, String idWorkZone, String idAdditionalZone,
 			Date insertDate, Integer insertUser, Date modDate,
 			Integer modUser, String adminEmail ) {
-		this.name = name;
+
 		this.comments = comments;
 		this.beginStep = beginStep;
 		this.idListZone = idListZone;
@@ -109,21 +103,51 @@ public class WProcessDef implements java.io.Serializable {
 		this.modUser = modUser;
 		this.adminEmail = adminEmail;
 	}
+	
+	@Deprecated
+	public String getName(){
+		
+		if (this.process != null){
+			return this.process.getName();
+		}
+		
+		return null;
+		
+	}
+
+	@Deprecated
+	public void setName(String name){
+		
+		if (this.process != null){
+			 this.process.setName(name);
+		}
+				
+	}
 
 	public Integer getId() {
-		return this.id;
+		return id;
 	}
+
 
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public String getName() {
-		return this.name;
+
+	public WProcess getProcess() {
+		return this.process;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setProcess(WProcess process) {
+		this.process = process;
+	}
+
+	public Integer getVersion() {
+		return this.version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 	public String getComments() {
@@ -360,7 +384,10 @@ public class WProcessDef implements java.io.Serializable {
 				* result
 				+ ((globalDeadlineDate == null) ? 0 : globalDeadlineDate
 						.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((process == null) ? 0 : process.hashCode());
+		result = prime * result
+				+ ((version == null) ? 0 : version.hashCode());
 		result = prime
 				* result
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
@@ -371,7 +398,6 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((idListZone == null) ? 0 : idListZone.hashCode());
 		result = prime * result
 				+ ((idWorkZone == null) ? 0 : idWorkZone.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((productionDate == null) ? 0 : productionDate.hashCode());
 		result = prime * result
@@ -434,10 +460,15 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!globalDeadlineDate.equals(other.globalDeadlineDate))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (process == null) {
+			if (other.process != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!process.equals(other.process))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
 			return false;
 		if (idAdditionalZone == null) {
 			if (other.idAdditionalZone != null)
@@ -458,11 +489,6 @@ public class WProcessDef implements java.io.Serializable {
 			if (other.idWorkZone != null)
 				return false;
 		} else if (!idWorkZone.equals(other.idWorkZone))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
 			return false;
 		if (productionDate == null) {
 			if (other.productionDate != null)
@@ -504,25 +530,28 @@ public class WProcessDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WProcessDef [id=" + id + ", name=" + name + ", comments=" + comments
-				+ ", beginStep=" + beginStep + ", idListZone=" + idListZone + ", idWorkZone="
-				+ idWorkZone + ", idAdditionalZone=" + idAdditionalZone + ", idProcessorStep="
-				+ idProcessorStep + ", rolesRelated=" + rolesRelated + ", usersRelated="
-				+ usersRelated + ", insertDate=" + insertDate + ", insertUser=" + insertUser
-				+ ", modDate=" + modDate + ", modUser=" + modUser + ", adminEmail=" + adminEmail
-				+ ", active=" + active + ", productionDate=" + productionDate + ", productionUser="
-				+ productionUser + ", totalTime=" + totalTime + ", totalTimeUnit=" + totalTimeUnit
-				+ ", globalDeadlineDate=" + globalDeadlineDate + ", systemEmailAccount="
-				+ systemEmailAccount + ", arrivingAdminNoticeTemplate="
+		return "WProcessDef [id=" + id + "process=" + process + ", version=" + version
+				+ ", active=" + active + ", productionDate=" + productionDate
+				+ ", productionUser=" + productionUser + ", comments=" + comments + ", beginStep="
+				+ beginStep + ", idListZone=" + idListZone + ", idWorkZone=" + idWorkZone
+				+ ", idAdditionalZone=" + idAdditionalZone + ", idProcessorStep=" + idProcessorStep
+				+ ", adminEmail=" + adminEmail + ", totalTime=" + totalTime + ", totalTimeUnit="
+				+ totalTimeUnit + ", globalDeadlineDate=" + globalDeadlineDate
+				+ ", systemEmailAccount=" + systemEmailAccount + ", arrivingAdminNoticeTemplate="
 				+ arrivingAdminNoticeTemplate + ", arrivingUserNoticeTemplate="
-				+ arrivingUserNoticeTemplate + "]";
+				+ arrivingUserNoticeTemplate + ", insertDate=" + insertDate + ", insertUser="
+				+ insertUser + ", modDate=" + modDate + ", modUser=" + modUser + ", rolesRelated="
+				+ rolesRelated + ", usersRelated=" + usersRelated + "]";
 	}
 	
 
 	public boolean empty() {
 
-		if (id!=null && ! id.equals(0)) return false;
-		if (name!=null && ! "".equals(name)) return false;
+		if (id!=null && !id.equals(0)) return false;
+
+		if (process!=null && !process.empty()) return false;
+		if (version!=null && !version.equals(0)) return false;
+
 		if (comments!=null && ! "".equals(comments)) return false;
 		
 		if (beginStep!=null && ! beginStep.empty()) return false;

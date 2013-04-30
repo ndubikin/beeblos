@@ -17,10 +17,25 @@
 
        		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessDefForm}" submitMode="server">
+                	<b> Load Process Def</b> {currentRowId} (version: {currentRowVersion}) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
+     	      	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessForm}" submitMode="server">
                 	<b> Load Process Def</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>
+            <rich:menuSeparator />         
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.createNewWProcessDef}" submitMode="server">
+                	<b> Add New Process Def</b> {currentRowId} (version: {currentRowVersion}) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowProcessId}"/>
+            	</rich:menuItem>
+     	      	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.cloneWProcessDef}" submitMode="ajax"
+     	      		reRender="w_process_def_list_table">
+                	<b> Clone Process Def</b> {currentRowId} (version: {currentRowVersion}) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+            	</rich:menuItem>
             	<rich:menuSeparator />         
+           	<rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.generateXmlWProcessDef}" submitMode="server">
                 	<b> Generate Process Def to XML</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
@@ -62,7 +77,7 @@
 				</f:facet>
 
 				<rich:column sortBy="#{wpd.id}"
-					style="width:10px; text-align: left;">
+					style="width:4%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_id}" />
 					</f:facet>
@@ -70,15 +85,23 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.name}"
-					style="width:90px; text-align: left;">
+					style="width:15%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_name}" />
 					</f:facet>
 					<h:outputText value="#{wpd.name}" />
 				</rich:column>
 
+				<rich:column sortBy="#{wpd.version}"
+					style="width:7%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_version}" />
+					</f:facet>
+					<h:outputText value="#{wpd.version}" />
+				</rich:column>
+
 				<rich:column sortBy="#{wpd.comments}"
-					style="width:120px; text-align: left;">
+					style="width:30%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_comments}" />
 					</f:facet>
@@ -86,7 +109,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.beginStep.name}"
-					style="width:120px; text-align: left;">
+					style="width:30%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_begin_step}" />
 					</f:facet>
@@ -95,7 +118,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.insertDate}"
-					style="width:20px; text-align: left;">
+					style="width:7%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_insert_date}" />
 					</f:facet>
@@ -106,7 +129,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.insertUser}"
-					style="width:30px; text-align: left;">
+					style="width:7%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_insert_user}" />
 					</f:facet>
@@ -115,7 +138,9 @@
 
 				<rich:componentControl event="onRowClick" for="w_process_def_search_menu"
 					operation="show">
-               <f:param value="#{wpd.id}" name="currentRowId"/>
+        	      <f:param value="#{wpd.id}" name="currentRowId"/>
+        	      <f:param value="#{wpd.version}" name="currentRowVersion"/>
+        	      <f:param value="#{wpd.process.id}" name="currentRowProcessId"/>
 				</rich:componentControl>
 
 			</rich:dataTable>

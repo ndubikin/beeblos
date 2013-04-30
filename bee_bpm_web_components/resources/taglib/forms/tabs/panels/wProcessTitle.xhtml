@@ -7,27 +7,17 @@
 
 	<div>
 	
-		<h:outputText value="#{msg.label_adding_new_process} #{msg.label_version}" 
-							styleClass="title_style" 
-							rendered="#{wProcessDefFormBean.currentWProcessDef.id==null or wProcessDefFormBean.currentWProcessDef.id==0}"
-							style="margin-left: 32px; margin-bottom: 10px;"/>
-
-		<h:outputText value="#{msg.label_process}: #{wProcessDefFormBean.currentWProcessDef.name}" 
+		<h:outputText value="#{msg.label_process}: #{wProcessDefFormBean.currentWProcess.name}" 
 							styleClass="title_style" 
 							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
 							style="margin-left: 32px; margin-bottom: 10px;"/>
-							
-		<h:outputText value=" (#{msg.label_version}: #{wProcessDefFormBean.currentWProcessDef.version})" 
-							styleClass="title_style" 
-							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
-							style="margin-bottom: 10px;"/>
 
 		<h:outputText value=" - " 
 							styleClass="title_style" 
 							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
 							style="margin-bottom: 10px;"/>	
 	
-		<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.insertDate}" 
+		<h:outputText value="#{wProcessDefFormBean.currentWProcess.insertDate}" 
 							styleClass="title_style" 
 							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
 							style="margin-bottom: 10px;">

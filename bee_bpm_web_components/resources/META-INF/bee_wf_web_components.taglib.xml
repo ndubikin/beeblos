@@ -91,6 +91,11 @@
  </tag>
  
  <tag>
+  <tag-name>wProcessForm</tag-name>
+  <source>/taglib/forms/wProcessForm.xhtml</source>
+ </tag>
+
+ <tag>
   <tag-name>wProcessDefForm</tag-name>
   <source>/taglib/forms/wProcessDefForm.xhtml</source>
  </tag>
