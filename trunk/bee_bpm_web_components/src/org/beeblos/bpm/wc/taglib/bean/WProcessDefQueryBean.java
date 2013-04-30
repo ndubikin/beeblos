@@ -235,6 +235,13 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	}
 	
+	// dml 20120104
+	public String loadWProcessForm() {
+
+		return new WProcessDefUtil().loadWProcessFormBean(id);
+
+	}
+	
 	//rrl 20120117
 	public String generateXmlWProcessDef() {
 
@@ -245,7 +252,39 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	// dml 20120110
 	public String createNewWProcessDef() {
 
-		return new WProcessDefUtil().createNewWProcessDef(WPROCESSDEF_QUERY);
+		try {
+			
+			return new WProcessDefUtil().createNewWProcessDef(this.id, WPROCESSDEF_QUERY);
+			
+		} catch (WProcessDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+
+	// dml 20130430
+	public void cloneWProcessDef() {
+
+		try {
+			
+			new WProcessDefUtil().cloneWProcessDef(this.id);
+			this.searchWProcessDefs();
+			
+			
+		} catch (WProcessDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	// dml 20120110
+	public String createNewWProcess() {
+
+		return new WProcessDefUtil().createNewWProcess(WPROCESSDEF_QUERY);
 		
 	}
 

@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.model.WProcess;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -25,9 +28,19 @@ public class WProcessDefBL {
 		
 	}
 	
-	public Integer add(WProcessDef process, Integer currentUser) throws WProcessDefException {
+	public Integer add(WProcessDef process, Integer currentUser) throws WProcessDefException, WProcessException {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
+		
+		// dml 20130430 - si es un nuevo WProcess se guarda antes de guardar el WProcessDef
+		if (process.getProcess() != null
+				&& (process.getProcess().getId() == null
+				|| process.getProcess().getId().equals(0))){
+			
+			Integer processId = new WProcessBL().add(process.getProcess(), currentUser);
+			process.getProcess().setId(processId);
+			
+		}
 		
 		// timestamp & trace info
 		process.setInsertDate(new Date());
@@ -38,6 +51,18 @@ public class WProcessDefBL {
 
 	}
 	
+	// dml 20130430
+	public void createFirstWProcessDef(WProcess process, Integer currentUser) throws WProcessDefException, WProcessException{
+		
+		WProcessDef wpd = new WProcessDef();
+		wpd.setActive(true);
+
+		wpd.setProcess(process);
+		wpd.setVersion(1);
+		
+		this.add(wpd, currentUser);
+		
+	}
 	
 	public void update(WProcessDef process, Integer currentUser) throws WProcessDefException {
 		
@@ -84,6 +109,12 @@ public class WProcessDefBL {
 	
 	}
 	
+	// dml 20130430
+	public Integer getLastWProcessDefVersion(Integer processId) throws WProcessDefException {
+
+		return new WProcessDefDao().getLastWProcessDefVersion(processId);
+	
+	}
 	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )

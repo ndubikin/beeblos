@@ -182,8 +182,16 @@
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
+   <from-outcome>LOAD_WPROCESS</from-outcome>
+   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
    <from-outcome>CREATE_NEW_WPROCESSDEF</from-outcome>
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>CREATE_NEW_WPROCESS</from-outcome>
+   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
    <from-outcome>WSTEPDEF_QUERY</from-outcome>
@@ -219,6 +227,10 @@
   <navigation-case>
    <from-outcome>SUCCESS_FORM_WPROCESSDEF</from-outcome>
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>SUCCESS_FORM_WPROCESS</from-outcome>
+   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
   </navigation-case>
   <!-- dml 20120305 -->
  <navigation-case>

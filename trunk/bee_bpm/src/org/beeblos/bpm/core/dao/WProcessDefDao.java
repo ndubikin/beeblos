@@ -159,7 +159,41 @@ public class WProcessDefDao {
 		return process;
 	}
 
+	// dml 20130430
+	public Integer getLastWProcessDefVersion(Integer processId) throws WProcessDefException {
 	
+		Integer version = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_process_def WHERE process_id = " + processId)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDefDao: getLastWProcessDefVersion - can't obtain process last version = " +
+					processId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessDefException("getLastWProcessDefVersion;  can't obtain process last version: " + 
+					processId + " - " + ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		if (version == null){
+			return 0;
+		}
+		
+		return version;
+	}	
 	public List<WProcessDef> getWProcessDefs() throws WProcessDefException {
 
 		org.hibernate.Session session = null;

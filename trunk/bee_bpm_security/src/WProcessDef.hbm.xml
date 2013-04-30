@@ -3,7 +3,7 @@
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Oct 30, 2010 12:25:06 AM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
-	<class name="org.beeblos.bpm.core.model.WProcessDef" table="w_process_def">
+	<class name="org.beeblos.bpm.core.model.WProcess" table="w_process">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -14,31 +14,6 @@
 		<property generated="never" lazy="false" name="comments"
 			type="string">
 			<column name="comments" />
-		</property>
-		<property generated="never" lazy="false" name="idListZone"
-			type="string">
-			<column length="100" name="id_list_zone">
-				<comment>Default:La lista del step processor que se asocia a este
-					paso.</comment>
-			</column>
-		</property>
-		<property generated="never" lazy="false" name="idWorkZone"
-			type="string">
-			<column length="100" name="id_work_zone">
-				<comment>Default:La pagina que contiene el trabajo a realizar del
-					step processor.</comment>
-			</column>
-		</property>
-		<property generated="never" lazy="false" name="idAdditionalZone"
-			type="string">
-			<column length="100" name="id_additional_zone">
-				<comment>Default:La pagina que contiene la informacion adicional
-					para el step processor.</comment>
-			</column>
-		</property>
-
-		<property generated="never" lazy="false" name="idProcessorStep" type="string">
-			<column length="255" name="id_processor_step"  />
 		</property>
 
 		<property generated="never" lazy="false" name="insertDate"
@@ -55,47 +30,114 @@
 		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
 			<column  name="mod_user" />
 		</property>
+		
+	</class>
+	
+	<class name="org.beeblos.bpm.core.model.WProcessDef" table="w_process_def">
 
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<property generated="never" lazy="false" name="version" type="java.lang.Integer">
+			<column name="version"  />
+		</property>
+	
 		<property name="active"	type="java.lang.Boolean">
 			<column name="active"/>
 		</property>
-        <property name="productionDate" type="timestamp">
-            <column name="production_date" length="0" />
-        </property>
-        <property name="productionUser" type="java.lang.Integer">
-            <column name="production_user" />
-        </property>
-        <property name="totalTime" type="java.lang.Integer">
-            <column name="total_time" />
-        </property>
-        <property name="globalDeadlineDate" type="java.lang.String">
-            <column name="global_deadline_date" />
-        </property>
+	
+		<property name="productionDate" type="timestamp">
+			<column name="production_date" length="0" />
+		</property>
+		
+		<property name="productionUser" type="java.lang.Integer">
+			<column name="production_user" />
+		</property>
+	
+		<property generated="never" lazy="false" name="comments" type="string">
+			<column name="comments" />
+		</property>
+		
+		<property generated="never" lazy="false" name="idListZone" type="string">
+			<column name="id_list_zone">
+				<comment>Default:La lista del step processor que se asocia a este paso.</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idWorkZone"
+			type="string">
+			<column name="id_work_zone">
+				<comment>Default:La pagina que contiene el trabajo a realizar del step processor.</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idAdditionalZone"
+			type="string">
+			<column name="id_additional_zone">
+				<comment>Default:La pagina que contiene la informacion adicional para el step processor.</comment>
+			</column>
+		</property>
+	
+		<property generated="never" lazy="false" name="idProcessorStep" type="string">
+			<column name="id_processor_step"  />
+		</property>
+	
+		<property generated="never" lazy="false" name="adminEmail" type="string">
+			<column name="admin_email" />
+		</property>
+	
+		<property name="totalTime" type="java.lang.Integer">
+			<column name="total_time" />
+		</property>
+	
+		<property name="globalDeadlineDate" type="java.lang.String">
+			<column name="global_deadline_date" />
+		</property>
+	
+		<property generated="never" lazy="false" name="insertDate" type="timestamp">
+			<column name="insert_date" not-null="true" />
+		</property>
+	
+		<property generated="never" lazy="false" name="insertUser" type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+	
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column name="mod_date"  />
+		</property>
+	
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
+	
+		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcess"
+			column="process_id"  name="process" fetch="join" lazy="false"/>
+	
+		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"
+			column="id_begin"  name="beginStep" fetch="join" lazy="false"/>
+	
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" name="totalTimeUnit">
 			<column name="total_time_unit"/>
 		</many-to-one>
-
-		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"
-			column="id_begin"  name="beginStep" fetch="join" lazy="false"/>
-
+	
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailAccount"
 			lazy="false" name="systemEmailAccount">
 			<column name="id_system_email"/>
 		</many-to-one>
-		
+			
 		<!-- dml 20120306 -->
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
 			lazy="false" name="arrivingAdminNoticeTemplate">
 			<column name="id_arriving_admin_notice_template"/>
 		</many-to-one>
-
+	
 		<!-- dml 20120306 -->
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
 			lazy="false" name="arrivingUserNoticeTemplate">
 			<column name="id_arriving_user_notice_template"/>
 		</many-to-one>
-
+		
 		<set cascade="all" name="rolesRelated" sort="unsorted"
 			table="w_process_role"  lazy="false" >
 			<key column="id_process" />
@@ -147,12 +189,7 @@
 		        </property>
 			</composite-element>
 		</set>		
-		
-		<property generated="never" lazy="false" name="adminEmail"
-			type="string">
-			<column name="admin_email" />
-		</property>
-		
+
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WRoleDef" table="w_role_def">

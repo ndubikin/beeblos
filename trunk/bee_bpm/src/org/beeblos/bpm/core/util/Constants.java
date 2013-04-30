@@ -88,12 +88,15 @@ public class Constants {
 	
 
 	public static final String SUCCESS_FORM_WPROCESSDEF = "SUCCESS_FORM_WPROCESSDEF";
+	public static final String SUCCESS_FORM_WPROCESS = "SUCCESS_FORM_WPROCESS"; // dml 20130430
 	public static final String LOAD_WPROCESSDEF = "LOAD_WPROCESSDEF";
+	public static final String LOAD_WPROCESS = "LOAD_WPROCESS";
 	public static final String WPROCESSDEF_QUERY = "WPROCESSDEF_QUERY";
 	public static final String SUCCESS_WROLEDEF = "SUCCESS_WROLEDEF";
 
 	// dml 20120110
 	public static final String CREATE_NEW_WPROCESSDEF = "CREATE_NEW_WPROCESSDEF";
+	public static final String CREATE_NEW_WPROCESS = "CREATE_NEW_WPROCESS";
 	
 	// dml 20120112
 	public static final String SUCCESS_FORM_WSTEPDEF = "SUCCESS_FORM_WSTEPDEF";
