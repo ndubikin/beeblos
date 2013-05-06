@@ -352,7 +352,7 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 
 			if (this.currObjId != null && this.currObjId != 0) {
 
-				setwStepWorkList(new WStepWorkBL().getStepListByIdWork(currObjId, getCurrentUserId()));
+				setwStepWorkList(new WStepWorkBL().getWorkListByIdWork(currObjId, getCurrentUserId()));
 
 			}
 			
