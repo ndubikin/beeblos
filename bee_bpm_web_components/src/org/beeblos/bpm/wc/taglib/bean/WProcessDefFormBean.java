@@ -91,11 +91,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	private List<SelectItem> lStepCombo = new ArrayList<SelectItem>();
 
-//  DAVID: todo esto creo q no iria aqui si no en el model directamente porque si no
-//  no nos queda resuelto el objeto "proceso" a nivel de BL que es como debe ser ...
-//	private List<WStepDef> lSteps = new ArrayList<WStepDef>(); 
-//	private List<WStepSequenceDef> stepSequenceList; 
-
 	private boolean readOnly;
 
 	private List<String> selectedWRoleDefList = new ArrayList<String>();
@@ -220,14 +215,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	}
 
-	// load an Object in currentWProcess
-	// DAVID:REVISAR BIEN ESTO PARA Q SIRVE, NO LE VEO MUCHA UTILIDAD ...
-	public void loadCurrentWProcess(Integer id) {
-
-		this.currentId = id;
-
-	}
-
 	public void loadCurrentWProcessDef() {
 
 		WProcessDefBL wpdbl = new WProcessDefBL();
@@ -238,13 +225,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					getCurrentUserId());
 
 			if (currentWProcessDef != null) {
-
-// NOTA PARA DAVID: esto creo q estaria mal que lo hagamos aquí, esto debe resolverlo la BL
-// o sea, la BL dice que devuelve un WProcessDef, pero resulta que viene "a medio cargar ..."
-// lo que no está bien ...				
-//				loadLSteps();
-//				
-//				loadStepSequenceList();
 				
 				// DAVID: ESTO ESTABA EN EL METODO loadStepSequenceList() y no se bien para q es ...
 				this.stepOutgoings = false;
@@ -378,7 +358,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 							|| currentWProcessDef.getTotalTimeUnit().getId() == 0)) {
 				currentWProcessDef.setTotalTimeUnit(null);
 			}
-
+			
 		}
 		
 		if (currentStepSequence != null) {
@@ -439,6 +419,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				currentWProcessDef.setArrivingAdminNoticeTemplate(new WEmailTemplates(EMPTY_OBJECT));
 			}
 
+			// dml 20130506
+			if (currentWProcessDef.getProcess() == null) {
+				currentWProcessDef.setProcess(new WProcess());
+			}
+
 		}
 
 		if (currentWProcessRole != null) {
@@ -493,6 +478,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				&& !"".equals(this.currentWProcessDef.getName())
 				&& this.currentWProcessDef.getVersion() != null
 				&& !"".equals(this.currentWProcessDef.getVersion())) {
+
+			result = true;
+
+		}
+
+		// dml 20130506 - si estamos modificando el proceso interno tenemos que ver que el nombre no sea vacio 
+		if (this.currentWProcessDef.getProcess() != null
+				&& this.currentWProcessDef.getProcess().getName() != null
+				&& !"".equals(this.currentWProcessDef.getProcess().getName())) {
 
 			result = true;
 
@@ -1890,7 +1884,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				WProcess process = new WProcessBL().getWProcessByPK(this.currentProcessIdSelected, null);
+				WProcess process = new WProcessBL().getProcessByPK(this.currentProcessIdSelected, null);
 			
 				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected);
 				

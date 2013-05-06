@@ -293,7 +293,7 @@ public class WProcessBean extends CoreManagedBean {
 
 		try {
 
-			currentWProcess = wpbl.getWProcessByPK(this.currentId,
+			currentWProcess = wpbl.getProcessByPK(this.currentId,
 					getCurrentUserId());
 			
 		} catch (WProcessException ex1) {
@@ -2130,7 +2130,7 @@ public class WProcessBean extends CoreManagedBean {
 			
 			try {
 				
-				WProcess process = new WProcessBL().getWProcessByPK(this.currentProcessIdSelected, null);
+				WProcess process = new WProcessBL().getProcessByPK(this.currentProcessIdSelected, null);
 			
 				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected);
 				

@@ -39,12 +39,12 @@
 			<h:outputText value="#{msg.label_comments}:"
 				styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_comments"
-				value="#{wProcessDefFormBean.currentWProcessDef.process.name}"
+				value="#{wProcessDefFormBean.currentWProcessDef.process.comments}"
 				style="width:350px; font-size:13px;	padding: 4px;"
 				 
 				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
-				value="#{wProcessDefFormBean.currentWProcessDef.process.name}"
+				value="#{wProcessDefFormBean.currentWProcessDef.process.comments}"
 				style="width:350px; font-size:13px;"
 				rendered="#{wProcessDefFormBean.readOnly}"/>
 
@@ -54,31 +54,37 @@
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 
-			<rich:spacer height="10" />
-			<h:panelGroup>
+			<rich:spacer height="10"
+				rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}" />
+			<h:panelGroup
+				rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}">
 				<h:outputText value="#{msg.label_created_by}: " />
 				<h:outputText id="fact_w_process_def_insert_user"
-					value="#{wProcessDefFormBean.currentWProcessDef.process.name} " />
+					value="#{wProcessDefFormBean.currentWProcessDef.process.insertUser} " />
 				<h:outputText value="#{msg.label_the} " />
 				<h:outputText
-					value="#{wProcessDefFormBean.currentWProcessDef.process.name}">
+					value="#{wProcessDefFormBean.currentWProcessDef.process.insertDate}">
 					<f:convertDateTime pattern="#{msg.label_date_format}"
 						timeZone="#{wProcessDefFormBean.timeZone}" />
 				</h:outputText>
 			</h:panelGroup>
 
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
+			<rich:spacer height="10"
+				rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}" />
+			<rich:spacer height="10"
+				rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}" />
 
-			<rich:spacer height="10" />
-			<h:panelGroup>
+			<rich:spacer height="10"
+				rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}" />
+			<h:panelGroup
+				rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}">
 				<h:outputText value="#{msg.label_last_modification}: "
 					styleClass="firstLeftText" />
 				<h:outputText id="fact_w_process_def_mod_user"
-					value="#{wProcessDefFormBean.currentWProcessDef.process.name} " />
+					value="#{wProcessDefFormBean.currentWProcessDef.process.modUser} " />
 				<h:outputText value="#{msg.label_the} " styleClass="firstLeftText" />
 				<h:outputText
-					value="#{wProcessDefFormBean.currentWProcessDef.process.name}">
+					value="#{wProcessDefFormBean.currentWProcessDef.process.modDate}">
 					<f:convertDateTime pattern="#{msg.label_date_format}"
 						timeZone="#{wProcessDefFormBean.timeZone}" />
 				</h:outputText>
@@ -102,13 +108,13 @@
 					rendered="#{!wProcessDefFormBean.readOnly}"/>
 
 				<a4j:commandButton id="update_button" value="#{msg.label_update}"
-					actionListener="#{wProcessDefFormBean.update_w_process}"
+					actionListener="#{wProcessDefFormBean.update}"
 					reRender="w_process_def_main_tag_form"
 					style="margin-right: 0px; width:120px; " 
 					rendered="#{!wProcessDefFormBean.readOnly and (wProcessDefFormBean.currentId != null) and (wProcessDefFormBean.currentId != 0)}"/>
 
 				<h:commandButton id="save_continue_button" value="#{msg.label_save}"
-					actionListener="#{wProcessDefFormBean.save_continue_w_process}"
+					actionListener="#{wProcessDefFormBean.save_continue}"
 					reRender="w_process_def_main_tag_form"
 					style="margin-right: 0px; width:120px; " 
 					rendered="#{!wProcessDefFormBean.readOnly and ((wProcessDefFormBean.currentId == null) or (wProcessDefFormBean.currentId == 0))}"/>

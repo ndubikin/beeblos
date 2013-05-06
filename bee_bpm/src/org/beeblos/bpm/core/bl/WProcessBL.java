@@ -24,34 +24,44 @@ public class WProcessBL {
 		
 	}
 	
-	public Integer add(WProcess process, Integer currentUser) throws WProcessException, WProcessDefException {
+	public Integer add(WProcess processHead, Integer currentUserId) throws WProcessException, WProcessDefException {
 		
-		logger.debug("add() WProcess - Name: ["+process.getName()+"]");
+		logger.debug("add() WProcess - Name: ["+processHead.getName()+"]");
 		
 		// timestamp & trace info
-		process.setInsertDate(new Date());
-		process.setModDate( DEFAULT_MOD_DATE );
-		process.setInsertUser(currentUser);
-		process.setModUser(currentUser);
-		Integer processId = new WProcessDao().add(process);
-		process.setId(processId);
-		
-		new WProcessDefBL().createFirstWProcessDef(process, currentUser);
-		
-		return processId;
+		processHead.setInsertDate(new Date());
+		processHead.setModDate( DEFAULT_MOD_DATE );
+		processHead.setInsertUser(currentUserId);
+		processHead.setModUser(currentUserId);
+
+		return new WProcessDao().add(processHead);
 
 	}
 		
-	public void update(WProcess process, Integer currentUser) throws WProcessException {
+	// dml 20130506
+	public Integer addProcessAndFirstWProcessDef(WProcess processHead, Integer currentUserId) throws WProcessException, WProcessDefException {
 		
-		logger.debug("update() WProcess < id = "+process.getId()+">");
+		logger.debug("addProcessAndFirstWProcessDef() WProcess - Name: ["+processHead.getName()+"]");
 		
-		if (!process.equals(new WProcessDao().getWProcessByPK(process.getId())) ) {
+		Integer processHeadId = this.add(processHead, currentUserId);
+		processHead.setId(processHeadId);
+		
+		new WProcessDefBL().createFirstWProcessDef(processHeadId, currentUserId);
+		
+		return processHeadId;
+
+	}
+		
+	public void update(WProcess processHead, Integer currentUserId) throws WProcessException {
+		
+		logger.debug("update() WProcess < id = "+processHead.getId()+">");
+		
+		if (!processHead.equals(new WProcessDao().getWProcessByPK(processHead.getId())) ) {
 
 			// timestamp & trace info
-			process.setModDate(new Date());
-			process.setModUser(currentUser);
-			new WProcessDao().update(process);
+			processHead.setModDate(new Date());
+			processHead.setModUser(currentUserId);
+			new WProcessDao().update(processHead);
 			
 		} else {
 			
@@ -61,21 +71,21 @@ public class WProcessBL {
 	}
 	
 	
-	public void delete(WProcess process, Integer currentUser) throws WProcessException {
+	public void delete(WProcess processHead, Integer currentUserId) throws WProcessException {
 
-		logger.debug("delete() WProcess - Name: ["+process.getName()+"]");
+		logger.debug("delete() WProcess - Name: ["+processHead.getName()+"]");
 		
-		new WProcessDao().delete(process);
+		new WProcessDao().delete(processHead);
 
 	}
 
-	public WProcess getWProcessByPK(Integer id, Integer currentUser) throws WProcessException {
+	public WProcess getProcessByPK(Integer id, Integer currentUserId) throws WProcessException {
 
 		return new WProcessDao().getWProcessByPK(id);
 	}
 	
 	
-	public WProcess getWProcessByName(String name, Integer currentUser) throws WProcessException {
+	public WProcess getProcessByName(String name, Integer currentUserId) throws WProcessException {
 
 		return new WProcessDao().getWProcessByName(name);
 	}
@@ -85,7 +95,7 @@ public class WProcessBL {
 	}
 	
 	
-	public List<WProcess> getWProcessList(Integer currentUser) throws WProcessException {
+	public List<WProcess> getProcessList(Integer currentUserId) throws WProcessException {
 
 		return new WProcessDao().getWProcessList();
 	

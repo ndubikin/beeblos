@@ -24,6 +24,10 @@ public class WProcess implements java.io.Serializable {
 	}
 
 	
+	public WProcess(Integer id) {
+		this.id = id;
+	}
+
 	public WProcess(Integer id, String name) {
 		this.id = id;
 		this.name = name;

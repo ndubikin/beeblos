@@ -47,6 +47,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 							// ultimas modificaciones
 
 	private Integer id;
+	private Integer processId; // dml 20130506 - id from the "WProcess" which is inside the current "WProcessDef" (id=WProcessDef.id)
 
 	private TimeZone timeZone;
 
@@ -77,6 +78,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		this.additionalZoneFilter = "";
 		
 		this.id = 0;
+		this.processId = 0;
 		
 		// reset session wProcessDefFormBean
 		HelperUtil
@@ -117,14 +119,19 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 
 	public Integer getId() {
-
 		return id;
-
 	}
 
 	public void setId(Integer id) {
-
 		this.id = id;
+	}
+
+	public Integer getProcessId() {
+		return processId;
+	}
+
+	public void setProcessId(Integer processId) {
+		this.processId = processId;
 	}
 
 	public TimeZone getTimeZone() {
@@ -256,7 +263,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 		try {
 			
-			return new WProcessDefUtil().createNewWProcessDef(this.id, WPROCESSDEF_QUERY);
+			return new WProcessDefUtil().createNewWProcessDef(this.processId, WPROCESSDEF_QUERY);
 			
 		} catch (WProcessDefException e) {
 			// TODO Auto-generated catch block
@@ -272,7 +279,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 		try {
 			
-			Integer newId = new WProcessDefBL().cloneWProcessDef(this.id,getCurrentUserId());
+			Integer newId = new WProcessDefBL().cloneWProcessDef(this.id, this.processId,getCurrentUserId());
 			logger.info("Process version id:"+this.id+" has a new cloned version with id:"+newId);
 			
 			this.searchWProcessDefs();
