@@ -110,7 +110,7 @@
 			<column  name="mod_user" />
 		</property>
 	
-		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcess"
+		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WProcess"
 			column="process_id"  name="process" fetch="join" lazy="false"/>
 	
 		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"

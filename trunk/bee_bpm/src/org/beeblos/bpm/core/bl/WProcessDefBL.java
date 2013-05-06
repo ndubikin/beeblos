@@ -1,6 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,43 +35,57 @@ public class WProcessDefBL {
 		
 	}
 	
-	public Integer add(WProcessDef process, Integer currentUser) throws WProcessDefException, WProcessException {
+	public Integer add(WProcessDef process, Integer currentUserId) throws WProcessDefException, WProcessException {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
 		
-		// dml 20130430 - si es un nuevo WProcess se guarda antes de guardar el WProcessDef
+		// dml 20130430 - si es un nuevo WProcess se guarda antes de guardar el WProcessDef y se rellena la informacion esencial
 		if (process.getProcess() != null
 				&& (process.getProcess().getId() == null
 				|| process.getProcess().getId().equals(0))){
 			
-			Integer processId = new WProcessBL().add(process.getProcess(), currentUser);
-			process.getProcess().setId(processId);
+			Integer processHeadId = new WProcessBL().add(process.getProcess(), currentUserId);
+			
+			this._setFirstWProcessDefData(process, processHeadId, currentUserId);
+			
 			
 		}
 		
 		// timestamp & trace info
 		process.setInsertDate(new Date());
 		process.setModDate( DEFAULT_MOD_DATE );
-		process.setInsertUser(currentUser);
-		process.setModUser(currentUser);
+		process.setInsertUser(currentUserId);
+		process.setModUser(currentUserId);
 		return new WProcessDefDao().add(process);
 
 	}
 	
 	// dml 20130430
-	public void createFirstWProcessDef(WProcess process, Integer currentUser) throws WProcessDefException, WProcessException{
+	private void _setFirstWProcessDefData(WProcessDef process, Integer processHeadId, Integer currentUserId) throws WProcessException {
 		
-		WProcessDef wpd = new WProcessDef();
-		wpd.setActive(true);
+		if (process != null){
+			
+			process.setActive(true);
 
-		wpd.setProcess(process);
-		wpd.setVersion(1);
+			process.setProcess(new WProcessBL().getProcessByPK(processHeadId, currentUserId));
+			process.setVersion(FIRST_WPROCESSDEF_VERSION);
 		
-		this.add(wpd, currentUser);
+		}
 		
 	}
 	
-	public void update(WProcessDef process, Integer currentUser) throws WProcessDefException {
+	// dml 20130430
+	public void createFirstWProcessDef(Integer processHeadId, Integer currentUserId) throws WProcessDefException, WProcessException{
+
+		WProcessDef wpd = new WProcessDef(EMPTY_OBJECT);
+
+		this._setFirstWProcessDefData(wpd, processHeadId, currentUserId);
+		
+		this.add(wpd, currentUserId);
+		
+	}
+	
+	public void update(WProcessDef process, Integer currentUserId) throws WProcessDefException {
 		
 		logger.debug("update() WProcessDef < id = "+process.getId()+">");
 		
@@ -77,7 +93,7 @@ public class WProcessDefBL {
 
 			// timestamp & trace info
 			process.setModDate(new Date());
-			process.setModUser(currentUser);
+			process.setModUser(currentUserId);
 			new WProcessDefDao().update(process);
 			
 		} else {
@@ -88,7 +104,7 @@ public class WProcessDefBL {
 	}
 	
 	
-	public void delete(WProcessDef process, Integer currentUser) throws WProcessDefException {
+	public void delete(WProcessDef process, Integer currentUserId) throws WProcessDefException {
 
 		logger.debug("delete() WProcessDef - Name: ["+process.getName()+"]");
 		
@@ -143,21 +159,53 @@ public class WProcessDefBL {
 		return wpd;
 	}
 
-	
-	// DAVID ESTA QUE HAY Q METERLE 1 FOR TE LA DEJO PARA VOS ...
-	// HABRIA Q VER PORQUE SI 1 PROCESO PETA Y NO SE CARGA, NO DEBERIAMOS ABORTAR LA LISTA COMPLETA
-	// SI NO QUE DEBERIAMOS PASAR POR ALTO ESE PROCESO Y ESCRIBIR LOG
-	// Y TIRAMOS UN THROW SOLO SI PETA ALGO GRAVE Q NO DEJE CARGAR NADA, NINGUN PROCESO, OK?
-	public List<WProcessDef> getWProcessDefs(Integer currentUser) throws WProcessDefException {
+	// dml 20130506
+	public List<WProcessDef> getProcessList(Integer currentUserId) throws WProcessDefException {
 
-		return new WProcessDefDao().getWProcessDefs();
+		List<WProcessDef> wpdList = new WProcessDefDao().getWProcessDefs();
+		
+		// dml 20130506
+		if (wpdList != null){
+		
+			for (WProcessDef wpd : wpdList){
+				
+				try {
+					
+					wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
+					wpd.setStepSequenceList(loadStepSequenceList(wpd.getId(), currentUserId));
+				
+				} catch (WStepSequenceDefException e) {
+				
+					String mess="Error: getProcessList: can't get routes related with process id: "
+							+ wpd.getId() + "Error: " + e.getMessage();
+					logger.error(mess);
+				
+				} catch (WStepDefException e) {
+					
+					String mess="Error: getProcessList: can't get step sequence for process id: "
+							+ wpd.getId() + "Error: " + e.getMessage();
+					logger.error(mess);
+				
+				}
+				
+			}
+			
+		} else {
+			
+			String mess="Error: getWProcessDefs: Impossible to get the current wProcessDefList";
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+			
+		}
+		
+		return wpdList;
 	
 	}
 	
 	// dml 20130430
-	public Integer getLastVersionNumber(Integer processId) throws WProcessDefException {
+	public Integer getLastVersionNumber(Integer processHeadId) throws WProcessDefException {
 
-		return new WProcessDefDao().getLastVersionNumber(processId);
+		return new WProcessDefDao().getLastVersionNumber(processHeadId);
 	
 	}
 	
@@ -210,7 +258,7 @@ public class WProcessDefBL {
 	
 	// clone a process version (w_process_def, related users and roles, related steps and routes ...)
 	// returns new process id
-	public Integer cloneWProcessDef(Integer processId, Integer userId) 
+	public Integer cloneWProcessDef(Integer processId, Integer processHeadId, Integer userId) 
 			throws  WProcessException, WStepSequenceDefException, WProcessDefException  {
 		
 		Integer clonedId=null,newversion=0;
@@ -219,7 +267,7 @@ public class WProcessDefBL {
 		try {
 			newprocver = this.getWProcessDefByPK(processId,userId);
 			procver = this.getWProcessDefByPK(processId,userId);
-			newversion=this.getLastVersionNumber(processId)+1;
+			newversion=this.getLastVersionNumber(processHeadId)+1;
 		} catch (WProcessDefException e) {
 			String mess = "Error cloning process version: can't get original process version id:"+processId
 							+" - "+e.getMessage()+" - "+e.getCause();
@@ -338,11 +386,6 @@ public class WProcessDefBL {
 
 				// dml 20120326 NOTA: LA VERSION ESTA HARDCODEADA A 1
 				routes = new WStepSequenceDefBL().getStepSequenceList(processId, currentUserId);
-
-//				DAVID: ESTO ESTABA AQUI EN EN BACKING BEAN Y LO DEJÉ COMENTADO PARA Q TE SITUES PERO ENTIENDO Q HAY QUE QUITARLO
-//				PORQUE ESTO SI Q ES PROPIO DEL BACKING BEAN NO?				
-//				this.stepOutgoings = false;
-//				this.stepIncomings = false;
 				
 			}
 			

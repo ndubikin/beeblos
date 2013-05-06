@@ -27,12 +27,13 @@
             <rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.createNewWProcessDef}" submitMode="server">
                 	<b> #{msg.label_add_new_version}</b> {currentRowId} (version: {currentRowVersion}) 
-                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowProcessId}"/>
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.processId}" value="{currentRowProcessId}"/>
             	</rich:menuItem>
      	      	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.cloneWProcessDef}" submitMode="ajax"
      	      		reRender="w_process_def_list_table">
                 	<b> #{msg.label_clone_this_process_version}</b> {currentRowId} (version: {currentRowVersion}) 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+                	<a4j:actionparam name="det2" assignTo="#{wProcessDefQueryBean.processId}" value="{currentRowProcessId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
            	<rich:menuSeparator />         

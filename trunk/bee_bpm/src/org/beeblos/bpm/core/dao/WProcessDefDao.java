@@ -195,7 +195,7 @@ public class WProcessDefDao {
 	}
 	
 	// dml 20130430
-	public Integer getLastVersionNumber(Integer processId) throws WProcessDefException {
+	public Integer getLastVersionNumber(Integer processHeadId) throws WProcessDefException {
 	
 		Integer version = null;
 		org.hibernate.Session session = null;
@@ -208,7 +208,7 @@ public class WProcessDefDao {
 
 			tx.begin();
 
-			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_process_def WHERE process_id = " + processId)
+			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_process_def WHERE process_id = " + processHeadId)
 					.uniqueResult();
 
 			tx.commit();
@@ -217,9 +217,9 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("WProcessDefDao: getLastWProcessDefVersion - can't obtain process last version = " +
-					processId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					processHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WProcessDefException("getLastWProcessDefVersion;  can't obtain process last version: " + 
-					processId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					processHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
 
 		}
 

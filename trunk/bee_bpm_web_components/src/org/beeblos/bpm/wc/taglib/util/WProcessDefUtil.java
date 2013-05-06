@@ -68,45 +68,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 
 		return ret;
 	}
-	
-// DAVID: ESTO VA EN LA BL. SI QUIERO CLONAR 1 PROCESO-VERSION, QUIEN DEBE SABER HACERLO ES LA BL
-// Y ES LO SUFICIENTEMENTE IMPORTANTE COMO PARA QUE ADEMÁS NO LO DELEGUEMOS A UN UTIL
-// NO TIENE NINGÚN SENTIDO TENER UNA "DEFINICION DEL NEGOCIO" DIGAMOS POR MEDIO DE LA INSTANCIACIÓN DE 
-// UN BACKING BEAN. REMEMBER Q EL BACKING BEAN SOLO SIRVE PARA ATENDER A LA VISTA Y DARLE FLEXIBILIDAD Y
-// USABILIDAD A LA VISTA, PERO LUEGO LAS COSAS EN SI LAS DEBE HACER LA CADENA BL/DAO ...
-	
-// ADEMÁS DE ESO, ESTABA CLONANDO MAL LOS OBJETOS PORQUE ESTABA ARRASTRANDO LA LISTA DE ROLES Y USUARIOS A
-// LA NUEVA VERSION (LAS RUTAS Y LOS STEPS NO LOS PASABA A LA NUEVA VERSION PORQUE ESTABA POR FUERA DE LA
-// ESTRUCTURA DE HIBERNATE ...
-	
-//	public void cloneWProcessDef(Integer id) throws WProcessDefException {
-//
-//		ValueExpression valueBinding = super
-//				.getValueExpression("#{wProcessDefFormBean}");
-//
-//		if (valueBinding != null) {
-//
-//			WProcessDefFormBean wpdfb = (WProcessDefFormBean) valueBinding
-//					.getValue(super.getELContext());
-//			wpdfb.init();
-//			wpdfb.loadCurrentWProcessDef(id);
-//			
-//			// ponemos a nulos los ids para crear uno nuevo con la misma info
-//			wpdfb.setCurrentId(null);
-//			wpdfb.getCurrentWProcessDef().setId(null);
-//			
-//			Integer lastProcessVersion = 
-//					new WProcessDefBL().getLastVersionNumber(wpdfb.getCurrentWProcessDef().getProcess().getId());
-//			
-//			wpdfb.getCurrentWProcessDef().setVersion(lastProcessVersion + 1);
-//			wpdfb.getCurrentWProcessDef().setActive(true);
-//			
-//			wpdfb.save();
-//
-//		}
-//
-//	}
-	
+		
 	public String createNewWProcess(String returnStatement) {
 
 		String ret = FAIL;
@@ -171,7 +133,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 							.getValue(super.getELContext());
 				wpfb.init();
 				wpfb.setCurrentId(idProcess);
-				wpfb.loadCurrentWProcess(idProcess);
+				wpfb.loadCurrentWProcessDef(idProcess);
 
 				ret = LOAD_WPROCESS;
 			
