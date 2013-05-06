@@ -58,6 +58,7 @@ public class Constants {
 	
 	public static final String ALIVE = "A";
 	public static final String PROCESSED = "P"; 
+	public static final String ALL = "ALL";
 	
 	public static final boolean EMPTY_OBJECT = true; // to work with emtpy objects ( this is a not null objet but empty one )
 	

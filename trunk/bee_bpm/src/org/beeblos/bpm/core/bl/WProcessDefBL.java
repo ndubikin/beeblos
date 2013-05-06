@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.ALL;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
@@ -17,12 +18,12 @@ import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
-import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 
@@ -108,38 +109,97 @@ public class WProcessDefBL {
 			
 	}
 	
-	// dml 20130506
-	public boolean delete(WProcessDef process, Integer currentUserId) throws WProcessWorkException, WProcessDefException {
+	// DAVID: no tengo claro q sea bueno pasar el objeto para borrar (en general no me gusta pasar el objeto a borrar...)
+	// porque es un objeto grande, hay que hacer muchas comparaciones, 
+	// y lo que hagamos debemos hacerlo contra la bd en el momento, o sea
+	// no podemos contar con que nos pasan un objeto cargado vaya a saber cuando
+	// y con que info, y tomar eso como "base cierta" para hacer todos los controles
+	// Prefiero q pasen el id, y ya leemos y revisamos y hacemos lo q haya q hacer, ok?
+	public void delete(Integer processId, boolean deleteRelatedSteps, Integer currentUserId) 
+			throws WProcessWorkException, WProcessDefException {
 
-		logger.debug("delete() WProcessDef - Name: ["+process.getName()+"]");
+		logger.debug("delete() WProcessDef - Name: ["+processId+"]");
 		
-		if (process != null
-			&& process.getId() != null
-			&& !process.getId().equals(0)){
-		
-			List<ProcessWorkLight> wpwList = 
-					new WProcessWorkBL().getWorkingWorkListFinder(process.getId(), 
-							null, false, null, null, false, null, null, false, null);
-			
-			// si el proceso no tiene works vemos si tiene steps asociados.
-			if (wpwList == null
-					|| wpwList.isEmpty()){
-				
-				new WProcessDefDao().delete(process);
-				return true;
-
-				
-			// si el proceso tiene works avisamos
-			} else {
-				
-				return false;
-				
-			}
-		
+		if (processId==null || processId==0) {
+			String mess = "Trying delete process with id null or 0 ...";
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
 		}
 		
-		return false;
+		// DAVID: CREO Q NO ES NECEARIO CARGAR ESTA UNA PARA BORRAR 1 PROCESO ...
+		
+		Integer qtyWorks;
+		try {
+			qtyWorks = new WStepWorkBL().getWorkCount(processId,ALL);
+		} catch (WStepWorkException e) {
+			String mess = "Error verifiyng existence of works related with this process id:"+processId
+					+ " "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
+		}
+		
+		if (qtyWorks>0) {
+			String mess = "Delete process with works is not permitted ... This process has "+qtyWorks+" works";
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
+		}
+			
+		List<String> deletedSteps = new ArrayList<String>(); // to store and return deleted steps
 
+		// check for related steps and delete 
+		if (deleteRelatedSteps) {
+			
+			deletedSteps = checkAndDeleteRelatedSteps(processId,currentUserId);
+			
+		}
+			
+//		new WProcessDefDao().delete(process);
+
+
+
+	}
+
+	private List<String> checkAndDeleteRelatedSteps(Integer processId, Integer userId) throws WProcessWorkException {
+		
+		List<String> ds = new ArrayList<String>();
+		try {
+			WStepDefBL stepDefBL = new WStepDefBL();
+			List<WStepDef> stepDefList = loadStepList(processId, userId);
+			for (WStepDef stepDef: stepDefList) {
+				if ( !checkSharedStep(stepDef.getId(), processId) 
+						&& checkWorkReferral(stepDef.getId(),processId) ) {
+					stepDefBL.delete(stepDef, userId);
+				}
+			}
+		} catch (WStepDefException e) {
+			String mess = "can't obtain step def list for given process id:"+processId;
+			throw new WProcessWorkException("Error obtaining step def list for process id:"+processId);
+		}
+		
+		
+		return ds;
+	}
+	
+
+	public boolean checkSharedStep(Integer stepId, Integer processId) {
+		// EN WSTEPDEF HACER 1 MÉTODO QUE CUENTE LA CANTIDAD DE PROCESOS (w_step_sequence_def.process_id) 
+		// QUE USAN ESTE PASO SIN CONTAR EL processId que le pasamos
+		// (porque si mas de 0 lo usan no se puede borrar el step
+		
+		
+		return false; // si nadie lo usa debe retornar false, si lo usan debe retornar true
+	}
+	public boolean  checkWorkReferral(Integer stepId, Integer processId) {
+		
+		// en w_step_work revisar que no esté referenciado para nada este step:
+		
+		// w_step_work.id_current_step != stepId && w_step_work.id_previous_step!=stepId
+		
+		// en realidad sería suficiente contar con que no exista el currentStep, pero como
+		// si por algún error existe un previous step q lo referencie, va petar cuando
+		// intentemos levantar el objeto por lo q mejor revisarlo también ..
+		
+		return false; // si no hay registros debe retornar false, si hay debe retornar true
 	}
 	
 	// dml 20130506
@@ -443,7 +503,8 @@ public class WProcessDefBL {
 	
 	
 	// nes 20130502 - traido desde el backing bean ...
-	private List<WStepDef> loadStepList(Integer processId, Integer userId) throws WStepDefException {
+	private List<WStepDef> loadStepList(Integer processId, Integer userId) 
+			throws WStepDefException {
 
 		List<WStepDef> lsteps=new ArrayList<WStepDef>();
 		try {

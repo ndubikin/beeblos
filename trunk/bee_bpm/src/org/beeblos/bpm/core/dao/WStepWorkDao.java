@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.dao;
 
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
 import java.text.SimpleDateFormat;
@@ -262,7 +263,7 @@ public class WStepWorkDao {
 	
 	// ALL WORKITEMS
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getStepListByProcess (
+	public List<WStepWork> getWorkListByProcessAndStatus (
 			Integer idProcess, String status ) 
 	throws WStepWorkException {
 
@@ -317,7 +318,7 @@ public class WStepWorkDao {
 	// NEW METHOD WITH ALL FILTERS ...
 	
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getWorkStepListByProcess (
+	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
 			Date arrivingDate, Date openedDate,	Date deadlineDate, 
@@ -478,7 +479,7 @@ public class WStepWorkDao {
 	
 	// ALL WORKITEMS FOR A PROCESS IN A CONCRETE STEP
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getStepListByProcess (
+	public List<WStepWork> getWorkListByProcessAndStep (
 			Integer idProcess, Integer idCurrentStep, String status ) 
 	throws WStepWorkException {
 
@@ -497,7 +498,6 @@ public class WStepWorkDao {
 		query += filter+getOrder();
 
 		logger.debug("------------>>> getStepListByProcess: "+query);
-
 		
 		try {
 
@@ -705,7 +705,7 @@ public class WStepWorkDao {
 
 	// ALL WORKITEMS FOR 1 OBJECT ( AND OBJECT TYPE ) 
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getStepListByProcess(
+	public List<WStepWork> getWorkListByProcess(
 			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser ) 
 	throws WStepWorkException {
 
@@ -745,7 +745,7 @@ public class WStepWorkDao {
 	
 	//rrl 20110118 
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getStepListByIdObject(
+	public List<WStepWork> getWorkListByIdObject(
 			Integer idObject, String idObjectType, Integer currentUser ) 
 	throws WStepWorkException {
 
@@ -784,7 +784,7 @@ public class WStepWorkDao {
 	
 	// dml 20120130
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getStepListByIdWork(
+	public List<WStepWork> getWorkListByIdWork(
 			Integer idWork, Integer currentUser ) 
 	throws WStepWorkException {
 
@@ -972,6 +972,51 @@ public class WStepWorkDao {
 		return retorno;
 	}
 	
+	// returns # existing works in WStepWork
+	public Integer getWorkCount (Integer processId, String mode) 
+			throws WStepWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		Integer qtySteps=0;
+
+		String query = "From WStepWork Where process.id="+processId;
+		
+		if (mode.equals(ALIVE)) {
+			query += " AND decidedDate is null";
+		} else if (mode.equals(PROCESSED)) {
+			query += " AND decidedDate is not null";
+		}
+		
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			qtySteps =  
+					(Integer) session
+								.createQuery(query)
+								.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="WStepWorkDao: getWorkCount() - error trying count stepWork - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+
+		}
+		
+		return qtySteps;		
+	}
+	
+	
 	public Boolean isLockedByUser (
 			Integer idStepWork, String idLockedBy ) 
 	throws WStepWorkException, WStepLockedByAnotherUserException {
@@ -1086,7 +1131,7 @@ public class WStepWorkDao {
 	
 
 
-	public List<StepWorkLight> getWorkingStepListFinder(Integer processIdFilter, 
+	public List<StepWorkLight> workingStepFinder(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
