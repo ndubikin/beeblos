@@ -251,7 +251,7 @@ public class TestWStepWorkBL extends TestCase{
 			System.out.println("------------------- RECUPERO LISTA DE WORKITEMS ( TOTAL ) ---------------------------");
 			
 			List<WStepWork> lsw = new ArrayList<WStepWork>();
-			lsw = stepwBL.getStepListByProcess(69, "", 1000);
+			lsw = stepwBL.getWorkListByProcessAndStatus(69, "", 1000);
 			for (WStepWork wsw: lsw) {
 				System.out.println(wsw);
 			}
@@ -259,7 +259,7 @@ public class TestWStepWorkBL extends TestCase{
 			System.out.println("------------------- RECUPERO LISTA DE WORKITEMS ( VIVOS ) ---------------------------");
 			
 			lsw = new ArrayList<WStepWork>();
-			lsw = stepwBL.getStepListByProcess(69, ALIVE, 1000);
+			lsw = stepwBL.getWorkListByProcessAndStatus(69, ALIVE, 1000);
 			for (WStepWork wsw: lsw) {
 				System.out.println(wsw);
 			}
@@ -267,7 +267,7 @@ public class TestWStepWorkBL extends TestCase{
 			System.out.println("-------------- RECUPERO LISTA DE WORKITEMS ( VIVOS DEL USUARIO ( O ROL ) ) ---------------------------");
 			
 			lsw = new ArrayList<WStepWork>();
-			lsw = stepwBL.getStepListByProcess(69, PROCESSED, 1000);
+			lsw = stepwBL.getWorkListByProcessAndStatus(69, PROCESSED, 1000);
 			for (WStepWork wsw: lsw) {
 				System.out.println(wsw);
 			}
@@ -277,7 +277,7 @@ public class TestWStepWorkBL extends TestCase{
 			System.out.println("--------------- RECUPERO LISTA DE WORKITEMS DE UN OBJETO ---------------------------");
 			
 			lsw = new ArrayList<WStepWork>();
-			lsw = stepwBL.getStepListByProcess(stepw.getProcess().getId(), stepw.getwProcessWork().getIdObject(), stepw.getwProcessWork().getIdObjectType(), 1000);
+			lsw = stepwBL.getWorkListByProcess(stepw.getProcess().getId(), stepw.getwProcessWork().getIdObject(), stepw.getwProcessWork().getIdObjectType(), 1000);
 			for (WStepWork wsw: lsw) {
 				System.out.println(wsw);
 			}
