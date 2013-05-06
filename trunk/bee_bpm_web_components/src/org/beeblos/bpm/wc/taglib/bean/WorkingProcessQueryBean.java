@@ -846,7 +846,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			} 
 			
 			List <SelectItem> l = UtilsVs
-					.castStringPairToSelectitem(new WStepDefBL().getComboList(processIdFilter, 1, stepMessage, ""));
+					.castStringPairToSelectitem(new WStepDefBL().getComboList(processIdFilter, stepMessage, ""));
 			
 			return l;
 			
