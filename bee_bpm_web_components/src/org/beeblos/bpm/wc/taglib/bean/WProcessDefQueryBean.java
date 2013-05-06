@@ -11,6 +11,8 @@ import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -265,16 +267,24 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		
 	}
 
-	// dml 20130430
+	// nes 20130502
 	public void cloneWProcessDef() {
 
 		try {
 			
-			new WProcessDefUtil().cloneWProcessDef(this.id);
+			Integer newId = new WProcessDefBL().cloneWProcessDef(this.id,getCurrentUserId());
+			logger.info("Process version id:"+this.id+" has a new cloned version with id:"+newId);
+			
 			this.searchWProcessDefs();
-			
-			
+		
+			// DAVID HAY QUE ARREGLAR PARA QUE LOS ERRORES SE VEAN EN PANTALLA SI SALTA ALGO OK?
 		} catch (WProcessDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WProcessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

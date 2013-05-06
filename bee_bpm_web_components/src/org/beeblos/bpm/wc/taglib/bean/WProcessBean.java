@@ -62,17 +62,17 @@ import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 
-public class WProcessDefFormBean extends CoreManagedBean {
+public class WProcessBean extends CoreManagedBean {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final Log logger = LogFactory
-			.getLog(WProcessDefFormBean.class.getName());
+			.getLog(WProcessBean.class.getName());
 
 	private static final String MANAGED_BEAN_NAME = "wProcessDefFormBean";
 
-	public static WProcessDefFormBean getCurrentInstance() {
-		return (WProcessDefFormBean) FacesContext.getCurrentInstance()
+	public static WProcessBean getCurrentInstance() {
+		return (WProcessBean) FacesContext.getCurrentInstance()
 				.getExternalContext().getRequestMap().get(MANAGED_BEAN_NAME);
 	}
 
@@ -84,34 +84,34 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private WProcessDef currentWProcessDef;
 	private Integer currentId; // current object managed by this bb
 
+	private WProcess currentWProcess; // dml 20130430
+
 	// auxiliar properties
 
 	private BeeblosAttachment attachment;
 	private String documentLink;
 
 	private List<SelectItem> lStepCombo = new ArrayList<SelectItem>();
-
-//  DAVID: todo esto creo q no iria aqui si no en el model directamente porque si no
-//  no nos queda resuelto el objeto "proceso" a nivel de BL que es como debe ser ...
-//	private List<WStepDef> lSteps = new ArrayList<WStepDef>(); 
-//	private List<WStepSequenceDef> stepSequenceList; 
+//	private List<WStepDef> lSteps = new ArrayList<WStepDef>(); - nes 20130502 - creo q no iria aqui si no en el objeto wprocessdef ...
 
 	private boolean readOnly;
 
 	private List<String> selectedWRoleDefList = new ArrayList<String>();
 	private List<String> selectedWUserDefList = new ArrayList<String>();
-	private List<WStepSequenceDef> outgoingRoutes;
-	private List<WStepSequenceDef> incomingRoutes;	
 
 	private WProcessRole currentWProcessRole;
 	private WProcessUser currentWProcessUser;
-	// dml 20120125
-	private WStepSequenceDef currentStepSequence;
-	
+
 	private String strRoleList;
 	private String strUserList;
 	
+	// dml 20120125
+//	private List<WStepSequenceDef> stepSequenceList; - nes 20130502 - paso al model q creo q va ahi ... 
+	private WStepSequenceDef currentStepSequence;
+	
 	// dml 20120323
+	private List<WStepSequenceDef> outgoingRoutes;
+	private List<WStepSequenceDef> incomingRoutes;
 	private Integer outgoingRoutesSize;
 	private Integer incomingRoutesSize;
 	
@@ -148,14 +148,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private Integer currentProcessIdSelected;
 	private List<SelectItem> wProcessComboList;
 	
-	public WProcessDefFormBean() {
+	public WProcessBean() {
 		super();
 		init();
 	}
 
 	public void init() {
 		super.init();
+
 		setShowHeaderMessage(false);
+		
 		loadStepCombo();
 		this._loadWProcessComboList(); // dml 20130430
 		_reset();
@@ -167,6 +169,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		currentId = null;
 		currentWProcessDef = new WProcessDef();
+		currentWProcess = new WProcess(); // dml 20130430
 		this.setReadOnly(false);
 		recoverNullObjects(); // <<<<<<<<< IMPORTANT >>>>>>>>>>>
 							  // to avoid access to null objects from view
@@ -176,6 +179,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		this.currentId = null;
 		this.currentWProcessDef = null;
+		this.currentWProcess = null; // dml 20130430
 		this.currentWProcessRole = new WProcessRole();
 		this.currentWProcessUser = new WProcessUser();
 		this.readOnly = true;
@@ -221,10 +225,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	// load an Object in currentWProcess
-	// DAVID:REVISAR BIEN ESTO PARA Q SIRVE, NO LE VEO MUCHA UTILIDAD ...
+	// dml 20130430
 	public void loadCurrentWProcess(Integer id) {
 
 		this.currentId = id;
+		this.loadCurrentWProcess();
 
 	}
 
@@ -277,6 +282,31 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		} catch (WStepSequenceDefException e) {
 			// DAVID TE DEJO PARA QUE ARREGLES ESTE ERROR Y Q SE PRESENTE EN PANTALLA OK?
 			e.printStackTrace();
+		}
+
+	}
+
+	// dml 20130430
+	public void loadCurrentWProcess() {
+
+		WProcessBL wpbl = new WProcessBL();
+
+		try {
+
+			currentWProcess = wpbl.getWProcessByPK(this.currentId,
+					getCurrentUserId());
+			
+		} catch (WProcessException ex1) {
+
+			String message = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = {
+					message + ",",
+					".Error loading current WProcess ..."
+							+ currentWProcess.getId() };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+
+			logger.error(message);
+			
 		}
 
 	}
@@ -501,6 +531,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return result;
 	}
 
+	// checks input data before save or update
+	private boolean checkInputDataWProcess() {
+
+		boolean result = false;
+
+		if (this.currentWProcess != null
+				&& this.currentWProcess.getName() != null
+				&& !"".equals(this.currentWProcess.getName())) {
+
+			result = true;
+
+		}
+
+		return result;
+	}
+
 	public String cancel() {
 
 		if (returnStatement.equals(WPROCESSDEF_QUERY)){
@@ -514,6 +560,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		_reset();
 		this.currentId = id;
 		this.loadCurrentWProcessDef();
+		this.loadCurrentWProcess(); // dml 20130430
 		this.setReadOnly(true);
 		return null;
 	}
@@ -531,6 +578,25 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			} catch (WProcessDefException e) {
 				recoverNullObjects();
+				result = FAIL;
+			}
+		}
+
+		return result;
+	}
+
+	// dml 20130430
+	public String save_continue_w_process() {
+
+		String result = FAIL;
+
+		if (checkInputDataWProcess()) {
+
+			try {
+
+				result = add_w_process();
+
+			} catch (WProcessException e) {
 				result = FAIL;
 			}
 		}
@@ -632,6 +698,80 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return ret;
 	}
 
+	// dml 20130430
+	public String add_w_process() throws WProcessException {
+
+		logger.debug("WProcessDefFormBean: add: currentWProcessId:["
+				+ this.currentId + "] ");
+
+		setShowHeaderMessage(false);
+
+		String ret = null;
+
+		// if object already exists in db then update and return
+		if (currentWProcess != null && currentWProcess.getId() != null
+				&& currentWProcess.getId() != 0) {
+
+			// before update store document in repository ( if exists )
+			if (attachment.getDocumentoNombre() != null
+					&& !"".equals(attachment.getDocumentoNombre())) {
+				// storeInRepository();
+			}
+
+			return update_w_process();
+		}
+
+		WProcessBL wpBL = new WProcessBL();
+
+		try {
+
+			// dml 20120306
+			setEmailTemplatesInObject();
+
+//			setModelWProcess(); // <<<<<<<<<<<<<<<<<<<< IMPORTANT >>>>>>>>>>>>>>>>>>
+
+			this.currentId = wpBL.add(currentWProcess,
+					this.getCurrentUserId());
+
+			loadCurrentWProcess(); // reload object from db
+
+			// Manual process to store attachment in the repository ( if
+			// attachment exists ...
+			if (attachment.getDocumentoNombre() != null
+					&& !"".equals(attachment.getDocumentoNombre())) {
+				// storeInRepository();
+				update_w_process();
+			}
+
+//			recoverNullObjectsWProcess();
+
+			this.setReadOnly(true);
+
+			ret = SUCCESS_FORM_WPROCESS;
+
+			setShowHeaderMessage(true);
+
+		} catch (WProcessException ex1) {
+
+			String message = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { message + ",", ".Please confirm input values." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+
+			throw new WProcessException(message);
+
+		} catch (Exception e) {
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error inserting object ..." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+
+			throw new WProcessException(message);
+
+		}
+
+		return ret;
+	}
+
 	public String update() {
 		logger.debug("update(): currentId:" + currentWProcessDef.getId()
 				+ " - " + currentWProcessDef.getName());
@@ -676,15 +816,57 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return ret;
 	}
 	
+	// dml 20130430
+	public String update_w_process() {
+		logger.debug("update(): currentId:" + currentWProcess.getId()
+				+ " - " + currentWProcess.getName());
+
+		String ret = null;
+
+		WProcessBL wpdBL = new WProcessBL();
+
+		try {
+			
+			// dml 20120306
+//			setEmailTemplatesInObject();
+
+//			setModelWProcess();
+
+			wpdBL.update(currentWProcess, this.getCurrentUserId());
+
+			loadCurrentWProcess(); // reload object from db
+
+//			recoverNullObjectsWProcess();
+
+			setShowHeaderMessage(true);
+			ret = SUCCESS_FORM_WPROCESS;
+			this.setReadOnly(true);
+
+		} catch (WProcessException ex1) {
+
+			String message = "Error updating object: "
+					+ currentWProcess.getId() + " - "
+					+ currentWProcess.getName() + "\n" + ex1.getMessage()
+					+ "\n" + ex1.getCause();
+
+			logger.error(message);
+
+			String params[] = { message + ",", ".Please confirm input values." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+
+			logger.error(message);
+
+		}
+
+		return ret;
+	}
 	
 	private void loadStepCombo() {
 
 		try {
 			
-			setlStepCombo(
-					UtilsVs.castStringPairToSelectitem(
-							new WStepDefBL()
-									.getComboList("Select step...", null)));
+			setlStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL()
+					.getComboList("Select step...", null)));
 
 		} catch (WStepDefException ex1) {
 
@@ -697,6 +879,56 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 	}
 
+
+/*
+	// dml 20120323
+	private ArrayList<WStepSequenceDef> loadOutgoingRoutesList() {
+		
+		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
+		
+		this.stepOutgoings = true;
+		
+		try {
+
+			outgoingRoutes = wssBL.getWStepSequenceDefListByFromStep(currentStepSequence.getId(), this.currentId, getCurrentUserId());
+
+			if (outgoingRoutes != null){
+				outgoingRoutesSize = outgoingRoutes.size();
+			} else {
+				outgoingRoutesSize = 0;
+			}
+			
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return null;
+	}
+	
+	// dml 20120323
+	private ArrayList<WStepSequenceDef> loadIncomingRoutesList() {
+		
+		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
+		
+		try {
+
+			incomingRoutes = wssBL.getWStepSequenceDefListByToStep(currentStepSequence.getId(), this.currentId, getCurrentUserId());
+
+			if (incomingRoutes != null){
+				incomingRoutesSize = incomingRoutes.size();
+			} else {
+				incomingRoutesSize = 0;
+			}
+			
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return null;
+	}
+*/
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
 	}
@@ -711,6 +943,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setCurrentId(Integer currentId) {
 		this.currentId = currentId;
+	}
+
+	public WProcess getCurrentWProcess() {
+		return currentWProcess;
+	}
+
+	public void setCurrentWProcess(WProcess currentWProcess) {
+		this.currentWProcess = currentWProcess;
 	}
 
 	public BeeblosAttachment getAttachment() {
@@ -1915,7 +2155,5 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 
 	}
-
-	
 	
 }

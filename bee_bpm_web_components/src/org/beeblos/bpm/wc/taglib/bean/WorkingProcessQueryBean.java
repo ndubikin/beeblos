@@ -24,6 +24,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepNotLockedException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -773,11 +774,16 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			}
 			
 		} catch (WProcessDefException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
+			String mess = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mess + ",",
 					".desactivateWProcessDef() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+			agregarMensaje("206", mess, params, FGPException.ERROR);
 			ex1.printStackTrace();
+		} catch (WStepSequenceDefException e) {
+			String mess = e.getMessage() + " - " + e.getCause();
+			String params[] = { mess + ",",
+					".desactivateWProcessDef() WProcessDefException ..." };
+			agregarMensaje("206", mess, params, FGPException.ERROR);
 		}
 
 	}
