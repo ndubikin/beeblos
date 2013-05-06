@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.model.WProcess;
 import org.beeblos.bpm.core.model.noper.StringPair;
@@ -159,6 +160,40 @@ public class WProcessDao {
 		return process;
 	}
 
+
+	// id=processId
+	public String getProcessName(Integer id) throws WProcessDefException {
+
+		String name = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			name = (String) session
+					.createQuery("select WProcess.name from WProcess where WProcess.id = :id)")
+						.setInteger("id",id)
+						.uniqueResult();
+
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDef: getProcessName - we can't obtain the required id = "+
+					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessDefException("WProcessDef: getProcessName - we can't obtain the required id : " + 
+					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		return name;
+	}
 	
 	public List<WProcess> getWProcessList() throws WProcessException {
 

@@ -276,8 +276,8 @@ public class WStepSequenceDefDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<WStepSequenceDef> getWStepSequenceDefs(
-			Integer idProcess, Integer version, Integer idFromStep ) 
+	public List<WStepSequenceDef> getStepSequenceDefs(
+			Integer processId, Integer idFromStep ) 
 	throws WStepSequenceDefException {
 
 		org.hibernate.Session session = null;
@@ -293,10 +293,9 @@ public class WStepSequenceDefDao {
 			tx.begin();
 
 			stepSeqs = session
-							.createQuery("From WStepSequenceDef WHERE process.id=? and version=? and fromStep.id = ?  ")
-							.setParameter(0, idProcess)
-							.setParameter(1, version)
-							.setParameter(2, idFromStep)
+							.createQuery("From WStepSequenceDef WHERE process.id=? and fromStep.id = ?  ")
+							.setParameter(0, processId)
+							.setParameter(1, idFromStep)
 							.list();
 
 			tx.commit();
@@ -325,8 +324,8 @@ public class WStepSequenceDefDao {
 
 	// dml 20120125
 	@SuppressWarnings("unchecked")
-	public List<WStepSequenceDef> getWStepSequenceDefList(
-			Integer idProcess, Integer version ) 
+	public List<WStepSequenceDef> getStepSequenceList(
+			Integer processId ) 
 	throws WStepSequenceDefException {
 
 		org.hibernate.Session session = null;
@@ -342,9 +341,8 @@ public class WStepSequenceDefDao {
 			tx.begin();
 
 			stepSeqs = session
-							.createQuery("FROM WStepSequenceDef WHERE process.id=? and version=? ORDER BY fromStep.id")
-							.setParameter(0, idProcess)
-							.setParameter(1, version)
+							.createQuery("FROM WStepSequenceDef WHERE process.id=? ORDER BY fromStep.id")
+							.setParameter(0, processId)
 							.list();
 
 			tx.commit();
@@ -372,8 +370,8 @@ public class WStepSequenceDefDao {
 	}
 
 	// dml 20120323
-	public List<WStepSequenceDef> getWStepSequenceDefListByFromStep(
-			Integer idFromStep, Integer idProcess ) 
+	public List<WStepSequenceDef> getOutgoingRoutes(
+			Integer stepId, Integer processId ) 
 	throws WStepSequenceDefException {
 	
 		org.hibernate.Session session = null;
@@ -388,16 +386,16 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
-			if (idProcess != null && !idProcess.equals(0)) {
+			if (processId != null && !processId.equals(0)) {
 				stepSeqs = session
 								.createQuery("FROM WStepSequenceDef WHERE fromStep.id = ? and process.id=? ORDER BY fromStep.id")
-								.setParameter(0, idFromStep)
-								.setParameter(1, idProcess)
+								.setParameter(0, stepId)
+								.setParameter(1, processId)
 								.list();
 			} else {
 				stepSeqs = session
 						.createQuery("FROM WStepSequenceDef WHERE fromStep.id = ? ORDER BY fromStep.id")
-						.setParameter(0, idFromStep)
+						.setParameter(0, stepId)
 						.list();
 			}
 			
@@ -427,8 +425,8 @@ public class WStepSequenceDefDao {
 	}
 	
 	// dml 20120323
-	public List<WStepSequenceDef> getWStepSequenceDefListByToStep(
-			Integer idToStep, Integer idProcess) 
+	public List<WStepSequenceDef> getIncomingRoutes(
+			Integer stepId, Integer versionId) 
 	throws WStepSequenceDefException {
 	
 		org.hibernate.Session session = null;
@@ -443,16 +441,16 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
-			if (idProcess != null) {
+			if (versionId != null) {
 				stepSeqs = session
 								.createQuery("FROM WStepSequenceDef WHERE toStep.id = ? and process.id=? ORDER BY toStep.id")
-								.setParameter(0, idToStep)
-								.setParameter(1, idProcess)
+								.setParameter(0, stepId)
+								.setParameter(1, versionId)
 								.list();
 			} else {
 				stepSeqs = session
 						.createQuery("FROM WStepSequenceDef WHERE toStep.id = ? ORDER BY toStep.id")
-						.setParameter(0, idToStep)
+						.setParameter(0, stepId)
 						.list();
 			}
 

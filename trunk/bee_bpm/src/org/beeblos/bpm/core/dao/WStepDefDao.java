@@ -74,7 +74,7 @@ public class WStepDefDao {
 		
 		try {
 
-			step = getWStepDefByPK(step.getId());
+			step = getStepDefByPK(step.getId());
 
 			HibernateUtil.borrar(step);
 
@@ -136,7 +136,7 @@ public class WStepDefDao {
 
 	}
 
-	public WStepDef getWStepDefByPK(Integer id) throws WStepDefException {
+	public WStepDef getStepDefByPK(Integer id) throws WStepDefException {
 
 		WStepDef step = null;
 		org.hibernate.Session session = null;
@@ -166,7 +166,7 @@ public class WStepDefDao {
 	}
 	
 	
-	public WStepDef getWStepDefByName(String name) throws WStepDefException {
+	public WStepDef getStepDefByName(String name) throws WStepDefException {
 
 		WStepDef  step = null;
 		org.hibernate.Session session = null;
@@ -230,8 +230,9 @@ public class WStepDefDao {
 		return steps;
 	}
 	
+	// nes 20130502 - ajustado al nuevo formato de campos de la sequence
 	@SuppressWarnings("unchecked")
-	public List<WStepDef> getWStepDefs(Integer currentWProcessDefId, Integer version) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer processId) throws WStepDefException {
 	
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -248,14 +249,13 @@ public class WStepDefDao {
 			String query =  "SELECT * FROM w_step_def ws " +
 							"WHERE ws.id IN (SELECT DISTINCT wsd.id_origin_step " +
 							"FROM  w_step_sequence_def wsd " +
-							"WHERE wsd.id_process = :idStep AND wsd.version = :version)";
+							"WHERE wsd.process_id = :processId )";
 			
 			System.out.println("[QUERY]: "+query);
 			
 			steps = session.createSQLQuery(query)
 					.addEntity("WStepDef", WStepDef.class)
-					.setParameter("idStep", currentWProcessDefId)
-					.setParameter("version", version)
+					.setParameter("processId", processId)
 					.list();
 
 			tx.commit();
@@ -341,7 +341,7 @@ public class WStepDefDao {
 	// returns a list with step names
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
-			Integer idProcess, Integer version,
+			Integer processId, Integer versionId,
 			String firstLineText, String blank )
 	throws WProcessDefException {
 		 
@@ -359,8 +359,8 @@ public class WStepDefDao {
 
 				lwsd = session
 							.createQuery("select distinct w.id, w.name, w.stepComments from WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and ws.version=? and w.id=ws.fromStep.id order by w.name")
-							.setParameter(0, idProcess)
-							.setParameter(1, version)
+							.setParameter(0, processId)
+							.setParameter(1, versionId)
 							.list();
 
 				if (lwsd!=null) {
@@ -415,7 +415,7 @@ public class WStepDefDao {
 	// dml 20130129
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
-			Integer idProcess, Integer version, Integer userId, boolean userIsProcessAdmin, boolean allItems, 
+			Integer processId, Integer versionId, Integer userId, boolean userIsProcessAdmin, boolean allItems, 
 			String firstLineText, String blank )
 	throws WProcessDefException {
 		 
@@ -436,8 +436,8 @@ public class WStepDefDao {
 				query += " LEFT OUTER JOIN w_step_role wsr ON s.id = wsr.id_step ";
 				query += " LEFT OUTER JOIN w_step_user wsu ON s.id = wsu.id_step ";
 				query += " WHERE s.id IN ";
-				query += " (SELECT DISTINCT id_origin_step FROM w_step_sequence_def ws WHERE ws.id_process = " 
-							+ idProcess + " AND ws.version = " + version + " ) ";
+				query += " (SELECT DISTINCT id_origin_step FROM w_step_sequence_def ws WHERE ws.process_id = " 
+							+ processId + " AND ws.version_id = " + versionId + " ) ";
 
 				// dml 20130129
 				if (userId != null
@@ -534,20 +534,20 @@ public class WStepDefDao {
 		
 		filter = (( filter != null && !"".equals(filter)) ? " WHERE ":"") + filter;
 		
-		System.out.println(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
-		System.out.println(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
-		System.out.println(" ---->>>>>>>>>> filter:["+filter+"]");
+		logger.debug(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
+		logger.debug(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
+		logger.debug(" ---->>>>>>>>>> filter:["+filter+"]");
 		
 		// load base query phrase
 		String query = getBaseQuery( isAdmin );
 		
-		System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
+		logger.debug(" ---->>>>>>>>>> base query:["+query+"]");
 
 		// builds full query phrase
 		query += filter+getSQLOrder(action);
 
-		System.out.println(" ---->>>>>>>>>> FULL query:["+query+"]");
-		System.out.println(" ---->>>>>>>>>> userId: "+userId);
+		logger.debug(" ---->>>>>>>>>> FULL query:["+query+"]");
+		logger.debug(" ---->>>>>>>>>> userId: "+userId);
 
 		
 		try {

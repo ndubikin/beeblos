@@ -26,8 +26,8 @@ public class WStepSequenceDefBL {
 	
 	public Integer add(WStepSequenceDef route, Integer currentUser) throws WStepSequenceDefException {
 		
-		logger.debug("add() WStepSequenceDef - Name: [ProcId:"+
-				route.getProcess().getId()+"-ver:"+route.getVersion()+"-fromStepId:"+route.getFromStep().getId()+"]");
+		logger.debug("add() WStepSequenceDef - Name: [Proc Version Id:"+
+				route.getProcess().getId()+"-fromStepId:"+route.getFromStep().getId()+"]");
 		
 		// timestamp & trace info
 		route.setInsertDate(new Date());
@@ -60,10 +60,10 @@ public class WStepSequenceDefBL {
 	}
 	
 	
-	public void deleteRoute(WStepSequenceDef route, Integer currentUser) throws WStepSequenceDefException {
+	public void deleteRoute(WStepSequenceDef route, Integer userId) throws WStepSequenceDefException {
 
-		logger.debug("delete() WStepSequenceDef - ProcId: [" +
-					route.getProcess().getId()+"-ver:"+route.getVersion()
+		logger.info("delete() WStepSequenceDef - VersionId: [" +
+					route.getProcess().getId()
 					+"-fromStepId:"+route.getFromStep().getId()+"]");
 		
 		new WStepSequenceDefDao().deleteRoute(route);
@@ -99,38 +99,38 @@ public class WStepSequenceDefBL {
 	}
 	
 	// retrieves all routes from passed step  ( enabled and disabled )
-	public List<WStepSequenceDef> getWStepSequenceDefs(
-			Integer idProcess, Integer version, Integer idFromStep , Integer currentUser  ) 
+	public List<WStepSequenceDef> getStepSequenceDefs(
+			Integer processId, Integer fromStepId , Integer userId  ) 
 	throws WStepSequenceDefException {
 
-		return new WStepSequenceDefDao().getWStepSequenceDefs(idProcess, version, idFromStep);
+		return new WStepSequenceDefDao().getStepSequenceDefs(processId, fromStepId);
 	 
 	}	
 
-	// dml 20120125
-	public List<WStepSequenceDef> getWStepSequenceDefList(
-			Integer idProcess, Integer version , Integer currentUser ) 
+	public List<WStepSequenceDef> getStepSequenceList(
+			Integer processId , Integer userId ) 
 	throws WStepSequenceDefException {
 
-		return new WStepSequenceDefDao().getWStepSequenceDefList(idProcess, version);
+		return new WStepSequenceDefDao().getStepSequenceList(processId);
 		
 	}
 	
-	// dml 20120323
-	public List<WStepSequenceDef> getWStepSequenceDefListByFromStep(
-			Integer idFromStep, Integer idProcess, Integer currentUser ) 
+	public List<WStepSequenceDef> getOutgoingRoutes(
+			Integer stepId, Integer processId, Integer userId ) 
 	throws WStepSequenceDefException {
 
-		return new WStepSequenceDefDao().getWStepSequenceDefListByFromStep(idFromStep, idProcess);
+		return new WStepSequenceDefDao()
+			.getOutgoingRoutes(stepId, processId);
 		
 	}
 	
-	// dml 20120323
-	public List<WStepSequenceDef> getWStepSequenceDefListByToStep(
-			Integer idToStep, Integer idProcess, Integer currentUser ) 
+	// returns a list with incoming routes pointing to a step
+	public List<WStepSequenceDef> getIncomingRoutes(
+			Integer stepId, Integer versionId, Integer userId ) 
 	throws WStepSequenceDefException {
 
-		return new WStepSequenceDefDao().getWStepSequenceDefListByToStep(idToStep, idProcess);
+		return new WStepSequenceDefDao()
+				.getIncomingRoutes(stepId, versionId);
 		
 	}
 	

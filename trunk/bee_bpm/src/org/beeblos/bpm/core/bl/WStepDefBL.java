@@ -42,7 +42,7 @@ public class WStepDefBL {
 		
 		logger.debug("update() WStepDef < id = "+step.getId()+">");
 		
-		if (!step.equals(new WStepDefDao().getWStepDefByPK(step.getId())) ) {
+		if (!step.equals(new WStepDefDao().getStepDefByPK(step.getId())) ) {
 
 			// timestamp & trace info
 			step.setModDate(new Date());
@@ -79,27 +79,28 @@ public class WStepDefBL {
 
 	}
 	
-	public WStepDef getWStepDefByPK(Integer id, Integer currentUser) throws WStepDefException {
+	public WStepDef getWStepDefByPK(Integer id, Integer userId) throws WStepDefException {
 
-		return new WStepDefDao().getWStepDefByPK(id);
+		return new WStepDefDao().getStepDefByPK(id);
 	}
 	
 	
-	public WStepDef getWStepDefByName(String name, Integer currentUser) throws WStepDefException {
+	public WStepDef getWStepDefByName(String name, Integer userId) throws WStepDefException {
 
-		return new WStepDefDao().getWStepDefByName(name);
+		return new WStepDefDao().getStepDefByName(name);
 	}
 
 	
-	public List<WStepDef> getWStepDefs(Integer currentUser) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer userId) throws WStepDefException {
 
+		// nota: falta revisar el tema de los permisos de usuario para esto ...
 		return new WStepDefDao().getWStepDefs();
 	
 	}
 	
-	public List<WStepDef> getWStepDefs(Integer currentWProcessDefId, Integer version) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer processId, Integer userId) throws WStepDefException {
 
-		return new WStepDefDao().getWStepDefs(currentWProcessDefId, version);
+		return new WStepDefDao().getStepDefs(processId);
 	
 	}
 	
@@ -114,24 +115,24 @@ public class WStepDefBL {
 	}
 	
 	public List<StringPair> getComboList(
-			Integer idProcess, Integer version,
+			Integer processId, Integer versionId,
 			String firstLineText, String blank )
 	throws WProcessDefException {
 		
-		return new WStepDefDao().getComboList(idProcess, version, firstLineText, blank);
+		return new WStepDefDao().getComboList(processId, versionId, firstLineText, blank);
 		
 	}
 
 	// dml 20130129 - new combo method with userId and allItems
 	public List<StringPair> getComboList(
-			Integer idProcess, Integer version, Integer userId, boolean allItems, 
+			Integer processId, Integer versionId, Integer userId, boolean allItems, 
 			String firstLineText, String blank )
 	throws WProcessDefException {
 		
 		// dml 20130129 - checking if the user is process admin
-		boolean userIsProcessAdmin = new WProcessDefBL().userIsProcessAdmin(userId, idProcess);
+		boolean userIsProcessAdmin = new WProcessDefBL().userIsProcessAdmin(userId, processId);
 
-		return new WStepDefDao().getComboList(idProcess, version, userId, userIsProcessAdmin, allItems, 
+		return new WStepDefDao().getComboList(processId, versionId, userId, userIsProcessAdmin, allItems, 
 				firstLineText, blank);
 		
 	}

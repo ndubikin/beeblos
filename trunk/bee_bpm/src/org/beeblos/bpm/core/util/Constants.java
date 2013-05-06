@@ -15,9 +15,6 @@ public class Constants {
 	public static final String PROCESS_STEP = "PROCESS_STEP"; // dml 20120308
 	public static final String TURNBACK_STEP = "TURNBACK_STEP"; // dml 20120308
 
-	public static final String ID_PERMISO_VER_DOCUMENTOS_PRIVADOS = getStringProperty("ver.documentos.privados");
-	public static final String LISTA_DOCCLASSID_PRIVADAS = getStringProperty("lista.docclass.privadas.docclassId");
-
 	public static String BEEBLOS_PROTOCOL = getStringProperty("repository.protocol");
 	public static String BEEBLOS_IP = getStringProperty("repository.ip");
 	public static Integer BEEBLOS_PORT = getIntegerProperty("repository.port");
