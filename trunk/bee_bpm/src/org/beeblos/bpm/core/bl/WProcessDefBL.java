@@ -103,7 +103,7 @@ public class WProcessDefBL {
 		wpd = new WProcessDefDao().getWProcessDefByPK(id);
 		
 		try {
-			wpd.setlSteps(loadLSteps(wpd.getId(),currentUserId));
+			wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
 		} catch (WStepDefException e1) {
 			String mess="Error: getWProcessDefByPK "+e1.getMessage();
 			throw new WStepSequenceDefException(mess);
@@ -127,7 +127,7 @@ public class WProcessDefBL {
 		wpd = new WProcessDefDao().getWProcessDefByName(name);
 		
 		try {
-			wpd.setlSteps(loadLSteps(wpd.getId(),currentUserId));
+			wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
 		} catch (WStepDefException e1) {
 			String mess="Error: getWProcessDefByName "+e1.getMessage();
 			throw new WStepSequenceDefException(mess);
@@ -307,7 +307,7 @@ public class WProcessDefBL {
 	
 	
 	// nes 20130502 - traido desde el backing bean ...
-	private List<WStepDef> loadLSteps(Integer processId, Integer userId) throws WStepDefException {
+	private List<WStepDef> loadStepList(Integer processId, Integer userId) throws WStepDefException {
 
 		List<WStepDef> lsteps=new ArrayList<WStepDef>();
 		try {
