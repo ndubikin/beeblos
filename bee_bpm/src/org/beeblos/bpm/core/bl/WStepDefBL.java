@@ -115,11 +115,10 @@ public class WStepDefBL {
 	}
 	
 	public List<StringPair> getComboList(
-			Integer processId, Integer versionId,
-			String firstLineText, String blank )
+			Integer processId, String firstLineText, String blank )
 	throws WProcessDefException {
 		
-		return new WStepDefDao().getComboList(processId, versionId, firstLineText, blank);
+		return new WStepDefDao().getComboList(processId, firstLineText, blank);
 		
 	}
 
