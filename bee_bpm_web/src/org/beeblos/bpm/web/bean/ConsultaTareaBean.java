@@ -554,17 +554,14 @@ public class ConsultaTareaBean extends CoreManagedBean {
 //					||((lPasosValidos.size() == 1) && ("Seleccionar paso ...".equals(lPasosValidos.get(0).getLabel())))) {
 				try {
 					
-					version = new WStepSequenceDefBL().getLastVersionWStepSequenceDef(idProceso);
+					//version = new WStepSequenceDefBL().getLastVersionWStepSequenceDef(idProceso);// nes 20130506 quitada version
 					
 					lPasosValidos=
 							UtilsVs
 								.castStringPairToSelectitem(
-									new WStepDefBL().getComboList(idProceso, version, "Seleccionar paso ...", null));
+									new WStepDefBL().getComboList(idProceso, "Seleccionar paso ...", null));
 					
 				} catch (WProcessDefException e) {
-					e.printStackTrace();
-					lPasosValidos.add(new SelectItem(null,"No se pudo cargar la lista de procesos ..."));
-				} catch (WStepSequenceDefException e) {
 					e.printStackTrace();
 					lPasosValidos.add(new SelectItem(null,"No se pudo cargar la lista de procesos ..."));
 				}

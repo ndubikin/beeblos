@@ -233,7 +233,7 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 	
 	// nes 20101025
 	public Integer inyectarPaso(
-			Integer idProcess, Integer idProcessVersion, Integer idStep, 
+			Integer processId, Integer idStep, 
 			Integer idObject, String idObjectType,
 			String objReference, String objComments
 			) 
@@ -241,9 +241,9 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 
 		Integer idStepWork = null;
 		
-		if ( idProcess==null || idProcess==0 || idProcessVersion==null || idProcessVersion==0 
+		if ( processId==null || processId==0  
 				|| idStep==null || idStep==0 ) {
-			throw new InyectorException("No se puede lanzar el workflow porque viene en cero o null el idProcess idProcessVersion o IdStep ...");
+			throw new InyectorException("No se puede lanzar el workflow porque viene en cero o null el idProcess o IdStep ...");
 		}
 		
 		if ( idObject==null || idObject==0 ) {
@@ -270,8 +270,7 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 			ib.setObjComments(objComments);
 
 			// setea el workflow y el paso que necesitamos ...
-			ib.setIdProcesoSeleccionado(idProcess);
-			ib.setVersion(idProcessVersion);			
+			ib.setIdProcesoSeleccionado(processId);
 			ib.setIdPasoSeleccionado(idStep);
 			
 			ib.inyectar();
