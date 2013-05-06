@@ -54,7 +54,7 @@ public class InyectorBean  extends CoreManagedBean {
 	private Integer usuarioLogueado;
 	
 	private Integer idProcesoSeleccionado;
-	private Integer version;
+//	private Integer version;
 	private Integer idPasoSeleccionado;
 	
 	private WProcessDef procesoSeleccionado;
@@ -152,11 +152,10 @@ public class InyectorBean  extends CoreManagedBean {
 		try {
 			
 			setProcesoSeleccionado(pdBL.getWProcessDefByPK(idProcesoSeleccionado, null));
-			version = wsdBL.getLastVersionWStepSequenceDef(idProcesoSeleccionado);
 			lPasosValidos= 
 					UtilsVs
 					.castStringPairToSelectitem(
-							wsBL.getComboList(idProcesoSeleccionado, version, "Seleccionar paso ...", null));
+							wsBL.getComboList(idProcesoSeleccionado, "Seleccionar paso ...", null));
 			
 			
 		} catch (WStepSequenceDefException e) {
@@ -324,7 +323,6 @@ public class InyectorBean  extends CoreManagedBean {
 		WStepWork pasoAInyectar = new WStepWork();
 		
 		pasoAInyectar.setProcess(procesoSeleccionado);
-		pasoAInyectar.setVersion(version);
 		
 		pasoAInyectar.setPreviousStep(null);
 		pasoAInyectar.setCurrentStep(pasoSeleccionado);
@@ -426,7 +424,7 @@ public class InyectorBean  extends CoreManagedBean {
 						UtilsVs
 						.castStringPairToSelectitem(
 								new WStepDefBL().getComboList(
-										idProcesoSeleccionado, version, "Seleccionar paso ...", null));
+										idProcesoSeleccionado, "Seleccionar paso ...", null));
 			} catch (WProcessDefException e) {
 				e.printStackTrace();
 				lPasosValidos.add(new SelectItem(null,"No se pudo cargar la lista de procesos ..."));
@@ -492,12 +490,7 @@ public class InyectorBean  extends CoreManagedBean {
 	public void setPasoSeleccionado(WStepDef pasoSeleccionado) {
 		this.pasoSeleccionado = pasoSeleccionado;
 	}
-	public Integer getVersion() {
-		return version;
-	}
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+
 	public String getObjReference() {
 		return objReference;
 	}

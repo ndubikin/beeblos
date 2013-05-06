@@ -16,44 +16,44 @@
     }
 </style>
 
-<h:form id="frmListaTarea">
+<h:form id="frmTaskList">
 
-	    <rich:contextMenu attached="false" id="menuProcesarTareas" submitMode="ajax">
+	    <rich:contextMenu attached="false" id="task_process_menu_id" submitMode="ajax">
 	         <rich:menuItem ajaxSingle="true"   action="#{consultaTareaBean.cargarPaso}" submitMode="server"
-	         				style="{styleItemProcesar}">
-	             <b> ( Procesar ) </b> {referencia} {comentarios} 
-	             <a4j:actionparam name="det3" assignTo="#{consultaTareaBean.idObject}" value="{id_object}"/>  
-	             <a4j:actionparam name="det4" assignTo="#{consultaTareaBean.idObjectType}" value="{id_object_type}"/>
-	             <a4j:actionparam name="det5" assignTo="#{consultaTareaBean.idPasoProceso}" value="{id_tarea}"/>                 
+	         				style="{styleItemProcess}">
+	             <b> ( Procesar ) </b> {relatesTo} {comments} 
+	             <a4j:actionparam name="det3" assignTo="#{consultaTareaBean.idObject}" value="{object_id}"/>  
+	             <a4j:actionparam name="det4" assignTo="#{consultaTareaBean.idObjectType}" value="{object_type_id}"/>
+	             <a4j:actionparam name="det5" assignTo="#{consultaTareaBean.idPasoProceso}" value="{task_id}"/>                 
 	        </rich:menuItem>
 
   	       <rich:menuItem ajaxSingle="true"   action="#{consultaTareaBean.desbloquearDesdeMenuItem}" submitMode="server"
-         		style="{styleItemDesbloquear}">
-         	    <b> ( Desbloquear ) </b> {referencia} {comentarios} 
-            	<a4j:actionparam name="det3" assignTo="#{consultaTareaBean.idObject}" value="{id_object}"/>  
-            	<a4j:actionparam name="det4" assignTo="#{consultaTareaBean.idObjectType}" value="{id_object_type}"/>
-             	<a4j:actionparam name="det5" assignTo="#{consultaTareaBean.idPasoProceso}" value="{id_tarea}"/>                 
+         		style="{styleItemUnlock}">
+         	    <b> ( Desbloquear ) </b> {relatesTo} {comments} 
+            	<a4j:actionparam name="det3" assignTo="#{consultaTareaBean.idObject}" value="{object_id}"/>  
+            	<a4j:actionparam name="det4" assignTo="#{consultaTareaBean.idObjectType}" value="{object_type_id}"/>
+             	<a4j:actionparam name="det5" assignTo="#{consultaTareaBean.idPasoProceso}" value="{task_id}"/>                 
      
     	    </rich:menuItem>  
     	    
   	       <rich:menuItem ajaxSingle="true"   action="#{consultaTareaBean.cargaFichaProyecto}" submitMode="server"
-         		style="{styleItemVerProyecto}">
-         	    <b> ( Ver Ficha de Proyecto ) </b> {id_object} {comentarios} 
-            	<a4j:actionparam name="det3" assignTo="#{consultaTareaBean.idObject}" value="{id_object}"/>  
-            	<a4j:actionparam name="det4" assignTo="#{consultaTareaBean.idObjectType}" value="{id_object_type}"/>
-             	<a4j:actionparam name="det5" assignTo="#{consultaTareaBean.idPasoProceso}" value="{id_tarea}"/>                 
+         		style="{styleItemViewProject}">
+         	    <b> ( Ver Ficha de Proyecto ) </b> {object_id} {comments} 
+            	<a4j:actionparam name="det3" assignTo="#{consultaTareaBean.idObject}" value="{object_id}"/>  
+            	<a4j:actionparam name="det4" assignTo="#{consultaTareaBean.idObjectType}" value="{object_type_id}"/>
+             	<a4j:actionparam name="det5" assignTo="#{consultaTareaBean.idPasoProceso}" value="{task_id}"/>                 
      
     	    </rich:menuItem>  
         
-        	<rich:menuItem ajaxSingle="true"   submitMode="client" style="{styleMensajeItemBloqueado}">
-	             <b> No puede procesar esta tarea porque está bloqueada por el usuario {usuarioBloqueadorNombre} desde el: {bloqueadoDesde} </b>  
+        	<rich:menuItem ajaxSingle="true"   submitMode="client" style="{styleLockedStepMessage}">
+	             <b> No puede procesar esta tarea porque está bloqueada por el usuario {userHolds} desde el: {lockedSince} </b>  
 	    	</rich:menuItem>
 
 	    </rich:contextMenu>   
 
 		<rich:datascroller  id="dsUp" 
-        		for="listaTareasTable" maxPages="10" 
-				reRender="frmListaTarea" renderIfSinglePage="false"
+        		for="task_list_table_id" maxPages="10" 
+				reRender="frmTaskList" renderIfSinglePage="false"
 				pageIndexVar="pageIndex" pagesVar="pages">
  			
  			<f:facet name="first">
@@ -72,109 +72,109 @@
                
         </rich:datascroller>		
 	
-	    <rich:dataTable id="listaTareasTable" value="#{consultaTareaBean.lTareas}" 
+	    <rich:dataTable id="task_list_table_id" value="#{consultaTareaBean.lTareas}" 
 	    		onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-	    		var="tarea" width="98%" columnClasses="center"
-	    		rows="8" reRender="frmListaTarea,dsUp,dsDown" style="margin-left: 16px;">
+	    		var="task" width="98%" columnClasses="center"
+	    		rows="8" reRender="frmTaskList,dsUp,dsDown" style="margin-left: 16px;">
 	        <f:facet name="header">
 	            <h:outputText value="#{msg.label_consultaDeTareas} ( #{consultaTareaBean.nResultados} #{msg.label_results} )"/>
 	        </f:facet>
 	
-	        <rich:column sortBy="#{tarea.process.name}" style="width:90px; text-align: left;"> 
+	        <rich:column sortBy="#{task.process.name}" style="width:90px; text-align: left;"> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_proceso}"/>
+	                <h:outputText value="#{msg.label_process}"/>
 	            </f:facet>
 	            <h:outputText value=" ! " style="color: red; font-weight:bold;"
-	            				title="Item bloqueado por otro usuario" 
-	            				rendered="#{tarea.locked eq true and tarea.lockedBy.id!=consultaTareaBean.usuarioLogueado}"/>
+	            				title="#{msg.label_step_locked_by_another_user}" 
+	            				rendered="#{task.locked eq true and task.lockedBy.id!=consultaTareaBean.usuarioLogueado}"/>
 	            <h:outputText value=" ! " style="color: green; font-weight:bold;"
-	            				title="Este item está bloqueado por usted desde el #{tarea.lockedSince}" 
-	            				rendered="#{tarea.locked eq true and tarea.lockedBy.id eq consultaTareaBean.usuarioLogueado}"/>
-	            <h:outputText value="#{tarea.process.name}"/>
+	            				title="#{msg.label_you_holds_this_step_from} #{task.lockedSince}" 
+	            				rendered="#{task.locked eq true and task.lockedBy.id eq consultaTareaBean.usuarioLogueado}"/>
+	            <h:outputText value="#{task.process.name}"/>
 	        </rich:column>
 	
-	        <rich:column sortBy="#{tarea.idObject}" style="width:40px; text-align: left;"> 
+	        <rich:column sortBy="#{task.idObject}" style="width:40px; text-align: left;"> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_referencia}"/>
+	                <h:outputText value="#{msg.label_id}"/>
 	            </f:facet>
-	            <h:outputText value="#{tarea.idObject}" rendered="#{tarea.comments eq nul}"/>
-	            <h:outputText value="#{tarea.reference}" rendered="#{tarea.comments != null}" style="padding: 4px;font-weight: bold;"/>	            
+	            <h:outputText value="#{task.idObject}" rendered="#{task.comments eq nul}"/>
+	            <h:outputText value="#{task.reference}" rendered="#{task.comments != null}" style="padding: 4px;font-weight: bold;"/>	            
 	        </rich:column>
 	
-	        <rich:column sortBy="#{tarea.idObjectType}" style="width:120px; text-align: left;"> 
+	        <rich:column sortBy="#{task.idObjectType}" style="width:120px; text-align: left;"> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_nombre}"/>
+	                <h:outputText value="#{msg.label_related_item}"/>
 	            </f:facet>
-	            <h:outputText value="#{tarea.idObjectType}" rendered="#{tarea.comments eq nul}"/>
-   	            <h:outputText value="#{tarea.comments}" rendered="#{tarea.comments != null}"/>
+	            <h:outputText value="#{task.idObjectType}" rendered="#{task.comments eq nul}"/>
+   	            <h:outputText value="#{task.comments}" rendered="#{task.comments != null}"/>
 	        </rich:column>
 	
-	        <rich:column sortBy="#{tarea.currentStep.name}" style="width:90px; text-align: left;"> 
+	        <rich:column sortBy="#{task.currentStep.name}" style="width:90px; text-align: left;"> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_paso}"/>
+	                <h:outputText value="#{msg.label_step}"/>
 	            </f:facet>
 	            <h:panelGrid columns="1">
-		            <h:outputText value="#{tarea.currentStep.name}"  style="#{tarea.openedDate eq null ? 'font-weight:bold;' : ''}"/>
-		            <h:outputText value="(paso devuelto)" style="color: red;" rendered="#{tarea.sentBack eq true}"/>
+		            <h:outputText value="#{task.currentStep.name}"  style="#{task.openedDate eq null ? 'font-weight:bold;' : ''}"/>
+		            <h:outputText value="(#{msg.label_step_returned})" style="color: red;" rendered="#{task.sentBack eq true}"/>
 	            </h:panelGrid>
 	        </rich:column>
 	        
-	        <rich:column sortBy="#{tarea.arrivingDate}" style="width:50px; text-align: left;"> 
+	        <rich:column sortBy="#{task.arrivingDate}" style="width:50px; text-align: left;"> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_llego_el}"/>
+	                <h:outputText value="#{msg.label_arrived}"/>
 	            </f:facet>
-	            <h:outputText value="#{tarea.arrivingDate}">
+	            <h:outputText value="#{task.arrivingDate}">
 	               	<f:converter converterId="SPDateConverter"/>
 	            </h:outputText>
 	        </rich:column>
 	
-	        <rich:column sortBy="#{tarea.openedDate}" style="width:50px; text-align: left;"> 
+	        <rich:column sortBy="#{task.openedDate}" style="width:50px; text-align: left;"> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_revisado_el}"/>
+	                <h:outputText value="#{msg.label_viewed}"/>
 	            </f:facet>
-	            <h:outputText value="#{tarea.openedDate}">
+	            <h:outputText value="#{task.openedDate}">
 	               	<f:converter converterId="SPDateConverter"/>
 	            </h:outputText>
 	        </rich:column>
 	
-	        <rich:column sortBy="#{tarea.deadlineDate}" style="width:50px; text-align: left; font-weight: bold; "> 
+	        <rich:column sortBy="#{task.deadlineDate}" style="width:50px; text-align: left; font-weight: bold; "> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_F_Limite}"/>
+	                <h:outputText value="#{msg.label_deadline}"/>
 	            </f:facet>
-	            <h:outputText value="#{tarea.deadlineDate}" >
+	            <h:outputText value="#{task.deadlineDate}" >
 	               	<f:converter converterId="SPDateConverter"/>
 	            </h:outputText>
 	        </rich:column>
 	        
-	        <rich:column sortBy="#{tarea.deadlineTime}" style="width:50px; text-align: left;"> 
+	        <rich:column sortBy="#{task.deadlineTime}" style="width:50px; text-align: left;"> 
 	            <f:facet name="header">
-	                <h:outputText value="#{msg.label_horaLimite}"/>
+	                <h:outputText value="#{msg.label_deadline_time}"/>
 	            </f:facet>
-	            <h:outputText value="#{tarea.deadlineTime}">
+	            <h:outputText value="#{task.deadlineTime}">
 	               	<f:convertDateTime pattern="hh:mm" timeZone="GMT+1"/>
 	            </h:outputText>
 	        </rich:column>
 	        
-	         <rich:componentControl event="onRowClick" for="menuProcesarTareas" operation="show">
-	            <f:param value="#{tarea.idObject}" name="id_object"/>
-	            <f:param value="#{tarea.idObjectType}" name="id_object_type"/>
-	            <f:param value="#{tarea.reference}" name="referencia"/>
-	            <f:param value="#{tarea.comments}" name="comentarios"/>
-	            <f:param value="#{tarea.id}" name="id_tarea"/>     
-	            <f:param value="#{tarea.locked eq true and tarea.lockedBy.id!=consultaTareaBean.usuarioLogueado ? 'display:none;' : ''}" name="styleItemProcesar"/>	                      
-	            <f:param value="#{tarea.locked eq true and tarea.lockedBy.id!=consultaTareaBean.usuarioLogueado ? '' : 'display:none;'}" name="styleMensajeItemBloqueado"/>
-				<f:param value="#{tarea.lockedBy.name}" name="usuarioBloqueadorNombre"/>
-				<f:param value="#{tarea.lockedSince}" name="bloqueadoDesde"/>
-          		<f:param value="#{tarea.locked eq true and tarea.lockedBy.id eq consultaTareaBean.usuarioLogueado? '' : 'display:none;'}" name="styleItemDesbloquear"/>
-          		<f:param value="#{tarea.idObjectType == 'com.softpoint.bdc.model.Proyecto' ? '' : 'display:none;'}" name="styleItemVerProyecto"/>
+	         <rich:componentControl event="onRowClick" for="task_process_menu_id" operation="show">
+	            <f:param value="#{task.idObject}" name="object_id"/>
+	            <f:param value="#{task.idObjectType}" name="object_type_id"/>
+	            <f:param value="#{task.reference}" name="relatesTo"/>
+	            <f:param value="#{task.comments}" name="comments"/>
+	            <f:param value="#{task.id}" name="task_id"/>     
+	            <f:param value="#{task.locked eq true and task.lockedBy.id!=consultaTareaBean.usuarioLogueado ? 'display:none;' : ''}" name="styleItemProcess"/>	                      
+	            <f:param value="#{task.locked eq true and task.lockedBy.id!=consultaTareaBean.usuarioLogueado ? '' : 'display:none;'}" name="styleLockedStepMessage"/>
+				<f:param value="#{task.lockedBy.name}" name="userHolds"/>
+				<f:param value="#{task.lockedSince}" name="lockedSince"/>
+          		<f:param value="#{task.locked eq true and task.lockedBy.id eq consultaTareaBean.usuarioLogueado? '' : 'display:none;'}" name="styleItemUnlock"/>
+          		<f:param value="#{task.idObjectType == 'com.softpoint.bdc.model.Proyecto' ? '' : 'display:none;'}" name="styleItemViewProject"/>
 	        </rich:componentControl>        
 	    </rich:dataTable>
 
 	
 		<rich:datascroller  id="dsdown" 
-        		for="listaTareasTable" maxPages="10"  
-				reRender="frmListaTarea" renderIfSinglePage="false"
+        		for="task_list_table_id" maxPages="10"  
+				reRender="frmTaskList" renderIfSinglePage="false"
 				pageIndexVar="pageIndex" pagesVar="pages">
  			
  			<f:facet name="first">

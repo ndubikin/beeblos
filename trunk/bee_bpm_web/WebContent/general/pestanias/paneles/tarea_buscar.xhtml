@@ -33,7 +33,7 @@
 	<h:panelGrid columns="4" style=" width : auto; height : auto; padding-left: 15px;" 
 			columnClasses="colStyle1,colStyle2, colStyle3, colStyle4">
 
-		<h:outputText value="#{msg.label_proceso}:" styleClass="labelForm" />
+		<h:outputText value="#{msg.label_process}:" styleClass="labelForm" />
 		<h:selectOneMenu id="proceso" value="#{consultaTareaBean.idProceso}"
 		 			     style="width:310px; height: 24px; font-size:13px;padding: 3px;">
 			<f:selectItems value="#{consultaTareaBean.lProceso}" />
@@ -41,12 +41,12 @@
 					event="onchange" reRender="id_buscar_paso" />
 		</h:selectOneMenu>	
 		
-        <h:commandButton id="btnBuscar" value="#{msg.label_buscar}"
+        <h:commandButton id="btnBuscar" value="#{msg.label_search}"
 						 style="width:100px;"
 						 action="#{consultaTareaBean.buscarTareas}" />
 		<rich:spacer height="10" />
 		
-		<h:outputText value="#{msg.label_buscar_paso}:"  style="width: 250px; height: 24px; font-size:12px;"/>
+		<h:outputText value="#{msg.label_search_step}:"  style="width: 250px; height: 24px; font-size:12px;"/>
 		<h:selectOneMenu id="id_buscar_paso" value="#{consultaTareaBean.idPasoSeleccionado}"
 		 			     style="width:310px; height: 24px; font-size:13px;padding: 3px;">
 			<f:selectItems value="#{consultaTareaBean.lPasosValidos}" />
@@ -54,23 +54,23 @@
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />
 
-		<h:outputText value="#{msg.label_input_instrucciones_nombre_paso}:" styleClass="firstLeftText" 
+		<h:outputText value="#{msg.label_instructions}:" styleClass="firstLeftText" 
 		  style="width: 250px; height: 24px; font-size:12px;" />
 		<h:inputText id="proveedorNombre" value="#{consultaTareaBean.filtroComentariosYReferencia}"
 			style="width:302px; font-size:13px;	padding: 3px;" />
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />
 
-		<h:outputText value="#{msg.label_llego_el}:"  styleClass="labelForm" />
+		<h:outputText value="#{msg.label_arrived}:"  styleClass="labelForm" />
 		<rich:calendar value="#{consultaTareaBean.procesoFechaLlegado}"
-					   id="procesoFechaLlegado" enableManualInput="true"
+					   id="arrived_date_id" enableManualInput="true"
 					   popup="true" datePattern="#{msg.formatoFecha}" locale="ES" >
 			<rich:ajaxValidator event="oninputblur" />
 		</rich:calendar>
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />
 		
-		<h:outputText value="#{msg.label_revisado_el}:"  styleClass="labelForm" />
+		<h:outputText value="#{msg.label_viewed}:"  styleClass="labelForm" />
 		<rich:calendar value="#{consultaTareaBean.procesoFechaRevisado}"
 					   id="procesoFechaRevisado" enableManualInput="true"
 					   popup="true" datePattern="#{msg.formatoFecha}" locale="ES"  >
@@ -79,7 +79,7 @@
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />
 
-		<h:outputText value="#{msg.label_F_Limite}:"  styleClass="labelForm" />
+		<h:outputText value="#{msg.label_deadline}:"  styleClass="labelForm" />
 		<rich:calendar value="#{consultaTareaBean.proyectoFechaLimite}"
 					   id="procesoFechaLimite" enableManualInput="true"
 					   popup="true" datePattern="#{msg.formatoFecha}" locale="ES"  >
