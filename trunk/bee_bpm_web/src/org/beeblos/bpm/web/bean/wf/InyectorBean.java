@@ -300,6 +300,11 @@ public class InyectorBean  extends CoreManagedBean {
 			logger.info("inyectar: _definicionObjetosDelEntorno: "+mensaje);
 			throw new InyectorException( mensaje );
 
+		} catch (WStepSequenceDefException e) {
+			String mess = "Error intentando definir el paso: No se puede cargar el proceso id:"+idProcesoSeleccionado;
+			mess +=" ERROR:"+e.getMessage()+" - "+ e.getCause();
+			logger.info("inyectar: _definicionObjetosDelEntorno: "+mess);
+			throw new InyectorException( mess );
 		}
 		
 	}

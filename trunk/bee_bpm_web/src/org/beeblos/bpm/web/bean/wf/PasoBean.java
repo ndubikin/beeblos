@@ -222,9 +222,8 @@ public class PasoBean  extends CoreManagedBean {
 			// retrieve routing info from definition
 			List<WStepSequenceDef> caminos 
 							= new WStepSequenceDefBL()
-										.getWStepSequenceDefs(
+										.getStepSequenceDefs(
 												pasoActual.getProcess().getId(), // process
-												pasoActual.getVersion(), 		 // version
 												pasoActual.getCurrentStep().getId(), // current step id
 												usuarioLogueado);			
 			
