@@ -322,7 +322,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			
 			lTareas = (ArrayList<WStepWork>)
 							new WStepWorkBL()
-									.getWorkStepListByProcess(
+									.getWorkListByProcess(
 											idProceso, idPasoSeleccionado, ALIVE, usuarioLogueado, 
 											false, procesoFechaLlegado, procesoFechaRevisado,
 											proyectoFechaLimite,filtroComentariosYReferencia);
@@ -359,7 +359,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			// nes 20110913 HARDCODE
 			lTareasDepto4 = (ArrayList<WStepWork>)
 									new WStepWorkBL()
-										.getWorkStepListByProcess( null, 400, ALIVE, usuarioLogueado, false, null, null, null, "");
+										.getWorkListByProcess( null, 400, ALIVE, usuarioLogueado, false, null, null, null, "");
 										
 			nResultadosDepto4 = lTareasDepto4.size(); // martin - 20101221
 
