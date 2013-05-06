@@ -545,10 +545,10 @@
 				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="version"
-			type="java.lang.Integer">
-			<column name="version" />
-		</property>
+<!-- 		<property generated="never" lazy="false" name="version" -->
+<!-- 			type="java.lang.Integer"> -->
+<!-- 			<column name="version" /> -->
+<!-- 		</property> -->
 		<property generated="never" lazy="false" name="name"
 			type="string">
 			<column length="255" name="name"/>
@@ -572,7 +572,7 @@
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
 			column="id_dest_step" lazy="false" name="toStep" />
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
-			column="id_process" lazy="false" name="process" />
+			column="process_id" lazy="false" name="process" />
 	</class>
 	<class name="org.beeblos.bpm.core.model.WTimeUnit" table="w_time_unit">
 		<id name="id" type="java.lang.Integer">

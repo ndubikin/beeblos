@@ -151,9 +151,9 @@ public class TestWStepWorkBL extends TestCase{
 			
 //			assertEquals(8, routeBL.getWStepSequenceDefs(1001).size());
 			
-			assertEquals(2, routeBL.getWStepSequenceDefs(iproc,version1, 40,1001).size());
-			assertEquals(2, routeBL.getWStepSequenceDefs(iproc,version1, 20,1001).size());
-			assertEquals(1, routeBL.getWStepSequenceDefs(iproc,version1, 10,1001).size());
+			assertEquals(2, routeBL.getStepSequenceDefs(iproc, 40,1001).size());
+			assertEquals(2, routeBL.getStepSequenceDefs(iproc, 20,1001).size());
+			assertEquals(1, routeBL.getStepSequenceDefs(iproc, 10,1001).size());
 			
 			
 			
