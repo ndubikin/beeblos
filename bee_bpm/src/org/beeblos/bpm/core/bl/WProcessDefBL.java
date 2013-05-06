@@ -14,14 +14,15 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
-import org.beeblos.bpm.core.model.WProcess;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 
@@ -68,7 +69,11 @@ public class WProcessDefBL {
 			process.setActive(true);
 
 			process.setProcess(new WProcessBL().getProcessByPK(processHeadId, currentUserId));
-			process.setVersion(FIRST_WPROCESSDEF_VERSION);
+			
+			if (process.getVersion() == null
+					|| process.getVersion().equals(0)){
+				process.setVersion(FIRST_WPROCESSDEF_VERSION);
+			}
 		
 		}
 		
@@ -103,13 +108,96 @@ public class WProcessDefBL {
 			
 	}
 	
-	
-	public void delete(WProcessDef process, Integer currentUserId) throws WProcessDefException {
+	// dml 20130506
+	public boolean delete(WProcessDef process, Integer currentUserId) throws WProcessWorkException, WProcessDefException {
 
 		logger.debug("delete() WProcessDef - Name: ["+process.getName()+"]");
 		
-		new WProcessDefDao().delete(process);
+		if (process != null
+			&& process.getId() != null
+			&& !process.getId().equals(0)){
+		
+			List<ProcessWorkLight> wpwList = 
+					new WProcessWorkBL().getWorkingWorkListFinder(process.getId(), 
+							null, false, null, null, false, null, null, false, null);
+			
+			// si el proceso no tiene works vemos si tiene steps asociados.
+			if (wpwList == null
+					|| wpwList.isEmpty()){
+				
+				new WProcessDefDao().delete(process);
+				return true;
 
+				
+			// si el proceso tiene works avisamos
+			} else {
+				
+				return false;
+				
+			}
+		
+		}
+		
+		return false;
+
+	}
+	
+	// dml 20130506
+	public void deactivateProcess(Integer processId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException{
+		
+		if (processId != null
+				&& !processId.equals(0)){
+			
+			WProcessDef wpd = this.getWProcessDefByPK(processId, currentUserId);
+			
+			if (wpd != null){
+				
+				if (wpd.isActive()){
+					
+					wpd.setActive(false);
+					this.update(wpd, currentUserId);
+					
+				} else {
+
+					String message = "The process you're trying to deactivate is already non active.";
+					logger.error(message);
+					throw new WProcessDefException(message);
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+
+	// dml 20130506
+	public void activateProcess(Integer processId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException{
+		
+		if (processId != null
+				&& !processId.equals(0)){
+			
+			WProcessDef wpd = this.getWProcessDefByPK(processId, currentUserId);
+			
+			if (wpd != null){
+				
+				if (!wpd.isActive()){
+					
+					wpd.setActive(true);
+					this.update(wpd, currentUserId);
+					
+				} else {
+
+					String message = "The process you're trying to activate is already active.";
+					logger.error(message);
+					throw new WProcessDefException(message);
+					
+				}
+				
+			}
+			
+		}
+		
 	}
 
 	public WProcessDef getWProcessDefByPK(Integer id, Integer currentUserId) 

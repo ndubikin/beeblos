@@ -7,6 +7,11 @@
 
 	<div>
 	
+		<h:outputText value="#{msg.label_adding_new_process}" 
+							styleClass="title_style" 
+							rendered="#{wProcessDefFormBean.currentWProcessDef.id==null or wProcessDefFormBean.currentWProcessDef.id==0}"
+							style="margin-left: 32px; margin-bottom: 10px;"/>
+
 		<h:outputText value="#{msg.label_process}: #{wProcessDefFormBean.currentWProcessDef.process.name}" 
 							styleClass="title_style" 
 							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"

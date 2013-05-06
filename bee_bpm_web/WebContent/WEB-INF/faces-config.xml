@@ -239,6 +239,18 @@
   </navigation-case>
  </navigation-rule>
  <navigation-rule>
+  <display-name>WProcessForm</display-name>
+  <from-view-id>/forms/wProcessFormCall.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>FAIL</from-outcome>
+   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>SUCCESS_FORM_WPROCESSDEF</from-outcome>
+   <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
+  </navigation-case>
+</navigation-rule>
+ <navigation-rule>
   <display-name>WStepDefForm</display-name>
   <from-view-id>/forms/wStepDefFormCall.xhtml</from-view-id>
   <navigation-case>

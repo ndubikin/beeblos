@@ -16,6 +16,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
+import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
@@ -153,7 +154,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			nResults = wProcessDefList.size();
 
 		} catch (WProcessDefException e) {
-			e.printStackTrace();
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to search the processes"};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
 		}
 
 		return WPROCESSDEF_QUERY;
@@ -266,8 +272,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			return new WProcessDefUtil().createNewWProcessDef(this.processId, WPROCESSDEF_QUERY);
 			
 		} catch (WProcessDefException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to create the new WProcessDef."};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
 		}
 		
 		return null;
@@ -283,17 +293,28 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			logger.info("Process version id:"+this.id+" has a new cloned version with id:"+newId);
 			
 			this.searchWProcessDefs();
-		
-			// DAVID HAY QUE ARREGLAR PARA QUE LOS ERRORES SE VEAN EN PANTALLA SI SALTA ALGO OK?
+			
 		} catch (WProcessDefException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
 		} catch (WStepSequenceDefException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
 		} catch (WProcessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
 		}
 		
 	}

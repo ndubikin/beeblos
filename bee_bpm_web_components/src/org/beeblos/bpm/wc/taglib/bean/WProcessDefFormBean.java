@@ -255,8 +255,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			logger.error(message);
 			
 		} catch (WStepSequenceDefException e) {
-			// DAVID TE DEJO PARA QUE ARREGLES ESTE ERROR Y Q SE PRESENTE EN PANTALLA OK?
-			e.printStackTrace();
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to load current WProcessDef ..." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+			logger.error(message);
+			
 		}
 
 	}
@@ -306,8 +310,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			String message = e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", ".Error generate current WProcessDef to XML ..." };
 			agregarMensaje("203", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			logger.error(message);			
 			
 		}catch(IOException e){
 			
@@ -559,7 +562,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				+ this.currentId + "] ");
 
 		setShowHeaderMessage(false);
-
+		String message = "";
+		
 		String ret = null;
 
 		// if object already exists in db then update and return
@@ -572,7 +576,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				// storeInRepository();
 			}
 
-			return update();
+			ret = update();
+
+			message = "The process '" + this.currentWProcessDef.getProcess().getName()+ "' has been correctly updated";
+
+			return ret;
+
 		}
 
 		WProcessDefBL wpdBL = new WProcessDefBL();
@@ -587,6 +596,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			this.currentId = wpdBL.add(currentWProcessDef,
 					this.getCurrentUserId());
 
+			message = "The process '" + this.currentWProcessDef.getProcess().getName()+ "' has been correctly added";
+
 			loadCurrentWProcessDef(); // reload object from db
 
 			// Manual process to store attachment in the repository ( if
@@ -594,7 +605,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			if (attachment.getDocumentoNombre() != null
 					&& !"".equals(attachment.getDocumentoNombre())) {
 				// storeInRepository();
+
 				update();
+			
+				message = "The process '" + this.currentWProcessDef.getProcess().getName()+ "' has been correctly updated";
+
 			}
 
 			recoverNullObjects();
@@ -604,10 +619,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			ret = SUCCESS_FORM_WPROCESSDEF;
 
 			setShowHeaderMessage(true);
+			this.messageStyle = this.normalMessageStyle();
+			agregarMensaje(message);
 
 		} catch (WProcessDefException ex1) {
 
-			String message = ex1.getMessage() + " - " + ex1.getCause();
+			message = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { message + ",", ".Please confirm input values." };
 			agregarMensaje("203", message, params, FGPException.ERROR);
 
@@ -615,7 +632,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		} catch (Exception e) {
 
-			String message = e.getMessage() + " - " + e.getCause();
+			message = e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", ".Error inserting object ..." };
 			agregarMensaje("203", message, params, FGPException.ERROR);
 
@@ -1384,18 +1401,19 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 		
 		try {
+
 			currentWProcessDef
 				.setStepSequenceList(
 						new WStepSequenceDefBL()
 							.getStepSequenceList(currentWProcessDef.getId(), this.getCurrentUserId() ) );
+
 		} catch (WStepSequenceDefException e) {
-			// DAVID HAY QUE VER ESTE ERROR DE LA RECARGA DE LA LISTA DE STEPS DE DONDE SE LLAMA PARA 
-			// PRESENTAR MENSAJE EN PANTALLA Y GRABAR LOG OK?
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error reloading step sequence list." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+			logger.error(message);
 			
-			String mess= "Error reloading step sequence list :"+e.getMessage();
-			logger.error(mess);
-			
-			e.printStackTrace();
 		}
 				
 		
@@ -1780,8 +1798,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			arrivingNoticeEmailTemplatesCombo = UtilsVs.castStringPairToSelectitem(new WEmailTemplatesBL().getComboList("Select a template", null));
 		
 		} catch (WEmailTemplatesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			messageStyle=errorMessageStyle();
+			setShowHeaderMessage(true);
+			String message = "WEmailTemplatesException: Method loadArrivingNoticeEmailTemplatesCombo in WProcessDefFormBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", "WEmailTemplatesException" };
+			agregarMensaje("203", message, params, FGPException.WARN);
+			logger.error(message);
+	
 		}
 		
 	}
@@ -1836,8 +1861,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WEmailTemplatesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			messageStyle=errorMessageStyle();
+			setShowHeaderMessage(true);
+			String message = "WEmailTemplatesException: Method loadEmailTemplateVariables in WProcessDefFormBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", "WEmailTemplatesException" };
+			agregarMensaje("203", message, params, FGPException.WARN);
+			logger.error(message);
+	
 		}
 
 	}
@@ -1895,11 +1927,25 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				this.currentWProcessDef.setVersion(lastVersion + 1);
 				
 			} catch (WProcessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				messageStyle=errorMessageStyle();
+				setShowHeaderMessage(true);
+				String message = "WProcessDefException: Method setProcessInWProcessDef in WProcessDefFormBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "WProcessDefException" };
+				agregarMensaje("203", message, params, FGPException.WARN);
+				logger.error(message);
+		
 			} catch (WProcessDefException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				messageStyle=errorMessageStyle();
+				setShowHeaderMessage(true);
+				String message = "WProcessDefException: Method setProcessInWProcessDef in WProcessDefFormBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "WProcessDefException" };
+				agregarMensaje("203", message, params, FGPException.WARN);
+				logger.error(message);
+		
 			}
 			
 		} else {
