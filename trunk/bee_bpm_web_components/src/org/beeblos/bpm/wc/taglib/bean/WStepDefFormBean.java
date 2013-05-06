@@ -767,7 +767,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		try {
 			
-			outgoingRoutes = wssBL.getWStepSequenceDefListByFromStep(this.currObjId, currentWProcessDefId, getCurrentUserId());
+			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, currentWProcessDefId, getCurrentUserId());
 
 			if (outgoingRoutes != null){
 				outgoingRoutesSize = outgoingRoutes.size();
@@ -790,7 +790,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		try {
 
-			incomingRoutes = wssBL.getWStepSequenceDefListByToStep(this.currObjId, currentWProcessDefId, getCurrentUserId());
+			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, currentWProcessDefId, getCurrentUserId());
 
 			if (incomingRoutes != null){
 				incomingRoutesSize = incomingRoutes.size();

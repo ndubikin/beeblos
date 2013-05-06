@@ -157,18 +157,18 @@
 						oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitConfirmarIngresoDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');} else if(#{!documentacionBean.autoGuardarRepositorio}){onsubmitNoAutoGuardarConfirmarIngresoDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
 					</a4j:commandButton>
 
-				 	<a4j:commandButton id="btnIPGuardarAnexos" value="#{msg.label_confirmarModificacion}" rendered="#{documentacionBean.accion eq 'modifDoc'}"
+				 	<a4j:commandButton id="btnIPGuardarAnexos" value="#{msg.label_confirm_data}" rendered="#{documentacionBean.accion eq 'modifDoc'}"
 						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.subirNuevoDocumentoRepositorio}" 
 						reRender="documentacionMessages, infoDocumento, uploadDocument, botoneraAnexos, infoListaDocumentos" disabled="#{!(documentUploadBean.size>0)}" 
 						oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitModificacionDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
 					</a4j:commandButton>
 
-				 	<a4j:commandButton id="btnIPModificarPropiedadesAnexos" value="#{msg.label_confirmarModificacion}" rendered="#{documentacionBean.accion eq 'modifProp'}"
+				 	<a4j:commandButton id="btnIPModificarPropiedadesAnexos" value="#{msg.label_confirm_data}" rendered="#{documentacionBean.accion eq 'modifProp'}"
 						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.modificarPropiedadesDocumento}" 
 						reRender="documentacionMessages, infoListaDocumentos" oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitModificacionDocumento();javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
 					</a4j:commandButton>
 
-				 	<a4j:commandButton id="btnIPEliminarAnexos" value="#{msg.label_confirmarEliminacion}" rendered="#{documentacionBean.accion eq 'elimiDoc'}"
+				 	<a4j:commandButton id="btnIPEliminarAnexos" value="#{msg.label_please_confirm_deletion}" rendered="#{documentacionBean.accion eq 'elimiDoc'}"
 						style="width: 160px; margin-right: 0px;" actionListener="#{documentacionBean.eliminarDocumento}" 
 						reRender="documentacionMessages, infoListaDocumentos" oncomplete="if(#{documentacionBean.flagDocumentoGuardado}){onsubmitEliminarDocumento(#{documentacionBean.documentoAdjunto.docId});javascript:Richfaces.hideModalPanel('fp_panelDocumento');}" >
 					</a4j:commandButton>
