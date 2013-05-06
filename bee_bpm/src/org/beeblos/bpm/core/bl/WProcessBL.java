@@ -80,6 +80,10 @@ public class WProcessBL {
 		return new WProcessDao().getWProcessByName(name);
 	}
 
+	public String getProcessName(Integer id) throws WProcessDefException {
+		return new WProcessDao().getProcessName(id);
+	}
+	
 	
 	public List<WProcess> getWProcessList(Integer currentUser) throws WProcessException {
 

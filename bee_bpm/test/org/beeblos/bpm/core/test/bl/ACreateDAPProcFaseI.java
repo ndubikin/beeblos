@@ -110,7 +110,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(14, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Propuesta incompleta")? resp.getId().toString()+"|":"");
@@ -126,7 +125,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(20, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Para valorar")? resp.getId().toString()+"|":"");
@@ -142,7 +140,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(null);
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Propuesta denegada")? resp.getId().toString()+"|":"");
@@ -171,7 +168,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(10, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -205,7 +201,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(30, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -221,7 +216,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(710, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Proyecto Editorial")? resp.getId().toString()+"|":"");
@@ -237,7 +231,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(320, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Actividad de Musica")? resp.getId().toString()+"|":"");
@@ -266,7 +259,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(30, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -295,7 +287,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(null);
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -323,7 +314,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(200, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -355,7 +345,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(22, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("A estudio")? resp.getId().toString()+"|":"");
@@ -371,7 +360,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(220, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Aprobada")? resp.getId().toString()+"|":"");
@@ -387,7 +375,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(42, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Denegada - aviso email")? resp.getId().toString()+"|":"");
@@ -404,7 +391,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(222, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Denegada - envio postal")? resp.getId().toString()+"|":"");
@@ -434,7 +420,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(24, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -463,7 +448,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(200, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -492,7 +476,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(50, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -508,7 +491,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(400, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -538,7 +520,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(null);
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -567,7 +548,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(null);
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -601,7 +581,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(700, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("Requiere publicacion")? resp.getId().toString()+"|":"");
@@ -617,7 +596,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(null);
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
 				respuestasValidas+= (resp.getName().contains("No requiere publicacion")? resp.getId().toString()+"|":"");
@@ -648,7 +626,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(250, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -664,7 +641,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(stepBL.getWStepDefByPK(56, user));
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("OK")? resp.getId().toString()+"|":"");
@@ -696,7 +672,6 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setFromStep(paso);
 			ruta.setToStep(null);
 			ruta.setProcess(process);
-			ruta.setVersion(1);
 			respuestasValidas = "";
 //			for (WStepResponseDef resp: paso.getResponse()) {
 //				respuestasValidas+= (resp.getName().contains("No requiere publicacion")? resp.getId().toString()+"|":"");

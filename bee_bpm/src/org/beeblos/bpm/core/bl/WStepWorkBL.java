@@ -290,20 +290,20 @@ public class WStepWorkBL {
 	// lanza un workflow
 	public Integer run(
 			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser) 
-	throws WProcessDefException, WStepDefException, WStepWorkException {
+	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException {
 	
 		
 		if ( ! existsActiveProcess(idProcess, idObject, idObjectType, currentUser) ) {
 		
-			WProcessDef process = new WProcessDefBL().getWProcessDefByPK(idProcess, currentUser);
-			WStepDef stepDef = new WStepDefBL().getWStepDefByPK(process.getBeginStep().getId(), currentUser);
+			WProcessDef processVersion = new WProcessDefBL().getWProcessDefByPK(idProcess, currentUser);
+			WStepDef stepDef = new WStepDefBL().getWStepDefByPK(processVersion.getBeginStep().getId(), currentUser);
 			
 			WStepWork stepWork = new WStepWork();
 	
 			Date now = new Date();
 	
 			// seteo paso 
-			_setStepWork(idObject, idObjectType, currentUser, process, stepDef, stepWork,
+			_setStepWork(idObject, idObjectType, currentUser, processVersion, stepDef, stepWork,
 					now);
 			
 			Integer idStepWork = this.add(stepWork, currentUser); // inserta en la tala de step work
@@ -574,9 +574,8 @@ public class WStepWorkBL {
 		
 		// load routes from current step
 		List<WStepSequenceDef> routes = new WStepSequenceDefBL()
-												.getWStepSequenceDefs(
+												.getStepSequenceDefs(
 														currentStepWork.getProcess().getId(), 
-														currentStepWork.getVersion(), 
 														currentStepWork.getCurrentStep().getId(),
 														currentUser);
 		

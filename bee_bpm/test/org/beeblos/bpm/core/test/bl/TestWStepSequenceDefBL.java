@@ -73,7 +73,6 @@ public class TestWStepSequenceDefBL extends TestCase{
 			route.setProcess(process);
 			route.setFromStep(stepBL.getWStepDefByPK(800, 1002));
 			route.setToStep(stepBL.getWStepDefByPK(20, 1002));
-			route.setVersion(version1);
 			route.setEnabled(true);
 			
 			iroute = routeBL.add(route,1000);
@@ -83,7 +82,6 @@ public class TestWStepSequenceDefBL extends TestCase{
 			assertEquals(iroute, wss.getId());
 			assertEquals(new Integer(800), wss.getFromStep().getId());
 			assertEquals(new Integer(20), wss.getToStep().getId());
-			assertEquals(version1, wss.getVersion());
 			assertTrue(wss.isEnabled());
 
 			
@@ -150,9 +148,9 @@ public class TestWStepSequenceDefBL extends TestCase{
 			
 			assertEquals(8, routeBL.getWStepSequenceDefs(1001).size());
 			
-			assertEquals(2, routeBL.getWStepSequenceDefs(iproc,version1, 40,1001).size());
-			assertEquals(2, routeBL.getWStepSequenceDefs(iproc,version1, 20,1001).size());
-			assertEquals(1, routeBL.getWStepSequenceDefs(iproc,version1, 10,1001).size());
+			assertEquals(2, routeBL.getStepSequenceDefs(iproc, 40,1001).size());
+			assertEquals(2, routeBL.getStepSequenceDefs(iproc, 20,1001).size());
+			assertEquals(1, routeBL.getStepSequenceDefs(iproc, 10,1001).size());
 			
 			// single route delete
 //			routeBL.deleteRoute(route4, 1002);

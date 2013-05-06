@@ -17,8 +17,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private WProcessDef process;
-	private Integer version;
+	private WProcessDef process; // refers directly a version of the process
 	private String name;
 	private WStepDef fromStep;
 	private WStepDef toStep;
@@ -53,7 +52,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		super();
 		this.id = id;
 		this.process = process;
-		this.version = version;
+		//this.version = version;
 		this.fromStep = fromStep;
 		this.toStep = toStep;
 		this.enabled = enabled;
@@ -68,7 +67,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		super();
 	
 		this.process = process;
-		this.version = version;
+		//this.version = version;
 		this.fromStep = fromStep;
 		this.toStep = toStep;
 		this.enabled = enabled;
@@ -93,18 +92,18 @@ public class WStepSequenceDef implements java.io.Serializable {
 	/**
 	 * @return the version
 	 */
-	public Integer getVersion() {
-		return version;
-	}
+//	public Integer getVersion() {
+//		return version;
+//	}
 
 
 
 	/**
 	 * @param version the version to set
 	 */
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+//	public void setVersion(Integer version) {
+//		this.version = version;
+//	}
 
 
 
@@ -283,7 +282,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + ((toStep == null) ? 0 : toStep.hashCode());
 		result = prime * result
 				+ ((validResponses == null) ? 0 : validResponses.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
+//		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -332,11 +331,11 @@ public class WStepSequenceDef implements java.io.Serializable {
 				return false;
 		} else if (!validResponses.equals(other.validResponses))
 			return false;
-		if (version == null) {
-			if (other.version != null)
-				return false;
-		} else if (!version.equals(other.version))
-			return false;
+//		if (version == null) {
+//			if (other.version != null)
+//				return false;
+//		} else if (!version.equals(other.version))
+//			return false;
 		return true;
 	}
 
@@ -345,7 +344,8 @@ public class WStepSequenceDef implements java.io.Serializable {
 	@Override
 	public String toString() {
 		return "WStepSequenceDef [id=" + id + ", process=" + process
-				+ ", version=" + version + ", name=" + name + ", fromStep="
+//				+ ", version=" + version 
+				+ ", name=" + name + ", fromStep="
 				+ fromStep + ", toStep=" + toStep + ", enabled=" + enabled
 				+ ", afterAll=" + afterAll + ", validResponses="
 				+ validResponses + ", insertUser=" + insertUser

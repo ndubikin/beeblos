@@ -2,8 +2,10 @@ package org.beeblos.bpm.core.model;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,6 +60,11 @@ public class WProcessDef implements java.io.Serializable {
 	// MANY2MANY
 	Set<WProcessRole> rolesRelated=new HashSet<WProcessRole>();
 	Set<WProcessUser> usersRelated=new HashSet<WProcessUser>();
+	
+	// nes 20130502 - traje desde backing bean ...
+	// se carga "a mano" en la BL pues no está mapeado por hibernate
+	private List<WStepDef> lSteps = new ArrayList<WStepDef>(); 
+	private List<WStepSequenceDef> stepSequenceList; 
 	
 	public WProcessDef() {
 		super();
@@ -360,6 +367,24 @@ public class WProcessDef implements java.io.Serializable {
 		this.arrivingUserNoticeTemplate = arrivingUserNoticeTemplate;
 	}
 
+	public List<WStepDef> getlSteps() {
+		return lSteps;
+	}
+
+	public void setlSteps(List<WStepDef> lSteps) {
+		this.lSteps = lSteps;
+	}
+
+
+	public List<WStepSequenceDef> getStepSequenceList() {
+		return stepSequenceList;
+	}
+
+
+	public void setStepSequenceList(List<WStepSequenceDef> stepSequenceList) {
+		this.stepSequenceList = stepSequenceList;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -571,6 +596,7 @@ public class WProcessDef implements java.io.Serializable {
 		return true;
 	}
 	
+
 	public void addRole( WRoleDef role, boolean admin, Integer idObject, String idObjectType, Integer insertUser ) {
 		WProcessRole wpr = new WProcessRole(admin, idObject, idObjectType, insertUser, new Date() );
 		wpr.setProcess(this);

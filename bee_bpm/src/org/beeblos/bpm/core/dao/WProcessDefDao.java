@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.model.ObjectM;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -159,8 +160,42 @@ public class WProcessDefDao {
 		return process;
 	}
 
+	// versionId = id from WProcessDef table
+	public String getProcessNameByVersionId(Integer versionId) throws WProcessDefException {
+
+		String name = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			name = (String) session
+					.createQuery("select WProcess.name from WProcess where WProcess.id = (select WProcessDef.processId where WProcessDef.id = :id)")
+						.setInteger("id",versionId)
+						.uniqueResult();
+
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDefDao: getWProcessDefByPK - we can't obtain the required id = "+
+					versionId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessDefException("WProcessDefDao: getWProcessDefByPK - we can't obtain the required id : " + 
+					versionId + " - " + ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		return name;
+	}
+	
 	// dml 20130430
-	public Integer getLastWProcessDefVersion(Integer processId) throws WProcessDefException {
+	public Integer getLastVersionNumber(Integer processId) throws WProcessDefException {
 	
 		Integer version = null;
 		org.hibernate.Session session = null;
