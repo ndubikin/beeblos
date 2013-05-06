@@ -171,12 +171,16 @@ public class WStepWorkBL {
 
 	
 	public Boolean existsActiveProcess(
-			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser ) 
+			Integer processId, Integer idObject, String idObjectType, Integer currentUser ) 
 	throws WStepWorkException {
 		
-		return new WStepWorkDao().existsActiveProcess(idProcess, idObject, idObjectType);
+		return new WStepWorkDao().existsActiveProcess(processId, idObject, idObjectType);
 	}
 
+	public Integer getWorkCount (Integer processId, String mode) throws WStepWorkException {
+		return new WStepWorkDao().getWorkCount(processId, mode);
+	}
+	
 	/*
 	 ********************** MÉTODOS PARA RECUPERAR LISTAS DE PASOS  ****************************************
 	 */
@@ -211,30 +215,30 @@ public class WStepWorkBL {
 	
 	// retrieves workitems for a process
 	// status: null=all, A=alive P=Processed
-	public List<WStepWork> getStepListByProcess(
+	public List<WStepWork> getWorkListByProcessAndStatus(
 			Integer idProcess, String status, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
 		// TODO: filtrar para el usuario que lo solicita		
-		return new WStepWorkDao().getStepListByProcess(idProcess, status);
+		return new WStepWorkDao().getWorkListByProcessAndStatus(idProcess, status);
 		
 		
 	}
 
 
 	// retrieves workitems for a process and a step ( idCurrentStep ) 
-	public List<WStepWork> getStepListByProcess(
+	public List<WStepWork> getWorkListByProcessAndStep(
 			Integer idProcess, Integer idCurrentStep, Integer currentUser, String status ) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
 		// TODO: filtrar para el usuario que lo solicita
 		
-		return new WStepWorkDao().getStepListByProcess(idProcess, idCurrentStep, status);
+		return new WStepWorkDao().getWorkListByProcessAndStep(idProcess, idCurrentStep, status);
 		
 		
 	}
 
-	public List<WStepWork> getWorkStepListByProcess (
+	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
 			Date arrivingDate, Date openedDate,	Date deadlineDate, 
@@ -242,7 +246,7 @@ public class WStepWorkBL {
 	throws WStepWorkException {
 		
 		return new WStepWorkDao()
-						.getWorkStepListByProcess(
+						.getWorkListByProcess(
 								idProcess, idCurrentStep, status,
 								userId, isAdmin, arrivingDate, openedDate, 
 								deadlineDate, filtroComentariosYReferencia);
@@ -254,31 +258,31 @@ public class WStepWorkBL {
 			
 
 	// recupera los workitems de 1 objeto para 1 proceso dado
-	public List<WStepWork> getStepListByProcess(
+	public List<WStepWork> getWorkListByProcess(
 			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
 		
-		return new WStepWorkDao().getStepListByProcess(idProcess, idObject, idObjectType, currentUser);
+		return new WStepWorkDao().getWorkListByProcess(idProcess, idObject, idObjectType, currentUser);
 		
 	}
 
 
 	//rrl 20110118: recupera los workitems de 1 objeto dado
-	public List<WStepWork> getStepListByIdObject(
+	public List<WStepWork> getWorkListByIdObject(
 			Integer idObject, String idObjectType, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
-		return new WStepWorkDao().getStepListByIdObject(idObject, idObjectType, currentUser);
+		return new WStepWorkDao().getWorkListByIdObject(idObject, idObjectType, currentUser);
 		
 	}
 	
 	//rrl 20110118: recupera los workitems de 1 objeto dado
-	public List<WStepWork> getStepListByIdWork(
+	public List<WStepWork> getWorkListByIdWork(
 			Integer idWork, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
-		return new WStepWorkDao().getStepListByIdWork(idWork, currentUser);
+		return new WStepWorkDao().getWorkListByIdWork(idWork, currentUser);
 		
 	}
 	
@@ -1190,7 +1194,7 @@ public class WStepWorkBL {
 		return new WStepWorkDao().getStepListByProcessName(idProcess, arrivingDate, openedDate, deadlineDate, status, currentUser);
 	}
 	
-	public List<StepWorkLight> getWorkingStepListFinder(Integer processIdFilter, 
+	public List<StepWorkLight> workingStepFinder(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
@@ -1199,7 +1203,7 @@ public class WStepWorkBL {
 			String action, boolean onlyActiveWorkingProcessesFilter)
 	throws WStepWorkException {
 
-		return new WStepWorkDao().getWorkingStepListFinder(processIdFilter, stepIdFilter, 
+		return new WStepWorkDao().workingStepFinder(processIdFilter, stepIdFilter, 
 				stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 				finalArrivingDateFilter, estrictArrivingDateFilter, 
 				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
