@@ -289,21 +289,21 @@ public class WStepWorkBL {
 
 	// lanza un workflow
 	public Integer run(
-			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser) 
+			Integer processId, Integer idObject, String idObjectType, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException {
 	
 		
-		if ( ! existsActiveProcess(idProcess, idObject, idObjectType, currentUser) ) {
+		if ( ! existsActiveProcess(processId, idObject, idObjectType, currentUser) ) {
 		
-			WProcessDef processVersion = new WProcessDefBL().getWProcessDefByPK(idProcess, currentUser);
-			WStepDef stepDef = new WStepDefBL().getWStepDefByPK(processVersion.getBeginStep().getId(), currentUser);
+			WProcessDef process = new WProcessDefBL().getWProcessDefByPK(processId, currentUser);
+			WStepDef stepDef = new WStepDefBL().getWStepDefByPK(process.getBeginStep().getId(), currentUser);
 			
 			WStepWork stepWork = new WStepWork();
 	
 			Date now = new Date();
 	
 			// seteo paso 
-			_setStepWork(idObject, idObjectType, currentUser, processVersion, stepDef, stepWork,
+			_setStepWork(idObject, idObjectType, currentUser, process, stepDef, stepWork,
 					now);
 			
 			Integer idStepWork = this.add(stepWork, currentUser); // inserta en la tala de step work
@@ -312,7 +312,7 @@ public class WStepWorkBL {
 
 		} else {
 			throw new WStepWorkException("WStepWorkBL: Already exists a step for this [process id:"
-					+idProcess
+					+processId
 					+" and object type " + idObjectType 
 					+" with id:"+idObject+"]") ;
 		}

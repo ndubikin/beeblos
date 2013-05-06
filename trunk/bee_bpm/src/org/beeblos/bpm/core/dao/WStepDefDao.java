@@ -341,8 +341,7 @@ public class WStepDefDao {
 	// returns a list with step names
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
-			Integer processId, Integer versionId,
-			String firstLineText, String blank )
+			Integer processId, String firstLineText, String blank )
 	throws WProcessDefException {
 		 
 			List<Object> lwsd = null;
@@ -358,9 +357,8 @@ public class WStepDefDao {
 				tx.begin();
 
 				lwsd = session
-							.createQuery("select distinct w.id, w.name, w.stepComments from WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and ws.version=? and w.id=ws.fromStep.id order by w.name")
+							.createQuery("select distinct w.id, w.name, w.stepComments from WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.name")
 							.setParameter(0, processId)
-							.setParameter(1, versionId)
 							.list();
 
 				if (lwsd!=null) {
