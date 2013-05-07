@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form>
+	
+		<a4j:jsFunction name="activateDelete" 
+			ajaxSingle="true" 
+			actionListener="#{wProcessDefQueryBean.activateDelete}" 
+			reRender="button_panel" />
+	
+	</h:form>
+
+	<h:form>
+
+		<h:panelGrid column="1">
+		
+			<h:panelGroup>
+				<h:outputText value="#{msg.label_please_confirm_deleting_process}: " 
+					style="font-size:13px;"/>
+				<h:outputText value="#{wProcessDefQueryBean.currentWProcessDef.process.name}, #{msg.label_version}: #{wProcessDefQueryBean.currentWProcessDef.version} (id: #{wProcessDefQueryBean.currentWProcessDef.id})" 
+					style="font-size:13px;"/>
+			</h:panelGroup>
+
+			<h:panelGroup>
+				<h:selectBooleanCheckbox value="#{wProcessDefQueryBean.tmpDeleteRelatedStepsPopup}"
+					style="margin-right:5px;vertical-align:middle;" />
+				<h:outputText value="#{msg.label_delete_related_steps} " />
+			</h:panelGroup>
+			
+			<rich:spacer height="10" />
+	
+			<h:panelGroup id="button_panel">
+				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
+					onclick="javascript:Richfaces.hideModalPanel('mpDeleteWProcessDef')"
+					disabled="#{wProcessDefQueryBean.tmpDeletingWProcessDefPopup}"
+					style="width:80px; height:24px;" />
+				<a4j:commandButton id="delete_button" value="#{msg.label_delete}"
+					action="#{wProcessDefQueryBean.deleteWProcessDef}"
+					onclick="activateDelete();"
+					oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWProcessDef');"
+					reRender="w_process_def_form${action}, messages"
+					disabled="#{wProcessDefQueryBean.tmpDeletingWProcessDefPopup}"
+					style="width:120px; margin-left: 10px; height:24px;" />
+				<h:outputText value="#{msg.label_wait}: #{msg.label_deleting_process}..." 
+					style="margin-left:10px;color:red;"
+					rendered="#{wProcessDefQueryBean.tmpDeletingWProcessDefPopup}"/>
+			</h:panelGroup>
+	
+		</h:panelGrid>
+	
+	</h:form>
+	
+</ui:composition>

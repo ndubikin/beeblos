@@ -1,6 +1,9 @@
 package org.beeblos.bpm.core.dao;
 
-import java.text.SimpleDateFormat;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
+import static org.beeblos.bpm.core.util.Constants.PROCESSED;
+
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,8 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.WProcessWork;
-import org.beeblos.bpm.core.model.noper.StringPair;
-import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
@@ -411,6 +412,53 @@ public class WProcessWorkDao {
 
 		return returnList;
 	}	
+
+	// returns # existing works in WStepWork
+	public Integer getWorkCount (Integer processId, String mode) 
+			throws WProcessWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		BigInteger qtySteps;
+
+		String query = "SELECT COUNT(*) FROM w_process_work wpw WHERE wpw.id_process = " + processId;
+		
+		if (mode.equals(ALIVE)) {
+			query += " AND wsw.decided_date is null";
+		} else if (mode.equals(PROCESSED)) {
+			query += " AND wsw.decidedDate is not null";
+		}
+		
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			qtySteps = (BigInteger) session
+								.createSQLQuery(query)
+								.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="WProcessWorkDao: getWorkCount() - error trying count processWork - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WProcessWorkException(mess);
+
+		}
+		
+		if (qtySteps != null){
+			return qtySteps.intValue();
+		}
+		
+		return 0;		
+	}
 
 }
 	

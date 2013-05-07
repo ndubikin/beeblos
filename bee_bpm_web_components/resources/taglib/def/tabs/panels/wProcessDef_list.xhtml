@@ -30,11 +30,18 @@
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.processId}" value="{currentRowProcessId}"/>
             	</rich:menuItem>
      	      	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.cloneWProcessDef}" submitMode="server"
-     	      		reRender="w_process_def_list_table">
+     	      		reRender="w_process_def_list_table, messages">
                 	<b> #{msg.label_clone_this_process_version}</b> {currentRowId} (version: {currentRowVersion}) 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
                 	<a4j:actionparam name="det2" assignTo="#{wProcessDefQueryBean.processId}" value="{currentRowProcessId}"/>
             	</rich:menuItem>
+           		<rich:menuItem ajaxSingle="true" 
+           			action="#{wProcessDefQueryBean.loadWProcessDefObject}"
+           			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteWProcessDef');"
+           			reRender="mpDeleteWProcessDef">
+                 	<b> #{msg.label_delete} #{msg.label_process}</b> {currentRowId} (version: {currentRowVersion}) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+             	</rich:menuItem>
             	<rich:menuSeparator />         
            	<rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.generateXmlWProcessDef}" submitMode="server">
@@ -90,7 +97,11 @@
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_name}" />
 					</f:facet>
-					<h:outputText value="#{wpd.name}" />
+					<h:commandLink value="#{wpd.name}" 
+						action="#{wProcessDefQueryBean.loadWProcessDefForm}"
+						style="text-decoration:none; color:black;">
+                		<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="#{wpd.id}"/>
+					</h:commandLink>
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.version}"

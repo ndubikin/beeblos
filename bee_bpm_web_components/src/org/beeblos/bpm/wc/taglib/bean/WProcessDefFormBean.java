@@ -61,6 +61,7 @@ import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
@@ -1956,6 +1957,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	}
 
-	
+	// dml 20120104
+	public String loadWProcessForm() {
+
+		return new WProcessDefUtil().loadWProcessFormBean(this.currentId);
+
+	}
 	
 }

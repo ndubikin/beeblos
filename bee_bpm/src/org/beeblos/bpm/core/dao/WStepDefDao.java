@@ -274,6 +274,48 @@ public class WStepDefDao {
 	
 	}	
 	
+	// dml 20130507
+	@SuppressWarnings("unchecked")
+	public List<Integer> getProcessIdList(Integer stepId) throws WStepDefException {
+	
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<Integer> processIdList = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			String query =  " SELECT DISTINCT(wssd.process_id) " +
+							" FROM w_step_sequence_def wssd " +
+							" WHERE (wssd.id_origin_step = :stepId OR wssd.id_dest_step = :stepId) ";
+			
+			System.out.println("[QUERY]: "+query);
+			
+			processIdList = (ArrayList<Integer>) session.createSQLQuery(query)
+					.setInteger("stepId", stepId)
+					.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "WStepDefDao: getProcessIdList() - can't obtain id process list - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WStepDefException(mess);
+
+		}
+
+		return processIdList;
+	
+	}	
+	
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )

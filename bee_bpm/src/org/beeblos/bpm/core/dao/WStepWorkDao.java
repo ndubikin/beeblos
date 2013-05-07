@@ -3,6 +3,7 @@ package org.beeblos.bpm.core.dao;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -979,14 +980,14 @@ public class WStepWorkDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		Integer qtySteps=0;
+		BigInteger qtySteps;
 
-		String query = "From WStepWork Where process.id="+processId;
+		String query = "SELECT COUNT(*) FROM w_step_work wsw WHERE wsw.id_process = " + processId;
 		
 		if (mode.equals(ALIVE)) {
-			query += " AND decidedDate is null";
+			query += " AND wsw.decided_date is null";
 		} else if (mode.equals(PROCESSED)) {
-			query += " AND decidedDate is not null";
+			query += " AND wsw.decidedDate is not null";
 		}
 		
 		try {
@@ -996,9 +997,8 @@ public class WStepWorkDao {
 
 			tx.begin();
 
-			qtySteps =  
-					(Integer) session
-								.createQuery(query)
+			qtySteps = (BigInteger) session
+								.createSQLQuery(query)
 								.uniqueResult();
 
 			tx.commit();
@@ -1013,7 +1013,11 @@ public class WStepWorkDao {
 
 		}
 		
-		return qtySteps;		
+		if (qtySteps != null){
+			return qtySteps.intValue();
+		}
+		
+		return 0;		
 	}
 	
 	
@@ -1129,7 +1133,47 @@ public class WStepWorkDao {
 		return stepws;
 	}
 	
+	// dml 20130507
+	@SuppressWarnings("unchecked")
+	public List<Integer> getProcessIdList(Integer stepId) throws WStepWorkException {
+	
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
 
+		List<Integer> processIdList = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			String query =  " SELECT DISTINCT(wsw.id_process) " +
+							" FROM w_step_work wsw " +
+							" WHERE (wsw.id_current_step = :stepId OR wsw.id_previous_step = :stepId) ";
+			
+			System.out.println("[QUERY]: "+query);
+			
+			processIdList = (ArrayList<Integer>) session.createSQLQuery(query)
+					.setInteger("stepId", stepId)
+					.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "WStepWorkDao: getProcessIdList() - can't obtain id process list - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+
+		}
+
+		return processIdList;
+	
+	}	
 
 	public List<StepWorkLight> workingStepFinder(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 

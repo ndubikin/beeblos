@@ -296,7 +296,7 @@ public class TestWStepWorkBL extends TestCase{
 			
 			
 			// ahora borro el proceso
-			new WProcessDefBL().delete( process,1000) ;
+			new WProcessDefBL().delete( iproc, false,1000) ;
 //			assertNull(processBL.getWProcessDefByPK(iproc,"Juancito"));
 		
 
