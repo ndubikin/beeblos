@@ -1,6 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.util.ArrayList;
@@ -12,7 +13,10 @@ import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -38,7 +42,6 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	private String additionalZoneFilter;
 	
 	private Integer currentUserId;
-	
 
 	private List<WProcessDef> wProcessDefList = new ArrayList<WProcessDef>();
 
@@ -48,9 +51,15 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 							// ultimas modificaciones
 
 	private Integer id;
+	private WProcessDef currentWProcessDef; // dml 20130507 - object used to show information in the delete wprocessdef popup (currently, but it would be used by other methods)
 	private Integer processId; // dml 20130506 - id from the "WProcess" which is inside the current "WProcessDef" (id=WProcessDef.id)
-
+	private boolean tmpDeletingWProcessDefPopup;
+	
 	private TimeZone timeZone;
+	
+	private boolean tmpDeleteRelatedStepsPopup;
+
+	private String messageStyle;
 
 	public WProcessDefQueryBean() {
 		super();
@@ -80,6 +89,10 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		
 		this.id = 0;
 		this.processId = 0;
+		
+		this.currentWProcessDef = new WProcessDef(EMPTY_OBJECT);
+		
+		this.tmpDeleteRelatedStepsPopup = false;
 		
 		// reset session wProcessDefFormBean
 		HelperUtil
@@ -234,6 +247,22 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 	
 
+	public boolean isTmpDeleteRelatedStepsPopup() {
+		return tmpDeleteRelatedStepsPopup;
+	}
+
+	public void setTmpDeleteRelatedStepsPopup(boolean tmpDeleteRelatedStepsPopup) {
+		this.tmpDeleteRelatedStepsPopup = tmpDeleteRelatedStepsPopup;
+	}
+
+	public WProcessDef getCurrentWProcessDef() {
+		return currentWProcessDef;
+	}
+
+	public void setCurrentWProcessDef(WProcessDef currentWProcessDef) {
+		this.currentWProcessDef = currentWProcessDef;
+	}
+
 	public Integer getCurrentUserId() {
 		if ( currentUserId== null ) {
 			ContextoSeguridad cs = (ContextoSeguridad)
@@ -257,6 +286,22 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	}
 	
+	public boolean isTmpDeletingWProcessDefPopup() {
+		return tmpDeletingWProcessDefPopup;
+	}
+
+	public void setTmpDeletingWProcessDefPopup(boolean tmpDeletingWProcessDefPopup) {
+		this.tmpDeletingWProcessDefPopup = tmpDeletingWProcessDefPopup;
+	}
+
+	public String getMessageStyle() {
+		return messageStyle;
+	}
+
+	public void setMessageStyle(String messageStyle) {
+		this.messageStyle = messageStyle;
+	}
+
 	//rrl 20120117
 	public String generateXmlWProcessDef() {
 
@@ -290,10 +335,14 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		try {
 			
 			Integer newId = new WProcessDefBL().cloneWProcessDef(this.id, this.processId,getCurrentUserId());
-			logger.info("Process version id:"+this.id+" has a new cloned version with id:"+newId);
 			
 			this.searchWProcessDefs();
 			
+			String message = "Process version id:"+this.id+" has a new cloned version with id:"+newId;
+			this.messageStyle = normalMessageStyle();
+			agregarMensaje(message);
+			logger.info(message);
+
 		} catch (WProcessDefException e) {
 
 			String message = e.getMessage() + " - " + e.getCause();
@@ -323,6 +372,116 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	public String createNewWProcess() {
 
 		return new WProcessDefUtil().createNewWProcess(WPROCESSDEF_QUERY);
+		
+	}
+	
+	// dml 20130507
+	public String deleteWProcessDef(){
+		
+		setShowHeaderMessage(true);
+
+		if (this.id != null
+				&& !this.id.equals(0)){
+			
+			try {
+				
+				new WProcessDefBL().delete(this.id, this.tmpDeleteRelatedStepsPopup, getCurrentUserId());
+				
+				this.tmpDeleteRelatedStepsPopup = false;
+				this.tmpDeletingWProcessDefPopup = false;
+				this.searchWProcessDefs();
+				
+				String message = "The process '" + this.currentWProcessDef.getProcess().getName() 
+						+ "' version: '" + this.currentWProcessDef.getVersion() + "' has been correctly deleted";
+				this.messageStyle = normalMessageStyle();
+				agregarMensaje(message);
+				logger.info(message);
+				
+			} catch (WProcessWorkException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WProcessDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WStepSequenceDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WStepWorkException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WProcessException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WStepDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
+	// dml 20130507
+	public void activateDelete(){
+		
+		tmpDeletingWProcessDefPopup = true;
+		
+	}
+	
+	// dml 20130507
+	public void loadWProcessDefObject(){
+		
+		if (this.id != null
+				&& !this.id.equals(0)){
+			
+			try {
+				
+				this.tmpDeletingWProcessDefPopup = false;
+				this.currentWProcessDef = new WProcessDefBL().getWProcessDefByPK(this.id, getCurrentUserId());
+				
+			} catch (WProcessDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to load process: id=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+				
+			} catch (WStepSequenceDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to load process: id=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+				
+			}
+			
+		}
 		
 	}
 

@@ -104,6 +104,45 @@ public class WStepDefBL {
 	
 	}
 	
+	// dml 20130507
+	public List<Integer> getProcessIdList(Integer stepId, Integer userId) throws WStepDefException{
+		
+		return new WStepDefDao().getProcessIdList(stepId);
+		
+	}
+	
+	// dml 20130507
+	public boolean isAnotherProcessUsingStep(Integer stepId, Integer processId, Integer userId) 
+			throws WStepDefException, WProcessDefException {
+
+		if (stepId == null
+				|| stepId.equals(0)
+				|| processId == null
+				|| processId.equals(0)){
+			String mess = "stepId and processId cannot be null or zero";
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+
+		List<Integer> processIdList = this.getProcessIdList(stepId, userId);
+		
+		if (processIdList == null){
+			String mess = "Error trying to retrieve the processIdList:"+processId;
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+			
+		for (Integer pid : processIdList){
+			
+			if (!pid.equals(processId)){
+				return true;
+			}
+			
+		} 
+
+		return false;
+	
+	}	
 	
 	public List<StringPair> getComboList(
 			String firstLineText, String blank )

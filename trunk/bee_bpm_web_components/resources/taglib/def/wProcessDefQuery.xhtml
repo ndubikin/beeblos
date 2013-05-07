@@ -6,6 +6,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
+	<ui:include src="../common/mpDeleteWProcessDef.xhtml"/>
+
 	<rich:tabPanel switchType="server"
 		selectedTab="#{componentNavigator.currentComponent.activeTab}"
 		valueChangeListener="#{componentNavigator.tabPanelSwitched}">

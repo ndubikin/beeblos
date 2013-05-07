@@ -8,7 +8,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessWorkDao;
+import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
@@ -98,6 +100,10 @@ public class WProcessWorkBL {
 				estrictStartedDateFilter, initialFinishedDateFilter, finalFinishedDateFilter, 
 				estrictFinishedDateFilter, action);
 		
+	}
+
+	public Integer getWorkCount (Integer processId, String mode) throws WProcessWorkException {
+		return new WProcessWorkDao().getWorkCount(processId, mode);
 	}
 
 }

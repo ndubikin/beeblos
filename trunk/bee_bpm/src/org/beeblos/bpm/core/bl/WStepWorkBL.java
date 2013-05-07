@@ -2,11 +2,11 @@ package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
+import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
 import static org.beeblos.bpm.core.util.Constants.WRITE_EMAIL_TO_FILESYSTEM;
-import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,6 +37,7 @@ import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -47,7 +48,6 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
@@ -1213,5 +1213,45 @@ public class WStepWorkBL {
 		
 	}
 	
+	// dml 20130507
+	public List<Integer> getProcessIdList(Integer stepId, Integer userId) throws WStepWorkException {
+
+		return new WStepWorkDao().getProcessIdList(stepId);
+	
+	}
+	
+	// dml 20130507
+	public boolean isAnotherProcessUsingWorkStep(Integer stepId, Integer processId, Integer userId) 
+			throws WStepWorkException, WProcessDefException {
+
+		if (stepId == null
+				|| stepId.equals(0)
+				|| processId == null
+				|| processId.equals(0)){
+			String mess = "stepId and processId cannot be null or zero";
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+
+		List<Integer> processIdList = this.getProcessIdList(stepId, userId);
+		
+		if (processIdList == null){
+			String mess = "Error trying to retrieve the processIdList:"+processId;
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+			
+		for (Integer pid : processIdList){
+			
+			if (!pid.equals(processId)){
+				return true;
+			}
+			
+		} 
+
+		return false;
+	
+	}
+
 }
 	

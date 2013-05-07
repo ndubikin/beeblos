@@ -3,6 +3,7 @@ package org.beeblos.bpm.core.dao;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_ADDED;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_MODIFIED;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -899,6 +900,54 @@ public class WProcessDao {
 			}
 		} else {
 			return false;
+		}
+
+	}
+
+	// dml 20130507
+	public boolean headProcessHasWProcessDef(Integer processHeadId)
+			throws WProcessException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		BigInteger result = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			String query =  "SELECT IF(wpd.process_id = :processHeadId,true,false) " +
+					" FROM w_process_def wpd " +
+					" WHERE wpd.process_id = :processHeadId " +
+					" GROUP BY wpd.process_id ";
+
+			System.out.println("[QUERY]: "+query);
+			
+			result = (BigInteger) session.createSQLQuery(query)
+					.setParameter("processHeadId", processHeadId)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDao: headProcessHasWProcessDef() - can't obtain result: "
+					+ ex.getMessage() + "\n" + ex.getCause());
+			throw new WProcessException(
+					"WProcessDao: headProcessHasWProcessDef() - can't obtain result: "
+							+ ex.getMessage() + "\n" + ex.getCause());
+
+		}
+
+		if (result == null || result.intValue() == 0) {
+			return false;
+		} else {
+			return true;
 		}
 
 	}

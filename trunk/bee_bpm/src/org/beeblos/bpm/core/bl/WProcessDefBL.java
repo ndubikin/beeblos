@@ -109,14 +109,9 @@ public class WProcessDefBL {
 			
 	}
 	
-	// DAVID: no tengo claro q sea bueno pasar el objeto para borrar (en general no me gusta pasar el objeto a borrar...)
-	// porque es un objeto grande, hay que hacer muchas comparaciones, 
-	// y lo que hagamos debemos hacerlo contra la bd en el momento, o sea
-	// no podemos contar con que nos pasan un objeto cargado vaya a saber cuando
-	// y con que info, y tomar eso como "base cierta" para hacer todos los controles
-	// Prefiero q pasen el id, y ya leemos y revisamos y hacemos lo q haya q hacer, ok?
-	public void delete(Integer processId, boolean deleteRelatedSteps, Integer currentUserId) 
-			throws WProcessWorkException, WProcessDefException {
+	public List<String> delete(Integer processId, boolean deleteRelatedSteps, Integer currentUserId) 
+			throws WProcessWorkException, WProcessDefException, WStepSequenceDefException, 
+			WStepWorkException, WProcessException, WStepDefException {
 
 		logger.debug("delete() WProcessDef - Name: ["+processId+"]");
 		
@@ -125,8 +120,6 @@ public class WProcessDefBL {
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
 		}
-		
-		// DAVID: CREO Q NO ES NECEARIO CARGAR ESTA UNA PARA BORRAR 1 PROCESO ...
 		
 		Integer qtyWorks;
 		try {
@@ -139,67 +132,182 @@ public class WProcessDefBL {
 		}
 		
 		if (qtyWorks>0) {
-			String mess = "Delete process with works is not permitted ... This process has "+qtyWorks+" works";
+			String mess = "Delete process with works is not allowed ... This process has "+qtyWorks+" works";
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
 		}
 			
-		List<String> deletedSteps = new ArrayList<String>(); // to store and return deleted steps
+		try {
+			qtyWorks = new WProcessWorkBL().getWorkCount(processId,ALL);
+		} catch (WProcessWorkException e) {
+			String mess = "Error verifiyng existence of works related with this process id:"+processId
+					+ " "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
+		}
+		
+		if (qtyWorks>0) {
+			String mess = "Delete process with works is not allowed ... This process has "+qtyWorks+" works";
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
+		}
+			
+		List<WStepDef> stepsToDelete = new ArrayList<WStepDef>(); // to store and return deleted steps
 
 		// check for related steps and delete 
 		if (deleteRelatedSteps) {
 			
-			deletedSteps = checkAndDeleteRelatedSteps(processId,currentUserId);
+			stepsToDelete = this._checkAndDeleteRelatedSteps(processId,currentUserId);
 			
 		}
+		
+		
+		this._deleteRelatedSequences(processId, currentUserId);
+		
+		WProcessDef process = this.getWProcessDefByPK(processId, currentUserId);
+		Integer processHeadId = process.getProcess().getId();
+		
+		// se borrarán en cascada (por el mapping) los roles y users relacionados con el process
+		new WProcessDefDao().delete(process);
+		logger.info("The WProcessDef " + process.getName() + " has been correctly deleted by user " + currentUserId);
+
+		List<String> deletedSteps = this._deleteRelatedSteps(stepsToDelete, currentUserId);
+		
+		this._checkAndDeleteProcessHead(processHeadId, currentUserId);
+		
+		
+
+		return deletedSteps;
+		
+	}
+	
+	// dml 20130507
+	private void _deleteRelatedSequences(Integer processId, Integer currentUserId) throws WProcessWorkException{
+				
+		List<WStepSequenceDef> wssdList;
+		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
+		
+		try {
 			
-//		new WProcessDefDao().delete(process);
-
-
-
+			wssdList = new WStepSequenceDefBL().getStepSequenceList(processId, null);
+			
+			if (wssdList != null
+					&& !wssdList.isEmpty()){
+				
+				for (WStepSequenceDef wssd : wssdList){
+					
+					wssdBL.deleteRoute(wssd, currentUserId);
+					
+				}
+				
+			}
+			
+		} catch (WStepSequenceDefException e) {
+			String mess = "Impossible to delete process " + processId + " step sequence defs";
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
+		}
+		
 	}
 
-	private List<String> checkAndDeleteRelatedSteps(Integer processId, Integer userId) throws WProcessWorkException {
+	// dml 20130507
+	private List<String> _deleteRelatedSteps(List<WStepDef> stepList, Integer currentUserId) throws WStepDefException {
+				
+		WStepDefBL wsdBL = new WStepDefBL();
+		List<String> deletedSteps = new ArrayList<String>();
 		
-		List<String> ds = new ArrayList<String>();
 		try {
-			WStepDefBL stepDefBL = new WStepDefBL();
-			List<WStepDef> stepDefList = loadStepList(processId, userId);
-			for (WStepDef stepDef: stepDefList) {
-				if ( !checkSharedStep(stepDef.getId(), processId) 
-						&& checkWorkReferral(stepDef.getId(),processId) ) {
-					stepDefBL.delete(stepDef, userId);
+			
+			if (stepList != null
+					&& !stepList.isEmpty()){
+				
+				for (WStepDef wsd : stepList){
+					
+					deletedSteps.add(wsd.getName());
+					wsdBL.delete(wsd, currentUserId);
+					logger.info("The WStepDef " + wsd.getName() + " has been correctly deleted by user " + currentUserId);
+					
 				}
+				
 			}
+			
+		} catch (WStepDefException e) {
+			String mess = "Impossible to delete step defs";
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		return deletedSteps;
+		
+	}
+
+	// dml 20130507
+	private void _checkAndDeleteProcessHead(Integer processHeadId, Integer currentUserId) throws WProcessException{
+		
+		WProcessBL wpBL = new WProcessBL();
+		
+		if (!wpBL.headProcessHasWProcessDef(processHeadId)){
+			
+			wpBL.delete(wpBL.getProcessByPK(processHeadId, currentUserId), currentUserId);
+			logger.info("The WProcess " + processHeadId + " has been correctly deleted by user " + currentUserId);
+			
+		}
+		
+	}
+
+	private List<WStepDef> _checkAndDeleteRelatedSteps(Integer processId, Integer userId) 
+			throws WProcessWorkException, WStepSequenceDefException, WStepWorkException {
+		
+		List<WStepDef> returnValue = new ArrayList<WStepDef>();
+		try {
+			
+			List<WStepDef> stepDefList = loadStepList(processId, userId);
+			
+			for (WStepDef stepDef: stepDefList) {
+				
+				if ( !checkSharedStep(stepDef.getId(), processId, userId) 
+						&& !checkWorkReferral(stepDef.getId(),processId, userId) ) {
+					
+					returnValue.add(stepDef);
+					
+				}
+				
+			}
+			
 		} catch (WStepDefException e) {
 			String mess = "can't obtain step def list for given process id:"+processId;
-			throw new WProcessWorkException("Error obtaining step def list for process id:"+processId);
+			throw new WProcessWorkException(mess);
 		}
 		
 		
-		return ds;
+		return returnValue;
 	}
 	
 
-	public boolean checkSharedStep(Integer stepId, Integer processId) {
-		// EN WSTEPDEF HACER 1 MÉTODO QUE CUENTE LA CANTIDAD DE PROCESOS (w_step_sequence_def.process_id) 
-		// QUE USAN ESTE PASO SIN CONTAR EL processId que le pasamos
-		// (porque si mas de 0 lo usan no se puede borrar el step
+	public boolean checkSharedStep(Integer stepId, Integer processId, Integer userId) throws WStepSequenceDefException {
 		
+		try {
+
+			return new WStepDefBL().isAnotherProcessUsingStep(stepId, processId, userId);
 		
-		return false; // si nadie lo usa debe retornar false, si lo usan debe retornar true
+		} catch (Exception e) {
+			String mess = "Error checking shared steps for process id:"+processId;
+			throw new WStepSequenceDefException(mess);
+		}
+
 	}
-	public boolean  checkWorkReferral(Integer stepId, Integer processId) {
+	
+	public boolean checkWorkReferral(Integer stepId, Integer processId, Integer userId) throws WStepWorkException {
 		
-		// en w_step_work revisar que no esté referenciado para nada este step:
+		try {
+
+			return new WStepWorkBL().isAnotherProcessUsingWorkStep(stepId, processId, userId);
+			
+		} catch (Exception e) {
+			String mess = "Error checking shared work steps for process id:"+processId;
+			throw new WStepWorkException(mess);
+		}
 		
-		// w_step_work.id_current_step != stepId && w_step_work.id_previous_step!=stepId
-		
-		// en realidad sería suficiente contar con que no exista el currentStep, pero como
-		// si por algún error existe un previous step q lo referencie, va petar cuando
-		// intentemos levantar el objeto por lo q mejor revisarlo también ..
-		
-		return false; // si no hay registros debe retornar false, si hay debe retornar true
 	}
 	
 	// dml 20130506
@@ -266,18 +374,22 @@ public class WProcessDefBL {
 		WProcessDef wpd;
 		wpd = new WProcessDefDao().getWProcessDefByPK(id);
 		
-		try {
-			wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
-		} catch (WStepDefException e1) {
-			String mess="Error: getWProcessDefByPK "+e1.getMessage();
-			throw new WStepSequenceDefException(mess);
-		}
-		
-		try {
-			wpd.setStepSequenceList(loadStepSequenceList(wpd.getId(),currentUserId));
-		} catch (WStepSequenceDefException e) {
-			String mess="Error: getWProcessDefByPK "+e.getMessage();
-			throw new WStepSequenceDefException(mess);
+		if (wpd != null){
+			
+			try {
+				wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
+			} catch (WStepDefException e1) {
+				String mess="Error: getWProcessDefByPK "+e1.getMessage();
+				throw new WStepSequenceDefException(mess);
+			}
+			
+			try {
+				wpd.setStepSequenceList(loadStepSequenceList(wpd.getId(),currentUserId));
+			} catch (WStepSequenceDefException e) {
+				String mess="Error: getWProcessDefByPK "+e.getMessage();
+				throw new WStepSequenceDefException(mess);
+			}
+			
 		}
 		
 		return wpd;

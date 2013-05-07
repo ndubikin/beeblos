@@ -90,7 +90,7 @@ public class TestWStepSequenceDefBL extends TestCase{
 			assertNull(routeBL.getWStepSequenceDefByPK(iroute,1002));
 			
 			// ahora borro el proceso
-			new WProcessDefBL().delete( process,1000) ;
+			new WProcessDefBL().delete( iproc, false, 1000) ;
 			assertNull(processBL.getWProcessDefByPK(iproc,1000));
 			
 		
@@ -162,7 +162,7 @@ public class TestWStepSequenceDefBL extends TestCase{
 			
 			
 			// ahora borro el proceso
-			new WProcessDefBL().delete( process,1000) ;
+			new WProcessDefBL().delete( iproc, false,1000) ;
 			assertNull(processBL.getWProcessDefByPK(iproc,1000));
 			
 		

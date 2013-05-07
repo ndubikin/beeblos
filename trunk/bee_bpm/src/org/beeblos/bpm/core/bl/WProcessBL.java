@@ -147,5 +147,12 @@ public class WProcessBL {
 		return new WProcessDao().userIsProcessAdmin(userId, processId);
 		
 	}
+
+	// dml 20130129
+	public boolean headProcessHasWProcessDef(Integer processHeadId) throws WProcessException{
+		
+		return new WProcessDao().headProcessHasWProcessDef(processHeadId);
+		
+	}
 }
 	
