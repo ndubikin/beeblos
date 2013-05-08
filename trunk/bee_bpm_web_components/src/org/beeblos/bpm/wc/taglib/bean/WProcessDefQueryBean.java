@@ -52,7 +52,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	private Integer id;
 	private WProcessDef currentWProcessDef; // dml 20130507 - object used to show information in the delete wprocessdef popup (currently, but it would be used by other methods)
-	private Integer processId; // dml 20130506 - id from the "WProcess" which is inside the current "WProcessDef" (id=WProcessDef.id)
+	private Integer processId; // dml 20130506 - id from the "WProcessHead" which is inside the current "WProcessDef" (id=WProcessDef.id)
 	private boolean tmpDeletingWProcessDefPopup;
 	
 	private TimeZone timeZone;

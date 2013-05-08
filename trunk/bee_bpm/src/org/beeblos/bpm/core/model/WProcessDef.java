@@ -20,7 +20,7 @@ public class WProcessDef implements java.io.Serializable {
 	
 	private Integer id;
 	
-	private WProcess process;
+	private WProcessHead process;
 	private Integer version;
 	
 	private boolean active;
@@ -75,7 +75,7 @@ public class WProcessDef implements java.io.Serializable {
 		super();
 		if ( createEmtpyObjects ) {
 			
-			this.process = new WProcess();
+			this.process = new WProcessHead();
 
 			this.beginStep = new WStepDef( EMPTY_OBJECT );
 			this.systemEmailAccount = new WEmailAccount(EMPTY_OBJECT);
@@ -141,11 +141,11 @@ public class WProcessDef implements java.io.Serializable {
 	}
 
 
-	public WProcess getProcess() {
+	public WProcessHead getProcess() {
 		return this.process;
 	}
 
-	public void setProcess(WProcess process) {
+	public void setProcess(WProcessHead process) {
 		this.process = process;
 	}
 

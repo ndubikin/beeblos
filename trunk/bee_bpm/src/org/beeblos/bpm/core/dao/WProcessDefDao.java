@@ -174,7 +174,7 @@ public class WProcessDefDao {
 			tx.begin();
 
 			name = (String) session
-					.createQuery("select WProcess.name from WProcess where WProcess.id = (select WProcessDef.processId where WProcessDef.id = :id)")
+					.createQuery("select WProcessHead.name from WProcessHead where WProcessHead.id = (select WProcessDef.processId where WProcessDef.id = :id)")
 						.setInteger("id",versionId)
 						.uniqueResult();
 
