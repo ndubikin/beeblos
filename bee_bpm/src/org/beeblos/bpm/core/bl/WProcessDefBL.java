@@ -41,12 +41,12 @@ public class WProcessDefBL {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
 		
-		// dml 20130430 - si es un nuevo WProcess se guarda antes de guardar el WProcessDef y se rellena la informacion esencial
+		// dml 20130430 - si es un nuevo WProcessHead se guarda antes de guardar el WProcessDef y se rellena la informacion esencial
 		if (process.getProcess() != null
 				&& (process.getProcess().getId() == null
 				|| process.getProcess().getId().equals(0))){
 			
-			Integer processHeadId = new WProcessBL().add(process.getProcess(), currentUserId);
+			Integer processHeadId = new WProcessHeadBL().add(process.getProcess(), currentUserId);
 			
 			this._setFirstWProcessDefData(process, processHeadId, currentUserId);
 			
@@ -69,7 +69,7 @@ public class WProcessDefBL {
 			
 			process.setActive(true);
 
-			process.setProcess(new WProcessBL().getProcessByPK(processHeadId, currentUserId));
+			process.setProcess(new WProcessHeadBL().getProcessByPK(processHeadId, currentUserId));
 			
 			if (process.getVersion() == null
 					|| process.getVersion().equals(0)){
@@ -244,12 +244,12 @@ public class WProcessDefBL {
 	// dml 20130507
 	private void _checkAndDeleteProcessHead(Integer processHeadId, Integer currentUserId) throws WProcessException{
 		
-		WProcessBL wpBL = new WProcessBL();
+		WProcessHeadBL wpBL = new WProcessHeadBL();
 		
 		if (!wpBL.headProcessHasWProcessDef(processHeadId)){
 			
 			wpBL.delete(wpBL.getProcessByPK(processHeadId, currentUserId), currentUserId);
-			logger.info("The WProcess " + processHeadId + " has been correctly deleted by user " + currentUserId);
+			logger.info("The WProcessHead " + processHeadId + " has been correctly deleted by user " + currentUserId);
 			
 		}
 		

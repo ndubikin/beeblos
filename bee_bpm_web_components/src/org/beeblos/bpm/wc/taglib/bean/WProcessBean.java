@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
-import org.beeblos.bpm.core.bl.WProcessBL;
+import org.beeblos.bpm.core.bl.WProcessHeadBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
@@ -44,7 +44,7 @@ import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
-import org.beeblos.bpm.core.model.WProcess;
+import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
@@ -84,7 +84,7 @@ public class WProcessBean extends CoreManagedBean {
 	private WProcessDef currentWProcessDef;
 	private Integer currentId; // current object managed by this bb
 
-	private WProcess currentWProcess; // dml 20130430
+	private WProcessHead currentWProcess; // dml 20130430
 
 	// auxiliar properties
 
@@ -169,7 +169,7 @@ public class WProcessBean extends CoreManagedBean {
 
 		currentId = null;
 		currentWProcessDef = new WProcessDef();
-		currentWProcess = new WProcess(); // dml 20130430
+		currentWProcess = new WProcessHead(); // dml 20130430
 		this.setReadOnly(false);
 		recoverNullObjects(); // <<<<<<<<< IMPORTANT >>>>>>>>>>>
 							  // to avoid access to null objects from view
@@ -289,7 +289,7 @@ public class WProcessBean extends CoreManagedBean {
 	// dml 20130430
 	public void loadCurrentWProcess() {
 
-		WProcessBL wpbl = new WProcessBL();
+		WProcessHeadBL wpbl = new WProcessHeadBL();
 
 		try {
 
@@ -301,7 +301,7 @@ public class WProcessBean extends CoreManagedBean {
 			String message = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = {
 					message + ",",
-					".Error loading current WProcess ..."
+					".Error loading current WProcessHead ..."
 							+ currentWProcess.getId() };
 			agregarMensaje("203", message, params, FGPException.ERROR);
 
@@ -721,7 +721,7 @@ public class WProcessBean extends CoreManagedBean {
 			return update_w_process();
 		}
 
-		WProcessBL wpBL = new WProcessBL();
+		WProcessHeadBL wpBL = new WProcessHeadBL();
 
 		try {
 
@@ -823,7 +823,7 @@ public class WProcessBean extends CoreManagedBean {
 
 		String ret = null;
 
-		WProcessBL wpdBL = new WProcessBL();
+		WProcessHeadBL wpdBL = new WProcessHeadBL();
 
 		try {
 			
@@ -945,11 +945,11 @@ public class WProcessBean extends CoreManagedBean {
 		this.currentId = currentId;
 	}
 
-	public WProcess getCurrentWProcess() {
+	public WProcessHead getCurrentWProcess() {
 		return currentWProcess;
 	}
 
-	public void setCurrentWProcess(WProcess currentWProcess) {
+	public void setCurrentWProcess(WProcessHead currentWProcess) {
 		this.currentWProcess = currentWProcess;
 	}
 
@@ -2110,7 +2110,7 @@ public class WProcessBean extends CoreManagedBean {
 		try {
 			
 			this.wProcessComboList = UtilsVs.castStringPairToSelectitem(
-					new WProcessBL().getComboActiveProcessList("Select ...", null));
+					new WProcessHeadBL().getComboList("Select ...", null));
 			
 		} catch (WProcessException e) {
 			
@@ -2130,7 +2130,7 @@ public class WProcessBean extends CoreManagedBean {
 			
 			try {
 				
-				WProcess process = new WProcessBL().getProcessByPK(this.currentProcessIdSelected, null);
+				WProcessHead process = new WProcessHeadBL().getProcessByPK(this.currentProcessIdSelected, null);
 			
 				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected);
 				

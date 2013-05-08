@@ -2,12 +2,10 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
-import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESS;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.io.IOException;
-import java.lang.annotation.Documented;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,8 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
-import org.beeblos.bpm.core.bl.WProcessBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WProcessHeadBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.email.bl.SendEmailBL;
@@ -44,8 +42,8 @@ import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
-import org.beeblos.bpm.core.model.WProcess;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
@@ -425,7 +423,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			// dml 20130506
 			if (currentWProcessDef.getProcess() == null) {
-				currentWProcessDef.setProcess(new WProcess());
+				currentWProcessDef.setProcess(new WProcessHead());
 			}
 
 		}
@@ -1897,7 +1895,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		try {
 			
 			this.wProcessComboList = UtilsVs.castStringPairToSelectitem(
-					new WProcessBL().getComboActiveProcessList("Select ...", null));
+					new WProcessHeadBL().getComboList("Select ...", null));
 			
 		} catch (WProcessException e) {
 			
@@ -1917,7 +1915,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				WProcess process = new WProcessBL().getProcessByPK(this.currentProcessIdSelected, null);
+				WProcessHead process = new WProcessHeadBL().getProcessByPK(this.currentProcessIdSelected, null);
 			
 				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected);
 				

@@ -3,7 +3,7 @@
                                    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Oct 30, 2010 12:25:06 AM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
-	<class name="org.beeblos.bpm.core.model.WProcess" table="w_process">
+	<class name="org.beeblos.bpm.core.model.WProcessHead" table="w_process">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -110,7 +110,7 @@
 			<column  name="mod_user" />
 		</property>
 	
-		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WProcess"
+		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WProcessHead"
 			column="process_id"  name="process" fetch="join" lazy="false"/>
 	
 		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepDef"

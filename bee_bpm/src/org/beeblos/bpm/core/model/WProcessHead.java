@@ -2,7 +2,7 @@ package org.beeblos.bpm.core.model;
 
 import java.util.Date;
 
-public class WProcess implements java.io.Serializable {
+public class WProcessHead implements java.io.Serializable {
 
 	/**
 	 * 
@@ -19,21 +19,21 @@ public class WProcess implements java.io.Serializable {
 	private Date modDate;
 	private Integer modUser;
 	
-	public WProcess() {
+	public WProcessHead() {
 		super();
 	}
 
 	
-	public WProcess(Integer id) {
+	public WProcessHead(Integer id) {
 		this.id = id;
 	}
 
-	public WProcess(Integer id, String name) {
+	public WProcessHead(Integer id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 
-	public WProcess(String name, String comments, 
+	public WProcessHead(String name, String comments, 
 			Date fechaAlta, Date fechaModificacion) {
 		this.name = name;
 		this.comments = comments;
@@ -41,7 +41,7 @@ public class WProcess implements java.io.Serializable {
 		this.modDate = fechaModificacion;
 	}
 
-	public WProcess(String name, String comments,
+	public WProcessHead(String name, String comments,
 			Date insertDate, Integer insertUser, Date modDate,
 			Integer modUser) {
 		this.name = name;
@@ -138,7 +138,7 @@ public class WProcess implements java.io.Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		WProcess other = (WProcess) obj;
+		WProcessHead other = (WProcessHead) obj;
 		if (comments == null) {
 			if (other.comments != null)
 				return false;
@@ -180,7 +180,7 @@ public class WProcess implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WProcess [id=" + id + ", name=" + name + ", comments=" + comments + ", insertDate="
+		return "WProcessHead [id=" + id + ", name=" + name + ", comments=" + comments + ", insertDate="
 				+ insertDate + ", insertUser=" + insertUser + ", modDate=" + modDate + ", modUser="
 				+ modUser + "]";
 	}
