@@ -458,7 +458,7 @@ public class WProcessHeadDao {
 
 	private String getBaseQuery(boolean isAdmin) {
 	
-		String baseQueryTmp="SELECT * FROM w_process_head wph ";
+		String baseQueryTmp="SELECT * FROM w_process wph ";
 	
 		return baseQueryTmp;
 
@@ -602,7 +602,7 @@ public class WProcessHeadDao {
 			tx.begin();
 
 			String query =  "SELECT IF(wph.process_id = :processHeadId,true,false) " +
-					" FROM w_process_head wph " +
+					" FROM w_process wph " +
 					" WHERE wph.process_id = :processHeadId " +
 					" GROUP BY wph.process_id ";
 
