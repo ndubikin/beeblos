@@ -15,6 +15,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -433,6 +434,13 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				logger.error(message);
 				
 			} catch (WStepDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WStepHeadException e) {
 
 				String message = e.getMessage() + " - " + e.getCause();
 				this.messageStyle = errorMessageStyle();

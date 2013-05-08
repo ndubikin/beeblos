@@ -17,6 +17,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -111,7 +112,7 @@ public class WProcessDefBL {
 	
 	public List<String> delete(Integer processId, boolean deleteRelatedSteps, Integer currentUserId) 
 			throws WProcessWorkException, WProcessDefException, WStepSequenceDefException, 
-			WStepWorkException, WProcessException, WStepDefException {
+			WStepWorkException, WProcessException, WStepDefException, WStepHeadException {
 
 		logger.debug("delete() WProcessDef - Name: ["+processId+"]");
 		
@@ -123,7 +124,7 @@ public class WProcessDefBL {
 		
 		Integer qtyWorks;
 		try {
-			qtyWorks = new WStepWorkBL().getWorkCount(processId,ALL);
+			qtyWorks = new WStepWorkBL().getWorkCountByProcess(processId,ALL);
 		} catch (WStepWorkException e) {
 			String mess = "Error verifiyng existence of works related with this process id:"+processId
 					+ " "+e.getMessage()+" - "+e.getCause();
@@ -211,7 +212,8 @@ public class WProcessDefBL {
 	}
 
 	// dml 20130507
-	private List<String> _deleteRelatedSteps(List<WStepDef> stepList, Integer currentUserId) throws WStepDefException {
+	private List<String> _deleteRelatedSteps(List<WStepDef> stepList, Integer currentUserId) 
+			throws WStepDefException, WStepWorkException, WStepHeadException {
 				
 		WStepDefBL wsdBL = new WStepDefBL();
 		List<String> deletedSteps = new ArrayList<String>();
@@ -224,7 +226,7 @@ public class WProcessDefBL {
 				for (WStepDef wsd : stepList){
 					
 					deletedSteps.add(wsd.getName());
-					wsdBL.delete(wsd, currentUserId);
+					wsdBL.delete(wsd.getId(), currentUserId);
 					logger.info("The WStepDef " + wsd.getName() + " has been correctly deleted by user " + currentUserId);
 					
 				}

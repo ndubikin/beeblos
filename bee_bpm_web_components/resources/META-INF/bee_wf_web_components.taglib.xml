@@ -109,6 +109,11 @@
   <tag-name>wStepDefForm</tag-name>
   <source>/taglib/forms/wStepDefForm.xhtml</source>
  </tag>
+ 
+ <tag>
+  <tag-name>wStepHeadForm</tag-name>
+  <source>/taglib/forms/wStepHeadForm.xhtml</source>
+ </tag>
 
  <tag>
   <tag-name>miCuenta</tag-name>

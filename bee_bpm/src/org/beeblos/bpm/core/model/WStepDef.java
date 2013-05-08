@@ -23,7 +23,12 @@ public class WStepDef implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private String name;
+	
+	private WStepHead stepHead;
+	private Integer version;
+	
+	private boolean active;
+	
 	private Integer idDept;
 	private Integer idPhase;
 	private String instructions;
@@ -88,19 +93,19 @@ public class WStepDef implements java.io.Serializable {
 	public WStepDef(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
+			this.stepHead =new WStepHead();
 			this.timeUnit =new WTimeUnit( EMPTY_OBJECT );
 			this.reminderTimeUnit =new WTimeUnit( EMPTY_OBJECT );
 			
 		}	
 	}
 
-	public WStepDef(Integer id, String name, Integer idDept, Integer idPhase,
+	public WStepDef(Integer id, Integer idDept, Integer idPhase,
 			String instructions, String stepComments, String idListZone,
 			String idWorkZone, String idAdditionalZone/*,
 			Set<WStepResponseDef> response*/) {
 		super();
 		this.id = id;
-		this.name = name;
 		this.idDept = idDept;
 		this.idPhase = idPhase;
 		this.instructions = instructions;
@@ -121,16 +126,52 @@ public class WStepDef implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return this.name;
+	@Deprecated
+	public String getName(){
+		
+		if (this.stepHead != null){
+			return this.stepHead.getName();
+		}
+		
+		return null;
+		
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	@Deprecated
+	public void setName(String name){
+		
+		if (this.stepHead != null){
+			 this.stepHead.setName(name);
+		}
+				
 	}
 
 	public Integer getIdDept() {
 		return this.idDept;
+	}
+
+	public WStepHead getStepHead() {
+		return stepHead;
+	}
+
+	public void setStepHead(WStepHead stepHead) {
+		this.stepHead = stepHead;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public void setIdDept(Integer idDept) {
@@ -429,7 +470,8 @@ public class WStepDef implements java.io.Serializable {
 				+ ((idWorkZone == null) ? 0 : idWorkZone.hashCode());
 		result = prime * result
 				+ ((instructions == null) ? 0 : instructions.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((stepHead == null) ? 0 : stepHead.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		result = prime * result + (reminderAdminNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
@@ -565,10 +607,15 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!instructions.equals(other.instructions))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (version == null) {
+			if (other.version != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!version.equals(other.version))
+			return false;
+		if (stepHead == null) {
+			if (other.stepHead != null)
+				return false;
+		} else if (!stepHead.equals(other.stepHead))
 			return false;
 		if (reminderAdminNotice != other.reminderAdminNotice)
 			return false;
@@ -628,8 +675,9 @@ public class WStepDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WStepDef [id=" + id + ", name=" + name + ", idDept=" + idDept + ", idPhase="
-				+ idPhase + ", instructions=" + instructions + ", stepComments=" + stepComments
+		return "WStepDef [id=" + id + ", stepHead=" + stepHead + ", version=" + version
+				+ ", active=" + active + ", idDept=" + idDept + ", idPhase=" + idPhase
+				+ ", instructions=" + instructions + ", stepComments=" + stepComments
 				+ ", idListZone=" + idListZone + ", idWorkZone=" + idWorkZone
 				+ ", idAdditionalZone=" + idAdditionalZone + ", idDefaultProcessor="
 				+ idDefaultProcessor + ", submitForm=" + submitForm + ", timeUnit=" + timeUnit
@@ -679,7 +727,8 @@ public class WStepDef implements java.io.Serializable {
 		if (assignedTime!=null && ! assignedTime.equals(0)) return false;
 		if (reminderTime!=null && ! reminderTime.equals(0)) return false;
 	
-		if (name!=null && ! "".equals(name)) return false;
+		if (version!=null && ! version.equals(0)) return false;
+		if (stepHead!=null && ! stepHead.empty()) return false;
 		if (instructions!=null && ! "".equals(instructions)) return false;
 		if (stepComments!=null && ! "".equals(stepComments)) return false;
 		

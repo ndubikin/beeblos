@@ -230,6 +230,7 @@ public class WProcessDefDao {
 		
 		return version;
 	}	
+	
 	public List<WProcessDef> getWProcessDefs() throws WProcessDefException {
 
 		org.hibernate.Session session = null;

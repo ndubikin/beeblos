@@ -7,14 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.faces.event.ActionEvent;
-
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
+import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 
@@ -39,6 +42,11 @@ public class WStepDefQueryBean extends CoreManagedBean {
 	private String action;
 	
 	private Integer id;
+	private WStepDef currentWStepDef; // dml 20130507 - object used to show information in the delete wprocessdef popup (currently, but it would be used by other methods)
+	private Integer stepHeadId; // dml 20130506 - id from the "WStepHead" which is inside the current "WStepDef" (id=WStepDef.id)
+	private boolean tmpDeletingWStepDefPopup;
+
+	private String messageStyle;
 
 	private TimeZone timeZone;
 
@@ -77,7 +85,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 
 			wStepDefList = (ArrayList<WStepDef>) new WStepDefBL()
 					.getStepListByFinder(nameFilter, commentsFilter, 
-							instructionsFilter, getCurrentUserId(), true, action);
+							instructionsFilter, getCurrentUserId(), true, action, null, null);
 
 			nResults = wStepDefList.size();
 
@@ -104,10 +112,31 @@ public class WStepDefQueryBean extends CoreManagedBean {
 
 	}
 
+	// dml 20130508
+	public String loadWStepForm() {
+
+		return new WStepDefUtil().loadWStepHeadFormBean(id);
+
+	}
+	
+
 	// dml 20120110
 	public String createNewWStepDef() {
 
-		return new WStepDefUtil().createNewWStepDef(WSTEPDEF_QUERY);
+		try {
+			
+			return new WStepDefUtil().createNewWStepDef(this.stepHeadId, WSTEPDEF_QUERY);
+		
+		} catch (WProcessDefException e) {
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to create the new WStepDef."};
+			agregarMensaje("221", message, params, FGPException.ERROR);
+			logger.error(message);
+			
+		}
+		
+		return null;
 		
 	}
 
@@ -179,5 +208,164 @@ public class WStepDefQueryBean extends CoreManagedBean {
 	public void setAction(String action) {
 		this.action = action;
 	}
+
+	public WStepDef getCurrentWStepDef() {
+		return currentWStepDef;
+	}
+
+	public void setCurrentWStepDef(WStepDef currentWStepDef) {
+		this.currentWStepDef = currentWStepDef;
+	}
+
+	public Integer getStepHeadId() {
+		return stepHeadId;
+	}
+
+	public void setStepHeadId(Integer stepHeadId) {
+		this.stepHeadId = stepHeadId;
+	}
+
+	public boolean isTmpDeletingWStepDefPopup() {
+		return tmpDeletingWStepDefPopup;
+	}
+
+	public void setTmpDeletingWStepDefPopup(boolean tmpDeletingWStepDefPopup) {
+		this.tmpDeletingWStepDefPopup = tmpDeletingWStepDefPopup;
+	}
+
+	public String getMessageStyle() {
+		return messageStyle;
+	}
+
+	public void setMessageStyle(String messageStyle) {
+		this.messageStyle = messageStyle;
+	}
 	
+	// nes 20130508
+	public void cloneWStepDef() {
+
+		try {
+			
+			Integer newId = new WStepDefBL().cloneWStepDef(this.id, this.stepHeadId,getCurrentUserId());
+			
+			this.searchWStepDefs();
+			
+			String message = "Step version id:"+this.id+" has a new cloned version with id:"+newId;
+			this.messageStyle = normalMessageStyle();
+			agregarMensaje(message);
+			logger.info(message);
+
+		} catch (WStepDefException e) {
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
+		} catch (WStepSequenceDefException e) {
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
+		} catch (WStepHeadException e) {
+
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
+			agregarMensaje("220", message, params, FGPException.ERROR);
+			logger.error(message);
+			
+		}
+		
+	}
+
+	// dml 20130508
+	public String createNewWStepHead() {
+
+		return new WStepDefUtil().createNewWStepHead(WSTEPDEF_QUERY);
+		
+	}
+	
+	// dml 20130508
+	public String deleteWStepDef(){
+		
+		setShowHeaderMessage(true);
+
+		if (this.id != null
+				&& !this.id.equals(0)){
+			
+			try {
+				
+				new WStepDefBL().delete(this.id, getCurrentUserId());
+				
+				this.tmpDeletingWStepDefPopup = false;
+				this.searchWStepDefs();
+				
+				String message = "The step '" + this.currentWStepDef.getStepHead().getName() 
+						+ "' version: '" + this.currentWStepDef.getVersion() + "' has been correctly deleted";
+				this.messageStyle = normalMessageStyle();
+				agregarMensaje(message);
+				logger.info(message);
+				
+			} catch (WStepDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WStepWorkException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WStepHeadException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} 
+			
+		}
+		
+		return null;
+		
+	}
+	
+	// dml 20130508
+	public void activateDelete(){
+		
+		tmpDeletingWStepDefPopup = true;
+		
+	}
+	
+	// dml 20130508
+	public void loadWStepDefObject(){
+		
+		if (this.id != null
+				&& !this.id.equals(0)){
+			
+			try {
+				
+				this.tmpDeletingWStepDefPopup = false;
+				this.currentWStepDef = new WStepDefBL().getWStepDefByPK(this.id, getCurrentUserId());
+				
+			} catch (WStepDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to load process: id=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+				
+			} 
+			
+		}
+		
+	}
+
 }

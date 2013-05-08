@@ -249,14 +249,50 @@
 
 	</class>
 	
-	<class name="org.beeblos.bpm.core.model.WStepDef" table="w_step_def">
+	<class name="org.beeblos.bpm.core.model.WStepHead" table="w_step_head">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column length="30" name="name"  />
+			<column length="100" name="name"  />
 		</property>
+		<property generated="never" lazy="false" name="comments"
+			type="string">
+			<column name="comments" />
+		</property>
+
+		<property generated="never" lazy="false" name="insertDate"
+			type="timestamp">
+			<column length="0" name="insert_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date"  />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
+		
+	</class>
+
+	<class name="org.beeblos.bpm.core.model.WStepDef" table="w_step_def">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<property generated="never" lazy="false" name="version" type="java.lang.Integer">
+			<column name="version"  />
+		</property>
+	
+		<property name="active"	type="java.lang.Boolean">
+			<column name="active"/>
+		</property>
+	
 		<property generated="never" lazy="false" name="idDept" type="int">
 			<column name="id_dept">
 				<comment>departamento al que corresponde el paso</comment>
@@ -420,6 +456,8 @@
         </property>
         
         
+		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WStepHead"
+			column="step_head_id" name="stepHead" fetch="join" lazy="false"/>
 
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" name="timeUnit">

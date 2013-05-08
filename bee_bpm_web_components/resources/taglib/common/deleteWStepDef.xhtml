@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form>
+	
+		<a4j:jsFunction name="activateDelete" 
+			ajaxSingle="true" 
+			actionListener="#{wStepDefQueryBean.activateDelete}" 
+			reRender="button_panel" />
+	
+	</h:form>
+
+	<h:form>
+
+		<h:panelGrid column="1">
+		
+			<h:panelGroup>
+				<h:outputText value="#{msg.label_please_confirm_deleting_step}: " 
+					style="font-size:13px;"/>
+				<h:outputText value="#{wStepDefQueryBean.currentWStepDef.stepHead.name}, #{msg.label_version}: #{wStepDefQueryBean.currentWStepDef.version} (id: #{wStepDefQueryBean.currentWStepDef.id})" 
+					style="font-size:13px;"/>
+			</h:panelGroup>
+
+			<rich:spacer height="10" />
+	
+			<h:panelGroup id="button_panel">
+				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
+					onclick="javascript:Richfaces.hideModalPanel('mpDeleteWStepDef')"
+					disabled="#{wStepDefQueryBean.tmpDeletingWStepDefPopup}"
+					style="width:80px; height:24px;" />
+				<a4j:commandButton id="delete_button" value="#{msg.label_delete}"
+					action="#{wStepDefQueryBean.deleteWStepDef}"
+					onclick="activateDelete();"
+					oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteWStepDef');"
+					reRender="w_step_def_form${action}, messages"
+					disabled="#{wStepDefQueryBean.tmpDeletingWStepDefPopup}"
+					style="width:120px; margin-left: 10px; height:24px;" />
+				<h:outputText value="#{msg.label_wait}: #{msg.label_deleting_step}..." 
+					style="margin-left:10px;color:red;"
+					rendered="#{wStepDefQueryBean.tmpDeletingWStepDefPopup}"/>
+			</h:panelGroup>
+	
+		</h:panelGrid>
+	
+	</h:form>
+	
+</ui:composition>

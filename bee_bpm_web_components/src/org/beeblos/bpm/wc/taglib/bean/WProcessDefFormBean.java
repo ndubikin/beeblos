@@ -141,6 +141,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private boolean stepOutgoings;
 	private boolean stepIncomings;
 	
+	// dml 20130507
 	private Integer currentProcessIdSelected;
 	private List<SelectItem> wProcessComboList;
 	
