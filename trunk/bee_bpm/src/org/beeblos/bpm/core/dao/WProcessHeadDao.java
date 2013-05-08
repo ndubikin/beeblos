@@ -601,10 +601,10 @@ public class WProcessHeadDao {
 
 			tx.begin();
 
-			String query =  "SELECT IF(wph.process_id = :processHeadId,true,false) " +
-					" FROM w_process wph " +
-					" WHERE wph.process_id = :processHeadId " +
-					" GROUP BY wph.process_id ";
+			String query =  "SELECT IF(wpd.process_id = :processHeadId,true,false) " +
+					" FROM w_process_def wpd " +
+					" WHERE wpd.process_id = :processHeadId " +
+					" GROUP BY wpd.process_id ";
 
 			System.out.println("[QUERY]: "+query);
 			
