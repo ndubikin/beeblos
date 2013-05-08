@@ -52,6 +52,7 @@ import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
+import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -124,6 +125,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	// dml 20120305
 	private String emailNameFilter;
+	private String activeFilter;
 	
 	// dml 20120305
 	private String returnStatement;
@@ -141,6 +143,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	private Integer currentProcessIdSelected;
 	private List<SelectItem> wProcessComboList;
+	
+	// dml 20130508
+	private List<WProcessDefLight> relatedProcessDefList;
 	
 	public WProcessDefFormBean() {
 		super();
@@ -242,6 +247,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			// dml 20120306
 			loadEmailTemplateVariables();
 			
+			this.reloadRelatedProcessDefList(); // dml 20130508
+			
 		} catch (WProcessDefException ex1) {
 
 			String message = ex1.getMessage() + " - " + ex1.getCause();
@@ -262,6 +269,27 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 		}
 
+	}
+	
+	// dml 20130508
+	public void reloadRelatedProcessDefList(){
+		
+		try {
+			
+ 			this.relatedProcessDefList = new WProcessDefBL()
+				.getWorkingProcessListFinder(false, null, null, null, false, null, null, this.activeFilter);
+			
+		} catch (WProcessDefException e) {
+
+			this.relatedProcessDefList = new ArrayList<WProcessDefLight>();
+			
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to load current WProcessDef ..." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+			logger.error(message);
+			
+		}
+		
 	}
 
 	//rrl 20120228 Bermuda Triangle mystery on the loss of source code Castor XML the process Marshall
@@ -1005,6 +1033,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setEmailNameFilter(String emailNameFilter) {
 		this.emailNameFilter = emailNameFilter;
+	}
+
+	public String getActiveFilter() {
+		return activeFilter;
+	}
+
+	public void setActiveFilter(String activeFilter) {
+		this.activeFilter = activeFilter;
 	}
 
 	public String getReturnStatement() {
@@ -1889,6 +1925,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.wProcessComboList = wProcessComboList;
 	}
 	
+	public List<WProcessDefLight> getRelatedProcessDefList() {
+		return relatedProcessDefList;
+	}
+
+	public void setRelatedProcessDefList(List<WProcessDefLight> relatedProcessDefList) {
+		this.relatedProcessDefList = relatedProcessDefList;
+	}
+
 	// dml 20130430
 	public void _loadWProcessComboList(){
 		
@@ -1959,6 +2003,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public String loadWProcessForm() {
 
 		return new WProcessDefUtil().loadWProcessFormBean(this.currentId);
+
+	}
+	
+	// dml 20120104
+	public String loadWProcessDefForm() {
+
+		return new WProcessDefUtil().loadWProcessDefFormBean(this.currentId);
 
 	}
 	
