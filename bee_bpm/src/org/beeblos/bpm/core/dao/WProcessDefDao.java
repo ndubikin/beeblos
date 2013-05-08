@@ -2,6 +2,9 @@ package org.beeblos.bpm.core.dao;
 
 import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_ADDED;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_MODIFIED;
+import static org.beeblos.bpm.core.util.Constants.ALL;
+import static org.beeblos.bpm.core.util.Constants.ACTIVE;
+import static org.beeblos.bpm.core.util.Constants.INACTIVE;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -174,7 +177,7 @@ public class WProcessDefDao {
 			tx.begin();
 
 			name = (String) session
-					.createQuery("select WProcessHead.name from WProcessHead where WProcessHead.id = (select WProcessDef.processId where WProcessDef.id = :id)")
+					.createQuery("Select WProcessDef.process.name from WProcessDef where WProcessDef.id = :id")
 						.setInteger("id",versionId)
 						.uniqueResult();
 
@@ -507,7 +510,8 @@ public class WProcessDefDao {
 	private String getBaseQuery(boolean isAdmin) {
 	
 		String baseQueryTmp="SELECT * FROM w_process_def wpd ";
-		baseQueryTmp +="LEFT JOIN w_step_def wsd ON wpd.id_begin=wsd.id ";
+		baseQueryTmp += " LEFT OUTER JOIN w_process wph ON wpd.process_id = wph.id ";
+		baseQueryTmp +=" LEFT JOIN w_step_def wsd ON wpd.id_begin=wsd.id ";
 	
 		return baseQueryTmp;
 
@@ -523,7 +527,7 @@ public class WProcessDefDao {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter +=" wpd.name = "+nameFilter;
+			filter +=" wph.name = "+nameFilter;
 		}
 
 		if ( commentFilter!=null && ! "".equals(commentFilter) ) {
@@ -589,10 +593,10 @@ public class WProcessDefDao {
 	
 		if (nameFilter!=null && ! "".equals(nameFilter)){
 			if (filter == ""){
-				filter+=" wpd.name LIKE '%"+nameFilter.trim()+"%' ";
+				filter+=" wph.name LIKE '%"+nameFilter.trim()+"%' ";
 			}
 			else { 
-				filter+=" AND wpd.name LIKE '%"+nameFilter.trim()+"%' ";
+				filter+=" AND wph.name LIKE '%"+nameFilter.trim()+"%' ";
 			}
 		}
 		
@@ -693,7 +697,7 @@ public class WProcessDefDao {
 
 	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyActiveWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
-			boolean estrictProductionDateFilter, Integer productionUserFilter, String action) 
+			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, String activeFilter) 
 	throws WProcessDefException {
 
 		String filter = "";
@@ -701,7 +705,7 @@ public class WProcessDefDao {
 		filter = buildWorkingProcessFilter(onlyActiveWorkingProcessesFilter,
 				processNameFilter, initialProductionDateFilter,
 				finalProductionDateFilter, estrictProductionDateFilter,
-				productionUserFilter, filter);
+				productionUserFilter, filter, activeFilter);
 		
 		
 		if (filter != null && !"".equals(filter)){
@@ -721,7 +725,8 @@ public class WProcessDefDao {
 			boolean onlyActiveWorkingProcessesFilter, String processNameFilter,
 			Date initialProductionDateFilter, Date finalProductionDateFilter,
 			boolean estrictProductionDateFilter, Integer productionUserFilter,
-			String filter) {
+			String filter, String activeFilter) {
+		
 		if (onlyActiveWorkingProcessesFilter) {
 			if (!"".equals(filter)) {
 				filter += " AND wpd.active IS TRUE ";
@@ -733,9 +738,9 @@ public class WProcessDefDao {
 		
 		if (processNameFilter != null && !"".endsWith(processNameFilter)){
 			if (!"".equals(filter)) {
-				filter += " AND wpd.name LIKE '%"+processNameFilter+"%'";
+				filter += " AND wph.name LIKE '%"+processNameFilter+"%'";
 			} else {
-				filter += " wpd.name LIKE '%"+processNameFilter+"%'";
+				filter += " wph.name LIKE '%"+processNameFilter+"%'";
 
 			}			
 		}
@@ -775,6 +780,21 @@ public class WProcessDefDao {
 			}
 		}
 
+		// dml 20130508
+		if (activeFilter != null
+				&& (activeFilter.equals(ACTIVE)
+				|| activeFilter.equals(INACTIVE))) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			if (activeFilter.equals(ACTIVE)) {
+				filter += " wpd.active IS TRUE ";
+			} else if (activeFilter.equals(INACTIVE)){
+				filter += " wpd.active IS FALSE ";
+
+			}
+		}
+		
 		System.out.println("QUERY FILTER:" + filter);
 
 		return filter;
@@ -784,15 +804,17 @@ public class WProcessDefDao {
 
 		String tmpQuery = "SELECT ";
 		tmpQuery += " wpd.id, ";
-		tmpQuery += " wpd.name, ";
+		tmpQuery += " wph.name, ";
 		tmpQuery += " wpd.comments, ";
 		tmpQuery += " wpd.production_date, ";
 		tmpQuery += " wpd.production_user, ";
 		tmpQuery += " (SELECT COUNT(id) FROM w_process_work pw WHERE pw.end_time IS NULL AND pw.id_process = wpd.id) AS liveWorks, ";
 		tmpQuery += " (SELECT COUNT(id) FROM w_step_work sw WHERE sw.decided_date IS NULL AND sw.id_process = wpd.id) AS liveSteps, ";
-		tmpQuery += " wpd.active ";
+		tmpQuery += " wpd.active, ";
+		tmpQuery += " wpd.version ";
 
 		tmpQuery += " FROM w_process_def wpd ";
+		tmpQuery += " LEFT OUTER JOIN w_process wph ON wpd.process_id = wph.id ";
 
 		tmpQuery += filter;
 
@@ -818,6 +840,7 @@ public class WProcessDefDao {
 		Integer liveSteps;
 		
 		boolean status;
+		Integer version;
 		
 		
 		Session session = null;
@@ -857,9 +880,10 @@ public class WProcessDefDao {
 					liveSteps= (cols[6] != null ? new Integer(
 							cols[6].toString()) : null);
 					status = (cols[7] != null ? (Boolean) cols[7] : false);
+					version= (cols[8] != null ? new Integer(cols[8].toString()) : null);
 
 					returnList.add(new WProcessDefLight(id, name, comments, productionDate, 
-							productionUser, liveWorks, liveSteps, status));
+							productionUser, liveWorks, liveSteps, status, version));
 				}
 
 			} else {

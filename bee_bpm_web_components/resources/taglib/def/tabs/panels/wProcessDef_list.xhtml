@@ -89,7 +89,11 @@
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_id}" />
 					</f:facet>
-					<h:outputText value="#{wpd.id}" />
+					<h:commandLink value="#{wpd.id}" 
+						action="#{wProcessDefQueryBean.loadWProcessDefForm}"
+						style="text-decoration:none; color:black;">
+                		<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="#{wpd.id}"/>
+					</h:commandLink>
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.name}"
@@ -109,7 +113,11 @@
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_version}" />
 					</f:facet>
-					<h:outputText value="#{wpd.version}" />
+					<h:commandLink value="#{wpd.version}" 
+						action="#{wProcessDefQueryBean.loadWProcessDefForm}"
+						style="text-decoration:none; color:black;">
+                		<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="#{wpd.id}"/>
+					</h:commandLink>
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.comments}"
@@ -121,7 +129,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{wpd.beginStep.name}"
-					style="width:30%; text-align: left;">
+					style="width:27%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_begin_step}" />
 					</f:facet>
@@ -148,12 +156,16 @@
 					<h:outputText value="#{wpd.insertUser}" />
 				</rich:column>
 
-				<rich:componentControl event="onRowClick" for="w_process_def_search_menu"
-					operation="show">
-        	      <f:param value="#{wpd.id}" name="currentRowId"/>
-        	      <f:param value="#{wpd.version}" name="currentRowVersion"/>
-        	      <f:param value="#{wpd.process.id}" name="currentRowProcessId"/>
-				</rich:componentControl>
+				<rich:column style="width:3%; text-align:center;">
+					<h:graphicImage value="/images/icons/changeset.png"
+						style="border:0;" />
+					<rich:componentControl event="onclick"
+						for="w_process_def_search_menu" operation="show">
+							<f:param value="#{wpd.id}" name="currentRowId" />
+							<f:param value="#{wpd.version}" name="currentRowVersion" />
+							<f:param value="#{wpd.process.id}" name="currentRowProcessId" />
+					</rich:componentControl>
+				</rich:column>
 
 			</rich:dataTable>
 

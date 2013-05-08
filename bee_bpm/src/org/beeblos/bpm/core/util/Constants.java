@@ -8,6 +8,9 @@ import java.util.Date;
 
 public class Constants {
 	
+	public static final String ACTIVE = "Active"; // dml 20130508
+	public static final String INACTIVE = "Inactive"; // dml 20130508
+
 	public static Integer FIRST_WPROCESSDEF_VERSION = 1; // dml 20130506
 	
 	public static final boolean WRITE_EMAIL_TO_FILESYSTEM = getStringProperty("email.to.filesystem","no").equals("yes");
