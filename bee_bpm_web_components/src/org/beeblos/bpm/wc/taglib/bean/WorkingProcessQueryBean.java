@@ -574,7 +574,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
 					.getWorkingProcessListFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
-							estrictProductionDateFilter, productionUserFilter, action, null);
+							estrictProductionDateFilter, productionUserFilter, action, null, null);
 
 			nResults = wProcessDefLightList.size();
 
@@ -598,7 +598,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
 					.getWorkingProcessListFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
-							estrictProductionDateFilter, productionUserFilter, action, null);
+							estrictProductionDateFilter, productionUserFilter, action, null, null);
 
 			nResults = wProcessDefLightList.size();
 

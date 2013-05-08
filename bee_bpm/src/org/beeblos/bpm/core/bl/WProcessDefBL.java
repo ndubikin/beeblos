@@ -499,12 +499,14 @@ public class WProcessDefBL {
 
 	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
-			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, String activeFilter)
+			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
+			Integer processHeadId, String activeFilter)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getWorkingProcessListFinder(onlyWorkingProcessesFilter, 
 				processNameFilter, initialProductionDateFilter, finalProductionDateFilter,
-				estrictProductionDateFilter, productionUserFilter, action, activeFilter);
+				estrictProductionDateFilter, productionUserFilter, action, processHeadId, 
+				activeFilter);
 		
 	}
 

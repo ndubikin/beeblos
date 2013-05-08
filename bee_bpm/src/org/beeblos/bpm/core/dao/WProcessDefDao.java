@@ -1,10 +1,9 @@
 package org.beeblos.bpm.core.dao;
 
-import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_ADDED;
-import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_MODIFIED;
-import static org.beeblos.bpm.core.util.Constants.ALL;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE;
 import static org.beeblos.bpm.core.util.Constants.INACTIVE;
+import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_ADDED;
+import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_MODIFIED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.model.ObjectM;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -697,7 +695,8 @@ public class WProcessDefDao {
 
 	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyActiveWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
-			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, String activeFilter) 
+			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
+			Integer processHeadId, String activeFilter) 
 	throws WProcessDefException {
 
 		String filter = "";
@@ -705,7 +704,7 @@ public class WProcessDefDao {
 		filter = buildWorkingProcessFilter(onlyActiveWorkingProcessesFilter,
 				processNameFilter, initialProductionDateFilter,
 				finalProductionDateFilter, estrictProductionDateFilter,
-				productionUserFilter, filter, activeFilter);
+				productionUserFilter, filter, processHeadId, activeFilter);
 		
 		
 		if (filter != null && !"".equals(filter)){
@@ -725,7 +724,7 @@ public class WProcessDefDao {
 			boolean onlyActiveWorkingProcessesFilter, String processNameFilter,
 			Date initialProductionDateFilter, Date finalProductionDateFilter,
 			boolean estrictProductionDateFilter, Integer productionUserFilter,
-			String filter, String activeFilter) {
+			String filter, Integer processHeadId, String activeFilter) {
 		
 		if (onlyActiveWorkingProcessesFilter) {
 			if (!"".equals(filter)) {
@@ -791,6 +790,17 @@ public class WProcessDefDao {
 				filter += " wpd.active IS TRUE ";
 			} else if (activeFilter.equals(INACTIVE)){
 				filter += " wpd.active IS FALSE ";
+
+			}
+		}
+		
+		// dml 20130508
+		if (processHeadId != null
+				&& !processHeadId.equals(0)) {
+			if (!"".equals(filter)) {
+				filter += " AND wpd.process_id = " + processHeadId + " ";
+			} else {
+				filter += " wpd.process_id = " + processHeadId + " ";
 
 			}
 		}

@@ -277,7 +277,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		try {
 			
  			this.relatedProcessDefList = new WProcessDefBL()
-				.getWorkingProcessListFinder(false, null, null, null, false, null, null, this.activeFilter);
+				.getWorkingProcessListFinder(false, null, null, null, false, null, null, 
+						this.currentWProcessDef.getProcess().getId(), this.activeFilter);
 			
 		} catch (WProcessDefException e) {
 
