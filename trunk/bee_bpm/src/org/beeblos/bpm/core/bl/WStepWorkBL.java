@@ -177,8 +177,12 @@ public class WStepWorkBL {
 		return new WStepWorkDao().existsActiveProcess(processId, idObject, idObjectType);
 	}
 
-	public Integer getWorkCount (Integer processId, String mode) throws WStepWorkException {
-		return new WStepWorkDao().getWorkCount(processId, mode);
+	public Integer getWorkCountByProcess (Integer processId, String mode) throws WStepWorkException {
+		return new WStepWorkDao().getWorkCountByProcess(processId, mode);
+	}
+	
+	public Integer getWorkCountByStep (Integer stepId, String mode) throws WStepWorkException {
+		return new WStepWorkDao().getWorkCountByStep(stepId, mode);
 	}
 	
 	/*

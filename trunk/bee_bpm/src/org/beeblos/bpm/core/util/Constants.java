@@ -12,6 +12,7 @@ public class Constants {
 	public static final String INACTIVE = "Inactive"; // dml 20130508
 
 	public static Integer FIRST_WPROCESSDEF_VERSION = 1; // dml 20130506
+	public static Integer FIRST_WSTEPDEF_VERSION = 1; // dml 20130508
 	
 	public static final boolean WRITE_EMAIL_TO_FILESYSTEM = getStringProperty("email.to.filesystem","no").equals("yes");
 	public static final String EMAIL_DEFAULT_SUBJECT = getStringProperty("email.default.subject");
@@ -102,8 +103,11 @@ public class Constants {
 	
 	// dml 20120112
 	public static final String SUCCESS_FORM_WSTEPDEF = "SUCCESS_FORM_WSTEPDEF";
+	public static final String SUCCESS_FORM_WSTEPHEAD = "SUCCESS_FORM_WSTEPHEAD"; // dml 20130508
 	public static final String LOAD_WSTEPDEF = "LOAD_WSTEPDEF";
+	public static final String LOAD_WSTEPHEAD = "LOAD_WSTEPHEAD"; // dml 20130508
 	public static final String CREATE_NEW_WSTEPDEF = "CREATE_NEW_WSTEPDEF";
+	public static final String CREATE_NEW_WSTEPHEAD = "CREATE_NEW_WSTEPHEAD"; // dml 20130508
 	public static final String WSTEPDEF_QUERY = "WSTEPDEF_QUERY";
 
 	// dml 20120113

@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpDeleteWStepDef" width="400" height="130">
+	    <f:facet name="header">
+	        <h:panelGroup id="deleteWStepDefTitlePanel">
+	            <h:outputText id="deleteWStepDefTitle"  
+	            	value="#{msg.label_deleting_step} #{wStepDefQueryBean.currentWStepDef.stepHead.name}, #{msg.label_version}: #{wStepDefQueryBean.currentWStepDef.version} (id: #{wStepDefQueryBean.currentWStepDef.id})"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="deleteWStepDef">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_delete_wstep_role"/>
+		        <rich:componentControl id="deleteWStepDefControl" for="mpDeleteWStepDef" attachTo="hidelink_delete_wstep_role" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+		<ui:include src="deleteWStepDef.xhtml"/>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	

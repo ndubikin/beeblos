@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.dao;
 
+import static org.beeblos.bpm.core.util.Constants.ACTIVE;
+import static org.beeblos.bpm.core.util.Constants.INACTIVE;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_ADDED;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_MODIFIED;
 
@@ -230,6 +232,42 @@ public class WStepDefDao {
 		return steps;
 	}
 	
+	// dml 20130430
+	public Integer getLastVersionNumber(Integer stepHeadId) throws WStepDefException {
+	
+		Integer version = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_step_def WHERE step_head_id = " + stepHeadId)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepDefDao: getLastVersionNumber - can't obtain step last version = " +
+					stepHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("getLastVersionNumber;  can't obtain step last version: " + 
+					stepHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		if (version == null){
+			return 0;
+		}
+		
+		return version;
+	}	
+
 	// nes 20130502 - ajustado al nuevo formato de campos de la sequence
 	@SuppressWarnings("unchecked")
 	public List<WStepDef> getStepDefs(Integer processId) throws WStepDefException {
@@ -552,7 +590,8 @@ public class WStepDefDao {
 	}
 
 	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
-			String instructionsFilter, Integer userId, boolean isAdmin, String action ) 
+			String instructionsFilter, Integer userId, boolean isAdmin, String action, 
+			Integer stepHeadId, String activeFilter ) 
 	throws WStepDefException {
 		
 		org.hibernate.Session session = null;
@@ -564,7 +603,8 @@ public class WStepDefDao {
 		// build filter from user params. String and Integer values will be added to
 		// the String directly in the string filter.
 		// Date parameters must be added to hibernate query in the try / catch clause below
-		String userFilter = getSQLFilter(nameFilter, commentFilter, instructionsFilter);
+		String userFilter = getSQLFilter(nameFilter, commentFilter, instructionsFilter,
+				stepHeadId, activeFilter);
 		
 		String requiredFilter = "";//getRequiredFilter(userId, isAdmin);
 		
@@ -679,7 +719,8 @@ public class WStepDefDao {
 	
 	}
 	
-	private String getSQLFilter(String nameFilter, String commentFilter, String instructionsFilter) {
+	private String getSQLFilter(String nameFilter, String commentFilter, String instructionsFilter, 
+			Integer stepHeadId, String activeFilter ) {
 	
 		String filter="";
 	
@@ -711,10 +752,35 @@ public class WStepDefDao {
 			}
 		}
 	
+		// dml 20130508
+		if (activeFilter != null
+				&& (activeFilter.equals(ACTIVE)
+				|| activeFilter.equals(INACTIVE))) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			if (activeFilter.equals(ACTIVE)) {
+				filter += " wsd.active IS TRUE ";
+			} else if (activeFilter.equals(INACTIVE)){
+				filter += " wsd.active IS FALSE ";
+
+			}
+		}
+		
+		// dml 20130508
+		if (stepHeadId != null
+				&& !stepHeadId.equals(0)) {
+			if (!"".equals(filter)) {
+				filter += " AND wsd.step_head_id = " + stepHeadId + " ";
+			} else {
+				filter += " wsd.step_head_id = " + stepHeadId + " ";
+
+			}
+		}
+		
 		return filter;
-	}
-	
-	
+
+	}	
 	
 	private String getOrder() {
 	

@@ -56,7 +56,7 @@ public class TestWStepDefBL extends TestCase{
 			Integer idUser1 = userBl.add(new WUserDef( "juan ss", "jn", true, 1000, new Date()), 1000);
 			Integer idUser2 = userBl.add(new WUserDef( "maria ss", "mr", true, 1000, new Date()), 1000);
 			
-			step = new WStepDef(null,"paso 1",2,3,"ejecute este paso plis","sincomentarios ...",null,null,null);
+			step = new WStepDef(null,2,3,"ejecute este paso plis","sincomentarios ...",null,null,null);
 			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));
 //			step.getAssigned().add(new WStepAssignedDef("pepe","user"));
 			
@@ -134,7 +134,7 @@ public class TestWStepDefBL extends TestCase{
 		public void testErrorBorrarWStepDef() throws Exception {
 		
 
-			new WStepDefBL().delete( stepBL.getWStepDefByPK(iproc, 1000),1000) ;
+			new WStepDefBL().delete( iproc,1000) ;
 			assertNull(stepBL.getWStepDefByPK(iproc,1001));
 			
 			

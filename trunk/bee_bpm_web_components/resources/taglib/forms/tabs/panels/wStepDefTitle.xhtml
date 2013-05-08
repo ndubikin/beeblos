@@ -5,28 +5,42 @@
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:rich="http://richfaces.org/rich">
 
-	<div>
+	<h:form>
 	
-		<h:outputText value="#{msg.label_adding_new_step}" 
-							styleClass="title_style" 
-							rendered="#{wStepDefFormBean.currentWStepDef.id==null or wStepDefFormBean.currentWStepDef.id==0}"
-							style="margin-left: 32px; margin-bottom: 10px;"/>
-
-		<h:outputText value="#{msg.label_step}: #{wStepDefFormBean.currentWStepDef.id}" 
-							styleClass="title_style" 
-							rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}"
-							style="margin-left: 32px; margin-bottom: 10px;"/>
-
-		<h:outputText value=" - " 
-							styleClass="title_style" 
-							rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}"
-							style="margin-bottom: 10px;"/>
-							
-		<h:outputText value="( #{wStepDefFormBean.currentWStepDef.name} )" 
-							styleClass="title_style" 
-							rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}"
-							style="margin-bottom: 10px;"/>
-							
-	</div>
+		<div>
+	
+			<h:outputText
+				value="#{msg.label_adding_new_step} #{msg.label_version}"
+				styleClass="title_style"
+				rendered="#{wStepDefFormBean.currentWStepDef.id==null or wStepDefFormBean.currentWStepDef.id==0}"
+				style="margin-left: 32px; margin-bottom: 10px;" />
+	
+			<h:commandLink value="#{msg.label_step}: #{wStepDefFormBean.currentWStepDef.name}" 
+				action="#{wStepDefFormBean.loadWStepForm}"
+				title="#{msg.label_open_head_step_form}"
+				styleClass="title_style" 
+				rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}"
+				style="margin-left: 32px; margin-bottom: 10px; text-decoration:none; color:black;"/>
+								
+			<h:outputText value=" (#{msg.label_version}: #{wStepDefFormBean.currentWStepDef.version})" 
+				styleClass="title_style" 
+				rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}"
+				style="margin-bottom: 10px;"/>
+	
+			<h:outputText value=" - " 
+				styleClass="title_style" 
+				rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}"
+				style="margin-bottom: 10px;"/>	
+		
+			<h:outputText value="#{wStepDefFormBean.currentWStepDef.insertDate}" 
+				styleClass="title_style" 
+				rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}"
+				style="margin-bottom: 10px;">
+				<f:convertDateTime pattern="#{msg.label_date_format}" timeZone="#{wStepDefFormBean.timeZone}"/>
+			</h:outputText>
+	
+		</div>
+		
+	</h:form>
 		
 </ui:composition>

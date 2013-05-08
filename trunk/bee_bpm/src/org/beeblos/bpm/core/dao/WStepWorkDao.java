@@ -974,7 +974,7 @@ public class WStepWorkDao {
 	}
 	
 	// returns # existing works in WStepWork
-	public Integer getWorkCount (Integer processId, String mode) 
+	public Integer getWorkCountByProcess(Integer processId, String mode) 
 			throws WStepWorkException {
 
 		org.hibernate.Session session = null;
@@ -1020,7 +1020,54 @@ public class WStepWorkDao {
 		return 0;		
 	}
 	
-	
+	// returns # existing works in WStepWork
+	public Integer getWorkCountByStep(Integer stepId, String mode) 
+			throws WStepWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		BigInteger qtySteps;
+
+		String query = "SELECT COUNT(*) FROM w_step_work wsw WHERE wsw.id_current_step = " 
+				+ stepId + " OR wsw.id_previous_step = " + stepId;
+		
+		if (mode.equals(ALIVE)) {
+			query += " AND wsw.decided_date is null";
+		} else if (mode.equals(PROCESSED)) {
+			query += " AND wsw.decidedDate is not null";
+		}
+		
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			qtySteps = (BigInteger) session
+								.createSQLQuery(query)
+								.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="WStepWorkDao: getWorkCount() - error trying count stepWork - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+
+		}
+		
+		if (qtySteps != null){
+			return qtySteps.intValue();
+		}
+		
+		return 0;		
+	}
+		
 	public Boolean isLockedByUser (
 			Integer idStepWork, String idLockedBy ) 
 	throws WStepWorkException, WStepLockedByAnotherUserException {

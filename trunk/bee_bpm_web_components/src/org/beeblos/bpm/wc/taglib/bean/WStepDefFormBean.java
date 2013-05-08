@@ -16,17 +16,20 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.bl.WStepHeadBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.bl.WTimeUnitBL;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepHead;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
@@ -39,6 +42,7 @@ import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 
 public class WStepDefFormBean extends CoreManagedBean {
 
@@ -78,18 +82,27 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private String strRoleList; // property to pass current role list ids to popup
 	private String strUserList; // property to pass current role list ids to popup
 	
-	// dml 20120305
+	// dml 20120505
 	private String returnStatement;
 	
-	// dml 20120323
+	// dml 20120523
 	private List<WStepSequenceDef> outgoingRoutes;
 	private Integer outgoingRoutesSize;
 	private List<WStepSequenceDef> incomingRoutes;
 	private Integer incomingRoutesSize;
 	
-	// dml 20120326
-	private Integer currentWProcessDefId;
-	//private Integer 
+	// dml 20120526
+	private Integer currentWStepDefId;
+
+	// dml 20130507
+	private Integer currentStepHeadIdSelected;
+	private List<SelectItem> wStepHeadComboList;
+	
+	// dml 20130508
+	private List<WStepDef> relatedStepDefList;
+	private String activeFilter;
+	
+	private String messageStyle;
 	
 	public WStepDefFormBean() {		
 		super();
@@ -104,12 +117,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		this.loadWTimeUnitForCombo();
 		
-		// dml 20120323
+		// dml 20120523
 		this.loadOutgoingRouteList();
 		
-		// dml 20120323
+		// dml 20120523
 		this.loadIncomingRouteList();
 		
+		this._loadWStepHeadComboList(); // dml 20130508
+
 		_reset();
 	}
 
@@ -117,7 +132,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public void initEmptyWStepDef() {
 
 		currObjId = null;
-		currentWProcessDefId = null;
+		currentWStepDefId = null;
 		
 		currentWStepDef = new WStepDef(EMPTY_OBJECT);
 		
@@ -240,6 +255,11 @@ public class WStepDefFormBean extends CoreManagedBean {
 				currentWStepDef.setUsersRelated( new HashSet<WStepUser>() );
 			}
 
+			// dml 20130508
+			if (currentWStepDef.getStepHead() == null) {
+				currentWStepDef.setStepHead(new WStepHead());
+			}
+
 		}
 		
 		if (currentWStepRole != null) {
@@ -274,11 +294,20 @@ public class WStepDefFormBean extends CoreManagedBean {
 		boolean result = false;
 		
 		if (this.currentWStepDef != null && this.currentWStepDef.getName() != null 
-				&& !"".equals(this.currentWStepDef.getName())){
+				&& !"".equals(this.currentWStepDef.getName())
+				&& this.currentWStepDef.getVersion() != null
+				&& !"".equals(this.currentWStepDef.getVersion())){
 				
 			result = true;
 			
-		} else {
+		// dml 20130508 - si estamos modificando el steo interno tenemos que ver que el nombre no sea vacio	
+		} else if (this.currentWStepDef.getStepHead() != null
+			&& this.currentWStepDef.getStepHead().getName() != null
+			&& !"".equals(this.currentWStepDef.getStepHead().getName())) {
+
+		result = true;
+
+	} else {
 			
 			String message = "You must insert correct values";
 			String params[] = {message + ",", ".Please confirm input values." };				
@@ -358,6 +387,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		logger.debug("WStepDefFormBean: add: objectId:["+this.currObjId+"] ");
 		
 		setShowHeaderMessage(false);
+		String message = "";
 
 		String ret = null;
 		
@@ -371,6 +401,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 				//storeInRepository(); 
 			}
 			
+			message = "The step '" + this.currentWStepDef.getStepHead().getName()+ "' has been correctly updated";
+
 			return update();
 		}
 		
@@ -382,10 +414,15 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 			currObjId = wsdBL.add(currentWStepDef, this.getCurrentUserId() );
 			
+			message = "The step '" + this.currentWStepDef.getStepHead().getName()+ "' has been correctly added";
+
 			// Manual process to store attachment in the repository ( if attachment exists ...
 			if (attachment.getDocumentoNombre()!=null && !"".equals(attachment.getDocumentoNombre())) {
 				//storeInRepository();
 				update();
+
+				message = "The step '" + this.currentWStepDef.getStepHead().getName()+ "' has been correctly updated";
+
 			}
 			
 			recoverNullObjects();
@@ -398,7 +435,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 		} catch (WStepDefException ex1) {
 
-			String message = ex1.getMessage() + " - "+ ex1.getCause();
+			message = ex1.getMessage() + " - "+ ex1.getCause();
 			String params[] = {message + ",", ".Please confirm input values." };				
 			agregarMensaje("205",message,params,FGPException.ERROR);	
 			
@@ -406,7 +443,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 		} catch (Exception e) {
 			
-			String message = e.getMessage() + " - "+ e.getCause();
+			message = e.getMessage() + " - "+ e.getCause();
 			String params[] = {message + ",", ".Error inserting object ..." };
 			agregarMensaje("205",message,params ,FGPException.ERROR);
 			
@@ -475,11 +512,13 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 			recoverNullObjects();
 			
-			// dml 20120323
+			// dml 20120523
 			this.loadOutgoingRouteList();
 
-			// dml 20120323
+			// dml 20120523
 			this.loadIncomingRouteList();
+			
+			this.reloadRelatedStepDefList(); // dml 20130508
 			
 		} catch (WStepDefException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
@@ -490,6 +529,29 @@ public class WStepDefFormBean extends CoreManagedBean {
 		}			
 	}
 	
+	// dml 20130508
+	public void reloadRelatedStepDefList(){
+		
+		try {
+			
+ 			this.relatedStepDefList = new WStepDefBL()
+				.getStepListByFinder(null, null, null, null, false, null, 
+						this.currentWStepDef.getStepHead().getId(), this.activeFilter);
+				
+		} catch (WStepDefException ex1) {
+
+			this.relatedStepDefList = new ArrayList<WStepDef>();
+
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".reloadRelatedStepDefList() WStepDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+			
+		}
+		
+	}
+
 	public void loadResponse(){
 		
 		if (currentStepResponse != null && currentStepResponse.getId() != null
@@ -760,14 +822,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 
-	// dml 20120323
+	// dml 20120523
 	private ArrayList<WStepSequenceDef> loadOutgoingRouteList() {
 		
 		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
 		
 		try {
 			
-			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, currentWProcessDefId, getCurrentUserId());
+			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, currentWStepDefId, getCurrentUserId());
 
 			if (outgoingRoutes != null){
 				outgoingRoutesSize = outgoingRoutes.size();
@@ -783,14 +845,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return null;
 	}
 	
-	// dml 20120323
+	// dml 20120523
 	private ArrayList<WStepSequenceDef> loadIncomingRouteList() {
 		
 		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
 		
 		try {
 
-			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, currentWProcessDefId, getCurrentUserId());
+			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, currentWStepDefId, getCurrentUserId());
 
 			if (incomingRoutes != null){
 				incomingRoutesSize = incomingRoutes.size();
@@ -904,6 +966,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.strUserList = strUserList;
 	}
 
+	public String getMessageStyle() {
+		return messageStyle;
+	}
+
+	public void setMessageStyle(String messageStyle) {
+		this.messageStyle = messageStyle;
+	}
+
 	public String getStrRoleList() {
 		
 		String strRoleList="";
@@ -927,6 +997,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	public void setReturnStatement(String returnStatement) {
 		this.returnStatement = returnStatement;
+	}
+
+	public String getActiveFilter() {
+		return activeFilter;
+	}
+
+	public void setActiveFilter(String activeFilter) {
+		this.activeFilter = activeFilter;
 	}
 
 	public List<WStepSequenceDef> getOutgoingRoutes() {
@@ -961,12 +1039,36 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.incomingRoutesSize = incomingRoutesSize;
 	}
 
-	public Integer getCurrentWProcessDefId() {
-		return currentWProcessDefId;
+	public Integer getCurrentStepHeadIdSelected() {
+		return currentStepHeadIdSelected;
 	}
 
-	public void setCurrentWProcessDefId(Integer currentWProcessDefId) {
-		this.currentWProcessDefId = currentWProcessDefId;
+	public void setCurrentStepHeadIdSelected(Integer currentStepHeadIdSelected) {
+		this.currentStepHeadIdSelected = currentStepHeadIdSelected;
+	}
+
+	public List<SelectItem> getwStepHeadComboList() {
+		return wStepHeadComboList;
+	}
+
+	public void setwStepHeadComboList(List<SelectItem> wStepHeadComboList) {
+		this.wStepHeadComboList = wStepHeadComboList;
+	}
+
+	public List<WStepDef> getRelatedStepDefList() {
+		return relatedStepDefList;
+	}
+
+	public void setRelatedStepDefList(List<WStepDef> relatedStepDefList) {
+		this.relatedStepDefList = relatedStepDefList;
+	}
+
+	public Integer getCurrentWProcessDefId() {
+		return currentWStepDefId;
+	}
+
+	public void setCurrentWProcessDefId(Integer currentWStepDefId) {
+		this.currentWStepDefId = currentWStepDefId;
 	}
 
 	public void deleteWStepUser(){
@@ -1231,7 +1333,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	}
 
-	// nes 20120203
+	// nes 20120205
 	private String _defineReturn() {
 
 		String ret = returnStatement;
@@ -1239,6 +1341,86 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		return ret;
 		
+	}
+	
+	// dml 20130508
+	public void _loadWStepHeadComboList(){
+		
+		try {
+			
+			this.wStepHeadComboList = UtilsVs.castStringPairToSelectitem(
+					new WStepHeadBL().getComboList("Select ...", null));
+			
+		} catch (WStepHeadException e) {
+			
+			this.wStepHeadComboList = new ArrayList<SelectItem>();
+			
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	// dml 20130508
+	public void setStepInWStepDef(){
+		
+		if (this.currentStepHeadIdSelected != null
+				&& !this.currentStepHeadIdSelected.equals(0)){
+			
+			try {
+				
+				WStepHead stepHead = new WStepHeadBL().getWStepHeadByPK(this.currentStepHeadIdSelected, null);
+			
+				Integer lastVersion = new WStepDefBL().getLastVersionNumber(this.currentStepHeadIdSelected);
+				
+				this.currentWStepDef = new WStepDef(EMPTY_OBJECT);
+
+				this.currentWStepDef.setStepHead(stepHead);
+				
+				this.currentWStepDef.setVersion(lastVersion + 1);
+				
+			} catch (WStepHeadException e) {
+				
+				setMessageStyle(errorMessageStyle());
+				setShowHeaderMessage(true);
+				String message = "WStepDefException: Method setProcessInWStepDef in WStepDefFormBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "WStepHeadException" };
+				agregarMensaje("205", message, params, FGPException.WARN);
+				logger.error(message);
+		
+			} catch (WStepDefException e) {
+				
+				setMessageStyle(errorMessageStyle());
+				setShowHeaderMessage(true);
+				String message = "WStepDefException: Method setPStepnWStepDef in WStepDefFormBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", "WStepDefException" };
+				agregarMensaje("205", message, params, FGPException.WARN);
+				logger.error(message);
+		
+			}
+			
+		} else {
+			
+			this.currentWStepDef = new WStepDef(EMPTY_OBJECT);
+
+		}
+
+	}
+
+	// dml 20120108
+	public String loadWStepHeadForm() {
+
+		return new WStepDefUtil().loadWStepHeadFormBean(this.currObjId);
+
+	}
+	
+	// dml 20120108
+	public String loadWStepDefForm() {
+
+		return new WStepDefUtil().loadWStepDefFormBean(this.currObjId);
+
 	}
 	
 }

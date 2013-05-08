@@ -34,7 +34,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 					.getValue(super.getELContext());
 			wpdfb.init();
 			wpdfb.initEmptyWProcessDef();
-			wpdfb.setReturnStatement(WPROCESSDEF_QUERY);
+			wpdfb.setReturnStatement(returnStatement);
 
 			ret = CREATE_NEW_WPROCESSDEF;
 
@@ -60,7 +60,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 			wpdfb.setCurrentProcessIdSelected(processId);
 			wpdfb.setProcessInWProcessDef();
 			
-			wpdfb.setReturnStatement(WPROCESSDEF_QUERY);
+			wpdfb.setReturnStatement(returnStatement);
 
 			ret = CREATE_NEW_WPROCESSDEF;
 
