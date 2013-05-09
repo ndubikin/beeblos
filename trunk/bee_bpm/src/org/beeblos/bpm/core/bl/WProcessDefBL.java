@@ -213,7 +213,8 @@ public class WProcessDefBL {
 
 	// dml 20130507
 	private List<String> _deleteRelatedSteps(List<WStepDef> stepList, Integer currentUserId) 
-			throws WStepDefException, WStepWorkException, WStepHeadException {
+			throws WStepDefException, WStepWorkException, WStepHeadException, 
+			WProcessDefException, WStepSequenceDefException {
 				
 		WStepDefBL wsdBL = new WStepDefBL();
 		List<String> deletedSteps = new ArrayList<String>();
@@ -237,6 +238,14 @@ public class WProcessDefBL {
 			String mess = "Impossible to delete step defs";
 			logger.error(mess);
 			throw new WStepDefException(mess);
+		} catch (WProcessDefException e) {
+			String mess = "Impossible to delete step defs";
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		} catch (WStepSequenceDefException e) {
+			String mess = "Impossible to delete step defs";
+			logger.error(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 		
 		return deletedSteps;

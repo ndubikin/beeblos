@@ -50,6 +50,12 @@
 			columnClasses="colStyle200px, colStyle480px"
 			rendered="#{wStepDefFormBean.currObjId eq null or wStepDefFormBean.currObjId eq 0}">
 				
+			<h:outputText value="#{msg.label_shared}:" styleClass="firstLeftText" />
+			<h:selectBooleanCheckbox value="#{wStepDefFormBean.currentWStepDef.shared}" 	
+				rendered="#{!wStepDefFormBean.readOnly}"/>
+			<h:outputText value="#{wStepDefFormBean.currentWStepDef.shared?msg.label_yes:msg.label_no}"
+				style="font-size:13px;" rendered="#{wStepDefFormBean.readOnly}"/>
+
 			<h:outputText value="#{msg.label_step} #{msg.label_comments}:" styleClass="firstLeftText" />
 			<h:inputTextarea id="w_step_def_step_comments"
 				value="#{wStepDefFormBean.currentWStepDef.stepComments}"

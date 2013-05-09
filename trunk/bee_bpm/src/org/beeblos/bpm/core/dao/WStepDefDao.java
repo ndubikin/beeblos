@@ -167,7 +167,7 @@ public class WStepDefDao {
 		return step;
 	}
 	
-	
+/* dml 20130509 metodo pasado a WStepHeadDao	
 	public WStepDef getStepDefByName(String name) throws WStepDefException {
 
 		WStepDef  step = null;
@@ -199,7 +199,7 @@ public class WStepDefDao {
 
 		return step;
 	}
-
+*/
 	
 	public List<WStepDef> getWStepDefs() throws WStepDefException {
 
@@ -215,7 +215,7 @@ public class WStepDefDao {
 
 			tx.begin();
 
-			steps = session.createQuery("From WStepDef order by name ").list();
+			steps = session.createQuery("From WStepDef Order By stepHead.name ").list();
 
 			tx.commit();
 
@@ -372,7 +372,7 @@ public class WStepDefDao {
 				tx.begin();
 
 				lwpd = session
-						.createQuery("From WStepDef order by name ")
+						.createQuery("From WStepDef Order By stepHead.name ")
 						.list();
 		
 				if (lwpd!=null) {
@@ -437,7 +437,7 @@ public class WStepDefDao {
 				tx.begin();
 
 				lwsd = session
-							.createQuery("select distinct w.id, w.name, w.stepComments from WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.name")
+							.createQuery("Select Distinct w.id, w.stepHead.name, w.stepComments from WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.stepHead.name")
 							.setParameter(0, processId)
 							.list();
 
@@ -509,8 +509,9 @@ public class WStepDefDao {
 				tx = session.getTransaction();
 				tx.begin();
 				
-				String query = "SELECT DISTINCT (s.id), s.name, s.step_comments ";
+				String query = "SELECT DISTINCT (s.id), wsh.name, s.step_comments ";
 				query += " FROM w_step_def s ";
+				query += " LEFT OUTER JOIN w_step_head wsh ON s.step_head_id = wsh.id ";
 				query += " LEFT OUTER JOIN w_step_role wsr ON s.id = wsr.id_step ";
 				query += " LEFT OUTER JOIN w_step_user wsu ON s.id = wsu.id_step ";
 				query += " WHERE s.id IN ";
@@ -528,7 +529,7 @@ public class WStepDefDao {
 					
 				}
 				
-				query += " ORDER BY s.name ";
+				query += " ORDER BY wsh.name ";
 /*
 				lwsd = session
 						.createSQLQuery("SELECT DISTINCT w.id, w.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? AND ws.version=? AND w.id = ws.fromStep.id ORDER BY w.name")
@@ -684,12 +685,13 @@ public class WStepDefDao {
 	
 	private String getBaseQuery(boolean isAdmin) {
 	
-		String baseQueryTmp="SELECT * FROM w_step_def wsd ";
+		String baseQueryTmp = "SELECT * FROM w_step_def wsd ";
+		baseQueryTmp += "LEFT OUTER JOIN w_step_head wsh ON wsd.step_head_id = wsh.id ";
 	
 		return baseQueryTmp;
 	
 	}
-	
+/*	
 	private String getFilter(String nameFilter, String commentFilter, String instructionsFilter) {
 
 		String filter="";
@@ -718,7 +720,7 @@ public class WStepDefDao {
 		return filter;
 	
 	}
-	
+*/	
 	private String getSQLFilter(String nameFilter, String commentFilter, String instructionsFilter, 
 			Integer stepHeadId, String activeFilter ) {
 	
@@ -727,10 +729,10 @@ public class WStepDefDao {
 	
 		if (nameFilter!=null && ! "".equals(nameFilter)){
 			if (filter == ""){
-				filter+=" wsd.name LIKE '%"+nameFilter.trim()+"%' ";
+				filter+=" wsh.name LIKE '%"+nameFilter.trim()+"%' ";
 			}
 			else { 
-				filter+=" AND wsd.name LIKE '%"+nameFilter.trim()+"%' ";
+				filter+=" AND wsh.name LIKE '%"+nameFilter.trim()+"%' ";
 			}
 		}
 		

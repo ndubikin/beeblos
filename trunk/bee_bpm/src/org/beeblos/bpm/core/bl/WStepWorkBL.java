@@ -1245,6 +1245,13 @@ public class WStepWorkBL {
 			throw new WProcessDefException(mess);
 		}
 			
+		// si le pasamos processId nulo, si la lista no esta vacia devuelve "true"
+		if ((processId == null
+				|| processId.equals(0))
+				&& !processIdList.isEmpty()){
+			return true;
+		}
+			
 		for (Integer pid : processIdList){
 			
 			if (!pid.equals(processId)){
