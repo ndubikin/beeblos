@@ -293,6 +293,10 @@
 			<column name="active"/>
 		</property>
 	
+		<property name="shared"	type="java.lang.Boolean">
+			<column name="shared"/>
+		</property>
+	
 		<property generated="never" lazy="false" name="idDept" type="int">
 			<column name="id_dept">
 				<comment>departamento al que corresponde el paso</comment>

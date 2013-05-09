@@ -28,6 +28,7 @@ public class WStepDef implements java.io.Serializable {
 	private Integer version;
 	
 	private boolean active;
+	private boolean shared;
 	
 	private Integer idDept;
 	private Integer idPhase;
@@ -174,6 +175,14 @@ public class WStepDef implements java.io.Serializable {
 		this.active = active;
 	}
 
+	public boolean isShared() {
+		return shared;
+	}
+
+	public void setShared(boolean shared) {
+		this.shared = shared;
+	}
+
 	public void setIdDept(Integer idDept) {
 		this.idDept = idDept;
 	}
@@ -218,9 +227,6 @@ public class WStepDef implements java.io.Serializable {
 		this.idAdditionalZone = idAdditionalZone;
 	}
 
-
-
-
 	public String getIdDefaultProcessor() {
 		return idDefaultProcessor;
 	}
@@ -233,49 +239,17 @@ public class WStepDef implements java.io.Serializable {
 		return submitForm;
 	}
 
-
-
 	public void setSubmitForm(String submitForm) {
 		this.submitForm = submitForm;
 	}
 
-
-
-	/**
-	 * @return the response
-	 */
 	public Set<WStepResponseDef> getResponse() {
 		return response;
 	}
 
-
-
-	/**
-	 * @param response the response to set
-	 */
 	public void setResponse(Set<WStepResponseDef> response) {
 		this.response = response;
 	}
-
-
-
-//	/**
-//	 * @return the assigned
-//	 */
-//	public Set<WStepAssignedDef> getAssigned() {
-//		return assigned;
-//	}
-//
-//
-//
-//	/**
-//	 * @param assigned the assigned to set
-//	 */
-//	public void setAssigned(Set<WStepAssignedDef> assigned) {
-//		this.assigned = assigned;
-//	}
-
-
 
 	/**
 	 * @return the instructions
@@ -676,8 +650,8 @@ public class WStepDef implements java.io.Serializable {
 	@Override
 	public String toString() {
 		return "WStepDef [id=" + id + ", stepHead=" + stepHead + ", version=" + version
-				+ ", active=" + active + ", idDept=" + idDept + ", idPhase=" + idPhase
-				+ ", instructions=" + instructions + ", stepComments=" + stepComments
+				+ ", active=" + active + ", shared=" + shared + ", idDept=" + idDept + ", idPhase="
+				+ idPhase + ", instructions=" + instructions + ", stepComments=" + stepComments
 				+ ", idListZone=" + idListZone + ", idWorkZone=" + idWorkZone
 				+ ", idAdditionalZone=" + idAdditionalZone + ", idDefaultProcessor="
 				+ idDefaultProcessor + ", submitForm=" + submitForm + ", timeUnit=" + timeUnit

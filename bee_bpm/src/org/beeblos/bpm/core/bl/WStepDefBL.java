@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
@@ -82,11 +81,11 @@ public class WStepDefBL {
 	// dml 20130430
 	public void createFirstWStepDef(Integer stepHeadId, Integer currentUserId) throws WStepDefException, WStepHeadException{
 
-		WStepDef wpd = new WStepDef(EMPTY_OBJECT);
+		WStepDef wsd = new WStepDef(EMPTY_OBJECT);
 
-		this._setFirstWStepDefData(wpd, stepHeadId, currentUserId);
+		this._setFirstWStepDefData(wsd, stepHeadId, currentUserId);
 		
-		this.add(wpd, currentUserId);
+		this.add(wsd, currentUserId);
 		
 	}
 
@@ -110,8 +109,9 @@ public class WStepDefBL {
 					
 	}
 	
-	
-	public void delete(Integer stepId, Integer currentUserId) throws WStepDefException, WStepWorkException, WStepHeadException  {
+	public void delete(Integer stepId, Integer currentUserId) 
+			throws WStepDefException, WStepWorkException, WProcessDefException, 
+			WStepSequenceDefException, WStepHeadException  {
 
 		logger.debug("delete() WProcessDef - Name: ["+stepId+"]");
 		
@@ -136,29 +136,18 @@ public class WStepDefBL {
 			logger.error(mess);
 			throw new WStepWorkException(mess);
 		}
-/* NO ESTAN EN LOS PROCESOS			
-		try {
-			qtyWorks = new WProcessWorkBL().getWorkCount(stepId,ALL);
-		} catch (WProcessWorkException e) {
-			String mess = "Error verifiyng existence of works related with this process id:"+stepId
-					+ " "+e.getMessage()+" - "+e.getCause();
-			logger.error(mess);
-			throw new WProcessWorkException(mess);
-		}
-		
-		if (qtyWorks>0) {
-			String mess = "Delete process with works is not allowed ... This process has "+qtyWorks+" works";
-			logger.error(mess);
-			throw new WProcessWorkException(mess);
-		}
-*/			
 
-//		this._deleteRelatedSequences(stepId, currentUserId);
+		// si el step se esta usando en alguna StepSequence no se permite borrarlo
+		if (this.isAnotherProcessUsingStep(stepId, null, currentUserId)) {
+			String mess = "Delete step with related step sequence is not allowed ...";
+			logger.error(mess);
+			throw new WStepSequenceDefException(mess);
+		}
 		
 		WStepDef step = this.getWStepDefByPK(stepId, currentUserId);
 		Integer stepHeadId = step.getStepHead().getId();
 		
-		// se borrarán en cascada (por el mapping) los roles y users relacionados con el process
+		// se borrarán en cascada (por el mapping) los roles y users relacionados con el step
 		new WStepDefDao().delete(step);
 		logger.info("The WProcessDef " + step.getName() + " has been correctly deleted by user " + currentUserId);
 
@@ -166,35 +155,6 @@ public class WStepDefBL {
 		
 	}
 	
-	// dml 20130507
-	private void _deleteRelatedSequences(Integer stepId, Integer currentUserId) throws WProcessWorkException{
-				
-		List<WStepSequenceDef> wssdList;
-		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
-		
-		try {
-			
-			wssdList = new WStepSequenceDefBL().getStepSequenceList(stepId, null);
-			
-			if (wssdList != null
-					&& !wssdList.isEmpty()){
-				
-				for (WStepSequenceDef wssd : wssdList){
-					
-					wssdBL.deleteRoute(wssd, currentUserId);
-					
-				}
-				
-			}
-			
-		} catch (WStepSequenceDefException e) {
-			String mess = "Impossible to delete process " + stepId + " step sequence defs";
-			logger.error(mess);
-			throw new WProcessWorkException(mess);
-		}
-		
-	}
-
 	// dml 20130507
 	private void _checkAndDeleteStepHead(Integer stepHeadId, Integer currentUserId) throws WStepHeadException{
 		
@@ -221,8 +181,8 @@ public class WStepDefBL {
 
 	}
 	
-	// clone a process version (w_process_def, related users and roles, related steps and routes ...)
-	// returns new process id
+	// clone a step version (w_step_def, related users and roles, related steps and routes ...)
+	// returns new step id
 	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer userId) 
 			throws  WStepHeadException, WStepSequenceDefException, WStepDefException  {
 		
@@ -276,11 +236,11 @@ public class WStepDefBL {
 		try {
 			clonedId = this.add(newstepver,userId);
 		} catch (WStepDefException e) {
-			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+stepId
+			String mess = "Error cloning step version: can't ADD new clone step version original-id:"+stepId
 					+" - "+e.getMessage()+" - "+e.getCause();
 			throw new WStepDefException(mess);
 		} catch (WStepHeadException e) {
-			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+stepId
+			String mess = "Error cloning step version: can't ADD new clone step version original-id:"+stepId
 					+" - "+e.getMessage()+" - "+e.getCause();
 			throw new WStepHeadException(mess);
 		}			
@@ -298,7 +258,7 @@ public class WStepDefBL {
 				}
 			}			
 		} catch (WStepSequenceDefException e) {
-			String mess = "Error cloning routes for old process id:"+stepId+"  newProcessId:"+newstepver
+			String mess = "Error cloning routes for old step id:"+stepId+"  newProcessId:"+newstepver
 					+" - "+e.getMessage()+" - "+e.getCause();
 			throw new WStepSequenceDefException(mess);
 		}
@@ -307,6 +267,64 @@ public class WStepDefBL {
 		return clonedId;
 	}
 	
+	// dml 20130509
+	public void deactivateStep(Integer stepId, Integer currentUserId) throws WStepDefException, WStepSequenceDefException{
+		
+		if (stepId != null
+				&& !stepId.equals(0)){
+			
+			WStepDef wsd = this.getWStepDefByPK(stepId, currentUserId);
+			
+			if (wsd != null){
+				
+				if (wsd.isActive()){
+					
+					wsd.setActive(false);
+					this.update(wsd, currentUserId);
+					
+				} else {
+
+					String message = "The step you're trying to deactivate is already non active.";
+					logger.error(message);
+					throw new WStepDefException(message);
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+
+	// dml 20130509
+	public void activateStep(Integer stepId, Integer currentUserId) throws WStepDefException, WStepSequenceDefException{
+		
+		if (stepId != null
+				&& !stepId.equals(0)){
+			
+			WStepDef wsd = this.getWStepDefByPK(stepId, currentUserId);
+			
+			if (wsd != null){
+				
+				if (!wsd.isActive()){
+					
+					wsd.setActive(true);
+					this.update(wsd, currentUserId);
+					
+				} else {
+
+					String message = "The step you're trying to activate is already active.";
+					logger.error(message);
+					throw new WStepDefException(message);
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+
 	// dml 20130430
 	public Integer getLastVersionNumber(Integer stepHeadId) throws WStepDefException {
 
@@ -320,11 +338,12 @@ public class WStepDefBL {
 	}
 	
 	
+/* dml 20130509 metodo pasado a WStepHeadDao	
 	public WStepDef getWStepDefByName(String name, Integer userId) throws WStepDefException {
 
 		return new WStepDefDao().getStepDefByName(name);
 	}
-
+*/
 	
 	public List<WStepDef> getStepDefs(Integer userId) throws WStepDefException {
 
@@ -351,12 +370,10 @@ public class WStepDefBL {
 			throws WStepDefException, WProcessDefException {
 
 		if (stepId == null
-				|| stepId.equals(0)
-				|| processId == null
-				|| processId.equals(0)){
-			String mess = "stepId and processId cannot be null or zero";
+				|| stepId.equals(0)){
+			String mess = "stepId cannot be null or zero";
 			logger.error(mess);
-			throw new WProcessDefException(mess);
+			throw new WStepDefException(mess);
 		}
 
 		List<Integer> processIdList = this.getProcessIdList(stepId, userId);
@@ -365,6 +382,13 @@ public class WStepDefBL {
 			String mess = "Error trying to retrieve the processIdList:"+processId;
 			logger.error(mess);
 			throw new WProcessDefException(mess);
+		}
+		
+		// si le pasamos processId nulo, si la lista no esta vacia devuelve "true"
+		if ((processId == null
+				|| processId.equals(0))
+				&& !processIdList.isEmpty()){
+			return true;
 		}
 			
 		for (Integer pid : processIdList){

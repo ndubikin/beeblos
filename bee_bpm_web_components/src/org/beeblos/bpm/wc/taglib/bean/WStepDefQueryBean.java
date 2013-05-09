@@ -329,6 +329,20 @@ public class WStepDefQueryBean extends CoreManagedBean {
 				agregarMensaje(message);
 				logger.error(message);
 				
+			} catch (WProcessDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
+			} catch (WStepSequenceDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
+				
 			} 
 			
 		}
