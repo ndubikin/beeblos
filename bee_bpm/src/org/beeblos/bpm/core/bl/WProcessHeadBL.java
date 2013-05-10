@@ -34,7 +34,7 @@ public class WProcessHeadBL {
 		processHead.setInsertUser(currentUserId);
 		processHead.setModUser(currentUserId);
 
-		return new WProcessHeadDao().add(processHead);
+		return new WProcessHeadDao().add(processHead, currentUserId);
 
 	}
 		
@@ -56,12 +56,12 @@ public class WProcessHeadBL {
 		
 		logger.debug("update() WProcessHead < id = "+processHead.getId()+">");
 		
-		if (!processHead.equals(new WProcessHeadDao().getWProcessByPK(processHead.getId())) ) {
+		if (!processHead.equals(new WProcessHeadDao().getWProcessByPK(processHead.getId(), currentUserId)) ) {
 
 			// timestamp & trace info
 			processHead.setModDate(new Date());
 			processHead.setModUser(currentUserId);
-			new WProcessHeadDao().update(processHead);
+			new WProcessHeadDao().update(processHead, currentUserId);
 			
 		} else {
 			
@@ -75,45 +75,45 @@ public class WProcessHeadBL {
 
 		logger.debug("delete() WProcessHead - Name: ["+processHead.getName()+"]");
 		
-		new WProcessHeadDao().delete(processHead);
+		new WProcessHeadDao().delete(processHead, currentUserId);
 
 	}
 
 	public WProcessHead getProcessByPK(Integer id, Integer currentUserId) throws WProcessException {
 
-		return new WProcessHeadDao().getWProcessByPK(id);
+		return new WProcessHeadDao().getWProcessByPK(id, currentUserId);
 	}
 	
 	
 	public WProcessHead getProcessByName(String name, Integer currentUserId) throws WProcessException {
 
-		return new WProcessHeadDao().getWProcessByName(name);
+		return new WProcessHeadDao().getWProcessByName(name, currentUserId);
 	}
 
-	public String getProcessName(Integer id) throws WProcessDefException {
-		return new WProcessHeadDao().getProcessName(id);
+	public String getProcessName(Integer id, Integer currentUserId) throws WProcessDefException {
+		return new WProcessHeadDao().getProcessName(id, currentUserId);
 	}
 	
 	
 	public List<WProcessHead> getProcessList(Integer currentUserId) throws WProcessException {
 
-		return new WProcessHeadDao().getWProcessList();
+		return new WProcessHeadDao().getWProcessList(currentUserId);
 	
 	}
 	
 	
 	public List<StringPair> getComboList(
-			String textoPrimeraLinea, String separacion )
+			String textoPrimeraLinea, String separacion, Integer currentUserId )
 	throws WProcessException {
 		 
-		return new WProcessHeadDao().getComboList(textoPrimeraLinea, separacion);
+		return new WProcessHeadDao().getComboList(textoPrimeraLinea, separacion, currentUserId);
 		
 	}
 
 	// dml 20130129
-	public boolean headProcessHasWProcessDef(Integer processHeadId) throws WProcessException{
+	public boolean headProcessHasWProcessDef(Integer processHeadId, Integer currentUserId) throws WProcessException{
 		
-		return new WProcessHeadDao().headProcessHasWProcessDef(processHeadId);
+		return new WProcessHeadDao().headProcessHasWProcessDef(processHeadId, currentUserId);
 		
 	}
 	

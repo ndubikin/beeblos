@@ -574,7 +574,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
 					.getWorkingProcessListFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
-							estrictProductionDateFilter, productionUserFilter, action, null, null);
+							estrictProductionDateFilter, productionUserFilter, action, null, null, getCurrentUserId());
 
 			nResults = wProcessDefLightList.size();
 
@@ -598,7 +598,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
 					.getWorkingProcessListFinder(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
-							estrictProductionDateFilter, productionUserFilter, action, null, null);
+							estrictProductionDateFilter, productionUserFilter, action, null, null, getCurrentUserId());
 
 			nResults = wProcessDefLightList.size();
 
@@ -815,12 +815,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				
 				return UtilsVs
 						.castStringPairToSelectitem(new WProcessDefBL().
-								getComboActiveProcessList("All active processes", ""));
+								getComboActiveProcessList("All active processes", "", getCurrentUserId()));
 				
 			} else {
 				
 				return UtilsVs
-						.castStringPairToSelectitem(new WProcessDefBL().getComboList("All processes", ""));
+						.castStringPairToSelectitem(new WProcessDefBL().getComboList("All processes", "", getCurrentUserId()));
 				
 			}
 			

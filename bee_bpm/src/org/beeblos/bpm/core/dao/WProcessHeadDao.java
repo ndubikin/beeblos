@@ -16,7 +16,7 @@ import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import org.beeblos.bpm.core.util.HibernateUtilNew;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -32,13 +32,13 @@ public class WProcessHeadDao {
 		
 	}
 	
-	public Integer add(WProcessHead process) throws WProcessException {
+	public Integer add(WProcessHead process, Integer currentUserId) throws WProcessException {
 		
 		logger.debug("add() WProcessHead - Name: ["+process.getName()+"]");
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(process));
+			return Integer.valueOf(HibernateUtilNew.guardar(process, currentUserId));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: add - Can't store process definition record "+ 
@@ -51,13 +51,13 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public void update(WProcessHead process) throws WProcessException {
+	public void update(WProcessHead process, Integer currentUserId) throws WProcessException {
 		
 		logger.debug("update() WProcessHead < id = "+process.getId()+">");
 		
 		try {
 
-			HibernateUtil.actualizar(process);
+			HibernateUtilNew.actualizar(process, currentUserId);
 
 
 		} catch (HibernateException ex) {
@@ -73,7 +73,7 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public void delete(WProcessHead process) throws WProcessException {
+	public void delete(WProcessHead process, Integer currentUserId) throws WProcessException {
 
 		logger.debug("delete() WProcessHead - Name: ["+process.getName()+"]");
 		
@@ -81,7 +81,7 @@ public class WProcessHeadDao {
 
 			//process = getWProcessByPK(process.getId());
 
-			HibernateUtil.borrar(process);
+			HibernateUtilNew.borrar(process, currentUserId);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: delete - Can't delete proccess definition record "+ process.getName() +
@@ -99,7 +99,7 @@ public class WProcessHeadDao {
 
 	}
 
-	public WProcessHead getWProcessByPK(Integer id) throws WProcessException {
+	public WProcessHead getWProcessByPK(Integer id, Integer currentUserId) throws WProcessException {
 
 		WProcessHead process = null;
 		org.hibernate.Session session = null;
@@ -107,7 +107,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -129,7 +129,7 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public WProcessHead getWProcessByName(String name) throws WProcessException {
+	public WProcessHead getWProcessByName(String name, Integer currentUserId) throws WProcessException {
 
 		WProcessHead  process = null;
 		org.hibernate.Session session = null;
@@ -137,7 +137,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -163,7 +163,7 @@ public class WProcessHeadDao {
 
 
 	// id=processId
-	public String getProcessName(Integer id) throws WProcessDefException {
+	public String getProcessName(Integer id, Integer currentUserId) throws WProcessDefException {
 
 		String name = null;
 		org.hibernate.Session session = null;
@@ -171,7 +171,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -196,7 +196,7 @@ public class WProcessHeadDao {
 		return name;
 	}
 	
-	public List<WProcessHead> getWProcessList() throws WProcessException {
+	public List<WProcessHead> getWProcessList(Integer currentUserId) throws WProcessException {
 
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -205,7 +205,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -230,7 +230,7 @@ public class WProcessHeadDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
-			String firstLineText, String blank )
+			String firstLineText, String blank, Integer currentUserId)
 	throws WProcessException {
 		 
 			List<WProcessHead> lwph = null;
@@ -241,7 +241,7 @@ public class WProcessHeadDao {
 
 			try {
 
-				session = HibernateUtil.obtenerSession();
+				session = HibernateUtilNew.obtenerSession(currentUserId);
 				tx = session.getTransaction();
 				tx.begin();
 
@@ -291,74 +291,11 @@ public class WProcessHeadDao {
 
 
 	}
-/* dml 20130507 PASA A WPROCESSDEF
-	@SuppressWarnings("unchecked")
-	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank )
-	throws WProcessException {
-		 
-			List<WProcessHead> lwph = null;
-			List<StringPair> retorno = new ArrayList<StringPair>(10);
-			
-			org.hibernate.Session session = null;
-			org.hibernate.Transaction tx = null;
 
-			try {
-
-				session = HibernateUtil.obtenerSession();
-				tx = session.getTransaction();
-				tx.begin();
-
-				lwph = session
-						.createQuery("From WProcessHead Where active IS TRUE Order By name")
-						.list();
-		
-				if (lwph!=null) {
-					
-					// inserta los extras
-					if ( firstLineText!=null && !"".equals(firstLineText) ) {
-						if ( !firstLineText.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
-						} else {
-							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
-						}
-					}
-					
-					if ( blank!=null && !"".equals(blank) ) {
-						if ( !blank.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
-						} else {
-							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
-						}
-					}
-					
-				
-					
-					for (WProcessHead wph: lwph) {
-						retorno.add(new StringPair(wph.getId(),wph.getName()));
-					}
-				} else {
-					// nes  - si el select devuelve null entonces devuelvo null
-					retorno=null;
-				}
-				
-				
-			} catch (HibernateException ex) {
-				if (tx != null)
-					tx.rollback();
-				throw new WProcessException(
-						"Can't obtain WProcesss combo list "
-						+ex.getMessage()+"\n"+ex.getCause());
-			} catch (Exception e) {}
-
-			return retorno;
-
-
-	}
-*/
 	@SuppressWarnings("unchecked")
 	public List<WProcessHead> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
-			Integer userId, boolean isAdmin, String action ) 
+			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
 					throws WProcessException {
 
 			org.hibernate.Session session = null;
@@ -403,7 +340,7 @@ public class WProcessHeadDao {
 			
 			try {
 
-				session = HibernateUtil.obtenerSession();
+				session = HibernateUtilNew.obtenerSession(currentUserId);
 				tx = session.getTransaction();
 
 				tx.begin();
@@ -586,7 +523,7 @@ public class WProcessHeadDao {
 	}
 
 	// dml 20130507
-	public boolean headProcessHasWProcessDef(Integer processHeadId)
+	public boolean headProcessHasWProcessDef(Integer processHeadId, Integer currentUserId)
 			throws WProcessException {
 
 		org.hibernate.Session session = null;
@@ -596,7 +533,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 
 			tx.begin();

@@ -89,7 +89,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			
 			lProceso = UtilsVs
 						.castStringPairToSelectitem(
-								new WProcessDefBL().getComboList("Todos ...", null));
+								new WProcessDefBL().getComboList("Todos ...", null, usuarioLogueado));
 			
 		} catch (WProcessDefException e) {
 			String mensaje= "Ocurrio Un Error al tratar de obtener la lista de procesos:" 
