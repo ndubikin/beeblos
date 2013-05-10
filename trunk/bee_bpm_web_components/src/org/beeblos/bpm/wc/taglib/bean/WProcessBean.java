@@ -2110,7 +2110,7 @@ public class WProcessBean extends CoreManagedBean {
 		try {
 			
 			this.wProcessComboList = UtilsVs.castStringPairToSelectitem(
-					new WProcessHeadBL().getComboList("Select ...", null));
+					new WProcessHeadBL().getComboList("Select ...", null, getCurrentUserId()));
 			
 		} catch (WProcessException e) {
 			
@@ -2132,7 +2132,7 @@ public class WProcessBean extends CoreManagedBean {
 				
 				WProcessHead process = new WProcessHeadBL().getProcessByPK(this.currentProcessIdSelected, null);
 			
-				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected);
+				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected, getCurrentUserId());
 				
 				this.currentWProcessDef = new WProcessDef(EMPTY_OBJECT);
 

@@ -16,7 +16,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import org.beeblos.bpm.core.util.HibernateUtilNew;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -32,13 +32,13 @@ public class WProcessDefDao {
 		
 	}
 	
-	public Integer add(WProcessDef process) throws WProcessDefException {
+	public Integer add(WProcessDef process, Integer currentUserId) throws WProcessDefException {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(process));
+			return Integer.valueOf(HibernateUtilNew.guardar(process, currentUserId));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: add - Can't store process definition record "+ 
@@ -51,13 +51,13 @@ public class WProcessDefDao {
 	}
 	
 	
-	public void update(WProcessDef process) throws WProcessDefException {
+	public void update(WProcessDef process, Integer currentUserId) throws WProcessDefException {
 		
 		logger.debug("update() WProcessDef < id = "+process.getId()+">");
 		
 		try {
 
-			HibernateUtil.actualizar(process);
+			HibernateUtilNew.actualizar(process, currentUserId);
 
 
 		} catch (HibernateException ex) {
@@ -73,7 +73,7 @@ public class WProcessDefDao {
 	}
 	
 	
-	public void delete(WProcessDef process) throws WProcessDefException {
+	public void delete(WProcessDef process, Integer currentUserId) throws WProcessDefException {
 
 		logger.debug("delete() WProcessDef - Name: ["+process.getName()+"]");
 		
@@ -81,7 +81,7 @@ public class WProcessDefDao {
 
 			//process = getWProcessDefByPK(process.getId());
 
-			HibernateUtil.borrar(process);
+			HibernateUtilNew.borrar(process, currentUserId);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: delete - Can't delete proccess definition record "+ process.getName() +
@@ -99,7 +99,7 @@ public class WProcessDefDao {
 
 	}
 
-	public WProcessDef getWProcessDefByPK(Integer id) throws WProcessDefException {
+	public WProcessDef getWProcessDefByPK(Integer id, Integer currentUserId) throws WProcessDefException {
 
 		WProcessDef process = null;
 		org.hibernate.Session session = null;
@@ -107,7 +107,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -129,7 +129,7 @@ public class WProcessDefDao {
 	}
 	
 	
-	public WProcessDef getWProcessDefByName(String name) throws WProcessDefException {
+	public WProcessDef getWProcessDefByName(String name, Integer currentUserId) throws WProcessDefException {
 
 		WProcessDef  process = null;
 		org.hibernate.Session session = null;
@@ -137,7 +137,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -162,7 +162,7 @@ public class WProcessDefDao {
 	}
 
 	// versionId = id from WProcessDef table
-	public String getProcessNameByVersionId(Integer versionId) throws WProcessDefException {
+	public String getProcessNameByVersionId(Integer versionId, Integer currentUserId) throws WProcessDefException {
 
 		String name = null;
 		org.hibernate.Session session = null;
@@ -170,7 +170,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -196,7 +196,7 @@ public class WProcessDefDao {
 	}
 	
 	// dml 20130430
-	public Integer getLastVersionNumber(Integer processHeadId) throws WProcessDefException {
+	public Integer getLastVersionNumber(Integer processHeadId, Integer currentUserId) throws WProcessDefException {
 	
 		Integer version = null;
 		org.hibernate.Session session = null;
@@ -204,7 +204,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -231,7 +231,7 @@ public class WProcessDefDao {
 		return version;
 	}	
 	
-	public List<WProcessDef> getWProcessDefs() throws WProcessDefException {
+	public List<WProcessDef> getWProcessDefs(Integer currentUserId) throws WProcessDefException {
 
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -240,7 +240,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -265,7 +265,7 @@ public class WProcessDefDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
-			String firstLineText, String blank )
+			String firstLineText, String blank, Integer currentUserId )
 	throws WProcessDefException {
 		 
 			List<WProcessDef> lwpd = null;
@@ -276,7 +276,7 @@ public class WProcessDefDao {
 
 			try {
 
-				session = HibernateUtil.obtenerSession();
+				session = HibernateUtilNew.obtenerSession(currentUserId);
 				tx = session.getTransaction();
 				tx.begin();
 
@@ -328,7 +328,7 @@ public class WProcessDefDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank )
+	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank, Integer currentUserId )
 	throws WProcessDefException {
 		 
 			List<WProcessDef> lwpd = null;
@@ -339,7 +339,7 @@ public class WProcessDefDao {
 
 			try {
 
-				session = HibernateUtil.obtenerSession();
+				session = HibernateUtilNew.obtenerSession(currentUserId);
 				tx = session.getTransaction();
 				tx.begin();
 
@@ -394,7 +394,7 @@ public class WProcessDefDao {
 	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
-			Integer userId, boolean isAdmin, String action ) 
+			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
 					throws WProcessDefException {
 
 			org.hibernate.Session session = null;
@@ -440,7 +440,7 @@ public class WProcessDefDao {
 			
 			try {
 
-				session = HibernateUtil.obtenerSession();
+				session = HibernateUtilNew.obtenerSession(currentUserId);
 				tx = session.getTransaction();
 
 				tx.begin();
@@ -697,7 +697,7 @@ public class WProcessDefDao {
 	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyActiveWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
-			Integer processHeadId, String activeFilter) 
+			Integer processHeadId, String activeFilter, Integer currentUserId) 
 	throws WProcessDefException {
 
 		String filter = "";
@@ -718,7 +718,7 @@ public class WProcessDefDao {
 		logger.debug("------>> getWorkingProcessListFinder -> query:" + query
 				+ "<<-------");
 
-		return getWorkingProcessListByFinder(query);
+		return getWorkingProcessListByFinder(query, currentUserId);
 	}
 
 	private String buildWorkingProcessFilter(
@@ -838,7 +838,7 @@ public class WProcessDefDao {
 		return tmpQuery;
 	}
 
-	private List<WProcessDefLight> getWorkingProcessListByFinder(String query)
+	private List<WProcessDefLight> getWorkingProcessListByFinder(String query, Integer currentUserId)
 			throws WProcessDefException {
 
 		Integer id;
@@ -862,7 +862,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -919,7 +919,7 @@ public class WProcessDefDao {
 	}
 	
 	// dml 20130129
-	public boolean userIsProcessAdmin(Integer userId, Integer processId)
+	public boolean userIsProcessAdmin(Integer userId, Integer processId, Integer currentUserId)
 			throws WProcessDefException {
 
 		org.hibernate.Session session = null;
@@ -929,7 +929,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtil.obtenerSession();
+			session = HibernateUtilNew.obtenerSession(currentUserId);
 			tx = session.getTransaction();
 
 			tx.begin();

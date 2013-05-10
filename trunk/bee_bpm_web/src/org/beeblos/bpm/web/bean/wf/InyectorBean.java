@@ -451,7 +451,7 @@ public class InyectorBean  extends CoreManagedBean {
 				lProcesosActivos=
 						UtilsVs
 						.castStringPairToSelectitem(
-								new WProcessDefBL().getComboList("Seleccionar ...", null));
+								new WProcessDefBL().getComboList("Seleccionar ...", null, usuarioLogueado));
 			} catch (WProcessDefException e) {
 				e.printStackTrace();
 				lProcesosActivos.add(new SelectItem(null,"No se pudo cargar la lista de procesos ..."));

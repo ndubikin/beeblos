@@ -59,7 +59,7 @@ public class WProcessDefBL {
 		process.setModDate( DEFAULT_MOD_DATE );
 		process.setInsertUser(currentUserId);
 		process.setModUser(currentUserId);
-		return new WProcessDefDao().add(process);
+		return new WProcessDefDao().add(process, currentUserId);
 
 	}
 	
@@ -96,12 +96,12 @@ public class WProcessDefBL {
 		
 		logger.debug("update() WProcessDef < id = "+process.getId()+">");
 		
-		if (!process.equals(new WProcessDefDao().getWProcessDefByPK(process.getId())) ) {
+		if (!process.equals(new WProcessDefDao().getWProcessDefByPK(process.getId(), currentUserId)) ) {
 
 			// timestamp & trace info
 			process.setModDate(new Date());
 			process.setModUser(currentUserId);
-			new WProcessDefDao().update(process);
+			new WProcessDefDao().update(process, currentUserId);
 			
 		} else {
 			
@@ -169,7 +169,7 @@ public class WProcessDefBL {
 		Integer processHeadId = process.getProcess().getId();
 		
 		// se borrarán en cascada (por el mapping) los roles y users relacionados con el process
-		new WProcessDefDao().delete(process);
+		new WProcessDefDao().delete(process, currentUserId);
 		logger.info("The WProcessDef " + process.getName() + " has been correctly deleted by user " + currentUserId);
 
 		List<String> deletedSteps = this._deleteRelatedSteps(stepsToDelete, currentUserId);
@@ -257,7 +257,7 @@ public class WProcessDefBL {
 		
 		WProcessHeadBL wpBL = new WProcessHeadBL();
 		
-		if (!wpBL.headProcessHasWProcessDef(processHeadId)){
+		if (!wpBL.headProcessHasWProcessDef(processHeadId, currentUserId)){
 			
 			wpBL.delete(wpBL.getProcessByPK(processHeadId, currentUserId), currentUserId);
 			logger.info("The WProcessHead " + processHeadId + " has been correctly deleted by user " + currentUserId);
@@ -383,7 +383,7 @@ public class WProcessDefBL {
 				throws WProcessDefException, WStepSequenceDefException {
 
 		WProcessDef wpd;
-		wpd = new WProcessDefDao().getWProcessDefByPK(id);
+		wpd = new WProcessDefDao().getWProcessDefByPK(id, currentUserId);
 		
 		if (wpd != null){
 			
@@ -411,7 +411,7 @@ public class WProcessDefBL {
 	public WProcessDef getWProcessDefByName(String name, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
 
 		WProcessDef wpd;
-		wpd = new WProcessDefDao().getWProcessDefByName(name);
+		wpd = new WProcessDefDao().getWProcessDefByName(name, currentUserId);
 		
 		try {
 			wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
@@ -433,7 +433,7 @@ public class WProcessDefBL {
 	// dml 20130506
 	public List<WProcessDef> getProcessList(Integer currentUserId) throws WProcessDefException {
 
-		List<WProcessDef> wpdList = new WProcessDefDao().getWProcessDefs();
+		List<WProcessDef> wpdList = new WProcessDefDao().getWProcessDefs(currentUserId);
 		
 		// dml 20130506
 		if (wpdList != null){
@@ -474,73 +474,73 @@ public class WProcessDefBL {
 	}
 	
 	// dml 20130430
-	public Integer getLastVersionNumber(Integer processHeadId) throws WProcessDefException {
+	public Integer getLastVersionNumber(Integer processHeadId, Integer currentUserId) throws WProcessDefException {
 
-		return new WProcessDefDao().getLastVersionNumber(processHeadId);
+		return new WProcessDefDao().getLastVersionNumber(processHeadId, currentUserId);
 	
 	}
 	
 	public List<StringPair> getComboList(
-			String textoPrimeraLinea, String separacion )
+			String textoPrimeraLinea, String separacion, Integer currentUserId )
 	throws WProcessDefException {
 		 
-		return new WProcessDefDao().getComboList(textoPrimeraLinea, separacion);
+		return new WProcessDefDao().getComboList(textoPrimeraLinea, separacion, currentUserId);
 		
 	}
 
 	// dml 20120120
-	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank )
+	public List<StringPair> getComboActiveProcessList(String firstLineText, String blank, Integer currentUserId )
 	throws WProcessDefException {
 	
-		return new WProcessDefDao().getComboActiveProcessList(firstLineText, blank);
+		return new WProcessDefDao().getComboActiveProcessList(firstLineText, blank, currentUserId);
 	
 	}	
 	
 	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
-			Integer userId, boolean isAdmin, String action ) 
+			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getProcessListByFinder(initialInsertDateFilter, finalInsertDateFilter, 
 				strictInsertDateFilter, nameFilter, commentFilter, listZoneFilter, 
-				workZoneFilter, additinalZoneFilter, userId, isAdmin, action);
+				workZoneFilter, additinalZoneFilter, userId, isAdmin, action, currentUserId);
 
 	}
 
 	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
-			Integer processHeadId, String activeFilter)
+			Integer processHeadId, String activeFilter, Integer currentUserId)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().getWorkingProcessListFinder(onlyWorkingProcessesFilter, 
 				processNameFilter, initialProductionDateFilter, finalProductionDateFilter,
 				estrictProductionDateFilter, productionUserFilter, action, processHeadId, 
-				activeFilter);
+				activeFilter, currentUserId);
 		
 	}
 
 	public String getProcessNameByVersionId(Integer id, Integer currentUserId) 
 			throws WProcessDefException, WStepSequenceDefException {
 
-		return new WProcessDefDao().getProcessNameByVersionId(id);
+		return new WProcessDefDao().getProcessNameByVersionId(id, currentUserId);
 	
 	}
 	
 	
 	// clone a process version (w_process_def, related users and roles, related steps and routes ...)
 	// returns new process id
-	public Integer cloneWProcessDef(Integer processId, Integer processHeadId, Integer userId) 
+	public Integer cloneWProcessDef(Integer processId, Integer processHeadId, Integer currentUserId) 
 			throws  WProcessException, WStepSequenceDefException, WProcessDefException  {
 		
 		Integer clonedId=null,newversion=0;
 		WProcessDef newprocver,procver;
 		List<WStepSequenceDef> routes = new ArrayList<WStepSequenceDef>();
 		try {
-			newprocver = this.getWProcessDefByPK(processId,userId);
-			procver = this.getWProcessDefByPK(processId,userId);
-			newversion=this.getLastVersionNumber(processHeadId)+1;
+			newprocver = this.getWProcessDefByPK(processId, currentUserId);
+			procver = this.getWProcessDefByPK(processId, currentUserId);
+			newversion=this.getLastVersionNumber(processHeadId, currentUserId)+1;
 		} catch (WProcessDefException e) {
 			String mess = "Error cloning process version: can't get original process version id:"+processId
 							+" - "+e.getMessage()+" - "+e.getCause();
@@ -564,7 +564,7 @@ public class WProcessDefBL {
 						.addRole(
 								processRole.getRole(), processRole.isAdmin(), 
 								processRole.getIdObject(), processRole.getIdObjectType(), 
-								userId);
+								currentUserId);
 				}
 			}
 
@@ -575,7 +575,7 @@ public class WProcessDefBL {
 						.addUser(
 								processUser.getUser(), processUser.isAdmin(), 
 								processUser.getIdObject(), processUser.getIdObjectType(), 
-								userId);
+								currentUserId);
 				}
 			}
 			
@@ -586,7 +586,7 @@ public class WProcessDefBL {
 		}
 			
 		try {
-			clonedId = this.add(newprocver,userId);
+			clonedId = this.add(newprocver, currentUserId);
 		} catch (WProcessDefException e) {
 			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+processId
 					+" - "+e.getMessage()+" - "+e.getCause();
@@ -600,13 +600,13 @@ public class WProcessDefBL {
 		// clone routes (the workflow map really ...)
 		WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
 		try {
-			routes = new WStepSequenceDefBL().getStepSequenceList(processId, userId);
+			routes = new WStepSequenceDefBL().getStepSequenceList(processId, currentUserId);
 			if (routes.size()>0){
 				for (WStepSequenceDef route: routes) {
 					route.setProcess(new WProcessDef());
 					route.getProcess().setId(clonedId);
-					seqBL.add(route, userId); // insert new cloned route
-					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+userId);
+					seqBL.add(route, currentUserId); // insert new cloned route
+					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+ currentUserId);
 				}
 			}			
 		} catch (WStepSequenceDefException e) {
@@ -620,9 +620,9 @@ public class WProcessDefBL {
 	}
 	
 	// dml 20130129
-	public boolean userIsProcessAdmin(Integer userId, Integer processId) throws WProcessDefException{
+	public boolean userIsProcessAdmin(Integer userId, Integer processId, Integer currentUserId) throws WProcessDefException{
 		
-		return new WProcessDefDao().userIsProcessAdmin(userId, processId);
+		return new WProcessDefDao().userIsProcessAdmin(userId, processId, currentUserId);
 		
 	}
 	

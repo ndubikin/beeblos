@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.util.Configuration;
 import org.beeblos.bpm.core.util.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.util.HibernateConfigurationUtil;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import org.beeblos.bpm.core.util.HibernateUtilNew;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.security.UsuarioRol;
@@ -71,6 +71,8 @@ public class Login_x_Bean extends CoreManagedBean {
 	private String currentSessionName;
 	private String newSessionName;
 	private String messageStyle;
+	
+	private static Integer currentUserId;
 	
 	private void construirContextoSeguridad(Usuario usuario) throws MarshalException, ValidationException, FileNotFoundException {
 
@@ -126,7 +128,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		
 		// dml 20120215
-//		HibernateConfigurationParameters hcp = HibernateUtil.loadDefaultParameters();
+//		HibernateConfigurationParameters hcp = HibernateUtilNew.loadDefaultParameters();
 		// if the configuration.properties parameters are valid theme are loaded as default
 //		if (hcp != null && !hcp.hasEmptyFields()) {
 //			contextoSeguridad.setHibernateConfigurationParameters(hcp);
@@ -326,6 +328,8 @@ public class Login_x_Bean extends CoreManagedBean {
 			Usuario usuario = uBl.autenticarUsuario(usuarioActual);
 
 			if (usuario != null) {
+				
+				currentUserId = usuario.getIdUsuario();
 
 					construirContextoSeguridad(usuario);
 					
@@ -512,7 +516,7 @@ public class Login_x_Bean extends CoreManagedBean {
 				try {
 					hibernateConfigurationParameters.setSessionName(newSessionName);
 					
-					if (HibernateUtil.getNewSession(hibernateConfigurationParameters) != null){
+					if (HibernateUtilNew.getNewSession(hibernateConfigurationParameters, currentUserId) != null){
 					
 						currentSessionName = newSessionName;
 						
@@ -696,7 +700,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		try {
 			
-			HibernateConfigurationParameters defaultConfig = HibernateUtil.loadDefaultParameters();
+			HibernateConfigurationParameters defaultConfig = HibernateUtilNew.loadDefaultParameters();
 			
 			// dml 20120215
 			if (defaultConfig != null && !defaultConfig.hasEmptyFields() && 
@@ -824,7 +828,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		try {
 			
-			if(HibernateUtil.checkJDBCConnection(hibernateConfigurationParameters)) {
+			if(HibernateUtilNew.checkJDBCConnection(hibernateConfigurationParameters)) {
 				
 				String message = "Configuration OK";
 				agregarMensaje(message);
@@ -873,7 +877,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		try {
 			
-			if(HibernateUtil.checkJDBCConnection(defaultConfig)) {
+			if(HibernateUtilNew.checkJDBCConnection(defaultConfig)) {
 				
 				return true;
 
@@ -914,7 +918,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	// dml 20120215
 	private void setAnyDefaultConfiguration() throws MarshalException, ValidationException, FileNotFoundException{
 		
-		hibernateConfigurationParameters = HibernateUtil.loadDefaultParameters();
+		hibernateConfigurationParameters = HibernateUtilNew.loadDefaultParameters();
 		
 		// if the configuration.properties parameters are valid theme are loaded as default
 		if (this.hibernateConfigurationParameters != null && 

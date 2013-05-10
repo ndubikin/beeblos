@@ -427,7 +427,7 @@ public class WStepDefBL {
 	throws WProcessDefException {
 		
 		// dml 20130129 - checking if the user is process admin
-		boolean userIsProcessAdmin = new WProcessDefBL().userIsProcessAdmin(userId, processId);
+		boolean userIsProcessAdmin = new WProcessDefBL().userIsProcessAdmin(userId, processId, userId);
 
 		return new WStepDefDao().getComboList(processId, versionId, userId, userIsProcessAdmin, allItems, 
 				firstLineText, blank);
