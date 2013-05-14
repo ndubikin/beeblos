@@ -9,6 +9,9 @@ import java.util.Date;
 public class Constants {
 	
 	// dml 20130510
+	public static String HIBERNATE_CONFIGURATION_LIST_XML = getStringProperty("hibernate.configuration.list.xml","hibernateConfigurationList.xml");
+
+	// dml 20130510
 	public static String APP_NAME = getStringProperty("beeblos.nombre.aplicacion","XXXX"); // LO CORTO A 4 PORQ DEJARON EL CAMPO DE USUARIOLOGIN DE ESE LARGO, LUEGO VER BIEN DE EMPROLIJAR ESTO ...
 
 	public static final String ACTIVE = "Active"; // dml 20130508

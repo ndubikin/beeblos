@@ -16,7 +16,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.util.HibernateUtilNew;
+import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -38,7 +38,7 @@ public class WProcessDefDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtilNew.guardar(process, currentUserId));
+			return Integer.valueOf(HibernateUtil.guardar(process));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: add - Can't store process definition record "+ 
@@ -57,7 +57,7 @@ public class WProcessDefDao {
 		
 		try {
 
-			HibernateUtilNew.actualizar(process, currentUserId);
+			HibernateUtil.actualizar(process);
 
 
 		} catch (HibernateException ex) {
@@ -81,7 +81,7 @@ public class WProcessDefDao {
 
 			//process = getWProcessDefByPK(process.getId());
 
-			HibernateUtilNew.borrar(process, currentUserId);
+			HibernateUtil.borrar(process);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: delete - Can't delete proccess definition record "+ process.getName() +
@@ -107,7 +107,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -137,7 +137,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -170,7 +170,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -204,7 +204,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -240,7 +240,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -276,7 +276,7 @@ public class WProcessDefDao {
 
 			try {
 
-				session = HibernateUtilNew.obtenerSession(currentUserId);
+				session = HibernateUtil.obtenerSession();
 				tx = session.getTransaction();
 				tx.begin();
 
@@ -339,7 +339,7 @@ public class WProcessDefDao {
 
 			try {
 
-				session = HibernateUtilNew.obtenerSession(currentUserId);
+				session = HibernateUtil.obtenerSession();
 				tx = session.getTransaction();
 				tx.begin();
 
@@ -440,7 +440,7 @@ public class WProcessDefDao {
 			
 			try {
 
-				session = HibernateUtilNew.obtenerSession(currentUserId);
+				session = HibernateUtil.obtenerSession();
 				tx = session.getTransaction();
 
 				tx.begin();
@@ -862,7 +862,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -929,7 +929,7 @@ public class WProcessDefDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 
 			tx.begin();

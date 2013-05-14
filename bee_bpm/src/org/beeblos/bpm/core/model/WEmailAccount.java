@@ -589,7 +589,7 @@ public class WEmailAccount implements java.io.Serializable{
 	public boolean empty(){
 				
 		if (id != null && !id.equals(0)) return false;
-		if (!wUserDef.empty()) return false;
+		if (wUserDef != null && !wUserDef.empty()) return false;
 		if (name != null && !name.equals("")) return false;
 		if (email != null && !email.equals("")) return false;
 		if (replyTo != null && !replyTo.equals("")) return false;

@@ -66,6 +66,11 @@
  </tag>
  
  <tag>
+  <tag-name>envTypeCrudCaratula</tag-name>
+  <source>/taglib/def/tabs/envTypeCrudCaratula.xhtml</source>
+ </tag>
+
+ <tag>
   <tag-name>wProcessDefQuery</tag-name>
   <source>/taglib/def/wProcessDefQuery.xhtml</source>
  </tag>

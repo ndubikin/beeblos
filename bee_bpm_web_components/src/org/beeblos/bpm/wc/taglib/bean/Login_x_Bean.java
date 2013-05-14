@@ -22,10 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
+import org.beeblos.bpm.core.error.EnvironmentException;
+import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.util.Configuration;
-import org.beeblos.bpm.core.util.HibernateConfigurationParameters;
-import org.beeblos.bpm.core.util.HibernateConfigurationUtil;
-import org.beeblos.bpm.core.util.HibernateUtilNew;
+import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.security.UsuarioRol;
@@ -71,8 +72,6 @@ public class Login_x_Bean extends CoreManagedBean {
 	private String currentSessionName;
 	private String newSessionName;
 	private String messageStyle;
-	
-	private static Integer currentUserId;
 	
 	private void construirContextoSeguridad(Usuario usuario) throws MarshalException, ValidationException, FileNotFoundException {
 
@@ -128,14 +127,14 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		
 		// dml 20120215
-//		HibernateConfigurationParameters hcp = HibernateUtilNew.loadDefaultParameters();
+//		HibernateConfigurationParameters hcp = HibernateUtil.loadDefaultParameters();
 		// if the configuration.properties parameters are valid theme are loaded as default
 //		if (hcp != null && !hcp.hasEmptyFields()) {
 //			contextoSeguridad.setHibernateConfigurationParameters(hcp);
 //		} else {
 			// if they are not, the default xml configuration will be loaded
 //			contextoSeguridad.
-//				setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
+//				setHibernateConfigurationParameters(new HibernateConfigurationBL().getDefaultConfiguration());
 //		}
 		
 		
@@ -329,39 +328,37 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			if (usuario != null) {
 				
-				currentUserId = usuario.getIdUsuario();
-
-					construirContextoSeguridad(usuario);
+				construirContextoSeguridad(usuario);
+				
+				// mrico 20110706
+				// Si se usa seguridad, debe tener algun permiso
+				if( USE_SECURITY ){
 					
-					// mrico 20110706
-					// Si se usa seguridad, debe tener algun permiso
-					if( USE_SECURITY ){
+					ContextoSeguridad contextoSeguridad = (ContextoSeguridad) getSession().getAttribute(SECURITY_CONTEXT);
+					
+					if(!contextoSeguridad.getUsuarioFunciones().listaVacia()){
 						
-						ContextoSeguridad contextoSeguridad = (ContextoSeguridad) getSession().getAttribute(SECURITY_CONTEXT);
-						
-						if(!contextoSeguridad.getUsuarioFunciones().listaVacia()){
-							
-							guardarLoginExito(usuario.getIdUsuario());
-							logger.info("Login_x_bean: construirContextoSeguridad: login:"+usuario.getIdUsuario()+" "+usuario.getApellidos()+" "+usuario.getNombres());
-							this.logged=true;
-							retorno = "LOGIN";
-		
-						} else {
-							logger.error("ERROR LOGIN: intento de acceso de usuario sin permisos:"+this.usuarioLogin); // nes 20110902
-							guardarLoginFracaso(this.usuarioLogin);
-							String mensaje = "El usuario no tiene funciones asignadas en el sistema";
-							String params[] = { "", mensaje };
-							agregarMensaje("3", "errorPermisos 1", params, FGPException.WARN);
-						}
-						
-						
-					} else {	
 						guardarLoginExito(usuario.getIdUsuario());
 						logger.info("Login_x_bean: construirContextoSeguridad: login:"+usuario.getIdUsuario()+" "+usuario.getApellidos()+" "+usuario.getNombres());
 						this.logged=true;
-						
 						retorno = "LOGIN";
+	
+					} else {
+						logger.error("ERROR LOGIN: intento de acceso de usuario sin permisos:"+this.usuarioLogin); // nes 20110902
+						guardarLoginFracaso(this.usuarioLogin);
+						String mensaje = "El usuario no tiene funciones asignadas en el sistema";
+						String params[] = { "", mensaje };
+						agregarMensaje("3", "errorPermisos 1", params, FGPException.WARN);
 					}
+					
+					
+				} else {	
+					guardarLoginExito(usuario.getIdUsuario());
+					logger.info("Login_x_bean: construirContextoSeguridad: login:"+usuario.getIdUsuario()+" "+usuario.getApellidos()+" "+usuario.getNombres());
+					this.logged=true;
+					
+					retorno = "LOGIN";
+				}
 
 			} else {
 				
@@ -475,7 +472,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		try {
 			
-			for (HibernateConfigurationParameters hcp : HibernateConfigurationUtil.getConfigurationList()){
+			for (HibernateConfigurationParameters hcp : new HibernateConfigurationBL().getConfigurationList()){
 				
 				result.add(new SelectItem(hcp.getSessionName(), hcp.getSessionName()));
 				
@@ -502,6 +499,15 @@ public class Login_x_Bean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method getHibernateConfigurationList in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
 		}
 		
 		return result;
@@ -516,7 +522,7 @@ public class Login_x_Bean extends CoreManagedBean {
 				try {
 					hibernateConfigurationParameters.setSessionName(newSessionName);
 					
-					if (HibernateUtilNew.getNewSession(hibernateConfigurationParameters, currentUserId) != null){
+					if (HibernateUtil.getNewSession(hibernateConfigurationParameters) != null){
 					
 						currentSessionName = newSessionName;
 						
@@ -527,7 +533,7 @@ public class Login_x_Bean extends CoreManagedBean {
 						
 					} else {
 						
-						hibernateConfigurationParameters = HibernateConfigurationUtil.
+						hibernateConfigurationParameters = new HibernateConfigurationBL().
 								getConfiguration(currentSessionName);			
 						if (hibernateConfigurationParameters == null) {				
 							setAnyDefaultConfiguration();				
@@ -544,7 +550,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 				} catch (ClassNotFoundException e) {
 
-					hibernateConfigurationParameters = HibernateConfigurationUtil.
+					hibernateConfigurationParameters = new HibernateConfigurationBL().
 							getConfiguration(currentSessionName);			
 					if (hibernateConfigurationParameters == null) {				
 						setAnyDefaultConfiguration();				
@@ -560,7 +566,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 				} catch (SQLException e) {
 
-					hibernateConfigurationParameters = HibernateConfigurationUtil.
+					hibernateConfigurationParameters = new HibernateConfigurationBL().
 							getConfiguration(currentSessionName);			
 					if (hibernateConfigurationParameters == null) {				
 						setAnyDefaultConfiguration();				
@@ -607,6 +613,15 @@ public class Login_x_Bean extends CoreManagedBean {
 				agregarMensaje(message);
 				logger.error(message);
 
+			} catch (EnvironmentException e) {
+
+				setMessageStyle(errorMessageStyle());
+				setShowHeaderMessage(true);
+				String message = "EnvironmentException: Method changeHibernateConfiguration in Login_x_Bean: "
+									+ e.getMessage() + " - " + e.getCause();
+				agregarMensaje(message);
+				logger.error(message);
+
 			}
 			
 			
@@ -617,7 +632,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		try {
 			
-			hibernateConfigurationParameters = HibernateConfigurationUtil.
+			hibernateConfigurationParameters = new HibernateConfigurationBL().
 					getConfiguration(currentSessionName);			
 			if (hibernateConfigurationParameters == null) {				
 				setAnyDefaultConfiguration();				
@@ -652,6 +667,15 @@ public class Login_x_Bean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
 		}
 		
 	}
@@ -661,7 +685,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		try {
 			
-			hibernateConfigurationParameters = HibernateConfigurationUtil.
+			hibernateConfigurationParameters = new HibernateConfigurationBL().
 					getConfiguration(newSessionName);
 		
 		} catch (MarshalException e) {
@@ -691,6 +715,15 @@ public class Login_x_Bean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method reRenderInformation in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
 		}
 
 	}
@@ -700,7 +733,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		try {
 			
-			HibernateConfigurationParameters defaultConfig = HibernateUtilNew.loadDefaultParameters();
+			HibernateConfigurationParameters defaultConfig = HibernateUtil.loadDefaultParameters();
 			
 			// dml 20120215
 			if (defaultConfig != null && !defaultConfig.hasEmptyFields() && 
@@ -708,7 +741,7 @@ public class Login_x_Bean extends CoreManagedBean {
 				
 				return true;
 				
-			} else if (((defaultConfig = HibernateConfigurationUtil.getDefaultConfiguration()) != null) &&
+			} else if (((defaultConfig = new HibernateConfigurationBL().getDefaultConfiguration()) != null) &&
 					defaultConfigurationInitIsCorrect(defaultConfig)) {
 				
 				return true;
@@ -746,6 +779,15 @@ public class Login_x_Bean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
 		}
 
 		return true;
@@ -774,7 +816,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		try {
 		
-			HibernateConfigurationUtil.addFirstConfiguration(hibernateConfigurationParameters);
+			new HibernateConfigurationBL().addFirstConfiguration(hibernateConfigurationParameters, null);
 		
 			return GO_TO_LOGIN;
 			
@@ -814,6 +856,15 @@ public class Login_x_Bean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method saveDefaultConfiguration in Login_x_Bean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
 		}
 		
 		return SAVE_CONF_FAIL;
@@ -828,7 +879,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		try {
 			
-			if(HibernateUtilNew.checkJDBCConnection(hibernateConfigurationParameters)) {
+			if(HibernateUtil.checkJDBCConnection(hibernateConfigurationParameters)) {
 				
 				String message = "Configuration OK";
 				agregarMensaje(message);
@@ -877,7 +928,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		try {
 			
-			if(HibernateUtilNew.checkJDBCConnection(defaultConfig)) {
+			if(HibernateUtil.checkJDBCConnection(defaultConfig)) {
 				
 				return true;
 
@@ -918,7 +969,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	// dml 20120215
 	private void setAnyDefaultConfiguration() throws MarshalException, ValidationException, FileNotFoundException{
 		
-		hibernateConfigurationParameters = HibernateUtilNew.loadDefaultParameters();
+		hibernateConfigurationParameters = HibernateUtil.loadDefaultParameters();
 		
 		// if the configuration.properties parameters are valid theme are loaded as default
 		if (this.hibernateConfigurationParameters != null && 
@@ -929,7 +980,11 @@ public class Login_x_Bean extends CoreManagedBean {
 		// if they are not, the default xml configuration will be loaded
 		} else {
 			
-			this.setHibernateConfigurationParameters(HibernateConfigurationUtil.getDefaultConfiguration());
+			try {
+				this.setHibernateConfigurationParameters(new HibernateConfigurationBL().getDefaultConfiguration());
+			} catch (EnvironmentException e) {
+				e.printStackTrace();
+			}
 			
 		}
 		

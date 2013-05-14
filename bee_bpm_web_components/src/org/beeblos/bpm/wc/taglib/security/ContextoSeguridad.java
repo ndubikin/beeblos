@@ -2,7 +2,7 @@ package org.beeblos.bpm.wc.taglib.security;
 
 import java.io.Serializable;
 
-import org.beeblos.bpm.core.util.HibernateConfigurationParameters;
+import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.security.st.model.Usuario;
 import org.beeblos.security.st.model.UsuarioFunciones;
 

@@ -40,7 +40,7 @@
 		<h:form>
 
 			<a4j:jsFunction name="loadRecord" action="#{hibernateConfigurationBean.loadRecord}"
-				reRender="exceptionsPnl, session_name, driver_name, dialect, username, password, url, default_catalog, show_sql, format_sql, delete_button, cancel_button, save_button">
+				reRender="exceptionsPnl, session_name, env_type, comments, driver_name, dialect, username, password, url, default_catalog, show_sql, format_sql, delete_button, cancel_button, save_button">
 				<a4j:actionparam name="param1" assignTo="#{hibernateConfigurationBean.sessionName}" />
 			</a4j:jsFunction>
 
@@ -78,6 +78,21 @@
 									reRender="frmHibernateConfigurationHeader, mpSetDefaultNotValidHibConf"/>
 							</h:panelGroup>
 							
+							<h:outputText value="#{msg.label_environment_type}:"
+								styleClass="labelForm" />
+							<h:selectOneMenu id="env_type" 
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.environment.envType.id}"
+								style="width:410px; font-size:12px;	padding: 4px;" >
+								<f:selectItems
+									value="#{hibernateConfigurationBean.envTypeComboList}" />
+							</h:selectOneMenu>
+				
+							<h:outputText value="#{msg.label_comments}:"
+								styleClass="labelForm" />
+							<h:inputText id="comments"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.environment.comments}"
+								style="width:400px; font-size:13px;	padding: 4px;"/>
+				
 							<h:outputText value="#{msg.label_driver_name}:"
 								styleClass="labelForm" />
 							<h:panelGroup>
@@ -234,8 +249,16 @@
 									<rich:toolTip value="#{msg.label_default_configuration}" for="is_default"/>
 								</rich:column>
 
+								<rich:column sortBy="#{hs.environment.envType.name}"
+									style="width:10%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_env_type}" />
+									</f:facet>
+									<h:outputText value="#{hs.environment.envType.name}" />
+								</rich:column>
+
 								<rich:column sortBy="#{hs.driverName}"
-									style="width:20%; text-align: left;">
+									style="width:15%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_driver_name}" />
 									</f:facet>
@@ -247,7 +270,7 @@
 								</rich:column>
 
 								<rich:column sortBy="#{hs.dialect}"
-									style="width:20%; text-align: left;">
+									style="width:15%; text-align: left;">
 									<f:facet name="header">
 										<h:outputText value="#{msg.label_dialect}" />
 									</f:facet>

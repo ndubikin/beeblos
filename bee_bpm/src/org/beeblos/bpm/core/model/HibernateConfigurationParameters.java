@@ -1,4 +1,7 @@
-package org.beeblos.bpm.core.util;
+package org.beeblos.bpm.core.model;
+
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+
 
 
 public class HibernateConfigurationParameters {
@@ -13,9 +16,21 @@ public class HibernateConfigurationParameters {
 	private boolean showSQL;
 	private boolean formatSQL;
 	private boolean defaultConfiguration;
+	
+	private Environment environment;
 
 	public HibernateConfigurationParameters() {
 
+	}
+
+	public HibernateConfigurationParameters(boolean createEmptyObject) {
+
+		if (createEmptyObject){
+			
+			this.environment = new Environment(EMPTY_OBJECT);
+			
+		}
+		
 	}
 
 	public HibernateConfigurationParameters(String sessionName, String driverName,
@@ -113,6 +128,14 @@ public class HibernateConfigurationParameters {
 
 	public void setDefaultConfiguration(boolean defaultConfiguration) {
 		this.defaultConfiguration = defaultConfiguration;
+	}
+
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
 	}
 
 	@Override
