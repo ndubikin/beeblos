@@ -8,20 +8,25 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.EnvTypeBL;
+import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
+import org.beeblos.bpm.core.error.EnvTypeException;
+import org.beeblos.bpm.core.error.EnvironmentException;
+import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.model.noper.DialectObject;
 import org.beeblos.bpm.core.model.noper.DriverObject;
 import org.beeblos.bpm.core.util.DialectObjectUtil;
 import org.beeblos.bpm.core.util.DriverObjectUtil;
-import org.beeblos.bpm.core.util.HibernateConfigurationParameters;
-import org.beeblos.bpm.core.util.HibernateConfigurationUtil;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
+import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 
@@ -54,6 +59,9 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	
 	// dml 20120207
 	private boolean validHibernateConfiguration;
+	
+	// dml 20130514
+	private List<SelectItem> envTypeComboList;
 		
 	public static HibernateConfigurationBean getCurrentInstance() {
 		return (HibernateConfigurationBean) FacesContext
@@ -64,15 +72,19 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	public HibernateConfigurationBean() {
 		super();
 
+		_reset();
 		init();
+
 	}
 
 	public void init() {
+		
 		super.init();
-
 		setShowHeaderMessage(false);
+		
+		this.loadHibernateConfigurationParametersList(); 
 
-		_reset();
+		this._loadEnvTypeComboList();
 
 	}
 
@@ -96,7 +108,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		this.currentHibernateConfigurationParameters = new HibernateConfigurationParameters();
 		
 		this.hibernateConfigurationParametersList = new ArrayList<HibernateConfigurationParameters>();
-		this.loadHibernateConfigurationParametersList(); 
 		
 		this.recordIsLoaded = false;
 			
@@ -106,6 +117,27 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 		return null;
 
+	}
+	
+	private void _loadEnvTypeComboList(){
+		
+		try {
+			
+			this.envTypeComboList = UtilsVs.castStringPairToSelectitem(
+					new EnvTypeBL().getComboList("Select one...", ""));
+		
+		} catch (EnvTypeException e) {
+			
+			this.envTypeComboList = new ArrayList<SelectItem>();			
+			
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvTypeException: Method _loadEnvTypeComboList in HibernateConfigurationBean: ";
+			agregarMensaje(message);
+			logger.error(message);				
+			
+		}
+		
 	}
 
 	public String save() {
@@ -160,7 +192,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 				this.hibernateConfigurationParametersList.remove(removeElement);
 				this.hibernateConfigurationParametersList.add(this.currentHibernateConfigurationParameters);
-				HibernateConfigurationUtil.persistConfigurationList(this.hibernateConfigurationParametersList);				
+				new HibernateConfigurationBL().persistConfigurationList(
+						this.hibernateConfigurationParametersList, getCurrentUserId());				
 				
 			} else {
 				
@@ -172,12 +205,12 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 			}
 			
-			
 			String message = setUpdateOkMessage();
 			agregarMensaje(message);
 			setShowHeaderMessage(true);
 			
 			_reset();
+			this.loadHibernateConfigurationParametersList();
 			
 		} catch (MarshalException e) {
 
@@ -206,66 +239,83 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method update in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
 		} 
 
 		return returnValue;
 
 	}
 
-
 	public String add() {
-		logger.debug(" add() role name:" +this.getSessionName() );
-		
+		logger.debug(" add() role name:" + this.getSessionName());
+
 		setShowHeaderMessage(false);
 		setMessageStyle(normalMessageStyle());
-		
+
 		String returnValue = null; // always returns null because calls are ajax
-		
-		 try {
-			
-			 this.hibernateConfigurationParametersList.add(currentHibernateConfigurationParameters);
-			 HibernateConfigurationUtil.persistConfigurationList(this.hibernateConfigurationParametersList);
-			
+
+		try {
+
+			this.hibernateConfigurationParametersList.add(currentHibernateConfigurationParameters);
+			new HibernateConfigurationBL().persistConfigurationList(
+							this.hibernateConfigurationParametersList, getCurrentUserId());
+
 			String message = setAddOkMessage(sessionName);
 			agregarMensaje(message);
 			setShowHeaderMessage(true);
-			
+
 			_reset();
+			this.loadHibernateConfigurationParametersList();
 
-			} catch (MarshalException e) {
+		} catch (MarshalException e) {
 
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
-				String message = "MarshalException: Method add in HibernateConfigurationBean: "
-									+ e.getMessage() + " - " + e.getCause();
-				agregarMensaje(message);
-				logger.error(message);
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "MarshalException: Method add in HibernateConfigurationBean: "
+					+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
 
-			} catch (ValidationException e) {
+		} catch (ValidationException e) {
 
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
-				String message = "ValidationException: Method add in HibernateConfigurationBean: "
-									+ e.getMessage() + " - " + e.getCause();
-				agregarMensaje(message);
-				logger.error(message);
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "ValidationException: Method add in HibernateConfigurationBean: "
+					+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
 
-			} catch (IOException e) {
+		} catch (IOException e) {
 
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
-				String message = "IOException: Method add in HibernateConfigurationBean: "
-									+ e.getMessage() + " - " + e.getCause();
-				agregarMensaje(message);
-				logger.error(message);
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "IOException: Method add in HibernateConfigurationBean: "
+					+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
 
-			} 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method add in HibernateConfigurationBean: "
+					+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} 
 
 		return returnValue;
 
 	}
-
-
 
 	public String delete() {
 		logger.debug(" delete() :" +this.getSessionName() );
@@ -289,7 +339,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 				this.hibernateConfigurationParametersList.remove(this.currentHibernateConfigurationParameters);
 			
-				HibernateConfigurationUtil.persistConfigurationList(hibernateConfigurationParametersList);
+				new HibernateConfigurationBL().persistConfigurationList(
+						hibernateConfigurationParametersList, getCurrentUserId());
 				
 				// set ok message 
 				String message = getDeleteOkMessage(currentHibernateConfigurationParameters.getSessionName()); 
@@ -298,6 +349,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				setShowHeaderMessage(true);
 	
 				_reset();
+				this.loadHibernateConfigurationParametersList();
 
 			}
 			
@@ -328,7 +380,16 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			agregarMensaje(message);
 			logger.error(message);
 
-		} 
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method delete in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		}  
 
 		return returnValue;
 
@@ -345,8 +406,9 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 			try{
 				
-				currentHibernateConfigurationParameters = HibernateConfigurationUtil.getConfiguration(sessionName);
-
+				currentHibernateConfigurationParameters = new HibernateConfigurationBL()
+						.getConfiguration(sessionName);
+				
 				recordIsLoaded = true;
 				
 				modifyValueBtn();
@@ -378,13 +440,21 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				agregarMensaje(message);
 				logger.error(message);
 
+			} catch (EnvironmentException e) {
+
+				setMessageStyle(errorMessageStyle());
+				setShowHeaderMessage(true);
+				String message = "EnvironmentException: Method loadRecord in HibernateConfigurationBean: "
+									+ e.getMessage() + " - " + e.getCause();
+				agregarMensaje(message);
+				logger.error(message);
+
 			} 
 
 		}
 
 	}
 	
-
 	public void loadHibernateConfigurationParametersList() {
 		
 		setShowHeaderMessage(false);
@@ -394,7 +464,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			
 			this.hibernateConfigurationParametersList = 
 					(List<HibernateConfigurationParameters>) 
-						(HibernateConfigurationUtil.getConfigurationList());
+						new HibernateConfigurationBL().getConfigurationList();
 
 		} catch (MarshalException e) {
 
@@ -410,6 +480,24 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
 			String message = "ValidationException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
+		} catch (FileNotFoundException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "FileNotFoundException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);
@@ -439,6 +527,14 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	public void setCurrentHibernateConfigurationParameters(
 			HibernateConfigurationParameters currentHibernateConfigurationParameters) {
 		this.currentHibernateConfigurationParameters = currentHibernateConfigurationParameters;
+	}
+
+	public List<SelectItem> getEnvTypeComboList() {
+		return envTypeComboList;
+	}
+
+	public void setEnvTypeComboList(List<SelectItem> envTypeComboList) {
+		this.envTypeComboList = envTypeComboList;
 	}
 
 	public void setValueBtn(String valueBtn) {
@@ -682,7 +778,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		try{
 			
-			HibernateConfigurationUtil.persistConfigurationList(hibernateConfigurationParametersList);
+			new HibernateConfigurationBL().persistConfigurationList(
+					hibernateConfigurationParametersList, getCurrentUserId());
 				
 			String message = getUpdatedDefaultConfiguration(); 
 			logger.info(message);
@@ -715,6 +812,15 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 								+ e.getMessage() + " - " + e.getCause();
 			agregarMensaje(message);
 			logger.error(message);		
+		} catch (EnvironmentException e) {
+
+			setMessageStyle(errorMessageStyle());
+			setShowHeaderMessage(true);
+			String message = "EnvironmentException: Method setDefaultConfiguration in HibernateConfigurationBean: "
+								+ e.getMessage() + " - " + e.getCause();
+			agregarMensaje(message);
+			logger.error(message);
+
 		}
 			
 		

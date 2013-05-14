@@ -1,4 +1,6 @@
-package org.beeblos.bpm.core.util;
+package org.beeblos.bpm.core.dao;
+
+import static org.beeblos.bpm.core.util.Constants.HIBERNATE_CONFIGURATION_LIST_XML;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,35 +10,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
 
-public class HibernateConfigurationUtil {
+public class HibernateConfigurationDao {
 
-	private static String hibernateConfigurationListXML = "hibernateConfigurationList.xml";
-
-	public HibernateConfigurationUtil() {
+	public HibernateConfigurationDao() {
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<HibernateConfigurationParameters> getConfigurationList()
-			throws MarshalException, ValidationException {
+	public List<HibernateConfigurationParameters> getConfigurationList() 
+			throws FileNotFoundException, MarshalException, ValidationException {
 		
 		FileReader reader;
 		List<HibernateConfigurationParameters> hcpl = new ArrayList<HibernateConfigurationParameters>();
 		try {
 			
-			reader = new FileReader(hibernateConfigurationListXML);
+			reader = new FileReader(HIBERNATE_CONFIGURATION_LIST_XML);
 
 			hcpl = (List<HibernateConfigurationParameters>) Unmarshaller.unmarshal(hcpl.getClass(),
 				reader);
 
 		} catch (FileNotFoundException e) {
 			
-			new File(hibernateConfigurationListXML);
+			new File(HIBERNATE_CONFIGURATION_LIST_XML);
+			throw new FileNotFoundException(e.toString());
 			
 		}
 
@@ -44,10 +46,10 @@ public class HibernateConfigurationUtil {
 
 	}
 
-	public static void persistConfigurationList(List<HibernateConfigurationParameters> hcpl)
+	public void persistConfigurationList(List<HibernateConfigurationParameters> hcpl)
 			throws IOException, MarshalException, ValidationException {
 
-		FileWriter writer = new FileWriter(hibernateConfigurationListXML);
+		FileWriter writer = new FileWriter(HIBERNATE_CONFIGURATION_LIST_XML);
 
 		Marshaller.marshal(hcpl, writer);
 
@@ -55,7 +57,7 @@ public class HibernateConfigurationUtil {
 
 	}
 
-	public static HibernateConfigurationParameters getConfiguration(String sessionName)
+	public HibernateConfigurationParameters getConfiguration(String sessionName)
 			throws MarshalException, ValidationException, FileNotFoundException{
 
 		List<HibernateConfigurationParameters> hcpl = getConfigurationList();
@@ -74,7 +76,7 @@ public class HibernateConfigurationUtil {
 
 	}
 	
-	public static HibernateConfigurationParameters getDefaultConfiguration()
+	public HibernateConfigurationParameters getDefaultConfiguration()
 			throws MarshalException, ValidationException, FileNotFoundException{
 
 		List<HibernateConfigurationParameters> hcpl = getConfigurationList();
@@ -93,7 +95,7 @@ public class HibernateConfigurationUtil {
 
 	}
 	
-	public static void addFirstConfiguration(HibernateConfigurationParameters hcp)
+	public void addFirstConfiguration(HibernateConfigurationParameters hcp)
 			throws MarshalException, ValidationException, IOException {
 
 		List<HibernateConfigurationParameters> hcpl = new ArrayList<HibernateConfigurationParameters>();

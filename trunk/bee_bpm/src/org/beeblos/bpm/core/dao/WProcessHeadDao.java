@@ -15,12 +15,8 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.noper.StringPair;
-import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.util.HibernateUtilNew;
-import org.hibernate.Hibernate;
+import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -38,7 +34,7 @@ public class WProcessHeadDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtilNew.guardar(process, currentUserId));
+			return Integer.valueOf(HibernateUtil.guardar(process));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: add - Can't store process definition record "+ 
@@ -57,7 +53,7 @@ public class WProcessHeadDao {
 		
 		try {
 
-			HibernateUtilNew.actualizar(process, currentUserId);
+			HibernateUtil.actualizar(process);
 
 
 		} catch (HibernateException ex) {
@@ -81,7 +77,7 @@ public class WProcessHeadDao {
 
 			//process = getWProcessByPK(process.getId());
 
-			HibernateUtilNew.borrar(process, currentUserId);
+			HibernateUtil.borrar(process);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: delete - Can't delete proccess definition record "+ process.getName() +
@@ -107,7 +103,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -137,7 +133,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -171,7 +167,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 			tx.begin();
 
@@ -205,7 +201,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 
 			tx.begin();
@@ -241,7 +237,7 @@ public class WProcessHeadDao {
 
 			try {
 
-				session = HibernateUtilNew.obtenerSession(currentUserId);
+				session = HibernateUtil.obtenerSession();
 				tx = session.getTransaction();
 				tx.begin();
 
@@ -340,7 +336,7 @@ public class WProcessHeadDao {
 			
 			try {
 
-				session = HibernateUtilNew.obtenerSession(currentUserId);
+				session = HibernateUtil.obtenerSession();
 				tx = session.getTransaction();
 
 				tx.begin();
@@ -533,7 +529,7 @@ public class WProcessHeadDao {
 
 		try {
 
-			session = HibernateUtilNew.obtenerSession(currentUserId);
+			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
 
 			tx.begin();

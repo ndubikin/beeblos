@@ -1113,4 +1113,64 @@
 		</many-to-one>
 	</class>
 	
+	<class name="org.beeblos.bpm.core.model.EnvType" table="env_type">
+		<id name="id" type="java.lang.Short">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<property generated="never" lazy="false" name="name" type="string">
+			<column length="100" name="name"/>
+		</property>
+		<property generated="never" lazy="false" name="color" type="string">
+			<column length="100" name="color"/>
+		</property>
+
+		<property generated="never" lazy="false" name="addDate" type="timestamp">
+			<column name="add_date" />
+		</property>
+		<property generated="never" lazy="false" name="addUser" type="java.lang.Integer">
+			<column name="add_user"/>
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column name="mod_date"  />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
+
+	</class>
+
+	<class name="org.beeblos.bpm.core.model.Environment" table="environment">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<property generated="never" lazy="false" name="name" type="string">
+			<column length="100" name="name"/>
+		</property>
+		<property generated="never" lazy="false" name="comments" type="string">
+			<column length="255" name="comments"/>
+		</property>
+
+		<property generated="never" lazy="false" name="addDate" type="timestamp">
+			<column name="add_date" />
+		</property>
+		<property generated="never" lazy="false" name="addUser" type="java.lang.Integer">
+			<column name="add_user"/>
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column name="mod_date"  />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.EnvType"
+			column="env_type_id" lazy="false" name="envType" 
+			cascade="none"/>
+
+	</class>
+	
 </hibernate-mapping>

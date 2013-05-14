@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import org.beeblos.bpm.core.dao.HibernateConfigurationDao;
+import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 import org.hibernate.HibernateException;
@@ -47,7 +49,7 @@ public class HibernateUtil {
 			// if it is not possible, it is loaded the default config of the xml file
 			if (parameters == null || parameters.hasEmptyFields()) {
 
-				parameters = HibernateConfigurationUtil.getDefaultConfiguration();
+				parameters = new HibernateConfigurationDao().getDefaultConfiguration();
 				
 			}
 			
