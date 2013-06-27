@@ -4,6 +4,7 @@
 
 tarea=		     				general,     	Tareas workflow,				/images/ico_MenuSeparator.gif,         /images/cn_panel.gif,          	rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /general/consultaTarea.jsf,						consultaTareaBean, 					org.beeblos.bpm.web.bean.ConsultaTareaBean, 559
 accesos=						general,        AccesosUsuario,					/images/ico_MenuSeparator.gif,         /images/cn_panel.gif,          	rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /general/consultaUsuarioLogin.jsf,				-,-, 534
+workflowEditor=					general,        Editor de workflow,				/images/ico_MenuSeparator.gif,         /images/cn_panel.gif,          	rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,           /general/javascript/examples/editors/workfloweditor.jsf,						-,-, 535
 
 
 ProcesarTarea= 					task,           Procesar tarea, 				/images/ico_MenuSeparator.gif,  		/images/cn_panel.gif,         	rich_panel.html,           rich/panel.html,               org/richfaces/component/UIPanel.html,         	/dap/procesarPaginaBienvenida.jsf,				pasoBean,							org.beeblos.bpm.web.bean.wf.PasoBean
