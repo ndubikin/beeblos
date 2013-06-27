@@ -224,7 +224,7 @@ public class HibernateUtil {
 		DatabaseMetaData meta = connection.getMetaData();
 
 		ResultSet catalogs = meta.getCatalogs();
-
+/*
 		System.out.println("metadata: Maj / min Version:  "
 				+ meta.getDatabaseMajorVersion() + "/"
 				+ connection.getMetaData().getDatabaseMinorVersion());
@@ -236,10 +236,10 @@ public class HibernateUtil {
 				.println("-----------------------------------------------------------------------------------------------------------");
 		System.out.println("Driver Name : " + meta.getDriverName());
 		System.out.println("Driver Version : " + meta.getDriverVersion());
-
+*/
 		while (catalogs.next()) {
 			String catalog = catalogs.getString(1); // "TABLE_CATALOG"
-			System.out.println("catalog: " + catalog);
+//			System.out.println("catalog: " + catalog);
 			if (catalog.equals(hSession.getDefaultCatalog())) {
 				ret = true; // si existe el catalogo ok
 				// break;
