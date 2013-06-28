@@ -78,7 +78,7 @@
 	    		var="task" width="98%" columnClasses="center"
 	    		rows="8" reRender="frmTaskList,dsUp,dsDown" style="margin-left: 16px;">
 	        <f:facet name="header">
-	            <h:outputText value="#{msg.label_consultaDeTareas} ( #{consultaTareaBean.nResultados} #{msg.label_results} )"/>
+	            <h:outputText value="#{msg.label_task_list} ( #{consultaTareaBean.nResultados} #{msg.label_results} )"/>
 	        </f:facet>
 	
 	        <rich:column sortBy="#{task.process.name}" style="width:90px; text-align: left;"> 
@@ -94,20 +94,20 @@
 	            <h:outputText value="#{task.process.name}"/>
 	        </rich:column>
 	
-	        <rich:column sortBy="#{task.idObject}" style="width:40px; text-align: left;"> 
+	        <rich:column sortBy="#{task.wProcessWork.idObject}" style="width:40px; text-align: left;"> 
 	            <f:facet name="header">
 	                <h:outputText value="#{msg.label_id}"/>
 	            </f:facet>
-	            <h:outputText value="#{task.idObject}" rendered="#{task.comments eq nul}"/>
-	            <h:outputText value="#{task.reference}" rendered="#{task.comments != null}" style="padding: 4px;font-weight: bold;"/>	            
+	            <h:outputText value="#{task.wProcessWork.idObject}" rendered="#{task.wProcessWork.comments eq nul}"/>
+	            <h:outputText value="#{task.wProcessWork.reference}" rendered="#{task.wProcessWork.comments != null}" style="padding: 4px;font-weight: bold;"/>	            
 	        </rich:column>
 	
-	        <rich:column sortBy="#{task.idObjectType}" style="width:120px; text-align: left;"> 
+	        <rich:column sortBy="#{task.wProcessWork.idObjectType}" style="width:120px; text-align: left;"> 
 	            <f:facet name="header">
 	                <h:outputText value="#{msg.label_related_item}"/>
 	            </f:facet>
-	            <h:outputText value="#{task.idObjectType}" rendered="#{task.comments eq nul}"/>
-   	            <h:outputText value="#{task.comments}" rendered="#{task.comments != null}"/>
+	            <h:outputText value="#{task.wProcessWork.idObjectType}" rendered="#{task.wProcessWork.comments eq nul}"/>
+   	            <h:outputText value="#{task.wProcessWork.comments}" rendered="#{task.wProcessWork.comments != null}"/>
 	        </rich:column>
 	
 	        <rich:column sortBy="#{task.currentStep.name}" style="width:90px; text-align: left;"> 
@@ -157,17 +157,17 @@
 	        </rich:column>
 	        
 	         <rich:componentControl event="onRowClick" for="task_process_menu_id" operation="show">
-	            <f:param value="#{task.idObject}" name="object_id"/>
-	            <f:param value="#{task.idObjectType}" name="object_type_id"/>
-	            <f:param value="#{task.reference}" name="relatesTo"/>
-	            <f:param value="#{task.comments}" name="comments"/>
+	            <f:param value="#{task.wProcessWork.idObject}" name="object_id"/>
+	            <f:param value="#{task.wProcessWork.idObjectType}" name="object_type_id"/>
+	            <f:param value="#{task.wProcessWork.reference}" name="relatesTo"/>
+	            <f:param value="#{task.wProcessWork.comments}" name="comments"/>
 	            <f:param value="#{task.id}" name="task_id"/>     
 	            <f:param value="#{task.locked eq true and task.lockedBy.id!=consultaTareaBean.usuarioLogueado ? 'display:none;' : ''}" name="styleItemProcess"/>	                      
 	            <f:param value="#{task.locked eq true and task.lockedBy.id!=consultaTareaBean.usuarioLogueado ? '' : 'display:none;'}" name="styleLockedStepMessage"/>
 				<f:param value="#{task.lockedBy.name}" name="userHolds"/>
 				<f:param value="#{task.lockedSince}" name="lockedSince"/>
           		<f:param value="#{task.locked eq true and task.lockedBy.id eq consultaTareaBean.usuarioLogueado? '' : 'display:none;'}" name="styleItemUnlock"/>
-          		<f:param value="#{task.idObjectType == 'com.softpoint.bdc.model.Proyecto' ? '' : 'display:none;'}" name="styleItemViewProject"/>
+          		<f:param value="#{task.wProcessWork.idObjectType == 'com.softpoint.bdc.model.Proyecto' ? '' : 'display:none;'}" name="styleItemViewProject"/>
 	        </rich:componentControl>        
 	    </rich:dataTable>
 
