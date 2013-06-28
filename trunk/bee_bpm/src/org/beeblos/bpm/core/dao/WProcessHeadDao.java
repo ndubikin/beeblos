@@ -391,7 +391,7 @@ public class WProcessHeadDao {
 
 	private String getBaseQuery(boolean isAdmin) {
 	
-		String baseQueryTmp="SELECT * FROM w_process wph ";
+		String baseQueryTmp="SELECT * FROM w_process_head wph ";
 	
 		return baseQueryTmp;
 

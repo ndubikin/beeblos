@@ -407,7 +407,7 @@ public class WProcessDefBL {
 		
 	}
 	
-	
+/*	
 	public WProcessDef getWProcessDefByName(String name, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
 
 		WProcessDef wpd;
@@ -429,7 +429,8 @@ public class WProcessDefBL {
 		
 		return wpd;
 	}
-
+*/
+	
 	// dml 20130506
 	public List<WProcessDef> getProcessList(Integer currentUserId) throws WProcessDefException {
 

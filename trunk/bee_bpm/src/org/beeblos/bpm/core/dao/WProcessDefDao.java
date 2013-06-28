@@ -128,7 +128,7 @@ public class WProcessDefDao {
 		return process;
 	}
 	
-	
+/*	
 	public WProcessDef getWProcessDefByName(String name, Integer currentUserId) throws WProcessDefException {
 
 		WProcessDef  process = null;
@@ -160,7 +160,8 @@ public class WProcessDefDao {
 
 		return process;
 	}
-
+*/
+	
 	// versionId = id from WProcessDef table
 	public String getProcessNameByVersionId(Integer versionId, Integer currentUserId) throws WProcessDefException {
 
@@ -209,7 +210,7 @@ public class WProcessDefDao {
 
 			tx.begin();
 
-			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_process_def WHERE process_id = " + processHeadId)
+			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_process_def WHERE head_id = " + processHeadId)
 					.uniqueResult();
 
 			tx.commit();
@@ -236,7 +237,7 @@ public class WProcessDefDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		List<WProcessDef> processs = null;
+		List<WProcessDef> processList = null;
 
 		try {
 
@@ -245,7 +246,7 @@ public class WProcessDefDao {
 
 			tx.begin();
 
-			processs = session.createQuery("From WProcessDef order by name ").list();
+			processList = session.createQuery("From WProcessDef Order By process.name ").list();
 
 			tx.commit();
 
@@ -259,7 +260,7 @@ public class WProcessDefDao {
 
 		}
 
-		return processs;
+		return processList;
 	}
 	
 	
@@ -281,7 +282,7 @@ public class WProcessDefDao {
 				tx.begin();
 
 				lwpd = session
-						.createQuery("From WProcessDef order by name ")
+						.createQuery("From WProcessDef Order By process.name ")
 						.list();
 		
 				if (lwpd!=null) {
@@ -344,7 +345,7 @@ public class WProcessDefDao {
 				tx.begin();
 
 				lwpd = session
-						.createQuery("From WProcessDef Where active IS TRUE order by name")
+						.createQuery("From WProcessDef Where active IS TRUE order by process.name")
 						.list();
 		
 				if (lwpd!=null) {
@@ -509,7 +510,7 @@ public class WProcessDefDao {
 	private String getBaseQuery(boolean isAdmin) {
 	
 		String baseQueryTmp="SELECT * FROM w_process_def wpd ";
-		baseQueryTmp += " LEFT OUTER JOIN w_process wph ON wpd.process_id = wph.id ";
+		baseQueryTmp += " LEFT OUTER JOIN w_process_head wph ON wpd.head_id = wph.id ";
 		baseQueryTmp +=" LEFT JOIN w_step_def wsd ON wpd.id_begin=wsd.id ";
 	
 		return baseQueryTmp;
@@ -799,9 +800,9 @@ public class WProcessDefDao {
 		if (processHeadId != null
 				&& !processHeadId.equals(0)) {
 			if (!"".equals(filter)) {
-				filter += " AND wpd.process_id = " + processHeadId + " ";
+				filter += " AND wpd.head_id = " + processHeadId + " ";
 			} else {
-				filter += " wpd.process_id = " + processHeadId + " ";
+				filter += " wpd.head_id = " + processHeadId + " ";
 
 			}
 		}
@@ -825,7 +826,7 @@ public class WProcessDefDao {
 		tmpQuery += " wpd.version ";
 
 		tmpQuery += " FROM w_process_def wpd ";
-		tmpQuery += " LEFT OUTER JOIN w_process wph ON wpd.process_id = wph.id ";
+		tmpQuery += " LEFT OUTER JOIN w_process_head wph ON wpd.head_id = wph.id ";
 
 		tmpQuery += filter;
 
