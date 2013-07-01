@@ -24,6 +24,8 @@ public class WStepWork implements java.io.Serializable {
 	
 	// TODO - QUITAR ESTAS DOS PROPIEDADES Q YA LAS TENEMOS EN WPROCESSWORK
 	private WProcessDef process;
+	
+	@Deprecated
 	private Integer version;
 	
 	private WStepDef previousStep;
@@ -187,6 +189,7 @@ public class WStepWork implements java.io.Serializable {
 	/**
 	 * @return the version
 	 */
+	@Deprecated
 	public Integer getVersion() {
 		return version;
 	}
@@ -195,6 +198,7 @@ public class WStepWork implements java.io.Serializable {
 	/**
 	 * @param version the version to set
 	 */
+	@Deprecated	
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
