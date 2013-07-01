@@ -19,6 +19,7 @@ public class WProcessWork implements java.io.Serializable {
 	private WProcessStatus status;
 
 	private WProcessDef process;
+	@Deprecated
 	private int version;
 	
 	private Date startingTime;
@@ -86,10 +87,12 @@ public class WProcessWork implements java.io.Serializable {
 		this.id = id;
 	}
 
+	@Deprecated
 	public int getVersion() {
 		return this.version;
 	}
 
+	@Deprecated
 	public void setVersion(int version) {
 		this.version = version;
 	}
