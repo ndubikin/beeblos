@@ -5,7 +5,18 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<script type="text/javascript">
+	//<![CDATA[
+	function openInNewTab(url)
+	{
 
+		var win=window.open(url, '_blank');
+		win.focus();
+	}
+	//]]>
+	</script>	
+	
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
@@ -16,7 +27,14 @@
 		<h:panelGrid width="100%" columns="1">
 
        		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
-            	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessDefForm}" submitMode="server">
+				<rich:menuItem
+					onclick="openInNewTab('${facesContext.externalContext.requestContextPath}/general/javascript/examples/editors/workfloweditorClean.html');"
+					submitMode="server">
+					<b> #{msg.label_load_process_xml_map}</b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}" />
+				</rich:menuItem>
+				<rich:menuSeparator />
+				<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessDefForm}" submitMode="server">
                 	<b>  #{msg.label_load_process_version}</b> {currentRowId} (version: {currentRowVersion}) 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>

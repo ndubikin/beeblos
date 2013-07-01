@@ -492,5 +492,28 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		}
 		
 	}
-
+	
+	public String returnMap() {
+		
+		String returnValue = "";
+		
+		if (id != null
+				&& !id.equals(0)){
+			try {
+				
+				returnValue = new WProcessDefBL().getWProcessDefByPK(id, getCurrentUserId()).getProcessMap();
+				
+			} catch (WProcessDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WStepSequenceDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return returnValue;
+		
+	}
+	
 }

@@ -66,6 +66,9 @@ public class WProcessDef implements java.io.Serializable {
 	private List<WStepDef> lSteps = new ArrayList<WStepDef>(); 
 	private List<WStepSequenceDef> stepSequenceList; 
 	
+	
+	private String processMap; // dml 20120105
+
 	public WProcessDef() {
 		super();
 	}
@@ -386,6 +389,16 @@ public class WProcessDef implements java.io.Serializable {
 	}
 
 
+	public String getProcessMap() {
+		return processMap;
+	}
+
+
+	public void setProcessMap(String processMap) {
+		this.processMap = processMap;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -589,9 +602,10 @@ public class WProcessDef implements java.io.Serializable {
 		// dml 20120306
 		if (arrivingAdminNoticeTemplate!=null && ! arrivingAdminNoticeTemplate.empty()) return false;
 		if (arrivingUserNoticeTemplate!=null && ! arrivingUserNoticeTemplate.empty()) return false;
+		
+		if (idProcessorStep!=null && ! "".equals(idProcessorStep)) return false; // dml 20120619
 
-		// dml 20120619
-		if (idProcessorStep!=null && ! "".equals(idProcessorStep)) return false;
+		if (processMap != null && ! "".equals(processMap)) return false; // dml 20130628
 
 		return true;
 	}

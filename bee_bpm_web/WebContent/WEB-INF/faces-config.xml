@@ -129,6 +129,11 @@
  			<to-view-id>/dap/procesarProyectoDAP.xhtml</to-view-id> 
  		</navigation-case> -->
   <navigation-case>
+   <from-outcome>XML_MAP_EDITOR</from-outcome> <!-- dml 20130628 - nueva funcionalidad para pintar el mapa de un proceso -->
+   <to-view-id>/general/javascript/examples/editors/workfloweditor.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
    <from-outcome>WELCOME_PAGE</from-outcome>
    <to-view-id>/welcome.xhtml</to-view-id>
    <redirect/>
