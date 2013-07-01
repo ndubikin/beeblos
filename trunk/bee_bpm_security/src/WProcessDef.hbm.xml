@@ -110,6 +110,10 @@
 			<column  name="mod_user" />
 		</property>
 	
+		<property name="processMap" type="text">
+			<column name="process_map" />
+		</property>
+
 		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WProcessHead"
 			column="head_id"  name="process" fetch="join" lazy="false"/>
 	
