@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.MissingResourceException;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -169,7 +170,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 					
 
-			} catch (Exception e) {
+			} catch (MissingResourceException e) {
 				String mensaje = "Ocurrio Un Error al tratar de obtener [pagina.inicio.dpto."+idDepartamento+
 								"] para idUsuario:[" + idUsuario + 
 								"] "	+ e.getMessage() + " : " + e.getCause();
