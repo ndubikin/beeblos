@@ -4,6 +4,10 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -493,26 +497,38 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		
 	}
 	
-	public String returnMap() {
-		
-		String returnValue = "";
+	public void createXmlMapAsTmp() {
 		
 		if (id != null
 				&& !id.equals(0)){
 			try {
 				
-				returnValue = new WProcessDefBL().getWProcessDefByPK(id, getCurrentUserId()).getProcessMap();
+				String processXmlMap = new WProcessDefBL().getWProcessDefByPK(id, getCurrentUserId()).getProcessMap();
 				
-			} catch (WProcessDefException e) {
+				String path = CONTEXTPATH + "/bee_bpm_web/processXmlMapTmp.xml";
+				File temp = new File(path);
+				
+				// if file doesnt exists, then create it
+				if (!temp.exists()) {
+					temp.createNewFile();
+				}
+				
+				FileWriter fw = new FileWriter(temp.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(processXmlMap);
+				bw.close();
+				
+			} catch (WProcessDefException e) {	
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (WStepSequenceDefException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		
-		return returnValue;
 		
 	}
 	

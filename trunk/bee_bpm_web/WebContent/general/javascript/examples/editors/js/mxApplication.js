@@ -13,6 +13,7 @@
 	 */
 	function mxApplication(config)
 	{
+		console.log("----------------------------> EMPIEZA <---------------------------------");
 		var hideSplash = function()
 		{
 			// Fades-out the splash screen
@@ -40,8 +41,21 @@
 			}
 			else
 			{
+				console.log("----------------------------> ANTES DE CARGAR EL NODO ... <---------------------------------");
+				/*					var xmlDoc = mxUtils.load(url).getXml();
+				var node = xmlDoc.documentElement;
+				var dec = new mxCodec(node.ownerDocument);
+				dec.decode(node, graph.getModel());
+				console.log("----------------------------> DESPUES DE CARGAR EL NODO ... <---------------------------------");
+*/				 
+				
 				var node = mxUtils.load(config).getDocumentElement();
 				var editor = new mxEditor(node);
+				
+				//alert("se va a abrir");
+				
+				editor.open("/bee_bpm_web/processXmlMapTmp.xml");
+				//editor.readGraphModel(miNodo);
 				
 				// Updates the window title after opening new files
 				var title = document.title;
@@ -60,7 +74,45 @@
 				// Displays version in statusbar
 				editor.setStatus('mxGraph '+mxClient.VERSION);
 
-				// Shows the application
+/*				
+				console.log("----------------------------> ANTES DE CREAR EL GRAFO ... <---------------------------------");
+
+				var graph = new mxGraph(container);
+
+				console.log("----------------------------> GRAFO CREADO... <---------------------------------");
+				
+				// Load cells and layouts the graph
+				graph.getModel().beginUpdate();
+				try
+				{	
+					console.log("----------------------------> ANTES PARSE <---------------------------------");
+					// Loads the custom file format (TXT file)
+					//parse(graph, 'fileio.txt');
+	
+					console.log("----------------------------> DESPUES PARSE <---------------------------------");
+					// Loads the mxGraph file format (XML file)
+					read(graph, '../dmlExample.xml');
+										
+					console.log("----------------------------> DESPUES READ <---------------------------------");
+					// Gets the default parent for inserting new cells. This
+					// is normally the first child of the root (ie. layer 0).
+					console.log("----------------------------> DEFAULT PARENT <---------------------------------");
+					console.log("----------------------------> " + graph.getDefaultParent() + " <---------------------------------");
+					var parent = graph.getDefaultParent();
+					console.log("----------------------------> END DEFAULT PARENT <---------------------------------");
+
+					var layout = new mxFastOrganicLayout(graph);
+					// Executes the layout
+					layout.execute(parent);
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+*/
+				
+				// Shows the application				
 				hideSplash();
 			}
 		}
@@ -75,5 +127,16 @@
 								
 		return editor;
 	}
+	
+	// Parses the mxGraph XML file format
+	function read(graph, filename)
+	{
+		var req = mxUtils.load(filename);
+		var root = req.getDocumentElement();
+		var dec = new mxCodec(root.ownerDocument);
+		
+		dec.decode(root, graph.getModel());
+	};
+
 
 }

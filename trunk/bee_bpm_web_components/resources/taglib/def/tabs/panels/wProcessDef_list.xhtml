@@ -29,6 +29,7 @@
        		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
 				<rich:menuItem
 					onclick="openInNewTab('${facesContext.externalContext.requestContextPath}/general/javascript/examples/editors/workfloweditorClean.html');"
+					action="#{wProcessDefQueryBean.createXmlMapAsTmp}"
 					submitMode="server">
 					<b> #{msg.label_load_process_xml_map}</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}" />
