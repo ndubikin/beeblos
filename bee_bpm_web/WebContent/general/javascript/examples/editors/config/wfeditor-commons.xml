@@ -84,6 +84,12 @@
 				mxUtils.linkInvoke(div, mxResources.get('travelBooking'), this,
 					'open', 'diagrams/travel-booking.xml', off);
 				mxUtils.br(div);
+				mxUtils.linkInvoke(div, mxResources.get('miEjemplo'), this,
+					'open', '../dmlExample.xml', off);
+				mxUtils.br(div);
+				mxUtils.linkInvoke(div, mxResources.get('processXmlMap'), this,
+					'open', '/tmp/processXmlMapTmp.xml', off);
+				mxUtils.br(div);
 				
 				if (!this.graph.isSelectionEmpty())
 				{
