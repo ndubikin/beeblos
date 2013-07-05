@@ -291,7 +291,7 @@ public class TestWStepWorkBL extends TestCase{
 //			assertNull(stepwBL.getWStepWorkByPK(iStepW,"Juancito"));
 			
 			// all process map delete
-			routeBL.deleteProcess(process, 1, 1002);
+			routeBL.deleteRoutesFromProcess(process, 1002);
 //			assertEquals(0, routeBL.getWStepSequenceDefs(1001).size());
 			
 			

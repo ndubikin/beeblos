@@ -72,7 +72,43 @@ public class WProcessDefDao {
 					
 	}
 	
-	
+	// dml 20130703
+	public void updateProcessXmlMap(Integer processId, String processMap, Integer modUserId,
+			Date modDate) throws WProcessDefException {
+
+		logger.debug("updateProcessXmlMap() WProcessDef < id = " + processId + ">");
+
+		try {
+
+			org.hibernate.Session session = null;
+			org.hibernate.Transaction tx = null;
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			session.createQuery(
+					"UPDATE WProcessDef SET processMap = :processMap, modUser = :modUserId, modDate = :modDate WHERE id = :processId")
+					.setString("processMap", processMap)
+					.setInteger("modUserId", modUserId)
+					.setInteger("processId", processId)
+					.setParameter("modDate", modDate)
+					.executeUpdate();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			String message = "SlaDao: update - Can't update xml map for process " + processId
+					+ " - and processMap = " + processMap + "\n - " + ex.getMessage() + "\n"
+					+ ex.getCause();
+			logger.error(message);
+			throw new WProcessDefException(message);
+
+		}
+
+	}
+
 	public void delete(WProcessDef process, Integer currentUserId) throws WProcessDefException {
 
 		logger.debug("delete() WProcessDef - Name: ["+process.getName()+"]");

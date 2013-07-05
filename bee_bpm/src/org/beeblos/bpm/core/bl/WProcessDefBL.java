@@ -110,6 +110,30 @@ public class WProcessDefBL {
 			
 	}
 	
+	// dml 20130703
+	public void updateProcessXmlMap(Integer processId, String processMap, Integer currentUserId)
+			throws WProcessDefException {
+
+		logger.debug("updateProcessXmlMap() WProcessDef < id = " + processId + ">");
+
+		if (processId != null 
+				&& !processId.equals(0) 
+				&& processMap != null
+				&& !processMap.isEmpty()) {
+
+			new WProcessDefDao().updateProcessXmlMap(processId, processMap, currentUserId, new Date());
+
+		} else {
+
+			logger.debug("WProcessDefBL.updateProcessXmlMap - error updating process xml map. processId/processMap are not correct ...");
+
+			throw new WProcessDefException(
+					"The processId and processMap must have a correct value.");
+
+		}
+
+	}
+
 	public List<String> delete(Integer processId, boolean deleteRelatedSteps, Integer currentUserId) 
 			throws WProcessWorkException, WProcessDefException, WStepSequenceDefException, 
 			WStepWorkException, WProcessException, WStepDefException, WStepHeadException {

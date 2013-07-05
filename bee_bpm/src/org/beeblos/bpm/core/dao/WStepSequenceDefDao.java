@@ -95,13 +95,12 @@ public class WStepSequenceDefDao {
 
 	}
 	
-	public void deleteProcess(
-			WProcessDef process, Integer version
+	// dml 20130705
+	public void deleteRoutesFromProcess(WProcessDef process/*, Integer version*/ // no tenemos version
 	) throws WStepSequenceDefException {
 
-		logger.debug("delete() by process & version - processName: ["+process.getName()+" - "+version+"]");
-		
-//		WStepSequenceDef stepSeq = null;
+		logger.debug("delete() by process & version - processName: [" + process.getName() + "]");
+
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
@@ -111,9 +110,9 @@ public class WStepSequenceDefDao {
 			tx = session.getTransaction();
 			tx.begin();
 
-			session.createQuery("delete from WStepSequenceDef where process=? AND version=?")
+			session.createQuery("delete from WStepSequenceDef where process=?")// AND version=?")
 					.setParameter(0, process)
-					.setParameter(1, version)
+//					.setParameter(1, version)
 					.executeUpdate();
 
 			tx.commit();

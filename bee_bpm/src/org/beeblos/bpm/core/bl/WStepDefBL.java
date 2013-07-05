@@ -79,13 +79,13 @@ public class WStepDefBL {
 	}
 	
 	// dml 20130430
-	public void createFirstWStepDef(Integer stepHeadId, Integer currentUserId) throws WStepDefException, WStepHeadException{
+	public Integer createFirstWStepDef(Integer stepHeadId, Integer currentUserId) throws WStepDefException, WStepHeadException{
 
-		WStepDef wsd = new WStepDef(EMPTY_OBJECT);
+		WStepDef wsd = new WStepDef();
 
 		this._setFirstWStepDefData(wsd, stepHeadId, currentUserId);
 		
-		this.add(wsd, currentUserId);
+		return this.add(wsd, currentUserId);
 		
 	}
 
@@ -352,9 +352,9 @@ public class WStepDefBL {
 	
 	}
 	
-	public List<WStepDef> getStepDefs(Integer stepId, Integer userId) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer processId, Integer userId) throws WStepDefException {
 
-		return new WStepDefDao().getStepDefs(stepId);
+		return new WStepDefDao().getStepDefs(processId);
 	
 	}
 	

@@ -21,16 +21,16 @@ public class WStepHeadBL {
 
 	}
 
-	public Integer add(WStepHead stepHeadHead, Integer currentUserId) throws WStepHeadException {
+	public Integer add(WStepHead stepHead, Integer currentUserId) throws WStepHeadException {
 
-		logger.debug("add() WStepHead - Name: [" + stepHeadHead.getName() + "]");
+		logger.debug("add() WStepHead - Name: [" + stepHead.getName() + "]");
 
 		// timestamp & trace info
-		stepHeadHead.setInsertDate(new Date());
-		stepHeadHead.setModDate(DEFAULT_MOD_DATE);
-		stepHeadHead.setInsertUser(currentUserId);
-		stepHeadHead.setModUser(currentUserId);
-		return new WStepHeadDao().add(stepHeadHead);
+		stepHead.setInsertDate(new Date());
+		stepHead.setModDate(DEFAULT_MOD_DATE);
+		stepHead.setInsertUser(currentUserId);
+		stepHead.setModUser(currentUserId);
+		return new WStepHeadDao().add(stepHead);
 
 	}
 
