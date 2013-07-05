@@ -71,12 +71,12 @@ public class WStepSequenceDefBL {
 	}
 	
 	// deletes all map (routes) for a given process and version ...
-	public void deleteProcess(WProcessDef process, Integer version, Integer currentUser) throws WStepSequenceDefException {
+	public void deleteRoutesFromProcess(WProcessDef process, Integer currentUser) throws WStepSequenceDefException {
 
 		logger.debug("delete() WStepSequenceDef - ProcId: [" +
-					process.getId()+"-ver:"+version	+"]");
+					process.getId() + "]");
 		
-		new WStepSequenceDefDao().deleteProcess(process, version);
+		new WStepSequenceDefDao().deleteRoutesFromProcess(process);
 
 	}
 

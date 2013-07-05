@@ -24,7 +24,7 @@
 				try
 				{
 					mxEvent.release(splash);
-					mxEffects.fadeOut(splash, 100, true);
+					mxEffects.fadeOut(splash, 1000, true);
 				}
 				catch (e)
 				{
@@ -53,8 +53,7 @@
 				var editor = new mxEditor(node);
 				
 				//alert("se va a abrir");
-				
-				editor.open("/bee_bpm_web/processXmlMapTmp.xml");
+				setTimeout(function(){openProcessXmlMapTmp(editor)},1000);
 				//editor.readGraphModel(miNodo);
 				
 				// Updates the window title after opening new files
@@ -128,15 +127,10 @@
 		return editor;
 	}
 	
-	// Parses the mxGraph XML file format
-	function read(graph, filename)
+	// Opens the previously saved xml map
+	function openProcessXmlMapTmp(editor)
 	{
-		var req = mxUtils.load(filename);
-		var root = req.getDocumentElement();
-		var dec = new mxCodec(root.ownerDocument);
-		
-		dec.decode(root, graph.getModel());
+		editor.open("/bee_bpm_web/processXmlMapTmp.xml");
 	};
-
 
 }

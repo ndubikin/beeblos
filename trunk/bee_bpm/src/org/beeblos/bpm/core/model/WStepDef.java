@@ -101,6 +101,11 @@ public class WStepDef implements java.io.Serializable {
 		}	
 	}
 
+	public WStepDef(Integer id){
+		super();
+		this.id = id;
+	}
+
 	public WStepDef(Integer id, Integer idDept, Integer idPhase,
 			String instructions, String stepComments, String idListZone,
 			String idWorkZone, String idAdditionalZone/*,

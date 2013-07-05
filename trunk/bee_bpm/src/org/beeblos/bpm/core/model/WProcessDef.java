@@ -563,6 +563,11 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!systemEmailAccount.equals(other.systemEmailAccount))
 			return false;
+		if (processMap == null) {
+			if (other.processMap != null)
+				return false;
+		} else if (!processMap.equals(other.processMap))
+			return false;
 		return true;
 	}
 

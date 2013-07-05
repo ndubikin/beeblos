@@ -70,7 +70,8 @@ public class WStepResponseDefBL {
 		return new WStepResponseDefDao().getWStepResponseDefByPK(id);
 	}
 	
-	
+	// dml 20130704 - este método no se podrá usar ya que no el nombre de un WStepResponseDef no tiene porque ser único
+	@Deprecated
 	public WStepResponseDef getWStepResponseDefByName(String name, Integer user) throws WStepResponseDefException {
 
 		return new WStepResponseDefDao().getWStepResponseDefByName(name);

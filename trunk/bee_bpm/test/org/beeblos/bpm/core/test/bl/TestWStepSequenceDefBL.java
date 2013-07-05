@@ -157,7 +157,7 @@ public class TestWStepSequenceDefBL extends TestCase{
 			assertEquals(7, routeBL.getWStepSequenceDefs(1001).size());
 			
 			// all process map delete
-			routeBL.deleteProcess(process, 1, 1002);
+			routeBL.deleteRoutesFromProcess(process, 1002);
 			assertEquals(0, routeBL.getWStepSequenceDefs(1001).size());
 			
 			

@@ -73,5 +73,5 @@ changesLost=All changes will be lost!
 swimlanes=Swimlanes
 travelBooking=Travel Booking
 miEjemplo=Hola que ase?
-processXmlMap=Selected process XML Map
+reloadSavedProcessXmlMap=Reload saved process XML Map
 notAvailable=Not available
