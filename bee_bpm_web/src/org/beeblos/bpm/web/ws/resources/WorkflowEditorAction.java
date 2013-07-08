@@ -9,7 +9,9 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Encoded;
@@ -153,7 +155,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 				Element workflow = (Element) workflowList.item(i);
 				
-				spId = workflow.getAttribute("description");
+				spId = workflow.getAttribute("spId");
 				
 				if (spId != null
 						&& !spId.isEmpty()){
@@ -183,21 +185,22 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			// lista para guardar los pasos que tendremos en el mapa para posteriormente actualizarlos
 			List<WStepDef> xmlMapStepList = new ArrayList<WStepDef>();
 			
+			String spStepComment = "";
+
 			NodeList taskList = xmlParsed.getElementsByTagName("Task");
 
 			// iterate the tasks (steps)
 			for (int i = 0; i < taskList.getLength(); i++) {
-				xmlId = "";
-				spId = "";
-				spName = "";
 				
 				Element task = (Element) taskList.item(i);
 
 				xmlId = task.getAttribute("id");
-				spId = task.getAttribute("description");
+				spId = task.getAttribute("spId");
 				spName = task.getAttribute("label");
+				spStepComment = task.getAttribute("description");
 				
 				// si el paso no tiene id lo creamos en nuestra BD y se lo añadimos al xml para guardar
+				// El "id" y el "name" serán obligatorios pero los "stepComments" no
 				if (spId == null
 						|| spId.isEmpty()
 						&& (spName != null
@@ -205,11 +208,12 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 					WStepHead stepHead = new WStepHead();
 					stepHead.setName(spName);
+					stepHead.setComments(spStepComment);
 					Integer stepHeadId = stepHeadBL.add(stepHead, currentUserId); // creo el stepHead
 					
 					spId = stepBL.createFirstWStepDef(stepHeadId, currentUserId).toString(); // creo la versión WStepDef
-										
-					task.setAttribute("description", spId); // le añadimos el spId nuevo al xml map para persistirlo con el
+					
+					task.setAttribute("spId", spId); // le añadimos el spId nuevo al xml map para persistirlo con el
 					
 				}
 				
@@ -221,6 +225,11 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					// añadimos el nuevo paso a la lista de pasos del proceso para actualizarlo despues con sus
 					// responses
 					WStepDef step = stepBL.getWStepDefByPK(Integer.valueOf(spId), currentUserId);
+					
+					// le vaciamos la lista de responses de la BD para actualizarla con lo que tenemos en el
+					// mapa xml en el siguiente bucle (paso 2 del algoritmo)
+					step.setResponse(new HashSet<WStepResponseDef>());
+					step.setName(spName);
 					xmlMapStepList.add(step);
 
 					// esta lista auxiliar será para posteriormente asociar los nuevos responses al step correcto
@@ -254,7 +263,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				Element edge = (Element) edgeList.item(i);
 
 				xmlId = edge.getAttribute("id");
-				spId = edge.getAttribute("description");
+				spId = edge.getAttribute("spId");
 				spName = edge.getAttribute("label");
 				
 				NodeList mxCellList = edge.getElementsByTagName("mxCell");
@@ -310,6 +319,8 @@ public class WorkflowEditorAction extends CoreManagedBean {
 						&& spToStepId != null
 						&& !"".equals(spToStepId)){
 					
+					WStepResponseDef stepResponseDef = new WStepResponseDef();
+
 					// AÑADIR NUEVO WStepResponseDef
 					// si el paso no tiene id quiere decir que es un nuevo WStepResponseDef por lo tanto
 					// lo creamos en nuestra BD y le añadimos nuestro "id" generado al xml para guardarlo
@@ -318,22 +329,29 @@ public class WorkflowEditorAction extends CoreManagedBean {
 							&& (spName != null
 							&& !spName.isEmpty())){
 						
-						WStepResponseDef stepResponseDef = new WStepResponseDef();
 						stepResponseDef.setName(spName);
 						stepResponseDef.setId(stepResponseBL.add(stepResponseDef, currentUserId)); // persistimos el WStepSequenceDef
 						spId = stepResponseDef.getId().toString(); 
 						
-						edge.setAttribute("description", spId); // le añadimos el spId nuevo al xml map para persistirlo
+						edge.setAttribute("spId", spId); // le añadimos el spId nuevo al xml map para persistirlo
+					
+					} else {
+						// como ya existe, buscamos el stepResponseDef con su id para meterlo en el xmlMapStepList
+						// para despues tenerlo a la hora de hacer la comprobación de los nuevos responses
+						stepResponseDef = 
+								stepResponseBL.getWStepResponseDefByPK(Integer.valueOf(spId), currentUserId);
+						stepResponseDef.setName(spName);
+					}
+					
 
-						// busco el step dentro de los que tiene el proceso (lo he metido arriba si no estaba
-						// ya anteriormente) y le meto esta nueva respuesta en su lista para al final de todo
-						// el proceso persistir las nuevas respuestas de los steps
-						for (WStepDef step : xmlMapStepList){
-							
-							if (spFromStepId.equals(step.getId().toString())){
-								step.getResponse().add(stepResponseDef);
-							}
-							
+					// busco el step dentro de los que tiene el proceso (lo he metido arriba si no estaba
+					// ya anteriormente) y le meto esta nueva respuesta en su lista para en el ultimo paso
+					// del proceso persistir las nuevas respuestas de los steps y eliminar las viejas que
+					// ya no tenemos en el mapa xml
+					for (WStepDef step : xmlMapStepList){
+						
+						if (spFromStepId.equals(step.getId().toString())){
+							step.getResponse().add(stepResponseDef);
 						}
 						
 					}
@@ -482,46 +500,71 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		
 		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
 		
-		boolean existWssdInXml = false;
+		List<WStepResponseDef> removeList = new ArrayList<WStepResponseDef>();
+		List<WStepResponseDef> bdResponseList = new ArrayList<WStepResponseDef>();
+		List<WStepResponseDef> xmlResponseList = new ArrayList<WStepResponseDef>();
+		
+		// todos los responses de la BD
 		for (WStepDef bdStep : bdStepList){
 			
-			existWssdInXml = false;
 			for (WStepResponseDef bdResponse : bdStep.getResponse()){
-				
-				for (WStepDef xmlStep : xmlStepList){
-					
-					for (WStepResponseDef xmlResponse : xmlStep.getResponse()){
-						
-						if (bdResponse.getId().equals(xmlResponse.getId())){
-							
-							existWssdInXml = true;
-							break;
-							
-						}
-						
-					}
-					
-					if (existWssdInXml){
-						break;
-					}
-					
-				}
-				
-				if (!existWssdInXml){
-					wsrdBL.delete(bdResponse, currentUserId);
-				}
-				
-
+				bdResponseList.add(bdResponse);
 			}
+			
 		}
+		
+		// todos los responses del xml
+		for (WStepDef xmlStep : xmlStepList){
+			
+			for (WStepResponseDef xmlResponse : xmlStep.getResponse()){
+				xmlResponseList.add(xmlResponse);
+			}
+			
+		}
+		
+		// comprobamos si los responses de la BD estan en el xml (que serán los que habrá actualmente) y si no
+		// es así lo borramos de la BD ya que serán obsoletos
+		boolean existWssdInXml = false;
+		for (WStepResponseDef bdResponse : bdResponseList){
+			
+			existWssdInXml = false;
+			for (WStepResponseDef xmlResponse : xmlResponseList){
+				
+				if (bdResponse.getId().equals(xmlResponse.getId())){
+					existWssdInXml = true;
+					break;
+				}
+				
+			}
+			
+			if (!existWssdInXml){
+				removeList.add(bdResponse);
+			}
+
+		}
+		
+		// eliminamos la lista de responses obsoletas
+		for (WStepResponseDef removeResponse : removeList){
+			wsrdBL.delete(removeResponse, currentUserId);
+		}
+		
 	}
 	
-	// los steps que ya no estan relacionados con este process se borrarán
+	// actualizamos los steps que tenemos en el xml y que estan tambien en la bd (además por la relación tambien
+	// se actualizan los responses).
 	private void _updateStepList(List<WStepDef> stepList) throws WStepDefException {
 		
 		// bucle para persistir los "id_step" en los WStepResponseDef nuevos
 		if (stepList != null){
 			for (WStepDef step : stepList){
+				
+				// si tenemos algun response con "respOrder" nulo se lo añadimos
+				for (WStepResponseDef response : step.getResponse()){
+					if (response.getRespOrder() == null){
+						response.setRespOrder(_nextResponseOrder(step.getResponse()));
+					}
+				}
+				
 				new WStepDefBL().update(step, currentUserId);
 			}
 		}
@@ -545,6 +588,22 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 	
+	private Integer _nextResponseOrder(Set<WStepResponseDef> responseList) {
+		
+		Integer nextRespOrder = 0;
+		
+		if (responseList != null){
+			for (WStepResponseDef wsrd : responseList){
+				if (wsrd.getRespOrder() != null
+						&& nextRespOrder < wsrd.getRespOrder()){
+					nextRespOrder = wsrd.getRespOrder();
+				}
+			}
+		}
+		
+		return nextRespOrder + 1;
+	}
+
 	@Path("/blMethodParser")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
