@@ -65,6 +65,8 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	private boolean tmpDeleteRelatedStepsPopup;
 
 	private String messageStyle;
+	
+	private String xmlMapTmp;
 
 	public WProcessDefQueryBean() {
 		super();
@@ -503,7 +505,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				&& !id.equals(0)){
 			try {
 				
-				String processXmlMap = new WProcessDefBL().getWProcessDefByPK(id, getCurrentUserId()).getProcessMap();
+				this.xmlMapTmp = new WProcessDefBL().getWProcessDefByPK(id, getCurrentUserId()).getProcessMap();
 				
 				String path = CONTEXTPATH + "/bee_bpm_web/processXmlMapTmp.xml";
 				File temp = new File(path);
@@ -515,7 +517,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				
 				FileWriter fw = new FileWriter(temp.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write(processXmlMap);
+				bw.write(this.xmlMapTmp);
 				bw.close();
 				
 			} catch (WProcessDefException e) {	
@@ -530,6 +532,14 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			}
 		}
 		
+	}
+
+	public String getXmlMapTmp() {
+		return xmlMapTmp;
+	}
+
+	public void setXmlMapTmp(String xmlMapTmp) {
+		this.xmlMapTmp = xmlMapTmp;
 	}
 	
 }

@@ -38,7 +38,8 @@ public class WProcessDefBL {
 		
 	}
 	
-	public Integer add(WProcessDef process, Integer currentUserId) throws WProcessDefException, WProcessException {
+	public Integer add(WProcessDef process, Integer currentUserId) 
+			throws WProcessDefException, WProcessException, WStepSequenceDefException {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
 		
@@ -50,8 +51,7 @@ public class WProcessDefBL {
 			Integer processHeadId = new WProcessHeadBL().add(process.getProcess(), currentUserId);
 			
 			this._setFirstWProcessDefData(process, processHeadId, currentUserId);
-			
-			
+						
 		}
 		
 		// timestamp & trace info
@@ -59,12 +59,56 @@ public class WProcessDefBL {
 		process.setModDate( DEFAULT_MOD_DATE );
 		process.setInsertUser(currentUserId);
 		process.setModUser(currentUserId);
-		return new WProcessDefDao().add(process, currentUserId);
+		Integer newProcessId = new WProcessDefDao().add(process, currentUserId);
+		process.setId(newProcessId);
+		
+		// dml 20130508 - a un nuevo proceso creado tenemos que asociarle un mapa vacío con su "id" para que el WS
+		// del editor sepa cuando se le da al "Save" a que proceso tiene que asociar el mapa, ya que si no tiene
+		// esta información no será capaz de asociar el xml que le entra con el proceso en el que tiene que
+		// guardar el mapa.
+		String processMap = createEmptyProcessXmlMap(newProcessId, currentUserId);
+		this.updateProcessXmlMap(newProcessId, processMap, currentUserId);
+		process.setProcessMap(processMap);
+		
+		return newProcessId;
 
 	}
 	
+	// dml 20130508 -
+	public String createEmptyProcessXmlMap(Integer newProcessId, Integer currentUserId) 
+			throws WProcessDefException, WStepSequenceDefException{
+		
+		String returnValue = "";
+		
+		// lo recargo para tener el process.getBeginStep().getName() que me hará falta para crear el mapa
+		WProcessDef process = null;
+		if (newProcessId != null){
+			process = this.getWProcessDefByPK(newProcessId, currentUserId);
+		} else {
+			return null;
+		}
+		
+		if (process == null){
+			return null;
+		}
+		
+		returnValue += "<mxGraphModel><root>";
+		returnValue += "<Workflow label=\"" + process.getName() + "\" id=\"0\" description=\"\" spId=\"" + process.getId() + "\"><mxCell/></Workflow>";
+		returnValue += "<Layer label=\"Default Layer\" description=\"\" id=\"1\"><mxCell parent=\"0\"/></Layer>";
+		
+		if (process.getBeginStep() != null){
+			returnValue += "<Task description=\"\" href=\"\" id=\"2\" label=\"" + process.getBeginStep().getName() + "\" spId=\"" + process.getBeginStep().getId() + "\"><mxCell parent=\"1\" vertex=\"1\"><mxGeometry as=\"geometry\" height=\"32\" width=\"72\" x=\"430\" y=\"230\"/></mxCell></Task>";
+		}
+		
+		returnValue += "</root></mxGraphModel>";
+		
+		return returnValue;
+		
+	}
+	
 	// dml 20130430
-	private void _setFirstWProcessDefData(WProcessDef process, Integer processHeadId, Integer currentUserId) throws WProcessException {
+	private void _setFirstWProcessDefData(WProcessDef process, Integer processHeadId, Integer currentUserId) 
+			throws WProcessException {
 		
 		if (process != null){
 			
@@ -82,7 +126,8 @@ public class WProcessDefBL {
 	}
 	
 	// dml 20130430
-	public void createFirstWProcessDef(Integer processHeadId, Integer currentUserId) throws WProcessDefException, WProcessException{
+	public void createFirstWProcessDef(Integer processHeadId, Integer currentUserId) 
+			throws WProcessDefException, WProcessException, WStepSequenceDefException{
 
 		WProcessDef wpd = new WProcessDef(EMPTY_OBJECT);
 

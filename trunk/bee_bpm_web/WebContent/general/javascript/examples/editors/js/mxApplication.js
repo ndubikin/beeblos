@@ -41,20 +41,19 @@
 			}
 			else
 			{
-				console.log("----------------------------> ANTES DE CARGAR EL NODO ... <---------------------------------");
-				/*					var xmlDoc = mxUtils.load(url).getXml();
-				var node = xmlDoc.documentElement;
-				var dec = new mxCodec(node.ownerDocument);
-				dec.decode(node, graph.getModel());
-				console.log("----------------------------> DESPUES DE CARGAR EL NODO ... <---------------------------------");
-*/				 
 				
 				var node = mxUtils.load(config).getDocumentElement();
 				var editor = new mxEditor(node);
-				
-				//alert("se va a abrir");
+
+// ESTO DEBERIA CARGAR COMO VARIABLE PERO NO SE LEE BIEN DESDE EL BEAN EL XMLSTRING CUANDO SE LE PASA
+// COMO PARAMETRO EL #{wProcessDefQueryBean.xmlMapTmp}
+//				console.log("----------------------------> ANTES DE CARGAR EL NODO XMLSTRING... <---------------------------------");
+//				console.log(xmlString);
+//				setTimeout(function(){readXmlString(editor,xmlString)},1000);
+//				console.log("----------------------------> CARGADO XMLSTRING ... <---------------------------------");
+//				console.log(xmlString);
+
 				setTimeout(function(){openProcessXmlMapTmp(editor)},1000);
-				//editor.readGraphModel(miNodo);
 				
 				// Updates the window title after opening new files
 				var title = document.title;
@@ -131,6 +130,14 @@
 	function openProcessXmlMapTmp(editor)
 	{
 		editor.open("/bee_bpm_web/processXmlMapTmp.xml");
+	};
+
+	// Opens the previously saved xml map
+	function readXmlString(editor,xmlString)
+	{
+		var doc = mxUtils.parseXML(xmlString);
+		node = doc.documentElement;
+		editor.readGraphModel(node);
 	};
 
 }
