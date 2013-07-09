@@ -24,7 +24,7 @@
 				try
 				{
 					mxEvent.release(splash);
-					mxEffects.fadeOut(splash, 1000, true);
+					mxEffects.fadeOut(splash, 1000, false);
 				}
 				catch (e)
 				{
@@ -46,13 +46,16 @@
 				var editor = new mxEditor(node);
 
 // ESTO DEBERIA CARGAR COMO VARIABLE PERO NO SE LEE BIEN DESDE EL BEAN EL XMLSTRING CUANDO SE LE PASA
-// COMO PARAMETRO EL #{wProcessDefQueryBean.xmlMapTmp}
+// COMO PARAMETRO EL #{wProcessDefQueryBean.xmlMapTmp} ya que no es pagina de jsf
 //				console.log("----------------------------> ANTES DE CARGAR EL NODO XMLSTRING... <---------------------------------");
 //				console.log(xmlString);
 //				setTimeout(function(){readXmlString(editor,xmlString)},1000);
 //				console.log("----------------------------> CARGADO XMLSTRING ... <---------------------------------");
 //				console.log(xmlString);
 
+				// dml 20130709 - como ya puse la llamada en el oncomplete ya no hace falta el timeout, 
+				// ya abrirá el editor una vez creado el fichero para leer
+				//openProcessXmlMapTmp(editor);
 				setTimeout(function(){openProcessXmlMapTmp(editor)},1000);
 				
 				// Updates the window title after opening new files
