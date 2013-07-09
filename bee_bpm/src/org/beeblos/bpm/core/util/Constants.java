@@ -8,6 +8,10 @@ import java.util.Date;
 
 public class Constants {
 	
+	// dml 20130709
+	public static String PROCESS_XML_MAP_LOCATION = getStringProperty("process.xml.map.location","/processXmlMapTmp.xml");
+	public static String WORKFLOW_EDITOR_URI = getStringProperty("workflow.editor.uri","/general/javascript/examples/editors/workfloweditor.html");
+
 	// dml 20130510
 	public static String HIBERNATE_CONFIGURATION_LIST_XML = getStringProperty("hibernate.configuration.list.xml","hibernateConfigurationList.xml");
 

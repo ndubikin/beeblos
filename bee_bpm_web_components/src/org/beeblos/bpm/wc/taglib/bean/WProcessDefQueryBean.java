@@ -3,6 +3,8 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
+import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
+import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
@@ -66,8 +71,6 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	private String messageStyle;
 	
-	private String xmlMapTmp;
-
 	public WProcessDefQueryBean() {
 		super();
 
@@ -505,9 +508,18 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				&& !id.equals(0)){
 			try {
 				
-				this.xmlMapTmp = new WProcessDefBL().getWProcessDefByPK(id, getCurrentUserId()).getProcessMap();
+				String xmlMapTmp = null;
 				
-				String path = CONTEXTPATH + "/bee_bpm_web/processXmlMapTmp.xml";
+				for (WProcessDef process : this.wProcessDefList){
+					
+					if (process.getId().equals(this.id)){
+						xmlMapTmp = process.getProcessMap();
+						break;
+					}
+					
+				}
+				
+				String path = CONTEXTPATH + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
 				File temp = new File(path);
 				
 				// if file doesnt exists, then create it
@@ -517,29 +529,30 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				
 				FileWriter fw = new FileWriter(temp.getAbsoluteFile());
 				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write(this.xmlMapTmp);
+				bw.write(xmlMapTmp);
+				bw.flush();
 				bw.close();
 				
-			} catch (WProcessDefException e) {	
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (WStepSequenceDefException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to create the xml map temp file for process: id=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+				
 			}
 		}
 		
 	}
 
-	public String getXmlMapTmp() {
-		return xmlMapTmp;
-	}
-
-	public void setXmlMapTmp(String xmlMapTmp) {
-		this.xmlMapTmp = xmlMapTmp;
+	public String getWorkflowEditorUrl(){
+		return this._getRequestContextPath() + WORKFLOW_EDITOR_URI;
 	}
 	
+	public String _getRequestContextPath() {
+		return FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestContextPath().trim().replaceAll("\\\\", "/");
+	}
+
+
 }

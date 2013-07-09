@@ -70827,7 +70827,7 @@ mxEditor.prototype.escapePostData = true;
  * Specifies the URL to be used for posting the diagram
  * to a backend in <save>.
  */
-mxEditor.prototype.urlPost = "/rest/wf/Save"; 
+mxEditor.prototype.urlPost = "/bee_bpm_web/rest/wf/Save"; 
 
 /**
  * Variable: urlImage
@@ -71143,9 +71143,44 @@ mxEditor.prototype.setModified = function (value)
  */
 mxEditor.prototype.addActions = function ()
 {
-	this.addAction('save', function(editor)
+	this.addAction('save', function(a)
 	{
-		editor.save();
+		var showSplash = function()
+		{
+			var splash = document.getElementById('splash');
+			splash.style.visibility = 'visible';
+		};
+
+
+		var hideSplash = function()
+		{
+			var splash = document.getElementById('splash');
+			
+			if (splash != null)
+			{
+				try
+				{
+					mxEvent.release(splash);
+					mxEffects.fadeOut(splash, 5000, false);
+				}
+				catch (e)
+				{
+					splash.parentNode.removeChild(splash);
+				}
+			}
+		};
+
+		showSplash();
+		a.save();
+		setTimeout(function(){openProcessXmlMapTmp(a)},5000);
+		hideSplash();
+
+		
+		function openProcessXmlMapTmp(a)
+		{
+			a.open('/bee_bpm_web/processXmlMapTmp.xml');
+		};
+
 	});
 	
 	this.addAction('print', function(editor)

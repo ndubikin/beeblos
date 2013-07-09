@@ -28,9 +28,9 @@
 
        		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
 				<rich:menuItem
-					onclick="openInNewTab('${facesContext.externalContext.requestContextPath}/general/javascript/examples/editors/workfloweditorClean.html');"
+					oncomplete="openInNewTab('#{wProcessDefQueryBean.workflowEditorUrl}');"
 					action="#{wProcessDefQueryBean.createXmlMapAsTmp}"
-					submitMode="server">
+					submitMode="ajax">
 					<b> #{msg.label_load_process_xml_map}</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}" />
 				</rich:menuItem>
@@ -180,10 +180,10 @@
 						style="border:0;" />
 					<rich:componentControl event="onclick"
 						for="w_process_def_search_menu" operation="show">
-							<f:param value="#{wpd.id}" name="currentRowId" />
-							<f:param value="#{wpd.version}" name="currentRowVersion" />
-							<f:param value="#{wpd.process.id}" name="currentRowProcessId" />
-					</rich:componentControl>
+						<f:param value="#{wpd.id}" name="currentRowId" />
+						<f:param value="#{wpd.version}" name="currentRowVersion" />
+						<f:param value="#{wpd.process.id}" name="currentRowProcessId" />
+ 					</rich:componentControl>
 				</rich:column>
 
 			</rich:dataTable>

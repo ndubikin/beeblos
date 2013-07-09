@@ -129,11 +129,6 @@
  			<to-view-id>/dap/procesarProyectoDAP.xhtml</to-view-id> 
  		</navigation-case> -->
   <navigation-case>
-   <from-outcome>XML_MAP_EDITOR</from-outcome> <!-- dml 20130628 - nueva funcionalidad para pintar el mapa de un proceso -->
-   <to-view-id>/general/javascript/examples/editors/workfloweditor.xhtml</to-view-id>
-   <redirect/>
-  </navigation-case>
-  <navigation-case>
    <from-outcome>WELCOME_PAGE</from-outcome>
    <to-view-id>/welcome.xhtml</to-view-id>
    <redirect/>
@@ -166,15 +161,15 @@
    <from-outcome>WPROCESSDEF_QUERY</from-outcome>
    <to-view-id>/def/wProcessDefCrud.xhtml</to-view-id>
   </navigation-case>
- <navigation-case>
+  <navigation-case>
    <from-outcome>WORKINGPROCESS_QUERY</from-outcome>
    <to-view-id>/admin/workingProcessQueryCall.xhtml</to-view-id>
   </navigation-case>
- <navigation-case>
+  <navigation-case>
    <from-outcome>WORKINGWORKS_QUERY</from-outcome>
    <to-view-id>/admin/workingWorkQueryCall.xhtml</to-view-id>
   </navigation-case>
- <navigation-case>
+  <navigation-case>
    <from-outcome>WORKINGSTEPS_QUERY</from-outcome>
    <to-view-id>/admin/workingStepQueryCall.xhtml</to-view-id>
   </navigation-case>
@@ -246,7 +241,7 @@
    <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
   </navigation-case>
   <!-- dml 20120305 -->
- <navigation-case>
+  <navigation-case>
    <from-outcome>WPROCESSDEF_QUERY</from-outcome>
    <to-view-id>/def/wProcessDefCrud.xhtml</to-view-id>
   </navigation-case>
@@ -262,7 +257,7 @@
    <from-outcome>SUCCESS_FORM_WPROCESSDEF</from-outcome>
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
   </navigation-case>
-</navigation-rule>
+ </navigation-rule>
  <navigation-rule>
   <display-name>WStepHeadForm</display-name>
   <from-view-id>/forms/wStepHeadFormCall.xhtml</from-view-id>
@@ -274,7 +269,7 @@
    <from-outcome>SUCCESS_FORM_WSTEPDEF</from-outcome>
    <to-view-id>/forms/wStepDefFormCall.xhtml</to-view-id>
   </navigation-case>
-</navigation-rule>
+ </navigation-rule>
  <navigation-rule>
   <display-name>WStepDefForm</display-name>
   <from-view-id>/forms/wStepDefFormCall.xhtml</from-view-id>

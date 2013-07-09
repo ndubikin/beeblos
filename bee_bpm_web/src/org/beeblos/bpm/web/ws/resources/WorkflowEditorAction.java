@@ -66,9 +66,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 		try {
 
-			String xml = URLDecoder.decode(inputMap, "UTF-8").replace("\n", "&#xa;");
+			long tiempoInicio = System.currentTimeMillis();
 
-			System.out.println("El xml HA LLEGADO: " + xml);
+			String xml = URLDecoder.decode(inputMap, "UTF-8").replace("\n", "&#xa;");
 
 			xmlParsed = this._loadXMLFromString(xml);
 
@@ -87,6 +87,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			}
 			
 			this._publishChanges(xml);
+
+			long totalTiempo = System.currentTimeMillis() - tiempoInicio;
+			System.out.println("TIEMPO DE WS :" + totalTiempo + " miliseg");
 
 			return "Este es el mapa del WProcessDef id:" + process.getId();
 
