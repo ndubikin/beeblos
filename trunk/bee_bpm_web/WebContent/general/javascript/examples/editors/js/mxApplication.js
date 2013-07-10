@@ -13,7 +13,7 @@
 	 */
 	function mxApplication(config)
 	{
-		console.log("----------------------------> EMPIEZA <---------------------------------");
+
 		var hideSplash = function()
 		{
 			// Fades-out the splash screen
@@ -74,44 +74,6 @@
 				
 				// Displays version in statusbar
 				editor.setStatus('mxGraph '+mxClient.VERSION);
-
-/*				
-				console.log("----------------------------> ANTES DE CREAR EL GRAFO ... <---------------------------------");
-
-				var graph = new mxGraph(container);
-
-				console.log("----------------------------> GRAFO CREADO... <---------------------------------");
-				
-				// Load cells and layouts the graph
-				graph.getModel().beginUpdate();
-				try
-				{	
-					console.log("----------------------------> ANTES PARSE <---------------------------------");
-					// Loads the custom file format (TXT file)
-					//parse(graph, 'fileio.txt');
-	
-					console.log("----------------------------> DESPUES PARSE <---------------------------------");
-					// Loads the mxGraph file format (XML file)
-					read(graph, '../dmlExample.xml');
-										
-					console.log("----------------------------> DESPUES READ <---------------------------------");
-					// Gets the default parent for inserting new cells. This
-					// is normally the first child of the root (ie. layer 0).
-					console.log("----------------------------> DEFAULT PARENT <---------------------------------");
-					console.log("----------------------------> " + graph.getDefaultParent() + " <---------------------------------");
-					var parent = graph.getDefaultParent();
-					console.log("----------------------------> END DEFAULT PARENT <---------------------------------");
-
-					var layout = new mxFastOrganicLayout(graph);
-					// Executes the layout
-					layout.execute(parent);
-				}
-				finally
-				{
-					// Updates the display
-					graph.getModel().endUpdate();
-				}
-*/
 				
 				// Shows the application				
 				hideSplash();
@@ -125,8 +87,9 @@
 			mxUtils.alert('Cannot start application: '+e.message);
 			throw e; // for debugging
 		}
-								
+
 		return editor;
+		
 	}
 	
 	// Opens the previously saved xml map
@@ -135,7 +98,8 @@
 		editor.open("/bee_bpm_web/processXmlMapTmp.xml");
 	};
 
-	// Opens the previously saved xml map
+	// Opens the previously saved xml map ( no funciona porque no tenemos el xmlString, no se como pasarselo
+	// al carecer de relacion entre esto y jsf)
 	function readXmlString(editor,xmlString)
 	{
 		var doc = mxUtils.parseXML(xmlString);

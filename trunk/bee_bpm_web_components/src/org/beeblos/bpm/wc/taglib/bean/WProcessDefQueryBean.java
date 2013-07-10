@@ -508,16 +508,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				&& !id.equals(0)){
 			try {
 				
-				String xmlMapTmp = null;
-				
-				for (WProcessDef process : this.wProcessDefList){
-					
-					if (process.getId().equals(this.id)){
-						xmlMapTmp = process.getProcessMap();
-						break;
-					}
-					
-				}
+				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.id, getCurrentUserId());
 				
 				String path = CONTEXTPATH + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
 				File temp = new File(path);
@@ -537,6 +528,13 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 				String message = e.getMessage() + " - " + e.getCause();
 				String params[] = { message + ",", ".Error trying to create the xml map temp file for process: id=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+				
+			} catch (WProcessDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to load the process xml map for id=" + this.id};
 				agregarMensaje("220", message, params, FGPException.ERROR);
 				logger.error(message);
 				

@@ -9972,6 +9972,7 @@ mxXmlRequest.prototype.send = function(onload, onerror)
 			this.username, this.password);
 		this.setRequestHeaders(this.request, this.params);
 		this.request.send(this.params);
+		this.request.onreadystatechange = function() {if (this.request.readyState == 4) print(this.request.responseText)}
 	}
 };
 
@@ -71143,7 +71144,7 @@ mxEditor.prototype.setModified = function (value)
  */
 mxEditor.prototype.addActions = function ()
 {
-	this.addAction('save', function(a)
+	this.addAction('save', function(editor)
 	{
 		var showSplash = function()
 		{
@@ -71161,7 +71162,7 @@ mxEditor.prototype.addActions = function ()
 				try
 				{
 					mxEvent.release(splash);
-					mxEffects.fadeOut(splash, 5000, false);
+					mxEffects.fadeOut(splash, 6500, false);
 				}
 				catch (e)
 				{
@@ -71171,14 +71172,14 @@ mxEditor.prototype.addActions = function ()
 		};
 
 		showSplash();
-		a.save();
-		setTimeout(function(){openProcessXmlMapTmp(a)},5000);
+		editor.save();
+		setTimeout(function(){openProcessXmlMapTmp(editor)},5000);
 		hideSplash();
 
 		
-		function openProcessXmlMapTmp(a)
+		function openProcessXmlMapTmp(editor)
 		{
-			a.open('/bee_bpm_web/processXmlMapTmp.xml');
+			editor.open('/bee_bpm_web/processXmlMapTmp.xml');
 		};
 
 	});
