@@ -53,6 +53,9 @@ import org.xml.sax.InputSource;
 @Path("/wf")
 public class WorkflowEditorAction extends CoreManagedBean {
 
+	private final static String DEFAULT_STEP_NAME = "STEP";
+	private final static String DEFAULT_RESPONSE_NAME = "RESPONSE";
+	
 	private Integer currentUserId = 1000;
 	private WProcessDef process = null;
 	
@@ -91,7 +94,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			long totalTiempo = System.currentTimeMillis() - tiempoInicio;
 			System.out.println("TIEMPO DE WS :" + totalTiempo + " miliseg");
 
-			return "Este es el mapa del WProcessDef id:" + process.getId();
+			return "TODO EJECUTADO CORRECTAMENTE";
 
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -202,12 +205,17 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				spName = task.getAttribute("label");
 				spStepComment = task.getAttribute("description");
 				
+				// el nombre no puede ser vacío, por lo tanto le ponemos el que tenemos por defecto
+				if (spName == null
+					|| spName.isEmpty()){
+					spName = DEFAULT_STEP_NAME;
+					task = this._setXmlElementDefaultName(task, DEFAULT_STEP_NAME);
+				}
+
 				// si el paso no tiene id lo creamos en nuestra BD y se lo añadimos al xml para guardar
 				// El "id" y el "name" serán obligatorios pero los "stepComments" no
 				if (spId == null
-						|| spId.isEmpty()
-						&& (spName != null
-						&& !spName.isEmpty())){
+						|| spId.isEmpty()){
 					
 					WStepHead stepHead = new WStepHead();
 					stepHead.setName(spName);
@@ -324,13 +332,19 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 					WStepResponseDef stepResponseDef = new WStepResponseDef();
 
+					// el nombre no puede ser vacío, por lo tanto le ponemos el que tenemos por defecto
+					if (spName == null
+							|| spName.isEmpty()){
+							spName = DEFAULT_RESPONSE_NAME;
+							edge = this._setXmlElementDefaultName(edge, DEFAULT_RESPONSE_NAME);
+					}
+
 					// AÑADIR NUEVO WStepResponseDef
 					// si el paso no tiene id quiere decir que es un nuevo WStepResponseDef por lo tanto
 					// lo creamos en nuestra BD y le añadimos nuestro "id" generado al xml para guardarlo
 					if (spId == null
-							|| spId.isEmpty()
-							&& (spName != null
-							&& !spName.isEmpty())){
+							|| spId.isEmpty()){
+						
 						
 						stepResponseDef.setName(spName);
 						stepResponseDef.setId(stepResponseBL.add(stepResponseDef, currentUserId)); // persistimos el WStepSequenceDef
@@ -421,6 +435,44 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		
 		return true;
 
+	}
+	
+	private Element _setXmlElementDefaultName(Element element, String defaultName){
+
+		element.setAttribute("label", defaultName); // le corregimos el name al step para que el usuario se de cuenta del fallo
+
+		NodeList mxCellList = element.getElementsByTagName("mxCell");
+		
+		// vamos a obtener la celta del xmlElement para marcar en el mapa en rojo la misma para avisar al
+		// usuario que este nombre lo ha rellenado el propio sistema ya que estaba vacío
+		if (mxCellList != null
+				&& mxCellList.getLength() == 1){
+			Element mxCell = ((Element) mxCellList.item(0));
+			String style = mxCell.getAttribute("style");
+			
+			String redFontColor = "fontColor=red;";			
+			
+			// si el style ya tiene fontColor elimino el que tenia y lo pongo en rojo pero 
+			// dejo el resto de estilos que pudiera tener la celda
+			if (style.contains("fontColor")){
+				String newStyle = "";
+				String[] items = style.split(";");
+				for(int i =0; i < items.length ; i++){
+					if (items[i].contains("fontColor")){
+						  newStyle += redFontColor;
+					} else {
+						  newStyle += items[i]+";";
+					}
+				}
+				mxCell.setAttribute("style", newStyle);
+			} else {
+				mxCell.setAttribute("style", mxCell.getAttribute("style") + redFontColor);
+			}
+			
+		}
+		
+		return element; 
+		
 	}
 	
 	// los steps que ya no estan relacionados con este process se borrarán

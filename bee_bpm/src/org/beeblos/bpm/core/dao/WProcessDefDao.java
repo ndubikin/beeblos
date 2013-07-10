@@ -268,6 +268,39 @@ public class WProcessDefDao {
 		return version;
 	}	
 	
+	// dml 20130710
+	public String getProcessDefXmlMap(Integer processDefId, Integer currentUserId) throws WProcessDefException {
+	
+		String processMap = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			processMap = (String) session.createQuery("Select processMap From WProcessDef Where id = :processDefId")
+					.setInteger("processDefId", processDefId)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDefDao: getProcessDefXmlMap - can't obtain process xml map = " +
+					processDefId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessDefException("getLastWProcessDefVersion;  can't obtain process xml map: " + 
+					processDefId + " - " + ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		return processMap;
+	}	
+	
 	public List<WProcessDef> getWProcessDefs(Integer currentUserId) throws WProcessDefException {
 
 		org.hibernate.Session session = null;

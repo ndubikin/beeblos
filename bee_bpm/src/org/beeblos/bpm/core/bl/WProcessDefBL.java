@@ -550,6 +550,13 @@ public class WProcessDefBL {
 	
 	}
 	
+	// dml 20130710
+	public String getProcessDefXmlMap(Integer processDefId, Integer currentUserId) throws WProcessDefException {
+
+		return new WProcessDefDao().getProcessDefXmlMap(processDefId, currentUserId);
+	
+	}
+	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion, Integer currentUserId )
 	throws WProcessDefException {
