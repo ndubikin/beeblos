@@ -1929,7 +1929,7 @@ var mxEffects =
  */
 var mxUtils =
 {
-	/**
+	/**	
 	 * Class: mxUtils
 	 * 
 	 * A singleton class that provides cross-browser helper methods.
@@ -9963,7 +9963,7 @@ mxXmlRequest.prototype.send = function(onload, onerror)
 				if (this.isReady())
 				{
 					onload(this);
-					this.onreadystatechaange = null;
+					this.onreadystatechange = null;
 				}
 			});
 		}
@@ -9972,7 +9972,6 @@ mxXmlRequest.prototype.send = function(onload, onerror)
 			this.username, this.password);
 		this.setRequestHeaders(this.request, this.params);
 		this.request.send(this.params);
-		this.request.onreadystatechange = function() {if (this.request.readyState == 4) print(this.request.responseText)}
 	}
 };
 
@@ -70836,7 +70835,7 @@ mxEditor.prototype.urlPost = "/bee_bpm_web/rest/wf/Save";
  * Specifies the URL to be used for creating a bitmap of
  * the graph in the image action.
  */
-mxEditor.prototype.urlImage = null;
+mxEditor.prototype.urlImage = "/bee_bpm_web/rest/wf/ShowImageMap";
 
 /**
  * Variable: urlInit
@@ -71649,7 +71648,7 @@ mxEditor.prototype.addActions = function ()
 		}
 	});
 	
-	this.addAction('toggleConsole', function(editor)
+	this.addAction('	', function(editor)
 	{
 		mxLog.setVisible(!mxLog.isVisible());
 	});

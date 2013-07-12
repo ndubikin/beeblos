@@ -502,7 +502,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		
 	}
 	
-	public void createXmlMapAsTmp() {
+	public void loadXmlMapAsTmp() {
 		
 		if (id != null
 				&& !id.equals(0)){
