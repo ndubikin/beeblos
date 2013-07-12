@@ -6,6 +6,17 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<script type="text/javascript">
+	//<![CDATA[
+	function openInNewTab(url)
+	{
+
+		var win=window.open(url, '_blank');
+		win.focus();
+	}
+	//]]>
+	</script>	
+
 	<h:form>
 	
 		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}" 
@@ -144,6 +155,13 @@
 					actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}"
 					reRender="w_process_def_main_tag_form"
 					style="width:80px; margin-right:20px; " 
+					rendered="#{wProcessDefFormBean.readOnly}"/>
+
+				<a4j:commandButton id="edit_xml_map_button" value="#{msg.label_edit_xml_map}"
+					oncomplete="openInNewTab('#{wProcessDefQueryBean.workflowEditorUrl}');"
+					actionListener="#{wProcessDefFormBean.loadXmlMapAsTmp}"
+					reRender="w_process_def_main_tag_form"
+					style="width:100px; margin-left:2px; " 
 					rendered="#{wProcessDefFormBean.readOnly}"/>
 			
 				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"

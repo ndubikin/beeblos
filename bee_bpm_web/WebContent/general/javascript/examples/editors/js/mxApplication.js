@@ -96,6 +96,9 @@
 	function openProcessXmlMapTmp(editor)
 	{
 		editor.open("/bee_bpm_web/processXmlMapTmp.xml");
+		
+		// With this we open the properties of the WProcessDef
+		editor.execute('showFixProperties', editor.graph.getSelectionCell());
 	};
 
 	// Opens the previously saved xml map ( no funciona porque no tenemos el xmlString, no se como pasarselo

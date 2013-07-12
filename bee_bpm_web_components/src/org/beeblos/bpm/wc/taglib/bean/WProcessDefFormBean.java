@@ -2,9 +2,14 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
+import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -2014,5 +2019,56 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return new WProcessDefUtil().loadWProcessDefFormBean(this.currentId);
 
 	}
+	
+	public void loadXmlMapAsTmp() {
+		
+		if (currentId != null
+				&& !currentId.equals(0)){
+			try {
+				
+				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.currentId, getCurrentUserId());
+				
+				String path = CONTEXTPATH + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+				File temp = new File(path);
+				
+				// if file doesnt exists, then create it
+				if (!temp.exists()) {
+					temp.createNewFile();
+				}
+				
+				FileWriter fw = new FileWriter(temp.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(xmlMapTmp);
+				bw.flush();
+				bw.close();
+				
+			} catch (IOException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to create the xml map temp file for process: id=" + this.currentId};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+				
+			} catch (WProcessDefException e) {
+
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to load the process xml map for id=" + this.currentId};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+				
+			}
+		}
+		
+	}
+
+	public String getWorkflowEditorUrl(){
+		return this._getRequestContextPath() + WORKFLOW_EDITOR_URI;
+	}
+	
+	public String _getRequestContextPath() {
+		return FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestContextPath().trim().replaceAll("\\\\", "/");
+	}
+
 	
 }

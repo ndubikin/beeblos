@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -64,8 +65,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	@Path("/Save")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.TEXT_PLAIN)
-	public String save(@FormParam("xml") String inputMap) {
+	public Response save(@FormParam("xml") String inputMap) {
 
 		try {
 
@@ -94,7 +94,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			long totalTiempo = System.currentTimeMillis() - tiempoInicio;
 			System.out.println("TIEMPO DE WS :" + totalTiempo + " miliseg");
 
-			return "TODO EJECUTADO CORRECTAMENTE";
+			return Response.ok("Correctamente",MediaType.TEXT_PLAIN).build();
 
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -657,6 +657,15 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		}
 		
 		return nextRespOrder + 1;
+	}
+
+	@Path("/ShowImageMap")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response showImageMap(@FormParam("xml") String inputMap) {
+
+		return Response.ok("WS SIN IMPLEMENTAR",MediaType.TEXT_PLAIN).build();
+
 	}
 
 	@Path("/blMethodParser")
