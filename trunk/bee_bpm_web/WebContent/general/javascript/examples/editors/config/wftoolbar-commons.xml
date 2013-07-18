@@ -71,4 +71,5 @@
 	<add as="tasks" action="toggleTasks" icon="images/tasks.gif"/>
 	<add as="help" action="toggleHelp" icon="images/help.gif"/>
 	<add as="console" action="toggleConsole" icon="images/console.gif"/>
+	<add as="properties" action="toggleFixProperties" icon="images/properties.gif"/>
 </mxDefaultToolbar>

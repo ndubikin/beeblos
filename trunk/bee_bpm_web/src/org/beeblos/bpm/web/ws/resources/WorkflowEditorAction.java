@@ -19,10 +19,12 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.StatusType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -36,6 +38,7 @@ import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepHeadBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
+import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
@@ -51,6 +54,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.sun.mail.imap.protocol.Status;
+
 @Path("/wf")
 public class WorkflowEditorAction extends CoreManagedBean {
 
@@ -65,7 +70,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	@Path("/Save")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response save(@FormParam("xml") String inputMap) {
+	public String save(@FormParam("xml") String inputMap) {
 
 		try {
 
@@ -94,8 +99,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			long totalTiempo = System.currentTimeMillis() - tiempoInicio;
 			System.out.println("TIEMPO DE WS :" + totalTiempo + " miliseg");
 
-			return Response.ok("Correctamente",MediaType.TEXT_PLAIN).build();
-
+			//return Response.ok("Correctamente",MediaType.TEXT_PLAIN).build();
+			return xml;
+			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -108,6 +114,77 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 
+	@Path("/SaveSingleCell")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response saveSingleCell(@FormParam("xml") String inputMap) {
+		
+		System.out.println("WS SaveSingleCell inputMap: " + inputMap);
+
+		return Response.ok("WS SaveSingleCell SIN IMPLEMENTAR",MediaType.TEXT_PLAIN).build();
+
+	}
+	
+	@Path("/InicialiceSession/{processId}")
+	@GET
+	@Consumes(MediaType.TEXT_HTML)
+	public Response inicialiceSession(@PathParam("processId") Integer processId) {
+		
+		Response returnValue = null;
+		
+		if (processId != null){
+			
+			System.out.println("WS InicialiceSession queremos el mapa del proceso: " + processId);
+			
+			try {
+				
+				String processXmlMap = new WProcessDefBL().getProcessDefXmlMap(processId, null);
+				
+				if (processXmlMap != null){
+					returnValue = Response.ok(processXmlMap,MediaType.TEXT_XML).build();
+				} else {
+					returnValue = Response.ok("ERROR WorkflowEditorAction.poll(): WProcessDef id: " + processId 
+							+ " has not a valid xml map", MediaType.TEXT_XML).build();
+				}
+
+			} catch (WProcessDefException e) {
+	
+				returnValue = Response.ok("ERROR WorkflowEditorAction.poll(): with processId: " + processId 
+						+ " returned a not valid result",MediaType.TEXT_XML).build();
+
+			}
+			
+		} else {
+			returnValue = Response.ok("ERROR WorkflowEditorAction.poll(): invalid processId", 
+					MediaType.TEXT_XML).build();
+		}
+		
+		return returnValue;
+
+	}
+	
+	@Path("/Notify")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response notify(@FormParam("changes") String changes, @FormParam("newMap") String newMap) {
+		
+		System.out.println("WS Notify changes: " + changes);
+
+		return Response.ok(changes, MediaType.TEXT_XML).build();
+
+	}
+	
+	@Path("/Poll")
+	@GET
+	@Consumes(MediaType.TEXT_HTML)
+	public Response poll() {
+		
+		System.out.println("WS Poll inputMap: ");
+
+		return 	Response.ok("WS Poll SIN IMPLEMENTAR",MediaType.TEXT_XML).build();
+
+	}
+	
 	private Document _loadXMLFromString(String xml) throws Exception {
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
