@@ -44,14 +44,10 @@
 				
 				var node = mxUtils.load(config).getDocumentElement();
 				var editor = new mxEditor(node);
-
-// ESTO DEBERIA CARGAR COMO VARIABLE PERO NO SE LEE BIEN DESDE EL BEAN EL XMLSTRING CUANDO SE LE PASA
-// COMO PARAMETRO EL #{wProcessDefQueryBean.xmlMapTmp} ya que no es pagina de jsf
-//				console.log("----------------------------> ANTES DE CARGAR EL NODO XMLSTRING... <---------------------------------");
-//				console.log(xmlString);
-//				setTimeout(function(){readXmlString(editor,xmlString)},1000);
-//				console.log("----------------------------> CARGADO XMLSTRING ... <---------------------------------");
-//				console.log(xmlString);
+				
+				// dml - creamos una session para el editor NO FUNCIONA BIEN
+				var session = editor.connect('/bee_bpm_web/rest/wf/InicialiceSession/69',
+						'/bee_bpm_web/rest/wf/Poll','/bee_bpm_web/rest/wf/Notify',onChange());
 
 				// dml 20130709 - como ya puse la llamada en el oncomplete ya no hace falta el timeout, 
 				// ya abrirá el editor una vez creado el fichero para leer
@@ -100,14 +96,10 @@
 		// With this we open the properties of the WProcessDef
 		editor.execute('showFixProperties', editor.graph.getSelectionCell());
 	};
-
-	// Opens the previously saved xml map ( no funciona porque no tenemos el xmlString, no se como pasarselo
-	// al carecer de relacion entre esto y jsf)
-	function readXmlString(editor,xmlString)
+		
+	function onChange()
 	{
-		var doc = mxUtils.parseXML(xmlString);
-		node = doc.documentElement;
-		editor.readGraphModel(node);
+		console.log("ESTO CAMBIAAA");
 	};
 
 }

@@ -1,4 +1,10 @@
 // Use http://centricle.com/tools/ascii-hex/ for hex codes
+properties=Properties
+console=Console
+help=Help
+tasks=Tasks
+outline=Outline
+
 urlHelp=help/index.html
 lastSaved=Last Saved
 currentFile=Current File

@@ -12755,6 +12755,8 @@ mxToolbar.prototype.selectMode = function(domNode, funct)
 		{
 			this.selectedMode.className = this.selectedMode.initialClassName+'Selected';
 		}
+
+		// mxUtils.alert("DML ALERT - mxToolbar.prototype.selectMode" + this.selectedMode.className);
 		
 		this.fireEvent(new mxEventObject(mxEvent.SELECT, "function", funct));
 	}
@@ -12935,17 +12937,22 @@ function mxSession(model, urlInit, urlPoll, urlNotify)
 		};
 	}
 	
+//	mxUtils.alert("DML ALERT - BEFORE ADD NOTIFY LISTENER");
+
 	// Adds the listener for notifying the backend of any
 	// changes in the model
 	model.addListener(mxEvent.NOTIFY, mxUtils.bind(this, function(sender, evt)
 	{
+//		mxUtils.alert("DML ALERT - IN ADD NOTIFY LISTENER");
 		var edit = evt.getProperty('edit');
-		
 		if (edit != null && this.debug || (this.connected && !this.suspended))
 		{
+//			mxUtils.alert("DML ALERT - THIS.NOTIFY");
 			this.notify('<edit>'+this.encodeChanges(edit.changes, edit.undone)+'</edit>');
+//			mxUtils.alert("DML ALERT - AFTER THIS.NOTIFY");
 		}
 	}));
+//			mxUtils.alert("DML ALERT - AFTER ALL");
 };
 
 /**
@@ -13153,36 +13160,73 @@ mxSession.prototype.poll = function()
  * 
  * Sends out the specified XML to <urlNotify> and fires a <notify> event.
  */
-mxSession.prototype.notify = function(xml, onLoad, onError)
+mxSession.prototype.notify = function(changes, onLoad, onError)
 {
-	if (xml != null &&
-		xml.length > 0)
+	if (changes != null &&
+		changes.length > 0)
 	{
 		if (this.urlNotify != null)
 		{
 			if (this.debug)
 			{
 				mxLog.show();
-				mxLog.debug('mxSession.notify: '+this.urlNotify+' xml='+xml);			
+				mxLog.debug('mxSession.notify: '+this.urlNotify+' changes='+changes);			
 			}
 			else
 			{
-				xml = '<message><delta>'+xml+'</delta></message>';
+				changes = '<message><delta>'+changes+'</delta></message>';
+
+				// dml - cargo el nuevo mapa para meter tambien en la BD en el proceso 
+				var newMap = this.writeGraphModel(this.linefeed);
 				
 				if (this.escapePostData)
 				{
-					xml = encodeURIComponent(xml);
+					changes = encodeURIComponent(changes);
+					newMap = encodeURIComponent(newMap);
 				}
 				
-				mxUtils.post(this.urlNotify, 'xml='+xml, onLoad, onError);
+				mxUtils.post(this.urlNotify, 'changes='+changes+'&newMap='+newMap, onLoad, onError);
 			}
 		}
 		
-		this.sent += xml.length;
-		this.fireEvent(new mxEventObject(mxEvent.NOTIFY,
-				'url', this.urlNotify, 'xml', xml));
+//		this.sent += changes.length;
+//		mxUtils.alert("DML ALERT - FIREEVENT DE NOTIFY JODELOTODO url: '" + this.urlNotify + "' con xml = " + xml);
+		// dml - como el NOTIFY descontrola absolutamente todo lo envio por post
+//		var notification = new mxEventObject(mxEvent.POST,'url', this.urlNotify, 'xml', xml);
+//		this.fireEvent(notification);
+//		mxUtils.alert("DML ALERT - SENT!!!");
+//		this.fireEvent(new mxEventObject(mxEvent.NOTIFY,
+//				'url', this.urlNotify, 'xml', xml));
 	}
 };
+
+/**
+ * Function: writeGraphModel
+ * 
+ * Hook to create the string representation of the diagram. The default
+ * implementation uses an <mxCodec> to encode the graph model as
+ * follows:
+ * 
+ * (code)
+ * var enc = new mxCodec();
+ * var node = enc.encode(this.graph.getModel());
+ * return mxUtils.getXml(node, this.linefeed);
+ * (end)
+ * 
+ * Parameters:
+ * 
+ * linefeed - Optional character to be used as the linefeed. Default is
+ * <linefeed>.
+ */
+mxSession.prototype.writeGraphModel = function (linefeed)
+{
+	linefeed = (linefeed != null) ? linefeed : this.linefeed;
+	var enc = new mxCodec();
+	var node = enc.encode(this.model);
+
+	return mxUtils.getXml(node, linefeed);
+};
+
 
 /**
  * Function: get
@@ -13217,8 +13261,12 @@ mxSession.prototype.get = function(url, onLoad, onError)
 			{
     			if (req.isReady() && req.getStatus() != 404)
     			{
-    				this.received += req.getText().length;
-					this.fireEvent(new mxEventObject(mxEvent.GET, 'url', url, 'request', req));
+   				this.received += req.getText().length;
+				// dml - el sistema de notificacion cuando esta como "this.connected = true" se vuelve loco y se mueve todo en cada cambio
+				// dml - ESTA LLAMADA CASCA, que es lo que hace que no se ponga el sistema como connected y por eso tira...porque si no se vuelve loco
+				//mxUtils.alert("FIREEVENT DE GET JODELOTODO url: '" + this.url);
+				//this.fireEvent(new mxEventObject(mxEvent.GET, 'url', url, 'request', req));
+				//mxUtils.alert("NO LLEGA");
 
 					if (this.isValidResponse(req))
 					{
@@ -13509,6 +13557,7 @@ mxSession.prototype.cellRemoved = function(cell, codec)
 		this.cellRemoved(this.model.getChildAt(cell, i));
 	}
 };
+
 /**
  * $Id: mxUndoableEdit.js,v 1.2 2013/02/12 12:34:43 gaudenz Exp $
  * Copyright (c) 2006-2010, JGraph Ltd
@@ -35327,6 +35376,7 @@ mxGraphModel.prototype.createUndoableEdit = function()
 	
 	edit.notify = function()
 	{
+		// mxUtils.alert("DML CAMBIOS - mxGraphModel.prototype.createUndoableEdit CAMBIOS: " + edit.changes);
 		// LATER: Remove changes property (deprecated)
 		edit.source.fireEvent(new mxEventObject(mxEvent.CHANGE,
 			'edit', edit, 'changes', edit.changes));
@@ -36538,6 +36588,7 @@ mxCell.prototype.getChildAt = function(index)
  */
 mxCell.prototype.insert = function(child, index)
 {
+	//mxUtils.alert("DML ALERT - mxCell.prototype.insert");
 	if (child != null)
 	{
 		if (index == null)
@@ -36581,6 +36632,7 @@ mxCell.prototype.insert = function(child, index)
  */
 mxCell.prototype.remove = function(index)
 {
+	//mxUtils.alert("DML ALERT - mxCell.prototype.remove");
 	var child = null;
 	
 	if (this.children != null && index >= 0)
@@ -36604,6 +36656,7 @@ mxCell.prototype.remove = function(index)
  */
 mxCell.prototype.removeFromParent = function()
 {
+	//mxUtils.alert("DML ALERT - mxCell.prototype.removeFromParent");
 	if (this.parent != null)
 	{
 		var index = this.parent.getIndex(this);
@@ -36662,6 +36715,7 @@ mxCell.prototype.getEdgeAt = function(index)
  */
 mxCell.prototype.insertEdge = function(edge, isOutgoing)
 {
+	//mxUtils.alert("DML ALERT - mxCell.prototype.insertEdge");
 	if (edge != null)
 	{
 		edge.removeFromTerminal(isOutgoing);
@@ -36696,6 +36750,7 @@ mxCell.prototype.insertEdge = function(edge, isOutgoing)
  */
 mxCell.prototype.removeEdge = function(edge, isOutgoing)
 {
+	//mxUtils.alert("DML ALERT - mxCell.prototype.removeEdge");
 	if (edge != null)
 	{
 		if (edge.getTerminal(!isOutgoing) != this &&
@@ -36727,6 +36782,7 @@ mxCell.prototype.removeEdge = function(edge, isOutgoing)
  */
 mxCell.prototype.removeFromTerminal = function(isSource)
 {
+	//mxUtils.alert("DML ALERT - mxCell.prototype.removeFromTerminal");
 	var terminal = this.getTerminal(isSource);
 	
 	if (terminal != null)
@@ -47732,6 +47788,8 @@ mxGraph.prototype.getRemovedCellsForChanges = function(changes)
  */
 mxGraph.prototype.processChange = function(change)
 {
+	//mxUtils.alert("DML ALERT - mxGraph.prototype.processChange");
+
 	// Resets the view settings, removes all cells and clears
 	// the selection if the root changes.
 	if (change instanceof mxRootChange)
@@ -48082,6 +48140,8 @@ mxGraph.prototype.setCellWarning = function(cell, warning, img, isSelect)
  */
 mxGraph.prototype.startEditing = function(evt)
 {
+	//mxUtils.alert("DML ALERT - mxGraph.prototype.startEditing");
+
 	this.startEditingAtCell(null, evt);
 };
 
@@ -48098,6 +48158,8 @@ mxGraph.prototype.startEditing = function(evt)
  */
 mxGraph.prototype.startEditingAtCell = function(cell, evt)
 {
+	//mxUtils.alert("DML ALERT - mxGraph.prototype.startEditingAtCell");
+
 	if (cell == null)
 	{
 		cell = this.getSelectionCell();
@@ -48131,6 +48193,7 @@ mxGraph.prototype.startEditingAtCell = function(cell, evt)
  */
 mxGraph.prototype.getEditingValue = function(cell, evt)
 {
+	//mxUtils.alert("DML ALERT - mxGraph.prototype.getEditingValue");
 	return this.convertValueToString(cell);
 };
 
@@ -48146,6 +48209,7 @@ mxGraph.prototype.getEditingValue = function(cell, evt)
  */
 mxGraph.prototype.stopEditing = function(cancel)
 {
+	//mxUtils.alert("DML ALERT - mxGraph.prototype.stopEditing");
 	this.cellEditor.stopEditing(cancel);
 };
 
@@ -48164,12 +48228,22 @@ mxGraph.prototype.stopEditing = function(cancel)
  */
 mxGraph.prototype.labelChanged = function(cell, value, evt)
 {
+	//mxUtils.alert("DML ALERT - mxGraph.prototype.labelChanged");
 	this.model.beginUpdate();
 	try
 	{
 		this.cellLabelChanged(cell, value, this.isAutoSizeCell(cell));
 		this.fireEvent(new mxEventObject(mxEvent.LABEL_CHANGED,
 				'cell', cell, 'value', value, 'event', evt));
+		
+//		mxUtils.alert("cell xml" + cell.getXml());
+//		mxUtils.alert("value" + value);
+//		mxUtils.alert("cell con el model" + this.model.getCell(cell));
+		// dml - cuando cambia la etiqueta de un elemento se persiste
+		// TAMPOCO TENEMOS EL EDITOR
+//		var editor = new mxEditor();
+//		editor.saveSingleCell(value);
+//		mxUtils.alert("no va");
 	}
 	finally
 	{
@@ -48297,11 +48371,13 @@ mxGraph.prototype.click = function(me)
 	var cell = me.getCell();
 	var mxe = new mxEventObject(mxEvent.CLICK, 'event', evt, 'cell', cell);
 
-	//mxUtils.alert('CLICK CLICK!' + cell);
+	//mxUtils.alert('DML ALERT - CLICK CLICK!' + cell);
 	
 	// dml - shows the properties with the cell info
 	// DE DONDE SACO EL EDITOOOOR
-	//¿editor?.execute('showFixProperties', cell);
+	// esto desarbola todo	
+	//this.model.createUndoableEdit();
+	//editor.execute('showFixProperties', cell);
 
 
 	if (me.isConsumed())
@@ -70840,6 +70916,14 @@ mxEditor.prototype.escapePostData = true;
 mxEditor.prototype.urlPost = "/bee_bpm_web/rest/wf/Save"; 
 
 /**
+ * Variable: singleWSUrlPost
+ *
+ * Specifies the URL to be used for posting the diagram
+ * to a backend in <saveSingleCell>.
+ */
+mxEditor.prototype.singleWSUrlPost = "/bee_bpm_web/rest/wf/SaveSingleCell"; 
+
+/**
  * Variable: urlImage
  *
  * Specifies the URL to be used for creating a bitmap of
@@ -71150,6 +71234,7 @@ mxEditor.prototype.setModified = function (value)
  * toggleHelp - Shows or hides the help window.
  * toggleOutline - Shows or hides the outline window.
  * toggleConsole - Shows or hides the console window.
+ * dml - toggleFixProperties - Shows or hides the fix properties window.
  */
 mxEditor.prototype.addActions = function ()
 {
@@ -71670,6 +71755,18 @@ mxEditor.prototype.addActions = function ()
 	this.addAction('toggleConsole', function(editor)
 	{
 		mxLog.setVisible(!mxLog.isVisible());
+	});
+
+	this.addAction('toggleFixProperties', function(editor)
+	{
+		if (editor.properties != null)
+		{
+			editor.properties.setVisible(!editor.properties.isVisible());
+		}
+		else
+		{
+			editor.showFixProperties();
+		}
 	});
 };
 
@@ -72508,6 +72605,46 @@ mxEditor.prototype.save = function (url, linefeed)
 };
 
 /**
+ * Function: saveSingleCell
+ * 
+ * Posts the string returned by <writeGraphModel> to the given URL or the
+ * URL returned by <getUrlPost>. The actual posting is carried out by
+ * <postDiagram>. If the URL is null then the resulting XML will be
+ * displayed using <mxUtils.popup>. Exceptions should be handled as
+ * follows:
+ * 
+ * (code)
+ * try
+ * {
+ *   editor.saveSingleCell();
+ * }
+ * catch (e)
+ * {
+ *   mxUtils.error('Cannot save : ' + e.message, 280, true);
+ * }
+ * (end)
+ */
+mxEditor.prototype.saveSingleCell = function (node)
+{
+	// Gets the URL to post the data to
+	var url = this.getSingleWSUrlPost();
+
+	// Posts the data if the URL is not empty
+	if (url != null && url.length > 0)
+	{
+
+		var data = mxUtils.getXml(node);
+		this.postDiagram(url, data);
+		
+		// Resets the modified flag
+		this.setModified(false);
+	}
+	
+	// Dispatches a save event
+	this.fireEvent(new mxEventObject(mxEvent.SAVE, 'url', url));
+};
+
+/**
  * Function: postDiagram
  * 
  * Hook for subclassers to override the posting of a diagram
@@ -72582,6 +72719,18 @@ mxEditor.prototype.writeGraphModel = function (linefeed)
 mxEditor.prototype.getUrlPost = function ()
 {
 	return this.urlPost;
+};
+
+/**
+ * Function: getSingleWSUrlPost
+ * 
+ * Returns the URL to post the diagram to. This is used
+ * in <saveSingleCell>. The default implementation returns <singleWSUrlPost>,
+ * adding <code>?draft=true</code>.
+ */
+mxEditor.prototype.getSingleWSUrlPost = function ()
+{
+	return this.singleWSUrlPost;
 };
 
 /**
@@ -72734,7 +72883,7 @@ mxEditor.prototype.showProperties = function (cell)
  * <createProperties>. It shows the fix dialog 
  *
  * dml comment
- * It function is to reload the previous cell properties
+ * This function is to reload the previous cell properties
  * when a new object is clicked.
  */
 mxEditor.prototype.showFixProperties = function (cell)
@@ -73026,7 +73175,7 @@ mxEditor.prototype.createFixProperties = function (cell)
 		// actions below
 		
 		// Defines the function to be executed when the
-		// OK button is pressed in the dialog
+		// Save button is pressed in the dialog
 		var saveFunction = mxUtils.bind(this, function()
 		{
 			// dml - No se esconden las properties
@@ -73079,6 +73228,10 @@ mxEditor.prototype.createFixProperties = function (cell)
 				{
 					this.graph.updateCellSize(cell);
 				}
+
+				// dml - hacemos save también en la BD de la modificacion
+				this.saveSingleCell(value);
+
 			}
 			finally
 			{
