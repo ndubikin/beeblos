@@ -7,7 +7,6 @@ import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.io.IOException;
-import java.lang.annotation.Documented;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,8 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
-import org.beeblos.bpm.core.bl.WProcessHeadBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WProcessHeadBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.email.bl.SendEmailBL;
@@ -44,8 +43,8 @@ import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
-import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
@@ -308,7 +307,7 @@ public class WProcessBean extends CoreManagedBean {
 	//rrl 20120228 Bermuda Triangle mystery on the loss of source code Castor XML the process Marshall
 	public void generateXMLCurrentWProcessDef() {
 		
-		System.out.println(">>>>>>>>>> Castor XML starting the process Marshall");
+		logger.debug(">>>>>>>>>> Castor XML starting the process Marshall");
 		
 		String xmlTemplatesPath = "/home/u097/workspace/bee_bpm/src/org/beeblos/bpm/core/xml/castor/WProcessDef_castor.xml";
 		
@@ -339,10 +338,10 @@ public class WProcessBean extends CoreManagedBean {
 				outStream.close();
 				FacesContext.getCurrentInstance().responseComplete();
 				
-		        System.out.println(contenidoXML);
+		        logger.debug(contenidoXML);
 				
 			} else {
-				System.out.println(">>>>>>>>>> Castor XML the content XML is null");
+				logger.debug(">>>>>>>>>> Castor XML the content XML is null");
 			}
 			
 		}catch(XMLGenerationException e){
@@ -362,7 +361,7 @@ public class WProcessBean extends CoreManagedBean {
 			
 		}
 		
-		System.out.println(">>>>>>>>>> Castor XML process complete Marshall");
+		logger.debug(">>>>>>>>>> Castor XML process complete Marshall");
 		
 	}
 	
@@ -1090,8 +1089,7 @@ public class WProcessBean extends CoreManagedBean {
 					+ pu.getUser().getId();
 		}
 
-		System.out
-				.println("--------------->>>>>>>>> strUserList ------------>>>>>>>>"
+		logger.debug("--------------->>>>>>>>> strUserList ------------>>>>>>>>"
 						+ strUserList);
 		return strUserList;
 	}
@@ -1748,7 +1746,7 @@ public class WProcessBean extends CoreManagedBean {
 			}
 			
 		} catch (Exception e) {
-			System.out.println("Error trying to convert Set<WStepResponseDef> to SelectItem:"
+			logger.debug("Error trying to convert Set<WStepResponseDef> to SelectItem:"
 								+e.getMessage()+" "+e.getCause()+" - "+e.getClass());
 			outList=null;
 		}
