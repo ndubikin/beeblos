@@ -293,7 +293,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	//rrl 20120228 Bermuda Triangle mystery on the loss of source code Castor XML the process Marshall
 	public void generateXMLCurrentWProcessDef() {
 		
-		System.out.println(">>>>>>>>>> Castor XML starting the process Marshall");
+		logger.debug(">>>>>>>>>> Castor XML starting the process Marshall");
 		
 		String xmlTemplatesPath = "/home/u097/workspace/bee_bpm/src/org/beeblos/bpm/core/xml/castor/WProcessDef_castor.xml";
 		
@@ -324,10 +324,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				outStream.close();
 				FacesContext.getCurrentInstance().responseComplete();
 				
-		        System.out.println(contenidoXML);
+		        logger.debug(contenidoXML);
 				
 			} else {
-				System.out.println(">>>>>>>>>> Castor XML the content XML is null");
+				logger.debug(">>>>>>>>>> Castor XML the content XML is null");
 			}
 			
 		}catch(XMLGenerationException e){
@@ -346,7 +346,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 		}
 		
-		System.out.println(">>>>>>>>>> Castor XML process complete Marshall");
+		logger.debug(">>>>>>>>>> Castor XML process complete Marshall");
 		
 	}
 	
@@ -1542,7 +1542,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (Exception e) {
-			System.out.println("Error trying to convert Set<WStepResponseDef> to SelectItem:"
+			logger.debug("Error trying to convert Set<WStepResponseDef> to SelectItem:"
 								+e.getMessage()+" "+e.getCause()+" - "+e.getClass());
 			outList=null;
 		}
