@@ -98,11 +98,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	private boolean readOnly;
 
-	private List<String> selectedWRoleDefList = new ArrayList<String>();
-	private List<String> selectedWUserDefList = new ArrayList<String>();
-	private List<WStepSequenceDef> outgoingRoutes;
-	private List<WStepSequenceDef> incomingRoutes;	
-
 	private WProcessRole currentWProcessRole;
 	private WProcessUser currentWProcessUser;
 	// dml 20120125
@@ -110,10 +105,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	private String strRoleList;
 	private String strUserList;
-	
-	// dml 20120323
-	private Integer outgoingRoutesSize;
-	private Integer incomingRoutesSize;
 	
 	// dml 20120127
 	private List<SelectItem> currentStepResponseList;
@@ -858,22 +849,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.readOnly = false;
 	}
 
-	public List<String> getSelectedWRoleDefList() {
-		return selectedWRoleDefList;
-	}
-
-	public void setSelectedWRoleDefList(List<String> selectedWRoleDefList) {
-		this.selectedWRoleDefList = selectedWRoleDefList;
-	}
-
-	public List<String> getSelectedWUserDefList() {
-		return selectedWUserDefList;
-	}
-
-	public void setSelectedWUserDefList(List<String> selectedWUserDefList) {
-		this.selectedWUserDefList = selectedWUserDefList;
-	}
-
 	public String getStrRoleList() {
 		strRoleList = "";
 		for (WProcessRole pr : this.currentWProcessDef.getRolesRelated()) {
@@ -882,8 +857,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					+ pr.getRole().getId();
 		}
 
-		System.out
-				.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"
+		logger.debug("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"
 						+ strRoleList);
 		return strRoleList;
 	}
@@ -919,38 +893,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	@Deprecated
 	public void setStepSequenceList(List<WStepSequenceDef> stepSequenceList) {
 		currentWProcessDef.setStepSequenceList(stepSequenceList);
-	}
-
-	public List<WStepSequenceDef> getOutgoingRoutes() {
-		return outgoingRoutes;
-	}
-
-	public void setOutgoingRoutes(List<WStepSequenceDef> outgoingRoutes) {
-		this.outgoingRoutes = outgoingRoutes;
-	}
-
-	public List<WStepSequenceDef> getIncomingRoutes() {
-		return incomingRoutes;
-	}
-
-	public void setIncomingRoutes(List<WStepSequenceDef> incomingRoutes) {
-		this.incomingRoutes = incomingRoutes;
-	}
-
-	public Integer getOutgoingRoutesSize() {
-		return outgoingRoutesSize;
-	}
-
-	public void setOutgoingRoutesSize(Integer outgoingRoutesSize) {
-		this.outgoingRoutesSize = outgoingRoutesSize;
-	}
-
-	public Integer getIncomingRoutesSize() {
-		return incomingRoutesSize;
-	}
-
-	public void setIncomingRoutesSize(Integer incomingRoutesSize) {
-		this.incomingRoutesSize = incomingRoutesSize;
 	}
 
 	public WStepSequenceDef getCurrentStepSequence() {
