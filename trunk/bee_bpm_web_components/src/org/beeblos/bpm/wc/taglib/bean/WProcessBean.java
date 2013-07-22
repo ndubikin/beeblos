@@ -109,12 +109,6 @@ public class WProcessBean extends CoreManagedBean {
 //	private List<WStepSequenceDef> stepSequenceList; - nes 20130502 - paso al model q creo q va ahi ... 
 	private WStepSequenceDef currentStepSequence;
 	
-	// dml 20120323
-	private List<WStepSequenceDef> outgoingRoutes;
-	private List<WStepSequenceDef> incomingRoutes;
-	private Integer outgoingRoutesSize;
-	private Integer incomingRoutesSize;
-	
 	// dml 20120127
 	private List<SelectItem> currentStepResponseList;
 	private List<String> currentStepValidResponses;
@@ -1114,38 +1108,6 @@ public class WProcessBean extends CoreManagedBean {
 	@Deprecated
 	public void setStepSequenceList(List<WStepSequenceDef> stepSequenceList) {
 		currentWProcessDef.setStepSequenceList(stepSequenceList);
-	}
-
-	public List<WStepSequenceDef> getOutgoingRoutes() {
-		return outgoingRoutes;
-	}
-
-	public void setOutgoingRoutes(List<WStepSequenceDef> outgoingRoutes) {
-		this.outgoingRoutes = outgoingRoutes;
-	}
-
-	public List<WStepSequenceDef> getIncomingRoutes() {
-		return incomingRoutes;
-	}
-
-	public void setIncomingRoutes(List<WStepSequenceDef> incomingRoutes) {
-		this.incomingRoutes = incomingRoutes;
-	}
-
-	public Integer getOutgoingRoutesSize() {
-		return outgoingRoutesSize;
-	}
-
-	public void setOutgoingRoutesSize(Integer outgoingRoutesSize) {
-		this.outgoingRoutesSize = outgoingRoutesSize;
-	}
-
-	public Integer getIncomingRoutesSize() {
-		return incomingRoutesSize;
-	}
-
-	public void setIncomingRoutesSize(Integer incomingRoutesSize) {
-		this.incomingRoutesSize = incomingRoutesSize;
 	}
 
 	public WStepSequenceDef getCurrentStepSequence() {
