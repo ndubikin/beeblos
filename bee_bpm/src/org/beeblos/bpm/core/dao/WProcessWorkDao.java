@@ -307,7 +307,7 @@ public class WProcessWorkDao {
 		
 		String tmpQuery = "SELECT ";
 		tmpQuery += " pw.id_process, ";
-		tmpQuery += " wpd.name, ";
+		tmpQuery += " ph.name, ";
 		tmpQuery += " pw.reference, ";
 		tmpQuery += " pw.comments, ";
 		tmpQuery += " (SELECT COUNT(id) FROM w_step_work sw WHERE sw.decided_date IS NULL AND sw.id_process = pw.id_process AND sw.id_work = pw.id ) AS liveSteps, ";
@@ -318,6 +318,7 @@ public class WProcessWorkDao {
 
 		tmpQuery += " FROM w_process_work pw ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
+		tmpQuery += " LEFT OUTER JOIN w_process_head ph ON ph.id=wpd.head_id ";
 		tmpQuery += " LEFT OUTER JOIN w_process_status ps ON ps.id = pw.id_status ";
 
 		tmpQuery += filter;

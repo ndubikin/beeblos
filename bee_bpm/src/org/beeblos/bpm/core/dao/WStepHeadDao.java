@@ -384,10 +384,10 @@ public class WStepHeadDao {
 
 			tx.begin();
 
-			String query =  "SELECT IF(wsd.step_head_id = :stepHeadId,true,false) " +
+			String query =  "SELECT IF(wsd.head_id = :stepHeadId,true,false) " +
 					" FROM w_step_def wsd " +
-					" WHERE wsd.step_head_id = :stepHeadId " +
-					" GROUP BY wsd.step_head_id ";
+					" WHERE wsd.head_id = :stepHeadId " +
+					" GROUP BY wsd.head_id ";
 
 			System.out.println("[QUERY]: "+query);
 			

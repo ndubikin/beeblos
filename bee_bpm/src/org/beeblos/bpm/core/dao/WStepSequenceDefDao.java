@@ -373,6 +373,11 @@ public class WStepSequenceDefDao {
 			Integer stepId, Integer processId ) 
 	throws WStepSequenceDefException {
 	
+		if (stepId==null || stepId.equals(0)) {
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - can't obtain stepSeq list (outgoing) for stepId ="
+					+(stepId==null?"null":"0"));
+		}
+		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
@@ -425,9 +430,14 @@ public class WStepSequenceDefDao {
 	
 	// dml 20120323
 	public List<WStepSequenceDef> getIncomingRoutes(
-			Integer stepId, Integer versionId) 
+			Integer stepId, Integer processId) 
 	throws WStepSequenceDefException {
 	
+		if (stepId==null || stepId.equals(0)) {
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - can't obtain stepSeq list (incoming) for stepId ="
+					+(stepId==null?"null":"0"));
+		}
+		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
@@ -440,11 +450,11 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
-			if (versionId != null) {
+			if (processId != null) {
 				stepSeqs = session
 								.createQuery("FROM WStepSequenceDef WHERE toStep.id = ? and process.id=? ORDER BY toStep.id")
 								.setParameter(0, stepId)
-								.setParameter(1, versionId)
+								.setParameter(1, processId)
 								.list();
 			} else {
 				stepSeqs = session

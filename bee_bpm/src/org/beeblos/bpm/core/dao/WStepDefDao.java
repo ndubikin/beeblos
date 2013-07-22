@@ -31,7 +31,7 @@ public class WStepDefDao {
 	
 	public Integer add(WStepDef step) throws WStepDefException {
 		
-		logger.debug("add() WStepDef - Name: ["+step.getName()+"]");
+		logger.debug("add() WStepDef - Name: ["+step.getStepHead().getName()+"]");
 		
 		try {
 
@@ -246,7 +246,7 @@ public class WStepDefDao {
 
 			tx.begin();
 
-			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_step_def WHERE step_head_id = " + stepHeadId)
+			version = (Integer) session.createSQLQuery("SELECT MAX(version) FROM w_step_def WHERE head_id = " + stepHeadId)
 					.uniqueResult();
 
 			tx.commit();
@@ -511,7 +511,7 @@ public class WStepDefDao {
 				
 				String query = "SELECT DISTINCT (s.id), wsh.name, s.step_comments ";
 				query += " FROM w_step_def s ";
-				query += " LEFT OUTER JOIN w_step_head wsh ON s.step_head_id = wsh.id ";
+				query += " LEFT OUTER JOIN w_step_head wsh ON s.head_id = wsh.id ";
 				query += " LEFT OUTER JOIN w_step_role wsr ON s.id = wsr.id_step ";
 				query += " LEFT OUTER JOIN w_step_user wsu ON s.id = wsu.id_step ";
 				query += " WHERE s.id IN ";
@@ -686,7 +686,7 @@ public class WStepDefDao {
 	private String getBaseQuery(boolean isAdmin) {
 	
 		String baseQueryTmp = "SELECT * FROM w_step_def wsd ";
-		baseQueryTmp += "LEFT OUTER JOIN w_step_head wsh ON wsd.step_head_id = wsh.id ";
+		baseQueryTmp += "LEFT OUTER JOIN w_step_head wsh ON wsd.head_id = wsh.id ";
 	
 		return baseQueryTmp;
 	
@@ -773,9 +773,9 @@ public class WStepDefDao {
 		if (stepHeadId != null
 				&& !stepHeadId.equals(0)) {
 			if (!"".equals(filter)) {
-				filter += " AND wsd.step_head_id = " + stepHeadId + " ";
+				filter += " AND wsd.head_id = " + stepHeadId + " ";
 			} else {
-				filter += " wsd.step_head_id = " + stepHeadId + " ";
+				filter += " wsd.head_id = " + stepHeadId + " ";
 
 			}
 		}
