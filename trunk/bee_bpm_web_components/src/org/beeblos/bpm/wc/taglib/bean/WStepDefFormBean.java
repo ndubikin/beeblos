@@ -99,7 +99,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private List<SelectItem> wStepHeadComboList;
 	
 	// dml 20130508
-	private List<WStepDef> relatedStepDefList;
+	private List<WStepDef> relatedStepDefList; // lista de steps para 1 step-head (o sea las versiones de 1 step)
 	private String activeFilter;
 	
 	private String messageStyle;
@@ -117,11 +117,12 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		this.loadWTimeUnitForCombo();
 		
-		// dml 20120523
-		this.loadOutgoingRouteList();
-		
-		// dml 20120523
-		this.loadIncomingRouteList();
+		// nes 20130722
+		if (currObjId!=null && !currObjId.equals(0)) {
+			// dml 20120523
+			this.loadOutgoingRouteList();
+			this.loadIncomingRouteList();
+		}
 		
 		this._loadWStepHeadComboList(); // dml 20130508
 
@@ -828,8 +829,19 @@ public class WStepDefFormBean extends CoreManagedBean {
 		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
 		
 		try {
-			
-			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, currentWStepDefId, getCurrentUserId());
+			/*
+			 * Nota Nestor: 20130722 - en la tabla sequence tenemos previstas las rutas de entrada y salida a un paso para 1 proceso:
+			 * O sea el campo process_id indica a que proceso corresponde esa ruta, id_origin_step y id_dest_step indican desde
+			 * que paso y hasta cual va la ruta.
+			 * 
+			 * Ahora bien: parados en 1 paso, no tenemos el idProcess para obtener solamente las rutas de ese paso para ese proceso.
+			 * Por ese motivo, desde el punto de vista del paso en si, deberíamos traer todas las rutas independientemente
+			 * del proceso al que estén relacionadas, y desde el punto de vista del proceso/paso, deberíamos traer solaemente las
+			 * de ese proceso ...
+			 * 
+			 * Por ese motivo en este método seteo process_id a null porque no hay nada que indique que estamos parados en 1 proceso...
+			 */
+			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, null, getCurrentUserId());
 
 			if (outgoingRoutes != null){
 				outgoingRoutesSize = outgoingRoutes.size();
@@ -846,13 +858,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 	}
 	
 	// dml 20120523
+	// nes 20130722 - ver comentario en el método anterior que vale también para este ...
 	private ArrayList<WStepSequenceDef> loadIncomingRouteList() {
 		
 		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
 		
 		try {
 
-			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, currentWStepDefId, getCurrentUserId());
+			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, null, getCurrentUserId());
 
 			if (incomingRoutes != null){
 				incomingRoutesSize = incomingRoutes.size();

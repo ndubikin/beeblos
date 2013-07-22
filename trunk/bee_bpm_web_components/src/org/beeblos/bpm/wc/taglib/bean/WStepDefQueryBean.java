@@ -242,11 +242,23 @@ public class WStepDefQueryBean extends CoreManagedBean {
 	}
 	
 	// nes 20130508
+	// force step cloning with all routes for all process ...
 	public void cloneWStepDef() {
+		Integer processId=null;
+		cloneWStepDef(processId);
+	}
+	
+	// nes 20130508
+	public void cloneWStepDef(Integer processId) {
 
 		try {
 			
-			Integer newId = new WStepDefBL().cloneWStepDef(this.id, this.stepHeadId,getCurrentUserId());
+			// cloning a step involves process in incoming and outgoing routes: each route (w_step_sequence_def)
+			// must have your process_id. IF process_id is null then clone clones all routes for all process involving
+			// cloned step ...
+			Integer newId = 
+					new WStepDefBL()
+							.cloneWStepDef(this.id, this.stepHeadId, processId, getCurrentUserId());
 			
 			this.searchWStepDefs();
 			
