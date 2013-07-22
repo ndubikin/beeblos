@@ -465,7 +465,7 @@
         
         
 		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WStepHead"
-			column="step_head_id" name="stepHead" fetch="join" lazy="false"/>
+			column="head_id" name="stepHead" fetch="join" lazy="false"/>
 
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" name="timeUnit">
