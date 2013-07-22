@@ -1433,7 +1433,7 @@ public class WStepWorkDao {
 		String tmpQuery = "SELECT ";
 		tmpQuery += " sw.id_process, ";
 		tmpQuery += " sw.id_current_step, ";
-		tmpQuery += " step.name step_name, ";
+		tmpQuery += " sh.name step_name, ";
 		tmpQuery += " sw.arriving_date, ";
 		tmpQuery += " sw.opened_date, ";
 		tmpQuery += " sw.opener_user, ";
@@ -1452,6 +1452,7 @@ public class WStepWorkDao {
 
 		tmpQuery += " FROM w_step_work sw ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
+		tmpQuery += " LEFT OUTER JOIN w_step_head sh  ON step.head_id = sh.id ";
 		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = sw.id_work ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = sw.id_process ";
 		tmpQuery += " LEFT OUTER JOIN w_user_def opener ON opener.id = sw.opener_user "; 

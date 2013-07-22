@@ -29,7 +29,7 @@ public class Resourceutil {
 					.println(">>>>>>>>>>>>>>>>>>>>>> ERROR LEYENDO PROPIEDAD : ["
 							+ pk
 							+ "] del configuration.properties ...!!!!!!!!!!!!!");
-			e.printStackTrace();
+
 
 		}
 		return ret;

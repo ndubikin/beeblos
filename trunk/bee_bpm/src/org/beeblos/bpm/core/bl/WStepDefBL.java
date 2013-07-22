@@ -20,6 +20,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
@@ -181,49 +182,94 @@ public class WStepDefBL {
 
 	}
 	
-	// clone a step version (w_step_def, related users and roles, related steps and routes ...)
-	// returns new step id
-	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer userId) 
+	/*
+	 * clone a step version (w_step_def, related users and roles, related steps and routes ...)
+	 * returns new step id
+	 * 
+	 */
+	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, Integer userId) 
 			throws  WStepHeadException, WStepSequenceDefException, WStepDefException  {
 		
-		Integer clonedId=null,newversion=0;
-		WStepDef newstepver,stepver;
-		List<WStepSequenceDef> routes = new ArrayList<WStepSequenceDef>();
+		boolean newStep=false; // by default generates a new version of current stepId
+		boolean cloneRoutes=true;
+		boolean cloneResponses=true;
+		boolean clonePermissions=true;
+		
+		return cloneWStepDef( stepId,  stepHeadId,  processId,
+				 newStep,  cloneRoutes,	cloneResponses, clonePermissions, userId);
+		
+	}
+	
+	/*
+	 *clone step with options:
+	 *
+	 * generateNewStep: indicates must generate a new step with your new step_head and version =1
+	 * 	generateNewStep=false -> generates a new version of stepId
+	 *  generateNewStep=true -> generates a new step copying data from stepId and version=1
+	 * cloneRoutes: indicates must generate new routes copying origin step routes
+	 * cloneResponses: indicates must generate new responses copying origin step responses
+	 * clonePermissions: indicates must generate new permissions copying origin step permissions
+	 * 
+	 * processId must passed if only the routes for 1 process will be cloned .... Remember 
+	 * WStepSequeceDef has incoming and outgoint routes for a step/process
+	 * 
+	 */
+	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, 
+									boolean generateNewStep, boolean cloneRoutes,
+									boolean cloneResponses,
+									boolean clonePermissions, Integer userId) 
+			throws  WStepHeadException, WStepSequenceDefException, WStepDefException  {
+		
+		Integer clonedId=null,newVersion=0;
+		WStepDef newStep,currentStep;
+		
 		try {
-			newstepver = this.getWStepDefByPK(stepId,userId);
-			stepver = this.getWStepDefByPK(stepId,userId);
-			newversion=this.getLastVersionNumber(stepHeadId)+1;
+			
+			newStep = this.getWStepDefByPK(stepId,userId);
+			currentStep = this.getWStepDefByPK(stepId,userId);
+
+			// new step or new version ...
+			if (generateNewStep) {
+				newVersion=1;
+			} else {
+				newVersion=this.getLastVersionNumber(stepHeadId)+1;	
+			}
+			
 		} catch (WStepDefException e) {
 			String mess = "Error cloning step version: can't get original step version id:"+stepId
 							+" - "+e.getMessage()+" - "+e.getCause();
 			throw new WStepDefException(mess);
 		}
 		
+		// cloning permissions ...
 		try {
-			newstepver.setId(null);
-			newstepver.setVersion(newversion); // new version number ....
-			newstepver.setRolesRelated(new HashSet<WStepRole>());
-			newstepver.setUsersRelated(new HashSet<WStepUser>());
-			
-			if ( stepver.getRolesRelated().size()>0) {
-				for ( WStepRole stepRole: stepver.getRolesRelated() ) {
-					stepRole.setStep(null);
-					newstepver
-						.addRole(
-								stepRole.getRole(), stepRole.isAdmin(), 
-								stepRole.getIdObject(), stepRole.getIdObjectType(), 
-								userId);
-				}
-			}
 
-			if ( stepver.getUsersRelated().size()>0) {
-				for ( WStepUser stepUser: stepver.getUsersRelated() ) {
-					stepUser.setStep(null);
-					newstepver
-						.addUser(
-								stepUser.getUser(), stepUser.isAdmin(), 
-								stepUser.getIdObject(), stepUser.getIdObjectType(), 
-								userId);
+			newStep.setId(null);
+			newStep.setVersion(newVersion); // new version number ....
+			newStep.setRolesRelated(new HashSet<WStepRole>());
+			newStep.setUsersRelated(new HashSet<WStepUser>());
+			
+			if (clonePermissions) {
+				if ( currentStep.getRolesRelated().size()>0) {
+					for ( WStepRole stepRole: currentStep.getRolesRelated() ) {
+						stepRole.setStep(null);
+						newStep
+							.addRole(
+									stepRole.getRole(), stepRole.isAdmin(), 
+									stepRole.getIdObject(), stepRole.getIdObjectType(), 
+									userId);
+					}
+				}
+
+				if ( currentStep.getUsersRelated().size()>0) {
+					for ( WStepUser stepUser: currentStep.getUsersRelated() ) {
+						stepUser.setStep(null);
+						newStep
+							.addUser(
+									stepUser.getUser(), stepUser.isAdmin(), 
+									stepUser.getIdObject(), stepUser.getIdObjectType(), 
+									userId);
+					}
 				}
 			}
 			
@@ -232,9 +278,10 @@ public class WStepDefBL {
 					+" - "+e.getClass()+" -" +e.getMessage()+" - "+e.getCause();
 			throw new WStepDefException(mess);
 		}
-			
+
+		// persist new step with permissions ...
 		try {
-			clonedId = this.add(newstepver,userId);
+			clonedId = this.add(newStep,userId);
 		} catch (WStepDefException e) {
 			String mess = "Error cloning step version: can't ADD new clone step version original-id:"+stepId
 					+" - "+e.getMessage()+" - "+e.getCause();
@@ -245,27 +292,84 @@ public class WStepDefBL {
 			throw new WStepHeadException(mess);
 		}			
 		
-		// clone routes (the workflow map really ...)
-		WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
-		try {
-			routes = new WStepSequenceDefBL().getStepSequenceList(stepId, userId);
-			if (routes.size()>0){
-				for (WStepSequenceDef route: routes) {
-					route.setProcess(new WProcessDef());
-					route.getProcess().setId(clonedId);
-					seqBL.add(route, userId); // insert new cloned route
-					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+userId);
+		// cloning routes (the workflow map really ...)
+		if (cloneRoutes) {
+			List<WStepSequenceDef> routes = new ArrayList<WStepSequenceDef>();
+			WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
+			// clone outgoing routes
+			try {
+				routes = new WStepSequenceDefBL().getOutgoingRoutes(stepId, processId, userId);
+				if (routes.size()>0){
+					for (WStepSequenceDef route: routes) {
+						route.setFromStep(new WStepDef(clonedId));
+						seqBL.add(route, userId); // insert new cloned route
+						logger.debug("inserted new route:"+route.getId()+":"+route.getId()+" user:"+userId);
+					}
+				}			
+			} catch (WStepSequenceDefException e) {
+				String mess = "Error cloning outgoing routes for old step id:"+stepId+"  newProcessId:"+newStep
+						+" - "+e.getMessage()+" - "+e.getCause();
+				throw new WStepSequenceDefException(mess);
+			}
+
+			// clone ingoing routes
+			try {
+				routes = new WStepSequenceDefBL().getIncomingRoutes(stepId, processId, userId);
+				if (routes.size()>0){
+					for (WStepSequenceDef route: routes) {
+						route.setToStep(new WStepDef(clonedId));
+						seqBL.add(route, userId); // insert new cloned route
+						logger.debug("inserted new route:"+route.getId()+":"+route.getId()+" user:"+userId);
+					}
+				}			
+			} catch (WStepSequenceDefException e) {
+				String mess = "Error cloning incoming routes for old step id:"+stepId+"  newProcessId:"+newStep
+						+" - "+e.getMessage()+" - "+e.getCause();
+				throw new WStepSequenceDefException(mess);
+			}
+			
+		
+		}
+		
+		// cloning responses
+		if (cloneResponses) {
+			if ( currentStep.getResponse().size()>0) {
+				for ( WStepResponseDef response: currentStep.getResponse() ) {
+					response.setId(null);
+					newStep
+						.addResponse(response);
 				}
 			}			
-		} catch (WStepSequenceDefException e) {
-			String mess = "Error cloning routes for old step id:"+stepId+"  newProcessId:"+newstepver
-					+" - "+e.getMessage()+" - "+e.getCause();
-			throw new WStepSequenceDefException(mess);
 		}
-
 		
 		return clonedId;
 	}
+	
+//	private void cloneStepRoutes(Integer sourceStepId, Integer outgoingStepId, Integer processId ) {
+//
+//		List<WStepSequenceDef> outgoingRoutes;
+//		Integer outgoingRoutesSize;
+//		List<WStepSequenceDef> incomingRoutes;
+//		Integer incomingRoutesSize;
+//		WStepSequenceDefBL wssBL = new WStepSequenceDefBL();
+//		
+//		try {
+//			
+//			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, currentWStepDefId, getCurrentUserId());
+//
+//			if (outgoingRoutes != null){
+//				outgoingRoutesSize = outgoingRoutes.size();
+//			} else {
+//				outgoingRoutesSize = 0;
+//			}
+//			
+//		} catch (WStepSequenceDefException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//	}
+	
 	
 	// dml 20130509
 	public void deactivateStep(Integer stepId, Integer currentUserId) throws WStepDefException, WStepSequenceDefException{
@@ -336,6 +440,7 @@ public class WStepDefBL {
 
 		return new WStepDefDao().getStepDefByPK(id);
 	}
+	
 	
 	
 /* dml 20130509 metodo pasado a WStepHeadDao	

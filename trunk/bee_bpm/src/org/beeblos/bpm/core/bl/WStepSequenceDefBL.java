@@ -126,11 +126,11 @@ public class WStepSequenceDefBL {
 	
 	// returns a list with incoming routes pointing to a step
 	public List<WStepSequenceDef> getIncomingRoutes(
-			Integer stepId, Integer versionId, Integer userId ) 
+			Integer stepId, Integer processId, Integer userId ) 
 	throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao()
-				.getIncomingRoutes(stepId, versionId);
+				.getIncomingRoutes(stepId, processId);
 		
 	}
 	
