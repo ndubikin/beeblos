@@ -202,11 +202,13 @@ public class Login_x_Bean extends CoreManagedBean {
 						departamento.getDepartamentoTitulo()!=null && 
 						!"".equals(departamento.getDepartamentoTitulo())) {
 					
-					int endIndex = departamento.getDepartamentoAbreviatura().indexOf(".");
-					
 					contextoSeguridad.setTituloPrincipal( departamento.getDepartamentoTitulo() );
 					// nes 20130724 - porq si el depto no tiene ingresada una abreviatura da error aqui ...
+					// además quité el int endIndex = departamento.getDepartamentoAbreviatura().indexOf("."); 
+					// que teníamos porq no se para que buscabamos un "." en la abreviatura ...
+					// comentado con David el 20130724
 					if (departamento.getDepartamentoAbreviatura()!=null && !"".equals(departamento.getDepartamentoAbreviatura())) {
+						int endIndex = departamento.getDepartamentoAbreviatura().length()-1;
 						contextoSeguridad.setDepartamentoAbreviatura(departamento.getDepartamentoAbreviatura().substring(0, endIndex));	
 					} 
 					
