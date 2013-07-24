@@ -16,6 +16,7 @@ import org.beeblos.bpm.core.bl.EnvTypeBL;
 import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
 import org.beeblos.bpm.core.error.EnvTypeException;
 import org.beeblos.bpm.core.error.EnvironmentException;
+import org.beeblos.bpm.core.model.Environment;
 import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.model.noper.DialectObject;
@@ -105,7 +106,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		logger.debug(" initProperties()");
 		
 		this.setSessionName("");
-		this.currentHibernateConfigurationParameters = new HibernateConfigurationParameters();
+		this.currentHibernateConfigurationParameters = new HibernateConfigurationParameters(true);// si no no crea el obj environment
 		
 		this.hibernateConfigurationParametersList = new ArrayList<HibernateConfigurationParameters>();
 		
@@ -117,6 +118,19 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		
 		return null;
 
+	}
+	
+	// CREATE NULL PROPERTIES OF OBJECT TYPE TO AVOID PROBLEMS
+	// WITH VIEW AND ITS REFERENES TO THESE OBJECTS ...
+	private void recoverNullObjects(){
+		
+		if(currentHibernateConfigurationParameters != null){
+			
+			if (currentHibernateConfigurationParameters.getEnvironment()==null) {
+				currentHibernateConfigurationParameters.setEnvironment(new Environment());
+			}
+		}
+		
 	}
 	
 	private void _loadEnvTypeComboList(){
@@ -408,6 +422,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 				currentHibernateConfigurationParameters = new HibernateConfigurationBL()
 						.getConfiguration(sessionName);
+				
+				recoverNullObjects();
 				
 				recordIsLoaded = true;
 				
