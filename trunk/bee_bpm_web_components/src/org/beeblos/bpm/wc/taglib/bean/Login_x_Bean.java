@@ -205,7 +205,11 @@ public class Login_x_Bean extends CoreManagedBean {
 					int endIndex = departamento.getDepartamentoAbreviatura().indexOf(".");
 					
 					contextoSeguridad.setTituloPrincipal( departamento.getDepartamentoTitulo() );
-					contextoSeguridad.setDepartamentoAbreviatura(departamento.getDepartamentoAbreviatura().substring(0, endIndex));
+					// nes 20130724 - porq si el depto no tiene ingresada una abreviatura da error aqui ...
+					if (departamento.getDepartamentoAbreviatura()!=null && !"".equals(departamento.getDepartamentoAbreviatura())) {
+						contextoSeguridad.setDepartamentoAbreviatura(departamento.getDepartamentoAbreviatura().substring(0, endIndex));	
+					} 
+					
 				}
 				
 			} catch (DepartamentoException e) {
