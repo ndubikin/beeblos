@@ -1,4 +1,5 @@
 // Use http://centricle.com/tools/ascii-hex/ for hex codes
+spObjectListPopup=Softpoint object list
 properties=Properties
 console=Console
 help=Help
@@ -78,6 +79,5 @@ newExportImage=Export Image (New)
 changesLost=All changes will be lost!
 swimlanes=Swimlanes
 travelBooking=Travel Booking
-miEjemplo=Hola que ase?
 reloadSavedProcessXmlMap=Reload saved process XML Map
 notAvailable=Not available

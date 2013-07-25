@@ -44,6 +44,7 @@
 		</add>
 		<separator/>
 		<add as="properties" action="showFixProperties" icon="images/properties.gif"/>
+		<add as="spObjectListPopup" action="loadSpObjectListPopupInfo" icon="images/properties.gif"/>
 		<separator/>
 		<add as="openHref" action="openHref" icon="images/link.gif"/>
 	</mxDefaultPopupMenu>
