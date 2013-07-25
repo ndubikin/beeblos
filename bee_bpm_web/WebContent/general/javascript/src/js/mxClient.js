@@ -1881,6 +1881,7 @@ var mxEffects =
 	 */
 	fadeOut: function(node, from, remove, step, delay, isEnabled)
 	{
+
 		step = step || 40;
 		delay = delay || 30;
 		
@@ -1997,6 +1998,65 @@ var mxUtils =
 	            mxUtils.removeCursors(children[i]);
 	        }
 	    }
+	},
+
+
+	/**
+	 * dml 20130724
+	 * 
+	 * Function: showSplash
+	 * 
+	 * Shows splash.
+	 * 
+	 */
+	showSplash: function()
+	{
+		var splash = document.getElementById('splash');
+		splash.style.visibility = 'visible';
+		mxUtils.setOpacity(splash, 100);
+	},
+
+	/**
+	 * dml 20130724
+	 * 
+	 * Function: hideSplash
+	 * 
+	 * Hides splash.
+	 * 
+	 * milliseconds - time to hide the splash in milliseconds.
+	 */
+	hideSplashNew: function()
+	{
+		var splash = document.getElementById('splash');
+		splash.style.visibility = 'hidden';
+		mxUtils.setOpacity(splash, 0);
+	},
+
+	/**
+	 * dml 20130724
+	 * 
+	 * Function: hideSplash
+	 * 
+	 * Hides splash.
+	 * 
+	 * milliseconds - time to hide the splash in milliseconds.
+	 */
+	hideSplash: function(milliseconds)
+	{
+		var splash = document.getElementById('splash');
+		
+		if (splash != null)
+		{
+			try
+			{
+				mxEvent.release(splash);
+				mxEffects.fadeOut(splash, milliseconds, false);
+			}
+			catch (e)
+			{
+				splash.parentNode.removeChild(splash);
+			}
+		}
 	},
 
 	/**
@@ -3429,6 +3489,11 @@ var mxUtils =
 	post: function(url, params, onload, onerror)
 	{
 		return new mxXmlRequest(url, params).send(onload, onerror);
+	},
+	
+	postWithEditor: function(url, params, editor, onload, onerror)
+	{
+		return new mxXmlRequest(url, params).sendWithEditor(onload, onerror, editor);
 	},
 	
 	/**
@@ -7887,6 +7952,13 @@ mxEventObject.prototype.name = null;
 mxEventObject.prototype.properties = null;
 
 /**
+ * Variable: spObjectListPopup
+ *
+ * Holds the spObjectListPopup as an associative array.
+ */
+mxEventObject.prototype.spObjectListPopup = null;
+
+/**
  * Variable: consumed
  *
  * Holds the consumed state. Default is false.
@@ -7911,6 +7983,16 @@ mxEventObject.prototype.getName = function()
 mxEventObject.prototype.getProperties = function()
 {
 	return this.properties;
+};
+
+/**
+ * Function: getSpObjectListPopup
+ * 
+ * Returns <spObjectListPopup>.
+ */
+mxEventObject.prototype.getSpObjectListPopup = function()
+{
+	return this.spObjectListPopup;
 };
 
 /**
@@ -9956,6 +10038,7 @@ mxXmlRequest.prototype.send = function(onload, onerror)
 	
 	if (this.request != null)
 	{
+
 		if (onload != null)
 		{
 			this.request.onreadystatechange = mxUtils.bind(this, function()
@@ -9963,6 +10046,44 @@ mxXmlRequest.prototype.send = function(onload, onerror)
 				if (this.isReady())
 				{
 					onload(this);
+					this.onreadystatechange = null;
+				}
+			});
+		}
+
+		this.request.open(this.method, this.url, this.async,
+			this.username, this.password);
+		this.setRequestHeaders(this.request, this.params);
+		this.request.send(this.params);
+	}
+};
+
+/**
+ * dml 20130725 se usa para el "save" para tener el editor para poder sustituir el mapa en el "onload" por el que viene del WS (con todos los nuevos spId's)
+ *
+ * Function: sendWithEditor
+ * 
+ * Send the <request> to the target URL using the specified functions to
+ * process the response asychronously.
+ * 
+ * Parameters:
+ * 
+ * onload - Function to be invoked if a successful response was received.
+ * onerror - Function to be called on any error.
+ */
+mxXmlRequest.prototype.sendWithEditor = function(onload, onerror, editor)
+{
+	this.request = this.create();
+	
+	if (this.request != null)
+	{
+		if (onload != null)
+		{
+			this.request.onreadystatechange = mxUtils.bind(this, function()
+			{
+				if (this.isReady())
+				{
+					onload(this, editor);
 					this.onreadystatechange = null;
 				}
 			});
@@ -11379,6 +11500,35 @@ mxForm.prototype.getTable = function()
 };
 
 /**
+ * Function: addButton
+ * 
+ * Helper method to add a button using the respective
+ * function.
+ */
+mxForm.prototype.addButton = function(buttonFunct, buttonString)
+{
+	var tr = document.createElement('tr');
+	var td = document.createElement('td');
+	tr.appendChild(td);
+	td = document.createElement('td');
+
+	// Adds the button
+	var button = document.createElement('button');
+	mxUtils.write(button, (buttonString == null) ? (mxResources.get('ok') || 'OK'):(mxResources.get(buttonString) || buttonString));
+
+	td.appendChild(button);
+
+	mxEvent.addListener(button, 'click', function()
+	{
+		buttonFunct();
+	});
+	
+	tr.appendChild(td);
+	this.body.appendChild(tr);
+
+};
+
+/**
  * Function: addButtons
  * 
  * Helper method to add an OK and Cancel button using the respective
@@ -11394,7 +11544,6 @@ mxForm.prototype.addButtons = function(okFunct, cancelFunct, okString, cancelStr
 	// Adds the ok button
 	var button = document.createElement('button');
 	mxUtils.write(button, (okString == null) ? (mxResources.get('ok') || 'OK'):(mxResources.get(okString) || okString));
-//dml	mxUtils.write(button, mxResources.get('ok') || 'OK');
 	td.appendChild(button);
 
 	mxEvent.addListener(button, 'click', function()
@@ -11405,7 +11554,6 @@ mxForm.prototype.addButtons = function(okFunct, cancelFunct, okString, cancelStr
 	// Adds the cancel button
 	button = document.createElement('button');
 	mxUtils.write(button, (cancelString == null) ? (mxResources.get('cancel') || 'Cancel'):(mxResources.get(cancelString) || cancelString));
-//dml	mxUtils.write(button, mxResources.get('cancel') || 'Cancel');
 	td.appendChild(button);
 	
 	mxEvent.addListener(button, 'click', function()
@@ -11535,6 +11683,45 @@ mxForm.prototype.addField = function(name, input)
 	
 	return input;
 };
+
+/**
+ * Function: addLinkInvoke
+ * 
+ * Adds a new row with the name and the link invoke
+ */
+mxForm.prototype.addLinkInvoke = function(name, postInfo, editor)
+{
+	var off = 0;
+
+	var tr = document.createElement('tr');
+	var td = document.createElement('td');
+	mxUtils.linkInvoke(td, name, editor,
+		'changeSpObject', postInfo, off);
+	tr.appendChild(td);
+	
+	this.body.appendChild(tr);
+	
+	return name;
+};
+
+/**
+ * Function: addLabel
+ * 
+ * Adds a new row with the name and the link invoke
+ */
+mxForm.prototype.addLabel = function(name)
+{
+
+	var tr = document.createElement('tr');
+	var td = document.createElement('td');
+	mxUtils.write(td, name);
+	tr.appendChild(td);
+	
+	this.body.appendChild(tr);
+	
+	return name;
+};
+
 /**
  * $Id: mxImage.js,v 1.1 2012/11/15 13:26:45 gaudenz Exp $
  * Copyright (c) 2006-2010, JGraph Ltd
@@ -12919,12 +13106,14 @@ mxToolbar.prototype.destroy = function ()
  * urlPoll - URL to be used for polling the backend.
  * urlNotify - URL to be used for sending changes to the backend.
  */
-function mxSession(model, urlInit, urlPoll, urlNotify)
+function mxSession(editor, urlInit, urlPoll, urlNotify, urlGetSpObjectList)
 {
+	var model = editor.graph.getModel();
 	this.model = model;
 	this.urlInit = urlInit;
 	this.urlPoll = urlPoll;
 	this.urlNotify = urlNotify;
+	this.urlGetSpObjectList = urlGetSpObjectList;
 
 	// Resolves cells by id using the model
 	if (model != null)
@@ -12937,22 +13126,33 @@ function mxSession(model, urlInit, urlPoll, urlNotify)
 		};
 	}
 	
-//	mxUtils.alert("DML ALERT - BEFORE ADD NOTIFY LISTENER");
-
 	// Adds the listener for notifying the backend of any
 	// changes in the model
 	model.addListener(mxEvent.NOTIFY, mxUtils.bind(this, function(sender, evt)
 	{
-//		mxUtils.alert("DML ALERT - IN ADD NOTIFY LISTENER");
 		var edit = evt.getProperty('edit');
 		if (edit != null && this.debug || (this.connected && !this.suspended))
 		{
-//			mxUtils.alert("DML ALERT - THIS.NOTIFY");
 			this.notify('<edit>'+this.encodeChanges(edit.changes, edit.undone)+'</edit>');
-//			mxUtils.alert("DML ALERT - AFTER THIS.NOTIFY");
+// dml 20130724 - con la creacion del getSpObjectList el NOTIFY lo mantenemos solo para que haga cosas en el WS, no recibe nada...si queremos procesar algo de vuelta al JS
+// comentamos lo de encima de esto y descomentamos lo de abajo cuya funcion se ejecutará a la vuelta del POST
+
+/*
+ *			this.notify('<edit>'+this.encodeChanges(edit.changes, edit.undone)+'</edit>', 
+ *				// dml 20130723 - si todo va bien y el notify devuelve una lista de elementos los metemos en el popup para ello (spObjectListPopup)
+ *				function(req){
+ *
+ *					if (req.getText() != null && req.getText().length > 0){
+ *
+ *						editor.spObjList = req.getText().split(',');
+ *						editor.execute('showSpObjectListPopup', editor.graph.getSelectionCell());
+ *						
+ *					}
+ *				}
+ *			)
+ */
 		}
 	}));
-//			mxUtils.alert("DML ALERT - AFTER ALL");
 };
 
 /**
@@ -12988,6 +13188,13 @@ mxSession.prototype.urlPoll = null;
  * URL to send changes to the backend.
  */
 mxSession.prototype.urlNotify = null;
+
+/**
+ * Variable: getSpObjectList
+ * 
+ * URL to send changes to the backend.
+ */
+mxSession.prototype.urlGetSpObjectList = null;
 
 /**
  * Variable: codec
@@ -13184,7 +13391,6 @@ mxSession.prototype.notify = function(changes, onLoad, onError)
 					changes = encodeURIComponent(changes);
 					newMap = encodeURIComponent(newMap);
 				}
-				
 				mxUtils.post(this.urlNotify, 'changes='+changes+'&newMap='+newMap, onLoad, onError);
 			}
 		}
@@ -13197,6 +13403,63 @@ mxSession.prototype.notify = function(changes, onLoad, onError)
 //		mxUtils.alert("DML ALERT - SENT!!!");
 //		this.fireEvent(new mxEventObject(mxEvent.NOTIFY,
 //				'url', this.urlNotify, 'xml', xml));
+	}
+};
+
+/**
+ * Function: notify
+ * 
+ * Sends out the specified XML to <urlNotify> and fires a <notify> event.
+ */
+mxSession.prototype.save = function(url, data, editor, onLoad, onError)
+{
+	if (data != null &&
+		data.length > 0)
+	{
+		if (url != null)
+		{
+			if (this.debug)
+			{
+				mxLog.show();
+				mxLog.debug('mxSession.notify: '+url+' xml='+data);			
+			}
+			else
+			{
+				mxUtils.postWithEditor(url, 'xml='+data, editor, onLoad, onError);
+
+			}
+		}
+
+	}
+};
+
+/**
+ * Function: notify
+ * 
+ * Sends out the specified XML to <urlNotify> and fires a <notify> event.
+ */
+mxSession.prototype.getSpObjectList = function(data, onLoad, onError)
+{
+	if (data != null && data.length > 0)
+	{
+		if (this.urlGetSpObjectList != null)
+		{
+			if (this.debug)
+			{
+				mxLog.show();
+				mxLog.debug('mxSession.getSpObjectList: '+this.urlGetSpObjectList+' data='+data);			
+			}
+			else
+			{
+				data = '<message><delta>'+data+'</delta></message>';
+
+				if (this.escapePostData)
+				{
+					data = encodeURIComponent(data);
+				}
+				mxUtils.post(this.urlGetSpObjectList, 'data='+data, onLoad, onError);
+			}
+		}
 	}
 };
 
@@ -48236,14 +48499,6 @@ mxGraph.prototype.labelChanged = function(cell, value, evt)
 		this.fireEvent(new mxEventObject(mxEvent.LABEL_CHANGED,
 				'cell', cell, 'value', value, 'event', evt));
 		
-//		mxUtils.alert("cell xml" + cell.getXml());
-//		mxUtils.alert("value" + value);
-//		mxUtils.alert("cell con el model" + this.model.getCell(cell));
-		// dml - cuando cambia la etiqueta de un elemento se persiste
-		// TAMPOCO TENEMOS EL EDITOR
-//		var editor = new mxEditor();
-//		editor.saveSingleCell(value);
-//		mxUtils.alert("no va");
 	}
 	finally
 	{
@@ -48371,13 +48626,15 @@ mxGraph.prototype.click = function(me)
 	var cell = me.getCell();
 	var mxe = new mxEventObject(mxEvent.CLICK, 'event', evt, 'cell', cell);
 
-	//mxUtils.alert('DML ALERT - CLICK CLICK!' + cell);
 	
 	// dml - shows the properties with the cell info
 	// DE DONDE SACO EL EDITOOOOR
 	// esto desarbola todo	
 	//this.model.createUndoableEdit();
-	//editor.execute('showFixProperties', cell);
+	//mxUtils.alert('DML ALERT - CLICK CLICK!' + this.container);
+//	mxUtils.alert("antes editor:" + this.editor);	
+//	this.editor.execute('showFixProperties', cell);
+//	mxUtils.alert("despues");
 
 
 	if (me.isConsumed())
@@ -61264,6 +61521,7 @@ mxPanningHandler.prototype.isPanningTrigger = function(me)
  */
 mxPanningHandler.prototype.mouseDown = function(sender, me)
 {
+
 	if (!me.isConsumed() && this.isEnabled() && !this.active)
 	{
 		// Hides the popupmenu if is is being displayed
@@ -69259,6 +69517,7 @@ function mxDefaultKeyHandler(editor)
 			old.apply(this, arguments);
 			// dml - no cerramos el properties never
 			// editor.hideProperties();
+			editor.hideSpObjectListPopup();
 			editor.fireEvent(new mxEventObject(mxEvent.ESCAPE, 'event', evt));
 		};
 	}
@@ -70222,7 +70481,7 @@ mxDefaultToolbar.prototype.destroy = function ()
  * page, the following code is used:
  * 
  * (code)
- * var doc = mxUtils.parseXML(xmlString);
+ * var doc = mxUtils.parseXml(xmlString);
  * var node = doc.documentElement;
  * editor.readGraphModel(node);
  * (end)
@@ -70639,7 +70898,7 @@ mxEditor.prototype.lastSavedResource = (mxClient.language != 'none') ? 'lastSave
  * 
  * Specifies the resource key for the current file info. If the resource for
  * this key does not exist then the value is used as the error message.
- * Default is 'lastSaved'.
+ * Default is 'currentFile'.
  */
 mxEditor.prototype.currentFileResource = (mxClient.language != 'none') ? 'currentFile' : '';
 	
@@ -70651,6 +70910,17 @@ mxEditor.prototype.currentFileResource = (mxClient.language != 'none') ? 'curren
  * error message. Default is 'properties'.
  */
 mxEditor.prototype.propertiesResource = (mxClient.language != 'none') ? 'properties' : '';
+	
+/**
+ * dml 20130722
+ *
+ * Variable: spObjectListResourcePopup
+ * 
+ * Specifies the resource key for the softpoint object lisf window title. If the
+ * resource for this key does not exist then the value is used as the
+ * error message. Default is 'spObjectListPopup'.
+ */
+mxEditor.prototype.spObjectListResourcePopup = (mxClient.language != 'none') ? 'spObjectListPopup' : '';
 	
 /**
  * Variable: tasksResource
@@ -70916,14 +71186,6 @@ mxEditor.prototype.escapePostData = true;
 mxEditor.prototype.urlPost = "/bee_bpm_web/rest/wf/Save"; 
 
 /**
- * Variable: singleWSUrlPost
- *
- * Specifies the URL to be used for posting the diagram
- * to a backend in <saveSingleCell>.
- */
-mxEditor.prototype.singleWSUrlPost = "/bee_bpm_web/rest/wf/SaveSingleCell"; 
-
-/**
  * Variable: urlImage
  *
  * Specifies the URL to be used for creating a bitmap of
@@ -71141,6 +71403,40 @@ mxEditor.prototype.propertiesHeight = null;
 mxEditor.prototype.movePropertiesDialog = false;
 
 /**
+ * Variable: spObList
+ * 
+ * Specifies the sp object list
+ */
+mxEditor.prototype.spObjList = null;
+		
+/**
+ * Variable: spObjectListPopupWidth
+ * 
+ * Specifies the width of the properties window in pixels.
+ * Default is 240.
+ */
+mxEditor.prototype.spObjectListPopupWidth = 240;
+		
+/**
+ * Variable: spObjectListPopupHeight
+ * 
+ * Specifies the height of the properties window in pixels.
+ * If no height is specified then the window will be automatically
+ * sized to fit its contents. Default is null.
+ */
+mxEditor.prototype.spObjectListPopupHeight = null;
+		
+/**
+ * Variable: moveSpObjectListPopup
+ *
+ * Specifies if the properties dialog should be automatically
+ * moved near the cell it is displayed for, otherwise the
+ * dialog is not moved. This value is only taken into 
+ * account if the dialog is already visible. Default is false.
+ */
+mxEditor.prototype.moveSpObjectListPopup = true;
+
+/**
  * Variable: validating
  *
  * Specifies if <mxGraph.validateGraph> should automatically be invoked after
@@ -71240,42 +71536,9 @@ mxEditor.prototype.addActions = function ()
 {
 	this.addAction('save', function(editor)
 	{
-		var showSplash = function()
-		{
-			var splash = document.getElementById('splash');
-			splash.style.visibility = 'visible';
-		};
 
-
-		var hideSplash = function()
-		{
-			var splash = document.getElementById('splash');
-			
-			if (splash != null)
-			{
-				try
-				{
-					mxEvent.release(splash);
-					mxEffects.fadeOut(splash, 6500, false);
-				}
-				catch (e)
-				{
-					splash.parentNode.removeChild(splash);
-				}
-			}
-		};
-
-		showSplash();
-		editor.save();
-		setTimeout(function(){openProcessXmlMapTmp(editor)},5000);
-		hideSplash();
-
+		editor.saveNew();
 		
-		function openProcessXmlMapTmp(editor)
-		{
-			editor.open('/bee_bpm_web/processXmlMapTmp.xml');
-		};
-
 	});
 	
 	this.addAction('print', function(editor)
@@ -71412,6 +71675,28 @@ mxEditor.prototype.addActions = function ()
 	this.addAction('showFixProperties', function(editor, cell)
 	{
 		editor.showFixProperties(cell);
+	});
+	
+	this.addAction('showSpObjectListPopup', function(editor, cell)
+	{
+		editor.showSpObjectListPopup(cell);
+	});
+	
+	this.addAction('loadSpObjectListPopupInfo', function(editor, cell)
+	{
+		var node = editor.session.codec.encode(cell);
+		var data = mxUtils.getXml(node, this.linefeed);
+		editor.session.getSpObjectList(data, 
+			function(req){
+
+				if (req.getText() != null && req.getText().length > 0){
+
+					editor.spObjList = req.getText().split(',');
+					editor.execute('showSpObjectListPopup', cell);
+					
+				}
+			}
+		)
 	});
 	
 	this.addAction('selectAll', function(editor)
@@ -71945,6 +72230,7 @@ mxEditor.prototype.getTemplate = function (name)
  */
 mxEditor.prototype.createGraph = function ()
 {
+
 	var graph = new mxGraph(null, null, this.graphRenderHint);
 	
 	// Enables rubberband, tooltips, panning
@@ -72604,8 +72890,65 @@ mxEditor.prototype.save = function (url, linefeed)
 	this.fireEvent(new mxEventObject(mxEvent.SAVE, 'url', url));
 };
 
+
 /**
- * Function: saveSingleCell
+ * Function: saveNew
+ * 
+ * 
+ * (code)
+ * try
+ * {
+ *   editor.saveNew(name);
+ * }
+ * catch (e)
+ * {
+ *   mxUtils.error('Cannot saveNew : ' + e.message, 280, true);
+ * }
+ * (end)
+ */
+mxEditor.prototype.saveNew = function (url, linefeed)
+{
+
+	// Gets the URL to post the data to
+	url = url || this.getUrlPost();
+
+
+	// Posts the data if the URL is not empty
+	if (url != null && url.length > 0)
+	{
+		var data = this.writeGraphModel(linefeed);
+		
+		mxUtils.showSplash();
+		this.hideSpObjectListPopup();
+
+		this.session.save(url, data, this, 
+			// dml 20130723 - si todo va bien el save hace el hideSplash cuando le llega la respuesta bien
+			function(req, editor){
+				
+				var xmlString = req.getText();
+				var doc = mxUtils.parseXml(xmlString);
+				var node = doc.documentElement;
+				var dec = new mxCodec(node.ownerDocument);
+				dec.decode(node, editor.graph.getModel());
+
+				editor.execute('showFixProperties', editor.graph.getSelectionCell());
+
+//				setTimeout(function(){this.openProcessXmlMapTmp()},1000);
+				mxUtils.hideSplash(0);
+
+		
+			}
+		)
+
+		// Resets the modified flag
+		this.setModified(false);
+	}
+
+
+};
+
+/**
+ * Function: changeSpObject
  * 
  * Posts the string returned by <writeGraphModel> to the given URL or the
  * URL returned by <getUrlPost>. The actual posting is carried out by
@@ -72616,7 +72959,7 @@ mxEditor.prototype.save = function (url, linefeed)
  * (code)
  * try
  * {
- *   editor.saveSingleCell();
+ *   editor.changeSpObject(name);
  * }
  * catch (e)
  * {
@@ -72624,25 +72967,49 @@ mxEditor.prototype.save = function (url, linefeed)
  * }
  * (end)
  */
-mxEditor.prototype.saveSingleCell = function (node)
+mxEditor.prototype.changeSpObject = function (name)
 {
-	// Gets the URL to post the data to
-	var url = this.getSingleWSUrlPost();
 
-	// Posts the data if the URL is not empty
-	if (url != null && url.length > 0)
-	{
+	mxUtils.showSplash();
+	this.hideSpObjectListPopup();
 
-		var data = mxUtils.getXml(node);
-		this.postDiagram(url, data);
+	this.session.notify(name, 
+		// dml 20130723 - si todo va bien el notify guarda el nuevo valor para el step y borra el viejo
+		function(req){
+
+			setTimeout(function(){this.openProcessXmlMapTmp()},50);
+			mxUtils.hideSplash(100);
+
 		
-		// Resets the modified flag
-		this.setModified(false);
-	}
-	
-	// Dispatches a save event
-	this.fireEvent(new mxEventObject(mxEvent.SAVE, 'url', url));
+		}
+	)
+
 };
+
+/**
+ * Function: openProcessXmlMapTmp
+ * 
+ * Posts the string returned by <writeGraphModel> to the given URL or the
+ * URL returned by <getUrlPost>. The actual posting is carried out by
+ * <postDiagram>. If the URL is null then the resulting XML will be
+ * displayed using <mxUtils.popup>. Exceptions should be handled as
+ * follows:
+ * 
+ * (code)
+ * try
+ * {
+ *   editor.openProcessXmlMapTmp();
+ * }
+ * catch (e)
+ * {
+ *   mxUtils.error('Cannot save : ' + e.message, 280, true);
+ * }
+ * (end)
+ */
+mxEditor.prototype.openProcessXmlMapTmp = function ()
+{
+	this.open('/bee_bpm_web/processXmlMapTmp.xml');
+}
 
 /**
  * Function: postDiagram
@@ -72722,18 +73089,6 @@ mxEditor.prototype.getUrlPost = function ()
 };
 
 /**
- * Function: getSingleWSUrlPost
- * 
- * Returns the URL to post the diagram to. This is used
- * in <saveSingleCell>. The default implementation returns <singleWSUrlPost>,
- * adding <code>?draft=true</code>.
- */
-mxEditor.prototype.getSingleWSUrlPost = function ()
-{
-	return this.singleWSUrlPost;
-};
-
-/**
  * Function: getUrlImage
  * 
  * Returns the URL to create the image with. This is typically
@@ -72748,23 +73103,36 @@ mxEditor.prototype.getUrlImage = function ()
 };
 
 /**
+ * dml 20130723
+ *
+ * Variable: session
+ * 
+ * Keeps de session in the editor.
+ * 
+ */
+mxEditor.prototype.session = null;
+
+/**
  * Function: connect
  * 
  * Creates and returns a session for the specified parameters, installing
  * the onChange function as a change listener for the session.
  */
-mxEditor.prototype.connect = function (urlInit, urlPoll, urlNotify, onChange)
+mxEditor.prototype.connect = function (urlInit, urlPoll, urlNotify, urlGetSpObjectList, onChange)
 {
-	var session = null;
+	this.session = null;
 	
 	if (!mxClient.IS_LOCAL)
 	{
-		session = new mxSession(this.graph.getModel(),
-			urlInit, urlPoll, urlNotify);
+		// dml 20130722 - vamos a pasar el editor al mxSession para probar si podemos mostrar los Steps cuando se cree uno nuevo o para cambiar
+		this.session = new mxSession(this,
+			urlInit, urlPoll, urlNotify, urlGetSpObjectList);
+		//session = new mxSession(this.graph.getModel(),
+		//	urlInit, urlPoll, urlNotify);
 
 		// Resets the undo history if the session was initialized which is the
 		// case if the message carries a namespace to be used for new IDs.
-		session.addListener(mxEvent.RECEIVE,
+		this.session.addListener(mxEvent.RECEIVE,
 			mxUtils.bind(this, function(sender, evt)
 			{
 				var node = evt.getProperty('node');
@@ -72778,14 +73146,14 @@ mxEditor.prototype.connect = function (urlInit, urlPoll, urlNotify, onChange)
 		
 		// Installs the listener for all events
 		// that signal a change of the session
-		session.addListener(mxEvent.DISCONNECT, onChange);
-		session.addListener(mxEvent.CONNECT, onChange);
-		session.addListener(mxEvent.NOTIFY, onChange);
-		session.addListener(mxEvent.GET, onChange);
-		session.start();
+		this.session.addListener(mxEvent.DISCONNECT, onChange);
+		this.session.addListener(mxEvent.CONNECT, onChange);
+		this.session.addListener(mxEvent.NOTIFY, onChange);
+		this.session.addListener(mxEvent.GET, onChange);
+		this.session.start();
 	}
 	
-	return session;
+	return this.session;
 };
 
 /**
@@ -72947,6 +73315,92 @@ mxEditor.prototype.showFixProperties = function (cell)
 			this.properties.setVisible(true);
 		}
 	}
+};
+
+/**
+ * dml
+ * 
+ * Function: showSpObjectListPopup
+ * 
+ * Creates and shows the sp object list dialog for the given
+ * cell. The content area of the dialog is created using
+ * <createSpObjectListPopup>. It shows the fix dialog 
+ *
+ * dml comment
+ * This function is to reload the previous cell spObjectListPopup
+ * when a new object is clicked.
+ */
+mxEditor.prototype.showSpObjectListPopup = function (cell)
+{
+	cell = cell || this.graph.getSelectionCell();
+	
+	// Uses the root node for the properties dialog
+	// if not cell was passed in and no cell is
+	// selected
+	if (cell == null)
+	{
+		cell = this.graph.getCurrentRoot();
+		
+		if (cell == null)
+		{
+			cell = this.graph.getModel().getRoot();
+		}
+	}
+	
+	if (cell != null)
+	{
+		// Makes sure there is no in-place editor in the
+		// graph and computes the location of the dialog
+		this.graph.stopEditing(true);
+
+		var offset = mxUtils.getOffset(this.graph.container);
+		var x = offset.x+10;
+		var y = offset.y;
+		
+		// Avoids moving the dialog if it is alredy open
+		if (this.spObjectListPopup != null && !this.moveSpObjectListPopup)
+		{
+			x = this.spObjectListPopup.getX();
+			y = this.spObjectListPopup.getY();
+		}
+		
+		// Places the dialog near the cell for which it
+		// displays the spObjectListPopup
+		else
+		{
+			var bounds = this.graph.getCellBounds(cell);
+			
+			if (bounds != null)
+			{
+				x += bounds.x+Math.min(200, bounds.width);
+				y += bounds.y;				
+			}			
+		}
+		
+		// Hides the existing properties dialog and creates a new one with the
+		// contents created in the hook method
+		this.hideSpObjectListPopup();
+		var node = this.createSpObjectListPopup(cell);
+		
+		if (node != null)
+		{
+			// Displays the contents in a window and stores a reference to the
+			// window for later hiding of the window
+			this.spObjectListPopup = new mxWindow(mxResources.get(this.spObjectListResourcePopup) ||
+				this.spObjectListResourcePopup, node, x, y, this.spObjectListPopupWidth, this.spObjectListPopupHeight, false);
+			this.spObjectListPopup.setVisible(true);
+		}
+	}
+};
+
+/**
+ * Function: isSpObjectListPopupVisible
+ * 
+ * Returns true if the sp object list dialog is currently visible.
+ */
+mxEditor.prototype.isSpObjectListPopupVisible = function ()
+{
+	return this.spObjectListPopup != null;
 };
 
 /**
@@ -73229,9 +73683,6 @@ mxEditor.prototype.createFixProperties = function (cell)
 					this.graph.updateCellSize(cell);
 				}
 
-				// dml - hacemos save también en la BD de la modificacion
-				this.saveSingleCell(value);
-
 			}
 			finally
 			{
@@ -73258,6 +73709,55 @@ mxEditor.prototype.createFixProperties = function (cell)
 };
 
 /**
+ * dml
+ * Function: createSpObjectListPopup
+ * 
+ * Creates and returns the DOM node that represents the contents
+ * of the properties dialog for the given cell. This implementation
+ * works for user objects that are XML nodes and display all the
+ * node attributes in a form. 
+ *
+ * dml comment
+ * This is a NEW Softpoint fix implementation
+ */
+mxEditor.prototype.createSpObjectListPopup = function (cell)
+{
+	var model = this.graph.getModel();
+	var value = model.getValue(cell);
+	
+	if (mxUtils.isNode(value))
+	{
+		// Creates a form for the user object inside
+		// the cell
+		var form = new mxForm('spObjectListPopup');
+		
+		// Adds a readonly field for the cell id
+		var id = form.addLabel('Choose a softpoint (or new) object to id: ' + cell.getId());
+
+		for (var i = 0; i < this.spObjList.length; i++)
+		{
+			var postInfo = "<changeSpObject><cellId>"+cell.getId()+"</cellId>"+"<newSpObject>"+this.spObjList[i]+"</newSpObject></changeSpObject>";
+			form.addLinkInvoke(this.spObjList[i], postInfo, this);
+
+		}
+
+		// Defines the function to be executed when the
+		// Cancel button is pressed in the dialog
+		var cancelFunction = mxUtils.bind(this, function()
+		{
+			// Hides the dialog
+			this.hideSpObjectListPopup();
+		});
+		
+		form.addButton(cancelFunction, 'Close');
+
+		return form.table;
+	}
+
+	return null;
+};
+
+/**
  * Function: hideProperties
  * 
  * Hides the properties dialog.
@@ -73268,6 +73768,20 @@ mxEditor.prototype.hideProperties = function ()
 	{
 		this.properties.destroy();
 		this.properties = null;
+	}
+};
+
+/**
+ * Function: hideProperties
+ * 
+ * Hides the properties dialog.
+ */
+mxEditor.prototype.hideSpObjectListPopup = function ()
+{
+	if (this.spObjectListPopup != null)
+	{
+		this.spObjectListPopup.destroy();
+		this.spObjectListPopup = null;
 	}
 };
 
@@ -74239,7 +74753,7 @@ mxCodec.prototype.decode = function(node, into)
 		}
 		catch (err)
 		{
-			// ignore
+			mxLog.debug('Cannot decode 1 '+node.nodeName+': '+err.message);
 		}
 		
 		try
@@ -74258,7 +74772,7 @@ mxCodec.prototype.decode = function(node, into)
 		}
 		catch (err)
 		{
-			mxLog.debug('Cannot decode '+node.nodeName+': '+err.message);
+			mxLog.debug('Cannot decode 2 '+node.nodeName+': '+err.message);
 		}
 	}
 	

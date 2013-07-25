@@ -14,25 +14,6 @@
 	function mxApplication(config)
 	{
 
-		var hideSplash = function()
-		{
-			// Fades-out the splash screen
-			var splash = document.getElementById('splash');
-			
-			if (splash != null)
-			{
-				try
-				{
-					mxEvent.release(splash);
-					mxEffects.fadeOut(splash, 1000, false);
-				}
-				catch (e)
-				{
-					splash.parentNode.removeChild(splash);
-				}
-			}
-		};
-		
 		try
 		{
 			if (!mxClient.isBrowserSupported())
@@ -47,12 +28,13 @@
 				
 				// dml - creamos una session para el editor NO FUNCIONA BIEN
 				var session = editor.connect('/bee_bpm_web/rest/wf/InicialiceSession/69',
-						'/bee_bpm_web/rest/wf/Poll','/bee_bpm_web/rest/wf/Notify',onChange());
+						'/bee_bpm_web/rest/wf/Poll','/bee_bpm_web/rest/wf/Notify',
+						'/bee_bpm_web/rest/wf/getSpObjectList',onChange());
 
 				// dml 20130709 - como ya puse la llamada en el oncomplete ya no hace falta el timeout, 
 				// ya abrirá el editor una vez creado el fichero para leer
 				//openProcessXmlMapTmp(editor);
-				setTimeout(function(){openProcessXmlMapTmp(editor)},1000);
+				setTimeout(function(){openProcessXmlMapTmpAndProperties(editor)},1000);
 				
 				// Updates the window title after opening new files
 				var title = document.title;
@@ -72,12 +54,12 @@
 				editor.setStatus('mxGraph '+mxClient.VERSION);
 				
 				// Shows the application				
-				hideSplash();
+				mxUtils.hideSplash(1000);
 			}
 		}
 		catch (e)
 		{
-			hideSplash();
+			mxUtils.hideSplash(1000);
 
 			// Shows an error message if the editor cannot start
 			mxUtils.alert('Cannot start application: '+e.message);
@@ -89,7 +71,7 @@
 	}
 	
 	// Opens the previously saved xml map
-	function openProcessXmlMapTmp(editor)
+	function openProcessXmlMapTmpAndProperties(editor)
 	{
 		editor.open("/bee_bpm_web/processXmlMapTmp.xml");
 		

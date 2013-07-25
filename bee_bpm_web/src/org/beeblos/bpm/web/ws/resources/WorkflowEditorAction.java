@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -24,14 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.StatusType;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
@@ -52,13 +42,15 @@ import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import com.sun.mail.imap.protocol.Status;
 
 @Path("/wf")
 public class WorkflowEditorAction extends CoreManagedBean {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private final static String DEFAULT_STEP_NAME = "STEP";
 	private final static String DEFAULT_RESPONSE_NAME = "RESPONSE";
 	
@@ -70,19 +62,23 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	@Path("/Save")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public String save(@FormParam("xml") String inputMap) {
+	public Response save(@FormParam("xml") String inputMap) {
 
 		try {
 
-			long tiempoInicio = System.currentTimeMillis();
+			System.out.println("------- INIT WS /Save -------");
 
+			long tiempoInicio = System.currentTimeMillis();
+			
 			String xml = URLDecoder.decode(inputMap, "UTF-8").replace("\n", "&#xa;");
 
-			xmlParsed = this._loadXMLFromString(xml);
+			xmlParsed = XmlConverterUtil.loadXMLFromString(xml);
 
 			this.parseXmlString();
 			
-			xml = this._loadStringFromXml();
+			xml = XmlConverterUtil.loadStringFromXml(xmlParsed);
+			
+//			xml = xml.substring(xml.indexOf("<mxGraphModel>"));
 			
 			if (process != null
 					&& process.getId() != null
@@ -97,10 +93,13 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			this._publishChanges(xml);
 
 			long totalTiempo = System.currentTimeMillis() - tiempoInicio;
-			System.out.println("TIEMPO DE WS :" + totalTiempo + " miliseg");
 
-			//return Response.ok("Correctamente",MediaType.TEXT_PLAIN).build();
-			return xml;
+			System.out.println("TIEMPO DE WS /Save:" + totalTiempo + " miliseg");
+			System.out.println("------- END WS /Save -------");
+
+//			xml = URLEncoder.encode(inputMap, "UTF-8").replace("&#xa;", "\n");
+
+			return Response.ok(xml, MediaType.TEXT_XML).build();
 			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -114,17 +113,6 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 
-	@Path("/SaveSingleCell")
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response saveSingleCell(@FormParam("xml") String inputMap) {
-		
-		System.out.println("WS SaveSingleCell inputMap: " + inputMap);
-
-		return Response.ok("WS SaveSingleCell SIN IMPLEMENTAR",MediaType.TEXT_PLAIN).build();
-
-	}
-	
 	@Path("/InicialiceSession/{processId}")
 	@GET
 	@Consumes(MediaType.TEXT_HTML)
@@ -134,6 +122,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		
 		if (processId != null){
 			
+			System.out.println("------- INIT WS /InicialiceSession -------");
 			System.out.println("WS InicialiceSession queremos el mapa del proceso: " + processId);
 			
 			try {
@@ -159,18 +148,106 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					MediaType.TEXT_XML).build();
 		}
 		
+		System.out.println("------- END WS /InicialiceSession -------");
 		return returnValue;
+
+	}
+	
+	@Path("/getSpObjectList")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response getSpObjectList(@FormParam("data") String data) {
+
+		String returnValue = null;
+		
+		try{
+		
+			long tiempoInicio = System.currentTimeMillis();
+
+			String decodedChanges = URLDecoder.decode(data, "UTF-8").replace("\n", "&#xa;");
+			
+			System.out.println("------- INIT WS /getSpObjectList -------");
+			System.out.println("WS getSpObjectList data: " + data);
+
+			xmlParsed = XmlConverterUtil.loadXMLFromString(decodedChanges);
+	
+			// Si tiene el tag <Task> es que se intenta añadir un nuevo task asi que le devolvemos toda la lista 
+			// para que elija si quiere alguno de los que tenemos o si quiere crear uno nuevo
+			NodeList taskList = xmlParsed.getElementsByTagName("Task");
+			
+			if (taskList != null
+					&& taskList.getLength() > 0){
+				returnValue = "New Item,";
+				List<StringPair> bdStepComboList = new WStepDefBL().getComboList(null, null);
+				if (bdStepComboList != null){
+					for (StringPair step : bdStepComboList){
+						returnValue += step.getString2() + " (id:" + step.getString1() + "),";
+					}
+				}
+				returnValue = returnValue.substring(0, returnValue.lastIndexOf(","));
+			}
+
+
+		long totalTiempo = System.currentTimeMillis() - tiempoInicio;
+		System.out.println("TIEMPO DE WS /getSpObjectList:" + totalTiempo + " miliseg");
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("WS getSpObjectList returnValue: " + returnValue);
+		
+		System.out.println("------- END WS /getSpObjectList -------");
+		return Response.ok(returnValue, MediaType.TEXT_XML).build();
 
 	}
 	
 	@Path("/Notify")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response notify(@FormParam("changes") String changes, @FormParam("newMap") String newMap) {
+	public void notify(@FormParam("changes") String changes, @FormParam("newMap") String newMap) {
 		
-		System.out.println("WS Notify changes: " + changes);
+		// dml 20130724
+		// IMPORTANTE: NOTIFY ADEMAS DE LOS CAMBIOS "changes" QUE SE RECIBEN Y QUE HAY QUE METER EN LA BASE DE DATOS
+		// SEA CUAL SEA LA NATURALEZA DEL MISMO TAMBIEN TIENE QUE PERSISTIR EL "newMap" EN EL WPROCESSDEF
+		// CORRESPONDIENTE. ESTO QUEDA ANOTADO PARA HACERLO CUANDO SE HAGA TODA LA FUNCIONALIDAD DEL "NOTIFY".
+		
+		try{
+		
+			long tiempoInicio = System.currentTimeMillis();
 
-		return Response.ok(changes, MediaType.TEXT_XML).build();
+			String decodedChanges = URLDecoder.decode(changes, "UTF-8").replace("\n", "&#xa;");
+			
+			System.out.println("------- INIT WS /Notify -------");
+
+			xmlParsed = XmlConverterUtil.loadXMLFromString(decodedChanges);
+	
+			// si tenemos el <Workflow> no hacemos nada porque o se trata de la primera carga del mapa en el editor
+			// que no tendremos que hacer nada o se trata de un /Save que se tratará por otro WS
+			NodeList workflowList = xmlParsed.getElementsByTagName("Workflow");
+			if (workflowList != null
+					&& workflowList.getLength() > 0){
+				System.out.println("WS Notify: no se hace nada porque es la primera notificacion de carga (se eliminara cuando se emplee el nuevo save creo): " + changes);				
+			} else{
+				System.out.println("WS Notify changes: " + changes);				
+			}
+
+			long totalTiempo = System.currentTimeMillis() - tiempoInicio;
+			System.out.println("TIEMPO DE WS /Notify:" + totalTiempo + " miliseg");
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("------- END WS /Notify -------");
 
 	}
 	
@@ -179,40 +256,14 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	@Consumes(MediaType.TEXT_HTML)
 	public Response poll() {
 		
+		System.out.println("------- INIT WS /Poll -------");
 		System.out.println("WS Poll inputMap: ");
+		System.out.println("------- END WS /Poll -------");
 
 		return 	Response.ok("WS Poll SIN IMPLEMENTAR",MediaType.TEXT_XML).build();
 
 	}
 	
-	private Document _loadXMLFromString(String xml) throws Exception {
-		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		InputSource is = new InputSource(new StringReader(xml));
-		
-		return builder.parse(is);
-		
-	}
-	
-	private String _loadStringFromXml() {
-		
-		try {
-		
-			DOMSource domSource = new DOMSource(xmlParsed);
-			StringWriter writer = new StringWriter();
-			StreamResult result = new StreamResult(writer);
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer transformer = tf.newTransformer();
-			transformer.transform(domSource, result);
-			
-			return writer.toString();
-	
-		} catch (TransformerException ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
 
 	private boolean parseXmlString() {
 
@@ -529,21 +580,25 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			
 			String redFontColor = "fontColor=red;";			
 			
-			// si el style ya tiene fontColor elimino el que tenia y lo pongo en rojo pero 
-			// dejo el resto de estilos que pudiera tener la celda
-			if (style.contains("fontColor")){
-				String newStyle = "";
-				String[] items = style.split(";");
-				for(int i =0; i < items.length ; i++){
-					if (items[i].contains("fontColor")){
-						  newStyle += redFontColor;
-					} else {
-						  newStyle += items[i]+";";
-					}
-				}
-				mxCell.setAttribute("style", newStyle);
-			} else {
+			if (style.isEmpty()){
 				mxCell.setAttribute("style", mxCell.getAttribute("style") + redFontColor);
+			} else {
+				// si el style ya tiene fontColor elimino el que tenia y lo pongo en rojo pero 
+				// dejo el resto de estilos que pudiera tener la celda
+				if (style.contains("fontColor")){
+					String newStyle = "";
+					String[] items = style.split(";");
+					for(int i = 0; i < items.length ; i++){
+						if (items[i].contains("fontColor")){
+							  newStyle += redFontColor;
+						} else {
+							  newStyle += items[i]+";";
+						}
+					}
+					mxCell.setAttribute("style", newStyle);
+				} else {
+					mxCell.setAttribute("style", mxCell.getAttribute("style") + ";" + redFontColor);
+				}
 			}
 			
 		}
