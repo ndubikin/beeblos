@@ -250,6 +250,168 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		System.out.println("------- END WS /Notify -------");
 
 	}
+
+	@Path("/NotifyWithResponse")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response notifyWithResponse(@FormParam("changes") String changes, @FormParam("newMap") String newMap) {
+		
+		String returnValue = "";
+		
+		try{
+		
+			long tiempoInicio = System.currentTimeMillis();
+
+			String decodedChanges = URLDecoder.decode(changes, "UTF-8").replace("\n", "&#xa;");
+			String decodedNewMap = URLDecoder.decode(newMap, "UTF-8").replace("\n", "&#xa;");
+			
+			System.out.println("------- INIT WS /NotifyWithResponse -------");
+
+			xmlParsed = XmlConverterUtil.loadXMLFromString(decodedChanges);
+			
+			Document newMapParsed = XmlConverterUtil.loadXMLFromString(decodedNewMap);
+			
+			// VAMOS A HACER UN PARSEO DE LA ENTRADA DE MOMENTO SOLO NOS QUEDAMOS CON LOS "CHANGES" DE TASK
+			// 1. si lo que entra en el "notify" es un cambio de spObject
+			NodeList changeStepList = xmlParsed.getElementsByTagName("changeSpObject");
+			if (changeStepList != null
+					&& changeStepList.getLength() > 0){
+				
+				newMapParsed = this._changeSpObject(newMapParsed);
+				
+				returnValue = this._persistXmlMapAndPublishChanges(newMapParsed);
+				
+			
+			}
+				
+			
+			long totalTiempo = System.currentTimeMillis() - tiempoInicio;
+			System.out.println("TIEMPO DE WS /NotifyWithResponse:" + totalTiempo + " miliseg");
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("------- END WS /NotifyWithResponse -------");
+		return Response.ok(returnValue, MediaType.TEXT_XML).build();
+
+	}
+
+	// dml 20130726
+	private Document _changeSpObject(Document newXmlMapParsed){
+		
+		String cellToChangeId = "";
+		NodeList cellToChangeList = xmlParsed.getElementsByTagName("cellId");
+		if (cellToChangeList != null
+				&& cellToChangeList.getLength() > 0){
+			
+			// este for iterara una única vez ya que solo hay un elemento "Workflow"
+			for (int i = 0; i < cellToChangeList.getLength(); i++) {
+
+				Element cellToChange = (Element) cellToChangeList.item(i);
+				
+				cellToChangeId = cellToChange.getAttribute("value");
+				
+			}
+				
+		}
+			
+		String newSpObjectId = "";
+		String newSpObjectName = "";
+		NodeList newSpObjectList = xmlParsed.getElementsByTagName("newSpObject");
+		if (newSpObjectList != null
+				&& newSpObjectList.getLength() > 0){
+			
+			// este for iterara una única vez ya que solo hay un elemento "Workflow"
+			for (int i = 0; i < newSpObjectList.getLength(); i++) {
+
+				Element newSpObject = (Element) newSpObjectList.item(i);
+				
+				String newSpObjectValue = newSpObject.getAttribute("value");
+				
+				if (newSpObjectValue != null && !"".equals(newSpObjectValue)){
+					newSpObjectId = newSpObjectValue.substring(
+							newSpObjectValue.indexOf("(id:") + 4, newSpObjectValue.indexOf(")"));
+					newSpObjectName = newSpObjectValue.substring(0, newSpObjectValue.indexOf("(id:"));
+				}
+				
+			}
+				
+		}
+		
+		if (cellToChangeId != null && !"".equals(cellToChangeId)
+			&& newSpObjectId != null && !"".equals(newSpObjectId)
+			&& newSpObjectName != null && !"".equals(newSpObjectName)){
+			
+			// recorro los "task" buscando el cellToChangeId que tenemos para cambiarle el "spId" y el "nombre".
+			NodeList taskList = newXmlMapParsed.getElementsByTagName("Task");
+			String xmlId = "";
+			// iterate the tasks (steps)
+			for (int i = 0; i < taskList.getLength(); i++) {
+				
+				Element task = (Element) taskList.item(i);
+
+				xmlId = task.getAttribute("id");
+				
+				// si encontramos el task a cambiar hacemos todos los cambios necesarios y salimos del algoritmo.
+				if (xmlId != null
+					&& !xmlId.isEmpty()
+					&& xmlId.equals(cellToChangeId)){
+					
+					task.setAttribute("spId", newSpObjectId);
+					task.setAttribute("label", newSpObjectName);
+					break;
+				
+				}
+
+			}
+			
+		}
+		
+		
+		return newXmlMapParsed; 
+		
+	}
+	
+	// dml 20130726
+	private String _persistXmlMapAndPublishChanges(Document newXmlMapParsed) 
+			throws IOException, NumberFormatException, WProcessDefException, WStepSequenceDefException{
+
+		String returnValue = XmlConverterUtil.loadStringFromXml(newXmlMapParsed);
+		
+		// 1. capturo el tag Workflow que será el equivalente en nuestra BD a un WProcessDef
+		NodeList workflowList = newXmlMapParsed.getElementsByTagName("Workflow");
+
+		// este for iterara una única vez ya que solo hay un elemento "Workflow"
+		for (int i = 0; i < workflowList.getLength(); i++) {
+
+			Element workflow = (Element) workflowList.item(i);
+			
+			String processId = workflow.getAttribute("spId");
+			
+			if (processId != null
+					&& !processId.isEmpty()
+					&& !"".equals(processId)){
+				
+				new WProcessDefBL().updateProcessXmlMap(Integer.valueOf(processId), returnValue, currentUserId);
+				
+				this._publishChanges(returnValue);
+
+			} else {
+				
+				// GRABAR ERROR Y SALIR
+			
+			}
+
+		}
+
+		return returnValue;
+		
+	}
 	
 	@Path("/Poll")
 	@GET
