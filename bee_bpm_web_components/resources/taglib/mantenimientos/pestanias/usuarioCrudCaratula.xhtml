@@ -75,7 +75,7 @@
 
 	<rich:panel style="width:100%" >
 		<f:facet name="header">
-			<h:outputText value="Usuarios" styleClass="labelFormBold" />
+			<h:outputText value="#{msg.label_users}" styleClass="labelFormBold" />
 		</f:facet>
 
 		<h:form id="frmUsuarioModif">
@@ -97,7 +97,7 @@
 	
 		<h:panelGrid columns="2">
 	
-			<h:outputText value="#{msg.label_login_user}" styleClass="labelForm" />
+			<h:outputText value="#{msg.label_user_login}" styleClass="labelForm" />
 				<h:panelGrid columns="2" >
 					<h:inputText id="loginuser" value="#{usuarioBean.currentUsuario.usuarioLogin}"
 						required="true"  style="width:300px"/>
@@ -106,17 +106,17 @@
 						style="width:80px;" />	
 				</h:panelGrid>	
 		
-				<h:outputText value="#{msg.label_nombres}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 				<h:inputText id="nombres" value="#{usuarioBean.currentUsuario.nombres}"
 					required="false"  style="width:300px"/>
 				
-				<h:outputText value="#{msg.label_apellidos}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_last_name}" styleClass="labelForm" />
 				<h:inputText id="apellidos" value="#{usuarioBean.currentUsuario.apellidos}"
 						required="false"  style="width:300px"/>
 	
 				<rich:spacer height="10" /><rich:spacer height="10" />
 	
-				<h:outputText value="#{msg.label_departamento}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_department}" styleClass="labelForm" />
 				<h:selectOneMenu id="departamentoCombo" value="#{usuarioBean.currentUsuario.idDepto}" style="width:300px" >
 					<f:selectItems value="#{usuarioBean.listadoDeptos}" />
 				</h:selectOneMenu>
@@ -124,7 +124,7 @@
 				<rich:spacer height="10" /><rich:spacer height="10" />
 				
 				
-				<h:outputText value="#{msg.label_userpass}" styleClass="labelForm"/>
+				<h:outputText value="#{msg.label_password}" styleClass="labelForm"/>
 			
 				<h:panelGroup>
 					<h:inputSecret id="pass" value="#{usuarioBean.password}" 
@@ -141,35 +141,35 @@
 				</h:panelGroup>
 				
 				
-				<h:outputText value="#{msg.label_habilitado}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_active}" styleClass="labelForm" />
 				<h:panelGroup>
 					<h:selectOneRadio  id="habilitado" value="#{usuarioBean.currentUsuario.habilitado}" styleClass="labelForm">
-						<f:selectItem itemValue="N" itemLabel="No" />
-						<f:selectItem itemValue="S" itemLabel="Si" />
+						<f:selectItem itemValue="N" itemLabel="#{msg.label_no}" />
+						<f:selectItem itemValue="S" itemLabel="#{msg.label_yes}" />
 					</h:selectOneRadio>
 				</h:panelGroup>
 				
-				<h:outputText value="#{msg.label_admon}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_administrator}" styleClass="labelForm" />
 				<h:panelGroup>
 					<h:selectOneRadio  id="admon" value="#{usuarioBean.currentUsuario.admon}" styleClass="labelForm">
-						<f:selectItem itemValue="N" itemLabel="No" />
-						<f:selectItem itemValue="S" itemLabel="Si" />
+						<f:selectItem itemValue="N" itemLabel="#{msg.label_no}" />
+						<f:selectItem itemValue="S" itemLabel="#{msg.label_yes}" />
 					</h:selectOneRadio>
 				</h:panelGroup>
 				
-				<h:outputText value="#{msg.label_jefeDeDepartamento}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_department_boss}" styleClass="labelForm" />
 				<h:panelGroup>
 					<h:selectOneRadio id="jefe" value="#{usuarioBean.currentUsuario.jefeDepartamento}" styleClass="labelForm">
-						<f:selectItem  itemValue="N" itemLabel="No"/>
-						<f:selectItem  itemValue="S" itemLabel="Si"/>
+						<f:selectItem  itemValue="N" itemLabel="#{msg.label_no}"/>
+						<f:selectItem  itemValue="S" itemLabel="#{msg.label_yes}"/>
 					</h:selectOneRadio>
 				</h:panelGroup>
 				
-				<h:outputText value="#{msg.label_suLectura}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_read_only}" styleClass="labelForm" />
 				<h:panelGroup>
 					<h:selectOneRadio id="suLectura" value="#{usuarioBean.currentUsuario.suLectura}" styleClass="labelForm">
-						<f:selectItem  itemValue="N" itemLabel="No"/>
-						<f:selectItem  itemValue="S" itemLabel="Si"/>
+						<f:selectItem  itemValue="N" itemLabel="#{msg.label_no}"/>
+						<f:selectItem  itemValue="S" itemLabel="#{msg.label_yes}"/>
 					</h:selectOneRadio>
 										
 				</h:panelGroup>
@@ -183,7 +183,7 @@
 							actionListener="#{usuarioBean.guardar}" />
 						
 						<h:commandButton id="btnBorrar" 
-							value="#{msg.label_borrar}" style="width:80px;" 
+							value="#{msg.label_delete}" style="width:80px;" 
 							disabled="#{usuarioBean.disableBotonBorrar}"
 							action="#{usuarioBean.borra}" onclick="return confirmar();"/>
 					</h:panelGrid>
@@ -212,7 +212,7 @@
 				value="#{usuarioBean.usuarios}" var="u" >
 			
 				<f:facet name="header">
-					<h:outputText value="#{msg.label_usuariosEnElSistema}" />
+					<h:outputText value="#{msg.label_system_user}" />
 				</f:facet>
 			
 				<rich:column sortBy="#{u.idUsuario}" style="width:30px; text-align: left;"> 
@@ -223,57 +223,57 @@
 	            </rich:column>
 	            <rich:column sortBy="#{u.usuarioLogin}" style="width:150px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_loginUser}"/>
+	                    <h:outputText value="#{msg.label_user_login}"/>
 	                </f:facet>
 	                <h:outputText value="#{u.usuarioLogin}"/>
 	            </rich:column>
 	            <rich:column sortBy="#{u.nombres}" style="width:150px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_nombre}"/>
+	                    <h:outputText value="#{msg.label_name}"/>
 	                </f:facet>
 	                <h:outputText value="#{u.nombres}"/>
 	            </rich:column>
 	            <rich:column sortBy="#{u.apellidos}" style="width:150px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_apellidos}"/>
+	                    <h:outputText value="#{msg.label_last_name}"/>
 	                </f:facet>
 	                <h:outputText value="#{u.apellidos}"/>
 	            </rich:column>
 	            
 	             <rich:column sortBy="#{u.habilitado}" style="width:30px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_habilitado}"/>
+	                    <h:outputText value="#{msg.label_active}"/>
 	                </f:facet>
-	                <h:outputText value="#{u.habilitado=='S' ? msg.label_si : msg.label_no}"/>
+	                <h:outputText value="#{u.habilitado=='S' ? msg.label_yes : msg.label_no}"/>
 	            </rich:column>
 	            <rich:column sortBy="#{u.admon}" style="width:20px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_admon}"/>
+	                    <h:outputText value="#{msg.label_administrator}"/>
 	                </f:facet>
-	                <h:outputText value="#{u.admon=='S' ? msg.label_si : msg.label_no}"/>
+	                <h:outputText value="#{u.admon=='S' ? msg.label_yes : msg.label_no}"/>
 	            </rich:column>
 	            <rich:column sortBy="#{u.jefeDepartamento}" style="width:30px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_jefeDeDepartamento}"/>
+	                    <h:outputText value="#{msg.label_department_boss}"/>
 	                </f:facet>
-	                <h:outputText value="#{u.jefeDepartamento=='S' ? msg.label_si : msg.label_no}"/>
+	                <h:outputText value="#{u.jefeDepartamento=='S' ? msg.label_yes : msg.label_no}"/>
 	            </rich:column>
 	            <rich:column sortBy="#{u.suLectura}" style="width:20px; text-align: left;"> 
 	            	<f:facet name="header">
-	                    <h:outputText value="#{msg.label_suLectura}"/>
+	                    <h:outputText value="#{msg.label_read_only}"/>
 	                </f:facet>
-	                <h:outputText value="#{u.suLectura=='S' ? msg.label_si : msg.label_no}"/>
+	                <h:outputText value="#{u.suLectura=='S' ? msg.label_yes : msg.label_no}"/>
 	            </rich:column>
 	        	            
 	            <rich:column sortBy="#{u.idDepto}" style="width:30px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_idDepto}"/>
+	                    <h:outputText value="#{msg.label_id_dept}"/>
 	                </f:facet>
 	                <h:outputText value="#{u.idDepto}"/>
 	            </rich:column>
 	               <rich:column sortBy="#{u.lastLoginDate}" style="width:100px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_ultimoLogin}"/>
+	                    <h:outputText value="#{msg.label_last_login}"/>
 	                </f:facet>
 	                <h:outputText value="#{u.lastLoginDate}"/>
 	            </rich:column>

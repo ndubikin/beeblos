@@ -122,7 +122,7 @@
 
 				</h:panelGroup>		
 					
-				<h:outputText value="#{msg.label_nombre}" styleClass="labelForm" />							
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />							
 				<h:panelGroup>
 					
 						<h:inputText id="nombre" value="#{monedaBean.moneda.monedaNombre}"
@@ -131,12 +131,12 @@
 						<rich:message for="nombre" showSummary="false"/>
 											
 						<rich:spacer width="10" />
-						<h:commandButton id="btnGuardar" value="#{msg.label_guardar}"
+						<h:commandButton id="btnGuardar" value="#{msg.label_save}"
 							action="#{monedaBean.guardar}"/>										
 	
 						<rich:spacer width="10" />
 	
-						<h:commandButton id="btnBorrar" value="#{msg.label_borrar}"
+						<h:commandButton id="btnBorrar" value="#{msg.label_delete}"
 							actionListener="#{monedaBean.borra}" onclick="return confirmar()"/>		
 						
 					</h:panelGroup>	
@@ -163,7 +163,7 @@
 
 	           	<rich:column  style="width:20px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_identificador}"/>
+	                    <h:outputText value="#{msg.label_identifier}"/>
 	                </f:facet>
 	                <h:outputText value="#{mon.idMoneda}"/>
 	            </rich:column> 
@@ -177,7 +177,7 @@
 	            
 	            <rich:column  style="width:20px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_nombre}"/>
+	                    <h:outputText value="#{msg.label_name}"/>
 	                </f:facet>
 	                <h:outputText value="#{mon.monedaNombre}"/>
 	            </rich:column> 

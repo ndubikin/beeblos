@@ -71,7 +71,7 @@
 									reRender="wUserDefTable" />
 							</h:panelGroup>
 							
-							<h:outputText value="#{msg.label_login_user}"
+							<h:outputText value="#{msg.label_user_login}"
 								styleClass="labelForm" />
 							<h:inputText id="login_id"
 								value="#{wUserDefBean.currentWUserDef.login}"
@@ -149,7 +149,7 @@
 								<rich:column sortBy="#{wud.login}"
 									style="width:150px; text-align: left;">
 									<f:facet name="header">
-										<h:outputText value="#{msg.label_login_user}" />
+										<h:outputText value="#{msg.label_user_login}" />
 									</f:facet>
 									<h:outputText value="#{wud.login}" />
 								</rich:column>
