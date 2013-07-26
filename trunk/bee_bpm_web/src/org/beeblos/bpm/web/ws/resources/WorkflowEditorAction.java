@@ -159,7 +159,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response getSpObjectList(@FormParam("data") String data) {
 
-		String returnValue = null;
+		String returnValue = "";
 		
 		try{
 		
@@ -180,12 +180,15 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					&& taskList.getLength() > 0){
 
 				List<StringPair> bdStepComboList = new WStepDefBL().getComboList(null, null);
-				if (bdStepComboList != null){
+				if (bdStepComboList != null
+						&& !bdStepComboList.isEmpty()){
 					for (StringPair step : bdStepComboList){
 						returnValue += step.getString2() + " (id:" + step.getString1() + "),";
 					}
+					
+					returnValue = returnValue.substring(0, returnValue.lastIndexOf(","));
 				}
-				returnValue = returnValue.substring(0, returnValue.lastIndexOf(","));
+
 			}
 
 
@@ -303,14 +306,13 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	}
 
 	// dml 20130726
-	private Document _changeSpObject(Document newXmlMapParsed){
+	private Document _changeSpObject(Document newXmlMapParsed) throws NumberFormatException, WStepDefException{
 		
 		String cellToChangeId = "";
 		NodeList cellToChangeList = xmlParsed.getElementsByTagName("cellId");
 		if (cellToChangeList != null
 				&& cellToChangeList.getLength() > 0){
 			
-			// este for iterara una única vez ya que solo hay un elemento "Workflow"
 			for (int i = 0; i < cellToChangeList.getLength(); i++) {
 
 				Element cellToChange = (Element) cellToChangeList.item(i);
@@ -363,8 +365,21 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					&& !xmlId.isEmpty()
 					&& xmlId.equals(cellToChangeId)){
 					
+					WStepDef step = new WStepDefBL().getWStepDefByPK(Integer.valueOf(newSpObjectId), currentUserId);
+					
 					task.setAttribute("spId", newSpObjectId);
 					task.setAttribute("label", newSpObjectName);
+					task.setAttribute("description", step.getStepComments());
+				
+					String responses = "";
+					if (step.getResponse() != null
+							&& !step.getResponse().isEmpty()){
+						for (WStepResponseDef response : step.getResponse()){
+							responses += response.getName() + "|";
+						}
+					}
+					task.setAttribute("responses", responses);
+					
 					break;
 				
 				}
