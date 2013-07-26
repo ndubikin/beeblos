@@ -284,11 +284,14 @@ public class WStepDefDao {
 
 			tx.begin();
 			
-			String query =  "SELECT * FROM w_step_def ws " +
-							"WHERE ws.id IN (SELECT DISTINCT wsd.id_origin_step " +
-							"FROM  w_step_sequence_def wsd " +
-							"WHERE wsd.process_id = :processId )";
-			
+			// NES 20130726 - ajustada query para que traiga los pasos que no tengan rutas "salientes" (que con la anterior no los traía...)
+			String query =  "SELECT sd.* FROM w_step_def sd " 
+							+ "WHERE sd.id IN ("
+							+ "SELECT DISTINCT wsd.id_origin_step FROM  w_step_sequence_def wsd WHERE wsd.process_id = :processId "
+							+ "UNION "
+							+ "SELECT DISTINCT id_dest_step FROM w_step_sequence_def WHERE process_id = :processId "
+							+ ")";
+		
 			System.out.println("[QUERY]: "+query);
 			
 			steps = session.createSQLQuery(query)
