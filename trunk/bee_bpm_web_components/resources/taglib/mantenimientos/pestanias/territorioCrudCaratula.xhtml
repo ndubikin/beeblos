@@ -130,7 +130,7 @@
 			
 	<rich:panel style="width:100%"  >
 		<f:facet name="header">
-			<h:outputText value="#{msg.label_territorios}" styleClass="labelFormWhiteTitle" />
+			<h:outputText value="#{msg.label_territories}" styleClass="labelFormWhiteTitle" />
 		</f:facet>
 			
 		<h:form id="frmMTerritorio">
@@ -155,10 +155,10 @@
 		
 
 	<fieldset class="demo_fieldset">
-		<legend class="demo_legend"><h:outputText value="Seleccione Territorio Padre"/></legend> 	
+		<legend class="demo_legend"><h:outputText value="#{msg.label_select_parent_territory}"/></legend> 	
 
 			<h:panelGrid id="selectPlace" columns="3" width="90%" columnClasses="colStyleF1,colStyleF2">
-				<h:outputText value="#{msg.label_Pais}:" styleClass="firstLeftText"/>
+				<h:outputText value="#{msg.label_country}:" styleClass="firstLeftText"/>
 				<h:selectOneMenu id="mt_pais" value="#{mTerritorioBean.idPais}"  
 					disabled = "#{!mTerritorioBean.disableBtnBorrar}" 
 					style="width:200px; height: 24px; font-size:13px;padding: 4px;">
@@ -166,7 +166,7 @@
 				</h:selectOneMenu>
 				<rich:spacer width="10" />
 				
-				<h:outputText value="#{msg.label_CCAA}:" styleClass="firstLeftText"/>
+				<h:outputText value="#{msg.label_region}:" styleClass="firstLeftText"/>
 				<h:selectOneMenu id="mt_ccaa" value="#{mTerritorioBean.idTerritorioCCAA}"   
 					disabled = "#{!mTerritorioBean.disableBtnBorrar}" 
 					style="width:200px; height: 24px; font-size:13px;padding: 4px;">
@@ -176,7 +176,7 @@
 				</h:selectOneMenu>
 				<rich:spacer width="10" />
 				
-				<h:outputText value="#{msg.label_Provincia}:" styleClass="firstLeftText"/>
+				<h:outputText value="#{msg.label_state}:" styleClass="firstLeftText"/>
 				<h:selectOneMenu id="mt_prov" value="#{mTerritorioBean.idTerritorioProvincia}"  
 					disabled = "#{!mTerritorioBean.disableBtnBorrar}"  
 					style="width:200px; height: 24px; font-size:13px;padding: 4px;">
@@ -193,13 +193,13 @@
 	</fieldset>	
 	
 	<fieldset class="demo_fieldset">
-		<legend class="demo_legend"><h:outputText value="Datos del Territorio"/></legend> 														
+		<legend class="demo_legend"><h:outputText value="#{msg.label_territory_data}"/></legend> 														
 			<h:panelGrid id="territorioData" columns="2" width="90%" columnClasses="colStyleF1,colStyleF2" >									
-				<h:outputText value="#{msg.label_nombre}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 				<h:inputText id="ter_nombre" value="#{mTerritorioBean.currentTerritorio.territorioNombre}"
 					required="false"  style="width:300px"/>	
 
-				<h:outputText value="#{msg.label_comentario}" styleClass="labelForm" />	
+				<h:outputText value="#{msg.label_comment}" styleClass="labelForm" />	
 				<h:panelGroup>				
 					<h:inputTextarea id="ter_comentario" value="#{mTerritorioBean.currentTerritorio.territorioComentario}"
 						required="false" style="width:300px; height: 40px; ">						
@@ -212,7 +212,7 @@
 	
 					<rich:spacer width="10" />
 	
-					<h:commandButton id="btnBorrar" value="#{msg.label_borrar}" disabled = "#{mTerritorioBean.disableBtnBorrar}"
+					<h:commandButton id="btnBorrar" value="#{msg.label_delete}" disabled = "#{mTerritorioBean.disableBtnBorrar}"
 						actionListener="#{mTerritorioBean.borra}" onclick="return confirmar()"
 					/>																			
 				</h:panelGroup>	
@@ -237,7 +237,7 @@
 				value="#{mTerritorioBean.listaTerritorios}" var="ter" >
 				
 				<f:facet name="header">
-					<h:outputText value="#{msg.label_territorios}" />
+					<h:outputText value="#{msg.label_territories}" />
 				</f:facet>
 
 	           	<rich:column  style="width:20px; text-align: left;"> 
@@ -248,13 +248,13 @@
 	            </rich:column> 
 	            <rich:column sortBy="#{ter.territorioNombre}" style="width:150px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_nombre}"/>
+	                    <h:outputText value="#{msg.label_name}"/>
 	                </f:facet>
 	                <h:outputText value="#{ter.territorioNombre}"/>
 	            </rich:column>
 	            <rich:column sortBy="#{ter.territorioComentario}" style="width:150px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_comentario}"/>
+	                    <h:outputText value="#{msg.label_comment}"/>
 	                </f:facet>
 	                <h:outputText value="#{ter.territorioComentario}"/>
 	            </rich:column> 

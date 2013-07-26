@@ -116,7 +116,7 @@
 
 			<h:panelGrid columns="2" width="70%">
 
-					<h:outputText value="#{msg.label_nombre}" styleClass="labelForm" />
+					<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 					<h:panelGroup>
 						<h:inputHidden id="hddIdTipoDireccion" value="#{tipoDireccionBean.tipoDireccion.idTipoDireccion}"/>
 						<h:inputText id="nombre" value="#{tipoDireccionBean.tipoDireccion.tipoDireccionNombre}"
@@ -126,7 +126,7 @@
 					</h:panelGroup>		
 					
 								
-					<h:outputText value="#{msg.label_comentario}" styleClass="labelForm" />	
+					<h:outputText value="#{msg.label_comment}" styleClass="labelForm" />	
 					<h:panelGroup>				
 						
 						<h:inputTextarea id="comentario" value="#{tipoDireccionBean.tipoDireccion.tipoDireccionComentario}"
@@ -134,12 +134,12 @@
 						</h:inputTextarea>	
 						
 						<rich:spacer width="10" />
-						<h:commandButton id="btnGuardar" value="#{msg.label_guardar}"
+						<h:commandButton id="btnGuardar" value="#{msg.label_save}"
 							action="#{tipoDireccionBean.guardar}"/>										
 	
 						<rich:spacer width="10" />
 	
-						<h:commandButton id="btnBorrar" value="#{msg.label_borrar}"
+						<h:commandButton id="btnBorrar" value="#{msg.label_delete}"
 							actionListener="#{tipoDireccionBean.borra}" onclick="return confirmar()"/>																			
 					</h:panelGroup>											
 
@@ -165,21 +165,21 @@
 
 	           	<rich:column  style="width:50px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_identificador}"/>
+	                    <h:outputText value="#{msg.label_identifier}"/>
 	                </f:facet>
 	                <h:outputText value="#{tipoDireccion.idTipoDireccion}"/>
 	            </rich:column> 
 	            
 	            <rich:column  style="width:150px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_nombre}"/>
+	                    <h:outputText value="#{msg.label_name}"/>
 	                </f:facet>
 	                <h:outputText value="#{tipoDireccion.tipoDireccionNombre}"/>
 	            </rich:column> 
 	            
 	            <rich:column  style="width:150px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_comentario}"/>
+	                    <h:outputText value="#{msg.label_comment}"/>
 	                </f:facet>
 	                <h:outputText value="#{tipoDireccion.tipoDireccionComentario}"/>
 	            </rich:column> 

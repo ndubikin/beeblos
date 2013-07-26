@@ -144,7 +144,7 @@
 				<h:inputText id="id_method" value="#{wEmailAccountBean.currEmailAccount.identificationMethod}"
 					required="false"  style="width:150px; font-size:13px; padding: 4px;"/>		
 												
-				<h:outputText value="#{msg.label_usuario}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_user}" styleClass="labelForm" />
 				<h:inputText id="output_user" value="#{wEmailAccountBean.currEmailAccount.outputUserName}"
 					required="false"  style="width:150px; font-size:13px; padding: 4px;"/>
 					
@@ -176,7 +176,7 @@
 						required="false" style="width:600px; height:150px; font-size:13px; padding: 4px;"/>			
 					<rich:spacer id="spcFirmaTexto" height="10"/>
 					
-					<h:outputText id="html_signature" value="#{msg.label_firma_html}" styleClass="labelForm"/>
+					<h:outputText id="html_signature" value="#{msg.label_signature_html}" styleClass="labelForm"/>
 			        <h:panelGroup id="signature_html_control">
 						<rich:editor id="html_signature_text" configuration="#{editorBean.currentConfiguration}" 
 									 width="600" height="150" viewMode="#{editorBean.viewMode}" 

@@ -89,7 +89,7 @@
 	<rich:panel style="width:100%"  >
 		
 		<f:facet name="header">
-			<h:outputText value="#{msg.label_paises}" styleClass="labelFormWhiteTitle" />
+			<h:outputText value="#{msg.label_countries}" styleClass="labelFormWhiteTitle" />
 		</f:facet>
 
 		<rich:spacer height="10" />
@@ -116,7 +116,7 @@
 			<h:panelGrid columns="2" width="70%">
 
 
-					<h:outputText value="#{msg.label_identificador}" styleClass="labelForm" />
+					<h:outputText value="#{msg.label_identifier}" styleClass="labelForm" />
 					<h:panelGroup>
 						<h:inputText id="idPais" value="#{paisBean.pais.idPais}"
 							required="false"  style="width:50px" maxlength="2">
@@ -125,7 +125,7 @@
 					</h:panelGroup>		
 					
 								
-					<h:outputText value="#{msg.label_nombre}" styleClass="labelForm" />	
+					<h:outputText value="#{msg.label_name}" styleClass="labelForm" />	
 					<h:panelGroup>				
 						<h:inputText id="paisNombre" value="#{paisBean.pais.paisNombre}"
 							required="false"  style="width:300px">						
@@ -138,19 +138,19 @@
 					</h:panelGroup>	
 					
 								
-					<h:outputText value="#{msg.label_comentario}" styleClass="labelForm" />	
+					<h:outputText value="#{msg.label_comment}" styleClass="labelForm" />	
 					<h:panelGroup>	
 						<h:inputText id="paisComentario" value="#{paisBean.pais.paisComentario}"
 							required="false"  style="width:300px">						
 						</h:inputText>	
 
 						<rich:spacer width="10" />
-						<h:commandButton id="btnGuardar" value="#{msg.label_guardar}"
+						<h:commandButton id="btnGuardar" value="#{msg.label_save}"
 							action="#{paisBean.guardar}"/>										
 	
 						<rich:spacer width="10" />
 	
-						<h:commandButton id="btnBorrar" value="#{msg.label_borrar}"
+						<h:commandButton id="btnBorrar" value="#{msg.label_delete}"
 							actionListener="#{paisBean.borra}" onclick="return confirmar()"/>																			
 					</h:panelGroup>											
 
@@ -176,19 +176,19 @@
 
 	           	<rich:column sortBy="#{p.idPais}" style="width:20px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_identificador}"/>
+	                    <h:outputText value="#{msg.label_identifier}"/>
 	                </f:facet>
 	                <h:outputText value="#{p.idPais}"/>
 	            </rich:column> 
 	           	<rich:column sortBy="#{p.paisNombre}" style="width:20px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_nombre}"/>
+	                    <h:outputText value="#{msg.label_name}"/>
 	                </f:facet>
 	                <h:outputText value="#{p.paisNombre}"/>
 	            </rich:column> 
 	            <rich:column sortBy="#{p.paisComentario}" style="width:20px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_comentario}"/>
+	                    <h:outputText value="#{msg.label_comment}"/>
 	                </f:facet>
 	                <h:outputText value="#{p.paisComentario}"/>
 	            </rich:column> 
