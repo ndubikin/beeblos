@@ -24,7 +24,7 @@
 			</Group>
 		</add>
 		<add as="edge">
-			<Edge label="" description="">
+			<Edge label="" description="" spId="">
 				<mxCell edge="1">
 					<mxGeometry as="geometry" relative="1"/>
 				</mxCell>
@@ -38,7 +38,7 @@
 			</Swimlane>
 		</add>
 		<add as="task">
-			<Task label="Task" description="" href="">
+			<Task label="Task" description="" href="" spId="">
 				<mxCell vertex="1">	
 					<mxGeometry as="geometry" width="72" height="32"/>
 				</mxCell>

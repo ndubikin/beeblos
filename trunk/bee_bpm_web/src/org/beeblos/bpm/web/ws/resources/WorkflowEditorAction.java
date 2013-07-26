@@ -9,7 +9,6 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Encoded;
@@ -26,11 +25,9 @@ import javax.ws.rs.core.Response;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepHeadBL;
-import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
-import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -53,6 +50,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	
 	private final static String DEFAULT_STEP_NAME = "STEP";
 	private final static String DEFAULT_RESPONSE_NAME = "RESPONSE";
+	private final static String DEFAULT_ROUTE_NAME = "ROUTE";
 	
 	private Integer currentUserId = 1000;
 	private WProcessDef process = null;
@@ -177,7 +175,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			
 			if (taskList != null
 					&& taskList.getLength() > 0){
-				returnValue = "New Item,";
+
 				List<StringPair> bdStepComboList = new WStepDefBL().getComboList(null, null);
 				if (bdStepComboList != null){
 					for (StringPair step : bdStepComboList){
@@ -435,7 +433,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		
 		WStepHeadBL stepHeadBL = new WStepHeadBL();
 		WStepDefBL stepBL = new WStepDefBL();
-		WStepResponseDefBL stepResponseBL = new WStepResponseDefBL();
+		WStepSequenceDefBL routeBL = new WStepSequenceDefBL();
 		
 		try {
 
@@ -540,7 +538,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 			}
 			
-			// 2. Ahora parseo los "Edge" que serán los WStepResponseDef de nuestro proceso además de crear los WStepSequenceDef
+			// 3. Ahora parseo los "Edge" que serán los WStepResponseDef de nuestro proceso además de crear los WStepSequenceDef
 
 			// variables auxiliares que nos harán falta para comprobaciones
 			String xmlFromStepId = "";
@@ -614,89 +612,57 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 				}
 				
-				// si no tiene Task tanto en "source" como en "target" no se guarda como un WStepResponse valido
-				if (spFromStepId != null
-						&& !spFromStepId.isEmpty()
-						&& spToStepId != null
-						&& !"".equals(spToStepId)){
+				// si tiene o bien fromStep o bien toStep se guarda como un WStepSequence Valido
+				if ((spFromStepId != null
+					&& !spFromStepId.isEmpty())
+					|| (spToStepId != null
+					&& !"".equals(spToStepId))){
 					
-					WStepResponseDef stepResponseDef = new WStepResponseDef();
+					WStepSequenceDef route = new WStepSequenceDef();
+					route.setEnabled(true);
+					route.setAfterAll(false);
 
-					// el nombre no puede ser vacío, por lo tanto le ponemos el que tenemos por defecto
+					// el nombre SI puede ser vacío, pero le ponemos uno por defecto (REVISAR NESTOR)
 					if (spName == null
-							|| spName.isEmpty()){
-							spName = DEFAULT_RESPONSE_NAME;
-							edge = this._setXmlElementDefaultName(edge, DEFAULT_RESPONSE_NAME);
+						|| spName.isEmpty()){
+						spName = DEFAULT_ROUTE_NAME;
+						edge = this._setXmlElementDefaultName(edge, DEFAULT_ROUTE_NAME);
 					}
+					
+					if (spFromStepId != null
+						&& !spFromStepId.isEmpty()){
+						route.setFromStep(new WStepDef(Integer.valueOf(spFromStepId)));
+					}
+					
+					if (spToStepId != null
+						&& !"".equals(spToStepId)){
+						route.setToStep(new WStepDef(Integer.valueOf(spToStepId)));
+					}
+					
+					route.setProcess(process);
 
-					// AÑADIR NUEVO WStepResponseDef
-					// si el paso no tiene id quiere decir que es un nuevo WStepResponseDef por lo tanto
+					// AÑADIR NUEVO WStepSequenceDef
+					// si la ruta no tiene id quiere decir que es un nuevo WStepSequenceDef por lo tanto
 					// lo creamos en nuestra BD y le añadimos nuestro "id" generado al xml para guardarlo
 					if (spId == null
 							|| spId.isEmpty()){
 						
 						
-						stepResponseDef.setName(spName);
-						stepResponseDef.setId(stepResponseBL.add(stepResponseDef, currentUserId)); // persistimos el WStepSequenceDef
-						spId = stepResponseDef.getId().toString(); 
+						route.setName(spName);
+						route.setId(routeBL.add(route, currentUserId)); // persistimos el WStepSequenceDef
+						spId = route.getId().toString(); 
 						
 						edge.setAttribute("spId", spId); // le añadimos el spId nuevo al xml map para persistirlo
 					
 					} else {
-						// como ya existe, buscamos el stepResponseDef con su id para meterlo en el xmlMapStepList
+						// como ya existe, buscamos el route con su id para meterlo en el xmlMapStepList
 						// para despues tenerlo a la hora de hacer la comprobación de los nuevos responses
-						stepResponseDef = 
-								stepResponseBL.getWStepResponseDefByPK(Integer.valueOf(spId), currentUserId);
-						stepResponseDef.setName(spName);
+						route = 
+								routeBL.getWStepSequenceDefByPK(Integer.valueOf(spId), currentUserId);
+						route.setName(spName);
 					}
 					
-
-					// busco el step dentro de los que tiene el proceso (lo he metido arriba si no estaba
-					// ya anteriormente) y le meto esta nueva respuesta en su lista para en el ultimo paso
-					// del proceso persistir las nuevas respuestas de los steps y eliminar las viejas que
-					// ya no tenemos en el mapa xml
-					for (WStepDef step : xmlMapStepList){
-						
-						if (spFromStepId.equals(step.getId().toString())){
-							step.getResponse().add(stepResponseDef);
-						}
-						
-					}
-					
-					boolean stepSequenceAlreadyExist = true;
-
-					// AÑADIR NUEVO WStepSequenceDef
-					// recorremos la lista de secuencias del mapa xml, si ya la tenemos le añadimos la respuesta, 
-					// de lo contrario creamos una secuencia nueva
-					for (WStepSequenceDef wssd : xmlMapStepSequenceList) {
-						
-						// si tenemos ya la secuencia en la lista le añadimos el valid response,
-						// de lo contrario la creamos (lo comprobamos viendo si son iguales los fromStep y toStep
-
-						
-						// COMPROBAR QUE SEA EL MISMO OBJECTO EL QUE SE ACTUALIZA
-						if (wssd.getFromStep().getId().equals(Integer.valueOf(spFromStepId))
-								&& wssd.getToStep().getId().equals(Integer.valueOf(spToStepId))){
-							
-							wssd.setValidResponses(wssd.getValidResponses() + "|" + spId);
-							stepSequenceAlreadyExist = false;
-							break;
-						}
-																		
-					}
-
-					// ademas de añadirlo en la lista de las secuencias del mapa xml lo añadimos en otra lista
-					// donde solo estarán las nuevas secuencias para añadir posteriormente
-					if (stepSequenceAlreadyExist){
-						
-						WStepSequenceDef newWssd = new WStepSequenceDef(process, null, 
-								new WStepDef(Integer.valueOf(spFromStepId)),
-								new WStepDef(Integer.valueOf(spToStepId)), 
-								true, false, spId, null);
-						
-						xmlMapStepSequenceList.add(newWssd);
-
-					}
+					xmlMapStepSequenceList.add(route);
 					
 					
 				}
@@ -707,13 +673,8 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			// una a una vamos a ver si tenemos las secuencias ya en BD para ver si lo único que tenemos que
 			// hacer es actualizarla (cambiarle las responses que tiene la misma), añadirla nueva o borrarla
 			// si dejamos de usarla
-			this._updateStepSequenceList(xmlMapStepSequenceList);
+			this._deleteUnusuedStepSequenceList(xmlMapStepSequenceList);
 
-			// una a una vamos a ver si tenemos las secuencias ya en BD para ver si lo único que tenemos que
-			// hacer es actualizarla (cambiarle las responses que tiene la misma), añadirla nueva o borrarla
-			// si dejamos de usarla
-			this._deleteUnusedStepResponseList(xmlMapStepList, process.getlSteps());
-			
 			// hay que hacer update de todos los steps que tengamos en el mapa para añadirles si es necesario
 			// los nuevos responses que se han puesto en el mapa
 			this._updateStepList(xmlMapStepList);
@@ -770,13 +731,12 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	}
 	
 	// los steps que ya no estan relacionados con este process se borrarán
-	private void _updateStepSequenceList(List<WStepSequenceDef> xmlMapStepSequenceList
+	private void _deleteUnusuedStepSequenceList(List<WStepSequenceDef> xmlMapStepSequenceList
 			) throws WStepSequenceDefException {
 		
 		WStepSequenceDefBL stepSequenceDefBL = new WStepSequenceDefBL();
 		
 		List<WStepSequenceDef> deleteUnusedWssdList = new ArrayList<WStepSequenceDef>();
-		List<WStepSequenceDef> newStepSequenceList = new ArrayList<WStepSequenceDef>();
 		
 		boolean existWssdInXml = false;
 		for (WStepSequenceDef bdWssd : process.getStepSequenceList()){
@@ -806,27 +766,6 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			
 		}
 		
-		boolean existWssdInBd = false;
-		for (WStepSequenceDef xmlWssd: xmlMapStepSequenceList){
-			
-			existWssdInBd = false;
-			for (WStepSequenceDef bdWssd : process.getStepSequenceList()){
-
-				if (bdWssd.getFromStep().getId().equals(xmlWssd.getFromStep().getId())
-						&& bdWssd.getToStep().getId().equals(xmlWssd.getToStep().getId())){
-					
-					existWssdInBd = true;
-					break;
-				}
-
-			}
-			
-			if (!existWssdInBd){
-				newStepSequenceList.add(xmlWssd);
-			}
-			
-		}
-		
 		// primero borramos las secuencias que ya no existen, despues actualizamos las que si existian y 
 		// por último añadimos las nuevas
 		for (WStepSequenceDef wssd: process.getStepSequenceList()){
@@ -837,82 +776,14 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			stepSequenceDefBL.deleteRoute(wssd, currentUserId);
 		}
 		
-		for (WStepSequenceDef wssd: newStepSequenceList){
-			stepSequenceDefBL.add(wssd, currentUserId);
-		}
-		
 	}
 		
-	// los steps que ya no estan relacionados con este process se borrarán
-	private void _deleteUnusedStepResponseList(List<WStepDef> xmlStepList,
-			List<WStepDef> bdStepList) throws WStepResponseDefException {
-		
-		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
-		
-		List<WStepResponseDef> removeList = new ArrayList<WStepResponseDef>();
-		List<WStepResponseDef> bdResponseList = new ArrayList<WStepResponseDef>();
-		List<WStepResponseDef> xmlResponseList = new ArrayList<WStepResponseDef>();
-		
-		// todos los responses de la BD
-		for (WStepDef bdStep : bdStepList){
-			
-			for (WStepResponseDef bdResponse : bdStep.getResponse()){
-				bdResponseList.add(bdResponse);
-			}
-			
-		}
-		
-		// todos los responses del xml
-		for (WStepDef xmlStep : xmlStepList){
-			
-			for (WStepResponseDef xmlResponse : xmlStep.getResponse()){
-				xmlResponseList.add(xmlResponse);
-			}
-			
-		}
-		
-		// comprobamos si los responses de la BD estan en el xml (que serán los que habrá actualmente) y si no
-		// es así lo borramos de la BD ya que serán obsoletos
-		boolean existWssdInXml = false;
-		for (WStepResponseDef bdResponse : bdResponseList){
-			
-			existWssdInXml = false;
-			for (WStepResponseDef xmlResponse : xmlResponseList){
-				
-				if (bdResponse.getId().equals(xmlResponse.getId())){
-					existWssdInXml = true;
-					break;
-				}
-				
-			}
-			
-			if (!existWssdInXml){
-				removeList.add(bdResponse);
-			}
-
-		}
-		
-		// eliminamos la lista de responses obsoletas
-		for (WStepResponseDef removeResponse : removeList){
-			wsrdBL.delete(removeResponse, currentUserId);
-		}
-		
-	}
-	
-	// actualizamos los steps que tenemos en el xml y que estan tambien en la bd (además por la relación tambien
-	// se actualizan los responses).
+	// actualizamos los steps que tenemos en el xml y que estan tambien en la bd
 	private void _updateStepList(List<WStepDef> stepList) throws WStepDefException {
 		
 		// bucle para persistir los "id_step" en los WStepResponseDef nuevos
 		if (stepList != null){
 			for (WStepDef step : stepList){
-				
-				// si tenemos algun response con "respOrder" nulo se lo añadimos
-				for (WStepResponseDef response : step.getResponse()){
-					if (response.getRespOrder() == null){
-						response.setRespOrder(_nextResponseOrder(step.getResponse()));
-					}
-				}
 				
 				new WStepDefBL().update(step, currentUserId);
 			}
@@ -937,22 +808,6 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 	
-	private Integer _nextResponseOrder(Set<WStepResponseDef> responseList) {
-		
-		Integer nextRespOrder = 0;
-		
-		if (responseList != null){
-			for (WStepResponseDef wsrd : responseList){
-				if (wsrd.getRespOrder() != null
-						&& nextRespOrder < wsrd.getRespOrder()){
-					nextRespOrder = wsrd.getRespOrder();
-				}
-			}
-		}
-		
-		return nextRespOrder + 1;
-	}
-
 	@Path("/ShowImageMap")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
