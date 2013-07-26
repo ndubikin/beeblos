@@ -29,6 +29,7 @@
 				// dml - creamos una session para el editor NO FUNCIONA BIEN
 				var session = editor.connect('/bee_bpm_web/rest/wf/InicialiceSession/69',
 						'/bee_bpm_web/rest/wf/Poll','/bee_bpm_web/rest/wf/Notify',
+						'/bee_bpm_web/rest/wf/NotifyWithResponse',
 						'/bee_bpm_web/rest/wf/getSpObjectList',onChange());
 
 				// dml 20130709 - como ya puse la llamada en el oncomplete ya no hace falta el timeout, 

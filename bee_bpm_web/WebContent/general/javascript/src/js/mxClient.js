@@ -13106,13 +13106,14 @@ mxToolbar.prototype.destroy = function ()
  * urlPoll - URL to be used for polling the backend.
  * urlNotify - URL to be used for sending changes to the backend.
  */
-function mxSession(editor, urlInit, urlPoll, urlNotify, urlGetSpObjectList)
+function mxSession(editor, urlInit, urlPoll, urlNotify, urlNotifyWithResponse, urlGetSpObjectList)
 {
 	var model = editor.graph.getModel();
 	this.model = model;
 	this.urlInit = urlInit;
 	this.urlPoll = urlPoll;
 	this.urlNotify = urlNotify;
+	this.urlNotifyWithResponse = urlNotifyWithResponse;
 	this.urlGetSpObjectList = urlGetSpObjectList;
 
 	// Resolves cells by id using the model
@@ -13188,6 +13189,14 @@ mxSession.prototype.urlPoll = null;
  * URL to send changes to the backend.
  */
 mxSession.prototype.urlNotify = null;
+
+/**
+ * Variable: urlNotifyWithResponse
+ *
+ * Specifies the URL to be used for notifying the backend
+ * in the session.
+ */
+mxEditor.prototype.urlNotifyWithResponse = null;
 
 /**
  * Variable: getSpObjectList
@@ -13407,7 +13416,50 @@ mxSession.prototype.notify = function(changes, onLoad, onError)
 };
 
 /**
- * Function: notify
+ * dml 20130726
+ *
+ * Function: notifyWithResponse
+ * 
+ * Sends out the specified XML to <urlNotify> and fires a <notify> event.
+ */
+mxSession.prototype.notifyWithResponse = function(changes, editor, onLoad, onError)
+{
+	if (changes != null &&
+		changes.length > 0)
+	{
+		if (this.urlNotify != null)
+		{
+			if (this.debug)
+			{
+				mxLog.show();
+				mxLog.debug('mxSession.notify: '+this.urlNotify+' changes='+changes);			
+			}
+			else
+			{
+				changes = '<message><delta>'+changes+'</delta></message>';
+
+				// dml - cargo el nuevo mapa para meter tambien en la BD en el proceso 
+				var newMap = this.writeGraphModel(this.linefeed);
+				
+				if (this.escapePostData)
+				{
+					changes = encodeURIComponent(changes);
+					newMap = encodeURIComponent(newMap);
+				}
+
+				mxUtils.postWithEditor(this.urlNotifyWithResponse, 'changes='+changes+'&newMap='+newMap, editor, onLoad, onError);
+
+			}
+		}
+
+	}
+
+};
+
+/**
+ * dml 20130725
+ *
+ * Function: save
  * 
  * Sends out the specified XML to <urlNotify> and fires a <notify> event.
  */
@@ -13433,8 +13485,11 @@ mxSession.prototype.save = function(url, data, editor, onLoad, onError)
 	}
 };
 
+
 /**
- * Function: notify
+ * dml 20130725
+ *
+ * Function: getSpObjectList
  * 
  * Sends out the specified XML to <urlNotify> and fires a <notify> event.
  */
@@ -72973,13 +73028,20 @@ mxEditor.prototype.changeSpObject = function (name)
 	mxUtils.showSplash();
 	this.hideSpObjectListPopup();
 
-	this.session.notify(name, 
+	this.session.notifyWithResponse(name, this, 
 		// dml 20130723 - si todo va bien el notify guarda el nuevo valor para el step y borra el viejo
-		function(req){
+		function(req, editor){
 
-			setTimeout(function(){this.openProcessXmlMapTmp()},50);
-			mxUtils.hideSplash(100);
+				var xmlString = req.getText();
+				var doc = mxUtils.parseXml(xmlString);
+				var node = doc.documentElement;
+				var dec = new mxCodec(node.ownerDocument);
+				dec.decode(node, editor.graph.getModel());
 
+				editor.execute('showFixProperties', editor.graph.getSelectionCell());
+
+//				setTimeout(function(){this.openProcessXmlMapTmp()},1000);
+				mxUtils.hideSplash(0);
 		
 		}
 	)
@@ -73118,7 +73180,7 @@ mxEditor.prototype.session = null;
  * Creates and returns a session for the specified parameters, installing
  * the onChange function as a change listener for the session.
  */
-mxEditor.prototype.connect = function (urlInit, urlPoll, urlNotify, urlGetSpObjectList, onChange)
+mxEditor.prototype.connect = function (urlInit, urlPoll, urlNotify, urlNotifyWithResponse, urlGetSpObjectList, onChange)
 {
 	this.session = null;
 	
@@ -73126,7 +73188,7 @@ mxEditor.prototype.connect = function (urlInit, urlPoll, urlNotify, urlGetSpObje
 	{
 		// dml 20130722 - vamos a pasar el editor al mxSession para probar si podemos mostrar los Steps cuando se cree uno nuevo o para cambiar
 		this.session = new mxSession(this,
-			urlInit, urlPoll, urlNotify, urlGetSpObjectList);
+			urlInit, urlPoll, urlNotify, urlNotifyWithResponse, urlGetSpObjectList);
 		//session = new mxSession(this.graph.getModel(),
 		//	urlInit, urlPoll, urlNotify);
 
@@ -73736,7 +73798,7 @@ mxEditor.prototype.createSpObjectListPopup = function (cell)
 
 		for (var i = 0; i < this.spObjList.length; i++)
 		{
-			var postInfo = "<changeSpObject><cellId>"+cell.getId()+"</cellId>"+"<newSpObject>"+this.spObjList[i]+"</newSpObject></changeSpObject>";
+			var postInfo = "<changeSpObject><cellId value='"+cell.getId()+"'/><newSpObject value='"+this.spObjList[i]+"'/></changeSpObject>";
 			form.addLinkInvoke(this.spObjList[i], postInfo, this);
 
 		}
