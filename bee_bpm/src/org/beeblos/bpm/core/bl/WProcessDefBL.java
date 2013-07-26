@@ -24,6 +24,7 @@ import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -97,7 +98,22 @@ public class WProcessDefBL {
 		returnValue += "<Layer label=\"Default Layer\" description=\"\" id=\"1\"><mxCell parent=\"0\"/></Layer>";
 		
 		if (process.getBeginStep() != null){
-			returnValue += "<Task description=\"\" href=\"\" id=\"2\" label=\"" + process.getBeginStep().getName() + "\" spId=\"" + process.getBeginStep().getId() + "\"><mxCell parent=\"1\" vertex=\"1\"><mxGeometry as=\"geometry\" height=\"32\" width=\"72\" x=\"430\" y=\"230\"/></mxCell></Task>";
+			String responses = "responses=\"";
+			if (process.getBeginStep().getResponse() != null
+				&& !process.getBeginStep().getResponse().isEmpty()){
+				for (WStepResponseDef response : process.getBeginStep().getResponse()){
+					
+					responses += response.getName() + "|"; 
+					
+				}
+			} 
+			responses += "\"";
+			
+			returnValue += "<Task description=\"" + process.getBeginStep().getStepComments() + 
+					"\" href=\"\" id=\"2\" label=\"" + process.getBeginStep().getName() 
+					+ "\" spId=\"" + process.getBeginStep().getId() + "\" " 
+					+ responses + "><mxCell parent=\"1\" vertex=\"1\">"
+					+ "<mxGeometry as=\"geometry\" height=\"32\" width=\"72\" x=\"430\" y=\"230\"/></mxCell></Task>";
 		}
 		
 		returnValue += "</root></mxGraphModel>";
