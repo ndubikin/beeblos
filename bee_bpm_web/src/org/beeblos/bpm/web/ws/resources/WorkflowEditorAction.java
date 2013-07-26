@@ -87,6 +87,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				
 				process.setProcessMap(xml);
 
+				System.out.println("WS Save WProcessDefBL.updateProcessXmlMap(): " + process.getId());
 				new WProcessDefBL().updateProcessXmlMap(process.getId(), xml, currentUserId);
 				
 			}
@@ -413,6 +414,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					&& !processId.isEmpty()
 					&& !"".equals(processId)){
 				
+				System.out.println("WS Save WProcessDefBL.updateProcessXmlMap(): " + processId);
 				new WProcessDefBL().updateProcessXmlMap(Integer.valueOf(processId), returnValue, currentUserId);
 				
 				this._publishChanges(returnValue);
@@ -528,8 +530,10 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					WStepHead stepHead = new WStepHead();
 					stepHead.setName(spName);
 					stepHead.setComments(spStepComment);
+					System.out.println("WS Save WStepHead.add(): " + spName);
 					Integer stepHeadId = stepHeadBL.add(stepHead, currentUserId); // creo el stepHead
 					
+					System.out.println("WS Save stepBL.createFirstWStepDef(): " + spName);
 					spId = stepBL.createFirstWStepDef(stepHeadId, currentUserId).toString(); // creo la versión WStepDef
 					
 					task.setAttribute("spId", spId); // le añadimos el spId nuevo al xml map para persistirlo con el
@@ -571,6 +575,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 								WStepResponseDef newResponse = new WStepResponseDef();
 								newResponse.setName(responses[j]);
 								newResponse.setRespOrder(_nextResponseOrder(step.getResponse()));
+								System.out.println("WS Save WStepResponseDefBL.add(): " + responses[j]);
 								newResponse.setId(new WStepResponseDefBL().add(newResponse, currentUserId));
 								xmlMapResponses.add(newResponse);
 							}
@@ -741,6 +746,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 							|| spId.isEmpty()){
 						
 						
+						System.out.println("WS Save routeBL.add(): " + route.getName());
 						route.setId(routeBL.add(route, currentUserId)); // persistimos el WStepSequenceDef
 						spId = route.getId().toString(); 
 						
@@ -864,10 +870,12 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		// primero borramos las secuencias que ya no existen, despues actualizamos las que si existian y 
 		// por último añadimos las nuevas
 		for (WStepSequenceDef wssd: process.getStepSequenceList()){
+			System.out.println("WS Save stepSequenceDefBL.update(): " + wssd.getName());
 			stepSequenceDefBL.update(wssd, currentUserId);
 		}
 		
 		for (WStepSequenceDef wssd: deleteUnusedWssdList){
+			System.out.println("WS Save stepSequenceDefBL.deleteRoute(): " + wssd.getName());
 			stepSequenceDefBL.deleteRoute(wssd, currentUserId);
 		}
 		
@@ -880,49 +888,41 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		WStepResponseDefBL wsrdBL = new WStepResponseDefBL();
 		
 		List<WStepResponseDef> removeList = new ArrayList<WStepResponseDef>();
-		List<WStepResponseDef> bdResponseList = new ArrayList<WStepResponseDef>();
-		List<WStepResponseDef> xmlResponseList = new ArrayList<WStepResponseDef>();
 				
+		// recorremos las listas y borramos solo los responses borrados individuales, no si se borra el step
 		for (WStepDef bdStep : bdStepList){
-			for (WStepResponseDef bdResponse : bdStep.getResponse()){
-				bdResponseList.add(bdResponse);
-			}
-		}
 
-		// todos los responses del xml
-		for (WStepDef xmlStep : xmlStepList){
-			
-			for (WStepResponseDef xmlResponse : xmlStep.getResponse()){
-				xmlResponseList.add(xmlResponse);
-			}
-			
-		}
-		
-		// dml 20130726 - si cada step 
-		
-		// comprobamos si los responses de la BD estan en el xml (que serán los que habrá actualmente) y si no
-		// es así lo borramos de la BD ya que serán obsoletos
-		boolean existWssdInXml = false;
-		for (WStepResponseDef bdResponse : bdResponseList){
-			
-			existWssdInXml = false;
-			for (WStepResponseDef xmlResponse : xmlResponseList){
+			for (WStepDef xmlStep : xmlStepList){
 				
-				if (bdResponse.getId().equals(xmlResponse.getId())){
-					existWssdInXml = true;
-					break;
+				// si tenemos el paso en la bd y en el xml es que no se borro. si falta alguna response la borramos
+				if (bdStep.getId().equals(xmlStep.getId())){
+					
+					for (WStepResponseDef bdResponse : bdStep.getResponse()){
+						
+						boolean existResponse = false;
+						for (WStepResponseDef xmlResponse : xmlStep.getResponse()){
+							
+							if (bdResponse.getId().equals(xmlResponse.getId())){
+								existResponse = true;
+							}
+							
+						}
+						
+						if (!existResponse){
+							removeList.add(bdResponse);
+						}
+					}
+					
+					
 				}
 				
+				
 			}
-			
-			if (!existWssdInXml){
-				removeList.add(bdResponse);
-			}
-
 		}
 		
 		// eliminamos la lista de responses obsoletas
 		for (WStepResponseDef removeResponse : removeList){
+			System.out.println("WS Save wsrdBL.deleteRoute(): " + removeResponse.getName());
 			wsrdBL.delete(removeResponse, currentUserId);
 		}
 		
@@ -943,6 +943,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					}
 				}
 				
+				System.out.println("WS Save wsrdBL.update(): " + step.getName());
 				new WStepDefBL().update(step, currentUserId);
 			}
 		}
