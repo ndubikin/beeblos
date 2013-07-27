@@ -25,6 +25,9 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private boolean afterAll;
 	private String validResponses; // indicates a list of idResponse comma separated
 	
+	// dml 20130727
+	private String rules;
+
 	private Integer insertUser;
 	private Date insertDate;
 	private Integer modUser;
@@ -224,6 +227,16 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.validResponses = validResponses;
 	}
 
+
+
+	public String getRules() {
+		return rules;
+	}
+
+
+	public void setRules(String rules) {
+		this.rules = rules;
+	}
 
 
 	public Integer getInsertUser() {

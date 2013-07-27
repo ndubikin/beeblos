@@ -42,7 +42,7 @@ public class WStepHeadBL {
 		Integer stepHeadId = this.add(stepHead, currentUserId);
 		stepHead.setId(stepHeadId);
 		
-		new WStepDefBL().createFirstWStepDef(stepHeadId, currentUserId);
+		new WStepDefBL().createFirstWStepDef(stepHeadId, null, null, null, currentUserId);
 		
 		return stepHeadId;
 

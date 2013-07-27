@@ -47,7 +47,7 @@ public class WStepDefBL {
 			
 			Integer stepHeadId = new WStepHeadBL().add(step.getStepHead(), currentUserId);
 			
-			this._setFirstWStepDefData(step, stepHeadId, currentUserId);
+			this._setFirstWStepDefData(step, stepHeadId, null, null, null, currentUserId);
 			
 			
 		}
@@ -62,13 +62,16 @@ public class WStepDefBL {
 	}
 	
 	// dml 20130430
-	private void _setFirstWStepDefData(WStepDef step, Integer stepHeadId, Integer currentUserId) throws WStepHeadException {
+	private void _setFirstWStepDefData(WStepDef step, Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) throws WStepHeadException {
 		
 		if (step != null){
 			
 //			step.setActive(true);
 
 			step.setStepHead(new WStepHeadBL().getWStepHeadByPK(stepHeadId, currentUserId));
+			step.setRules(rules);
+			step.setStepComments(stepComments);
+			step.setInstructions(instructions);
 			
 			if (step.getVersion() == null
 					|| step.getVersion().equals(0)){
@@ -80,11 +83,11 @@ public class WStepDefBL {
 	}
 	
 	// dml 20130430
-	public Integer createFirstWStepDef(Integer stepHeadId, Integer currentUserId) throws WStepDefException, WStepHeadException{
+	public Integer createFirstWStepDef(Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) throws WStepDefException, WStepHeadException{
 
 		WStepDef wsd = new WStepDef();
 
-		this._setFirstWStepDefData(wsd, stepHeadId, currentUserId);
+		this._setFirstWStepDefData(wsd, stepHeadId, rules, stepComments, instructions, currentUserId);
 		
 		return this.add(wsd, currentUserId);
 		
