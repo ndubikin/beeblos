@@ -79,8 +79,6 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			
 			xml = XmlConverterUtil.loadStringFromXml(xmlParsed);
 			
-//			xml = xml.substring(xml.indexOf("<mxGraphModel>"));
-			
 			if (process != null
 					&& process.getId() != null
 					&& !process.getId().equals(0)){
@@ -98,8 +96,6 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 			System.out.println("TIEMPO DE WS /Save:" + totalTiempo + " miliseg");
 			System.out.println("------- END WS /Save -------");
-
-//			xml = URLEncoder.encode(inputMap, "UTF-8").replace("&#xa;", "\n");
 
 			return Response.ok(xml, MediaType.TEXT_XML).build();
 			
@@ -646,7 +642,22 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 			}
 			
-			// 3. Ahora parseo los "Edge" que serán los WStepResponseDef de nuestro proceso además de crear los WStepSequenceDef
+			// 3. Ahora parseo los "Symbol" para ver si tenemos "Begin"
+			NodeList symbolList = xmlParsed.getElementsByTagName("Symbol");
+			String beginSymbolId = null;
+			// iterate the symbols
+			for (int i = 0; i < symbolList.getLength(); i++) {
+				Element symbol = (Element) symbolList.item(i);
+				spName = symbol.getAttribute("label");
+				if (spName != null
+						&& spName.equals("Begin")){
+					beginSymbolId = symbol.getAttribute("id");
+					break;
+				}
+				
+			}
+			
+			// 4. Ahora parseo los "Edge" que serán los WStepResponseDef de nuestro proceso además de crear los WStepSequenceDef
 
 			// variables auxiliares que nos harán falta para comprobaciones
 			String xmlFromStepId = "";
@@ -681,6 +692,14 @@ public class WorkflowEditorAction extends CoreManagedBean {
 						&& mxCellList.getLength() == 1){
 					xmlFromStepId = ((Element) mxCellList.item(0)).getAttribute("source");
 					xmlToStepId = ((Element) mxCellList.item(0)).getAttribute("target");
+					
+					// si el "edge" sale del begin symbol no lo persistimos
+					if (xmlFromStepId != null
+							&& beginSymbolId != null
+							&& beginSymbolId.equals(xmlFromStepId)){
+						System.out.println("WS Save La ruta no se persiste ya que sale del 'Begin' xmlId: " + xmlId);
+						continue;
+					}
 					
 					// comprobamos que viene de un step valido, si no es así no se va a guardar como WStepResponseDef
 					spFromStepId = "";
