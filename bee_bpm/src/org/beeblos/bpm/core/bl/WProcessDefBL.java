@@ -97,6 +97,8 @@ public class WProcessDefBL {
 		returnValue += "<Workflow label=\"" + process.getName() + "\" id=\"0\" description=\"\" spId=\"" + process.getId() + "\"><mxCell/></Workflow>";
 		returnValue += "<Layer label=\"Default Layer\" description=\"\" id=\"1\"><mxCell parent=\"0\"/></Layer>";
 		
+		returnValue += "<Symbol label=\"Begin\" description=\"\" href=\"\" id=\"3\"><mxCell style=\"symbol;image=images/symbols/event.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"320\" y=\"230\" width=\"32\" height=\"32\" as=\"geometry\"/></mxCell></Symbol>";
+		
 		if (process.getBeginStep() != null){
 			String responses = "responses=\"";
 			if (process.getBeginStep().getResponse() != null
@@ -108,6 +110,8 @@ public class WProcessDefBL {
 				}
 			} 
 			responses += "\"";
+			
+			returnValue += "<Edge label=\"\" description=\"\" id=\"4\"><mxCell style=\"straightEdge\" edge=\"1\" parent=\"1\" source=\"3\" target=\"2\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></Edge>";
 			
 			returnValue += "<Task description=\"" + process.getBeginStep().getStepComments() + 
 					"\" href=\"\" id=\"2\" label=\"" + process.getBeginStep().getName() 
