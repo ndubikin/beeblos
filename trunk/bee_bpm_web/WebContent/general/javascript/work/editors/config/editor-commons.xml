@@ -183,7 +183,7 @@
 			function (editor)
 			{
 				var image = mxUtils.prompt(mxResources.get('enterImageUrl'),
-					'examples/images/image.gif');
+					'work/images/image.gif');
 				
 				if (image != null)
 				{

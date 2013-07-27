@@ -2,9 +2,9 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
-import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
-import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
+import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
+import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
