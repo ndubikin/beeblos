@@ -415,11 +415,15 @@ public class WorkflowEditorAction extends CoreManagedBean {
 							&& cellToChangeId.equals(xmlFromStepId)){
 						
 						String spId = edge.getAttribute("spId");
-						WStepSequenceDef route = routeBL.getWStepSequenceDefByPK(
-								Integer.valueOf(spId), currentUserId);
-						route.setFromStep(new WStepDef(Integer.valueOf(newSpObjectId)));
-						route.setValidResponses(null); // le vaciamos las responses porque ya no podrá tener las del step antiguo
-						routeBL.update(route, currentUserId);
+						if (spId != null
+								&& !"".equals(spId)){
+							WStepSequenceDef route = routeBL.getWStepSequenceDefByPK(
+									Integer.valueOf(spId), currentUserId);
+							route.setFromStep(new WStepDef(Integer.valueOf(newSpObjectId)));
+							route.setValidResponses(null); // le vaciamos las responses porque ya no podrá tener las del step antiguo
+							routeBL.update(route, currentUserId);
+							
+						}
 						
 						
 					}
@@ -430,11 +434,13 @@ public class WorkflowEditorAction extends CoreManagedBean {
 							&& cellToChangeId.equals(xmlToStepId)){
 						
 						String spId = edge.getAttribute("spId");
-						WStepSequenceDef route = routeBL.getWStepSequenceDefByPK(
-								Integer.valueOf(spId), currentUserId);
-						route.setToStep(new WStepDef(Integer.valueOf(newSpObjectId)));
-						routeBL.update(route, currentUserId);
-						
+						if (spId != null
+								&& !"".equals(spId)){
+							WStepSequenceDef route = routeBL.getWStepSequenceDefByPK(
+									Integer.valueOf(spId), currentUserId);
+							route.setToStep(new WStepDef(Integer.valueOf(newSpObjectId)));
+							routeBL.update(route, currentUserId);
+						}						
 					}
 									
 				}
