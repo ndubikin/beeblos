@@ -307,7 +307,8 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	}
 
 	// dml 20130726
-	private Document _changeSpObject(Document newXmlMapParsed) throws NumberFormatException, WStepDefException{
+	private Document _changeSpObject(Document newXmlMapParsed) 
+			throws NumberFormatException, WStepDefException, WStepSequenceDefException{
 		
 		String cellToChangeId = "";
 		NodeList cellToChangeList = xmlParsed.getElementsByTagName("cellId");
@@ -383,6 +384,55 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 					break;
 				
+				}
+
+			}
+			
+			// recorro los "edge" buscando si alguno tiene como "source" o "target" el step cambiado para reajustarlo
+			NodeList edgeList = newXmlMapParsed.getElementsByTagName("Edge");
+			xmlId = "";
+			// iterate the tasks (steps)
+			for (int i = 0; i < edgeList.getLength(); i++) {
+				
+				Element edge = (Element) edgeList.item(i);
+
+				NodeList mxCellList = edge.getElementsByTagName("mxCell");
+				
+				// vamos a obtener el "source" y el "target" para comparar si hay alguno con el antiguo para cambiarlo
+				if (mxCellList != null
+						&& mxCellList.getLength() == 1){
+					String xmlFromStepId = ((Element) mxCellList.item(0)).getAttribute("source");
+					String xmlToStepId = ((Element) mxCellList.item(0)).getAttribute("target");
+
+					WStepSequenceDefBL routeBL = new WStepSequenceDefBL();
+					// vemos el source
+					if (cellToChangeId != null && !"".equals(cellToChangeId)
+							&& xmlFromStepId != null && !"".equals(xmlFromStepId)
+							&& cellToChangeId.equals(xmlFromStepId)){
+						
+						String spId = edge.getAttribute("spId");
+						WStepSequenceDef route = routeBL.getWStepSequenceDefByPK(
+								Integer.valueOf(spId), currentUserId);
+						route.setFromStep(new WStepDef(Integer.valueOf(newSpObjectId)));
+						route.setValidResponses(null); // le vaciamos las responses porque ya no podrá tener las del step antiguo
+						routeBL.update(route, currentUserId);
+						
+						
+					}
+					
+					// vemos el target
+					if (cellToChangeId != null && !"".equals(cellToChangeId)
+							&& xmlToStepId != null && !"".equals(xmlToStepId)
+							&& cellToChangeId.equals(xmlToStepId)){
+						
+						String spId = edge.getAttribute("spId");
+						WStepSequenceDef route = routeBL.getWStepSequenceDefByPK(
+								Integer.valueOf(spId), currentUserId);
+						route.setToStep(new WStepDef(Integer.valueOf(newSpObjectId)));
+						routeBL.update(route, currentUserId);
+						
+					}
+									
 				}
 
 			}
