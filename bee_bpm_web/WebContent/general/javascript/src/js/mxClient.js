@@ -1185,10 +1185,10 @@ var mxResources =
 	 * (code)
 	 * <mxEditor>
 	 *   <ui>
-	 *     <resource basename="examples/resources/mxWorkflow"/>
+	 *     <resource basename="work/resources/mxWorkflow"/>
 	 * (end)
 	 * 
-	 * The above element will load examples/resources/mxWorkflow.properties as well
+	 * The above element will load work/resources/mxWorkflow.properties as well
 	 * as the language specific file for the current language, if it exists.
 	 * 
 	 * Values may contain placeholders of the form {1}...{n} where each placeholder

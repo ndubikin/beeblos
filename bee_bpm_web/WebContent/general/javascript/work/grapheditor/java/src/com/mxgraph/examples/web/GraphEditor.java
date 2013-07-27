@@ -22,7 +22,7 @@ public class GraphEditor
 	public static int PORT = 8080;
 
 	/**
-	 * Point your browser to http://localhost:8080/javascript/examples/grapheditor/www/index.html
+	 * Point your browser to http://localhost:8080/javascript/work/grapheditor/www/index.html
 	 */
 	public static void main(String[] args) throws Exception
 	{
@@ -41,7 +41,7 @@ public class GraphEditor
 		handlers.setHandlers(new Handler[] { fileHandler, context });
 		server.setHandler(handlers);
 
-		System.out.println("Go to http://localhost:8080/javascript/examples/grapheditor/www/index.html");
+		System.out.println("Go to http://localhost:8080/javascript/work/grapheditor/www/index.html");
 		
 		server.start();
 		server.join();
