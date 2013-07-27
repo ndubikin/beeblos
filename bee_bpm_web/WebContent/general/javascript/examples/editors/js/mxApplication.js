@@ -35,7 +35,7 @@
 				// dml 20130709 - como ya puse la llamada en el oncomplete ya no hace falta el timeout, 
 				// ya abrirá el editor una vez creado el fichero para leer
 				//openProcessXmlMapTmp(editor);
-				setTimeout(function(){openProcessXmlMapTmpAndProperties(editor)},1000);
+				setTimeout(function(){openProcessXmlMapTmpAndProperties(editor)},1800);
 				
 				// Updates the window title after opening new files
 				var title = document.title;
@@ -55,12 +55,12 @@
 				editor.setStatus('mxGraph '+mxClient.VERSION);
 				
 				// Shows the application				
-				mxUtils.hideSplash(1000);
+				mxUtils.hideSplash(2200);
 			}
 		}
 		catch (e)
 		{
-			mxUtils.hideSplash(1000);
+			mxUtils.hideSplash(2200);
 
 			// Shows an error message if the editor cannot start
 			mxUtils.alert('Cannot start application: '+e.message);
