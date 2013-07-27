@@ -30,8 +30,10 @@ import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepHead;
@@ -715,6 +717,19 @@ public class WorkflowEditorAction extends CoreManagedBean {
 						continue;
 					}
 					
+					// el nombre SI puede ser vacío, pero si la ruta va a ningun sitio se le pone "ERROR"
+					if (xmlToStepId == null
+						|| xmlToStepId.isEmpty()){
+						spName = DEFAULT_ERROR;
+						edge = this._setXmlElementDefaultNameAndColor(edge, DEFAULT_ERROR, RED);
+					} else {
+						if (spName != null
+								&& spName.equals(DEFAULT_ERROR)){
+							spName = "";
+							edge = this._setXmlElementDefaultNameAndColor(edge, "", null);
+						}
+					}
+
 					// comprobamos que viene de un step valido, si no es así no se va a guardar como WStepResponseDef
 					spFromStepId = "";
 					spToStepId = "";
@@ -775,16 +790,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					if (spToStepId != null
 						&& !"".equals(spToStepId)){
 						route.setToStep(new WStepDef(Integer.valueOf(spToStepId)));
-					} else {
-						// el nombre SI puede ser vacío, pero si la ruta va a ningun sitio se le pone "ERROR"
-						if (spName == null
-							|| spName.isEmpty()){
-							spName = DEFAULT_ERROR;
-							edge = this._setXmlElementDefaultNameAndColor(edge, DEFAULT_ERROR, RED);
-							route.setName(spName);
-						}
-						
-					}
+					} 
 						
 					// comprobamos que tiene responses y si tiene si son del from step valido
 					if (spResponses != null
@@ -864,7 +870,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			
 			// hay que hacer update de todos los steps que tengamos en el mapa para añadirles si es necesario
 			// los nuevos responses que se han puesto en el mapa
-			this._updateStepList(xmlMapStepList);
+			// dml 20130727 - tambien vemos si los steps que ya no estan los podemos borrar o no si no estan en otro
+			// proceso o en el mismo mapa repetidos
+			this._manageStepList(process.getlSteps(), xmlMapStepList);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -888,7 +896,10 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			Element mxCell = ((Element) mxCellList.item(0));
 			String style = mxCell.getAttribute("style");
 			
-			String fontColor = "fontColor=" + color + ";";			
+			String fontColor = "";
+			if (color != null){
+				fontColor = "fontColor=" + color + ";";			
+			}
 			
 			if (style.isEmpty()){
 				mxCell.setAttribute("style", mxCell.getAttribute("style") + fontColor);
@@ -907,7 +918,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					}
 					mxCell.setAttribute("style", newStyle);
 				} else {
-					mxCell.setAttribute("style", mxCell.getAttribute("style") + ";" + fontColor);
+					if (color != null){
+						mxCell.setAttribute("style", mxCell.getAttribute("style") + ";" + fontColor);
+					}
 				}
 			}
 			
@@ -1016,11 +1029,12 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	
 	// actualizamos los steps que tenemos en el xml y que estan tambien en la bd (además por la relación tambien
 	// se actualizan los responses).
-	private void _updateStepList(List<WStepDef> stepList) throws WStepDefException {
+	private void _manageStepList(List<WStepDef> bdStepList, List<WStepDef> xmlStepList) 
+			throws WStepDefException, WStepWorkException, WProcessDefException, WStepSequenceDefException, WStepHeadException {
 		
 		// bucle para persistir los "id_step" en los WStepResponseDef nuevos
-		if (stepList != null){
-			for (WStepDef step : stepList){
+		if (xmlStepList != null){
+			for (WStepDef step : xmlStepList){
 				
 				// si tenemos algun response con "respOrder" nulo se lo añadimos
 				for (WStepResponseDef response : step.getResponse()){
@@ -1031,6 +1045,35 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				
 				System.out.println("WS Save wsrdBL.update(): " + step.getName());
 				new WStepDefBL().update(step, currentUserId);
+			}
+		}
+		
+		List<Integer> removeStepIdList = new ArrayList<Integer>();
+		// dml 20130727 - si el step ya no existe se lo mandamos a la BL a borrar y esta decidira si no se usa en 
+		// ningun otro sitio para borrarlo (tanto el como sus responses)
+		for (WStepDef bdStep : bdStepList){
+			
+			boolean existStep = false;
+			for (WStepDef xmlStep : xmlStepList){
+				
+				if (bdStep.getId().equals(xmlStep.getId())){
+					existStep = true;
+					break;
+				}
+				
+			}
+			if (!existStep){
+				removeStepIdList.add(bdStep.getId());
+			}
+			
+		}
+		
+		for (Integer removeStepId : removeStepIdList){
+			boolean deletedOk = new WStepDefBL().delete(removeStepId, process.getId(), currentUserId);
+			if (deletedOk){
+				System.out.println("WS Save. WStepDefBL().delete() It is not possible to delete the step, it is used in other place. id: " + removeStepId);
+			} else {
+				System.out.println("WS Save. WStepDefBL().delete() Step deleted. id: " + removeStepId);
 			}
 		}
 		
