@@ -52,7 +52,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	private static final long serialVersionUID = 1L;
 	
 	private final static String DEFAULT_STEP_NAME = "STEP";
-	private final static String DEFAULT_ROUTE_NAME = "ROUTE";
+	private final static String DEFAULT_ERROR = "ERROR";
 	private final static String RED = "red";
 	
 	private Integer currentUserId = 1000;
@@ -765,13 +765,6 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					route.setAfterAll(false);
 					route.setProcess(process);
 					route.setRules(spRules); // dml 20130727
-
-					// el nombre SI puede ser vacío, pero le ponemos uno por defecto (REVISAR NESTOR)
-					if (spName == null
-						|| spName.isEmpty()){
-						spName = DEFAULT_ROUTE_NAME;
-						edge = this._setXmlElementDefaultNameAndColor(edge, DEFAULT_ROUTE_NAME, RED);
-					}
 					route.setName(spName);
 					
 					if (spFromStepId != null
@@ -782,6 +775,15 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					if (spToStepId != null
 						&& !"".equals(spToStepId)){
 						route.setToStep(new WStepDef(Integer.valueOf(spToStepId)));
+					} else {
+						// el nombre SI puede ser vacío, pero si la ruta va a ningun sitio se le pone "ERROR"
+						if (spName == null
+							|| spName.isEmpty()){
+							spName = DEFAULT_ERROR;
+							edge = this._setXmlElementDefaultNameAndColor(edge, DEFAULT_ERROR, RED);
+							route.setName(spName);
+						}
+						
 					}
 						
 					// comprobamos que tiene responses y si tiene si son del from step valido
