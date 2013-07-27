@@ -124,6 +124,15 @@ public class WStepSequenceDefBL {
 		
 	}
 	
+	public Integer countOutgoingRoutes(
+			Integer stepId, Integer processId, Integer userId ) 
+	throws WStepSequenceDefException {
+
+		return new WStepSequenceDefDao()
+			.countOutgoingRoutes(stepId, processId);
+		
+	}
+	
 	// returns a list with incoming routes pointing to a step
 	public List<WStepSequenceDef> getIncomingRoutes(
 			Integer stepId, Integer processId, Integer userId ) 
@@ -131,6 +140,16 @@ public class WStepSequenceDefBL {
 
 		return new WStepSequenceDefDao()
 				.getIncomingRoutes(stepId, processId);
+		
+	}
+	
+	// returns qty routes incoming to this step. If processId=null will return all # of incoming routes
+	public Integer countIncomingRoutes(
+			Integer stepId, Integer processId, Integer userId ) 
+	throws WStepSequenceDefException {
+
+		return new WStepSequenceDefDao()
+				.countIncomingRoutes(stepId, processId);
 		
 	}
 	

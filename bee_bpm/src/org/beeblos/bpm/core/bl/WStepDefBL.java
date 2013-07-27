@@ -114,7 +114,7 @@ public class WStepDefBL {
 			throws WStepDefException, WStepWorkException, WProcessDefException, 
 			WStepSequenceDefException, WStepHeadException  {
 
-		logger.debug("delete() WProcessDef - Name: ["+stepId+"]");
+		logger.debug("delete(stepid) WProcessDef - Name: ["+stepId+"]");
 		
 		if (stepId==null || stepId==0) {
 			String mess = "Trying delete step with id null or 0 ...";
@@ -153,6 +153,45 @@ public class WStepDefBL {
 		logger.info("The WProcessDef " + step.getName() + " has been correctly deleted by user " + currentUserId);
 
 		this._checkAndDeleteStepHead(stepHeadId, currentUserId);
+		
+	}
+	
+	// to use this method previously must delete all incoming and outcoming routes from step to delete...
+	public boolean delete(Integer stepId, Integer processId, Integer currentUserId) 
+			throws WStepDefException, WStepWorkException, WProcessDefException, 
+					WStepSequenceDefException, WStepHeadException 
+			   {
+
+		logger.debug("delete(stepid,processid) WProcessDef - Name: ["+stepId+"/processId:"+processId+"]");
+		
+		if (stepId==null || stepId==0) {
+			String mess = "Error: deleting step with id null or 0 ...";
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		// checks if step is used in other process or in the same process in other routes ...
+		Integer qtyRoutes=0;
+		WStepSequenceDefBL routesBL = new WStepSequenceDefBL();
+
+		// send null processId to count all routes in all processes. If
+		try {
+			qtyRoutes = routesBL.countIncomingRoutes(stepId, null, currentUserId);
+			if (qtyRoutes>0) return false;
+			qtyRoutes = routesBL.countOutgoingRoutes(stepId, null, currentUserId);
+			if (qtyRoutes>0) return false;	
+		} catch (WStepSequenceDefException e) {
+			String mess = "Error verifiyng existence of another uses for this step id:"+stepId
+							+ " "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		delete(stepId,currentUserId);
+
+		
+		// if arrives here, all is ok, return true ...
+		return true;
 		
 	}
 	

@@ -428,6 +428,65 @@ public class WStepSequenceDefDao {
 
 	}
 	
+	public Integer countOutgoingRoutes(
+			Integer stepId, Integer processId ) 
+	throws WStepSequenceDefException {
+	
+		if (stepId==null || stepId.equals(0)) {
+			throw new WStepSequenceDefException("WStepSequenceDefDao: countOutgoingRoutes() - can't obtain stepSeq list (outgoing) for stepId ="
+					+(stepId==null?"null":"0"));
+		}
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		Integer qtyOutgoingRoutes=0;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			if (processId != null && !processId.equals(0)) {
+				qtyOutgoingRoutes = (Integer) session
+								.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE fromStep.id = ? and process.id=? ")
+								.setParameter(0, stepId)
+								.setParameter(1, processId)
+								.uniqueResult();
+			} else {
+				qtyOutgoingRoutes = (Integer) session
+						.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE fromStep.id = ? ORDER BY fromStep.id")
+						.setParameter(0, stepId)
+						.uniqueResult();
+			}
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			ex.printStackTrace();
+			logger.warn("WStepSequenceDefDao: countOutgoingRoutes() - can't obtain stepSeq list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: countOutgoingRoutes() - can't obtain stepSeq list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list - " +
+					e.getMessage()+"\n"+e.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list: "
+					+ e.getMessage()+"\n"+e.getCause());
+		}
+
+		return qtyOutgoingRoutes;
+
+	}	
+	
 	// dml 20120323
 	public List<WStepSequenceDef> getIncomingRoutes(
 			Integer stepId, Integer processId) 
@@ -487,6 +546,65 @@ public class WStepSequenceDefDao {
 		return stepSeqs;
 
 	}
+	
+	public Integer countIncomingRoutes(
+			Integer stepId, Integer processId) 
+	throws WStepSequenceDefException {
+	
+		if (stepId==null || stepId.equals(0)) {
+			throw new WStepSequenceDefException("WStepSequenceDefDao: countIncomingRoutes() - can't count stepseq (incoming) for stepId ="
+					+(stepId==null?"null":"0"));
+		}
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		Integer qtyIncomingRoutes=0;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			if (processId != null) {
+				qtyIncomingRoutes = (Integer) session
+								.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE toStep.id = ? and process.id=? ")
+								.setParameter(0, stepId)
+								.setParameter(1, processId)
+								.uniqueResult();
+			} else {
+				qtyIncomingRoutes = (Integer) session
+						.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE toStep.id = ? ORDER BY toStep.id")
+						.setParameter(0, stepId)
+						.uniqueResult();
+			}
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			ex.printStackTrace();
+			logger.warn("WStepSequenceDefDao: countIncomingRoutes() - error executing query - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: countIncomingRoutes() - error executing query - "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list - " +
+					e.getMessage()+"\n"+e.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list: "
+					+ e.getMessage()+"\n"+e.getCause());
+		}
+
+		return qtyIncomingRoutes;
+
+	}	
 	
 	
 	// nes 20101217
