@@ -440,7 +440,7 @@ public class WStepSequenceDefDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		Integer qtyOutgoingRoutes=0;
+		Long qtyOutgoingRoutes = null;
 
 		try {
 
@@ -450,13 +450,13 @@ public class WStepSequenceDefDao {
 			tx.begin();
 
 			if (processId != null && !processId.equals(0)) {
-				qtyOutgoingRoutes = (Integer) session
+				qtyOutgoingRoutes = (Long) session
 								.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE fromStep.id = ? and process.id=? ")
 								.setParameter(0, stepId)
 								.setParameter(1, processId)
 								.uniqueResult();
 			} else {
-				qtyOutgoingRoutes = (Integer) session
+				qtyOutgoingRoutes = (Long) session
 						.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE fromStep.id = ? ORDER BY fromStep.id")
 						.setParameter(0, stepId)
 						.uniqueResult();
@@ -483,7 +483,11 @@ public class WStepSequenceDefDao {
 					+ e.getMessage()+"\n"+e.getCause());
 		}
 
-		return qtyOutgoingRoutes;
+		if (qtyOutgoingRoutes != null){
+			return qtyOutgoingRoutes.intValue();
+		} else {
+			return 0;
+		}
 
 	}	
 	
@@ -559,7 +563,7 @@ public class WStepSequenceDefDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		Integer qtyIncomingRoutes=0;
+		Long qtyIncomingRoutes = null;
 
 		try {
 
@@ -569,13 +573,13 @@ public class WStepSequenceDefDao {
 			tx.begin();
 
 			if (processId != null) {
-				qtyIncomingRoutes = (Integer) session
+				qtyIncomingRoutes = (Long) session
 								.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE toStep.id = ? and process.id=? ")
 								.setParameter(0, stepId)
 								.setParameter(1, processId)
 								.uniqueResult();
 			} else {
-				qtyIncomingRoutes = (Integer) session
+				qtyIncomingRoutes = (Long) session
 						.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE toStep.id = ? ORDER BY toStep.id")
 						.setParameter(0, stepId)
 						.uniqueResult();
@@ -602,7 +606,11 @@ public class WStepSequenceDefDao {
 					+ e.getMessage()+"\n"+e.getCause());
 		}
 
-		return qtyIncomingRoutes;
+		if (qtyIncomingRoutes != null){
+			return qtyIncomingRoutes.intValue();
+		} else {
+			return 0;
+		}
 
 	}	
 	
