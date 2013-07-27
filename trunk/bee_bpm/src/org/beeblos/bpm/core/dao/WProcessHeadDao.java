@@ -534,10 +534,10 @@ public class WProcessHeadDao {
 
 			tx.begin();
 
-			String query =  "SELECT IF(wpd.process_id = :processHeadId,true,false) " +
+			String query =  "SELECT IF(wpd.head_id = :processHeadId,true,false) " +
 					" FROM w_process_def wpd " +
-					" WHERE wpd.process_id = :processHeadId " +
-					" GROUP BY wpd.process_id ";
+					" WHERE wpd.head_id = :processHeadId " +
+					" GROUP BY wpd.head_id ";
 
 			System.out.println("[QUERY]: "+query);
 			
