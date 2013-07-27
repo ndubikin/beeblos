@@ -301,6 +301,18 @@
 			<column name="shared"/>
 		</property>
 	
+		<property generated="never" lazy="false" name="rules" type="string">
+			<column name="rules"  />
+		</property>
+	
+		<property generated="never" lazy="false" name="preconditions" type="string">
+			<column name="preconditions"  />
+		</property>
+	
+		<property generated="never" lazy="false" name="postconditions" type="string">
+			<column name="postconditions"  />
+		</property>
+	
 		<property generated="never" lazy="false" name="idDept" type="int">
 			<column name="id_dept">
 				<comment>departamento al que corresponde el paso</comment>
@@ -592,6 +604,11 @@
 				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
 			</column>
 		</property>
+
+		<property generated="never" lazy="false" name="rules" type="string">
+			<column name="rules"  />
+		</property>
+
 <!-- 		<property generated="never" lazy="false" name="version" -->
 <!-- 			type="java.lang.Integer"> -->
 <!-- 			<column name="version" /> -->

@@ -367,7 +367,13 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 					task.setAttribute("spId", newSpObjectId);
 					task.setAttribute("label", newSpObjectName);
-					task.setAttribute("description", step.getStepComments());
+					
+					if (step != null){
+						task.setAttribute("description", step.getStepComments());
+						task.setAttribute("rules", step.getRules());
+						task.setAttribute("instructions", step.getInstructions());
+					}
+					
 				
 					String responses = "";
 					if (step.getResponse() != null
@@ -545,8 +551,10 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			// lista para guardar los pasos que tendremos en el mapa para posteriormente actualizarlos
 			List<WStepDef> xmlMapStepList = new ArrayList<WStepDef>();
 			
-			String spStepComment = "";
+			String spStepComments = "";
 			String spResponses = "";
+			String spRules = "";
+			String spInstructions = "";
 
 			NodeList taskList = xmlParsed.getElementsByTagName("Task");
 
@@ -558,8 +566,10 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				xmlId = task.getAttribute("id");
 				spId = task.getAttribute("spId");
 				spName = task.getAttribute("label");
-				spStepComment = task.getAttribute("description");
+				spStepComments = task.getAttribute("description");
 				spResponses = task.getAttribute("responses");
+				spRules = task.getAttribute("rules");
+				spInstructions = task.getAttribute("instructions");
 				
 				// el nombre no puede ser vacío, por lo tanto le ponemos el que tenemos por defecto
 				if (spName == null
@@ -575,12 +585,12 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 					WStepHead stepHead = new WStepHead();
 					stepHead.setName(spName);
-					stepHead.setComments(spStepComment);
+
 					System.out.println("WS Save WStepHead.add(): " + spName);
 					Integer stepHeadId = stepHeadBL.add(stepHead, currentUserId); // creo el stepHead
 					
 					System.out.println("WS Save stepBL.createFirstWStepDef(): " + spName);
-					spId = stepBL.createFirstWStepDef(stepHeadId, currentUserId).toString(); // creo la versión WStepDef
+					spId = stepBL.createFirstWStepDef(stepHeadId, spRules, spStepComments, spInstructions, currentUserId).toString(); // creo la versión WStepDef
 					
 					task.setAttribute("spId", spId); // le añadimos el spId nuevo al xml map para persistirlo con el
 					
@@ -596,6 +606,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					WStepDef step = stepBL.getWStepDefByPK(Integer.valueOf(spId), currentUserId);
 					
 					step.setName(spName);
+					step.setRules(spRules);
+					step.setStepComments(spStepComments);
+					step.setInstructions(spInstructions);
 					
 					Set<WStepResponseDef> xmlMapResponses = new HashSet<WStepResponseDef>();
 					// ahora vemos las responses que hay y si hay alguno q no existe lo metemos
@@ -684,6 +697,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				spId = edge.getAttribute("spId");
 				spName = edge.getAttribute("label");
 				spResponses = edge.getAttribute("responses");
+				spRules = edge.getAttribute("rules");
 				
 				NodeList mxCellList = edge.getElementsByTagName("mxCell");
 				
@@ -750,6 +764,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					route.setEnabled(true);
 					route.setAfterAll(false);
 					route.setProcess(process);
+					route.setRules(spRules); // dml 20130727
 
 					// el nombre SI puede ser vacío, pero le ponemos uno por defecto (REVISAR NESTOR)
 					if (spName == null

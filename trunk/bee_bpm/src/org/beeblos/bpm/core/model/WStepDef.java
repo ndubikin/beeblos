@@ -82,6 +82,11 @@ public class WStepDef implements java.io.Serializable {
 	private String customSaveMethod;
 	private String customSaveRefClass;
 	
+	// dml 20130727
+	private String rules;
+	private String preconditions;
+	private String postconditions;
+
 	// dml 20120113
 	private Date insertDate;
 	private Integer insertUser;
@@ -945,6 +950,30 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setBackingBean(boolean backingBean) {
 		this.backingBean = backingBean;
+	}
+
+	public String getRules() {
+		return rules;
+	}
+
+	public void setRules(String rules) {
+		this.rules = rules;
+	}
+
+	public String getPreconditions() {
+		return preconditions;
+	}
+
+	public void setPreconditions(String preconditions) {
+		this.preconditions = preconditions;
+	}
+
+	public String getPostconditions() {
+		return postconditions;
+	}
+
+	public void setPostconditions(String postconditions) {
+		this.postconditions = postconditions;
 	}
 
 }
