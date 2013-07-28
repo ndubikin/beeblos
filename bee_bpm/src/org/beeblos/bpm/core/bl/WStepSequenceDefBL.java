@@ -27,7 +27,8 @@ public class WStepSequenceDefBL {
 	public Integer add(WStepSequenceDef route, Integer currentUser) throws WStepSequenceDefException {
 		
 		logger.debug("add() WStepSequenceDef - Name: [Proc Version Id:"+
-				route.getProcess().getId()+"-fromStepId:"+route.getFromStep().getId()+"]");
+				route.getProcess().getId()+"-fromStepId:"
+				+((route!=null && route.getFromStep()!=null)?route.getFromStep().getId():"xxxx")+"]");
 		
 		// timestamp & trace info
 		route.setInsertDate(new Date());
@@ -41,7 +42,7 @@ public class WStepSequenceDefBL {
 	
 	public void update(WStepSequenceDef route, Integer currentUser) throws WStepSequenceDefException {
 		
-		logger.debug("update() WStepSequenceDef < id = "+route.getId()+">");
+		logger.debug("update() WStepSequenceDef < id = "+(route!=null?route.getId():"xx.xx")+">");
 		
 		if (!route.equals(new WStepSequenceDefDao().getWStepSequenceDefByPK(route.getId())) ) {
 
@@ -64,7 +65,8 @@ public class WStepSequenceDefBL {
 
 		logger.info("delete() WStepSequenceDef - VersionId: [" +
 					route.getProcess().getId()
-					+"-fromStepId:"+route.getFromStep().getId()+"]");
+					+"-fromStepId:"
+					+((route!=null && route.getFromStep()!=null)?route.getFromStep().getId():"xx..xx")+"]");
 		
 		new WStepSequenceDefDao().deleteRoute(route);
 

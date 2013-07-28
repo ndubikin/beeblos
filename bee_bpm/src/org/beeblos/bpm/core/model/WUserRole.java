@@ -97,6 +97,9 @@ public class WUserRole implements java.io.Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result + insertUser;
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
@@ -113,6 +116,13 @@ public class WUserRole implements java.io.Serializable {
 		WUserRole other = (WUserRole) obj;
 		if (active != other.active)
 			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser != other.insertUser)
+			return false;
 		if (role == null) {
 			if (other.role != null)
 				return false;
@@ -126,20 +136,20 @@ public class WUserRole implements java.io.Serializable {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "WUserRole [" + (user != null ? "user=" + user + ", " : "")
-				+ (role != null ? "role=" + role + ", " : "") + "active="
-				+ active + ", insertUser=" + insertUser + ", "
-				+ (insertDate != null ? "insertDate=" + insertDate : "") + "]";
-	}
-
 	public boolean empty() {
 
 		if (user!=null && ! user.empty()) return false;
 		if (role!=null && ! role.empty()) return false;
 		
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "WUserRole [" + (user != null ? "user=" + user + ", " : "")
+				+ (role != null ? "role=" + role + ", " : "") + "active="
+				+ active + ", insertUser=" + insertUser + ", "
+				+ (insertDate != null ? "insertDate=" + insertDate : "") + "]";
 	}
 	
 	

@@ -47,7 +47,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		}	
 	}
 
-	public WStepSequenceDef(Integer id, WProcessDef process, Integer version,
+	public WStepSequenceDef(Integer id, WProcessDef process,// Integer version,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
 			boolean afterAll, String validResponses, String name) {
 		super();
@@ -62,7 +62,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public WStepSequenceDef(WProcessDef process, Integer version,
+	public WStepSequenceDef(WProcessDef process, //Integer version,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
 			boolean afterAll, String validResponses, String name) {
 		super();

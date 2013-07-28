@@ -8,6 +8,7 @@ public class StepWorkLight {
 	private Integer idStep;
 	private String stepName;
 	private String reference;
+	private String comments;
 	private Date arrivingDate;
 	private Date openedDate;
 	private Integer openerUser;
@@ -32,7 +33,7 @@ public class StepWorkLight {
 	}
 
 	public StepWorkLight(Integer idProcess, Integer idStep,
-			String stepName, String reference, Date arrivingDate, Date openedDate,
+			String stepName, String reference, String comments, Date arrivingDate, Date openedDate,
 			Integer openerUser, Date decidedDate, Integer performer,
 			Date deadlineDate, Date deadlineTime, boolean locked, Integer lockedBy,
 			Integer idStepWork, String openerUserLogin, String openerUserName,
@@ -42,6 +43,7 @@ public class StepWorkLight {
 		this.idStep = idStep;
 		this.stepName = stepName;
 		this.reference = reference;
+		this.comments = comments;
 		this.arrivingDate = arrivingDate;
 		this.openedDate = openedDate;
 		this.openerUser = openerUser;
@@ -154,6 +156,14 @@ public class StepWorkLight {
 		this.reference = reference;
 	}
 
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
 	public boolean isLocked() {
 		return locked;
 	}
@@ -213,7 +223,9 @@ public class StepWorkLight {
 	@Override
 	public String toString() {
 		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep
-				+ ", stepName=" + stepName + ", reference=" + reference
+				+ ", stepName=" + stepName 
+				+ ", reference=" + reference
+				+ ", comments=" + comments
 				+ ", arrivingDate=" + arrivingDate + ", openedDate="
 				+ openedDate + ", openerUser=" + openerUser + ", decidedDate="
 				+ decidedDate + ", performer=" + performer + ", deadlineTime="
@@ -260,6 +272,8 @@ public class StepWorkLight {
 				+ ((performerName == null) ? 0 : performerName.hashCode());
 		result = prime * result
 				+ ((reference == null) ? 0 : reference.hashCode());
+		result = prime * result
+				+ ((comments == null) ? 0 : comments.hashCode());		
 		result = prime * result
 				+ ((stepName == null) ? 0 : stepName.hashCode());
 		return result;
@@ -356,6 +370,13 @@ public class StepWorkLight {
 				return false;
 		} else if (!reference.equals(other.reference))
 			return false;
+		
+		if (comments == null) {
+			if (other.comments != null)
+				return false;
+		} else if (!comments.equals(other.comments))
+			return false;
+		
 		if (stepName == null) {
 			if (other.stepName != null)
 				return false;
