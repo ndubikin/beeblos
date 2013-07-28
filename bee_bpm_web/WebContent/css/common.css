@@ -580,11 +580,11 @@ table.doctable td {
 */
 
 .viewFilters {
-	text-align: center;
-	padding-left: 0px;
+	text-align: left; 
+	margin-left:25px; 
+	padding-left: 10px;
 	font-size: 11px;
 	cursor: pointer;
 	color: #7795AF;
-	font-family: Verdana;
 	text-decoration: underline
 }

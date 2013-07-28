@@ -83,12 +83,12 @@
  </managed-bean>
  <managed-bean>
   <managed-bean-name>pasoBean</managed-bean-name>
-  <managed-bean-class>org.beeblos.bpm.web.bean.wf.PasoBean</managed-bean-class>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.PasoBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
  <managed-bean>
   <managed-bean-name>inyectorBean</managed-bean-name>
-  <managed-bean-class>org.beeblos.bpm.web.bean.wf.InyectorBean</managed-bean-class>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.InyectorBean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
  <navigation-rule>
@@ -124,10 +124,20 @@
  </navigation-rule>
  <navigation-rule>
   <from-view-id>*</from-view-id>
-  <!-- 		<navigation-case> 
- 			<from-outcome>PROCESAR_TAREA</from-outcome> 
- 			<to-view-id>/dap/procesarProyectoDAP.xhtml</to-view-id> 
- 		</navigation-case> -->
+	<navigation-case> 
+		<from-outcome>PROCESS_TASK</from-outcome> 
+		<to-view-id>/task/processWithForm.xhtml</to-view-id> 
+	</navigation-case> 
+	<navigation-case>
+		<from-outcome>TASK_PROCESSED_OK</from-outcome>
+		<to-view-id>/task/processWellcomePage.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>PROCESS_WELLCOME_PAGE</from-outcome>
+		<to-view-id>/task/processWellcomePage.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>	
   <navigation-case>
    <from-outcome>WELCOME_PAGE</from-outcome>
    <to-view-id>/welcome.xhtml</to-view-id>
