@@ -1,7 +1,7 @@
 package org.beeblos.bpm.web.bean;
 
-import static org.beeblos.bpm.web.util.ConstantsWeb.FAIL;
-import static org.beeblos.bpm.web.util.ConstantsWeb.SUCCESS_PAIS;
+import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.SUCCESS_PAIS;
 
 import java.util.ArrayList;
 import java.util.List;

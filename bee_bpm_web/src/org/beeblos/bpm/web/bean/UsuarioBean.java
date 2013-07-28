@@ -1,5 +1,9 @@
 package org.beeblos.bpm.web.bean;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_PASS;
+import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.SUCCESS_USUARIO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +16,6 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
-import org.beeblos.bpm.web.util.ConstantsWeb;
 import org.beeblos.security.st.bl.DepartamentoBL;
 import org.beeblos.security.st.bl.UsuarioBL;
 import org.beeblos.security.st.bl.UsuarioCuentasEmailBL;
@@ -114,7 +117,7 @@ public class UsuarioBean extends CoreManagedBean {
 		
 		this.showResetPassMsg = false;	
 		
-		return ConstantsWeb.SUCCESS_USUARIO;
+		return SUCCESS_USUARIO;
 
 	}
 
@@ -133,7 +136,7 @@ public class UsuarioBean extends CoreManagedBean {
 		//setMsgUsuarios("Ingrese Nuevo Usuario");
 		
 
-		return ConstantsWeb.SUCCESS_USUARIO;
+		return SUCCESS_USUARIO;
 
 	}
 	
@@ -199,7 +202,7 @@ public class UsuarioBean extends CoreManagedBean {
 			this.currentUsuario.setPassword(hashpass);
 			
 			new UsuarioBL().agregar(this.currentUsuario);
-			retorno = ConstantsWeb.SUCCESS_USUARIO;
+			retorno = SUCCESS_USUARIO;
 			
 		} catch (UsuarioException e) {
 			// TODO Auto-generated catch block
@@ -326,7 +329,7 @@ public class UsuarioBean extends CoreManagedBean {
 					+ cs.getUsuario().getNombres() + " "
 					+ cs.getUsuario().getApellidos());
 
-			retorno = ConstantsWeb.SUCCESS_USUARIO;
+			retorno = SUCCESS_USUARIO;
 			limpiaBean();
 
 		} catch (UsuarioException e) {
@@ -355,7 +358,7 @@ public class UsuarioBean extends CoreManagedBean {
 	
 	public String nuevoUsuario (ActionEvent event){
 		reset();
-		return ConstantsWeb.SUCCESS_USUARIO;
+		return SUCCESS_USUARIO;
 	}
 	
 	
@@ -371,7 +374,7 @@ public class UsuarioBean extends CoreManagedBean {
 	
 	public void agregarCuentaCorreo (){
 		
-		String retorno = ConstantsWeb.FAIL;
+		String retorno = FAIL;
 		
 		if (this.currentEmail!=null && this.currentEmail.getIdUce()==0){
 			
@@ -383,7 +386,7 @@ public class UsuarioBean extends CoreManagedBean {
 			}
 			
 			resetListaEmail();
-			retorno = ConstantsWeb.SUCCESS_USUARIO;
+			retorno = SUCCESS_USUARIO;
 		}
 		//return retorno;
 		
@@ -648,7 +651,7 @@ public class UsuarioBean extends CoreManagedBean {
 
 		UsuarioBL uBL = new UsuarioBL();
 		
-		String hashPassword = MD5Hash.encode(ConstantsWeb.DEFAULT_PASS.getBytes());
+		String hashPassword = MD5Hash.encode(DEFAULT_PASS.getBytes());
 		
 		try{
 			Usuario usuarioLocal = uBL.obtenerUsuarioPorPK(this.idUsuario);
@@ -688,7 +691,7 @@ public class UsuarioBean extends CoreManagedBean {
 			logger.warn("error al intentar cargar la lista de propuestas - "+e.getMessage());
 		} 
 		
-		return ConstantsWeb.SUCCESS_USUARIO; 
+		return SUCCESS_USUARIO; 
 				
 	}
 

@@ -1,5 +1,8 @@
 package org.beeblos.bpm.web.bean;
 
+import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.SUCCESS_TERRITORIO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
-import org.beeblos.bpm.web.util.ConstantsWeb;
 import org.beeblos.security.auxiliar.bl.PaisBL;
 import org.beeblos.security.auxiliar.bl.TerritorioBL;
 import org.beeblos.security.auxiliar.bl.TipoTerritorioBL;
@@ -322,7 +324,7 @@ public class MTerritorioBean extends CoreManagedBean {
 		
 		System.out.println("----------_>>>>>< tc:"+this.idTipoTerritorio+" idC:"+this.idTerritorio);
 		
-		return ConstantsWeb.SUCCESS_TERRITORIO;
+		return SUCCESS_TERRITORIO;
 	}
 	
 
@@ -344,7 +346,7 @@ public class MTerritorioBean extends CoreManagedBean {
 	// nes 20100927
 	public void actualizar() {
 		
-		String retorno = ConstantsWeb.FAIL;
+		String retorno = FAIL;
 
 		try {
 		
@@ -356,7 +358,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			
 			territorioBL.actualizar(currentTerritorio);
 			
-			retorno=ConstantsWeb.SUCCESS_TERRITORIO;
+			retorno=SUCCESS_TERRITORIO;
 			
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
@@ -378,7 +380,7 @@ public class MTerritorioBean extends CoreManagedBean {
 	// nes 20100927
 	public String agregar() {
 
-		String retorno = ConstantsWeb.FAIL;
+		String retorno = FAIL;
 
 		TerritorioBL territorioBL = new TerritorioBL();
 
@@ -389,7 +391,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			this.currentTerritorio.setTerritorioPais(this.currentPais);
 			
 			territorioBL.agregar(currentTerritorio);
-			retorno=ConstantsWeb.SUCCESS_TERRITORIO;
+			retorno=SUCCESS_TERRITORIO;
 			
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
@@ -440,7 +442,7 @@ public class MTerritorioBean extends CoreManagedBean {
 	// nes 20100927
 	public String borra() {
 
-		String retorno = ConstantsWeb.FAIL;
+		String retorno = FAIL;
 
 		TerritorioBL territorioBL = new TerritorioBL();
 
@@ -448,7 +450,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			currentTerritorio = territorioBL.obtenerTerritorioPorPK(idTerritorio);
 			
 			territorioBL.borrar(currentTerritorio);
-			retorno = ConstantsWeb.SUCCESS_TERRITORIO;
+			retorno = SUCCESS_TERRITORIO;
 			_reset();
 			recargaListaTerritorios();
 			
