@@ -10,7 +10,7 @@ public class Constants {
 	
 	// dml 20130709
 	public static String PROCESS_XML_MAP_LOCATION = getStringProperty("process.xml.map.location","/processXmlMapTmp.xml");
-	public static String WORKFLOW_EDITOR_URI = getStringProperty("workflow.editor.uri","/general/javascript/work/editors/workfloweditor.html");
+	public static String WORKFLOW_EDITOR_URI = getStringProperty("workflow.editor.uri","/general/javascript/examples/editors/workfloweditor.html");
 
 	// dml 20130510
 	public static String HIBERNATE_CONFIGURATION_LIST_XML = getStringProperty("hibernate.configuration.list.xml","hibernateConfigurationList.xml");
@@ -27,9 +27,6 @@ public class Constants {
 	public static final boolean WRITE_EMAIL_TO_FILESYSTEM = getStringProperty("email.to.filesystem","no").equals("yes");
 	public static final String EMAIL_DEFAULT_SUBJECT = getStringProperty("email.default.subject");
 	
-	public static final String PROCESS_STEP = "PROCESS_STEP"; // dml 20120308
-	public static final String TURNBACK_STEP = "TURNBACK_STEP"; // dml 20120308
-
 	public static String BEEBLOS_PROTOCOL = getStringProperty("repository.protocol");
 	public static String BEEBLOS_IP = getStringProperty("repository.ip");
 	public static Integer BEEBLOS_PORT = getIntegerProperty("repository.port");
@@ -128,5 +125,46 @@ public class Constants {
 	public static final String LAST_W_PROCESS_DEF_ADDED = "LAST_W_PROCESS_DEF_ADDED";	
 	public static final String LAST_W_PROCESS_DEF_MODIFIED = "LAST_W_PROCESS_DEF_MODIFIED";
 
+	public static final String PROCESS_STEP = "PROCESS_STEP";
+	public static final String TURNBACK_STEP = "TURNBACK_STEP";
+	
+	public static final String PROCESADOR_PASO_DEFAULT = "/task/processWithForm.xhtml";
+	public static final String PAGINA_PROCESO_DEFAULT = "/task/processor/tabs/defaultStepProcessor.xhtml";
+	public static final String PAGINA_LISTA_DEFAULT ="/dap/procesarProyectoDAP/pestanias/listaProyectosPpDAP.xhtml";
+	public static final String PAGINA_ANEXA_DEFAULT ="/fichas/fichaPropuestaReducida.xhtml";
+	
+	public static final String PAGINA_PROCESO_OK_DEFAULT ="/task/tabs/processOkDefault.xhtml";
+	public static final String PAGINA_GUARDAR_OK_DEFAULT ="/dap/procesarProyectoDAP/pestanias/guardarOkDefault.xhtml";
+	public static final String PAGINA_PROCESO_CANCEL_DEFAULT ="/dap/procesarProyectoDAP/pestanias/procesoCancelDefault.xhtml";
+	
+	public static final String TASK_PROCESSED_OK ="TASK_PROCESSED_OK";
+	
+	public static final String NONE = "NONE";
+	public static final String CONSULTA_TAREA 		= "CONSULTA_TAREA";
+	public static final String PROCESS_TASK 		= "PROCESS_TASK"; // NES 20101220
+	public static final String PASO_DESBLOQUEADO 		= "PASO_DESBLOQUEADO"; // NES 20111219
+	public static final String SUCCESS_MIUSUARIO		="SUCCESS_MIUSUARIO";
+	
+	public static final String INYECTAR_WORKFLOW 		= "INYECTAR_WORKFLOW";  // nes 20101217
+
+	public static final String SUCCESS_PAIS 			= "SUCCESS_PAIS";
+	public static final String SUCCESS_TIPOTERRITORIO	= "SUCCESS_TIPOTERRITORIO";
+	public static final String SUCCESS_MONEDA 			= "SUCCESS_MONEDA";
+	public static final String SUCCESS_DEPARTAMENTO 	= "SUCCESS_DEPARTAMENTO";
+
+	public static final String CONSULTA_USUARIO_LOGIN 	= "CONSULTA_USUARIO_LOGIN";
+	public static final String SUCCESS_USUARIO  		= "SUCCESS_USUARIO";
+	public static final String SUCCESS_ENVIAR_A_GTD 	= "SUCCESS_ENVIAR_A_GTD";
+
+	public static final String SUCCESS_WELCOME 			= "SUCCESS_WELCOME";
+	
+	public static final String WELCOME_PAGE				= "WELCOME_PAGE";
+
+	public static final String SUCCESS_TERRITORIO = "SUCCESS_TERRITORIO"; // mrico 20110418
+			
+	public static final String DEFAULT_PASS = "12345";
+	
+	public static final Integer TERRITORIO_ID_ESTADO=0;
+	public static final Integer TERRITORIO_ID_LOCALIDAD=1;
 	
 }
