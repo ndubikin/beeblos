@@ -669,11 +669,11 @@
             <column name="id" />
             <generator class="identity" />
         </id>
-        <version name="version" type="int">
-            <column name="version" >
-                <comment>version</comment>
-            </column>
-        </version>
+<!--         <version name="version" type="int"> -->
+<!--             <column name="version" > -->
+<!--                 <comment>version</comment> -->
+<!--             </column> -->
+<!--         </version> -->
         <property name="startingTime" type="timestamp">
             <column name="starting_time" length="0" >
                 <comment>the work was started at this date and time (UTC TIME)</comment>
@@ -738,10 +738,10 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
-		<property generated="never" lazy="false" name="version"
-			type="java.lang.Integer">
-			<column name="version" />
-		</property>
+<!-- 		<property generated="never" lazy="false" name="version" -->
+<!-- 			type="java.lang.Integer"> -->
+<!-- 			<column name="version" /> -->
+<!-- 		</property> -->
 
 		<property generated="never" lazy="false" name="arrivingDate"
 			type="timestamp">
