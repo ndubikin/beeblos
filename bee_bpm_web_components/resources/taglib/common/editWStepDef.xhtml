@@ -48,7 +48,7 @@
 				<h:panelGroup>
 					<rich:calendar value="#{wStepDefFormBean.currentWStepDef.deadlineDate}"
 								   id="id_deadline_date" enableManualInput="true"
-								   popup="true" datePattern="#{msg.formatoFecha}" locale="ES" >
+								   popup="true" datePattern="#{msg.date_format_mask}" locale="ES" >
 						<rich:ajaxValidator event="oninputblur" />
 					</rich:calendar>					
 					<h:outputText value="#{wStepDefFormBean.currentWStepDef.deadlineTime}" 

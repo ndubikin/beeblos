@@ -5,6 +5,7 @@ import static org.beeblos.bpm.core.util.Constants.PROCESSING;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGSTEPS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGWORKS_QUERY;
+import static org.beeblos.bpm.core.util.Constants.FAIL;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +20,7 @@ import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -32,6 +34,7 @@ import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.wc.taglib.bean.util.TareaWorkflowUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -41,6 +44,8 @@ import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessWorkUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepWorkUtil;
+
+
 
 public class WorkingProcessQueryBean extends CoreManagedBean {
 	
@@ -919,20 +924,17 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		return new WProcessWorkUtil().loadWProcessWorkFormBean(idWork);
 
 	}
-	
-	
-	//NOTA: ELIMINAR ESTE METODO SI NO SE VA A LLAMAR DESDE EL CONTEXTUAL DE UN WSTEPWORK A ESTE MÉTODO
-	// dml 20120307
-//	public void processWStepWork(){
-//		
-//		try {
-//			currentWStepWork = new WStepWorkBL().getWStepWorkByPK(this.idStepWork, getCurrentUserId());
-//		} catch (WStepWorkException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		
+
+	public void processWStepWork(){
+		
+		try {
+			currentWStepWork = new WStepWorkBL().getWStepWorkByPK(this.idStepWork, getCurrentUserId());
+		} catch (WStepWorkException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 //		if ( currentWStepWork.getCurrentStep().isEmailNotification()  ) {
 //			try {
 //				new WStepWorkBL()._emailNotificationArrivingStep(currentWStepWork,"");
@@ -942,8 +944,63 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 //				logger.info("Exception: there is not possible sending email notification to users involved");
 //			}
 //		}
-//		
-//		
-//	}
+	}
 
+	public String loadStepWork(){
+
+		String ret=FAIL;
+		
+		try {
+
+			ret = new TareaWorkflowUtil()
+							.cargarPasoWorkflow(idStepWork, null, null);
+
+			
+			// nes 20110220 - obligo a que se recargue la lista porque si no no refresca bien ...
+			wProcessDefLightList=null;
+			processWorkLightList=null;
+			stepWorkLightList=null;
+			nResults=0;
+			nStepResults=0;
+			nWorkResults=0;
+			
+		} catch (CantLockTheStepException e) {
+			
+			String mensaje = "No se puede reservar la tarea indicada ....\n";
+			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("61",mensaje,params,FGPException.WARN);
+			logger.info("cargarPaso: "+mensaje);
+			//throw new TareaException( mensaje );
+			ret=FAIL;
+			
+		} catch (WStepLockedByAnotherUserException e) {
+			
+			String mensaje = "La tarea indicada está bloqueada por otro usuario ....\n";
+			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("61",mensaje,params,FGPException.WARN);
+			logger.info("cargarPaso: "+mensaje);
+			//throw new TareaException( mensaje );
+			ret=FAIL;
+			
+		} catch (WStepWorkException e) {
+			
+			String mensaje = "No se puede cargar la tarea indicada ....\n";
+			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("61",mensaje,params,FGPException.WARN);
+			logger.info("cargarPaso: "+mensaje);
+			//throw new TareaException( mensaje );
+			ret=FAIL;
+			
+		} catch (WUserDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return ret;
+
+	}
+	
 }

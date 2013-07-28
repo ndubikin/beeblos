@@ -13,17 +13,9 @@
 		<rich:spacer height="10" />
 
 		<h:outputText value="#{msg.label_process}: "/>
-		<h:panelGroup>
-			<h:outputText id="step_work_name"
+		<h:outputText id="step_work_name"
 				value="#{wStepWorkFormBean.currentWStepWork.process.name}"
 				style="font-weight:bold; font-size:13px;" />
-			<h:outputText value="#{msg.label_version}: " style="margin-left:10px; font-size:13px;"/>
-			<h:outputText id="process_work_version"
-				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.version}"
-				style="font-weight:bold; font-size:13px;" />
-
-		</h:panelGroup>
-
 
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />

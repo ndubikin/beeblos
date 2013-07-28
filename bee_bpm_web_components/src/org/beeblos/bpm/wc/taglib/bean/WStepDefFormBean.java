@@ -92,7 +92,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private Integer incomingRoutesSize;
 	
 	// dml 20120526
-	private Integer currentWStepDefId;
+	private Integer currentProcessDefId;
 
 	// dml 20130507
 	private Integer currentStepHeadIdSelected;
@@ -133,7 +133,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public void initEmptyWStepDef() {
 
 		currObjId = null;
-		currentWStepDefId = null;
+		currentProcessDefId = null;
 		
 		currentWStepDef = new WStepDef(EMPTY_OBJECT);
 		
@@ -841,7 +841,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			 * 
 			 * Por ese motivo en este método seteo process_id a null porque no hay nada que indique que estamos parados en 1 proceso...
 			 */
-			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, null, getCurrentUserId());
+			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, currentProcessDefId, getCurrentUserId());
 
 			if (outgoingRoutes != null){
 				outgoingRoutesSize = outgoingRoutes.size();
@@ -865,7 +865,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		try {
 
-			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, null, getCurrentUserId());
+			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, currentProcessDefId, getCurrentUserId());
 
 			if (incomingRoutes != null){
 				incomingRoutesSize = incomingRoutes.size();
@@ -1076,12 +1076,12 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.relatedStepDefList = relatedStepDefList;
 	}
 
-	public Integer getCurrentWProcessDefId() {
-		return currentWStepDefId;
+	public Integer getCurrentProcessDefId() {
+		return currentProcessDefId;
 	}
 
-	public void setCurrentWProcessDefId(Integer currentWStepDefId) {
-		this.currentWStepDefId = currentWStepDefId;
+	public void setCurrentProcessDefId(Integer currentProcessDefId) {
+		this.currentProcessDefId = currentProcessDefId;
 	}
 
 	public void deleteWStepUser(){
