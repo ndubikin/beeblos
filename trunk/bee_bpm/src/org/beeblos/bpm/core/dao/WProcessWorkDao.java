@@ -32,10 +32,20 @@ public class WProcessWorkDao {
 	public Integer add(WProcessWork workProcess) throws WProcessWorkException {
 		
 		logger.debug("add() WProcessWork - Name: ["+workProcess.getReference()+"]");
-		
-		try {
+		Integer id=null;
 
-			return Integer.valueOf(HibernateUtil.guardar(workProcess));
+		try {
+			// if no object related, relate object itself
+			if (workProcess.getIdObjectType()==WProcessWork.class.getName()) {
+				workProcess.setIdObject(1);
+			}
+
+			id = Integer.valueOf(HibernateUtil.guardar(workProcess));
+			
+			if (workProcess.getIdObjectType()==WProcessWork.class.getName()) {
+				workProcess.setIdObject(id);
+				HibernateUtil.actualizar(workProcess);
+			}
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessWorkDao: add - Can't store process definition record "+ 
@@ -45,6 +55,7 @@ public class WProcessWorkDao {
 
 		}
 
+		return id;
 	}
 	
 	

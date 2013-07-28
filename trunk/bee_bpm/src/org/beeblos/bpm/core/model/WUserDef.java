@@ -202,15 +202,6 @@ public class WUserDef implements java.io.Serializable {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "WUserDef [id=" + id + ", name=" + name + ", login=" + login
-				+ ", email=" + email + ", active=" + active + ", insertUser="
-				+ insertUser + ", insertDate=" + insertDate + ", modUser="
-				+ modUser + ", modDate=" + modDate + ", rolesRelated="
-				+ rolesRelated + "]";
-	}
-
 	public boolean empty() {
 
 		if (id!=null && ! id.equals(0)) return false;
@@ -220,6 +211,20 @@ public class WUserDef implements java.io.Serializable {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return "WUserDef [" + (id != null ? "id=" + id + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (login != null ? "login=" + login + ", " : "")
+				+ (email != null ? "email=" + email + ", " : "") + "active="
+				+ active + ", insertUser=" + insertUser + ", "
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated : "")
+				+ "]";
+	}
+
 	// dml 20120508
 	public void addRole( WRoleDef role, boolean active, Integer insertUser ) {
 		WUserRole wur = new WUserRole(active, insertUser, new Date());

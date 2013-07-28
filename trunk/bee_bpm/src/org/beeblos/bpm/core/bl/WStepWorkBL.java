@@ -531,7 +531,7 @@ public class WStepWorkBL {
 		}
 	}
 	
-	// locks a step. If the step is locked by same user, does nothing but don't return exception ...
+	// locks a step. If the step is locked by same user nothing to do but don't return exception ...
 	private void _lockStep( WStepWork stepToLock, Integer currentUser ) throws WStepWorkException, WStepLockedByAnotherUserException {
 		
 		// if step is not locked then locks it !
@@ -709,7 +709,7 @@ public class WStepWorkBL {
 		newStepWork.setArrivingDate(now);
 		newStepWork.setAdminProcess(isAdminProcess);
 		newStepWork.setProcess( currentStepWork.getProcess() );
-		newStepWork.setVersion( currentStepWork.getVersion() );
+//		newStepWork.setVersion( currentStepWork.getVersion() );
 
 		newStepWork.setwProcessWork(currentStepWork.getwProcessWork());
 

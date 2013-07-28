@@ -1431,24 +1431,25 @@ public class WStepWorkDao {
 	private String buildWorkingStepQuery(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
-		tmpQuery += " sw.id_process, ";
-		tmpQuery += " sw.id_current_step, ";
-		tmpQuery += " sh.name step_name, ";
-		tmpQuery += " sw.arriving_date, ";
-		tmpQuery += " sw.opened_date, ";
-		tmpQuery += " sw.opener_user, ";
-		tmpQuery += " sw.decided_date, ";
-		tmpQuery += " sw.performer_user_id, ";
-		tmpQuery += " sw.deadline_date, ";
-		tmpQuery += " sw.deadline_time, ";
-		tmpQuery += " pw.reference, ";
-		tmpQuery += " sw.locked, ";
-		tmpQuery += " sw.locked_by, ";
-		tmpQuery += " sw.id, ";
-		tmpQuery += " opener.login, ";
-		tmpQuery += " opener.name opener_name, ";
-		tmpQuery += " performer.login, ";
-		tmpQuery += " performer.name performer_name ";
+		tmpQuery += " sw.id_process, ";  //0
+		tmpQuery += " sw.id_current_step, "; //1
+		tmpQuery += " sh.name step_name, "; //2
+		tmpQuery += " sw.arriving_date, "; //3
+		tmpQuery += " sw.opened_date, "; //4 
+		tmpQuery += " sw.opener_user, "; //5
+		tmpQuery += " sw.decided_date, "; //6
+		tmpQuery += " sw.performer_user_id, "; //7
+		tmpQuery += " sw.deadline_date, "; //8
+		tmpQuery += " sw.deadline_time, "; //9
+		tmpQuery += " pw.reference, "; //10
+		tmpQuery += " sw.locked, "; //11
+		tmpQuery += " sw.locked_by, "; //12
+		tmpQuery += " sw.id, "; //13
+		tmpQuery += " opener.login, "; //14
+		tmpQuery += " opener.name opener_name, "; //15
+		tmpQuery += " performer.login, ";//16
+		tmpQuery += " performer.name performer_name, ";//17
+		tmpQuery += " pw.comments "; //18
 
 		tmpQuery += " FROM w_step_work sw ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
@@ -1486,6 +1487,7 @@ public class WStepWorkDao {
 		Date deadlineDate;
 		Date deadlineTime;
 		String reference;
+		String comments;
 		
 		// dml 20120123
 		boolean locked;
@@ -1548,10 +1550,10 @@ public class WStepWorkDao {
 					openerUserName = (cols[15] != null ? cols[15].toString() : "");
 					performerLogin = (cols[16] != null ? cols[16].toString() : "");
 					performerName = (cols[17] != null ? cols[17].toString() : "");
-					
+					comments = (cols[18] != null ? cols[18].toString() : "");
 					
 					returnList.add(new StepWorkLight(idProcess, idStep, stepName, 
-							reference, arrivingDate, openedDate, openerUser, decidedDate, 
+							reference, comments, arrivingDate, openedDate, openerUser, decidedDate, 
 							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork, 
 							openerUserLogin, openerUserName, performerLogin, performerName));
 				}

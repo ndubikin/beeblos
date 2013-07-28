@@ -147,14 +147,6 @@ public class WRoleDef implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
-	@Override
-	public String toString() {
-		return "WRoleDef [id=" + id + ", name=" + name + ", description="
-				+ description + ", idObject=" + idObject + ", idObjectType="
-				+ idObjectType + ", usersRelated=" + usersRelated
-				+ ", insertUser=" + insertUser + ", insertDate=" + insertDate
-				+ ", modUser=" + modUser + ", modDate=" + modDate + "]";
-	}
 
 	@Override
 	public int hashCode() {
@@ -162,6 +154,7 @@ public class WRoleDef implements java.io.Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((idObject == null) ? 0 : idObject.hashCode());
 		result = prime * result
@@ -173,7 +166,27 @@ public class WRoleDef implements java.io.Serializable {
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "WRoleDef ["
+				+ (id != null ? "id=" + id + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (description != null ? "description=" + description + ", "
+						: "")
+				+ (idObject != null ? "idObject=" + idObject + ", " : "")
+				+ (idObjectType != null ? "idObjectType=" + idObjectType + ", "
+						: "")
+				+ (usersRelated != null ? "usersRelated=" + usersRelated + ", "
+						: "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate : "") + "]";
 	}
 
 	@Override
@@ -182,13 +195,18 @@ public class WRoleDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WRoleDef))
 			return false;
 		WRoleDef other = (WRoleDef) obj;
 		if (description == null) {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (idObject == null) {
 			if (other.idObject != null)

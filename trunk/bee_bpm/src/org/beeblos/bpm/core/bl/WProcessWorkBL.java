@@ -13,6 +13,7 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
+import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 
 
@@ -29,6 +30,7 @@ public class WProcessWorkBL {
 		
 		logger.debug("add() WProcessWork - Name: ["+process.getId()+"]");
 		
+		_setObjectType(process);
 		// timestamp & trace info
 		process.setInsertDate(new Date());
 		process.setModDate( DEFAULT_MOD_DATE );
@@ -41,6 +43,13 @@ public class WProcessWorkBL {
 
 	}
 	
+	
+	// nes 20130728 - por el tema de aceptar procesos genericos no relacionados con 1 objeto obligatoriamente
+	private void _setObjectType(WProcessWork process){
+		if (process.getIdObjectType()==null) {
+			process.setIdObjectType(WProcessWork.class.getName());
+		}
+	}
 	
 	public void update(WProcessWork process, Integer currentUser) throws WProcessWorkException {
 		
