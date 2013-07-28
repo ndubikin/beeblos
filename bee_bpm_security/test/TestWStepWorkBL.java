@@ -105,7 +105,7 @@ public class TestWStepWorkBL extends TestCase{
 			iproc = processBL.add(process,1000);
 			
 			processWork.setProcess(process);
-			processWork.setVersion(1);
+//			processWork.setVersion(1);
 			processWork.setStartingTime(new Date());
 			processWork.setReference("process work reference");
 			processWork.setIdObject(750);
@@ -124,17 +124,17 @@ public class TestWStepWorkBL extends TestCase{
 			
 			// cargo la ruta
 			// presupongo que existen los step con id 800 y 20
-			WStepSequenceDef route1 = new WStepSequenceDef(process,version1,paso10,paso20, true, true, null, "");
+			WStepSequenceDef route1 = new WStepSequenceDef(process,paso10,paso20, true, true, null, "");
 			
-			WStepSequenceDef route2 = new WStepSequenceDef(process,version1,paso20,paso24, true, false, null, "");
-			WStepSequenceDef route3 = new WStepSequenceDef(process,version1,paso20,paso30, true, true , null, "");
+			WStepSequenceDef route2 = new WStepSequenceDef(process,paso20,paso24, true, false, null, "");
+			WStepSequenceDef route3 = new WStepSequenceDef(process,paso20,paso30, true, true , null, "");
 
-			WStepSequenceDef route4 = new WStepSequenceDef(process,version1,paso24,paso40, true, true, null, "");
-			WStepSequenceDef route5 = new WStepSequenceDef(process,version1,paso30,paso50, true, false, null, "");
+			WStepSequenceDef route4 = new WStepSequenceDef(process,paso24,paso40, true, true, null, "");
+			WStepSequenceDef route5 = new WStepSequenceDef(process,paso30,paso50, true, false, null, "");
 
-			WStepSequenceDef route6 = new WStepSequenceDef(process,version1,paso40,null, true, false, null, "");
-			WStepSequenceDef route7 = new WStepSequenceDef(process,version1,paso40,paso90, true, false, null, "");
-			WStepSequenceDef route8 = new WStepSequenceDef(process,version1,paso50,paso90, true, true, null, "");			
+			WStepSequenceDef route6 = new WStepSequenceDef(process,paso40,null, true, false, null, "");
+			WStepSequenceDef route7 = new WStepSequenceDef(process,paso40,paso90, true, false, null, "");
+			WStepSequenceDef route8 = new WStepSequenceDef(process,paso50,paso90, true, true, null, "");			
 			
 
 			iroute = routeBL.add(route3,1000);
