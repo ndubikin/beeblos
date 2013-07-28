@@ -3,7 +3,7 @@
  */
 package org.beeblos.bpm.web.common;
 
-import static org.beeblos.bpm.web.util.ConstantsWeb.SUCCESS_WELCOME;
+import static org.beeblos.bpm.core.util.Constants.SUCCESS_WELCOME;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
