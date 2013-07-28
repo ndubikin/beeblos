@@ -583,7 +583,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public String add() throws WProcessDefException {
 
-		logger.debug("WProcessDefFormBean: add: currentWProcessDefId:["
+		logger.debug("WProcessDefFormBean: add: currentProcessDefId:["
 				+ this.currentId + "] ");
 
 		setShowHeaderMessage(false);
