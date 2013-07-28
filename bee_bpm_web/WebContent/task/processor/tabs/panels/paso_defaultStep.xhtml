@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+
+<style type="text/css">
+
+	.top {
+	    vertical-align: top;
+	    
+	}
+
+
+.firstLeftText {
+	margin-left: 18px;
+	font-family : Arial;
+	font-size : 12px;
+}
+
+.colStylepp0 { 
+	width: 370px;
+	margin: 0px;
+
+}
+.colStylepp1 { 
+	width: 120px;
+	margin: 0px;
+
+}
+.colStylepp2 { 
+	width: 250px;
+	margin: 0px;
+
+}
+.colStylepp3 { 
+	width: 50px;
+	margin: 0px;
+
+}
+.colStylepp4 { 
+	width: 120px;
+	margin: 0px;
+
+}
+.colStylepp5 { 
+	width: 250px;
+	margin: 0px;
+}
+.colStylepp6 { 
+	width: 50px;
+	margin: 0px;
+
+}
+</style>
+
+	<h:form id="step_process_form">
+	
+<a4j:jsFunction name="onsubmitStep_process_form" oncomplete="this.submit;" /> 
+	
+		
+		<h:outputText value="( Paso devuelto )" style="color: red; font-size:13px; font-weight: bold; margin-left:207px;" 
+						rendered="#{pasoBean.pasoActual.sentBack eq true}"/>
+		<rich:spacer height="10" rendered="#{pasoBean.pasoActual.sentBack eq true}"/>		
+		
+		<h:panelGrid columns="5" style=" width : auto; height : auto; padding-left: 7px;margin-left:25px;" 
+				columnClasses="colStylepp0, colStylepp3, colStylepp1, colStylepp2, colStylepp3"
+				rendered="#{fichaProyectoBean.id!=0}">
+				
+			<rich:spacer height="10" />	<rich:spacer height="10" />
+			<rich:spacer height="10" />	<rich:spacer height="10" />	<rich:spacer height="10" />
+	
+
+			<h:outputText value="#{pasoBean.pasoActual.currentStep.name}" 
+							style="font-weight: normal; font-size:14px;"/>				
+			<rich:spacer height="10" />
+			
+
+			<h:outputText value="Enviado por:" />	
+			<h:outputText value="#{pasoBean.pasoActual.insertUser.name}" style="font-weight: bold; font-size: 14px;" />				
+			<rich:spacer height="10" />
+
+	
+
+			<h:outputText value="#{pasoBean.pasoActual.currentStep.instructions}" style="font-weight: bold; margin-top: 20px; font-size: 14px;" 
+							rendered="#{pasoBean.pasoActual.currentStep.instructions!=null}" />				
+			<rich:spacer height="10" />
+			<rich:spacer height="10" rendered="#{pasoBean.pasoActual.currentStep.instructions eq null}" />
+
+			<h:outputText 	id="id_label_respuestas"
+							value="Respuestas:" rendered="#{pasoBean.hayRespuestas}" 
+							style="#{pasoBean.idRespuesta!=null and pasoBean.idRespuesta!=0?'':'color: red; font-weight:bold;'}"/>
+			<rich:spacer height="10" rendered="#{!pasoBean.hayRespuestas}"/>
+			<h:selectOneMenu id="id_respuesta"   
+							rendered="#{pasoBean.hayRespuestas}" 
+							immediate="false"
+							value="#{pasoBean.idRespuesta}"
+							style="width:200px; height: 24px; font-size:13px;padding: 3px;">
+							<f:selectItems
+								value="#{pasoBean.lRespuestasCombo}" />
+							<a4j:support ajaxSingle="true"  
+										event="onchange" reRender="id_label_respuestas" />
+			</h:selectOneMenu>
+			<rich:spacer height="10" rendered="#{!pasoBean.hayRespuestas}"/>
+			<rich:spacer height="10" />			
+
+		</h:panelGrid>
+		
+		<h:panelGrid columns="2" style=" width : auto; height : auto; padding-left: 7px;margin-left:25px;" 
+				columnClasses="colStylesc1,colStylesc2"
+				rendered="#{pasoBean.pasoActual.userInstructions !=null}">
+				
+			<rich:spacer height="10" />	<rich:spacer height="10" /> 
+
+			<h:outputText value="Instrucciones personales:" />
+			<h:outputText value="#{pasoBean.pasoActual.userInstructions}" 
+							 style="width:98%; height:100px; font-size: 14px;"/>
+
+			<rich:spacer height="10" />	<rich:spacer height="10" />
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

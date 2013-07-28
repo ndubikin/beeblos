@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+<f:loadBundle basename="com.softpoint.bdc.util.mensajes" var="msg" />
+
+<ui:composition template="/templates/main.xhtml">
+
+<ui:define name="title">BeeBpm administration</ui:define>
+<ui:define name="current">Workflow inyector</ui:define>
+<ui:define name="body" >
+	
+<h:form id="inyector_form">
+				
+	<h:panelGrid id="exceptionsPnl" height="540px" rendered="#{exceptionBean.renderMessage}">
+		<rich:dataTable value="#{exceptionBean.exceptionList}" var="exp" style="margin-left:250px;">
+            <rich:column> 
+                <f:facet name="header">	                    
+                </f:facet>	           
+                <h:graphicImage value="#{exp.imagePath}" />                
+            </rich:column>
+            <rich:column> 
+                <f:facet name="header">
+                    <h:outputText value="#{msg.label_message}"/>
+                </f:facet>
+                <h:outputText value="#{exp.code} "/>
+                <h:outputText value="#{exp.message}"/>
+            </rich:column>	            
+            				
+		</rich:dataTable>
+	</h:panelGrid>
+		
+ 
+	<h:panelGrid columns="1">
+		<rich:spacer height="10" />
+		<h:outputText value="Inyectar nuevo elemento en worklfow:" styleClass="title_style" />
+		<rich:spacer height="15" />
+		<ui:include src="inyector/tabs/panels/inyector_default.xhtml"/>
+		<rich:spacer height="10" />
+		<ui:include src="inyector/tabs/panels/inyector_launch_button.xhtml"/>
+		<rich:spacer height="10" />
+	</h:panelGrid>
+
+</h:form>	
+</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+	<h:messages showDetail="true" showSummary="true" />
+	<h:outputLabel value="#{msg.label_workflow_started_successfully}" rendered="#{inyectorBean.showHeaderMessage}"
+			styleClass="labelHeaderErrorMessage"/>
+	
+	<h:panelGrid id="pantalla_inyector" columns="3" style=" width : 100%; height : auto; " 
+			columnClasses="column25percent,column70percent,column05percent" >
+			
+		<rich:spacer height="10" />	<rich:spacer height="10" /> <rich:spacer height="10" />	
+			
+		<h:outputText value="Elija el proceso donde quiere inyectar este elemento:" style="width: 250px; height: 24px; font-size:13px;"/>
+		<h:selectOneMenu id="id_proceso"  
+			value="#{inyectorBean.idProcesoSeleccionado}"
+			style="width: 250px; height: 24px; font-size:13px;padding: 3px;">
+			<f:selectItems	value="#{inyectorBean.lProcesosActivos}" />
+			<a4j:support ajaxSingle="true"  actionListener="#{inyectorBean.changeProceso}"
+							event="onchange" reRender="inyector_form, id_proceso2" />
+		</h:selectOneMenu>
+
+		<rich:spacer width="10" />
+		
+		<h:outputText value="Paso en el que va a inyectar el item"  style="width: 250px; height: 24px; font-size:13px;"/>
+		<h:selectOneMenu id="id_proceso2" value="#{inyectorBean.idPasoSeleccionado}"
+		 			     style="width:500px; height: 24px; font-size:13px;padding: 3px;">
+			<f:selectItems value="#{inyectorBean.lPasosValidos}" />
+		</h:selectOneMenu>
+		<rich:spacer height="10" />
+
+		<rich:spacer width="10" /> <rich:spacer width="10" /> <rich:spacer width="10" />
+
+		<h:outputText value="#{msg.label_reference}"  style="width: 250px; height: 24px; font-size:13px;"/>
+		<h:inputText value="#{inyectorBean.objReference}" style="width:250px; height: 24px; font-size:13px;padding: 3px;"/>
+		<rich:spacer height="10" />
+
+		<h:outputText value="#{msg.label_comments}"  style="width: 250px; height: 24px; font-size:13px;"/>
+		<h:inputText value="#{inyectorBean.objComments}" style="width:250px; height: 24px; font-size:13px;padding: 3px;"/>
+		<rich:spacer height="10" />
+
+
+	</h:panelGrid>
+
+
+</ui:composition>
