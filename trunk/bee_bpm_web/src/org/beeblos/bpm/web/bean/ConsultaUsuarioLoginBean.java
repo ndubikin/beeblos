@@ -17,7 +17,7 @@
  */
 package org.beeblos.bpm.web.bean;
 
-import static org.beeblos.bpm.web.util.ConstantsWeb.CONSULTA_USUARIO_LOGIN;
+import static org.beeblos.bpm.core.util.Constants.CONSULTA_USUARIO_LOGIN;
 
 import java.util.ArrayList;
 import java.util.Date;

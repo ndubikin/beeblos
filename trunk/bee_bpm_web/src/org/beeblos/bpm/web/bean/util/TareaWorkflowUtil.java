@@ -1,8 +1,8 @@
 package org.beeblos.bpm.web.bean.util;
 
-import static org.beeblos.bpm.web.util.ConstantsWeb.FAIL;
-import static org.beeblos.bpm.web.util.ConstantsWeb.PASO_DESBLOQUEADO;
-import static org.beeblos.bpm.web.util.ConstantsWeb.PROCESAR_TAREA;
+import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.PASO_DESBLOQUEADO;
+import static org.beeblos.bpm.core.util.Constants.PROCESS_TASK;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -17,9 +17,9 @@ import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.wc.security.error.InyectorException;
+import org.beeblos.bpm.wc.taglib.bean.InyectorBean;
+import org.beeblos.bpm.wc.taglib.bean.PasoBean;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.web.bean.wf.InyectorBean;
-import org.beeblos.bpm.web.bean.wf.PasoBean;
 
 
 public class TareaWorkflowUtil extends CoreManagedBean{
@@ -62,7 +62,7 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 			
 			pb.setNombreBeanEL(cargarObjetoRelacionado(idObject, idObjectType)); // carga el objeto relacionado y setea el bean ( EL ) en el bean que gestiona el paso ( PasoBean ) ...
 	
-			retorno = PROCESAR_TAREA;
+			retorno = PROCESS_TASK;
 		}
 
 		return retorno;
@@ -128,7 +128,7 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 
 			pasob.setPaso();
 			
-			retorno = PROCESAR_TAREA;
+			retorno = PROCESS_TASK;
 		
 		}
 		

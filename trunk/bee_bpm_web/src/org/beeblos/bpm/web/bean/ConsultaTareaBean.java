@@ -1,8 +1,8 @@
 package org.beeblos.bpm.web.bean;
 
-import static org.beeblos.bpm.web.util.ConstantsWeb.ALIVE;
-import static org.beeblos.bpm.web.util.ConstantsWeb.CONSULTA_TAREA;
-import static org.beeblos.bpm.web.util.ConstantsWeb.FAIL;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
+import static org.beeblos.bpm.core.util.Constants.CONSULTA_TAREA;
+import static org.beeblos.bpm.core.util.Constants.FAIL;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,12 +14,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
-import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
-import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WStepWork;
