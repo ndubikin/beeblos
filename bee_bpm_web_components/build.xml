@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- @author: sgurin  -->
-<project name="sptrac_components" default="jar">
+<project name="bee_bpm_components" default="jar">
 
 	<property file="build.properties"/>
 	<description>
