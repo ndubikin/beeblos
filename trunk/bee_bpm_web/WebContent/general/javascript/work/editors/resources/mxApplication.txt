@@ -81,3 +81,4 @@ swimlanes=Swimlanes
 travelBooking=Travel Booking
 reloadSavedProcessXmlMap=Reload saved process XML Map
 notAvailable=Not available
+main=Main
