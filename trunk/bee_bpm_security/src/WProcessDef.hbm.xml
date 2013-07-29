@@ -1194,4 +1194,69 @@
 
 	</class>
 	
+	    <class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_data_field" catalog="bee_bpm_dev">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="WProcessHead" class="org.beeblos.bpm.core.model.WProcessHead" fetch="select">
+            <column name="process_head_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="WDataType" class="org.beeblos.bpm.core.model.WDataType" fetch="select">
+            <column name="data_type_id" not-null="true" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="120" />
+        </property>
+        <property name="required" type="java.lang.Boolean">
+            <column name="required" />
+        </property>
+        <property name="dataType" type="java.lang.Integer">
+            <column name="data_type" />
+        </property>
+        <property name="comments" type="string">
+            <column name="comments" />
+        </property>
+        <property name="insertDate" type="timestamp">
+            <column name="insert_date" length="0" not-null="true" />
+        </property>
+        <property name="insertUser" type="int">
+            <column name="insert_user" not-null="true" />
+        </property>
+        <property name="modDate" type="timestamp">
+            <column name="mod_date" length="0" not-null="true" />
+        </property>
+        <property name="modUser" type="int">
+            <column name="mod_user" not-null="true" />
+        </property>
+    </class>
+	
+   <class name="org.beeblos.bpm.core.model.WDataType" table="w_data_type" catalog="bee_bpm_dev">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <property name="maxLength" type="java.lang.Integer">
+            <column name="max_length" />
+        </property>
+        <property name="showName" type="string">
+            <column name="show_name" />
+        </property>
+        <property name="insertDate" type="timestamp">
+            <column name="insert_date" length="0" not-null="true" />
+        </property>
+        <property name="insertUser" type="int">
+            <column name="insert_user" not-null="true" />
+        </property>
+        <property name="modDate" type="timestamp">
+            <column name="mod_date" length="0" not-null="true" />
+        </property>
+        <property name="modUser" type="int">
+            <column name="mod_user" not-null="true" />
+        </property>
+
+    </class>	
 </hibernate-mapping>
