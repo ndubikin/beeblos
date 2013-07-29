@@ -78,6 +78,14 @@
 			</ui:include>
 		</rich:tab>
 
+		<rich:tab name="w_process_def_data_fields"
+			label="#{msg.label_data_fields}"
+			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
+			<ui:include src="tabs/wProcessDefDataFields.xhtml">
+				<ui:param name="action" value="WPROCESSDEF_DATAFIELDS" />
+			</ui:include>
+		</rich:tab>
+
 	</rich:tabPanel>
 
 </ui:composition>

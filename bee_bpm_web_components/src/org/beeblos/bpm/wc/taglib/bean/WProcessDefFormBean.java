@@ -47,6 +47,7 @@ import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
+import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessRole;
@@ -147,6 +148,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	//rrl 20130729
 	private boolean flagValidate;
 	private boolean refreshForm;
+	private boolean visibleButtonNewDataField;
+	private WProcessDataField wProcessDataFieldSelected;
 
 	
 	public WProcessDefFormBean() {
@@ -213,6 +216,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		//rrl 20130729
 		refreshForm=false;
+		visibleButtonNewDataField = true;
+		wProcessDataFieldSelected = new WProcessDataField(); 
 		
 	}
 
@@ -2057,5 +2062,28 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.refreshForm = refreshForm;
 	}
 
+	public boolean isVisibleButtonNewDataField() {
+		return visibleButtonNewDataField;
+	}
+
+	public void setVisibleButtonNewDataField(boolean visibleButtonNewDataField) {
+		this.visibleButtonNewDataField = visibleButtonNewDataField;
+	}
+
+	public WProcessDataField getwProcessDataFieldSelected() {
+		return wProcessDataFieldSelected;
+	}
+
+	public void setwProcessDataFieldSelected(
+			WProcessDataField wProcessDataFieldSelected) {
+		this.wProcessDataFieldSelected = wProcessDataFieldSelected;
+	}
+
+	public void initializeDataFieldsAddNew() {
+		
+		this.wProcessDataFieldSelected = new WProcessDataField();
+		visibleButtonNewDataField = false;
+		
+	}
 	
 }
