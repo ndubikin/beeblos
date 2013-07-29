@@ -6,7 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	
-	<rich:modalPanel  id="mpCheckEmailAccount" width="530" height="130">
+	<rich:modalPanel  id="mpCheckEmailAccount" width="530" height="160">
 	    <f:facet name="header">
 	        <h:panelGroup id="checkEmailAccountTitlePanel">
 	            <h:outputText id="checkEmailAccountTitle"  value="#{msg.label_check_email_account}"></h:outputText>
@@ -15,7 +15,7 @@
 		<f:facet name="controls">
 		    <h:panelGroup id="checkEmailAccount">
 		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_check_email_accounts"/>
-		        <rich:componentControl id="checkEmailAccountControl" attachTo="hidelink_check_email_accounts" operation="hide" event="onclick"/>
+		        <rich:componentControl id="checkEmailAccountControl" for="mpCheckEmailAccount"  attachTo="hidelink_check_email_accounts" operation="hide" event="onclick"/>
 		    </h:panelGroup>
 		</f:facet>
 
