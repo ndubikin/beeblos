@@ -146,6 +146,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	//rrl 20130729
 	private boolean flagValidate;
+	private boolean refreshForm;
 
 	
 	public WProcessDefFormBean() {
@@ -209,6 +210,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		this.stepOutgoings = false;
 		this.stepIncomings = false;
+		
+		//rrl 20130729
+		refreshForm=false;
 		
 	}
 
@@ -853,6 +857,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.readOnly = false;
 	}
 
+	//rrl 20130729 When click "Refresh" button reloads the form by loadWProcessForm()
+	public void refreshWProcessDef() {
+		refreshForm=false;
+		loadWProcessForm();
+	}
+	
 	public String getStrRoleList() {
 		strRoleList = "";
 		for (WProcessRole pr : this.currentWProcessDef.getRolesRelated()) {
@@ -1979,6 +1989,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	public void loadXmlMapAsTmp() {
 		
+		//rrl 20130729 When click "Refresh" button reloads the form by loadWProcessForm()
+		refreshForm=true;
+		
 		if (currentId != null
 				&& !currentId.equals(0)){
 			try {
@@ -2034,6 +2047,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setFlagValidate(boolean flagValidate) {
 		this.flagValidate = flagValidate;
+	}
+
+	public boolean isRefreshForm() {
+		return refreshForm;
+	}
+
+	public void setRefreshForm(boolean refreshForm) {
+		this.refreshForm = refreshForm;
 	}
 
 	
