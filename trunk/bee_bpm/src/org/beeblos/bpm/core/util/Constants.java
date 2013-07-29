@@ -5,6 +5,8 @@ import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 
 public class Constants {
 	
@@ -77,6 +79,7 @@ public class Constants {
 	
 	// fecha fija para inicializar mod_date en las diferentes tablas ...
 	public static final Date DEFAULT_MOD_DATE = new Date(0200000002L);
+	public static final DateTime DEFAULT_MOD_DATE_TIME = new DateTime(0200000002L);
 	
 	public static final Integer ID_ROLE_DEF_DIRECTORES_DEPTO = getIntegerProperty("directoresdepto.role_def.id");
 	public static final Integer ID_ROLE_DEF_SUBDIRECTORES = getIntegerProperty("subdirectores.role_def.id");

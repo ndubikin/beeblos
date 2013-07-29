@@ -5,8 +5,11 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WDataTypeDao;
+import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WDataTypeException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WDataType;
+import org.beeblos.bpm.core.model.noper.StringPair;
 
 
 
@@ -67,6 +70,16 @@ public class WDataTypeBL {
 
 		return new WDataTypeDao().getWDataTypeList();
 	
+	}
+
+	public List<StringPair> getComboList(
+			String firstLineText, String blank )
+	throws WDataTypeException {
+		 
+		return new WDataTypeDao()
+						.getComboList(firstLineText, blank); 
+
+
 	}
 	
 }

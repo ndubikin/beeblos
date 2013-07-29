@@ -23,22 +23,11 @@ public class WDataType implements java.io.Serializable {
 	public WDataType() {
 	}
 
-	public WDataType(Date insertDate, int insertUser, Date modDate, int modUser) {
-		this.insertDate = insertDate;
-		this.insertUser = insertUser;
-		this.modDate = modDate;
-		this.modUser = modUser;
-	}
 
-	public WDataType(String name, Integer maxLength, String showName,
-			Date insertDate, int insertUser, Date modDate, int modUser) {
+	public WDataType(String name, Integer maxLength, String showName) {
 		this.name = name;
 		this.maxLength = maxLength;
 		this.showName = showName;
-		this.insertDate = insertDate;
-		this.insertUser = insertUser;
-		this.modDate = modDate;
-		this.modUser = modUser;
 
 	}
 
