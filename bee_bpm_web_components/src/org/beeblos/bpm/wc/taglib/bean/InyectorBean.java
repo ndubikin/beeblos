@@ -102,6 +102,10 @@ public class InyectorBean  extends CoreManagedBean {
 		this.pasoSeleccionado=null;
 		this.procesoSeleccionado=null;
 
+		//rrl 20130729 
+		this.objReference=null;
+		this.objComments=null;
+		
 		this.idStepWork=null;
 		this.idObject=null;
 		this.idObjectType=null;
@@ -196,6 +200,9 @@ public class InyectorBean  extends CoreManagedBean {
 			
 			//rrl 20100114
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
+			
+			//rrl 20130729 
+			_limpiarVariablesDelBean();
 
 			// setea el mensaje en pantalla al usuario
 		} catch (WStepWorkException e) {
