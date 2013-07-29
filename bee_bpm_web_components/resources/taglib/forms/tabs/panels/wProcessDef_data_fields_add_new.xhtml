@@ -21,8 +21,9 @@
 			<h:graphicImage id="imgInsertar" value="/images/insertar.png" style="border:0;" />
 		</a4j:commandLink>
 
-		<h:panelGroup rendered="#{!wProcessDefFormBean.visibleButtonNewDataField}">
-			<h:panelGrid columns="4" style="margin-left: 16px;">
+		<h:panelGroup rendered="#{!wProcessDefFormBean.visibleButtonNewDataField}" >
+			<h:outputText value="Adding new data field:" style="margin-left: 20px; font-size:12px; "/>
+			<h:panelGrid columns="4" style="margin-left: 16px; margin-top:10px;">
 				<h:outputText value="#{msg.label_name}:" styleClass="label_form"
 					style="margin:0px;padding:0px;" />
 				<h:outputText value="#{msg.label_required}:"
@@ -32,18 +33,23 @@
 				<h:outputText value="#{msg.label_comments}:"
 					styleClass="label_form"/>
 					
-				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.name}" />
-				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.required}" />
-				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.dataType}" />
-				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.comments}" />
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.name}" style="font-size: 12px;padding: 4px;width: 200px;"/>
+				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.required}" />
+				<h:selectOneMenu validatorMessage="required"
+        					value="#{wProcessDefFormBean.wProcessDataFieldSelected.dataType.id}" style="font-size: 12px;padding: 4px;width: 200px;">
+					<f:selectItems value="#{wProcessDefFormBean.dataTypes}" />
+		      	</h:selectOneMenu>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.comments}" style="font-size: 12px;padding: 4px;width: 300px;"/>
 			</h:panelGrid>
 			
-			<h:panelGroup>
-				<a4j:commandButton value="#{msg.label_cancel}"
-				    style="width:120px; margin-left: 16px; margin-bottom: 10px;" />		
-				<a4j:commandButton value="#{msg.label_save}"
-				    style="width:120px; margin-left: 10px; margin-bottom: 10px;" />
-			</h:panelGroup>
+			<div style=" margin-top:10px;margin-bottom:10px;">
+				<h:panelGroup>
+					<a4j:commandButton value="#{msg.label_cancel}"
+					    style="width:120px; margin-left: 16px; margin-bottom: 10px;" />		
+					<a4j:commandButton value="#{msg.label_save}"
+					    style="width:120px; margin-left: 10px; margin-bottom: 10px;" />
+				</h:panelGroup>
+			</div>
 		</h:panelGroup>
 
 	</h:form>
