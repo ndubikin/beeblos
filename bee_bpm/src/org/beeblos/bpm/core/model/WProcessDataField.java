@@ -9,13 +9,19 @@ import java.util.Date;
  */
 public class WProcessDataField implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
-	private WProcessHead WProcessHead;
-	private WDataType WDataType;
+	private WProcessHead processHead;
+	private WDataType dataType;
 	private String name;
 	private Boolean required;
-	private Integer dataType;
 	private String comments;
+
+	// trail
 	private Date insertDate;
 	private int insertUser;
 	private Date modDate;
@@ -24,29 +30,14 @@ public class WProcessDataField implements java.io.Serializable {
 	public WProcessDataField() {
 	}
 
-	public WProcessDataField(WProcessHead WProcessHead, WDataType WDataType,
-			Date insertDate, int insertUser, Date modDate, int modUser) {
-		this.WProcessHead = WProcessHead;
-		this.WDataType = WDataType;
-		this.insertDate = insertDate;
-		this.insertUser = insertUser;
-		this.modDate = modDate;
-		this.modUser = modUser;
-	}
-
-	public WProcessDataField(WProcessHead WProcessHead, WDataType WDataType,
-			String name, Boolean required, Integer dataType, String comments,
-			Date insertDate, int insertUser, Date modDate, int modUser) {
-		this.WProcessHead = WProcessHead;
-		this.WDataType = WDataType;
+	public WProcessDataField(WProcessHead processHead, WDataType dataType,
+			String name, Boolean required, String comments) {
+		this.processHead = processHead;
+		this.dataType = dataType;
 		this.name = name;
 		this.required = required;
-		this.dataType = dataType;
 		this.comments = comments;
-		this.insertDate = insertDate;
-		this.insertUser = insertUser;
-		this.modDate = modDate;
-		this.modUser = modUser;
+
 	}
 
 	public Integer getId() {
@@ -57,20 +48,20 @@ public class WProcessDataField implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public WProcessHead getWProcessHead() {
-		return this.WProcessHead;
+	public WProcessHead getProcessHead() {
+		return processHead;
 	}
 
-	public void setWProcessHead(WProcessHead WProcessHead) {
-		this.WProcessHead = WProcessHead;
+	public void setProcessHead(WProcessHead processHead) {
+		this.processHead = processHead;
 	}
 
-	public WDataType getWDataType() {
-		return this.WDataType;
+	public WDataType getDataType() {
+		return dataType;
 	}
 
-	public void setWDataType(WDataType WDataType) {
-		this.WDataType = WDataType;
+	public void setDataType(WDataType dataType) {
+		this.dataType = dataType;
 	}
 
 	public String getName() {
@@ -87,14 +78,6 @@ public class WProcessDataField implements java.io.Serializable {
 
 	public void setRequired(Boolean required) {
 		this.required = required;
-	}
-
-	public Integer getDataType() {
-		return this.dataType;
-	}
-
-	public void setDataType(Integer dataType) {
-		this.dataType = dataType;
 	}
 
 	public String getComments() {
