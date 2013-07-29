@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+
+		<script type="text/javascript">
+
+	function confirmDelete(message, name) {
+		
+		var txtConfirm = message + " '" + name + "'" + String.fromCharCode(63);
+
+		if (confirm(txtConfirm)) {
+			return true;
+		}
+		return false;
+
+	}
+
+</script>
+
+
+	<h:form>
+
+		<a4j:jsFunction name="loadRecord"
+			action="#{systemObjectBean.loadRecord}"
+			reRender="system_object_header_form">
+			<a4j:actionparam name="param1" assignTo="#{systemObjectBean.id}" />
+		</a4j:jsFunction>
+
+		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true"
+			reRender="delete_button, cancel_button, save_button" />
+
+	</h:form>
+
+
+	<rich:panel style="width:100%" align="center">
+			
+		<f:facet name="header">
+			<h:outputText value="#{msg.label_system_object}"
+				styleClass="labelFormBold" />
+		</f:facet>
+
+		<h:form id="system_object_header_form">
+
+			<h:messages style="#{systemObjectBean.messageStyle}" />
+			<rich:spacer height="33"
+				rendered="#{!systemObjectBean.showAnyMessage}" />
+
+			<h:panelGrid columns="2" columnClasses="colStyle140px">
+
+				<h:outputText value="#{msg.label_name}:" styleClass="labelForm" />
+				<h:inputText id="system_object_name"
+					value="#{systemObjectBean.currentSystemObject.name}"
+					style="width:316px; font-size:13px;	padding: 4px;"/>
+
+				<h:outputText value="#{msg.label_class}:"
+					styleClass="labelForm" />
+				<h:inputText id="class"
+					value="#{systemObjectBean.currentSystemObject.objectClass}"
+					style="width:316px; font-size:13px;	padding: 4px;"/>
+
+				<h:outputText value="#{msg.label_hierarchy}:"
+					styleClass="labelForm" />
+				<h:inputText id="hierarchy"
+					value="#{systemObjectBean.currentSystemObject.hierarchy}"
+					style="width:316px; font-size:13px;	padding: 4px;"/>
+
+				<h:outputText value="#{msg.label_comments}:"
+					styleClass="labelForm" />
+				<h:inputText id="comments"
+					value="#{systemObjectBean.currentSystemObject.comments}"
+					style="width:316px; font-size:13px;	padding: 4px;"/>
+
+				<rich:spacer width="10" />
+				<rich:spacer width="10" />
+
+				<rich:spacer width="10" />
+				<h:panelGrid columns="3" style="margin: -4px;">
+
+					<h:commandButton id="cancel_button" value="#{msg.label_cancel}"
+						style="width:120px; align: left;"
+						action="#{systemObjectBean.reset}" />
+
+					<h:commandButton id="save_button"
+						value="#{systemObjectBean.valueBtn}" style="width:120px;"
+						actionListener="#{systemObjectBean.save}" />
+
+					<h:commandButton id="delete_button" value="#{msg.label_delete}"
+						style="width:80px;"
+						action="#{systemObjectBean.delete}"
+						disabled="#{systemObjectBean.id eq null or systemObjectBean.id eq 0}"
+						onclick="return confirmDelete('#{msg.label_are_you_sure_to_delete}','#{systemObjectBean.currentSystemObject.name}');" />
+
+				</h:panelGrid>
+
+			</h:panelGrid>
+
+			<rich:spacer height="33"/>
+			<rich:spacer height="33"/>
+
+			<rich:panel style="width:100%">
+
+				<rich:dataTable id="system_objects_table" width="90%" align="center"
+					onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+					onRowClick="return loadRecord('#{systemObject.id}');" rows="10"
+					styleClass="table" value="#{systemObjectBean.systemObjectList}"
+					var="systemObject">
+
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_system_objects}" />
+					</f:facet>
+
+					<rich:column sortBy="#{systemObject.name}"
+						style="width:20%; text-align: left;">
+						<f:facet name="header">
+							<h:outputText value="#{msg.label_system_object}" />
+						</f:facet>
+						<h:outputText value="#{systemObject.name}" />
+					</rich:column>
+
+					<rich:column sortBy="#{systemObject.objectClass}"
+						style="width:30%; text-align: right;">
+						<f:facet name="header">
+							<h:outputText value="#{msg.label_class}" />
+						</f:facet>
+						<h:outputText value="#{systemObject.objectClass}" />
+					</rich:column>
+
+					<rich:column sortBy="#{systemObject.hierarchy}"
+						style="width:10%; text-align: right;">
+						<f:facet name="header">
+							<h:outputText value="#{msg.label_hierarchy}" />
+						</f:facet>
+						<h:outputText value="#{systemObject.hierarchy}" />
+					</rich:column>
+
+					<rich:column sortBy="#{systemObject.comments}"
+						style="width:40%; text-align: right;">
+						<f:facet name="header">
+							<h:outputText value="#{msg.label_comments}" />
+						</f:facet>
+						<h:outputText value="#{systemObject.comments}" />
+					</rich:column>
+
+				</rich:dataTable>
+
+				<rich:spacer height="10" />
+				<rich:datascroller for="system_objects_table" maxPages="10" />
+
+			</rich:panel>
+		</h:form>
+	</rich:panel>
+
+</ui:composition>
