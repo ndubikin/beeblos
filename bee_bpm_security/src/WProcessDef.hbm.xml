@@ -1194,27 +1194,26 @@
 
 	</class>
 	
-	    <class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_data_field" catalog="bee_bpm_dev">
+	<class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_data_field" catalog="bee_bpm_dev">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
         </id>
-        <many-to-one name="WProcessHead" class="org.beeblos.bpm.core.model.WProcessHead" fetch="select">
-            <column name="process_head_id" not-null="true" />
-        </many-to-one>
-        <many-to-one name="WDataType" class="org.beeblos.bpm.core.model.WDataType" fetch="select">
+       
+        <many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcessHead"
+			column="process_head_id"  name="processHead" fetch="join" lazy="false" />
+        
+        <many-to-one name="dataType" class="org.beeblos.bpm.core.model.WDataType" fetch="join">
             <column name="data_type_id" not-null="true" />
         </many-to-one>
-        <property name="name" type="string">
+
+         <property name="name" type="string">
             <column name="name" length="120" />
         </property>
         <property name="required" type="java.lang.Boolean">
             <column name="required" />
         </property>
-        <property name="dataType" type="java.lang.Integer">
-            <column name="data_type" />
-        </property>
-        <property name="comments" type="string">
+         <property name="comments" type="string">
             <column name="comments" />
         </property>
         <property name="insertDate" type="timestamp">
@@ -1259,4 +1258,38 @@
         </property>
 
     </class>	
+    <class name="org.beeblos.bpm.core.model.SystemObject" table="w_system_object" catalog="bee_bpm_dev">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="45" />
+        </property>
+        <property name="objectClass" type="string">
+            <column name="object_class" not-null="true" />
+        </property>
+        <property name="hierarchy" type="int">
+            <column name="hierarchy" not-null="true">
+                <comment>Menor numero implica mas importante</comment>
+            </column>
+        </property>
+        <property name="comments" type="string">
+            <column name="comments" />
+        </property>
+        <property name="addDate" type="timestamp">
+            <column name="add_date" length="0" not-null="true" />
+        </property>
+        <property name="addUser" type="java.lang.Integer">
+            <column name="add_user" />
+        </property>
+        <property name="modDate" type="timestamp">
+            <column name="mod_date" length="0" not-null="true" />
+        </property>
+        <property name="modUser" type="java.lang.Integer">
+            <column name="mod_user" />
+        </property>
+
+    </class>    
+    
 </hibernate-mapping>
