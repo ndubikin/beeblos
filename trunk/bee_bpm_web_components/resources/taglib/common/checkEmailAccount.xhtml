@@ -5,7 +5,9 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<h:form>
+	<h:form id="checkEmailAccount_form">
+
+		<h:messages showDetail="true" showSummary="false" style="#{wProcessDefFormBean.messageStyle}" />
 
 		<h:panelGrid width="98%" columns="2"
 			columnClasses="colStyle100,colStyle250">
@@ -33,8 +35,8 @@
 					style="width:80px; height:24px;" />
 				<a4j:commandButton id="ok_button_sr" value="#{msg.label_send}"
 					actionListener="#{wProcessDefFormBean.checkEmailAccount}"
-					oncomplete="javascript:Richfaces.hideModalPanel('mpCheckEmailAccount');"
-					reRender="w_process_def_step_permissions, w_process_def_step_response_table, mpAddStepResponse"
+					oncomplete="if(#{wProcessDefFormBean.flagValidate}){javascript:Richfaces.hideModalPanel('mpCheckEmailAccount');}"
+					reRender="checkEmailAccount_form, w_process_def_step_permissions, w_process_def_step_response_table, mpAddStepResponse"
 					style="width:120px; margin-left: 10px; height:24px;" />
 			</h:panelGroup>
 		</h:panelGrid>

@@ -143,6 +143,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	// dml 20130508
 	private List<WProcessDefLight> relatedProcessDefList;
+
+	//rrl 20130729
+	private boolean flagValidate;
+
 	
 	public WProcessDefFormBean() {
 		super();
@@ -1666,15 +1670,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 	
+	//rrl 20130729 clear the ExceptionList to display the last message (if no error)
+	public void clearDisplayMessage(){
+		this.setExceptionList(new ArrayList<FGPException>());
+	}
+	
 	// dml 20120227
 	public void checkEmailAccount(){
 		
+		flagValidate = true;
+
 		setShowHeaderMessage(false);
 		messageStyle=normalMessageStyle();
 		
 		Email email = new Email();
 		
 		if (currEmailAccount != null){
+			
+			flagValidate = false;
 			
 			email = setEmailParameters();
 			
@@ -1685,6 +1698,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				String message = "The email has been sent";
 				agregarMensaje(message);
 				setShowHeaderMessage(true);
+				
+				flagValidate = true;
 		
 			} catch (SendEmailException e) {
 		
@@ -2010,6 +2025,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public String _getRequestContextPath() {
 		return FacesContext.getCurrentInstance().getExternalContext()
 				.getRequestContextPath().trim().replaceAll("\\\\", "/");
+	}
+
+	//rrl 20130729
+	public boolean isFlagValidate() {
+		return flagValidate;
+	}
+
+	public void setFlagValidate(boolean flagValidate) {
+		this.flagValidate = flagValidate;
 	}
 
 	
