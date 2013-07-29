@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WDataTypeBL;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
@@ -36,6 +37,7 @@ import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.email.bl.SendEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.error.SendEmailException;
+import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.error.WProcessDefException;
@@ -150,6 +152,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private boolean refreshForm;
 	private boolean visibleButtonNewDataField;
 	private WProcessDataField wProcessDataFieldSelected;
+	private List<SelectItem> dataTypes;
 
 	
 	public WProcessDefFormBean() {
@@ -746,6 +749,21 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 	}
 
+	private void loadDataTypes() {
+		try {
+			setDataTypes(
+					UtilsVs.castStringPairToSelectitem(
+							new WDataTypeBL()
+									.getComboList("Select data type...", null)));
+		} catch (WDataTypeException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".loadDataTypes() WDataTypeException ..." };
+			agregarMensaje("206", mensaje, params, FGPException.ERROR);
+
+		} 
+	}
+	
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
 	}
@@ -2085,5 +2103,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		visibleButtonNewDataField = false;
 		
 	}
-	
+
+	public List<SelectItem> getDataTypes() {
+		if (dataTypes==null) {
+			loadDataTypes();
+		}
+		return dataTypes;
+	}
+
+	public void setDataTypes(List<SelectItem> dataTypes) {
+		this.dataTypes = dataTypes;
+	}
+
 }
