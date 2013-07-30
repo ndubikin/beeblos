@@ -64,12 +64,12 @@
 					<h:outputText value="#{dataField.required ? msg.label_yes : ''}"/>
 				</rich:column>
 
-				<rich:column
+				<rich:column sortBy="#{dataField.dataType.name}"
 					style="width:10%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_data_type}" />
 					</f:facet>
-					<h:outputText value=""/>
+					<h:outputText value="#{dataField.dataType.name}"/>
 				</rich:column>
 
 				<rich:column sortBy="#{dataField.comments}"
