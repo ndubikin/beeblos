@@ -105,36 +105,36 @@ public class WUserRole implements java.io.Serializable {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof WUserRole))
-			return false;
-		WUserRole other = (WUserRole) obj;
-		if (active != other.active)
-			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser != other.insertUser)
-			return false;
-		if (role == null) {
-			if (other.role != null)
-				return false;
-		} else if (!role.equals(other.role))
-			return false;
-		if (user == null) {
-			if (other.user != null)
-				return false;
-		} else if (!user.equals(other.user))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (!(obj instanceof WUserRole))
+//			return false;
+//		WUserRole other = (WUserRole) obj;
+//		if (active != other.active)
+//			return false;
+//		if (insertDate == null) {
+//			if (other.insertDate != null)
+//				return false;
+//		} else if (!insertDate.equals(other.insertDate))
+//			return false;
+//		if (insertUser != other.insertUser)
+//			return false;
+//		if (role == null) {
+//			if (other.role != null)
+//				return false;
+//		} else if (!role.equals(other.role))
+//			return false;
+//		if (user == null) {
+//			if (other.user != null)
+//				return false;
+//		} else if (!user.equals(other.user))
+//			return false;
+//		return true;
+//	}
 
 	public boolean empty() {
 

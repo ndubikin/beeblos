@@ -161,11 +161,28 @@ public class WProcessDefBL {
 		
 		logger.debug("update() WProcessDef < id = "+process.getId()+">");
 		
-		if (!process.equals(new WProcessDefDao().getWProcessDefByPK(process.getId(), currentUserId)) ) {
+		WProcessDef storedProcess = new WProcessDefDao().getWProcessDefByPK(process.getId(), currentUserId); 
+		if (!process.equals(storedProcess) ) {
 
+			Date now = new Date();
+			
 			// timestamp & trace info
-			process.setModDate(new Date());
+			process.setModDate(now);
 			process.setModUser(currentUserId);
+			
+//			// check head && managed data table changes ...
+//			if (process.getProcess()!=null && process.getProcess().getManagedTable()!=null) {
+//				if (process.getProcess().getManagedTable().getInsertDate()==null) {
+//					process.getProcess().getManagedTable().setInsertDate(now);
+//					process.getProcess().getManagedTable().setModDate( DEFAULT_MOD_DATE );
+//				} else 
+//					if (!process.getProcess().getManagedTable()
+//								.equals(storedProcess.getProcess().getManagedTable()) ) {
+//						process.getProcess().getManagedTable().setModDate( now );
+//					}
+//			}
+			
+			
 			new WProcessDefDao().update(process, currentUserId);
 			
 		} else {

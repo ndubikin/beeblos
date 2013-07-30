@@ -11,10 +11,16 @@ import java.util.Set;
  */
 public class WDataType implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String name;
 	private Integer maxLength;
 	private String showName;
+	private Integer sqlType; // must match with java.sql.Type
+	private String sqlTypeName; // must match with java.sql.Type
 	private Date insertDate;
 	private int insertUser;
 	private Date modDate;
@@ -93,6 +99,26 @@ public class WDataType implements java.io.Serializable {
 
 	public void setModUser(int modUser) {
 		this.modUser = modUser;
+	}
+
+
+	public Integer getSqlType() {
+		return sqlType;
+	}
+
+
+	public void setSqlType(Integer sqlType) {
+		this.sqlType = sqlType;
+	}
+
+
+	public String getSqlTypeName() {
+		return sqlTypeName;
+	}
+
+
+	public void setSqlTypeName(String sqlTypeName) {
+		this.sqlTypeName = sqlTypeName;
 	}
 
 }
