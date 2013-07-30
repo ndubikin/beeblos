@@ -30,9 +30,50 @@
 		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
 			<column  name="mod_user" />
 		</property>
+		<one-to-one name="managedTable" class="org.beeblos.bpm.core.model.WProcessHeadManagedData"
+				
+				cascade="all">
 		
+		</one-to-one>
 	</class>
-	
+
+    <class name="org.beeblos.bpm.core.model.WProcessHeadManagedData" table="w_process_head_managed_data">
+        <id name="headId" type="int">
+            <column name="head_id" />
+            <generator class="foreign">
+                <param name="property">WProcessHead</param>
+            </generator>
+        </id>
+
+        <property name="name" type="string">
+            <column name="name" length="100" not-null="true" unique="true" />
+        </property>
+        <property name="ignoreCase" type="java.lang.Boolean">
+            <column name="ignore_case" />
+        </property>
+        <property name="schema" type="string">
+            <column name="schema" length="100" not-null="true" />
+        </property>
+        <property name="catalog" type="string">
+            <column name="catalog" length="100" not-null="true" />
+        </property>
+        <property name="comment" type="string">
+            <column name="comment" />
+        </property>
+		<property generated="never" lazy="false" name="insertDate"
+			type="timestamp">
+			<column length="0" name="insert_date"  />
+		</property>
+        <property name="insertUser" type="int">
+            <column name="insert_user" not-null="true" />
+        </property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column length="0" name="mod_date"  />
+		</property>
+        <property name="modUser" type="int">
+            <column name="mod_user" not-null="true" />
+        </property>
+    </class>	
 	<class name="org.beeblos.bpm.core.model.WProcessDef" table="w_process_def">
 
 		<id name="id" type="java.lang.Integer">
@@ -1194,7 +1235,7 @@
 
 	</class>
 	
-	<class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_data_field" catalog="bee_bpm_dev">
+	<class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_data_field">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -1236,7 +1277,7 @@
         </property>
     </class>
 	
-   <class name="org.beeblos.bpm.core.model.WDataType" table="w_data_type" catalog="bee_bpm_dev">
+   <class name="org.beeblos.bpm.core.model.WDataType" table="w_data_type">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -1250,6 +1291,12 @@
         <property name="showName" type="string">
             <column name="show_name" />
         </property>
+        <property name="sqlType" type="int">
+            <column name="sql_type" not-null="true" />
+        </property>
+        <property name="sqlTypeName" type="string">
+            <column name="sql_type_name" length="45" not-null="true" />
+        </property>        
         <property name="insertDate" type="timestamp">
             <column name="insert_date" length="0" not-null="true" />
         </property>
@@ -1264,7 +1311,7 @@
         </property>
 
     </class>	
-    <class name="org.beeblos.bpm.core.model.SystemObject" table="w_system_object" catalog="bee_bpm_dev">
+    <class name="org.beeblos.bpm.core.model.SystemObject" table="w_system_object">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
