@@ -41,9 +41,25 @@
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
 
+			<h:outputText value="#{msg.label_length}: " />
+			<h:outputText 
+				value="#{wProcessDefFormBean.wProcessDataFieldSelected.length}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
 			<h:outputText value="#{msg.label_comments}: " />
 			<h:outputText 
 				value="#{wProcessDefFormBean.wProcessDataFieldSelected.comments}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_active}: " />
+			<h:outputText 
+				value="#{wProcessDefFormBean.wProcessDataFieldSelected.active ? msg.label_yes : ''}"
 				style="width:200px; font-size:13px;	padding: 4px;" />
 
 			<rich:spacer height="10" />
