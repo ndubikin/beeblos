@@ -1203,7 +1203,7 @@
         <many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcessHead"
 			column="process_head_id"  name="processHead" fetch="join" lazy="false" />
         
-        <many-to-one name="dataType" class="org.beeblos.bpm.core.model.WDataType" fetch="join">
+        <many-to-one name="dataType" class="org.beeblos.bpm.core.model.WDataType" fetch="join" lazy="false">
             <column name="data_type_id" not-null="true" />
         </many-to-one>
 
