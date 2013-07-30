@@ -20,10 +20,14 @@ public class WProcessDataField implements java.io.Serializable {
 	private String name;
 	private Boolean required;
 	private String comments;
-	
 	private Boolean active;
 	private Integer length;
-
+	private boolean nullable=true;
+	private boolean unique=false;
+	private boolean quoted=false;
+	private String defaultValue;
+	
+	
 	// trail
 	private Date insertDate;
 	private int insertUser;
@@ -45,14 +49,19 @@ public class WProcessDataField implements java.io.Serializable {
 	}
 
 	public WProcessDataField(WProcessHead processHead, WDataType dataType,
-			String name, Boolean required, String comments, Boolean active, Integer length) {
-		this.processHead = processHead;
-		this.dataType = dataType;
-		this.name = name;
-		this.required = required;
-		this.comments = comments;
-		this.active = active;
-		this.length = length;
+			String name, Boolean required, String comments, Boolean active, Integer length,
+			boolean nullable, boolean unique, boolean quoted, String defaultValue) {
+		setProcessHead(processHead);
+		setDataType(dataType);
+		setName(name);
+		setRequired(required);
+		setComments(comments);
+		setActive(active);
+		setLength(length);
+		setNullable(nullable);
+		setUnique(unique);
+		setQuoted(quoted);
+		setDefaultValue(defaultValue);
 
 	}
 
@@ -118,6 +127,38 @@ public class WProcessDataField implements java.io.Serializable {
 
 	public void setLength(Integer length) {
 		this.length = length;
+	}
+
+	public boolean isNullable() {
+		return nullable;
+	}
+
+	public void setNullable(boolean nullable) {
+		this.nullable = nullable;
+	}
+
+	public boolean isUnique() {
+		return unique;
+	}
+
+	public void setUnique(boolean unique) {
+		this.unique = unique;
+	}
+
+	public boolean isQuoted() {
+		return quoted;
+	}
+
+	public void setQuoted(boolean quoted) {
+		this.quoted = quoted;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
 	public Date getInsertDate() {

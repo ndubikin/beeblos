@@ -151,56 +151,56 @@ public class WUserDef implements java.io.Serializable {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		WUserDef other = (WUserDef) obj;
-		if (active != other.active)
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser != other.insertUser)
-			return false;
-		if (login == null) {
-			if (other.login != null)
-				return false;
-		} else if (!login.equals(other.login))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (rolesRelated == null) {
-			if (other.rolesRelated != null)
-				return false;
-		} else if (!rolesRelated.equals(other.rolesRelated))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		WUserDef other = (WUserDef) obj;
+//		if (active != other.active)
+//			return false;
+//		if (email == null) {
+//			if (other.email != null)
+//				return false;
+//		} else if (!email.equals(other.email))
+//			return false;
+//		if (insertDate == null) {
+//			if (other.insertDate != null)
+//				return false;
+//		} else if (!insertDate.equals(other.insertDate))
+//			return false;
+//		if (insertUser != other.insertUser)
+//			return false;
+//		if (login == null) {
+//			if (other.login != null)
+//				return false;
+//		} else if (!login.equals(other.login))
+//			return false;
+//		if (modDate == null) {
+//			if (other.modDate != null)
+//				return false;
+//		} else if (!modDate.equals(other.modDate))
+//			return false;
+//		if (modUser == null) {
+//			if (other.modUser != null)
+//				return false;
+//		} else if (!modUser.equals(other.modUser))
+//			return false;
+//		if (name == null) {
+//			if (other.name != null)
+//				return false;
+//		} else if (!name.equals(other.name))
+//			return false;
+//		if (rolesRelated == null) {
+//			if (other.rolesRelated != null)
+//				return false;
+//		} else if (!rolesRelated.equals(other.rolesRelated))
+//			return false;
+//		return true;
+//	}
 
 	public boolean empty() {
 
