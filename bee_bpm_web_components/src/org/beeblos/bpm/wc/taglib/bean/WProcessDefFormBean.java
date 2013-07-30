@@ -2154,6 +2154,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				processDataField.setName(wProcessDataFieldSelected.getName());
 				processDataField.setRequired(wProcessDataFieldSelected.getRequired());
 				processDataField.setComments(wProcessDataFieldSelected.getComments());
+				processDataField.setLength(wProcessDataFieldSelected.getLength());
+				processDataField.setActive(wProcessDataFieldSelected.getActive());
 				
 				wdfBL.add(processDataField, this.getCurrentUserId());
 				
@@ -2167,12 +2169,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					processDataField.setName(wProcessDataFieldSelected.getName());
 					processDataField.setRequired(wProcessDataFieldSelected.getRequired());
 					processDataField.setComments(wProcessDataFieldSelected.getComments());
+					processDataField.setLength(wProcessDataFieldSelected.getLength());
+					processDataField.setActive(wProcessDataFieldSelected.getActive());
 					
 					wdfBL.update(processDataField, this.getCurrentUserId());
 					
 				}
 				
 			}
+			
+			reloadDataFieldList();
 			
 			initializeDataFieldsCloseAddNew();
 			
@@ -2252,6 +2258,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				wdfBL.delete(wProcessDataFieldSelected, getCurrentUserId() );
 
 				reloadDataFieldList();
+				
+				initializeDataFieldsCloseAddNew();
 				
 			}		
 			

@@ -49,7 +49,7 @@
 				</rich:column>
 
 				<rich:column sortBy="#{dataField.name}"
-					style="width:35%; text-align: left;">
+					style="width:20%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_name}" />
 					</f:facet>
@@ -72,12 +72,28 @@
 					<h:outputText value="#{dataField.dataType.name}"/>
 				</rich:column>
 
+				<rich:column sortBy="#{dataField.length}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_length}" />
+					</f:facet>
+					<h:outputText value="#{dataField.length}"/>
+				</rich:column>
+
 				<rich:column sortBy="#{dataField.comments}"
-					style="width:35%; text-align: left;">
+					style="width:30%; text-align: left;">
 					<f:facet name="header">
 						<h:outputText value="#{msg.label_comments}" />
 					</f:facet>
 					<h:outputText value="#{dataField.comments}"/>
+				</rich:column>
+
+				<rich:column sortBy="#{dataField.active}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_active}" />
+					</f:facet>
+					<h:outputText value="#{dataField.active ? msg.label_yes : ''}"/>
 				</rich:column>
 
 				<rich:componentControl event="onRowClick" for="w_process_data_fields_menu"

@@ -23,23 +23,29 @@
 
 		<h:panelGroup rendered="#{!wProcessDefFormBean.visibleButtonNewDataField}" >
 			<h:outputText value="Adding new data field:" style="margin-left: 20px; font-size:12px; "/>
-			<h:panelGrid columns="4" style="margin-left: 16px; margin-top:10px;">
+			<h:panelGrid columns="6" style="margin-left: 16px; margin-top:10px;">
 				<h:outputText value="#{msg.label_name}:" styleClass="label_form"
 					style="margin:0px;padding:0px;" />
 				<h:outputText value="#{msg.label_required}:"
 					styleClass="label_form"/>
 				<h:outputText value="#{msg.label_data_type}:"
 					styleClass="label_form"/>
+				<h:outputText value="#{msg.label_length}:"
+					styleClass="label_form"/>
 				<h:outputText value="#{msg.label_comments}:"
+					styleClass="label_form"/>
+				<h:outputText value="#{msg.label_active}:"
 					styleClass="label_form"/>
 					
 				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.name}" style="font-size: 12px;padding: 4px;width: 200px;"/>
 				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.required}" />
 				<h:selectOneMenu validatorMessage="required"
-        					value="#{wProcessDefFormBean.wProcessDataFieldSelected.dataType.id}" style="font-size: 12px;padding: 4px;width: 200px;">
+        					value="#{wProcessDefFormBean.wProcessDataFieldSelected.dataType.id}" style="font-size: 12px;padding: 4px;width: 150px;">
 					<f:selectItems value="#{wProcessDefFormBean.dataTypes}" />
 		      	</h:selectOneMenu>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.length}" style="font-size: 12px;padding: 4px;width: 50px;"/>
 				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.comments}" style="font-size: 12px;padding: 4px;width: 300px;"/>
+				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.active}" />
 			</h:panelGrid>
 			
 			<div style=" margin-top:10px;margin-bottom:10px;">
@@ -49,7 +55,7 @@
 					    action="#{wProcessDefFormBean.cancelNewDataField}" reRender="w_process_def_data_fields_add_new${action}"/>
 					<a4j:commandButton value="#{msg.label_save}"
 					    style="width:120px; margin-left: 10px; margin-bottom: 10px;"
-					    action="#{wProcessDefFormBean.saveNewDataField}" reRender="w_process_def_data_fields_add_new${action}"/>
+					    action="#{wProcessDefFormBean.saveNewDataField}" reRender="w_process_def_data_fields_add_new${action}, w_process_def_data_fields_form${action}"/>
 				</h:panelGroup>
 			</div>
 		</h:panelGroup>
