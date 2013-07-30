@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WDataTypeBL;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
+import org.beeblos.bpm.core.bl.WProcessDataFieldBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WProcessHeadBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
@@ -40,6 +41,7 @@ import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
+import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.error.WRoleDefException;
@@ -47,6 +49,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
+import org.beeblos.bpm.core.model.WDataType;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessDataField;
@@ -153,6 +156,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private boolean visibleButtonNewDataField;
 	private WProcessDataField wProcessDataFieldSelected;
 	private List<SelectItem> dataTypes;
+	private List<WProcessDataField> dataFieldList;
 
 	
 	public WProcessDefFormBean() {
@@ -220,7 +224,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		//rrl 20130729
 		refreshForm=false;
 		visibleButtonNewDataField = true;
-		wProcessDataFieldSelected = new WProcessDataField(); 
+		wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT); 
 		
 	}
 
@@ -261,6 +265,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			loadEmailTemplateVariables();
 			
 			this.reloadRelatedProcessDefList(); // dml 20130508
+			this.reloadDataFieldList();         // rrl 20130730
 			
 		} catch (WProcessDefException ex1) {
 
@@ -2099,8 +2104,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void initializeDataFieldsAddNew() {
 		
-		this.wProcessDataFieldSelected = new WProcessDataField();
+		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
 		visibleButtonNewDataField = false;
+		
+	}
+	
+	//rrl 20130730
+	public List<WProcessDataField> getDataFieldList() {
+		return dataFieldList;
+	}
+
+	public void setDataFieldList(List<WProcessDataField> dataFieldList) {
+		this.dataFieldList = dataFieldList;
+	}
+	
+	public void initializeDataFieldsCloseAddNew() {
+		
+		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
+		visibleButtonNewDataField = true;
 		
 	}
 
@@ -2114,5 +2135,135 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void setDataTypes(List<SelectItem> dataTypes) {
 		this.dataTypes = dataTypes;
 	}
+	
+	//rrl 20130730
+	public String saveNewDataField() {
 
+		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
+		WProcessDataField processDataField = null;
+
+		try {
+		
+			if (wProcessDataFieldSelected.getId() == null || 
+					wProcessDataFieldSelected.getId() == 0) {
+				
+				processDataField = new WProcessDataField();
+				processDataField.setProcessHead(currentWProcessDef.getProcess());
+				processDataField.setDataType(new WDataTypeBL()
+					.getWDataTypeByPK(wProcessDataFieldSelected.getDataType().getId(), this.getCurrentUserId()));
+				processDataField.setName(wProcessDataFieldSelected.getName());
+				processDataField.setRequired(wProcessDataFieldSelected.getRequired());
+				processDataField.setComments(wProcessDataFieldSelected.getComments());
+				
+				wdfBL.add(processDataField, this.getCurrentUserId());
+				
+			} else {
+				
+				processDataField = wdfBL.
+						getWProcessDataFieldByPK(wProcessDataFieldSelected.getId(), this.getCurrentUserId());
+				if (processDataField!=null) {
+					processDataField.setDataType(new WDataTypeBL()
+						.getWDataTypeByPK(wProcessDataFieldSelected.getDataType().getId(), this.getCurrentUserId()));
+					processDataField.setName(wProcessDataFieldSelected.getName());
+					processDataField.setRequired(wProcessDataFieldSelected.getRequired());
+					processDataField.setComments(wProcessDataFieldSelected.getComments());
+					
+					wdfBL.update(processDataField, this.getCurrentUserId());
+					
+				}
+				
+			}
+			
+			initializeDataFieldsCloseAddNew();
+			
+		} catch (WDataTypeException e) {
+			e.printStackTrace();
+		} catch (WProcessDataFieldException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public String cancelNewDataField() {
+
+		initializeDataFieldsCloseAddNew();
+		
+		return null;
+	}
+
+	public void reloadDataFieldList(){
+		
+		try {
+			
+ 			this.dataFieldList = new WProcessDataFieldBL()
+				.getWProcessDataFieldList(currentWProcessDef.getProcess().getId(), getCurrentUserId());
+			
+		} catch (WProcessDataFieldException e) {
+
+			this.dataFieldList = new ArrayList<WProcessDataField>();
+			
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to load current WProcessDef ..." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+			logger.error(message);
+			
+		}
+		
+	}
+	
+	public void loadDataField(){
+		
+		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
+		
+		try {
+
+			if (wProcessDataFieldSelected != null && wProcessDataFieldSelected.getId() != null && 
+					wProcessDataFieldSelected.getId() != 0) {
+			
+				wProcessDataFieldSelected = wdfBL.getWProcessDataFieldByPK(wProcessDataFieldSelected.getId(), getCurrentUserId());
+
+				visibleButtonNewDataField = false;
+				
+			}
+			
+		} catch (WProcessDataFieldException e) {
+
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".loadDataField() WProcessDataFieldException ..." };
+			agregarMensaje("203", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+
+		}
+		
+	}
+	
+	public void deleteDataField(){
+		
+		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
+		
+		try {
+			
+			if (wProcessDataFieldSelected != null && wProcessDataFieldSelected.getId() != null){
+			
+				wProcessDataFieldSelected = wdfBL.getWProcessDataFieldByPK(wProcessDataFieldSelected.getId(), getCurrentUserId());
+						
+				wdfBL.delete(wProcessDataFieldSelected, getCurrentUserId() );
+
+				reloadDataFieldList();
+				
+			}		
+			
+		} catch (WProcessDataFieldException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".deleteStepFromSequence() WStepSequenceDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
+		}
+		
+	}
+
+	
 }

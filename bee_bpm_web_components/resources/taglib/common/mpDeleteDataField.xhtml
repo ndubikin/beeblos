@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpDeleteDataField" width="400" height="250">
+	    <f:facet name="header">
+	        <h:panelGroup id="deleteDataFieldTitlePanel">
+	            <h:outputText id="deleteDataFieldTitle"  value="#{msg.label_remove_data_field}"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="deleteDataFieldSequence">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_delete_data_field"/>
+		        <rich:componentControl id="deleteDataFieldControl" for="mpDeleteDataField" attachTo="hidelink_delete_data_field" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+		<ui:include src="deleteDataField.xhtml"/>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	

@@ -45,9 +45,11 @@
 			<div style=" margin-top:10px;margin-bottom:10px;">
 				<h:panelGroup>
 					<a4j:commandButton value="#{msg.label_cancel}"
-					    style="width:120px; margin-left: 16px; margin-bottom: 10px;" />		
+					    style="width:120px; margin-left: 16px; margin-bottom: 10px;"
+					    action="#{wProcessDefFormBean.cancelNewDataField}" reRender="w_process_def_data_fields_add_new${action}"/>
 					<a4j:commandButton value="#{msg.label_save}"
-					    style="width:120px; margin-left: 10px; margin-bottom: 10px;" />
+					    style="width:120px; margin-left: 10px; margin-bottom: 10px;"
+					    action="#{wProcessDefFormBean.saveNewDataField}" reRender="w_process_def_data_fields_add_new${action}"/>
 				</h:panelGroup>
 			</div>
 		</h:panelGroup>
