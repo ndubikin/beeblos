@@ -28,6 +28,17 @@ public class WProcessDataField implements java.io.Serializable {
 	private int modUser;
 
 	public WProcessDataField() {
+		super();
+	}
+	
+	public WProcessDataField(boolean createEmtpyObjects ){
+		super();
+		if ( createEmtpyObjects ) {
+			
+			this.processHead = new WProcessHead();
+			this.dataType = new WDataType();
+			
+		}	
 	}
 
 	public WProcessDataField(WProcessHead processHead, WDataType dataType,

@@ -172,6 +172,40 @@ public class WProcessDataFieldDao {
 		return processs;
 	}
 
+	//rrl 20130730
+	public List<WProcessDataField> getWProcessDataFieldList(Integer processHeadId) throws WProcessDataFieldException {
 
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WProcessDataField> processs = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			processs = session
+					.createQuery("From WProcessDataField pdfi WHERE pdfi.processHead.id= ? order by id ")
+					.setInteger(0, processHeadId)
+					.list();
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessDataFieldException("WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		return processs;
+	}
+	
 }
 	
