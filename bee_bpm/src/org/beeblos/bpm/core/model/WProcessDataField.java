@@ -20,6 +20,9 @@ public class WProcessDataField implements java.io.Serializable {
 	private String name;
 	private Boolean required;
 	private String comments;
+	
+	private Boolean active;
+	private Integer length;
 
 	// trail
 	private Date insertDate;
@@ -42,12 +45,14 @@ public class WProcessDataField implements java.io.Serializable {
 	}
 
 	public WProcessDataField(WProcessHead processHead, WDataType dataType,
-			String name, Boolean required, String comments) {
+			String name, Boolean required, String comments, Boolean active, Integer length) {
 		this.processHead = processHead;
 		this.dataType = dataType;
 		this.name = name;
 		this.required = required;
 		this.comments = comments;
+		this.active = active;
+		this.length = length;
 
 	}
 
@@ -97,6 +102,22 @@ public class WProcessDataField implements java.io.Serializable {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public Integer getLength() {
+		return length;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
 	}
 
 	public Date getInsertDate() {
