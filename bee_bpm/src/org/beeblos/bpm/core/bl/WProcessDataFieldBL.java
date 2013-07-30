@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -18,21 +21,31 @@ public class WProcessDataFieldBL {
 		
 	}
 	
-	public Integer add(WProcessDataField processDataField, Integer currentUser) throws WProcessDataFieldException {
+	public Integer add(WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException {
 		
 		logger.debug("add() WProcessDataField - Name: ["+processDataField.getName()+"]");
+		
+		// timestamp & trace info
+		processDataField.setInsertDate(new Date());
+		processDataField.setModDate( DEFAULT_MOD_DATE );
+		processDataField.setInsertUser(currentUserId);
+		processDataField.setModUser(currentUserId);
 		
 		return new WProcessDataFieldDao().add(processDataField);
 
 	}
 	
 	
-	public void update(WProcessDataField processDataField, Integer currentUser) throws WProcessDataFieldException {
+	public void update(WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException {
 		
 		logger.debug("update() WProcessDataField < id = "+processDataField.getId()+">");
 		
 		if (!processDataField.equals(new WProcessDataFieldDao().getWProcessDataFieldByPK(processDataField.getId())) ) {
 
+			// timestamp & trace info
+			processDataField.setModDate(new Date());
+			processDataField.setModUser(currentUserId);
+			
 			new WProcessDataFieldDao().update(processDataField);
 			
 		} else {
@@ -43,7 +56,7 @@ public class WProcessDataFieldBL {
 	}
 	
 	
-	public void delete(WProcessDataField processDataField, Integer currentUser) throws WProcessDataFieldException {
+	public void delete(WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException {
 
 		logger.debug("delete() WProcessDataField - Name: ["+processDataField.getName()+"]");
 		
@@ -51,21 +64,27 @@ public class WProcessDataFieldBL {
 
 	}
 
-	public WProcessDataField getWProcessDataFieldByPK(Integer id, Integer currentUser) throws WProcessDataFieldException {
+	public WProcessDataField getWProcessDataFieldByPK(Integer id, Integer currentUserId) throws WProcessDataFieldException {
 
 		return new WProcessDataFieldDao().getWProcessDataFieldByPK(id);
 	}
 	
 	
-	public WProcessDataField getWProcessDataFieldByName(String name, Integer currentUser) throws WProcessDataFieldException {
+	public WProcessDataField getWProcessDataFieldByName(String name, Integer currentUserId) throws WProcessDataFieldException {
 
 		return new WProcessDataFieldDao().getWProcessDataFieldByName(name);
 	}
 
 	
-	public List<WProcessDataField> getWProcessDataFieldList(Integer currentUser) throws WProcessDataFieldException {
+	public List<WProcessDataField> getWProcessDataFieldList(Integer currentUserId) throws WProcessDataFieldException {
 
 		return new WProcessDataFieldDao().getWProcessDataFieldList();
+	
+	}
+
+	public List<WProcessDataField> getWProcessDataFieldList(Integer processHeadId, Integer currentUserId) throws WProcessDataFieldException {
+
+		return new WProcessDataFieldDao().getWProcessDataFieldList(processHeadId);
 	
 	}
 	
