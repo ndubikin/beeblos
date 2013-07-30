@@ -1216,6 +1216,12 @@
          <property name="comments" type="string">
             <column name="comments" />
         </property>
+        <property name="active" type="java.lang.Boolean">
+            <column name="active" />
+        </property>
+		<property name="length" type="java.lang.Integer">
+			<column name="length"/>
+		</property>
         <property name="insertDate" type="timestamp">
             <column name="insert_date" length="0" not-null="true" />
         </property>
