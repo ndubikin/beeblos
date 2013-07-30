@@ -6,11 +6,13 @@ import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
+import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -55,6 +57,7 @@ import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
+import org.beeblos.bpm.core.model.WProcessHeadManagedData;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
@@ -64,7 +67,9 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.core.util.Resourceutil;
 import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
+import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -74,6 +79,8 @@ import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 public class WProcessDefFormBean extends CoreManagedBean {
+
+	private static final String _ROOT_MANAGED_TABLE_NAME = "wmt_";
 
 	private static final long serialVersionUID = 1L;
 
@@ -154,6 +161,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private boolean flagValidate;
 	private boolean refreshForm;
 	private boolean visibleButtonNewDataField;
+	private boolean visibleButtonAdvancedConfiguration;
 	private WProcessDataField wProcessDataFieldSelected;
 	private List<SelectItem> dataTypes;
 	private List<WProcessDataField> dataFieldList;
@@ -224,6 +232,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		//rrl 20130729
 		refreshForm=false;
 		visibleButtonNewDataField = true;
+		visibleButtonAdvancedConfiguration = true;
 		wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT); 
 		
 	}
@@ -2093,6 +2102,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.visibleButtonNewDataField = visibleButtonNewDataField;
 	}
 
+	public boolean isVisibleButtonAdvancedConfiguration() {
+		return visibleButtonAdvancedConfiguration;
+	}
+
+	public void setVisibleButtonAdvancedConfiguration(
+			boolean visibleButtonAdvancedConfiguration) {
+		this.visibleButtonAdvancedConfiguration = visibleButtonAdvancedConfiguration;
+	}
+
 	public WProcessDataField getwProcessDataFieldSelected() {
 		return wProcessDataFieldSelected;
 	}
@@ -2273,5 +2291,149 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
+	public void switchButtonAdvancedConfiguration() {
+		visibleButtonAdvancedConfiguration=!visibleButtonAdvancedConfiguration;
+	}
+
+	// generates managed table for custom properties
+
+	public void createManagedTable() {
+		if ( !_checkValidProcessConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+		
+		TableManager tm = new TableManager();
+
+		createManagedTable(tm);
+	}
+	
+	public void createManagedTable( TableManager tm ) { 
+		if ( !_checkValidProcessConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+
+		String tableName = checkTableName(); // checks tablename and update currentWProcessDef if corresponds...
+		reloadDataFieldList(); // refresh dataFieldList
+		
+		try {
+			
+			tm.createTable(tableName,dataFieldList);
+			
+			System.out.println("table: "+tableName+" was created ...");
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void recreateManagedTable() {
+
+		if ( !_checkValidTableConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+		
+		TableManager tm = new TableManager();
+		
+		if (!checkTableExists(tm)) {
+			System.out.println("Error, can't recreate table because it doesn't exists ...");;
+		}
+		removeManagedTable(tm,currentWProcessDef.getProcess().getManagedTable().getName());
+		createManagedTable(tm);
+		
+	}
+
+	public void removeManagedTable( TableManager tm, String tableName ) { 
+		if ( !_checkValidTableConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+
+		try {
+			tm.removeTable(tableName);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private boolean checkTableExists(TableManager tm) {
+		//currentWProcessDef.process.managedTable.name
+		try {
+			Integer qtyRecords = 
+					tm.checkTableExists(
+							currentWProcessDef.getProcess().getManagedTable().getName() );
+
+			System.out.println("qty records:"+qtyRecords);
+			if (qtyRecords.equals(-1)) {
+				return false;
+			} 
+			return true;
+		} catch (ClassNotFoundException e) {
+			System.out.println("Error ClassNotFoundException "+e.getMessage()+" - "+e.getCause());
+		} catch (SQLException e) {
+			System.out.println("Error SQLException:"+e.getMessage()+" - "+e.getCause());
+		}
+		return false;
+	}
+
+	
+	private boolean _checkValidProcessConfiguration() {
+		if (currentWProcessDef == null) {
+			System.out.println("Error no hay un proceso cargado ...");
+			return false;
+		} else if (currentWProcessDef.getProcess() == null) {
+			System.out.println("Error el proceso corriente con el id:"
+					+(currentWProcessDef.getId()!=null?currentWProcessDef.getId():"null")
+					+" está inconsistente y no tiene su correspondiente head o no sepuede cargar ...");
+			return false;
+			
+		} 
+		return true;
+	}
+
+	
+	private boolean _checkValidTableConfiguration() {
+		if (currentWProcessDef == null) {
+			System.out.println("Error no hay un proceso cargado ...");
+			return false;
+		} else if (currentWProcessDef.getProcess() == null) {
+			System.out.println("Error el proceso corriente con el id:"
+					+(currentWProcessDef.getId()!=null?currentWProcessDef.getId():"null")
+					+" está inconsistente y no tiene su correspondiente head o no sepuede cargar ...");
+			return false;
+			
+		} else if (currentWProcessDef.getProcess().getManagedTable()==null) {
+			System.out.println("Error managed table has no valid data ....");
+			return false;
+		}
+		return true;
+	}
+
+	private String checkTableName() {
+		
+		// if no managedTableData record exist then create it!
+		if (currentWProcessDef!=null 
+				&& currentWProcessDef.getProcess()!=null) {
+			if (currentWProcessDef.getProcess().getManagedTable()==null) {
+				WProcessHeadManagedData managedTable = new WProcessHeadManagedData();
+				managedTable.setHeadId(currentWProcessDef.getProcess().getId());
+				managedTable.setCatalog(getStringProperty("bee_bpm_core.hibernate.connection.default_catalog"));
+				managedTable.setSchema(getStringProperty("bee_bpm_core.hibernate.connection.default_catalog"));
+				managedTable.setName(_ROOT_MANAGED_TABLE_NAME+currentWProcessDef.getProcess().getId());
+//				managedTable.setWProcessHead(currentWProcessDef.getProcess());
+				currentWProcessDef.getProcess().setManagedTable(managedTable);
+				
+				// if exists managedTableData record check table name
+			} else {
+				if (currentWProcessDef.getProcess().getManagedTable()==null 
+						|| "".equals(currentWProcessDef.getProcess().getManagedTable()) ) {
+					logger.warn("TableName for process_head:"+currentWProcessDef.getProcess().getId()+" was null or not valid value ...");
+					currentWProcessDef
+							.getProcess()
+							.getManagedTable()
+							.setName(_ROOT_MANAGED_TABLE_NAME+currentWProcessDef.getProcess().getId());
+				}
+			}
+		}
+
+		// update currentWProcessDef record
+		this.update();
+		return currentWProcessDef
+				.getProcess()
+				.getManagedTable()
+				.getName();
+	}
 	
 }
