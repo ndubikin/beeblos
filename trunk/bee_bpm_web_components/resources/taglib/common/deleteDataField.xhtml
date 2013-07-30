@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form>
+
+		<rich:spacer height="10" />
+
+		<h:outputText value="#{msg.label_please_confirm_the_data_field_removing_or_cancel_the_operation}" />
+
+		<h:panelGrid width="98%" columns="2"
+			columnClasses="colStyle50,colStyle100">
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_name}: " />
+			<h:outputText 
+				value="#{wProcessDefFormBean.wProcessDataFieldSelected.name}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_required}: " />
+			<h:outputText 
+				value="#{wProcessDefFormBean.wProcessDataFieldSelected.required ? msg.label_yes : ''}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_data_type}: " />
+			<h:outputText 
+				value=""
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_comments}: " />
+			<h:outputText 
+				value="#{wProcessDefFormBean.wProcessDataFieldSelected.comments}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+
+		<div class="pg_default">
+		
+		</div>
+
+		<h:panelGroup>
+			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+				onclick="javascript:Richfaces.hideModalPanel('mpDeleteDataField')"
+				style="width:80px; height:24px;" />
+			<a4j:commandButton id="delete_button_sr" value="#{msg.label_remove}"
+				actionListener="#{wProcessDefFormBean.deleteDataField}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteDataField');"
+				reRender="w_process_def_data_fields_table, mpDeleteDataField"
+				style="width:120px; margin-left: 10px; height:24px;" />
+		</h:panelGroup>
+
+	</h:form>
+</ui:composition>
