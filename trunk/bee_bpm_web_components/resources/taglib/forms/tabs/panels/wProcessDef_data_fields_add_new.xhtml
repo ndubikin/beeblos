@@ -12,17 +12,15 @@
 
 	<h:form id="w_process_def_data_fields_add_new${action}">
 	
-		<a4j:commandLink title="#{msg.label_add_new_data_field}"
-			style="margin-left: 18px; margin-bottom: 50px; border:0; border-width:0; width:0; height:0; outline:0;"
+		<a4j:commandLink value="#{msg.label_add}" title="#{msg.label_add_new_data_field}"
 			tabindex="-1"
 			action="#{wProcessDefFormBean.initializeDataFieldsAddNew}"
 			reRender="w_process_def_data_fields_add_new${action}"
 			rendered="#{contextoSeguridad.permiteCualquiera['530'] and wProcessDefFormBean.visibleButtonNewDataField}">
-			<h:graphicImage id="imgInsertar" value="/images/insertar.png" style="border:0;" />
 		</a4j:commandLink>
 
 		<h:panelGroup rendered="#{!wProcessDefFormBean.visibleButtonNewDataField}" >
-			<h:outputText value="Adding new data field:" style="margin-left: 20px; font-size:12px; "/>
+			<h:outputText value="#{msg.label_adding_new_data_field}:" style="margin-left: 20px; font-size:12px; "/>
 			<h:panelGrid columns="6" style="margin-left: 16px; margin-top:10px;">
 				<h:outputText value="#{msg.label_name}:" styleClass="label_form"
 					style="margin:0px;padding:0px;" />
