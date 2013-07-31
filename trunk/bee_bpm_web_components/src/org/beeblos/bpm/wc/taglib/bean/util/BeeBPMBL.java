@@ -20,6 +20,7 @@ import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.noper.ManagedData;
 import org.beeblos.bpm.wc.security.error.InyectorException;
 
 /*
@@ -43,7 +44,8 @@ public class BeeBPMBL {
 	public Integer inyectar(
 			Integer idProcess, Integer idStep, 
 			Integer idObject, String idObjectType,
-			String objReference, String objComments, Integer userId) 
+			String objReference, String objComments, 
+			ManagedData processCustomData, Integer userId) 
 					throws InyectorException, AlreadyExistsRunningProcessException, 
 							WStepWorkException, WProcessWorkException {
 		
@@ -63,7 +65,8 @@ public class BeeBPMBL {
 		idStepWork = new WStepWorkBL()
 							.start(
 									_setProcessWork(idProcess,  idStep, idObject,  idObjectType, objReference,  objComments,  userId), 
-									_setStepWork(null,userId), 
+									_setStepWork(null,userId),
+									processCustomData,
 									userId) ;
 
 		return idStepWork;
@@ -93,7 +96,7 @@ public class BeeBPMBL {
 			logger.info("inyectar:"+mensaje);
 			throw new InyectorException(mensaje);
 		}
-	// NESTOR ARREGLAR ESTO LUEGO CUANDO TENGAMOS EL CONTROL DE OBJETOS EN EL WPROCESS-DEF	
+		// TODO NESTOR ARREGLAR ESTO LUEGO CUANDO TENGAMOS EL CONTROL DE OBJETOS EN EL WPROCESS-DEF	
 //		if (idObject==null || idObject==0 ||
 //				idObjectType==null || "".equals(idObjectType)) {
 //			

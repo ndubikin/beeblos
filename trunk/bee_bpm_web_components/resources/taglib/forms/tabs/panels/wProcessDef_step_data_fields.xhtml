@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
+
+
+	<h:form id="w_process_def_step_data_field_id" style="margin-left: 16px;">
+	
+		<rich:spacer height="20px"/>
+
+		<h:panelGrid width="100%" columns="1">
+
+    
+			<rich:dataTable id="w_step_data_field"
+				value="#{wStepDefFormBean.currentWStepDef.stepHead.stepDataFieldList}"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				var="sdf" width="100%" columnClasses="center" rows="5"
+				>
+				
+				<f:facet name="header">
+					<h:outputText value="#{msg.label_data_field}" />
+				</f:facet>
+	
+				<rich:column sortBy="#{sdf.dataField.name}"
+					style="width:250px; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_name}" />
+					</f:facet>
+					<h:outputText value="#{sdf.dataField.name}" />
+				</rich:column>
+	
+
+			</rich:dataTable>
+
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

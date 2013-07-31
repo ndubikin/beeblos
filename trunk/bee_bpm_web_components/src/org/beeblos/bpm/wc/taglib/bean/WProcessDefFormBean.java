@@ -2166,7 +2166,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					wProcessDataFieldSelected.getId() == 0) {
 				
 				processDataField = new WProcessDataField();
-				processDataField.setProcessHead(currentWProcessDef.getProcess());
+				processDataField.setProcessHeadId(currentWProcessDef.getProcess().getId());
 				processDataField.setDataType(new WDataTypeBL()
 					.getWDataTypeByPK(wProcessDataFieldSelected.getDataType().getId(), this.getCurrentUserId()));
 				processDataField.setName(wProcessDataFieldSelected.getName());

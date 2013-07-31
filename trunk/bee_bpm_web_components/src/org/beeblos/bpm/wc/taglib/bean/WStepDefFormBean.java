@@ -28,7 +28,6 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WRoleDef;
-import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepHead;
 import org.beeblos.bpm.core.model.WStepResponseDef;
@@ -104,9 +103,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private String activeFilter;
 	
 	private String messageStyle;
-	
-	//rrl 20130731
-	private List<WStepDataField> dataFieldRelatedList;
 	
 	public WStepDefFormBean() {		
 		super();
@@ -515,7 +511,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 					wsdBL
 						.getWStepDefByPK(this.currObjId, this.getCurrentUserId() );
 			
-			recoverNullObjects();
+			recoverNullObjects();//new org.beeblos.bpm.core.bl.WStepDataFieldBL().getWStepDataFieldByPK(1, 1000);
 			
 			// dml 20120523
 			this.loadOutgoingRouteList();
@@ -1439,20 +1435,5 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return new WStepDefUtil().loadWStepDefFormBean(this.currObjId);
 
 	}
-	
-	//rrl 20130731
-	public List<WStepDataField> getDataFieldRelatedList() {
-		return dataFieldRelatedList;
-	}
-
-	public void setDataFieldRelatedList(List<WStepDataField> dataFieldRelatedList) {
-		this.dataFieldRelatedList = dataFieldRelatedList;
-	}
-	
-	public Integer getDatafieldRelatedListSize() {
-		
-		return (dataFieldRelatedList != null ? dataFieldRelatedList.size(): 0);
-	}
-	
 	
 }

@@ -18,6 +18,7 @@ import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.AlreadyExistsRunningProcessException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -127,7 +128,7 @@ public class InyectorBean  extends CoreManagedBean {
 		
 	}
 
-	
+	// set idProcesoSeleccionado and load data for this process
 	public String changeProceso() throws InyectorException {
 		
 		logger.debug(" id"+objIdUsuario+" ref:"+objReference);
@@ -135,23 +136,22 @@ public class InyectorBean  extends CoreManagedBean {
 		
 		setShowHeaderMessage(false); // nes 20100117 oculta mensajes previos en pantalla
 		
-		
+		// check idProcesoSeleccionado has a valid value
 		if (idProcesoSeleccionado==null || idProcesoSeleccionado==0) {
-			
 			idPasoSeleccionado=null;
 			return null;
-			
 		}
 
 		WProcessDefBL pdBL = new WProcessDefBL(); 
 		WStepSequenceDefBL wsdBL = new WStepSequenceDefBL();
 		WStepDefBL wsBL= new WStepDefBL();
 		
-		// cargo el proceso seleccionado ... y la lista de pasos válidos para que el usuario elija ...
+		// load selected process ... and valid step list for user selection
 		
 		try {
 			
 			setProcesoSeleccionado(pdBL.getWProcessDefByPK(idProcesoSeleccionado, null));
+			
 			lPasosValidos= 
 					UtilesVarios
 					.castStringPairToSelectitem(
@@ -175,7 +175,19 @@ public class InyectorBean  extends CoreManagedBean {
 	public String changePaso() {
 		
 		if (idPasoSeleccionado!=null && idProcesoSeleccionado!=null) {
+			
 			botonInyectarDisabled=false;
+			
+			WStepDefBL stepDefBL = new WStepDefBL();
+			
+			try {
+				setPasoSeleccionado(stepDefBL.getWStepDefByPK(idPasoSeleccionado, currentUser));
+			} catch (WStepDefException e) {
+				logger.error("can't get WStepDef for id:"+idPasoSeleccionado+"  >> will be reset to null!!");
+				setIdPasoSeleccionado(null);
+				setIdPasoSeleccionado(0);
+			}
+			
 		} else {
 			botonInyectarDisabled=true;
 		}
@@ -183,7 +195,9 @@ public class InyectorBean  extends CoreManagedBean {
 		return null;
 		
 	}
+
 	
+	// called from xhtml view ...
 	public String inyectar() throws InyectorException {
 		
 		String ret=null;
@@ -196,7 +210,9 @@ public class InyectorBean  extends CoreManagedBean {
 			idStepWork = new BeeBPMBL()
 								.inyectar(
 										idProcesoSeleccionado, idPasoSeleccionado, 
-										idObject, idObjectType, objReference, objComments, _getLoggedUser());
+										idObject, idObjectType, objReference, objComments, 
+										null,
+										_getLoggedUser());
 			
 			//rrl 20100114
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
