@@ -9,8 +9,11 @@ import java.util.Date;
  */
 public class WProcessHeadManagedData implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int headId;
-	private WProcessHead WProcessHead;
 	private String name;
 	private Boolean ignoreCase;
 	private String schema;
@@ -24,28 +27,13 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 	public WProcessHeadManagedData() {
 	}
 
-	public WProcessHeadManagedData(WProcessHead WProcessHead, String name,
+	public WProcessHeadManagedData(Integer headId, String name,
 			String schema, String catalog, Date insertDate, int insertUser,
 			Date modDate, int modUser) {
-		this.WProcessHead = WProcessHead;
+		setHeadId(headId);
 		this.name = name;
 		this.schema = schema;
 		this.catalog = catalog;
-		this.insertDate = insertDate;
-		this.insertUser = insertUser;
-		this.modDate = modDate;
-		this.modUser = modUser;
-	}
-
-	public WProcessHeadManagedData(WProcessHead WProcessHead, String name,
-			Boolean ignoreCase, String schema, String catalog, String comment,
-			Date insertDate, int insertUser, Date modDate, int modUser) {
-		this.WProcessHead = WProcessHead;
-		this.name = name;
-		this.ignoreCase = ignoreCase;
-		this.schema = schema;
-		this.catalog = catalog;
-		this.comment = comment;
 		this.insertDate = insertDate;
 		this.insertUser = insertUser;
 		this.modDate = modDate;
@@ -58,14 +46,6 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 
 	public void setHeadId(int headId) {
 		this.headId = headId;
-	}
-
-	public WProcessHead getWProcessHead() {
-		return this.WProcessHead;
-	}
-
-	public void setWProcessHead(WProcessHead WProcessHead) {
-		this.WProcessHead = WProcessHead;
 	}
 
 	public String getName() {
@@ -144,8 +124,6 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((WProcessHead == null) ? 0 : WProcessHead.hashCode());
 		result = prime * result + ((catalog == null) ? 0 : catalog.hashCode());
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		result = prime * result + headId;
@@ -170,11 +148,6 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 		if (!(obj instanceof WProcessHeadManagedData))
 			return false;
 		WProcessHeadManagedData other = (WProcessHeadManagedData) obj;
-		if (WProcessHead == null) {
-			if (other.WProcessHead != null)
-				return false;
-		} else if (!WProcessHead.equals(other.WProcessHead))
-			return false;
 		if (catalog == null) {
 			if (other.catalog != null)
 				return false;
@@ -218,5 +191,21 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "WProcessHeadManagedData [headId=" + headId + ", "
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (ignoreCase != null ? "ignoreCase=" + ignoreCase + ", " : "")
+				+ (schema != null ? "schema=" + schema + ", " : "")
+				+ (catalog != null ? "catalog=" + catalog + ", " : "")
+				+ (comment != null ? "comment=" + comment + ", " : "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ "insertUser=" + insertUser + ", "
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ "modUser=" + modUser + "]";
+	}
+
+	
 
 }
