@@ -188,7 +188,7 @@ public class WProcessDataFieldDao {
 			tx.begin();
 
 			processs = session
-					.createQuery("From WProcessDataField pdfi WHERE pdfi.processHead.id= ? order by id ")
+					.createQuery("From WProcessDataField pdfi WHERE pdfi.processHeadId= ? order by id ")
 					.setInteger(0, processHeadId)
 					.list();
 			
