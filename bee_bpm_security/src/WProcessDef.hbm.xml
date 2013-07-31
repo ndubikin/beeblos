@@ -38,11 +38,9 @@
 	</class>
 
     <class name="org.beeblos.bpm.core.model.WProcessHeadManagedData" table="w_process_head_managed_data">
-        <id name="headId" type="int">
+        <id name="headId" type="java.lang.Integer">
             <column name="head_id" />
-            <generator class="foreign">
-                <param name="property">WProcessHead</param>
-            </generator>
+            <generator class="assigned" />
         </id>
 
         <property name="name" type="string">
@@ -52,7 +50,7 @@
             <column name="ignore_case" />
         </property>
         <property name="schema" type="string">
-            <column name="schema" length="100" not-null="true" />
+            <column name="sxema" length="100" not-null="true" />
         </property>
         <property name="catalog" type="string">
             <column name="catalog" length="100" not-null="true" />
@@ -60,20 +58,20 @@
         <property name="comment" type="string">
             <column name="comment" />
         </property>
-		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
-			<column length="0" name="insert_date"  />
+		<property generated="never" lazy="false" name="insertDate" type="timestamp">
+			<column name="insert_date"  />
 		</property>
-        <property name="insertUser" type="int">
+        <property name="insertUser" type="java.lang.Integer">
             <column name="insert_user" not-null="true" />
         </property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column length="0" name="mod_date"  />
+			<column name="mod_date"  />
 		</property>
-        <property name="modUser" type="int">
+        <property name="modUser" type="java.lang.Integer">
             <column name="mod_user" not-null="true" />
         </property>
     </class>	
+    
 	<class name="org.beeblos.bpm.core.model.WProcessDef" table="w_process_def">
 
 		<id name="id" type="java.lang.Integer">
@@ -354,7 +352,7 @@
 			<column name="postconditions"  />
 		</property>
 	
-		<property generated="never" lazy="false" name="idDept" type="int">
+		<property generated="never" lazy="false" name="idDept" type="java.lang.Integer">
 			<column name="id_dept">
 				<comment>departamento al que corresponde el paso</comment>
 			</column>
@@ -710,7 +708,7 @@
             <column name="id" />
             <generator class="identity" />
         </id>
-<!--         <version name="version" type="int"> -->
+<!--         <version name="version" type="java.lang.Integer"> -->
 <!--             <column name="version" > -->
 <!--                 <comment>version</comment> -->
 <!--             </column> -->
@@ -740,13 +738,13 @@
                 <comment>user friendly comments to identificate this work</comment>
             </column>
         </property>
-        <property name="insertUser" type="int">
+        <property name="insertUser" type="java.lang.Integer">
             <column name="insert_user"  />
         </property>
         <property name="insertDate" type="timestamp">
             <column name="insert_date" length="0" not-null="true" />
         </property>
-        <property name="modUser" type="int">
+        <property name="modUser" type="java.lang.Integer">
             <column name="mod_user"  />
         </property>
         <property name="modDate" type="timestamp">
@@ -1025,7 +1023,7 @@
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WUserDef" table="w_user_def">
-		<id name="id" type="int">
+		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
 		</id>
@@ -1074,7 +1072,7 @@
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WUseridmapper" table="w_useridmapper">
-		<id name="idUser" type="int">
+		<id name="idUser" type="java.lang.Integer">
 			<column name="id_user" />
 			<generator class="foreign">
 				<param name="property">WUserDef</param>
@@ -1266,13 +1264,13 @@
         <property name="insertDate" type="timestamp">
             <column name="insert_date" length="0" not-null="true" />
         </property>
-        <property name="insertUser" type="int">
+        <property name="insertUser" type="java.lang.Integer">
             <column name="insert_user" not-null="true" />
         </property>
         <property name="modDate" type="timestamp">
             <column name="mod_date" length="0" not-null="true" />
         </property>
-        <property name="modUser" type="int">
+        <property name="modUser" type="java.lang.Integer">
             <column name="mod_user" not-null="true" />
         </property>
     </class>
@@ -1291,7 +1289,7 @@
         <property name="showName" type="string">
             <column name="show_name" />
         </property>
-        <property name="sqlType" type="int">
+        <property name="sqlType" type="java.lang.Integer">
             <column name="sql_type" not-null="true" />
         </property>
         <property name="sqlTypeName" type="string">
@@ -1300,13 +1298,13 @@
         <property name="insertDate" type="timestamp">
             <column name="insert_date" length="0" not-null="true" />
         </property>
-        <property name="insertUser" type="int">
+        <property name="insertUser" type="java.lang.Integer">
             <column name="insert_user" not-null="true" />
         </property>
         <property name="modDate" type="timestamp">
             <column name="mod_date" length="0" not-null="true" />
         </property>
-        <property name="modUser" type="int">
+        <property name="modUser" type="java.lang.Integer">
             <column name="mod_user" not-null="true" />
         </property>
 
@@ -1322,7 +1320,7 @@
         <property name="objectClass" type="string">
             <column name="object_class" not-null="true" />
         </property>
-        <property name="hierarchy" type="int">
+        <property name="hierarchy" type="java.lang.Integer">
             <column name="hierarchy" not-null="true">
                 <comment>Menor numero implica mas importante</comment>
             </column>
