@@ -29,6 +29,8 @@
 		<h:selectOneMenu id="id_proceso2" value="#{inyectorBean.idPasoSeleccionado}"
 		 			     style="width:500px; height: 24px; font-size:13px;padding: 3px;">
 			<f:selectItems value="#{inyectorBean.lPasosValidos}" />
+			<a4j:support ajaxSingle="true"  actionListener="#{inyectorBean.changePaso}"
+							event="onchange" reRender="inyector_form, id_proceso2" />			
 		</h:selectOneMenu>
 		<rich:spacer height="10" />
 

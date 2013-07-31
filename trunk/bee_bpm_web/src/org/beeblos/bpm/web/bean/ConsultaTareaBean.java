@@ -21,11 +21,11 @@ import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.wc.taglib.bean.util.TareaWorkflowUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.UtilsVs;
-import org.beeblos.bpm.web.bean.util.TareaWorkflowUtil;
 
 
 public class ConsultaTareaBean extends CoreManagedBean {
