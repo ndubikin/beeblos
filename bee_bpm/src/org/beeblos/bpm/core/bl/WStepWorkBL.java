@@ -48,6 +48,7 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.noper.ManagedData;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
@@ -80,7 +81,7 @@ public class WStepWorkBL {
 	
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
-	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUser) throws WStepWorkException, WProcessWorkException {
+	public Integer start(WProcessWork work, WStepWork stepw, ManagedData processCustomData, Integer currentUser) throws WStepWorkException, WProcessWorkException {
 		
 		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"]");
 		
@@ -295,37 +296,45 @@ public class WStepWorkBL {
 	 ********************** MÉTODOS PARA TRABAJO DEL WORKFLOW  ****************************************
 	 */
 
+	// TODO NESTOR 20130731 - NO TENGO CLARO POR QUE PERO A ESTE MÉTODO NO LO LLAMA NADIE ...
+	// NO SE SI ES VIEJO O SI LO USAMOS SOLO EN DAP, HAY QUE REVISAR ...
+	
 	// lanza un workflow
-	public Integer run(
-			Integer processId, Integer idObject, String idObjectType, Integer currentUser) 
-	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException {
-	
-		
-		if ( ! existsActiveProcess(processId, idObject, idObjectType, currentUser) ) {
-		
-			WProcessDef process = new WProcessDefBL().getWProcessDefByPK(processId, currentUser);
-			WStepDef stepDef = new WStepDefBL().getWStepDefByPK(process.getBeginStep().getId(), currentUser);
-			
-			WStepWork stepWork = new WStepWork();
-	
-			Date now = new Date();
-	
-			// seteo paso 
-			_setStepWork(idObject, idObjectType, currentUser, process, stepDef, stepWork,
-					now);
-			
-			Integer idStepWork = this.add(stepWork, currentUser); // inserta en la tala de step work
-			
-			return idStepWork;
-
-		} else {
-			throw new WStepWorkException("WStepWorkBL: Already exists a step for this [process id:"
-					+processId
-					+" and object type " + idObjectType 
-					+" with id:"+idObject+"]") ;
-		}
-		
-	}
+//	public Integer run(
+//			Integer processId, Integer idObject, String idObjectType, Integer currentUser) 
+//	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException {
+//	
+//		/*
+//		 * revisa que exista algún proceso activo para la tupla: processId, idObject, idObjectType
+//		 * pero esto puede ser opcional, o sea habria que indicar en los parámetros del wf si se
+//		 * permite lanzar mas de 1 proceso de este tipo para la tupla
+//		 * 
+//  		 */
+//		if ( ! existsActiveProcess(processId, idObject, idObjectType, currentUser) ) {
+//		
+//			WProcessDef process = new WProcessDefBL().getWProcessDefByPK(processId, currentUser);
+//			WStepDef stepDef = new WStepDefBL().getWStepDefByPK(process.getBeginStep().getId(), currentUser);
+//			
+//			WStepWork stepWork = new WStepWork();
+//	
+//			Date now = new Date();
+//	
+//			// seteo paso 
+//			_setStepWork(idObject, idObjectType, currentUser, process, stepDef, stepWork,
+//					now);
+//			
+//			Integer idStepWork = this.add(stepWork, currentUser); // inserta en la tala de step work
+//			
+//			return idStepWork;
+//
+//		} else {
+//			throw new WStepWorkException("WStepWorkBL: Already exists a step for this [process id:"
+//					+processId
+//					+" and object type " + idObjectType 
+//					+" with id:"+idObject+"]") ;
+//		}
+//		
+//	}
 
 	// procesa 1 paso - devuelve la cantidad de nuevas rutas lanzadas ... ( workitems generados ... )
 	public Integer processStep (
@@ -405,6 +414,8 @@ public class WStepWorkBL {
 			_setOpenInfo(currentUser, storedStep);
 			
 			this._lockStep(storedStep, currentUser);
+			
+			// set process custom data
 			
 			
 		} catch ( WStepWorkException swe ) {  // if can't lock it returns exception ...

@@ -516,7 +516,11 @@ public class WProcessDefBL {
 		if (wpd != null){
 			
 			try {
+				
 				wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
+//				wpd.setManagedDataDef(loadManagedDataDef(wpd));
+				
+				
 			} catch (WStepDefException e1) {
 				String mess="Error: getWProcessDefByPK "+e1.getMessage();
 				throw new WStepSequenceDefException(mess);
@@ -534,6 +538,26 @@ public class WProcessDefBL {
 		return wpd;
 		
 	}
+	
+	private void loadManagedDataDef( WProcessDef wpd ) {
+
+		if (wpd.getProcess().getId()==null  
+				|| wpd.getProcess().getId()==0 
+				|| wpd.getProcess().getManagedTable()==null
+				|| wpd.getProcess().getManagedTable().getName()==null
+				|| "".equals(wpd.getProcess().getManagedTable().getName())) {
+			wpd.setManagedDataDef(null);
+			return;
+		}
+		
+		
+	}
+	
+	public void _createManagedDataObject(WProcessDef wpd) {
+		
+		
+	}
+	
 	
 /*	
 	public WProcessDef getWProcessDefByName(String name, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
