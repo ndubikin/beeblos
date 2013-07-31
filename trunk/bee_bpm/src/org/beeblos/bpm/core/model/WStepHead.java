@@ -1,6 +1,10 @@
 package org.beeblos.bpm.core.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class WStepHead implements java.io.Serializable {
 
@@ -18,6 +22,8 @@ public class WStepHead implements java.io.Serializable {
 	private Integer insertUser;
 	private Date modDate;
 	private Integer modUser;
+	
+	Set<WStepDataField> dataFieldDef = new HashSet<WStepDataField>(0);
 	
 	public WStepHead() {
 		super();
@@ -115,14 +121,29 @@ public class WStepHead implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
+	public Set<WStepDataField> getDataFieldDef() {
+		return dataFieldDef;
+	}
+
+
+	public void setDataFieldDef(Set<WStepDataField> dataFieldDef) {
+		this.dataFieldDef = dataFieldDef;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result
+				+ ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result
+				+ ((dataFieldDef == null) ? 0 : dataFieldDef.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result + ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -136,13 +157,18 @@ public class WStepHead implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WStepHead))
 			return false;
 		WStepHead other = (WStepHead) obj;
 		if (comments == null) {
 			if (other.comments != null)
 				return false;
 		} else if (!comments.equals(other.comments))
+			return false;
+		if (dataFieldDef == null) {
+			if (other.dataFieldDef != null)
+				return false;
+		} else if (!dataFieldDef.equals(other.dataFieldDef))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -194,5 +220,23 @@ public class WStepHead implements java.io.Serializable {
 		
 		return true;
 	}
+
+	public List<WStepDataField> getStepDataFieldList() {
+
+		if (dataFieldDef != null
+				&& dataFieldDef.size() > 0) {
+
+			List<WStepDataField> dfl = 
+					new ArrayList<WStepDataField>(dataFieldDef.size()+1);
+			
+			dfl = new ArrayList<WStepDataField>(dataFieldDef);
+
+			return dfl;
+		}
+
+		return null;
+
+	}
+	
 	
 }

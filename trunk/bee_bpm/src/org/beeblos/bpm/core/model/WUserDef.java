@@ -23,7 +23,7 @@ public class WUserDef implements java.io.Serializable {
 	private String login;
 	private String email;
 	private boolean active;
-	private int insertUser;
+	private Integer insertUser;
 	private Date insertDate;
 	private Integer modUser;
 	private Date modDate;
@@ -45,7 +45,7 @@ public class WUserDef implements java.io.Serializable {
 		this.id=idUser;
 	}
 
-	public WUserDef(String name, String login, boolean active, int insertUser,
+	public WUserDef(String name, String login, boolean active, Integer insertUser,
 			Date insertDate) {
 		this.name=name;
 		this.login=login;
@@ -95,11 +95,11 @@ public class WUserDef implements java.io.Serializable {
 		this.active = active;
 	}
 
-	public int getInsertUser() {
+	public Integer getInsertUser() {
 		return insertUser;
 	}
 
-	public void setInsertUser(int insertUser) {
+	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
 	}
 

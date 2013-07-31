@@ -18,7 +18,7 @@ public class WStepDataField implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private Integer stepDefId;
+	private Integer stepHeadId;
 	private WProcessDataField dataField;
 	private String name;
 	private Boolean required;
@@ -29,9 +29,9 @@ public class WStepDataField implements java.io.Serializable {
 	
 	// trail
 	private Date insertDate;
-	private int insertUser;
+	private Integer insertUser;
 	private Date modDate;
-	private int modUser;
+	private Integer modUser;
 
 	public WStepDataField() {
 		super();
@@ -46,11 +46,11 @@ public class WStepDataField implements java.io.Serializable {
 		}	
 	}
 	
-	public WStepDataField(Integer id, Integer stepDefId,
+	public WStepDataField(Integer id, Integer stepHeadId,
 			WProcessDataField dataField, String name, Boolean required,
 			String comments, Boolean active, Integer length, String defaultValue) {
 		this.id = id;
-		this.stepDefId = stepDefId;
+		this.stepHeadId = stepHeadId;
 		this.dataField = dataField;
 		this.name = name;
 		this.required = required;
@@ -132,11 +132,11 @@ public class WStepDataField implements java.io.Serializable {
 		this.insertDate = insertDate;
 	}
 
-	public int getInsertUser() {
+	public Integer getInsertUser() {
 		return insertUser;
 	}
 
-	public void setInsertUser(int insertUser) {
+	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
 	}
 
@@ -148,21 +148,23 @@ public class WStepDataField implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
-	public int getModUser() {
+	public Integer getModUser() {
 		return modUser;
 	}
 
-	public void setModUser(int modUser) {
+	public void setModUser(Integer modUser) {
 		this.modUser = modUser;
 	}
 
-	public Integer getStepDefId() {
-		return stepDefId;
+	public Integer getStepHeadId() {
+		return stepHeadId;
 	}
 
-	public void setStepDefId(Integer stepDefId) {
-		this.stepDefId = stepDefId;
+	public void setStepHeadId(Integer stepHeadId) {
+		this.stepHeadId = stepHeadId;
 	}
+
+
 
 
 }
