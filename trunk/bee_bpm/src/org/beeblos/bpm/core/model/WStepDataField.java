@@ -18,6 +18,7 @@ public class WStepDataField implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	private Integer stepDefId;
 	private WProcessDataField dataField;
 	private String name;
 	private Boolean required;
@@ -43,6 +44,20 @@ public class WStepDataField implements java.io.Serializable {
 			this.dataField = new WProcessDataField();
 		
 		}	
+	}
+	
+	public WStepDataField(Integer id, Integer stepDefId,
+			WProcessDataField dataField, String name, Boolean required,
+			String comments, Boolean active, Integer length, String defaultValue) {
+		this.id = id;
+		this.stepDefId = stepDefId;
+		this.dataField = dataField;
+		this.name = name;
+		this.required = required;
+		this.comments = comments;
+		this.active = active;
+		this.length = length;
+		this.defaultValue = defaultValue;
 	}
 
 	public Integer getId() {
@@ -139,6 +154,14 @@ public class WStepDataField implements java.io.Serializable {
 
 	public void setModUser(int modUser) {
 		this.modUser = modUser;
+	}
+
+	public Integer getStepDefId() {
+		return stepDefId;
+	}
+
+	public void setStepDefId(Integer stepDefId) {
+		this.stepDefId = stepDefId;
 	}
 
 
