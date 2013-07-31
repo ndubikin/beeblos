@@ -12,13 +12,6 @@
 
 	<h:form id="w_process_def_data_fields_add_new${action}">
 	
-		<a4j:commandLink value="#{msg.label_add}" title="#{msg.label_add_new_data_field}"
-			tabindex="-1"
-			action="#{wProcessDefFormBean.initializeDataFieldsAddNew}"
-			reRender="w_process_def_data_fields_add_new${action}"
-			rendered="#{contextoSeguridad.permiteCualquiera['530'] and wProcessDefFormBean.visibleButtonNewDataField}">
-		</a4j:commandLink>
-
 		<h:panelGroup rendered="#{!wProcessDefFormBean.visibleButtonNewDataField}" >
 			<h:outputText value="#{msg.label_adding_new_data_field}:" style="margin-left: 20px; font-size:12px; "/>
 			<h:panelGrid columns="6" style="margin-left: 16px; margin-top:10px;">
@@ -50,7 +43,7 @@
 				<h:panelGroup>
 					<a4j:commandButton value="#{msg.label_cancel}"
 					    style="width:120px; margin-left: 16px; margin-bottom: 10px;"
-					    action="#{wProcessDefFormBean.cancelNewDataField}" reRender="w_process_def_data_fields_add_new${action}"/>
+					    action="#{wProcessDefFormBean.cancelNewDataField}" reRender="w_process_def_data_fields_add_new${action}, w_process_def_data_fields_form${action}"/>
 					<a4j:commandButton value="#{msg.label_save}"
 					    style="width:120px; margin-left: 10px; margin-bottom: 10px;"
 					    action="#{wProcessDefFormBean.saveNewDataField}" reRender="w_process_def_data_fields_add_new${action}, w_process_def_data_fields_form${action}"/>
