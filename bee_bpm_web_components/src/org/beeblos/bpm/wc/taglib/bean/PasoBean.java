@@ -148,16 +148,16 @@ public class PasoBean  extends CoreManagedBean {
 		
 	}
 	
-	// RAUL - HAY QUE MIRAR MUY BIEN PARA QUE SE USA ESTO Y SI NO SE USA QUITARLO
-	// Y SI SE USA, VER COMO PODEMOS GENERALIZARLO
-	public String cargarFichaProyecto(){
-		logger.debug("cargarFichaProyecto ["+(pasoActual!=null?pasoActual.getId():"null")+"]");
-	
-		// NESTOR VER Q AFECTA NO TENER ESTO ...
-//		return VER_PROYECTO;
-		return "VER_PROYECTO";
-		
-	}
+//	// RAUL - HAY QUE MIRAR MUY BIEN PARA QUE SE USA ESTO Y SI NO SE USA QUITARLO
+//	// Y SI SE USA, VER COMO PODEMOS GENERALIZARLO
+//	public String cargarFichaProyecto(){
+//		logger.debug("cargarFichaProyecto ["+(pasoActual!=null?pasoActual.getId():"null")+"]");
+//	
+//		// NESTOR VER Q AFECTA NO TENER ESTO ...
+////		return VER_PROYECTO;
+//		return "VER_PROYECTO";
+//		
+//	}
 
 	// setea el paso en el que se va a trabajar
 	public void setPaso() 
