@@ -28,6 +28,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WRoleDef;
+import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepHead;
 import org.beeblos.bpm.core.model.WStepResponseDef;
@@ -1433,6 +1434,35 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public String loadWStepDefForm() {
 
 		return new WStepDefUtil().loadWStepDefFormBean(this.currObjId);
+
+	}
+
+	public List<WStepDataField> getStepDataFieldList() {
+
+		if ( currentWStepDef!=null   
+				&& currentWStepDef.getStepHead()!=null
+				&& currentWStepDef.getStepHead().getDataFieldDef() != null
+				&& currentWStepDef.getStepHead().getDataFieldDef().size() > 0) {
+
+			List<WStepDataField> dfl = 
+					new ArrayList<WStepDataField>();
+			
+			dfl = new ArrayList<WStepDataField>(currentWStepDef.getStepHead().getDataFieldDef());
+			
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> size lista dfl:"+dfl.size());
+			
+			if (dfl.size()>0) {
+				System.out.println("#################################################################################");
+				for (WStepDataField sdf: dfl) {
+					System.out.println(">>>>>>>>> campo:"+sdf.getDataField().getName()+" id-df:"+sdf.getId());
+				}
+				System.out.println("#################################################################################");
+			}
+			
+			return dfl;
+		}
+System.out.println("################# OJO OJO LISTA DFL RETORNA NULL ...");
+		return null;
 
 	}
 	

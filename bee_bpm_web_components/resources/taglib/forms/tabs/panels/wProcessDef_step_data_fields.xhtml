@@ -13,10 +13,9 @@
 		<rich:spacer height="20px"/>
 
 		<h:panelGrid width="100%" columns="1">
-
-    
+   
 			<rich:dataTable id="w_step_data_field"
-				value="#{wStepDefFormBean.currentWStepDef.stepHead.stepDataFieldList}"
+				value="#{wStepDefFormBean.stepDataFieldList}"
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 				var="sdf" width="100%" columnClasses="center" rows="5"

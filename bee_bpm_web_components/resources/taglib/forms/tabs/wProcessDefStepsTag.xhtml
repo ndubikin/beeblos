@@ -15,11 +15,6 @@
 	<ui:include src="panels/wProcessDefTitle.xhtml" />
 
 	<rich:spacer height="10" />
-	
-	<div style="border:1px grey solid; padding:10px; margin-top:10px; margin-bottom:10px;">
-		<h:outputText value="#{msg.label_use_process_step_list_by_default}:" styleClass="label_form" />
-		<h:selectBooleanCheckbox value="#{wProcessDefFormBean.currentWProcessDef.stepDefaultUseFieldList}" />
-	</div>
 
 	<fieldset class="demo_fieldset">
 		<legend class="demo_legend">#{msg.label_steps_referenced_by_this_proccess}</legend>
@@ -32,14 +27,17 @@
 		<legend class="demo_legend">#{msg.label_step_definition_and_permissions}</legend>
 
 		<h:panelGrid columns="2" styleClass="colStyle50_percent,colStyle50_percent">
-				<ui:include src="panels/wProcessDef_step_definition.xhtml"></ui:include>
+				<h:panelGroup>
+					<ui:include src="panels/wProcessDef_step_definition.xhtml"></ui:include>
+					<ui:include src="panels/wProcessDef_step_data_fields.xhtml"></ui:include>	
+				</h:panelGroup>
+				
 				<h:panelGroup>
 					<ui:include src="panels/wProcessDef_step_permissions_responses.xhtml"></ui:include>
 					<ui:include src="panels/wProcessDef_step_permissions_roles.xhtml"></ui:include>
 					<ui:include src="panels/wProcessDef_step_permissions_users.xhtml"></ui:include>
 					<ui:include src="panels/wProcessDef_step_permissions_outgoing_routes.xhtml"></ui:include>
 					<ui:include src="panels/wProcessDef_step_permissions_incoming_routes.xhtml"></ui:include>
-					<ui:include src="panels/wProcessDef_step_permissions_data_fields.xhtml"></ui:include>
 				</h:panelGroup>
 		</h:panelGrid>
 
