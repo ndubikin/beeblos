@@ -328,6 +328,9 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
+        <property name="stepDefId" type="java.lang.Integer">
+            <column name="step_def_id"  />
+        </property> 		
 
         <property name="name" type="string">
             <column name="name" length="100" not-null="true" />
