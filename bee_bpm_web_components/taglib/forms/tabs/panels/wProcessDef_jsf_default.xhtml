@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<h:form id="w_process_def_steps_tag_form">
+
+		<h:panelGrid width="98%" columns="2" style=" width : 650px; margin-left: 16px;"
+			columnClasses="colStyle140px, colStyle480px">
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+			
+			<h:outputText value="#{msg.label_list_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_id_list_zone"
+				value="#{wProcessDefFormBean.currentWProcessDef.idListZone}"
+				disabled="#{wProcessDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_work_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_id_work_zone"
+				value="#{wProcessDefFormBean.currentWProcessDef.idWorkZone}"
+				disabled="#{wProcessDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_additional_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_process_def_id_additional_zone"
+				value="#{wProcessDefFormBean.currentWProcessDef.idAdditionalZone}"
+				disabled="#{wProcessDefFormBean.readOnly}" 
+				style="width:480px; font-size:13px;	padding: 4px;" />
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<h:panelGroup>
+				<a4j:commandButton id="edit_button" value="#{msg.label_edit}"
+					actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}"
+					reRender="w_process_def_steps_tag_form"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{wProcessDefFormBean.readOnly}"/>
+			
+				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
+					action="#{wProcessDefFormBean.cancel}"
+					reRender="w_process_def_steps_tag_form"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{!wProcessDefFormBean.readOnly}"/>
+
+				<a4j:commandButton id="update_button" value="#{msg.label_update}"
+					actionListener="#{wProcessDefFormBean.update}"
+					reRender="w_process_def_steps_tag_form"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wProcessDefFormBean.readOnly and (wProcessDefFormBean.currentId != null) and (wProcessDefFormBean.currentId != 0)}"/>
+
+				<h:commandButton id="save_continue_button" value="#{msg.label_save}"
+					actionListener="#{wProcessDefFormBean.save_continue}"
+					reRender="w_process_def_steps_tag_form"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wProcessDefFormBean.readOnly and ((wProcessDefFormBean.currentId == null) or (wProcessDefFormBean.currentId == 0))}"/>
+
+			</h:panelGroup>
+
+		</h:panelGrid>
+		
+	</h:form>
+	
+</ui:composition>

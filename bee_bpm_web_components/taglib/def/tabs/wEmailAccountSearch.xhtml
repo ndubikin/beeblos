@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:form id="w_user_email_account_form">
+
+		
+<a4j:jsFunction name="onsubmitChangePasswordButton" action="#{wEmailAccountBean.changePassword}" reRender="output_password_panel" /> 
+		
+		
+		<h:panelGrid id="exceptionsPnl"  rendered="#{exceptionBean.renderMessage}">
+			<rich:dataTable value="#{exceptionBean.exceptionList}" var="exp" >
+	            <rich:column> 
+	                <f:facet name="header">	                    
+	                </f:facet>	           
+	                <h:graphicImage value="#{exp.imagePath}" />  	                     
+	            </rich:column>
+	            <rich:column> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_message}"/>
+	                </f:facet>
+	                <h:outputText value="#{exp.code} "/>
+	                <h:outputText value="#{exp.message}"/>
+	            </rich:column>	            
+	            				
+			</rich:dataTable>
+		</h:panelGrid>
+
+		<h:panelGrid columns="1" width="100%">
+		
+			<h:panelGroup>
+				<fieldset class="demo_fieldset">
+					<legend class="demo_legend">#{msg.label_search_data}</legend>
+					<div>
+						<ui:include src="panels/wEmailAccount_search.xhtml">
+							<ui:param name="action" value="${action}" />
+						</ui:include>
+					</div>
+				</fieldset>
+	
+				<fieldset class="demo_fieldset">
+					<legend class="demo_legend">#{msg.label_email_account_list}</legend>
+					<div>
+						<ui:include src="panels/wEmailAccount_list.xhtml">
+							<ui:param name="action" value="${action}" />
+						</ui:include>
+					</div>
+				</fieldset>
+	
+				<h:panelGroup 
+					rendered="#{wEmailAccountBean.addNewEmailMode or (wEmailAccountBean.id != null and wEmailAccountBean.id != 0)}">
+					<fieldset class="demo_fieldset">
+						<legend class="demo_legend">#{msg.label_email_account_loaded_record}</legend>
+						<div>
+							<ui:include src="panels/wEmailAccount_loaded_record.xhtml">
+								<ui:param name="action" value="${action}" />
+							</ui:include>
+						</div>
+					</fieldset>
+				</h:panelGroup>
+				
+			</h:panelGroup>
+			
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

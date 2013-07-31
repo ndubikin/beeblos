@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form>
+
+	<h:panelGrid column="1">
+	
+		<h:panelGroup>
+			<h:outputText value="#{msg.label_confirm_setting_as_default_the_non_valid_hibernate_configuration}: " />
+			<h:outputText id="hibernate_session_name"
+				value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.sessionName}"
+				style="width:200px; font-size:13px;	padding: 4px;" />
+		</h:panelGroup>
+		
+		<rich:spacer height="10" />
+
+		<h:panelGroup>
+			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+				onclick="javascript:Richfaces.hideModalPanel('mpSetDefaultNotValidHibConf');"
+				style="width:80px; height:24px;" />
+			<a4j:commandButton id="delete_button_sr" value="#{msg.label_set_as_default}"
+				actionListener="#{hibernateConfigurationBean.changeDefaultConfiguration}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpSetDefaultNotValidHibConf');"
+				reRender="hibernate_sessions_table"
+				style="width:120px; margin-left: 10px; height:24px;" />
+		</h:panelGroup>
+
+	</h:panelGrid>
+	
+	</h:form>
+</ui:composition>

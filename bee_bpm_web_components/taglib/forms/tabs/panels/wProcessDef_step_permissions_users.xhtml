@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
+
+
+	<h:form id="w_process_def_step_permissions_users" style="margin-left: 16px;">
+	
+		<h:panelGrid width="100%" columns="1">
+		
+      		<rich:contextMenu attached="false" id="w_step_def_related_user_menu" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false" action="#{wStepDefFormBean.changeAdminPrivilegesWStepUser}"
+            		reRender="w_process_def_step_related_users_table" style="{styleIsNotAdmin}">
+                	<b> Make </b> {currentUserName} <b> admin of this step </b>
+               		<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currentWStepUser.user.id}" value="{currentUserId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wStepDefFormBean.currentWStepUser.user.name}" value="{currentUserName}"/>
+	           	</rich:menuItem>
+            	<rich:menuItem ajaxSingle="false" action="#{wStepDefFormBean.changeAdminPrivilegesWStepUser}"
+            		reRender="w_process_def_step_related_users_table" style="{styleIsAdmin}">
+                	<b> Remove admin privileges for </b> {currentUserName}
+               		<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currentWStepUser.user.id}" value="{currentUserId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wStepDefFormBean.currentWStepUser.user.name}" value="{currentUserName}"/>
+	           	</rich:menuItem>
+           		<rich:menuItem ajaxSingle="true" 
+           			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteWStepUser');"
+           			reRender="mpDeleteWStepUser">
+                	<b> Remove </b> {currentUserName} <b> privileges to this step </b>
+               		<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currentWStepUser.user.id}" value="{currentUserId}"/>
+               		<a4j:actionparam name="det2" assignTo="#{wStepDefFormBean.currentWStepUser.user.name}" value="{currentUserName}"/>
+ 	           	</rich:menuItem>
+            </rich:contextMenu>		
+		
+			
+			<rich:spacer height="10px"/>
+	
+			<rich:dataTable id="w_process_def_step_related_users_table"
+					value="#{wStepDefFormBean.userRelatedList}"
+					onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+					var="step_user" width="100%" columnClasses="center" rows="5"
+					reRender=""  
+					rendered="#{wStepDefFormBean.userRelatedListSize gt 0}">
+	
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_users_with_permissions_for_this_step}" />
+					</f:facet>
+	
+					<rich:column sortBy="#{step_user.user.name}"
+						style="width:250px; text-align: left;">
+						<f:facet name="header">
+							<h:outputText value="#{msg.label_user}" />
+						</f:facet>
+						<h:outputText value="#{step_user.user.name}" />
+						<h:outputText value="  ( #{msg.label_admin} )" rendered="#{step_user.admin}"/>
+					</rich:column>
+	
+					<rich:componentControl event="onRowClick"
+						for="w_step_def_related_user_menu" operation="show">
+	              		<f:param value="#{step_user.user.id}" name="currentUserId"/>
+	              		<f:param value="#{step_user.user.name}" name="currentUserName"/>
+	                	<f:param value="#{step_user.admin ? '' : 'display:none;'}" name="styleIsAdmin"/>
+	                	<f:param value="#{step_user.admin ? 'display:none;' : ''}" name="styleIsNotAdmin"/>
+					</rich:componentControl>
+	
+			</rich:dataTable>
+	
+			<h:outputText value="#{msg.label_no_users_related}" 
+						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.userRelatedListSize eq 0}"
+						style="font-weight: bold;"/>
+	
+			<rich:spacer height="10px"/>
+	
+			<h:panelGroup>
+				<a4j:jsFunction name="onsubmitSearchUser" action="#{wStepDefFormBean.updateUsersRelated}"
+					reRender="w_process_def_step_permissions_users">
+					<a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strUserList}"  />
+				</a4j:jsFunction>			
+				<a4j:commandLink id="insert_user"
+					title="#{msg.label_add_new_global_user_to_project}"
+					oncomplete="javascript:Richfaces.showModalPanel('mpSearchUser', {titleParam: '#{msg.label_users_involved_in_this_step}'});"
+					reRender="mpSearchUser"
+					rendered="#{contextoSeguridad.permiteCualquiera['530'] and wStepDefFormBean.currentWStepDef != null}">
+					<h:graphicImage id="imgInsertar3" value="/images/insertar.png"
+						style="border:0;" />
+			 		<a4j:actionparam name="strUser" value="#{wStepDefFormBean.strUserList}" assignTo="#{userAndRoleSelectorBean.strUserString}" />
+				</a4j:commandLink>
+			</h:panelGroup>
+
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

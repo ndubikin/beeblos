@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+
+<c:if test="${empty accion}">
+	<c:set var="accion" value="" />
+</c:if>
+
+<style type="text/css">
+.viewFilters {
+	text-align: center; padding-left: 0px; font-size: 11px; cursor: pointer; color: #7795AF; font-family: Verdana; text-decoration: underline
+}
+
+.controlsEditorPanel {
+	border : 0px; padding: 0px; margin :  0px 0px 0px 0px; overflow: auto; width: 100%;
+}
+</style>
+
+
+<script type="text/javascript">
+	
+	//alert("renderizando...");
+
+	//var urlForAction = null;
+    
+	function confirmar() {		 
+		
+		var txtNombre = document.getElementById("frm_miUsuarioCuentasEmail:nombre");
+			
+		if( txtNombre.value == "" ){
+			return false;
+		}	  	
+	
+	  	var txtConfirm = String.fromCharCode(191)+"Est"+String.fromCharCode(225)+" seguro que desea eliminar el Indicador seleccionado"+String.fromCharCode(63);
+		if (confirm(txtConfirm)) {			
+
+			//alert(" urlForAction = " + urlForAction)
+			/*
+			A4J.AJAX.Submit('frmUceHeader',event,
+							{'similarityGroupingId':'frmUceHeader:btnBorrar',
+							 'parameters':{'frmUceHeader:btnBorrar':'frmUceHeader:btnBorrar'}, 
+							 'actionUrl':urlForAction} );
+			*/
+			return true;
+		}
+		return false;
+	}
+
+
+	
+	function submitFrmUceLista(){ 
+		document.getElementById("frm_miUsuarioCuentasEmail:nombre").submit();
+		
+				
+	} 
+	
+
+//-->
+</script>
+
+
+	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />
+
+	<h:messages showDetail="true" showSummary="true"/>
+
+	<rich:spacer></rich:spacer>
+
+	<center><!-- ********************************* Gestion Cuentas de Email********************    -->
+
+	<rich:panel style="width:100%"  >
+		
+			<rich:spacer height="10" />
+
+			<ui:include src="paneles/cuenta_correo_parametros_conexion.xhtml" />
+		
+	</rich:panel> 
+	</center>
+
+<script type="text/javascript">
+	
+	document.getElementById("frm_miUsuarioCuentasEmail:btnBorrar").disabled = true;
+	//document.getElementById("frm_miUsuarioCuentasEmail:btnGuardar").disabled = true;
+	//var currentSession = document.getElementById("frmUceLista:sessionId").value;
+	
+	//urlForAction = "/fgp_piloto/mantenimientos/uceCrud.jsf;jsessionid=" + currentSession;
+</script>	
+
+</ui:composition>
+
+

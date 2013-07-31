@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<h:form id="w_process_def_notifications_form">
+
+		<a4j:jsFunction name="sendEmailRow"
+			action="#{wProcessDefFormBean.addEmailAccount}"
+			oncomplete="javascript:Richfaces.hideModalPanel('mpSearchEmail');"
+			reRender="w_process_def_notifications_form">
+			<a4j:actionparam name="param1"
+				assignTo="#{wProcessDefFormBean.currEmailAccount.id}" />
+		</a4j:jsFunction>
+
+		<h:panelGrid width="98%" columns="2" style=" width : 740px; margin-left: 16px;"
+			columnClasses="colStyle200px, colStyle480px">
+			
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+			
+			<h:outputText value="#{msg.label_system_email}:" styleClass="firstLeftText" />
+			
+			<h:panelGroup id="email_buttons">
+			
+				<h:outputText id="email" value="#{wProcessDefFormBean.currEmailAccount.email}"
+					rendered="#{wProcessDefFormBean.currEmailAccount.name != null}"
+					style="margin-left: 10px; font-weight:bold;" />
+		
+				<a4j:commandButton id="search_emails_button"
+					onclick="javascript:Richfaces.showModalPanel('mpSearchEmail');"
+					image="/images/extender.png" style="margin-left:10px;" />
+				<rich:toolTip for="search_emails_button"
+					value="#{msg.label_select_an_email_account}" />
+
+				<a4j:commandButton id="detach_email_button"
+					action="#{wProcessDefFormBean.detachEmail}"
+					reRender="w_process_def_notifications_form" image="/images/cerrar.png"
+					style="margin-left:5px;"
+					rendered="#{wProcessDefFormBean.currEmailAccount.id != null and wProcessDefFormBean.currEmailAccount.id != 0}" />
+				<rich:toolTip for="detach_email_button"
+					value="#{msg.label_detach_email}" />
+
+				<a4j:commandButton id="check_account"
+					action="#{wProcessDefFormBean.clearDisplayMessage}"
+					oncomplete="javascript:Richfaces.showModalPanel('mpCheckEmailAccount');"
+					reRender="mpCheckEmailAccount, w_process_def_notifications_form" 
+					image="/images/email.png"
+					rendered="#{wProcessDefFormBean.currEmailAccount.id != null and wProcessDefFormBean.currEmailAccount.id != 0}"
+					style="margin-left: 5px;"/>
+				<rich:toolTip for="check_account"
+					value="#{msg.label_check_email_account}" />
+					
+			</h:panelGroup>
+	
+			<rich:spacer height="10" />
+			<h:panelGroup id="email_name">
+				<h:outputText value="#{wProcessDefFormBean.currEmailAccount.name}"
+					rendered="#{wProcessDefFormBean.currEmailAccount.name != null}"
+					style="margin-left: 10px; font-weight:bold;" />
+				<h:outputText value="#{msg.label_no_attached_email}"
+					rendered="#{wProcessDefFormBean.currEmailAccount.name == null}"
+					style="margin-left: 10px; color:red;" />
+			</h:panelGroup>
+
+			<rich:spacer height="10" />
+			<h:panelGroup id="no_password_message">
+				<h:outputText value="#{msg.label_this_account_has_no_password}."
+					rendered="#{wProcessDefFormBean.currEmailAccount.id != null and wProcessDefFormBean.currEmailAccount.id != 0 and (wProcessDefFormBean.currEmailAccount.outputPassword == null or wProcessDefFormBean.currEmailAccount.outputPassword == '')}"
+					style="margin-left: 10px; font-weight:bold; color:red;" />
+				<h:outputText value="#{msg.label_you_should_configure_this_parameter_before_using_it}"
+					rendered="#{wProcessDefFormBean.currEmailAccount.id != null and wProcessDefFormBean.currEmailAccount.id != 0 and (wProcessDefFormBean.currEmailAccount.outputPassword == null or wProcessDefFormBean.currEmailAccount.outputPassword == '')}"
+					style="margin-left: 10px; font-weight:bold; color:red;" />
+			</h:panelGroup>
+
+			
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

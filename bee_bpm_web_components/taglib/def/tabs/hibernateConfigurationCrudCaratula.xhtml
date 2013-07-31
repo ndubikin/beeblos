@@ -1,0 +1,351 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition template="/templates/component-sample.xhtml">
+	<ui:define name="sample">
+
+		<script type="text/javascript">
+
+	function confirmDelete(message, name) {
+		
+		var txtConfirm = message + " '" + name + "'" + String.fromCharCode(63);
+
+		if (confirm(txtConfirm)) {
+			return true;
+		}
+		return false;
+
+	}
+
+</script>
+
+		<style type="text/css">
+.rich-message-label {
+	color: red;
+}
+</style>
+
+
+		<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages"
+			var="msg" />
+
+		<ui:include src="../../common/mpSetDefaultNotValidHibConf.xhtml"/>
+
+		<h:form>
+
+			<a4j:jsFunction name="loadRecord" action="#{hibernateConfigurationBean.loadRecord}"
+				reRender="exceptionsPnl, session_name, env_type, comments, driver_name, dialect, username, password, url, default_catalog, show_sql, format_sql, delete_button, cancel_button, save_button">
+				<a4j:actionparam name="param1" assignTo="#{hibernateConfigurationBean.sessionName}" />
+			</a4j:jsFunction>
+
+			<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true"
+				reRender="delete_button, cancel_button, save_button" />
+
+		</h:form>
+		<body>
+
+			<center>
+
+				<rich:panel style="width:100%">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_hibernate_configuration}" styleClass="labelFormBold" />
+					</f:facet>
+
+					<h:form id="frmHibernateConfigurationHeader">
+
+						<h:panelGrid columns="2" style=" width:60%">
+
+							<h:outputText value="#{msg.label_session_name}:"
+								styleClass="labelForm" />
+							<h:panelGroup>
+								<h:inputText id="session_name"
+									value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.sessionName}"
+									style="width:400px; font-size:13px;	padding: 4px;"
+									disabled="#{hibernateConfigurationBean.recordIsLoaded}">
+									<a4j:support event="onchange"
+										reRender="save_button, cancel_button" />
+								</h:inputText>
+								<a4j:commandLink id="set_default" value="#{msg.label_set_as_default_configuration}"
+									style="margin-left: 16px; width: 120px;" 
+									actionListener="#{hibernateConfigurationBean.isValidConfiguration}"
+									oncomplete="if(#{!hibernateConfigurationBean.validHibernateConfiguration and hibernateConfigurationBean.recordIsLoaded}) {javascript:Richfaces.showModalPanel('mpSetDefaultNotValidHibConf')}" 
+									reRender="frmHibernateConfigurationHeader, mpSetDefaultNotValidHibConf"/>
+							</h:panelGroup>
+							
+							<h:outputText value="#{msg.label_environment_type}:"
+								styleClass="labelForm" />
+							<h:selectOneMenu id="env_type" 
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.environment.envType.id}"
+								style="width:410px; font-size:12px;	padding: 4px;" >
+								<f:selectItems
+									value="#{hibernateConfigurationBean.envTypeComboList}" />
+							</h:selectOneMenu>
+				
+							<h:outputText value="#{msg.label_comments}:"
+								styleClass="labelForm" />
+							<h:inputText id="comments"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.environment.comments}"
+								style="width:400px; font-size:13px;	padding: 4px;"/>
+				
+							<h:outputText value="#{msg.label_driver_name}:"
+								styleClass="labelForm" />
+							<h:panelGroup>
+								<h:inputText id="driver_name"
+									value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.driverName}"
+									style="width:400px; font-size:13px;	padding: 4px;" >
+									<a4j:support event="onchange"
+										reRender="save_button, cancel_button" />
+								</h:inputText>
+	
+								<rich:suggestionbox
+									suggestionAction="#{hibernateConfigurationBean.driverNameAutocomplete}"
+									var="driver" for="driver_name"
+									fetchValue="#{driver.driverOrDBValue}" minChars="2"
+									width="400" height="100">
+									<h:column>
+										<h:outputText value="#{driver.driverOrDBValue}" />
+									</h:column>
+				
+									<a4j:support ajaxSingle="true" event="onselect"
+										reRender="driver_name">
+										<f:setPropertyActionListener value="#{driver.driverName}"
+											target="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.driverName}" />
+									</a4j:support>
+								</rich:suggestionbox>
+							</h:panelGroup>
+											
+							<h:outputText value="#{msg.label_dialect}:"
+								styleClass="labelForm" />
+							<h:panelGroup>
+								<h:inputText id="dialect"
+									value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.dialect}"
+									style="width:400px; font-size:13px;	padding: 4px;" >
+									<a4j:support event="onchange"
+										reRender="save_button, cancel_button" />
+								</h:inputText>
+	
+								<rich:suggestionbox
+									suggestionAction="#{hibernateConfigurationBean.dialectNameAutocomplete}"
+									var="dialect" for="dialect"
+									fetchValue="#{dialect.dialectValue}" minChars="2"
+									width="400" height="100">
+									<h:column>
+										<h:outputText value="#{dialect.dialectValue}" />
+									</h:column>
+				
+									<a4j:support ajaxSingle="true" event="onselect"
+										reRender="dialect">
+										<f:setPropertyActionListener value="#{dialect.dialectName}"
+											target="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.dialect}" />
+									</a4j:support>
+								</rich:suggestionbox>
+							</h:panelGroup>
+											
+							<h:outputText value="#{msg.label_username}:"
+								styleClass="labelForm" />
+							<h:inputText id="username"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.username}"
+								style="width:400px; font-size:13px;	padding: 4px;">
+								<a4j:support event="onchange"
+									reRender="save_button, cancel_button" />
+							</h:inputText>
+				
+							<h:outputText value="#{msg.label_password}:"
+								styleClass="labelForm" />
+							<h:inputText id="password"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.password}"
+								style="width:400px; font-size:13px;	padding: 4px;">
+								<a4j:support event="onchange"
+									reRender="save_button, cancel_button" />
+							</h:inputText>
+				
+							<h:outputText value="#{msg.label_url}:" styleClass="labelForm" />
+							<h:inputText id="url"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.url}"
+								style="width:400px; font-size:13px;	padding: 4px;">
+								<a4j:support event="onchange"
+									reRender="save_button, cancel_button" />
+							</h:inputText>
+				
+							<h:outputText value="#{msg.label_default_catalog}:"
+								styleClass="labelForm" />
+							<h:inputText id="default_catalog"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.defaultCatalog}"
+								style="width:400px; font-size:13px;	padding: 4px;">
+								<a4j:support event="onchange"
+									reRender="save_button, cancel_button" />
+							</h:inputText>
+
+							<h:outputText value="#{msg.label_show_sql}:"
+								styleClass="labelForm" />
+							<h:selectBooleanCheckbox id="show_sql"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.showSQL}"/>
+
+							<h:outputText value="#{msg.label_format_sql}:"
+								styleClass="labelForm" />
+							<h:selectBooleanCheckbox id="format_sql"
+								value="#{hibernateConfigurationBean.currentHibernateConfigurationParameters.formatSQL}"/>
+
+							<rich:spacer width="10" />
+							<rich:spacer width="10" />
+
+							<rich:spacer width="10" />								
+							<h:panelGrid columns="4" style="margin: -4px;">
+
+								<h:commandButton id="cancel_button" value="#{msg.label_cancel}"
+									style="width:120px; align: left;"
+									disabled="#{hibernateConfigurationBean.formIsEmpty}"
+									action="#{hibernateConfigurationBean._reset}" />
+
+								<h:commandButton id="save_button"
+									value="#{hibernateConfigurationBean.valueBtn}" style="width:120px;"
+									disabled="#{hibernateConfigurationBean.formIsEmpty}"
+									actionListener="#{hibernateConfigurationBean.save}" />
+
+								<h:commandButton id="delete_button" value="#{msg.label_delete}"
+									style="width:80px;" disabled="#{!hibernateConfigurationBean.recordIsLoaded}"
+									action="#{hibernateConfigurationBean.delete}"
+									onclick="return confirmDelete('#{msg.label_are_you_sure_to_delete_the_session}','#{hibernateConfigurationBean.currentHibernateConfigurationParameters.sessionName}');" />
+
+								<h:commandButton id="check_button" value="#{msg.label_check_configuration}"
+									style="margin-left: 16px; width: 120px;"
+									action="#{hibernateConfigurationBean.checkConfiguration}"/>
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+						<rich:spacer height="10" />
+
+						<rich:panel style="width:100%">
+
+							<rich:dataTable id="hibernate_sessions_table" width="98%"
+								onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+								onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+								onRowClick="return loadRecord('#{hs.sessionName}');" rows="5"
+								styleClass="table" value="#{hibernateConfigurationBean.hibernateConfigurationParametersList}" var="hs">
+
+								<f:facet name="header">
+									<h:outputText value="#{msg.label_system_defined_sessions}" />
+								</f:facet>
+
+								<rich:column sortBy="#{hs.sessionName}"
+									style="width:10%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_session_name}" />
+									</f:facet>
+									<h:outputText id="is_default" value="*" style="color: red; font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.sessionName}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.sessionName}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+									<rich:toolTip value="#{msg.label_default_configuration}" for="is_default"/>
+								</rich:column>
+
+								<rich:column sortBy="#{hs.environment.envType.name}"
+									style="width:10%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_env_type}" />
+									</f:facet>
+									<h:outputText value="#{hs.environment.envType.name}" />
+								</rich:column>
+
+								<rich:column sortBy="#{hs.driverName}"
+									style="width:15%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_driver_name}" />
+									</f:facet>
+									<h:outputText value="#{hs.driverName}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.driverName}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+								</rich:column>
+
+								<rich:column sortBy="#{hs.dialect}"
+									style="width:15%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_dialect}" />
+									</f:facet>
+									<h:outputText value="#{hs.dialect}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.dialect}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+								</rich:column>
+
+								<rich:column sortBy="#{hs.username}"
+									style="width:10%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_username}" />
+									</f:facet>
+									<h:outputText value="#{hs.username}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.username}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+								</rich:column>
+
+								<rich:column sortBy="#{hs.url}"
+									style="width:15%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_url}" />
+									</f:facet>
+									<h:outputText value="#{hs.url}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.url}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+								</rich:column>
+
+								<rich:column sortBy="#{hs.defaultCatalog}"
+									style="width:15%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_default_catalog}" />
+									</f:facet>
+									<h:outputText value="#{hs.defaultCatalog}" 
+										rendered="#{!hs.defaultConfiguration}"/>
+									<h:outputText value="#{hs.defaultCatalog}" 
+										style="font-weight:bold;"
+										rendered="#{hs.defaultConfiguration}"/>
+								</rich:column>
+
+								<rich:column style="width:5%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_show_sql}" />
+									</f:facet>
+									<h:outputText value="#{(hs.showSQL ? 'Yes':'None')}"/>
+								</rich:column>
+
+								<rich:column style="width:5%; text-align: left;">
+									<f:facet name="header">
+										<h:outputText value="#{msg.label_format_sql}" />
+									</f:facet>
+									<h:outputText value="#{(hs.formatSQL ? 'Yes':'None')}"/>
+								</rich:column>
+
+							</rich:dataTable>
+
+							<rich:spacer height="10" />
+							<rich:datascroller for="hibernate_sessions_table" maxPages="10" />
+
+						</rich:panel>
+					</h:form>
+				</rich:panel>
+
+			</center>
+		</body>
+
+
+
+
+	</ui:define>
+</ui:composition>
+</html>

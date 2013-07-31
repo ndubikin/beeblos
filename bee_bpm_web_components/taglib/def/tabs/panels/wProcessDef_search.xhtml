@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:form id="w_process_def_search_form${action}">
+
+		<h:panelGrid columns="3"
+			style=" width : auto; height : auto; padding-left: 15px;"
+			columnClasses="colStyle140px, colStyle480px, colStyle100px">
+			
+			<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
+			<h:inputText id="name" value="#{wProcessDefQueryBean.nameFilter}"
+				style="width:400px; font-size:12px;	padding: 4px;" />
+			<h:commandButton id="searchButton" value="#{msg.label_search}"
+				action="#{wProcessDefQueryBean.searchWProcessDefs}"
+				style="width:100px; margin-left:30px;">
+				<f:setPropertyActionListener value="${action}"
+					target="#{wProcessDefQueryBean.action}" />
+			</h:commandButton>
+
+			<h:outputText value="#{msg.label_comments}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="comments"
+				value="#{wProcessDefQueryBean.commentsFilter}"
+				style="width:400px; font-size:12px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+
+		<h:panelGroup
+			style=" width : auto; height : auto; padding-left: 15px;">
+			<a4j:outputPanel styleClass="viewFilters" id="look">
+				<rich:effect for="look" event="onclick" type="Fade" params="delay:0.0, duration:0.1" disableDefault="true"/>
+				<rich:effect for="look" event="onclick" type="BlindDown" targetId="filters" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="filters"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<rich:effect for="look" event="onclick" type="Appear"  targetId="hide2"  params="delay:0.1,duration:0.5,from:0.0,to:1.0" />
+				<h:outputText escape="false" value="#{msg.label_more_search_filters}" />
+			</a4j:outputPanel>
+	
+			<a4j:outputPanel id="hide2" styleClass="viewFilters" style="display:none">
+				<rich:effect for="hide2" event="onclick" type="BlindUp" targetId="filters" params="id:'filters', duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Appear" targetId="look" params="delay:0.2, duration:0.5" />
+				<rich:effect for="hide2" event="onclick" type="Fade" targetId="hide2" params="delay:0.0, duration:0.2" />
+				<h:outputText style="padding-right:5px" value="#{msg.label_hide}"/>
+			</a4j:outputPanel>
+		 </h:panelGroup>
+
+		<h:panelGrid columns="3" id="filters" 
+			style=" width : auto; height : auto; padding-left: 15px; display:none;"
+			columnClasses="colStyle140px, colStyle480px, colStyle100px">
+
+			<h:outputText value="#{msg.label_list_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="list_zone"
+				value="#{wProcessDefQueryBean.listZoneFilter}"
+				style="width:400px; font-size:12px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_work_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="work_zone"
+				value="#{wProcessDefQueryBean.workZoneFilter}"
+				style="width:400px; font-size:12px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_additional_zone}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="additional_zone"
+				value="#{wProcessDefQueryBean.additionalZoneFilter}"
+				style="width:400px; font-size:12px;	padding: 4px;" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_insert_date} #{msg.label_from}:"
+				styleClass="firstLeftText" />
+			<h:panelGroup>
+				<rich:calendar id="initial_insert_date"
+					value="#{wProcessDefQueryBean.initialInsertDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{wProcessDefQueryBean.timeZone}" />
+				<h:outputText value="#{msg.label_to}" styleClass="labelForm"
+					style="margin-left: 10px; margin-right: 10px;" />
+				<rich:calendar id="final_insert_date"
+					value="#{wProcessDefQueryBean.finalInsertDateFilter}"
+					datePattern="#{msg.label_date_format}" enableManualInput="false"
+					locale="ES" timeZone="#{wProcessDefQueryBean.timeZone}"
+					disabled="#{wProcessDefQueryBean.strictInsertDateFilter}" />
+				<h:outputText value="#{msg.label_only_from} :"
+					styleClass="firstLeftText" style="margin-left: 10px;" />
+				<h:selectBooleanCheckbox id="only_insert_date"
+					value="#{wProcessDefQueryBean.strictInsertDateFilter}">
+					<a4j:support event="onclick" reRender="final_insert_date" />
+				</h:selectBooleanCheckbox>
+			</h:panelGroup>
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

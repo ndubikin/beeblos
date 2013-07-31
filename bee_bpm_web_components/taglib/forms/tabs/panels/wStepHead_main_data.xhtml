@@ -1,0 +1,286 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<h:form>
+	
+		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wStepDefFormBean.changeReadOnlyToFalse}" 
+						reRender="cancel_button, save_button" />
+	
+	</h:form>
+
+
+	<h:form id="w_step_head_main_tag_form">
+		
+		<h:panelGrid width="98%" columns="2" style="width:700px;margin-left:16px;"
+			columnClasses="colStyle200px, colStyle480px">
+			
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+			
+			<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
+			<h:inputText id="fact_w_step_head_name"
+				value="#{wStepDefFormBean.currentWStepDef.stepHead.name}"
+				style="width:350px; font-size:13px;	padding: 4px;"				
+				rendered="#{!wStepDefFormBean.readOnly}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.stepHead.name}"
+				style="font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly}"/>
+
+			<h:outputText value="#{msg.label_comments}:"
+				styleClass="firstLeftText" />
+			<h:inputText id="fact_w_step_head_comments"
+				value="#{wStepDefFormBean.currentWStepDef.stepHead.comments}"
+				style="width:350px; font-size:13px;	padding: 4px;"
+				 
+				rendered="#{!wStepDefFormBean.readOnly}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.stepHead.comments}"
+				style="font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly}"/>
+
+		</h:panelGrid>
+		
+		<h:panelGrid width="98%" columns="2" style="width:700px;margin-left:16px;"
+			columnClasses="colStyle200px, colStyle480px"
+			rendered="#{wStepDefFormBean.currObjId eq null or wStepDefFormBean.currObjId eq 0}">
+				
+			<h:outputText value="#{msg.label_shared}:" styleClass="firstLeftText" />
+			<h:selectBooleanCheckbox value="#{wStepDefFormBean.currentWStepDef.shared}" 	
+				rendered="#{!wStepDefFormBean.readOnly}"/>
+			<h:outputText value="#{wStepDefFormBean.currentWStepDef.shared?msg.label_yes:msg.label_no}"
+				style="font-size:13px;" rendered="#{wStepDefFormBean.readOnly}"/>
+
+			<h:outputText value="#{msg.label_step} #{msg.label_comments}:" styleClass="firstLeftText" />
+			<h:inputTextarea id="w_step_def_step_comments"
+				value="#{wStepDefFormBean.currentWStepDef.stepComments}"
+				style="width:350px; height: 60px; font-size:13px;	padding: 4px;"				
+				rendered="#{!wStepDefFormBean.readOnly}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.stepComments}"
+				style="width:350px; font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly}"/>
+			
+			<h:outputText value="#{msg.label_instructions}:" styleClass="firstLeftText" />
+			<h:inputTextarea id="w_step_def_instructions"
+				value="#{wStepDefFormBean.currentWStepDef.instructions}"
+				style="width:350px; height: 60px; font-size:13px; padding: 4px;"				
+				rendered="#{!wStepDefFormBean.readOnly}"/>
+			<h:outputText 
+				value="#{wStepDefFormBean.currentWStepDef.instructions}"
+				style="width:350px; font-size:13px;"
+				rendered="#{wStepDefFormBean.readOnly}"/>
+			
+			<h:outputText value="#{msg.label_assigned_time}:" styleClass="firstLeftText" title="#{msg.label_amount_of_time_user_has_to_realize_the_work}"/>
+			<h:panelGroup rendered="#{wStepDefFormBean.readOnly}">
+				<h:outputText value="#{wStepDefFormBean.currentWStepDef.assignedTime}" 
+					style="font-weight: bold;"/>
+				<h:outputText value="#{wStepDefFormBean.currentWStepDef.timeUnit.name}" 
+					style="font-weight: bold; margin-left: 10px;"/>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{!wStepDefFormBean.readOnly}">
+				<h:inputText id="w_step_def_assigned_time"
+					value="#{wStepDefFormBean.currentWStepDef.assignedTime}"
+					style="width:150px; font-size:13px;	padding: 4px;"/>
+				<h:selectOneMenu id="w_step_def_assigned_time_unit"
+					value="#{wStepDefFormBean.currentWStepDef.timeUnit.id}"
+					style="width:150px; margin-left:10px; font-size:13px; padding: 3px;">
+					<f:selectItems value="#{wStepDefFormBean.timeUnitComboList}" />
+				</h:selectOneMenu>
+			</h:panelGroup>
+
+			<h:outputText value="#{msg.label_deadline}:" styleClass="firstLeftText" />
+			<h:panelGroup rendered="#{wStepDefFormBean.readOnly}">
+				<h:outputText value="#{wStepDefFormBean.currentWStepDef.deadlineDate.time}" 
+					style="font-weight: bold;">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</h:outputText>
+				<h:outputText value="#{wStepDefFormBean.currentWStepDef.deadlineTime.time}" 
+					style="font-weight: bold; margin-left: 10px;">
+					<f:convertDateTime pattern="HH:mm" />
+				</h:outputText>
+			</h:panelGroup>
+			<rich:calendar id="w_step_def_deadline_date"
+				value="#{wStepDefFormBean.currentWStepDef.deadlineDate}"
+				datePattern="#d/M/yy HH:mm" enableManualInput="false"
+				locale="ES" timeZone="#{wStepDefFormBean.timeZone}"
+				rendered="#{!wStepDefFormBean.readOnly}" />
+
+			<h:outputText value="#{msg.label_reminder}:" styleClass="firstLeftText" />
+			<h:panelGroup rendered="#{wStepDefFormBean.readOnly}">
+				<h:outputText value="#{wStepDefFormBean.currentWStepDef.reminderTime}" 
+					style="font-weight: bold;"/>
+				<h:outputText value="#{wStepDefFormBean.currentWStepDef.reminderTimeUnit.name}" 
+					style="font-weight: bold; margin-left: 10px;"/>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{!wStepDefFormBean.readOnly}">
+				<h:inputText id="w_step_def_reminder_time"
+					value="#{wStepDefFormBean.currentWStepDef.reminderTime}"
+					style="width:150px; font-size:13px;	padding: 4px;"/>
+				<h:selectOneMenu id="w_step_def_reminder_time_unit"
+					value="#{wStepDefFormBean.currentWStepDef.reminderTimeUnit.id}"
+					style="width:150px; margin-left:10px; font-size:13px; padding: 3px;">
+					<f:selectItems value="#{wStepDefFormBean.timeUnitComboList}" />
+				</h:selectOneMenu>
+			</h:panelGroup>
+
+			<h:outputText value="#{msg.label_modifiable_at_runtime}:" styleClass="firstLeftText" />
+			<h:outputText value="#{(wStepDefFormBean.currentWStepDef.runtimeModifiable ? 'Yes':'None')}" 
+				style="font-weight: bold;" rendered="#{wStepDefFormBean.readOnly}"/>
+			<h:selectBooleanCheckbox value="#{wStepDefFormBean.currentWStepDef.runtimeModifiable}"
+				rendered="#{!wStepDefFormBean.readOnly}"/>
+						
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+		
+		<h:panelGrid width="98%" columns="2" style="width:700px;margin-left:16px;"
+			columnClasses="colStyle200px, colStyle480px"
+			rendered="#{wStepDefFormBean.currObjId ne null and wStepDefFormBean.currObjId ne 0}">
+				
+			<rich:spacer height="10"/>
+			<rich:spacer height="10"/>
+			
+			<rich:spacer height="10" styleClass="firstLeftText"/>
+			<h:panelGroup width="100%">
+				<h:outputText value="#{msg.label_created_by}: " />
+				<h:outputText id="fact_w_step_head_insert_user"
+					value="#{wStepDefFormBean.currentWStepDef.stepHead.insertUser} " />
+				<h:outputText value="#{msg.label_the} " />
+				<h:outputText
+					value="#{wStepDefFormBean.currentWStepDef.stepHead.insertDate}">
+					<f:convertDateTime pattern="#{msg.label_date_format}"
+						timeZone="#{wStepDefFormBean.timeZone}" />
+				</h:outputText>
+			</h:panelGroup>
+
+			<rich:spacer height="10"/>
+			<rich:spacer height="10"/>
+
+			<rich:spacer height="10"/>
+			<h:panelGroup>
+				<h:outputText value="#{msg.label_last_modification}: " />
+				<h:outputText id="fact_w_step_head_mod_user"
+					value="#{wStepDefFormBean.currentWStepDef.stepHead.modUser} " />
+				<h:outputText value="#{msg.label_the} " styleClass="firstLeftText" />
+				<h:outputText
+					value="#{wStepDefFormBean.currentWStepDef.stepHead.modDate}">
+					<f:convertDateTime pattern="#{msg.label_date_format}"
+						timeZone="#{wStepDefFormBean.timeZone}" />
+				</h:outputText>
+			</h:panelGroup>
+
+
+		</h:panelGrid>
+		
+		<h:panelGrid width="98%" columns="2" style="width:700px;margin-left:16px;"
+			columnClasses="colStyle200px, colStyle480px">
+				
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<rich:spacer height="10" />
+			<h:panelGroup>
+				<a4j:commandButton id="edit_button" value="#{msg.label_edit}"
+					actionListener="#{wStepDefFormBean.changeReadOnlyToFalse}"
+					reRender="w_step_head_main_tag_form"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{wStepDefFormBean.readOnly}"/>
+			
+				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
+					action="#{wStepDefFormBean.cancel}"
+					reRender="w_step_head_main_tag_form"
+					style="width:80px; margin-right:20px; " 
+					rendered="#{!wStepDefFormBean.readOnly}"/>
+
+				<a4j:commandButton id="update_button" value="#{msg.label_update}"
+					actionListener="#{wStepDefFormBean.update}"
+					reRender="w_step_head_main_tag_form"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wStepDefFormBean.readOnly and (wStepDefFormBean.currObjId != null) and (wStepDefFormBean.currObjId != 0)}"/>
+
+				<h:commandButton id="save_continue_button" value="#{msg.label_save}"
+					action="#{wStepDefFormBean.save_continue}"
+					style="margin-right: 0px; width:120px; " 
+					rendered="#{!wStepDefFormBean.readOnly and ((wStepDefFormBean.currObjId == null) or (wStepDefFormBean.currObjId == 0))}"/>
+
+			</h:panelGroup>
+			
+		</h:panelGrid>
+
+		<h:panelGrid columns="1" width="98%" style="margin-left:16px;"
+			rendered="#{wStepDefFormBean.currObjId ne null and wStepDefFormBean.currObjId ne 0}">
+				
+			<rich:spacer height="10" />
+
+			<rich:dataTable id="w_step_head_list_table"
+				value="#{wStepDefFormBean.relatedStepDefList}"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				var="wsd" width="40%" rows="10" reRender="dseDown">
+				<f:facet name="header">
+					<h:outputText
+						value="#{msg.label_head_related_step_def_list} ( #{wStepDefFormBean.relatedStepDefList.size()} #{msg.label_results} )" />
+				</f:facet>
+
+				<rich:column sortBy="#{wsd.id}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_id}" />
+					</f:facet>
+					<h:outputText value="#{wsd.id}" />
+				</rich:column>
+
+				<rich:column sortBy="#{wsd.name}"
+					style="width:70%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_name}" />
+					</f:facet>
+					<h:commandLink value="#{wsd.name}" 
+						action="#{wStepDefFormBean.loadWStepDefForm}"
+						style="text-decoration:none; color:black;">
+                		<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.currObjId}" value="#{wsd.id}"/>
+					</h:commandLink>
+				</rich:column>
+
+				<rich:column sortBy="#{wsd.version}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_version}" />
+					</f:facet>
+					<h:outputText value="#{wsd.version}" />
+				</rich:column>
+
+			</rich:dataTable>
+
+			<rich:datascroller id="dseDown" for="w_step_head_list_table"
+				maxPages="10" reRender="w_step_head_main_tag_form"
+				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
+
+				<f:facet name="first">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last">
+					<h:outputText value="...#{pages}" />
+				</f:facet>
+				<f:facet name="first_disabled">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last_disabled">
+					<h:outputText value="... #{pages}" />
+				</f:facet>
+				<h:outputText value="#{pages}" />
+
+			</rich:datascroller>
+			
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

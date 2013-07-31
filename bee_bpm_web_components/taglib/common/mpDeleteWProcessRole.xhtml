@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpDeleteWProcessRole" width="400" height="120">
+	    <f:facet name="header">
+	        <h:panelGroup id="deleteWProcessRoleTitlePanel">
+	            <h:outputText id="deleteWProcessRoleTitle"  value="#{msg.label_removing_role_privileges}"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="deleteWProcessRole">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_delete_wprocess_role"/>
+		        <rich:componentControl id="deleteWProcessRoleControl" for="mpDeleteWProcessRole" attachTo="hidelink_delete_wprocess_role" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+		<ui:include src="deleteWProcessRole.xhtml"/>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	

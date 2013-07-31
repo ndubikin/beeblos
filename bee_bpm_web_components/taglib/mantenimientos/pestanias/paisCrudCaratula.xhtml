@@ -1,0 +1,227 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+<script language="VBScript">
+	//Set WshNetwork = CreateObject("WScript.Network")
+
+	//alert(WshNetwork.UserName)
+	//document.frmPaisHeader.userName.value = WshNetwork.UserName
+	//document.frmPaisHeader.computerName.value = WshNetwork.ComputerName
+	//document.frmPaisHeader.userDomain.value = WshNetwork.UserDomain
+
+	
+</script>
+
+<script type="text/javascript">
+	
+	//alert("renderizando...");
+
+	//var urlForAction = null;
+    
+	function confirmar() {		 
+		
+		var txtNombre = document.getElementById("frmPaisHeader:paisNombre");
+			
+		if( txtNombre.value == "" ){
+		 return false;
+		}	  	
+
+	  	var txtConfirm = String.fromCharCode(191)+"Est"+String.fromCharCode(225)+" seguro que desea eliminar el Indicador seleccionado"+String.fromCharCode(63);
+		if (confirm(txtConfirm)) {			
+
+			//alert(" urlForAction = " + urlForAction)
+			/*
+			A4J.AJAX.Submit('frmPaisHeader',event,
+							{'similarityGroupingId':'frmPaisHeader:btnBorrar',
+							 'parameters':{'frmPaisHeader:btnBorrar':'frmPaisHeader:btnBorrar'}, 
+							 'actionUrl':urlForAction} );
+			*/
+			return true;
+		}
+		return false;
+	}
+	
+	function enviarFilaParaActualizar(idPais, paisNombre, paisComentario)
+	{  
+		var txtIdPais = document.getElementById("frmPaisHeader:idPais");	
+		var txtNombre = document.getElementById("frmPaisHeader:paisNombre");
+		var txtComentario = document.getElementById("frmPaisHeader:paisComentario");
+		var btnGuardar = document.getElementById("frmPaisHeader:btnGuardar");
+		var btnBorrar = document.getElementById("frmPaisHeader:btnBorrar");
+		txtIdPais.value=idPais;
+		txtNombre.value = paisNombre;
+		txtComentario.value=paisComentario;
+		btnGuardar.value="Actualizar";		
+		
+		try{			
+			btnBorrar.disabled = false;
+			txtIdPais.readOnly=true;
+			
+		} catch (e) {
+			alert( "e.message = " + e.message );			
+		}			
+	}
+
+	function submitFrmPaises(){ 
+		document.getElementById("frmPaises:idPais").submit();
+		document.getElementById("frmPaises:paisNombre").submit();
+		document.getElementById("frmPaises:paisComentario").submit();
+	} 
+	
+
+//-->
+</script>
+
+
+	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />
+
+	<h:messages showDetail="true" showSummary="true"/>
+
+	<rich:spacer></rich:spacer>
+
+	<center><!-- ********************************* Alta de paises********************    -->
+
+	<rich:panel style="width:100%"  >
+		
+		<f:facet name="header">
+			<h:outputText value="#{msg.label_countries}" styleClass="labelFormWhiteTitle" />
+		</f:facet>
+
+		<rich:spacer height="10" />
+		
+		<h:form id="frmPaisHeader">
+			<h:panelGrid id="exceptionsPnl"  rendered="#{exceptionBean.renderMessage}">
+				<rich:dataTable value="#{exceptionBean.exceptionList}" var="exp" >
+		            <rich:column> 
+		                <f:facet name="header">	                    
+		                </f:facet>	           
+		                <h:graphicImage value="#{exp.imagePath}" />  	                     
+		            </rich:column>
+		            <rich:column> 
+		                <f:facet name="header">
+		                    <h:outputText value="#{msg.label_message}"/>
+		                </f:facet>
+		                <h:outputText value="#{exp.code} "/>
+		                <h:outputText value="#{exp.message}"/>
+		            </rich:column>	            
+		            				
+				</rich:dataTable>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" width="70%">
+
+
+					<h:outputText value="#{msg.label_identifier}" styleClass="labelForm" />
+					<h:panelGroup>
+						<h:inputText id="idPais" value="#{paisBean.pais.idPais}"
+							required="false"  style="width:50px" maxlength="2">
+													
+						</h:inputText>	
+					</h:panelGroup>		
+					
+								
+					<h:outputText value="#{msg.label_name}" styleClass="labelForm" />	
+					<h:panelGroup>				
+						<h:inputText id="paisNombre" value="#{paisBean.pais.paisNombre}"
+							required="false"  style="width:300px">						
+						</h:inputText>
+						
+						<rich:spacer width="10" />
+						<h:commandButton id="btnBuscar" value="#{msg.label_search}"
+							action="#{paisBean.buscar}"/>		
+						
+					</h:panelGroup>	
+					
+								
+					<h:outputText value="#{msg.label_comment}" styleClass="labelForm" />	
+					<h:panelGroup>	
+						<h:inputText id="paisComentario" value="#{paisBean.pais.paisComentario}"
+							required="false"  style="width:300px">						
+						</h:inputText>	
+
+						<rich:spacer width="10" />
+						<h:commandButton id="btnGuardar" value="#{msg.label_save}"
+							action="#{paisBean.guardar}"/>										
+	
+						<rich:spacer width="10" />
+	
+						<h:commandButton id="btnBorrar" value="#{msg.label_delete}"
+							actionListener="#{paisBean.borra}" onclick="return confirmar()"/>																			
+					</h:panelGroup>											
+
+				
+				<rich:spacer heitht="10" />
+				<rich:spacer height="10" />
+			</h:panelGrid>
+		</h:form>
+
+	
+	<rich:panel style="width:98%">
+		<h:form id="frmPaises">
+			<rich:dataTable id="paisesTable" width="70%" 
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				onRowClick="return enviarFilaParaActualizar('#{p.idPais}','#{p.paisNombre}','#{p.paisComentario}');"				
+				rows="10" styleClass="table" 
+				value="#{paisBean.paises}" var="p" >
+				
+				<f:facet name="header">
+					<h:outputText value="Paises en el Sistema" />
+				</f:facet>
+
+	           	<rich:column sortBy="#{p.idPais}" style="width:20px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_identifier}"/>
+	                </f:facet>
+	                <h:outputText value="#{p.idPais}"/>
+	            </rich:column> 
+	           	<rich:column sortBy="#{p.paisNombre}" style="width:20px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_name}"/>
+	                </f:facet>
+	                <h:outputText value="#{p.paisNombre}"/>
+	            </rich:column> 
+	            <rich:column sortBy="#{p.paisComentario}" style="width:20px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_comment}"/>
+	                </f:facet>
+	                <h:outputText value="#{p.paisComentario}"/>
+	            </rich:column> 
+								
+			</rich:dataTable>
+			
+			<rich:spacer height="10" />
+			
+			<rich:datascroller for="paisesTable" maxPages="20"  
+				reRender="frmPaises"/>
+		
+			<rich:spacer height="10" />
+			
+			<h:panelGrid columns="1" style="text-align:left;" width="90%">
+			<h:messages globalOnly="true" styleClass="labelForm" showDetail="false" errorClass="error" 
+			fatalClass="fatal" infoClass="info" style="text-align:left;"/>
+			</h:panelGrid>
+			
+			<h:inputHidden id="sessionId" value="#{paisBean.currentSession}"/>
+		</h:form>
+	</rich:panel>
+	</rich:panel> 
+	</center>
+
+<script type="text/javascript">
+	
+	document.getElementById("frmPaisHeader:btnBorrar").disabled = true;
+	document.getElementById("frmPaisHeader:idPais").disabled = false;
+	//var currentSession = document.getElementById("frmPaises:sessionId").value;
+	
+	//urlForAction = "/fgp_piloto/mantenimientos/paisCrud.jsf;jsessionid=" + currentSession;
+</script>	
+
+</ui:composition>
+
+

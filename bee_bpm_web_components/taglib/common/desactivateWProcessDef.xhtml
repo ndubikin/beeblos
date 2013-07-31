@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form>
+
+	<h:panelGrid column="1">
+	
+		<h:outputText value="#{msg.label_this_action_turns_off_this_process_and_will_not_be_launch_more_tasks} " />
+		
+		<rich:spacer height="10" />
+
+		<h:panelGroup>
+			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+				onclick="javascript:Richfaces.hideModalPanel('mpDesactivateWProcessDef')"
+				style="width:80px; height:24px;" />
+			<a4j:commandButton id="delete_button_sr" value="#{msg.label_desactivate}"
+				actionListener="#{workingProcessQueryBean.desactivateWProcessDef}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpDesactivateWProcessDef');"
+				reRender="working_process_form${action}, insert_role"
+				style="width:120px; margin-left: 10px; height:24px;" />
+		</h:panelGroup>
+
+	</h:panelGrid>
+	
+	</h:form>
+</ui:composition>
