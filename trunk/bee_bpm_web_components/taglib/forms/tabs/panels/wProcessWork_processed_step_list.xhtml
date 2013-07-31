@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<c:if test="${empty action}">
+		<c:set var="action" value="" />
+	</c:if>
+
+	<h:form id="w_process_work_processed_steps_form${action}">
+
+		<h:panelGrid width="100%" columns="1">
+
+       		<rich:contextMenu attached="false" id="w_process_work_processed_steps_menu" submitMode="ajax">
+            	<rich:menuItem ajaxSingle="false" action="#{wProcessWorkFormBeann.loadWStepWorkForm}"
+            		oncomplete="javascript:Richfaces.showModalPanel('mpViewStepWork');"
+            		reRender="mpViewStepWork">
+                	<b> View Step Work </b> ( {idProcess}/{idStep} - {reference} ) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessWorkFormBean.idStepWork}" value="{idStepWork}"/>
+            	</rich:menuItem>
+            	<rich:menuSeparator />         
+             	<rich:menuItem ajaxSingle="false" action="#{wProcessWorkFormBean.loadWStepDefForm}" submitMode="server">
+                	<b> Edit step definition </b> ( {stepName} ) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessWorkFormBean.idStep}" value="{idStep}"/>
+            	</rich:menuItem>
+            </rich:contextMenu>
+        
+        </h:panelGrid>    
+            
+		<h:panelGrid width="90%" columns="1">
+
+			<rich:datascroller id="dseUp" for="w_process_work_processed_steps_table"
+				maxPages="10" reRender="w_process_work_processed_steps_form${action}"
+				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
+
+				<f:facet name="first">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last">
+					<h:outputText value="...#{pages}" />
+				</f:facet>
+				<f:facet name="first_disabled">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last_disabled">
+					<h:outputText value="... #{pages}" />
+				</f:facet>
+				<h:outputText value="#{pages}" />
+			</rich:datascroller>
+
+			<rich:dataTable id="w_process_work_processed_steps_table"
+				value="#{wProcessWorkFormBean.processedStepList}"
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				var="stepWork" width="98%" columnClasses="center" rows="10"
+				reRender="dseUp,dseDown" style="margin-left: 16px;">
+
+				<f:facet name="header">
+					<h:outputText value="WProcessWork Processed Step List" />
+				</f:facet>
+
+				<rich:column sortBy="#{stepWork.id}"
+					style="width:10%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_id}" />
+					</f:facet>
+					<h:outputText value="#{stepWork.id}" />
+				</rich:column>
+
+				<rich:column sortBy="#{stepWork.previousStep.name}"
+					style="width:20%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_previous_step}" />
+					</f:facet>
+					<h:outputText value="#{stepWork.previousStep.name}" />
+				</rich:column>
+
+				<rich:column sortBy="#{stepWork.currentStep.name}"
+					style="width:20%; text-align: left;">
+					<f:facet name="header">
+						<h:outputText value="#{msg.label_current_step}" />
+					</f:facet>
+					<h:outputText value="#{stepWork.currentStep.name}" />
+				</rich:column>
+
+	            <rich:column sortBy="#{stepWork.arrivingDate}" 
+	            	style="width:25%; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_arriving_date}"/>
+	                </f:facet>
+	                <h:outputText value="#{stepWork.arrivingDate}">
+						<f:convertDateTime pattern="#{msg.label_date_time_format}" 
+							timeZone="#{wProcessWorkFormBean.timeZone}"/>
+	                </h:outputText>
+	            </rich:column>
+
+	            <rich:column sortBy="#{stepWork.decidedDate}" 
+	            	style="width:25%; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_decided_date}"/>
+	                </f:facet>
+	                <h:outputText value="#{stepWork.decidedDate}">
+						<f:convertDateTime pattern="#{msg.label_date_time_format}" 
+							timeZone="#{wProcessWorkFormBean.timeZone}"/>
+	                </h:outputText>
+	            </rich:column>
+
+				<rich:componentControl event="onRowClick" for="w_process_work_processed_steps_menu"
+					operation="show">
+               		<f:param value="#{stepWork.process.id}" name="idProcess"/>
+               		<f:param value="#{stepWork.wProcessWork.id}" name="idStepWork"/>
+                	<f:param value="#{stepWork.currentStep.id}" name="idStep"/>
+                	<f:param value="#{stepWork.currentStep.name}" name="stepName"/>
+               		<f:param value="#{stepWork.wProcessWork.reference}" name="reference"/>
+				</rich:componentControl>
+
+			</rich:dataTable>
+
+			<rich:datascroller id="dseDown"
+				for="w_process_work_processed_steps_table" maxPages="10"
+				reRender="w_process_work_processed_steps_form${action}"
+				renderIfSinglePage="false" pageIndexVar="pageIndex" pagesVar="pages">
+
+				<f:facet name="first">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last">
+					<h:outputText value="...#{pages}" />
+				</f:facet>
+				<f:facet name="first_disabled">
+					<h:outputText value="1..." />
+				</f:facet>
+				<f:facet name="last_disabled">
+					<h:outputText value="... #{pages}" />
+				</f:facet>
+				<h:outputText value="#{pages}" />
+
+			</rich:datascroller>
+
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+
+	</h:form>
+</ui:composition>

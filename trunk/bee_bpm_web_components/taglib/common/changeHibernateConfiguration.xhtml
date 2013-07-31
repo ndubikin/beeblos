@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<style>
+
+.panelScroll {
+	height: 245px;
+	overflow: auto;
+}
+
+</style>
+
+	<h:form id="change_hibernate_configuration_popup">
+	
+		<h:selectOneMenu id="select_configuration" 
+			value="#{login_x_Bean.newSessionName}"
+			style="width:300px; font-size:13px;	padding: 4px;">
+			<f:selectItems
+				value="#{login_x_Bean.hibernateConfigurationList}" />
+			<a4j:support ajaxSingle="true"  actionListener="#{login_x_Bean.reRenderInformation}"
+					event="onchange" reRender="session_name_popup, url_popup, catalog_popup, username_popup" />
+		</h:selectOneMenu>
+
+		<h:panelGrid width="98%" columns="2"
+			columnClasses="colStyle100,colStyle250">
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_session_name}: " />
+			<h:outputText id="session_name_popup"
+				value="#{login_x_Bean.hibernateConfigurationParameters.sessionName}"
+				style="font-weight:bold;font-size: 12px; "/>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_url}: " />
+			<h:outputText id="url_popup"
+				value="#{login_x_Bean.hibernateConfigurationParameters.url}"
+				style="font-weight:bold;font-size: 12px; "/>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_catalog}: " />
+			<h:outputText id="catalog_popup"
+				value="#{login_x_Bean.hibernateConfigurationParameters.defaultCatalog}"
+				style="font-weight:bold;font-size: 12px; "/>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+			<h:outputText value="#{msg.label_username}: " />
+			<h:outputText id="username_popup"
+				value="#{login_x_Bean.hibernateConfigurationParameters.username}"
+				style="font-weight:bold;font-size: 12px; "/>
+
+			<rich:spacer height="10" />
+			<rich:spacer height="10" />
+
+		</h:panelGrid>
+
+		<h:panelGroup>
+			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
+				actionListener="#{login_x_Bean.cleanHibernateConfigurationParameters}"
+				reRender="sessionName, url, defaultCatalog, mpChangeHibernateConfiguration"
+				onclick="javascript:Richfaces.hideModalPanel('mpChangeHibernateConfiguration')"
+				style="width:80px; height:24px;" />
+			<a4j:commandButton id="change_button_sr" value="#{msg.label_change}"
+				actionListener="#{login_x_Bean.changeHibernateConfiguration}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpChangeHibernateConfiguration');"
+				reRender="sessionName, url, defaultCatalog, mpChangeHibernateConfiguration"
+				style="width:120px; margin-left: 10px; height:24px;"/>
+		</h:panelGroup>
+
+	</h:form>
+</ui:composition>

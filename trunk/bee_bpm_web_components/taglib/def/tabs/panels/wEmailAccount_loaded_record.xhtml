@@ -1,0 +1,237 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	
+	<h:panelGrid column="1">
+	
+		<h:panelGrid columns="3"
+			style=" width : auto; height : auto; padding-left: 15px;"
+			columnClasses="colStyle200px, colStyle400px, colStyle400px">
+												
+			<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
+			<h:panelGroup>
+				<h:inputHidden id="hddIdUce" value="#{wEmailAccountBean.id}">
+					<a4j:support ajaxSingle="false"  action="#{wEmailAccountBean.loadCurrentWEmailAccount}"
+						event="onchange" reRender="w_user_email_account_form, w_user_email_accounts_table, name, saveButton, deleteButton" />
+				</h:inputHidden>
+				<h:inputText id="name" value="#{wEmailAccountBean.currEmailAccount.name}"
+					required="false"  style="width:250px; font-size:13px; padding: 4px;"/>
+			</h:panelGroup>
+			
+			<rich:spacer width="10" />
+			
+			<h:outputText value="#{msg.label_owner}" styleClass="labelForm" />
+			<h:selectOneMenu id="owner_name" 
+				value="#{wEmailAccountBean.currEmailAccount.wUserDef.id}"
+				style="width:260px; font-size:13px; padding: 4px;"
+				disabled="#{wEmailAccountBean.id != null and wEmailAccountBean.id != 0}">
+				<f:selectItems
+					value="#{wEmailAccountBean.wUserDefList}" />
+			</h:selectOneMenu>
+	
+			<rich:spacer width="10" />
+	
+			<h:outputText value="#{msg.label_email}" styleClass="labelForm" />
+			<h:panelGroup>
+				<h:inputText id="email" value="#{wEmailAccountBean.currEmailAccount.email}"
+					required="false"  style="width:250px; font-size:13px; padding: 4px;"/>
+			</h:panelGroup>
+	
+			<rich:spacer height="10" />
+			
+			<h:outputText value="#{msg.label_user_default_account}" styleClass="labelForm" />
+			<h:selectBooleanCheckbox id="isPrefer" value="#{wEmailAccountBean.currEmailAccount.userDefaultAccount}"
+				required="false"  style="text-align:left"/>	
+			<rich:spacer height="10" />
+			
+			<h:outputText value="#{msg.label_reply_to}" styleClass="labelForm" />
+			<h:inputText id="reply_to" value="#{wEmailAccountBean.currEmailAccount.replyTo}"
+				required="false"  style=" width:250px; font-size:13px; padding: 4px;"/>	
+
+			<h:panelGroup>
+				
+				<rich:spacer width="10" />
+		
+				<rich:spacer width="10" />	
+				<a4j:commandButton id="cancelButtonTop" value="#{msg.label_cancel}" 
+					reRender="w_user_email_account_form"
+					action="#{wEmailAccountBean.cancel}"
+					style="width:120px"/>			
+						
+				<rich:spacer width="10" />	
+				<h:commandButton id="deleteButtonTop" value="#{msg.label_delete}" 
+					actionListener="#{wEmailAccountBean.delete}" onclick="return confirm()"
+					disabled="#{wEmailAccountBean.addNewEmailMode and (wEmailAccountBean.id == null or wEmailAccountBean.id == 0)}"
+					style="width:80px"/>						
+									
+				<a4j:commandButton id="saveButtonTop" value="#{wEmailAccountBean.valueBtn}" 
+					reRender="w_user_email_account_form"
+					action="#{wEmailAccountBean.save}"
+					style="width:120px"/>			
+						
+			</h:panelGroup>	
+										
+		</h:panelGrid>
+					
+		<fieldset id="input" class="demo_fieldset" >
+			<legend class="demo_legend"  >#{msg.label_input_server}</legend>
+			<div>
+			<h:panelGrid columns="4"
+				style=" width : auto; height : auto; padding-left: 30px;"
+				columnClasses="colStyle200px, colStyle200px, colStyle200px, colStyle200px">
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
+				<h:inputText id="input_name_service" value="#{wEmailAccountBean.currEmailAccount.inputServerName}"
+					required="false"  style="width:180px; font-size:13px; padding: 4px;"/>
+					
+				<rich:spacer height="10" />
+				<rich:spacer height="10" />	
+			
+				<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
+				<h:inputText id="input_port" value="#{wEmailAccountBean.currEmailAccount.inputPort}"
+					required="false"  style="width:50px; font-size:13px; padding: 4px;"/>
+					
+				<h:outputText value="#{msg.label_type}" styleClass="labelForm" />
+				<h:inputText id="input_server_type" value="#{wEmailAccountBean.currEmailAccount.inputServerType}"
+					required="false"  style="width:50px; font-size:13px; padding: 4px;"/>		
+					
+				<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
+				<h:inputText id="input_security" value="#{wEmailAccountBean.currEmailAccount.connectionSecurity}"
+						required="false"  style="width:150px; font-size:13px; padding: 4px;"/>	
+					
+				<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
+				<h:inputText id="input_ident_method" value="#{wEmailAccountBean.currEmailAccount.identificationMethod}"
+					required="false"  style="width:150px; font-size:13px; padding: 4px;"/>			
+	
+			</h:panelGrid>
+			</div>
+		</fieldset>	
+		
+		<rich:spacer width="10" />
+		
+		<fieldset id="salida" class="demo_fieldset" >	 
+			<legend class="demo_legend">#{msg.label_output_server}</legend>
+			<div>
+			<h:panelGrid columns="4"
+				style=" width : auto; height : auto; padding-left: 30px;"
+				columnClasses="colStyle200px, colStyle200px, colStyle200px, colStyle200px">
+					
+				<h:outputText value="#{msg.label_output_server}" styleClass="labelForm" />
+				<h:inputText id="output_server_name" value="#{wEmailAccountBean.currEmailAccount.outputServer}"
+					required="false"  style="width:180px; font-size:13px; padding: 4px;"/>
+					
+				<rich:spacer height="10" />	
+				<rich:spacer height="10" />		
+					
+				<h:outputText value="#{msg.label_port}" styleClass="labelForm" />
+				<h:inputText id="output_port" value="#{wEmailAccountBean.currEmailAccount.outputPort}"
+					required="false"  style="width:50px; font-size:13px; padding: 4px;"/>
+					
+				<rich:spacer height="10" />	
+				<rich:spacer height="10" />		
+			
+				<h:outputText value="#{msg.label_connection_security}" styleClass="labelForm" />
+					
+				<h:selectOneMenu id="seguridadSal" value="#{wEmailAccountBean.currEmailAccount.outputConnectionSecurity}" style="width:150px">
+					<f:selectItems value="#{wEmailAccountBean.securityList}" />
+				</h:selectOneMenu>	
+										
+				<h:outputText value="#{msg.label_identification_method}" styleClass="labelForm" />
+				<h:inputText id="id_method" value="#{wEmailAccountBean.currEmailAccount.identificationMethod}"
+					required="false"  style="width:150px; font-size:13px; padding: 4px;"/>		
+												
+				<h:outputText value="#{msg.label_user}" styleClass="labelForm" />
+				<h:inputText id="output_user" value="#{wEmailAccountBean.currEmailAccount.outputUserName}"
+					required="false"  style="width:150px; font-size:13px; padding: 4px;"/>
+					
+				<h:outputText value="#{msg.label_output_password}" styleClass="labelForm" />
+				<h:panelGroup id="output_password_panel">
+					<h:inputSecret id="output_password" value="#{wEmailAccountBean.currEmailAccount.outputPassword}"
+						readonly="#{wEmailAccountBean.outputPasswordEditable?'false':'true'}"
+						required="false" style="width:150px; font-size:13px; padding: 4px;">
+	            		<a4j:support event="onchange" ajaxSingle="true" action="#{wEmailAccountBean.changeOutputPassword}"/>
+					</h:inputSecret>
+					<a4j:commandButton id="changePasswordButton" value="#{msg.label_new_password}"
+						rendered="#{!wEmailAccountBean.outputPasswordEditable}"
+						oncomplete="onsubmitChangePasswordButton();"
+						style="margin-left: 10px;"/>			
+				</h:panelGroup>
+			
+			</h:panelGrid>	
+			</div>
+		</fieldset>
+		<fieldset id="input" class="demo_fieldset" >
+			<legend class="demo_legend"  >#{msg.label_signature_fields}</legend>
+			<div>
+			<h:panelGrid columns="3"
+				style=" width : auto; height : auto; padding-left: 30px;"
+				columnClasses="colStyle200px, colStyle600px, colStyle200px">
+
+					<h:outputText id="txt_signature" value="#{msg.label_signature_txt}" styleClass="labelForm"/>
+					<h:inputTextarea id="txt_signature_text" value="#{wEmailAccountBean.currEmailAccount.signatureTxt}"
+						required="false" style="width:600px; height:150px; font-size:13px; padding: 4px;"/>			
+					<rich:spacer id="spcFirmaTexto" height="10"/>
+					
+					<h:outputText id="html_signature" value="#{msg.label_signature_html}" styleClass="labelForm"/>
+			        <h:panelGroup id="signature_html_control">
+						<rich:editor id="html_signature_text" configuration="#{editorBean.currentConfiguration}" 
+									 width="600" height="150" viewMode="#{editorBean.viewMode}" 
+									 value="#{wEmailAccountBean.currEmailAccount.signatureHtml}" >
+						</rich:editor>
+			
+			               <h:panelGrid columns="1">
+			                   <h:selectOneRadio value="#{editorBean.viewMode}">
+			                       <f:selectItem itemLabel="displaying HTML" itemValue="visual" />
+			                       <f:selectItem itemLabel="HTML text" itemValue="source" />
+			                       <a4j:support event="onclick" reRender="html_signature_text, signature_html_control" requestDelay="500"
+			                           eventsQueue="settingsQueue" similarityGroupingId="settings" />
+			                   </h:selectOneRadio>
+			               </h:panelGrid>
+					</h:panelGroup>
+					<rich:spacer id="spcFirmaHtml" height="10"/>
+					
+				</h:panelGrid>
+			
+			</div>
+		</fieldset>
+		
+		<rich:spacer width="10" />
+		<rich:spacer width="10" />
+
+		<h:panelGrid columns="3"
+			style=" width : auto; height : auto; padding-left: 30px;"
+			columnClasses="colStyle200px, colStyle600px, colStyle200px">
+
+			<rich:spacer width="10" />
+			<h:panelGroup>
+			
+				<rich:spacer width="10" />	
+				<a4j:commandButton id="cancelButtonFloor" value="#{msg.label_cancel}" 
+					reRender="w_user_email_account_form"
+					action="#{wEmailAccountBean.cancel}"
+					style="width:120px"/>			
+						
+				<rich:spacer width="10" />	
+				<h:commandButton id="deleteButtonFloor" value="#{msg.label_delete}" 
+					actionListener="#{wEmailAccountBean.delete}" onclick="return confirm()"
+					disabled="#{wEmailAccountBean.addNewEmailMode and (wEmailAccountBean.id == null or wEmailAccountBean.id == 0)}"
+					style="width:80px"/>						
+									
+				<rich:spacer width="10" />
+				<a4j:commandButton id="saveButtonFloor" value="#{wEmailAccountBean.valueBtn}" 
+					reRender="w_user_email_account_form"
+					action="#{wEmailAccountBean.save}"
+					style="width:120px"/>			
+						
+			</h:panelGroup>	
+			<rich:spacer width="10" />
+			
+		</h:panelGrid>
+
+	</h:panelGrid>
+
+</ui:composition>

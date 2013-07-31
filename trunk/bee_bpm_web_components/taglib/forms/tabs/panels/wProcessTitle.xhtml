@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+	<div>
+	
+		<h:outputText value="#{msg.label_adding_new_process}" 
+							styleClass="title_style" 
+							rendered="#{wProcessDefFormBean.currentWProcessDef.id==null or wProcessDefFormBean.currentWProcessDef.id==0}"
+							style="margin-left: 32px; margin-bottom: 10px;"/>
+
+		<h:outputText value="#{msg.label_process}: #{wProcessDefFormBean.currentWProcessDef.process.name}" 
+							styleClass="title_style" 
+							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
+							style="margin-left: 32px; margin-bottom: 10px;"/>
+
+		<h:outputText value=" - " 
+							styleClass="title_style" 
+							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
+							style="margin-bottom: 10px;"/>	
+	
+		<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.insertDate}" 
+							styleClass="title_style" 
+							rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
+							style="margin-bottom: 10px;">
+			<f:convertDateTime pattern="#{msg.label_date_format}" timeZone="#{wProcessDefFormBean.timeZone}"/>
+		</h:outputText>
+
+	</div>
+		
+</ui:composition>

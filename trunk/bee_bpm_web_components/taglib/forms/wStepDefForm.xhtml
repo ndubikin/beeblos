@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fbbva="http://www.softpoint.org/fbbva-common-user">
+
+	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages"
+		var="msg" />
+		
+	<ui:include src="../common/mpSearchRole.xhtml"/>
+	<ui:include src="../common/mpSearchUser.xhtml"/>
+	<ui:include src="../common/mpAddStepResponse.xhtml"/>
+	<ui:include src="../common/mpEditStepResponse.xhtml"/>
+	<ui:include src="../common/mpDeleteStepResponse.xhtml"/>
+	<ui:include src="../common/mpDeleteWStepRole.xhtml"/>
+	<ui:include src="../common/mpDeleteWStepUser.xhtml"/>
+
+	<rich:tabPanel switchType="server" height="540px"
+		selectedTab="#{componentNavigator.currentComponent.activeTab}"
+		valueChangeListener="#{componentNavigator.tabPanelSwitched}">
+
+		<rich:tab name="w_step_def_maintag"
+			label="#{msg.label_wstepdef_main_tab}">
+			<ui:include src="tabs/wStepDefMainTag.xhtml">
+				<ui:param name="action" value="WSTEPDEF_MAINTAG" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_permissions_tag"
+			label="#{msg.label_permissions}"
+			rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}">
+			<ui:include src="tabs/wStepDefPermissionsTag.xhtml">
+				<ui:param name="action" value="WSTEPDEF_PERMISSIONS" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_responses"
+			label="#{msg.label_responses}"
+			rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}">
+			<ui:include src="tabs/wStepDefResponsesTag.xhtml">
+				<ui:param name="action" value="WSTEPDEF_RESPONSES" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_zone_tag"
+			label="#{msg.label_jsf}"
+			rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}">
+			<ui:include src="tabs/wStepDefZoneTag.xhtml">
+				<ui:param name="action" value="WSTEPDEF_ZONETAG" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_alarm_tag"
+			label="#{msg.label_alarms}"
+			rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}">
+			<ui:include src="tabs/wStepDefAlarmTag.xhtml">
+				<ui:param name="action" value="WSTEPDEF_ALARMTAG" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab name="w_process_def_custom_validation"
+			label="#{msg.label_custom_validation}"
+			rendered="#{wStepDefFormBean.currObjId!=null and wStepDefFormBean.currObjId!=0}">
+			<ui:include src="tabs/wStepDefCustomValidation.xhtml">
+				<ui:param name="action" value="WSTEPDEF_CUSTOMVALIDATION" />
+			</ui:include>
+		</rich:tab>
+
+	</rich:tabPanel>
+
+</ui:composition>

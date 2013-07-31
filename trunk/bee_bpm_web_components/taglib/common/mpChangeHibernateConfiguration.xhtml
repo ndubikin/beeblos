@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	
+	<rich:modalPanel  id="mpChangeHibernateConfiguration" width="450" height="300">
+	    <f:facet name="header">
+	        <h:panelGroup id="changeHibernateConfigurationTitlePanel">
+	            <h:outputText id="changeHibernateConfigurationTitle"  value="#{msg.label_change_hibernate_configuration}"></h:outputText>
+	        </h:panelGroup>
+	    </f:facet>	
+		<f:facet name="controls">
+		    <h:panelGroup id="changeHibernateConfiguration">
+		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_change_hiberante_configuration"/>
+		        <rich:componentControl id="changeHibernateConfigurationControl" for="mpChangeHibernateConfiguration" attachTo="hidelink_change_hiberante_configuration" operation="hide" event="onclick"/>
+		    </h:panelGroup>
+		</f:facet>
+
+		<ui:include src="changeHibernateConfiguration.xhtml"/>
+	
+	</rich:modalPanel>	
+	
+	
+</ui:composition>
+	

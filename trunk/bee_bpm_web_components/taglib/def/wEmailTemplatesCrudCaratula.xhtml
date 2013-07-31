@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<style type="text/css">
+.colStyle1 {
+	width: 150px;
+	margin: 0px;
+}
+
+.colStyle2 {
+	width: 250px;
+	margin: 0px;
+}
+
+.colStyle2B {
+	width: 250px;
+	margin: 0px;
+}
+
+.colStyle3 {
+	width: 20px;
+	margin: 0px;
+}
+
+.colStyle4 {
+	width: 150px;
+	margin: 0px;
+	
+}
+.colStyle5 {
+	width: 300px;
+	margin: 0px;
+}
+.colStyle6{
+	width: 50px;
+	margin: 0px;
+}
+.viewFilters {
+	text-align: center; padding-left: 0px; font-size: 11px; cursor: pointer; color: #7795AF; font-family: Verdana; text-decoration: underline
+}
+
+.controlsEditorPanel {
+	border : 0px; padding: 0px; margin :  0px 0px 0px 0px; overflow: auto; width: 100%;
+}
+</style>
+
+<script language="VBScript">
+	//Set WshNetwork = CreateObject("WScript.Network")
+
+	//alert(WshNetwork.UserName)
+	//document.frmUceHeader.userName.value = WshNetwork.UserName
+	//document.frmUceHeader.computerName.value = WshNetwork.ComputerName
+	//document.frmUceHeader.userDomain.value = WshNetwork.UserDomain
+
+	
+</script>
+
+<script type="text/javascript">
+	
+	//alert("renderizando...");
+
+	//var urlForAction = null;
+    
+	function confirm() {		 
+		
+		var txtNombre = document.getElementById("w_email_template_form:name");
+			
+		if( txtNombre.value == "" ){
+			return false;
+		}	  	
+	
+	  	var txtConfirm = "Are you sure that you want delete this indicator"+String.fromCharCode(63);
+		if (confirm(txtConfirm)) {			
+
+			//alert(" urlForAction = " + urlForAction)
+			/*
+			A4J.AJAX.Submit('frmUceHeader',event,
+							{'similarityGroupingId':'frmUceHeader:deleteButton',
+							 'parameters':{'frmUceHeader:deleteButton':'frmUceHeader:deleteButton'}, 
+							 'actionUrl':urlForAction} );
+			*/
+			return true;
+		}
+		return false;
+	}
+
+
+	
+	function submitFrmUceLista(){ 
+		document.getElementById("w_email_template_form:name").submit();
+		
+				
+	} 
+	
+
+//-->
+</script>
+
+
+	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />
+
+	<h:messages showDetail="true" showSummary="true"/>
+
+	<rich:tabPanel switchType="server"
+		selectedTab="#{componentNavigator.currentComponent.activeTab}"
+		valueChangeListener="#{componentNavigator.tabPanelSwitched}">
+
+		<rich:tab name="w_email_templates_panel" label="WEmailTemplates">
+			<ui:include src="tabs/wEmailTemplatesSearch.xhtml" />
+		</rich:tab>
+
+	</rich:tabPanel>
+
+</ui:composition>

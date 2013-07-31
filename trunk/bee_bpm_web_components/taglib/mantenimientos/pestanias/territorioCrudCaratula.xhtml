@@ -1,0 +1,295 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+<script language="VBScript">
+	//Set WshNetwork = CreateObject("WScript.Network")
+
+	//alert(WshNetwork.UserName)
+	//document.frmTerritorio.userName.value = WshNetwork.UserName
+	//document.frmTerritorio.computerName.value = WshNetwork.ComputerName
+	//document.frmTerritorio.userDomain.value = WshNetwork.UserDomain
+
+	
+</script>
+
+<style type="text/css">
+.colStyleF1 { 
+	width: 100px;
+}
+.colStyleF2 { 
+	width: 460px;
+
+}
+.colStyleF2_thin { 
+	width: 200px;
+
+}
+.colStyleF3 { 
+	width: 50px;
+
+}
+.colStyleF3_fat { 
+	width: 250px;
+
+}
+</style>
+
+<script type="text/javascript">
+	
+	//alert("renderizando...");
+
+	//var urlForAction = null;
+    document.getElementById("frmTerritorio:btnBorrar").disabled = true;
+    
+	function confirmar() {		 
+		
+		var txtNombre = document.getElementById("frmTerritorio:ter_nombre");
+			
+		if( txtNombre.value == "" ){
+		 return false;
+		}	  	
+	
+	  	var txtConfirm = String.fromCharCode(191)+"Est"+String.fromCharCode(225)+" seguro que desea eliminar el Indicador seleccionado"+String.fromCharCode(63);
+		if (confirm(txtConfirm)) {			
+
+			//alert(" urlForAction = " + urlForAction)
+			/*
+			A4J.AJAX.Submit('frmTerritorio',event,
+							{'similarityGroupingId':'frmTerritorio:btnBorrar',
+							 'parameters':{'frmTerritorio:btnBorrar':'frmTerritorio:btnBorrar'}, 
+							 'actionUrl':urlForAction} );
+			*/
+			return true;
+		}
+		return false;
+	}
+	
+	function enviarFilaParaAtcualizar(idTerritorio, territorioNombre, territorioComentarios, idTipoTerritorio)
+	{  
+
+		var txtIdTerritorio = document.getElementById("frmDatosModif:hddIdTerritorio");
+		var txtIdTipoTerritorio = document.getElementById("frmDatosModif:hddIdTipoTerritorio"); 
+		
+		var txtTerritorioNombre = document.getElementById("frmMTerritorio:ter_nombre");
+		var txtTerritorioComentario = document.getElementById("frmMTerritorio:ter_comentario");
+		
+			
+		var btnGuardar = document.getElementById("frmMTerritorio:btnGuardar");
+		var btnBorrar = document.getElementById("frmMTerritorio:btnBorrar");
+
+		var modificarTerritorio = document.getElementById("frmDatosModif:modConv");
+		
+		txtIdTerritorio.value=idTerritorio;
+		if (idTipoTerritorio != null){
+			txtIdTipoTerritorio.value = idTipoTerritorio;
+		}
+		
+		txtTerritorioNombre.value=territorioNombre;
+		txtTerritorioComentario.value=territorioComentarios;
+
+		
+		btnGuardar.value="Actualizar";	
+
+		modificarTerritorio.onclick();
+		
+		try{			
+			btnBorrar.disabled = false;
+		} catch (e) {
+			alert( "e.message = " + e.message );			
+		}			
+	}
+
+	function submitFrmTerritorioLista(){ 
+		document.getElementById("frmTerritorio:ter_nombre").submit();
+		document.getElementById("frmTerritorio:ter_comentario").submit();
+				
+	} 
+	
+
+//-->
+</script>
+
+<h:form id="frmDatosModif">
+	<h:inputHidden id="hddIdTerritorio" value="#{mTerritorioBean.idTerritorio}"/>
+	<h:inputHidden id="hddIdTipoTerritorio" value="#{mTerritorioBean.idTipoTerritorio}"/>
+	<h:commandLink id="modConv" action="#{mTerritorioBean.modificarTerritorio}" value="" />
+</h:form>
+
+	<f:loadBundle basename="org.beeblos.bpm.wc.taglib.util.messages" var="msg" />
+
+	<h:messages showDetail="true" showSummary="true"/>
+
+	<rich:spacer></rich:spacer>
+
+	<center><!-- ********************************* Alta de Territorios********************    -->
+			
+	<rich:panel style="width:100%"  >
+		<f:facet name="header">
+			<h:outputText value="#{msg.label_territories}" styleClass="labelFormWhiteTitle" />
+		</f:facet>
+			
+		<h:form id="frmMTerritorio">
+			<h:panelGrid id="exceptionsPnl"  rendered="#{exceptionBean.renderMessage}">
+				<rich:dataTable value="#{exceptionBean.exceptionList}" var="exp" >
+		            <rich:column> 
+		                <f:facet name="header">	                    
+		                </f:facet>	           
+		                <h:graphicImage value="#{exp.imagePath}" />  	                     
+		            </rich:column>
+		            <rich:column> 
+		                <f:facet name="header">
+		                    <h:outputText value="#{msg.label_message}"/>
+		                </f:facet>
+		                <h:outputText value="#{exp.code} "/>
+		                <h:outputText value="#{exp.message}"/>
+		            </rich:column>	            
+		            				
+				</rich:dataTable>
+			</h:panelGrid>
+
+		
+
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend"><h:outputText value="#{msg.label_select_parent_territory}"/></legend> 	
+
+			<h:panelGrid id="selectPlace" columns="3" width="90%" columnClasses="colStyleF1,colStyleF2">
+				<h:outputText value="#{msg.label_country}:" styleClass="firstLeftText"/>
+				<h:selectOneMenu id="mt_pais" value="#{mTerritorioBean.idPais}"  
+					disabled = "#{!mTerritorioBean.disableBtnBorrar}" 
+					style="width:200px; height: 24px; font-size:13px;padding: 4px;">
+					<f:selectItem itemLabel="España" itemValue="ES" />
+				</h:selectOneMenu>
+				<rich:spacer width="10" />
+				
+				<h:outputText value="#{msg.label_region}:" styleClass="firstLeftText"/>
+				<h:selectOneMenu id="mt_ccaa" value="#{mTerritorioBean.idTerritorioCCAA}"   
+					disabled = "#{!mTerritorioBean.disableBtnBorrar}" 
+					style="width:200px; height: 24px; font-size:13px;padding: 4px;">
+					<f:selectItems value="#{mTerritorioBean.listaCCAA}" />
+					<a4j:support ajaxSingle="true"  actionListener="#{mTerritorioBean.recargaListaProvincias}"
+						event="onchange" reRender="mt_prov, listaTerritorios, btnGuardar" />
+				</h:selectOneMenu>
+				<rich:spacer width="10" />
+				
+				<h:outputText value="#{msg.label_state}:" styleClass="firstLeftText"/>
+				<h:selectOneMenu id="mt_prov" value="#{mTerritorioBean.idTerritorioProvincia}"  
+					disabled = "#{!mTerritorioBean.disableBtnBorrar}"  
+					style="width:200px; height: 24px; font-size:13px;padding: 4px;">
+					<f:selectItems value="#{mTerritorioBean.listaProvincia}" />
+					<a4j:support ajaxSingle="true"  action="#{mTerritorioBean.cargarCurrentTerritorioPadre}"
+						event="onchange" reRender="listaTerritorios, btnGuardar" />
+				</h:selectOneMenu>			
+				
+				
+				
+			</h:panelGrid>
+														
+	
+	</fieldset>	
+	
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend"><h:outputText value="#{msg.label_territory_data}"/></legend> 														
+			<h:panelGrid id="territorioData" columns="2" width="90%" columnClasses="colStyleF1,colStyleF2" >									
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
+				<h:inputText id="ter_nombre" value="#{mTerritorioBean.currentTerritorio.territorioNombre}"
+					required="false"  style="width:300px"/>	
+
+				<h:outputText value="#{msg.label_comment}" styleClass="labelForm" />	
+				<h:panelGroup>				
+					<h:inputTextarea id="ter_comentario" value="#{mTerritorioBean.currentTerritorio.territorioComentario}"
+						required="false" style="width:300px; height: 40px; ">						
+					</h:inputTextarea>	
+						
+					<rich:spacer width="10" />
+					<h:commandButton id="btnGuardar" value="#{mTerritorioBean.valueBtn}"
+						disabled = "#{mTerritorioBean.disableBtnGuardar}"
+						action="#{mTerritorioBean.guardar}" />										
+	
+					<rich:spacer width="10" />
+	
+					<h:commandButton id="btnBorrar" value="#{msg.label_delete}" disabled = "#{mTerritorioBean.disableBtnBorrar}"
+						actionListener="#{mTerritorioBean.borra}" onclick="return confirmar()"
+					/>																			
+				</h:panelGroup>	
+				
+				<rich:spacer heitht="10" />
+				<rich:spacer height="10" />
+						
+			</h:panelGrid>	
+			
+	</fieldset>	
+	
+	<rich:panel id="listaTerritorios" style="width:98%">
+
+			<rich:dataTable id="territoriosTable" width="98%" 
+				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+				onRowClick="return enviarFilaParaAtcualizar('#{ter.idTerritorio}',
+															'#{ter.territorioNombre}',
+															'#{ter.territorioComentario}',
+															'#{ter.tipoTerritorio.idTipoTerritorio}');"				
+				rows="10" styleClass="table" 
+				value="#{mTerritorioBean.listaTerritorios}" var="ter" >
+				
+				<f:facet name="header">
+					<h:outputText value="#{msg.label_territories}" />
+				</f:facet>
+
+	           	<rich:column  style="width:20px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_id}"/>
+	                </f:facet>
+	                <h:outputText value="#{ter.idTerritorio}"/>
+	            </rich:column> 
+	            <rich:column sortBy="#{ter.territorioNombre}" style="width:150px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_name}"/>
+	                </f:facet>
+	                <h:outputText value="#{ter.territorioNombre}"/>
+	            </rich:column>
+	            <rich:column sortBy="#{ter.territorioComentario}" style="width:150px; text-align: left;"> 
+	                <f:facet name="header">
+	                    <h:outputText value="#{msg.label_comment}"/>
+	                </f:facet>
+	                <h:outputText value="#{ter.territorioComentario}"/>
+	            </rich:column> 
+
+				
+			</rich:dataTable>
+			
+			<rich:spacer height="10" />
+			
+			<rich:datascroller for="territoriosTable" maxPages="20"  
+				reRender="frmMTerritorio, territoriosTable" page="#{mTerritorioBean.scrollerPage}"/>
+		
+			<rich:spacer height="10" />
+			
+			<h:panelGrid columns="1" style="text-align:left;" width="90%">
+			<h:messages globalOnly="true" styleClass="labelForm" showDetail="false" errorClass="error" 
+			fatalClass="fatal" infoClass="info" style="text-align:left;"/>
+			</h:panelGrid>
+			
+			<h:inputHidden id="sessionId" value="#{mTerritorioBean.currentSession}"/>
+		</rich:panel>
+		</h:form>
+	
+	</rich:panel>
+	</center>
+	
+
+<script type="text/javascript">
+	
+	//document.getElementById("frmTerritorio:btnBorrar").disabled = true;
+	//var currentSession = document.getElementById("frmTerritorio:sessionId").value;
+	
+	//urlForAction = "/fgp_piloto/mantenimientos/territorioCrud.jsf;jsessionid=" + currentSession;
+</script>	
+
+</ui:composition>
+
+

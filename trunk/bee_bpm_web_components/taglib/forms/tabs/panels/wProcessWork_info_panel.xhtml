@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel style=" margin-left: 32px; width: 25%;">
+
+		<f:facet name="header">#{msg.label_process_work_info}</f:facet>
+
+		<h:panelGrid  columns="2"
+			style=" margin-left: 16px;"
+			columnClasses="colStyle100px, colStyle140px">
+
+			<h:outputText value="#{msg.label_status}:"	
+				styleClass="labelForm" style="text-align : right; font-weight:bold;"/>
+			<h:outputText id="status"
+				value="#{wProcessWorkFormBean.currentWProcessWork.status.name}"/>
+
+			<h:outputText value="#{msg.label_launched_on}: "
+				styleClass="labelForm" style="text-align : right; font-weight:bold;" />
+			<h:outputText
+				value="#{wProcessWorkFormBean.currentWProcessWork.startingTime}">
+				<f:convertDateTime pattern="#{msg.label_date_time_format}"
+					timeZone="#{wProcessWorkFormBean.timeZone}" />
+			</h:outputText>
+			
+			<h:outputText value="#{msg.label_ended_on}:"
+				styleClass="labelForm" style="text-align : right; font-weight:bold;"
+				rendered="#{wProcessWorkFormBean.currentWProcessWork.endTime != null}"/>
+			<h:outputText
+				value="#{wProcessWorkFormBean.currentWProcessWork.endTime}"
+				rendered="#{wProcessWorkFormBean.currentWProcessWork.endTime != null}">
+				<f:convertDateTime pattern="#{msg.label_date_time_format}"
+					timeZone="#{wProcessWorkFormBean.timeZone}" />
+			</h:outputText>
+
+			<h:outputText value="#{msg.label_launched_by}:"
+				styleClass="labelForm" style="text-align : right; font-weight:bold;" />
+			<h:outputText id="insertuser"
+				value="#{wProcessWorkFormBean.currentWProcessWork.insertUser}"/>
+
+
+		</h:panelGrid>
+
+	</rich:panel>
+
+</ui:composition>
+

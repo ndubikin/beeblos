@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+<rich:panel id="formLogin" style="width:400px;">	
+	
+	
+	<h:form id="login_caratula_form">
+		<f:facet name="title">Login</f:facet>
+
+		<h:panelGrid columns="3" style="width:400px;">
+			<rich:spacer/>
+			<rich:spacer/>
+			<rich:spacer/>
+
+			<rich:spacer/>
+			<rich:spacer/>
+			<rich:spacer/>	
+								
+			<rich:spacer/>
+			<rich:spacer/>
+			<rich:spacer/>
+			
+			<rich:spacer/>
+			<rich:spacer/>
+			<rich:spacer/>
+					
+			<rich:spacer/>
+			<rich:spacer/>
+			<rich:spacer/>
+			
+			<rich:spacer/>
+			<rich:spacer/>
+			<rich:spacer/>
+		
+			<h:outputText value="Usuario"  styleClass="labelForm"/> 
+			<h:inputText value="#{login_x_Bean.usuarioLogin}" id="usuarioNombre" required="true">
+				<f:validateLength minimum="3" maximum="12"/>
+			</h:inputText>
+			<rich:message for="usuarioNombre" showSummary="false"/>
+			
+			<h:outputText value="Contraseña" styleClass="labelForm"/>
+			<h:inputSecret value="#{login_x_Bean.password}" id="password" required="true">
+				<f:validateLength minimum="5" maximum="12"/>
+			</h:inputSecret>
+			<rich:message for="password"/>
+			
+			<rich:spacer/>
+			<h:commandButton value="Entrar" action="#{login_x_Bean.login}" onclick="return true;"/>
+			<rich:spacer/>
+			
+			<rich:spacer/>
+			<rich:spacer/>
+			<rich:spacer/>
+					
+		</h:panelGrid>
+		
+		
+		<rich:spacer></rich:spacer>
+	</h:form>
+
+	
+
+</rich:panel>
+</ui:composition>
+
