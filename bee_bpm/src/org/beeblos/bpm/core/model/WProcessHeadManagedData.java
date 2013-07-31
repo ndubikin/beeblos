@@ -13,23 +13,23 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int headId;
+	private Integer headId;
 	private String name;
 	private Boolean ignoreCase;
 	private String schema;
 	private String catalog;
 	private String comment;
 	private Date insertDate;
-	private int insertUser;
+	private Integer insertUser;
 	private Date modDate;
-	private int modUser;
+	private Integer modUser;
 
 	public WProcessHeadManagedData() {
 	}
 
 	public WProcessHeadManagedData(Integer headId, String name,
-			String schema, String catalog, Date insertDate, int insertUser,
-			Date modDate, int modUser) {
+			String schema, String catalog, Date insertDate, Integer insertUser,
+			Date modDate, Integer modUser) {
 		setHeadId(headId);
 		this.name = name;
 		this.schema = schema;
@@ -40,11 +40,11 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
-	public int getHeadId() {
+	public Integer getHeadId() {
 		return this.headId;
 	}
 
-	public void setHeadId(int headId) {
+	public void setHeadId(Integer headId) {
 		this.headId = headId;
 	}
 
@@ -96,11 +96,11 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 		this.insertDate = insertDate;
 	}
 
-	public int getInsertUser() {
+	public Integer getInsertUser() {
 		return this.insertUser;
 	}
 
-	public void setInsertUser(int insertUser) {
+	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
 	}
 
@@ -112,11 +112,11 @@ public class WProcessHeadManagedData implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
-	public int getModUser() {
+	public Integer getModUser() {
 		return this.modUser;
 	}
 
-	public void setModUser(int modUser) {
+	public void setModUser(Integer modUser) {
 		this.modUser = modUser;
 	}
 

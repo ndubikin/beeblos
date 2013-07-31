@@ -1,6 +1,8 @@
 package org.beeblos.bpm.core.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.beeblos.bpm.tm.model.Table;
 
@@ -17,6 +19,8 @@ public class WProcessHead implements java.io.Serializable {
 	private String comments;
 	
 	private WProcessHeadManagedData managedTable; // data fields table
+	
+	Set<WProcessHeadManagedData> processDataFieldDef = new HashSet<WProcessHeadManagedData>(0);
 	
 	private Date insertDate;
 	private Integer insertUser;
@@ -126,6 +130,17 @@ public class WProcessHead implements java.io.Serializable {
 
 	public void setManagedTable(WProcessHeadManagedData managedTable) {
 		this.managedTable = managedTable;
+	}
+
+
+	public Set<WProcessHeadManagedData> getProcessDataFieldDef() {
+		return processDataFieldDef;
+	}
+
+
+	public void setProcessDataFieldDef(
+			Set<WProcessHeadManagedData> processDataFieldDef) {
+		this.processDataFieldDef = processDataFieldDef;
 	}
 
 

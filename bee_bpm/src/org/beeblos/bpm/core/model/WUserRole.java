@@ -21,7 +21,7 @@ public class WUserRole implements java.io.Serializable {
 	private WUserDef user;
 	private WRoleDef role;
 	private boolean active;
-	private int insertUser;
+	private Integer insertUser;
 	private Date insertDate;
 
 	public WUserRole() {
@@ -37,7 +37,7 @@ public class WUserRole implements java.io.Serializable {
 		}	
 	}
 
-	public WUserRole(WUserDef user, WRoleDef role, boolean active, int insertUser,
+	public WUserRole(WUserDef user, WRoleDef role, boolean active, Integer insertUser,
 			Date insertDate) {
 		this.user = user;
 		this.role = role;
@@ -46,7 +46,7 @@ public class WUserRole implements java.io.Serializable {
 		this.insertDate = insertDate;
 	}
 
-	public WUserRole(boolean active, int insertUser, Date insertDate) {
+	public WUserRole(boolean active, Integer insertUser, Date insertDate) {
 		this.active = active;
 		this.insertUser = insertUser;
 		this.insertDate = insertDate;
@@ -76,11 +76,11 @@ public class WUserRole implements java.io.Serializable {
 		this.active = active;
 	}
 
-	public int getInsertUser() {
+	public Integer getInsertUser() {
 		return this.insertUser;
 	}
 
-	public void setInsertUser(int insertUser) {
+	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
 	}
 
