@@ -268,9 +268,10 @@ public class TableManager {
 
 	private String buildCreateTableStatement(String tableName,List<WProcessDataField> columns) {
 
-		String sql = "CREATE TABLE "+tableName+" ";
-		sql +=" ( id INTEGER AUTO_INCREMENT NOT NULL, "; // mandatory field ...
-		
+		String sql 	= "CREATE TABLE "+tableName+" ";
+		sql 		+=" ( id INTEGER AUTO_INCREMENT NOT NULL, "; // mandatory field ...
+		sql 		+=" process_work_id INTEGER NOT NULL, ";   // mandatory field ...
+		sql 		+=" process_id INTEGER NOT NULL, ";   // mandatory field indicates map version
 		for (WProcessDataField column: columns) {
 			sql+=	column.getName()+" "
 					+ column.getDataType().getSqlTypeName()
@@ -284,9 +285,11 @@ public class TableManager {
 //		" age INTEGER, " + 
 //		" PRIMARY KEY ( id ))"; 		
 		
+		// mandatory pk and foreign key
+		sql += " PRIMARY KEY ( id ), "; 
+		sql += " CONSTRAINT `fk_"+tableName+"_1` FOREIGN KEY (`process_work_id`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION ";
+		sql += " ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		
-		sql +=" PRIMARY KEY ( id ))"; 
-
 		System.out.println("sql:"+sql);
 		
 		return sql;
