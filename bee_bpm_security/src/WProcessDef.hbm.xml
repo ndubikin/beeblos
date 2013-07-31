@@ -31,10 +31,15 @@
 			<column  name="mod_user" />
 		</property>
 		<one-to-one name="managedTable" class="org.beeblos.bpm.core.model.WProcessHeadManagedData"
-				
 				cascade="all">
-		
 		</one-to-one>
+       <set name="processDataFieldDef" table="w_process_data_field" 
+				lazy="false" fetch="join" cascade="none">
+            <key>
+                <column name="process_head_id" not-null="true" />
+            </key>
+            <one-to-many class="org.beeblos.bpm.core.model.WProcessDataField" />
+        </set>		
 	</class>
 
     <class name="org.beeblos.bpm.core.model.WProcessHeadManagedData" table="w_process_head_managed_data">
@@ -291,7 +296,54 @@
 		</set>
 
 	</class>
-	
+
+    <class name="org.beeblos.bpm.core.model.WStepDataField" table="w_step_data_field">
+
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+        <property name="stepHeadId" type="java.lang.Integer">
+            <column name="step_head_id"  />
+        </property> 		
+
+        <property name="name" type="string">
+            <column name="name" length="100" not-null="true" />
+        </property>
+        <property name="required" type="java.lang.Boolean">
+            <column name="required" />
+        </property>
+        <property name="active" type="java.lang.Boolean">
+            <column name="active" />
+        </property>
+        <property name="length" type="java.lang.Integer">
+            <column name="length"  />
+        </property>        
+
+       <property name="defaultValue" type="string">
+            <column name="default_value" length="100" not-null="true" unique="true" />
+        </property>
+
+        <property name="comments" type="string">
+            <column name="comments" />
+        </property>
+		<property generated="never" lazy="false" name="insertDate" type="timestamp">
+			<column name="insert_date"  />
+		</property>
+        <property name="insertUser" type="java.lang.Integer">
+            <column name="insert_user" not-null="true" />
+        </property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column name="mod_date"  />
+		</property>
+        <property name="modUser" type="java.lang.Integer">
+            <column name="mod_user" not-null="true" />
+        </property>
+        
+        <many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcessDataField"
+			column="process_data_field_id" name="dataField" fetch="join" lazy="false"/>
+    </class>	
+
 	<class name="org.beeblos.bpm.core.model.WStepHead" table="w_step_head">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -319,56 +371,16 @@
 		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
 			<column  name="mod_user" />
 		</property>
+
+       <set name="dataFieldDef" table="w_step_data_field" 
+				lazy="false" fetch="join" cascade="none" >
+            <key>
+                <column name="step_head_id" not-null="true" />
+            </key>
+            <one-to-many class="org.beeblos.bpm.core.model.WStepDataField" />
+        </set>	
 		
 	</class>
-
-    <class name="org.beeblos.bpm.core.model.WStepDataField" table="w_step_data_field">
-
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-        <property name="stepDefId" type="java.lang.Integer">
-            <column name="step_def_id"  />
-        </property> 		
-
-        <property name="name" type="string">
-            <column name="name" length="100" not-null="true" />
-        </property>
-        <property name="required" type="java.lang.Boolean">
-            <column name="required" />
-        </property>
-        <property name="active" type="java.lang.Boolean">
-            <column name="active" />
-        </property>
-        <property name="length" type="java.lang.Integer">
-            <column name="length"  />
-        </property>        
-
-       <property name="defaultValue" type="string">
-            <column name="defaultValue" length="100" not-null="true" unique="true" />
-        </property>
-
-        <property name="comments" type="string">
-            <column name="comments" />
-        </property>
-		<property generated="never" lazy="false" name="insertDate" type="timestamp">
-			<column name="insert_date"  />
-		</property>
-        <property name="insertUser" type="java.lang.Integer">
-            <column name="insert_user" not-null="true" />
-        </property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column name="mod_date"  />
-		</property>
-        <property name="modUser" type="java.lang.Integer">
-            <column name="mod_user" not-null="true" />
-        </property>
-        
-        <many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcessDataField"
-			column="process_data_field_id" name="dataField" fetch="join" lazy="false"/>
-    </class>	
-
 
 	<class name="org.beeblos.bpm.core.model.WStepDef" table="w_step_def">
 		<id name="id" type="java.lang.Integer">
@@ -1286,9 +1298,11 @@
             <column name="id" />
             <generator class="identity" />
         </id>
-       
-        <many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcessHead"
-			column="process_head_id"  name="processHead" fetch="join" lazy="false" />
+		
+		<property name="processHeadId" type="java.lang.Integer">
+			<column name="process_head_id" />
+		</property>
+
         
         <many-to-one name="dataType" class="org.beeblos.bpm.core.model.WDataType" fetch="join" lazy="false">
             <column name="data_type_id" not-null="true" />
