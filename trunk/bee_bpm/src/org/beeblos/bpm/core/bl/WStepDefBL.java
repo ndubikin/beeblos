@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
@@ -480,7 +481,18 @@ public class WStepDefBL {
 	
 	public WStepDef getWStepDefByPK(Integer id, Integer userId) throws WStepDefException {
 
-		return new WStepDefDao().getStepDefByPK(id);
+		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id);
+		
+		try {
+			stepDef.getStepHead().setDataFieldDef(
+						new WStepDataFieldBL().getWStepDataFieldSet(
+								stepDef.getStepHead().getId(),userId ) );
+		} catch (WStepDataFieldException e) {
+			logger.error("Can't load manually the dataField set !!!");
+			e.printStackTrace();
+		}
+		
+		return stepDef;
 	}
 	
 	
