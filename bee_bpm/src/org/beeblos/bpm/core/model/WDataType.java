@@ -22,9 +22,9 @@ public class WDataType implements java.io.Serializable {
 	private Integer sqlType; // must match with java.sql.Type
 	private String sqlTypeName; // must match with java.sql.Type
 	private Date insertDate;
-	private int insertUser;
+	private Integer insertUser;
 	private Date modDate;
-	private int modUser;
+	private Integer modUser;
 
 	public WDataType() {
 	}
@@ -77,11 +77,11 @@ public class WDataType implements java.io.Serializable {
 		this.insertDate = insertDate;
 	}
 
-	public int getInsertUser() {
+	public Integer getInsertUser() {
 		return this.insertUser;
 	}
 
-	public void setInsertUser(int insertUser) {
+	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
 	}
 
@@ -93,11 +93,11 @@ public class WDataType implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
-	public int getModUser() {
+	public Integer getModUser() {
 		return this.modUser;
 	}
 
-	public void setModUser(int modUser) {
+	public void setModUser(Integer modUser) {
 		this.modUser = modUser;
 	}
 
@@ -121,4 +121,100 @@ public class WDataType implements java.io.Serializable {
 		this.sqlTypeName = sqlTypeName;
 	}
 
+
+	@Override
+	public String toString() {
+		return "WDataType ["
+				+ (id != null ? "id=" + id + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (maxLength != null ? "maxLength=" + maxLength + ", " : "")
+				+ (showName != null ? "showName=" + showName + ", " : "")
+				+ (sqlType != null ? "sqlType=" + sqlType + ", " : "")
+				+ (sqlTypeName != null ? "sqlTypeName=" + sqlTypeName + ", "
+						: "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ "insertUser=" + insertUser + ", "
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ "modUser=" + modUser + "]";
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result + insertUser;
+		result = prime * result
+				+ ((maxLength == null) ? 0 : maxLength.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + modUser;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((showName == null) ? 0 : showName.hashCode());
+		result = prime * result + ((sqlType == null) ? 0 : sqlType.hashCode());
+		result = prime * result
+				+ ((sqlTypeName == null) ? 0 : sqlTypeName.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof WDataType))
+			return false;
+		WDataType other = (WDataType) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser != other.insertUser)
+			return false;
+		if (maxLength == null) {
+			if (other.maxLength != null)
+				return false;
+		} else if (!maxLength.equals(other.maxLength))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser != other.modUser)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (showName == null) {
+			if (other.showName != null)
+				return false;
+		} else if (!showName.equals(other.showName))
+			return false;
+		if (sqlType == null) {
+			if (other.sqlType != null)
+				return false;
+		} else if (!sqlType.equals(other.sqlType))
+			return false;
+		if (sqlTypeName == null) {
+			if (other.sqlTypeName != null)
+				return false;
+		} else if (!sqlTypeName.equals(other.sqlTypeName))
+			return false;
+		return true;
+	}
+	
 }
