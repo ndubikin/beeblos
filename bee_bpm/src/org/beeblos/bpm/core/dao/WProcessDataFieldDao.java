@@ -1,11 +1,13 @@
 package org.beeblos.bpm.core.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
+import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
@@ -206,6 +208,70 @@ public class WProcessDataFieldDao {
 
 		return processs;
 	}
+	
+	//rrl 20130801
+	@SuppressWarnings("unchecked")
+	public List<StringPair> getComboList(
+			String firstLineText, String separationLine, Integer processHeadId )
+	throws WProcessDataFieldException {
+		 
+		List<WProcessDataField> lpdf = null;
+		List<StringPair> retorno = new ArrayList<StringPair>(10);
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			lpdf = session
+					.createQuery("From WProcessDataField pdfi WHERE pdfi.processHeadId= ? order by pdfi.name ")
+					.setInteger(0, processHeadId)
+					.list();
+	
+			if (lpdf!=null) {
+				
+				// inserta los extras
+				if ( firstLineText!=null && !"".equals(firstLineText) ) {
+					if ( !firstLineText.equals("WHITESPACE") ) {
+						retorno.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
+					} else {
+						retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+					}
+				}
+				
+				if ( separationLine!=null && !"".equals(separationLine) ) {
+					if ( !separationLine.equals("WHITESPACE") ) {
+						retorno.add(new StringPair(null,separationLine));  // deja la separación línea con lo q venga
+					} else {
+						retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+					}
+				}
+				
+				for (WProcessDataField pdfi: lpdf) {
+					retorno.add(new StringPair(pdfi.getId(),pdfi.getName()));
+				}
+			} else {
+				// nes  - si el select devuelve null entonces devuelvo null
+				retorno=null;
+			}
+			
+			
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			throw new WProcessDataFieldException(
+					"Can't obtain WProcessDataField combo list "
+					+ex.getMessage()+"\n"+ex.getCause());
+		} catch (Exception e) {}
+
+		return retorno;
+
+	}
+	
 	
 }
 	
