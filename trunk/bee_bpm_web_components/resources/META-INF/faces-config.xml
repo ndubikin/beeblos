@@ -18,6 +18,11 @@
 		<managed-bean-class>org.beeblos.bpm.wc.taglib.bean.UserAndRoleSelectorBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+	<managed-bean>
+		<managed-bean-name>dataFieldSelectorBean</managed-bean-name>
+		<managed-bean-class>org.beeblos.bpm.wc.taglib.bean.DataFieldSelectorBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
  <managed-bean>
   <managed-bean-name>login_x_Bean</managed-bean-name>

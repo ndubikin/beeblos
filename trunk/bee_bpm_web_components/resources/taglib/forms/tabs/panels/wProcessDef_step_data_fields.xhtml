@@ -7,8 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
 
-
-	<h:form id="w_process_def_step_data_field_id" style="margin-left: 16px;">
+	<h:form id="w_process_def_data_fields_form" style="margin-left: 16px;">
 	
 		<rich:spacer height="20px"/>
 
@@ -19,8 +18,8 @@
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 				var="sdf" width="100%" columnClasses="center" rows="5"
-				>
-				
+				rendered="#{wStepDefFormBean.stepDataFieldListSize gt 0}">
+			
 				<f:facet name="header">
 					<h:outputText value="#{msg.label_data_field}" />
 				</f:facet>
@@ -32,10 +31,36 @@
 					</f:facet>
 					<h:outputText value="#{sdf.dataField.name}" />
 				</rich:column>
-	
 
 			</rich:dataTable>
 
+			<h:outputText value="#{msg.label_no_data_fields_related}" 
+						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.stepDataFieldListSize eq 0}"
+						style="font-weight: bold;"/>
+						
+	
+			<rich:spacer height="10px"/>
+	
+			<h:panelGroup>
+				<a4j:jsFunction name="onsubmitSearchDataField" action="#{wStepDefFormBean.updateDataFieldsRelated}"
+					reRender="w_process_def_data_fields_form">
+					<a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strDataFieldList}"  />
+				</a4j:jsFunction>			
+				<a4j:commandLink id="insert_user"
+					title="#{msg.label_add_new_data_field_to_project}"
+					action="#{dataFieldSelectorBean.loadInfoForDataField}"
+					oncomplete="javascript:Richfaces.showModalPanel('mpSearchDataField', {titleParam: '#{msg.label_data_fields_involved_in_this_step}'});"
+					reRender="mpSearchDataField"
+					rendered="#{contextoSeguridad.permiteCualquiera['530'] and wStepDefFormBean.currentWStepDef != null}">
+					<h:graphicImage id="imgInsertar" value="/images/insertar.png"
+						style="border:0;" />
+			 		<a4j:actionparam name="strUser" value="#{wStepDefFormBean.strDataFieldList}" assignTo="#{dataFieldSelectorBean.strDataFieldString}" />
+			 		<a4j:actionparam name="processHeadId" value="#{wStepDefFormBean.currentProcessHeadId}" assignTo="#{dataFieldSelectorBean.processHeadId}" />
+				</a4j:commandLink>
+			</h:panelGroup>
+	
+	
+						
 		</h:panelGrid>
 
 	</h:form>

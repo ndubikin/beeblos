@@ -49,9 +49,10 @@
 					</f:facet>
 					<a4j:commandLink value="#{step.id}" action="#{wStepDefFormBean.loadObject}"
 						style="text-decoration:none;color:black;"
-						reRender="w_process_def_step_definition, w_process_def_step_permissions_outgoing_routes_form, w_process_def_step_permissions_incoming_routes_form, w_process_def_step_permissions_responses, w_process_def_step_permissions_roles, w_process_def_step_permissions_users, edit_wstepdef_form">
+						reRender="w_process_def_data_fields_form, w_process_def_step_definition, w_process_def_step_permissions_outgoing_routes_form, w_process_def_step_permissions_incoming_routes_form, w_process_def_step_permissions_responses, w_process_def_step_permissions_roles, w_process_def_step_permissions_users, edit_wstepdef_form">
                 		<a4j:actionparam name="det1" assignTo="#{wStepDefFormBean.currObjId}" value="#{step.id}"/>
-                		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentStepId}" value="#{step.id}"/>
+                		<a4j:actionparam name="det2" assignTo="#{wStepDefFormBean.currentProcessHeadId}" value="#{wProcessDefFormBean.currentWProcessDef.process.id}"/>
+                		<a4j:actionparam name="det3" assignTo="#{wProcessDefFormBean.currentStepId}" value="#{step.id}"/>
 					</a4j:commandLink>
 				</rich:column>
 
@@ -62,9 +63,10 @@
 					</f:facet>
 					<a4j:commandLink value="#{step.name}" action="#{wStepDefFormBean.loadObject}"
 						style="text-decoration:none;color:black;"
-						reRender="w_process_def_step_definition, w_process_def_step_permissions_outgoing_routes_form, w_process_def_step_permissions_incoming_routes_form, w_process_def_step_permissions_responses, w_process_def_step_permissions_roles, w_process_def_step_permissions_users, edit_wstepdef_form">
+						reRender="w_process_def_data_fields_form, w_process_def_step_definition, w_process_def_step_permissions_outgoing_routes_form, w_process_def_step_permissions_incoming_routes_form, w_process_def_step_permissions_responses, w_process_def_step_permissions_roles, w_process_def_step_permissions_users, edit_wstepdef_form">
                 		<a4j:actionparam name="det1" assignTo="#{wStepDefFormBean.currObjId}" value="#{step.id}"/>
-                		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentStepId}" value="#{step.id}"/>
+                		<a4j:actionparam name="det2" assignTo="#{wStepDefFormBean.currentProcessHeadId}" value="#{wProcessDefFormBean.currentWProcessDef.process.id}"/>
+                		<a4j:actionparam name="det3" assignTo="#{wProcessDefFormBean.currentStepId}" value="#{step.id}"/>
 					</a4j:commandLink>
 				</rich:column>
 
@@ -75,7 +77,7 @@
 					</f:facet>
 					<a4j:commandLink value="#{step.stepComments}" action="#{wStepDefFormBean.loadObject}"
 						style="text-decoration:none;color:black;"
-						reRender="w_process_def_step_definition, w_process_def_step_permissions_outgoing_routes_form, w_process_def_step_permissions_incoming_routes_form, w_process_def_step_permissions_responses, w_process_def_step_permissions_roles, w_process_def_step_permissions_users, edit_wstepdef_form">
+						reRender="w_process_def_data_fields_form, w_process_def_step_definition, w_process_def_step_permissions_outgoing_routes_form, w_process_def_step_permissions_incoming_routes_form, w_process_def_step_permissions_responses, w_process_def_step_permissions_roles, w_process_def_step_permissions_users, edit_wstepdef_form">
                 		<a4j:actionparam name="det1" assignTo="#{wStepDefFormBean.currObjId}" value="#{step.id}"/>
                 		<a4j:actionparam name="det2" assignTo="#{wProcessDefFormBean.currentStepId}" value="#{step.id}"/>
 					</a4j:commandLink>

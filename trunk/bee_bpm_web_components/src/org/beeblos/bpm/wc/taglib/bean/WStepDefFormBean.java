@@ -83,6 +83,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private String strRoleList; // property to pass current role list ids to popup
 	private String strUserList; // property to pass current role list ids to popup
 	
+	//rrl 20130801 
+	private String strDataFieldList; // property to pass current role list ids to popup
+	
 	// dml 20120505
 	private String returnStatement;
 	
@@ -104,6 +107,10 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private String activeFilter;
 	
 	private String messageStyle;
+
+	//rrl 20130801
+	private Integer currentProcessHeadId;
+	
 	
 	public WStepDefFormBean() {		
 		super();
@@ -980,6 +987,26 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.strUserList = strUserList;
 	}
 
+	//rrl 20130801
+	public String getStrDataFieldList() {
+		
+		strDataFieldList="";
+		if ( currentWStepDef.getStepHead()!=null
+				&& currentWStepDef.getStepHead().getDataFieldDef() != null ) {
+			for ( WStepDataField su: this.currentWStepDef.getStepHead().getDataFieldDef()) {
+				strDataFieldList+=(strDataFieldList!=null && !"".equals(strDataFieldList)?",":"")+su.getId();
+			}
+		}
+		
+		System.out.println("--------------->>>>>>>>> strDataFieldList ------------>>>>>>>>"+strDataFieldList);
+
+		return strDataFieldList;
+	}
+	
+	public void setStrDataFieldList(String strDataFieldList) {
+		this.strDataFieldList = strDataFieldList;
+	}
+
 	public String getMessageStyle() {
 		return messageStyle;
 	}
@@ -1437,33 +1464,52 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	}
 
+	//rrl 20130801
 	public List<WStepDataField> getStepDataFieldList() {
 
+		List<WStepDataField> dfl = new ArrayList<WStepDataField>();
+		
 		if ( currentWStepDef!=null   
 				&& currentWStepDef.getStepHead()!=null
 				&& currentWStepDef.getStepHead().getDataFieldDef() != null
-				&& currentWStepDef.getStepHead().getDataFieldDef().size() > 0) {
+				&& currentWStepDef.getStepHead().getDataFieldDef().size() != 0) {
 
-			List<WStepDataField> dfl = 
-					new ArrayList<WStepDataField>();
-			
 			dfl = new ArrayList<WStepDataField>(currentWStepDef.getStepHead().getDataFieldDef());
 			
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> size lista dfl:"+dfl.size());
-			
-			if (dfl.size()>0) {
-				System.out.println("#################################################################################");
-				for (WStepDataField sdf: dfl) {
-					System.out.println(">>>>>>>>> campo:"+sdf.getDataField().getName()+" id-df:"+sdf.getId());
-				}
-				System.out.println("#################################################################################");
-			}
-			
-			return dfl;
 		}
-System.out.println("################# OJO OJO LISTA DFL RETORNA NULL ...");
-		return null;
+		
+		return dfl;
+	}
 
+	public Integer getStepDataFieldListSize() {
+		
+		return (currentWStepDef!=null && currentWStepDef.getStepHead()!=null && currentWStepDef.getStepHead().getDataFieldDef() != null ?
+				currentWStepDef.getStepHead().getDataFieldDef().size():
+					0);
+	}
+
+	//rrl 20130801
+	public Integer getCurrentProcessHeadId() {
+		return currentProcessHeadId;
+	}
+
+	public void setCurrentProcessHeadId(Integer currentProcessHeadId) {
+		this.currentProcessHeadId = currentProcessHeadId;
+	}
+
+	public String updateDataFieldsRelated() {
+		
+		if ("".equals(strDataFieldList)) {
+		
+			System.out.println("### TRAZA: ACTUALIZAR los valores strDataFieldList="+strDataFieldList);
+			
+		} else {
+	
+			System.out.println("### TRAZA: strDataFieldList es VACIO");
+			
+		}
+		
+		return null;
 	}
 	
 }
