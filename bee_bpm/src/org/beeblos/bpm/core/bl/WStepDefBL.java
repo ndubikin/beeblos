@@ -483,14 +483,14 @@ public class WStepDefBL {
 
 		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id);
 		
-		try {
-			stepDef.getStepHead().setDataFieldDef(
-						new WStepDataFieldBL().getWStepDataFieldSet(
-								stepDef.getStepHead().getId(),userId ) );
-		} catch (WStepDataFieldException e) {
-			logger.error("Can't load manually the dataField set !!!");
-			e.printStackTrace();
-		}
+//		try {
+//			stepDef.getStepHead().setDataFieldDef(
+//						new WStepDataFieldBL().getWStepDataFieldSet(
+//								stepDef.getStepHead().getId(),userId ) );
+//		} catch (WStepDataFieldException e) {
+//			logger.error("Can't load manually the dataField set !!!");
+//			e.printStackTrace();
+//		}
 		
 		return stepDef;
 	}
