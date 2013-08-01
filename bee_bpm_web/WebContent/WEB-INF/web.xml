@@ -82,6 +82,10 @@
     <param-value>/images/exception/fatal3.png</param-value>
   </context-param>
   <filter>
+    <filter-name>RichFacesFirefox11Filter</filter-name>
+    <filter-class>org.beeblos.bpm.wc.taglib.util.RichFacesFirefox11Filter</filter-class>
+  </filter>
+  <filter>
     <display-name>RichFaces Filter</display-name>
     <filter-name>richfaces</filter-name>
     <filter-class>org.ajax4jsf.Filter</filter-class>
@@ -98,6 +102,10 @@
       <param-value>100000</param-value>
     </init-param>
   </filter>
+  <filter-mapping>
+    <filter-name>RichFacesFirefox11Filter</filter-name>
+    <url-pattern>/a4j/*</url-pattern>
+  </filter-mapping> 
   <filter-mapping>
     <filter-name>richfaces</filter-name>
     <servlet-name>Faces Servlet</servlet-name>
