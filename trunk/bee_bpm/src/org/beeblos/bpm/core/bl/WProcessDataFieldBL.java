@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDataFieldDao;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
+import org.beeblos.bpm.core.model.noper.StringPair;
 
 
 
@@ -87,6 +88,13 @@ public class WProcessDataFieldBL {
 		return new WProcessDataFieldDao().getWProcessDataFieldList(processHeadId);
 	
 	}
+	
+	//rrl 20130801
+	public List<StringPair> getComboList(String firstLineText, String separationLine, Integer processHeadId ) throws WProcessDataFieldException {
+
+		return new WProcessDataFieldDao().getComboList(firstLineText, separationLine, processHeadId);
+	}
+	
 	
 }
 	
