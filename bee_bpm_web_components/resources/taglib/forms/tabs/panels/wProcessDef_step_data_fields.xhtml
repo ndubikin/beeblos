@@ -37,10 +37,9 @@
 			<h:outputText value="#{msg.label_no_data_fields_related}" 
 						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.stepDataFieldListSize eq 0}"
 						style="font-weight: bold;"/>
-						
 	
 			<rich:spacer height="10px"/>
-	
+
 			<h:panelGroup>
 				<a4j:jsFunction name="onsubmitSearchDataField" action="#{wStepDefFormBean.updateDataFieldsRelated}"
 					reRender="w_process_def_data_fields_form">

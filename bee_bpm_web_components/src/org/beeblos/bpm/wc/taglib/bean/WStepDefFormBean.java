@@ -8,6 +8,7 @@ import static org.beeblos.bpm.core.util.Constants.WSTEPDEF_QUERY;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -15,12 +16,16 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WProcessDataFieldBL;
+import org.beeblos.bpm.core.bl.WStepDataFieldBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepHeadBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.bl.WTimeUnitBL;
+import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WRoleDefException;
+import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
@@ -989,7 +994,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	//rrl 20130801
 	public String getStrDataFieldList() {
-		
+
 		strDataFieldList="";
 		if ( currentWStepDef.getStepHead()!=null
 				&& currentWStepDef.getStepHead().getDataFieldDef() != null ) {
@@ -1497,19 +1502,102 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.currentProcessHeadId = currentProcessHeadId;
 	}
 
+	//rrl 20130802
 	public String updateDataFieldsRelated() {
 		
-		if ("".equals(strDataFieldList)) {
+		try {
 		
-			System.out.println("### TRAZA: ACTUALIZAR los valores strDataFieldList="+strDataFieldList);
+			if ("".equals(strDataFieldList)) {
+				
+				WStepDataFieldBL wStepDataFieldBL = new WStepDataFieldBL();
+				Set<WStepDataField> dataFieldRelated = new WStepDataFieldBL().getWStepDataFieldSet(currentWStepDef.getStepHead().getId(), null);
+				if (dataFieldRelated != null) {
+					for (WStepDataField wsdf : dataFieldRelated) {
+						wStepDataFieldBL.delete(wsdf, null);
+					}
+				}
+				
+			} else {
+
+				updateStepDataFieldRelatedList();
+				
+			}
 			
-		} else {
-	
-			System.out.println("### TRAZA: strDataFieldList es VACIO");
-			
+		} catch (NumberFormatException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateDataFieldsRelated() NumberFormatException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WProcessDataFieldException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateDataFieldsRelated() WProcessDataFieldException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+		} catch (WStepDataFieldException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".updateDataFieldsRelated() WStepDataFieldException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
 		}
 		
 		return null;
+	}
+	
+	
+	private void updateStepDataFieldRelatedList() throws NumberFormatException, WStepDataFieldException, WProcessDataFieldException {
+				
+		WStepDataFieldBL wStepDataFieldBL = new WStepDataFieldBL();
+
+		boolean isInList = false;
+		
+		Set<WStepDataField> dataFieldRelated = new WStepDataFieldBL().getWStepDataFieldSet(currentWStepDef.getStepHead().getId(), null);
+		if (dataFieldRelated != null) {
+
+			for (String s : strDataFieldList.split(",")) {
+
+				isInList = false;
+				for (WStepDataField wsdf : dataFieldRelated) {
+					if (wsdf.getId().equals(Integer.parseInt(s))) {
+						isInList = true;
+						break;
+					}
+				}
+
+				if (!isInList) {
+					
+					WStepDataField stepDataField = new WStepDataField();
+					
+					stepDataField.setStepHeadId(currentWStepDef.getStepHead().getId());
+					stepDataField.setDataField(new WProcessDataFieldBL().getWProcessDataFieldByPK(Integer.parseInt(s), null));
+					wStepDataFieldBL.add(stepDataField, getCurrentUserId());
+				}
+			}
+
+			ArrayList<WStepDataField> removeList = new ArrayList<WStepDataField>();
+			for (WStepDataField wsdf : dataFieldRelated) {
+
+				isInList = false;
+
+				for (String s : strDataFieldList.split(",")) {
+
+					if (wsdf.getId().equals(Integer.parseInt(s))) {
+						isInList = true;
+						break;
+					}
+				}
+
+				if (!isInList) {
+					removeList.add(wsdf);
+				}
+			}
+
+			for (WStepDataField wsdf : removeList) {
+				wStepDataFieldBL.delete(wsdf, null);
+			}
+		}
 	}
 	
 }
