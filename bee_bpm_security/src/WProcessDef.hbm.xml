@@ -308,7 +308,7 @@
         </property> 		
 
         <property name="name" type="string">
-            <column name="name" length="100" not-null="true" />
+            <column name="name" length="100" />
         </property>
         <property name="required" type="java.lang.Boolean">
             <column name="required" />
@@ -321,7 +321,7 @@
         </property>        
 
        <property name="defaultValue" type="string">
-            <column name="default_value" length="100" not-null="true" unique="true" />
+            <column name="default_value" length="100" unique="true" />
         </property>
 
         <property name="comments" type="string">
