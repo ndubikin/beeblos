@@ -209,11 +209,11 @@ public class WStepDataFieldDao {
 		return processs;
 	}
 	
-	public Set<WStepDataField> getWStepDataFieldSet(Integer processHeadId) throws WStepDataFieldException {
+	public Set<WStepDataField> getWStepDataFieldSet(Integer stepHeadId) throws WStepDataFieldException {
 
 		Set<WStepDataField> dataFieldSet = new HashSet<WStepDataField>(0);
 
-		List<WStepDataField> listDF = getWStepDataFieldList(processHeadId);
+		List<WStepDataField> listDF = getWStepDataFieldList(stepHeadId);
 		for (WStepDataField dataField: listDF) {
 			dataFieldSet.add(dataField);
 		}
