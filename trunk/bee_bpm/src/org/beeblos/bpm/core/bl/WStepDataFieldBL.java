@@ -89,10 +89,10 @@ public class WStepDataFieldBL {
 	
 	}
 	
-	public Set<WStepDataField> getWStepDataFieldSet( Integer processHeadId, Integer currentUserId) 
+	public Set<WStepDataField> getWStepDataFieldSet( Integer stepHeadId, Integer currentUserId) 
 			throws WStepDataFieldException {
 
-		return new WStepDataFieldDao().getWStepDataFieldSet(processHeadId);
+		return new WStepDataFieldDao().getWStepDataFieldSet(stepHeadId);
 	
 	}
 	
