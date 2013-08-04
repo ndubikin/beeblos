@@ -12,7 +12,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessHead;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 
 

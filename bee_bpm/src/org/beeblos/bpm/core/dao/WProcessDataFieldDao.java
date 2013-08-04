@@ -7,14 +7,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 
 
 public class WProcessDataFieldDao {
 	
+	private static final String ORG_HIBERNATE_EXCEPTION_CONSTRAINT_VIOLATION_EXCEPTION = "org.hibernate.exception.ConstraintViolationException";
 	private static final Log logger = LogFactory.getLog(WProcessDataFieldDao.class.getName());
 	
 	public WProcessDataFieldDao(){
@@ -71,6 +73,14 @@ public class WProcessDataFieldDao {
 			HibernateUtil.borrar(processDataField);
 
 		} catch (HibernateException ex) {
+			
+			// check constraint violation exception
+			if (ex.getClass().getName().equals(ORG_HIBERNATE_EXCEPTION_CONSTRAINT_VIOLATION_EXCEPTION) ) {
+				String mess = "WProcessDataFieldDao:org.hibernate.exception.ConstraintViolationException deleting a process definition record "+ processDataField.getName() +
+						" <id = "+processDataField.getId()+ "> \n  The record will be used by a Step Definition. Delete it first!! "+" - "+ex.getMessage()+"\n"+ex.getCause(); 
+				logger.error( mess );
+				throw new WProcessDataFieldException(mess);
+			}
 			logger.error("WProcessDataFieldDao: delete - Can't delete process definition record "+ processDataField.getName() +
 					" <id = "+processDataField.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WProcessDataFieldException("WProcessDataFieldDao:  delete - Can't delete process definition record  "+ processDataField.getName() +

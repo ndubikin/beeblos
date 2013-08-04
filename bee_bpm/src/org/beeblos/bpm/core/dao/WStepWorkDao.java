@@ -15,7 +15,7 @@ import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;

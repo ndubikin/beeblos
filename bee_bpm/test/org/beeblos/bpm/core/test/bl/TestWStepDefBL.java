@@ -15,7 +15,7 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.junit.Test;
 
 

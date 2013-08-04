@@ -9,7 +9,7 @@ import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WTimeUnit;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 
 

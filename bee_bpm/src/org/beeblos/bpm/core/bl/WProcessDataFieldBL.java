@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDataFieldDao;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 
 

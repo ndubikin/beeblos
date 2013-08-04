@@ -11,9 +11,12 @@ public class WStepDataField implements java.io.Serializable {
 
 	/**
 	 * this Class manages related fields for a a step
-	 * Only must select a step defined in w_process_data_field because
-	 * the datafields are managed at process-head level
-	 * Used steps can't be deleted from w_process_data_field 
+	 * Only must select a step already defined in w_process_data_field 
+	 * because the datafields are managed at process-head level
+	 * Used datafields can't be deleted from w_process_data_field:
+	 * the system will check for all values = null to delete a process_data_field
+	 * from managed table.
+	 *  
 	 */
 	private static final long serialVersionUID = 1L;
 	
@@ -23,13 +26,16 @@ public class WStepDataField implements java.io.Serializable {
 //	private WStepHead stepHead;
 	
 	private WProcessDataField dataField;
+	private Integer order;
 	private String name;
-	private Boolean required;
 	private String comments;
-	private Boolean active;
+	private boolean active;
+	private boolean readOnly; // indicates this data field must be showeD but no modified (default step processor)
+	private boolean forceModification; // idicates user must input the value in this WStepDataField
+	private boolean required;
+
 	private Integer length;
 	private String defaultValue;
-	
 	// trail
 	private Date insertDate;
 	private Integer insertUser;
@@ -43,9 +49,7 @@ public class WStepDataField implements java.io.Serializable {
 	public WStepDataField(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
-
 			this.dataField = new WProcessDataField();
-		
 		}	
 	}
 	
@@ -87,12 +91,44 @@ public class WStepDataField implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Boolean getRequired() {
-		return required;
+	public Integer getOrder() {
+		return order;
 	}
 
-	public void setRequired(Boolean required) {
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+
+	public boolean isForceModification() {
+		return forceModification;
+	}
+
+	public void setForceModification(boolean forceModification) {
+		this.forceModification = forceModification;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public void setRequired(boolean required) {
 		this.required = required;
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public boolean isRequired() {
+		return required;
 	}
 
 	public String getComments() {
@@ -101,14 +137,6 @@ public class WStepDataField implements java.io.Serializable {
 
 	public void setComments(String comments) {
 		this.comments = comments;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
 	}
 
 	public Integer getLength() {
@@ -129,6 +157,33 @@ public class WStepDataField implements java.io.Serializable {
 
 	public Date getInsertDate() {
 		return insertDate;
+	}
+
+	@Override
+	public String toString() {
+		return "WStepDataField ["
+				+ (id != null ? "id=" + id + ", " : "")
+				+ (stepHeadId != null ? "stepHeadId=" + stepHeadId + ", " : "")
+				+ (dataField != null ? "dataField=" + dataField + ", " : "")
+				+ (order != null ? "order=" + order + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (comments != null ? "comments=" + comments + ", " : "")
+				+ "active="
+				+ active
+				+ ", readOnly="
+				+ readOnly
+				+ ", forceModification="
+				+ forceModification
+				+ ", required="
+				+ required
+				+ ", "
+				+ (length != null ? "length=" + length + ", " : "")
+				+ (defaultValue != null ? "defaultValue=" + defaultValue + ", "
+						: "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
 	public void setInsertDate(Date insertDate) {
@@ -179,13 +234,14 @@ public class WStepDataField implements java.io.Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((active == null) ? 0 : active.hashCode());
+		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result
 				+ ((dataField == null) ? 0 : dataField.hashCode());
 		result = prime * result
 				+ ((defaultValue == null) ? 0 : defaultValue.hashCode());
+		result = prime * result + (forceModification ? 1231 : 1237);
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
@@ -195,10 +251,9 @@ public class WStepDataField implements java.io.Serializable {
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((required == null) ? 0 : required.hashCode());
-//		result = prime * result
-//				+ ((stepHead == null) ? 0 : stepHead.hashCode());
+		result = prime * result + ((order == null) ? 0 : order.hashCode());
+		result = prime * result + (readOnly ? 1231 : 1237);
+		result = prime * result + (required ? 1231 : 1237);
 		result = prime * result
 				+ ((stepHeadId == null) ? 0 : stepHeadId.hashCode());
 		return result;
@@ -213,10 +268,7 @@ public class WStepDataField implements java.io.Serializable {
 		if (!(obj instanceof WStepDataField))
 			return false;
 		WStepDataField other = (WStepDataField) obj;
-		if (active == null) {
-			if (other.active != null)
-				return false;
-		} else if (!active.equals(other.active))
+		if (active != other.active)
 			return false;
 		if (comments == null) {
 			if (other.comments != null)
@@ -232,6 +284,8 @@ public class WStepDataField implements java.io.Serializable {
 			if (other.defaultValue != null)
 				return false;
 		} else if (!defaultValue.equals(other.defaultValue))
+			return false;
+		if (forceModification != other.forceModification)
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -268,16 +322,15 @@ public class WStepDataField implements java.io.Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (required == null) {
-			if (other.required != null)
+		if (order == null) {
+			if (other.order != null)
 				return false;
-		} else if (!required.equals(other.required))
+		} else if (!order.equals(other.order))
 			return false;
-//		if (stepHead == null) {
-//			if (other.stepHead != null)
-//				return false;
-//		} else if (!stepHead.equals(other.stepHead))
-//			return false;
+		if (readOnly != other.readOnly)
+			return false;
+		if (required != other.required)
+			return false;
 		if (stepHeadId == null) {
 			if (other.stepHeadId != null)
 				return false;

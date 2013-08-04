@@ -11,7 +11,7 @@ import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WEmailTemplates;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;

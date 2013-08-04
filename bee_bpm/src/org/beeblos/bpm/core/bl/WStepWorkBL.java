@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
@@ -37,6 +38,7 @@ import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
@@ -48,17 +50,21 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.noper.ManagedData;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
-import org.beeblos.bpm.core.model.noper.StringPair;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
+import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.core.util.Resourceutil;
+import org.beeblos.bpm.tm.TableManager;
+import org.beeblos.bpm.tm.exception.TableManagerException;
+
+import com.sp.common.util.StringPair;
 
 
 
 
 public class WStepWorkBL {
 	
+	private static final String INSERT = "INSERT";
 	private static final Log logger = LogFactory.getLog(WStepWorkBL.class.getName());
 	
 	public WStepWorkBL (){
@@ -78,10 +84,12 @@ public class WStepWorkBL {
 
 	}
 	
+	// ######### TRANSACCION URGENTE METER TRANSACCION #####################
 	
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
-	public Integer start(WProcessWork work, WStepWork stepw, ManagedData processCustomData, Integer currentUser) throws WStepWorkException, WProcessWorkException {
+	public Integer start(WProcessWork work, WStepWork stepw, ManagedData managedData, Integer currentUser) 
+			throws WStepWorkException, WProcessWorkException, TableManagerException {
 		
 		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"]");
 		
@@ -97,22 +105,36 @@ public class WStepWorkBL {
 			WProcessWorkBL wpbl = new WProcessWorkBL(); 
 			workId = wpbl.add(work, currentUser);
 			work = wpbl.getWProcessWorkByPK(workId	, currentUser); // recovers persisted work to assure all propreties are correctely loaded in the object
-			
+
+			if (managedData!=null) {
+				managedData.setCurrentWorkId(work.getId()); // process-work id
+				managedData.setProcessId(work.getProcess().getId()); // version id
+				managedData.setOperation(INSERT);
+			}
+
 		} else {
 			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+work.getId()+")");
 		}
 		
+		// if work persisted ok continue with step-work
 		stepw.setwProcessWork(work);
 		// timestamp & trace info
 		stepw.setArrivingDate(new Date());
 		stepw.setInsertUser( new WUserDef(currentUser) );
 		stepw.setModDate( DEFAULT_MOD_DATE);
 		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
+
+		if (managedData!=null) {
+			TableManager tm = new TableManager();
+			tm.process(managedData);
+		}
 		
 		_sendEmailNotification(stepw);
 
 		return idGeneratedStep;
 	}
+	
+	// ######### TRANSACCION URGENTE METER TRANSACCION #####################
 	
 	public void update(WStepWork stepw, Integer currentUser) throws WStepWorkException {
 		
@@ -416,7 +438,10 @@ public class WStepWorkBL {
 			this._lockStep(storedStep, currentUser);
 			
 			// set process custom data
-			
+			if (storedStep.getCurrentStep().getStepHead().getDataFieldDef()!=null
+					&& storedStep.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
+				_loadStepWorkManagedData(storedStep);
+			}
 			
 		} catch ( WStepWorkException swe ) {  // if can't lock it returns exception ...
 				
@@ -531,6 +556,44 @@ public class WStepWorkBL {
 		_lockStep(stepToLock, currentUser);
 		
 		return true;
+
+	}
+	
+	// load managed data for stepWork
+	private void _loadStepWorkManagedData(WStepWork stepWork){
+		if (stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null 
+				&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0){
+
+			// if there is defined custom data fields for a step(def) && managed table is defined ...
+			// then load stepWorkManagedData
+			if ( stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null
+					&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0
+					&& stepWork.getProcess().getProcess().getManagedTableConfiguration()!=null
+					&& stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()!=null
+					&& !"".equals(stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()) ) {
+				
+				ManagedData md = new ManagedData();
+				md.setDataField( 
+						ListConverters.convertWStepDataFieldToList
+						 (stepWork.getCurrentStep().getStepHead().getDataFieldDef(),null,null,ACTIVE_DATA_FIELDS) );
+				md.setChanged(false);				
+				md.setCurrentStepWorkId(stepWork.getId()); // step work id
+				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id
+				md.setProcessId(stepWork.getProcess().getProcess().getId()); // process head id
+//				List<ManagedDataField> fieldList = new ArrayList<ManagedDataField>();
+//				fieldList = TableManager.loadRecord(md);
+//				md.setDataField(dataField)
+
+				// IMPLEMENTAR
+				TableManager tm = new TableManager();
+//				tm.loadRecord(md);
+				
+				
+				stepWork.setStepWorkManagedData(md);				
+				
+			}
+			
+		} 
 
 	}
 	

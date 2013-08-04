@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.EnvironmentDao;
 import org.beeblos.bpm.core.error.EnvironmentException;
 import org.beeblos.bpm.core.model.Environment;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 public class EnvironmentBL {
 

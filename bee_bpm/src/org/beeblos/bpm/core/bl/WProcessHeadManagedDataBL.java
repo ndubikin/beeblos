@@ -10,8 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessHeadManagedDataDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessException;
-import org.beeblos.bpm.core.model.WProcessHeadManagedData;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration;
+import com.sp.common.util.StringPair;
 
 
 
@@ -23,10 +23,10 @@ public class WProcessHeadManagedDataBL {
 		
 	}
 	
-	public Integer add(WProcessHeadManagedData managedTableDef, Integer currentUserId) 
+	public Integer add(WProcessHeadManagedDataConfiguration managedTableDef, Integer currentUserId) 
 			throws WProcessException, WProcessDefException {
 		
-		logger.debug("add() WProcessHeadManagedData - Name: ["+managedTableDef.getName()+"]");
+		logger.debug("add() WProcessHeadManagedDataConfiguration - Name: ["+managedTableDef.getName()+"]");
 		
 		if(managedTableDef.getIgnoreCase()==null) {
 			managedTableDef.setIgnoreCase(true);
@@ -42,9 +42,9 @@ public class WProcessHeadManagedDataBL {
 
 	}
 		
-	public void update(WProcessHeadManagedData managedTableDef, Integer currentUserId) throws WProcessException {
+	public void update(WProcessHeadManagedDataConfiguration managedTableDef, Integer currentUserId) throws WProcessException {
 		
-		logger.debug("update() WProcessHeadManagedData < id = "+managedTableDef.getHeadId()+">");
+		logger.debug("update() WProcessHeadManagedDataConfiguration < id = "+managedTableDef.getHeadId()+">");
 		
 		if (!managedTableDef.equals(
 				new WProcessHeadManagedDataDao()
@@ -63,21 +63,21 @@ public class WProcessHeadManagedDataBL {
 	}
 	
 	
-	public void delete(WProcessHeadManagedData managedTableDef, Integer currentUserId) throws WProcessException {
+	public void delete(WProcessHeadManagedDataConfiguration managedTableDef, Integer currentUserId) throws WProcessException {
 
-		logger.debug("delete() WProcessHeadManagedData - Name: ["+managedTableDef.getName()+"]");
+		logger.debug("delete() WProcessHeadManagedDataConfiguration - Name: ["+managedTableDef.getName()+"]");
 		
 		new WProcessHeadManagedDataDao().delete(managedTableDef, currentUserId);
 
 	}
 
-	public WProcessHeadManagedData getWProcessHeadManagedTableByPK(Integer id, Integer currentUserId) throws WProcessException {
+	public WProcessHeadManagedDataConfiguration getWProcessHeadManagedTableByPK(Integer id, Integer currentUserId) throws WProcessException {
 
 		return new WProcessHeadManagedDataDao().getWProcessHeadManagedTableByPK(id, currentUserId);
 	}
 	
 	
-	public WProcessHeadManagedData getWProcessHeadManagedTableByName(String name, Integer currentUserId) throws WProcessException {
+	public WProcessHeadManagedDataConfiguration getWProcessHeadManagedTableByName(String name, Integer currentUserId) throws WProcessException {
 
 		return new WProcessHeadManagedDataDao().getWProcessHeadManagedTableByName(name, currentUserId);
 	}
@@ -87,7 +87,7 @@ public class WProcessHeadManagedDataBL {
 	}
 	
 	
-	public List<WProcessHeadManagedData> getTableDefList(Integer currentUserId) throws WProcessException {
+	public List<WProcessHeadManagedDataConfiguration> getTableDefList(Integer currentUserId) throws WProcessException {
 
 		return new WProcessHeadManagedDataDao().getTableDefList(currentUserId);
 	

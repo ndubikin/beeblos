@@ -19,6 +19,7 @@ public class WStepWork implements java.io.Serializable {
 	private Integer id;
 	
 	private WProcessWork wProcessWork;
+	private ManagedData stepWorkManagedData; // nes 20130803
 	
 	// TODO - QUITAR ESTAS DOS PROPIEDADES Q YA LAS TENEMOS EN WPROCESSWORK
 	private WProcessDef process;
@@ -201,7 +202,6 @@ public class WStepWork implements java.io.Serializable {
 //		this.version = version;
 //	}
 
-
 	/**
 	 * @return the previousStep
 	 */
@@ -209,6 +209,14 @@ public class WStepWork implements java.io.Serializable {
 		return previousStep;
 	}
 
+
+	public ManagedData getStepWorkManagedData() {
+		return stepWorkManagedData;
+	}
+
+	public void setStepWorkManagedData(ManagedData stepWorkManagedData) {
+		this.stepWorkManagedData = stepWorkManagedData;
+	}
 
 	/**
 	 * @param previousStep the previousStep to set
@@ -515,6 +523,8 @@ public class WStepWork implements java.io.Serializable {
 				+ (id != null ? "id=" + id + ", " : "")
 				+ (wProcessWork != null ? "wProcessWork=" + wProcessWork + ", "
 						: "")
+				+ (stepWorkManagedData != null ? "stepWorkManagedData="
+						+ stepWorkManagedData + ", " : "")
 				+ (process != null ? "process=" + process + ", " : "")
 				+ (previousStep != null ? "previousStep=" + previousStep + ", "
 						: "")

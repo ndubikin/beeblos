@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepResponseDefDao;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.model.WStepResponseDef;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 
 

@@ -26,7 +26,7 @@ import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 
 
@@ -173,30 +173,34 @@ public class WProcessDefBL {
 			// check head && managed data table changes ...
 			// managed table only can be added if the WProcessDef and WProcessHead already exists
 			// There is not possible to add it in "add" method for WProcessDef ...
-			if (process.getProcess()!=null && process.getProcess().getManagedTable()!=null) {
+			if (process.getProcess()!=null && process.getProcess().getManagedTableConfiguration()!=null) {
 				
-				if (process.getProcess().getManagedTable().getHeadId()==0
-						|| storedProcess.getProcess().getManagedTable()==null
-						|| storedProcess.getProcess().getManagedTable().getHeadId()==0) {
+				if (process.getProcess().getManagedTableConfiguration().getHeadId()==0
+						|| storedProcess.getProcess().getManagedTableConfiguration()==null
+						|| storedProcess.getProcess().getManagedTableConfiguration().getHeadId()==0) {
 					
 					try {
 						
 						// set pk (same id that process-head-id
-						process.getProcess().getManagedTable().setHeadId(process.getProcess().getId());
+						process.getProcess().getManagedTableConfiguration().setHeadId(process.getProcess().getId());
 						
 						Integer id = new WProcessHeadManagedDataBL()
-												.add(process.getProcess().getManagedTable(), currentUserId);
+												.add(process.getProcess().getManagedTableConfiguration(), currentUserId);
 						if ( id!=process.getProcess().getId() ) {
 							logger.error("WProcessDef:update Error trying persist ManagedTable for process head id:"
 									+(process.getProcess().getId()!=null?process.getProcess().getId():"null")
 									+". The w_process_head_managed_data was added with id:"+(id!=null?id:"null"));
 						}
 						
-						process.getProcess().getManagedTable().setHeadId(id);
+						process.getProcess().getManagedTableConfiguration().setHeadId(id);
 					
 					} catch (WProcessException e) {
 						logger.error("Can't add process head managed table name:"
-										+(process.getProcess().getManagedTable().getName()!=null?process.getProcess().getManagedTable().getName():"null")
+										+(process.getProcess()
+													.getManagedTableConfiguration()
+													.getName()!=null 
+															? process.getProcess().getManagedTableConfiguration().getName()
+															: "null")
 										+ e.getMessage()+" - "+e.getCause());
 					}
 					
@@ -543,9 +547,9 @@ public class WProcessDefBL {
 
 		if (wpd.getProcess().getId()==null  
 				|| wpd.getProcess().getId()==0 
-				|| wpd.getProcess().getManagedTable()==null
-				|| wpd.getProcess().getManagedTable().getName()==null
-				|| "".equals(wpd.getProcess().getManagedTable().getName())) {
+				|| wpd.getProcess().getManagedTableConfiguration()==null
+				|| wpd.getProcess().getManagedTableConfiguration().getName()==null
+				|| "".equals(wpd.getProcess().getManagedTableConfiguration().getName())) {
 			wpd.setManagedDataDef(null);
 			return;
 		}
