@@ -8,11 +8,8 @@
 	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
 
 	<h:form id="w_process_def_data_fields_form" style="margin-left: 16px;">
-	
-		<rich:spacer height="20px"/>
 
-		<h:panelGrid width="100%" columns="1">
-   
+		<div class="fieldset_block_info_wo_line">
 			<rich:dataTable id="w_step_data_field"
 				value="#{wStepDefFormBean.stepDataFieldList}"
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
@@ -31,37 +28,31 @@
 					</f:facet>
 					<h:outputText value="#{sdf.dataField.name}" />
 				</rich:column>
-
+	
 			</rich:dataTable>
-
+	
 			<h:outputText value="#{msg.label_no_data_fields_related}" 
 						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.stepDataFieldListSize eq 0}"
-						style="font-weight: bold;"/>
-	
-			<rich:spacer height="10px"/>
+						styleClass="label_form_bold"/>
+		</div>
 
-			<h:panelGroup>
-				<a4j:jsFunction name="onsubmitSearchDataField" action="#{wStepDefFormBean.updateDataFieldsRelated}"
-					reRender="w_process_def_data_fields_form">
-					<a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strDataFieldList}"  />
-				</a4j:jsFunction>			
-				<a4j:commandLink id="insert_user"
-					title="#{msg.label_add_new_data_field_to_project}"
-					action="#{dataFieldSelectorBean.loadInfoForDataField}"
-					oncomplete="javascript:Richfaces.showModalPanel('mpSearchDataField', {titleParam: '#{msg.label_data_fields_involved_in_this_step}'});"
-					reRender="mpSearchDataField"
-					rendered="#{contextoSeguridad.permiteCualquiera['530'] and wStepDefFormBean.currentWStepDef != null}">
-					<h:graphicImage id="imgInsertar" value="/images/insertar.png"
-						style="border:0;" />
-			 		<a4j:actionparam name="strUser" value="#{wStepDefFormBean.strDataFieldList}" assignTo="#{dataFieldSelectorBean.strDataFieldString}" />
-			 		<a4j:actionparam name="processHeadId" value="#{wStepDefFormBean.currentProcessHeadId}" assignTo="#{dataFieldSelectorBean.processHeadId}" />
-				</a4j:commandLink>
-			</h:panelGroup>
+		<div class="fieldset_block_info_wo_line">
+			<a4j:jsFunction name="onsubmitSearchDataField" action="#{wStepDefFormBean.updateDataFieldsRelated}"
+				reRender="w_process_def_data_fields_form">
+				<a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strDataFieldList}"  />
+			</a4j:jsFunction>			
+			<a4j:commandLink id="insert_w_step_data_Field" value="#{msg.label_add_a_data_field}"
+				styleClass="command_link_form"
+				title="#{msg.label_associate_new_data_field_to_this_step}"
+				action="#{dataFieldSelectorBean.loadInfoForDataField}"
+				oncomplete="javascript:Richfaces.showModalPanel('mpSearchDataField', {titleParam: '#{msg.label_data_fields_involved_in_this_step}'});"
+				reRender="mpSearchDataField"
+				rendered="#{contextoSeguridad.permiteCualquiera['530'] and wStepDefFormBean.currentWStepDef != null}">
+		 		<a4j:actionparam name="strUser" value="#{wStepDefFormBean.strDataFieldList}" assignTo="#{dataFieldSelectorBean.strDataFieldString}" />
+		 		<a4j:actionparam name="processHeadId" value="#{wStepDefFormBean.currentProcessHeadId}" assignTo="#{dataFieldSelectorBean.processHeadId}" />
+			</a4j:commandLink>
+		</div>
 	
-	
-						
-		</h:panelGrid>
-
 	</h:form>
 
 </ui:composition>

@@ -1,8 +1,6 @@
 package org.beeblos.bpm.wc.taglib.util;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
@@ -13,7 +11,6 @@ import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
-import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WUserDef;

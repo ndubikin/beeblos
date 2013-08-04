@@ -47,7 +47,7 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 
 public class WStepDefFormBean extends CoreManagedBean {
@@ -1117,6 +1117,15 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.currentProcessDefId = currentProcessDefId;
 	}
 
+	//rrl 20130801
+	public Integer getCurrentProcessHeadId() {
+		return currentProcessHeadId;
+	}
+
+	public void setCurrentProcessHeadId(Integer currentProcessHeadId) {
+		this.currentProcessHeadId = currentProcessHeadId;
+	}
+	
 	public void deleteWStepUser(){
 		
 		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
@@ -1469,37 +1478,21 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	}
 
-	//rrl 20130801
+	//rrl 20130801 - nes 20130803
 	public List<WStepDataField> getStepDataFieldList() {
 
-		List<WStepDataField> dfl = new ArrayList<WStepDataField>();
-		
-		if ( currentWStepDef!=null   
-				&& currentWStepDef.getStepHead()!=null
-				&& currentWStepDef.getStepHead().getDataFieldDef() != null
-				&& currentWStepDef.getStepHead().getDataFieldDef().size() != 0) {
+		return new ArrayList<WStepDataField>(
+				currentWStepDef.getStepHead().getStepDataFieldList());
 
-			dfl = new ArrayList<WStepDataField>(currentWStepDef.getStepHead().getDataFieldDef());
-			
-		}
-		
-		return dfl;
 	}
 
 	public Integer getStepDataFieldListSize() {
 		
-		return (currentWStepDef!=null && currentWStepDef.getStepHead()!=null && currentWStepDef.getStepHead().getDataFieldDef() != null ?
-				currentWStepDef.getStepHead().getDataFieldDef().size():
-					0);
-	}
-
-	//rrl 20130801
-	public Integer getCurrentProcessHeadId() {
-		return currentProcessHeadId;
-	}
-
-	public void setCurrentProcessHeadId(Integer currentProcessHeadId) {
-		this.currentProcessHeadId = currentProcessHeadId;
+		return (currentWStepDef!=null 
+					&& currentWStepDef.getStepHead()!=null 
+					&& currentWStepDef.getStepHead().getDataFieldDef() != null 
+							? currentWStepDef.getStepHead().getDataFieldDef().size()
+							: 0);
 	}
 
 	//rrl 20130802
@@ -1510,7 +1503,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 			if ("".equals(strDataFieldList)) {
 				
 				WStepDataFieldBL wStepDataFieldBL = new WStepDataFieldBL();
-				Set<WStepDataField> dataFieldRelated = new WStepDataFieldBL().getWStepDataFieldSet(currentWStepDef.getStepHead().getId(), null);
+				Set<WStepDataField> dataFieldRelated = 
+						new WStepDataFieldBL()
+								.getWStepDataFieldSet(currentWStepDef.getStepHead().getId(), null);
 				if (dataFieldRelated != null) {
 					for (WStepDataField wsdf : dataFieldRelated) {
 						wStepDataFieldBL.delete(wsdf, null);

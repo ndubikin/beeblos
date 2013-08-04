@@ -15,7 +15,7 @@ import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 
 
 public class UserAndRoleSelectorBean extends CoreManagedBean {

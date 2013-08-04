@@ -277,10 +277,10 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 			ib.setObjComments(objComments);
 
 			// setea el workflow y el paso que necesitamos ...
-			ib.setIdProcesoSeleccionado(processId);
-			ib.setIdPasoSeleccionado(idStep);
+			ib.setSelectedProcessId(processId);
+			ib.setSelectedStepDefId(idStep);
 			
-			ib.inyectar();
+			ib.launchWork();
 			
 			idStepWork = ib.getIdStepWork();
 	

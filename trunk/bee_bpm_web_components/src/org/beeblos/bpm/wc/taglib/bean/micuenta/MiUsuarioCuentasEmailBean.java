@@ -19,12 +19,13 @@ import org.beeblos.security.st.bl.UsuarioCuentasEmailBL;
 import org.beeblos.security.st.error.UsuarioCuentasEmailException;
 import org.beeblos.security.st.error.UsuarioException;
 import org.beeblos.security.st.model.UsuarioCuentasEmail;
+import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.DesEncrypter;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.Constantes;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 
 public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 
@@ -664,8 +665,11 @@ public class MiUsuarioCuentasEmailBean extends CoreManagedBean {
 		if (this.listaUsuarios==null || this.listaUsuarios.size()==0) {
 			
 			try {
-				this.listaUsuarios = UtilsVs.castStringPairToSelectitem( new UsuarioBL()
-												.obtenerUsuariosParaCombo("Seleccionar ...", null));
+//				this.listaUsuarios = UtilsVs.castStringPairToSelectitem( new UsuarioBL()
+//												.obtenerUsuariosParaCombo("Seleccionar ...", null));
+				this.listaUsuarios = UtilsVs.castStringPairToSelectitem(
+						new UsuarioBL()
+						.obtenerUsuariosParaCombo("Seleccionar ...", null));
 				
 			} catch (UsuarioException e) {
 				

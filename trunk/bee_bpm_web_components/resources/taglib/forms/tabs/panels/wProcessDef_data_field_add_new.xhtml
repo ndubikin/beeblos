@@ -14,9 +14,11 @@
 	
 		<h:panelGroup rendered="#{!wProcessDefFormBean.visibleButtonNewDataField}" >
 			<h:outputText value="#{msg.label_adding_new_data_field}:" style="margin-left: 20px; font-size:12px; "/>
-			<h:panelGrid columns="6" style="margin-left: 16px; margin-top:10px;">
-				<h:outputText value="#{msg.label_name}:" styleClass="label_form"
+			<h:panelGrid columns="7" style="margin-left: 16px; margin-top:10px;">
+				<h:outputText value="#{msg.label_order}:" styleClass="label_form"
 					style="margin:0px;padding:0px;" />
+				<h:outputText value="#{msg.label_name}:"
+					styleClass="label_form"/>					
 				<h:outputText value="#{msg.label_required}:"
 					styleClass="label_form"/>
 				<h:outputText value="#{msg.label_data_type}:"
@@ -27,7 +29,8 @@
 					styleClass="label_form"/>
 				<h:outputText value="#{msg.label_active}:"
 					styleClass="label_form"/>
-					
+
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.order}" style="font-size: 12px;padding: 4px;width: 20px;"/>					
 				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.name}" style="font-size: 12px;padding: 4px;width: 200px;"/>
 				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.required}" />
 				<h:selectOneMenu validatorMessage="required"

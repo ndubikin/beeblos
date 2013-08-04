@@ -37,6 +37,7 @@
 	<h:form id="w_process_def_data_fields_advanced_configuration${action}">
 	
 		<a4j:commandLink value="#{msg.label_advanced_configuration}" title="#{msg.label_advanced_configuration}"
+			styleClass="command_link_form"
 			tabindex="-1"
 			action="#{wProcessDefFormBean.switchButtonAdvancedConfiguration}"
 			reRender="w_process_def_data_fields_advanced_configuration${action}"
@@ -45,7 +46,7 @@
 
 		<h:panelGroup rendered="#{!wProcessDefFormBean.visibleButtonAdvancedConfiguration}" >
 
-			<h:panelGroup rendered="#{(wProcessDefFormBean.currentWProcessDef.process.managedTable eq null)}" >
+			<h:panelGroup rendered="#{(wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration eq null)}" >
 				<h:outputText value="#{msg.label_no_datatable_for_managed_properties_exist}." styleClass="label_form" />
 				<br/>
 				<h:outputText value="#{msg.label_please_press_create_button_to_create_it}!" styleClass="label_form" />
@@ -56,22 +57,22 @@
 					    reRender="w_process_def_data_fields_advanced_configuration${action}"/>
 			</h:panelGroup>
 
-			<h:panelGroup rendered="#{(wProcessDefFormBean.currentWProcessDef.process.managedTable != null)}">
+			<h:panelGroup rendered="#{(wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration != null)}">
 
 				<h:outputText value="#{msg.label_process_managed_data}:" styleClass="column20percent label_form_bold"/>
 				<br/>
 				<br/>
 				
 				<h:outputText value="#{msg.label_table_name}:" styleClass="column20percent label_form"/>
-				<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.managedTable.name}" styleClass="label_form_bold"/>
+				<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration.name}" styleClass="label_form_bold"/>
 				<br/>
 				
 				<h:outputText value="#{msg.label_created}:" styleClass="column20percent label_form"/>
-				<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.managedTable.insertDate}" styleClass="label_form_bold"/>
+				<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration.insertDate}" styleClass="label_form_bold"/>
 				<br/>
 
 				<h:outputText value="#{msg.label_last_update}:" styleClass="column20percent label_form"/>
-				<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.managedTable.modDate}" styleClass="label_form_bold"/>
+				<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration.modDate}" styleClass="label_form_bold"/>
 				<br/>
 
 				<a4j:commandButton value="#{msg.label_recreate_managed_table}"
