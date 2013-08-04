@@ -25,7 +25,7 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.Constantes;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 
 public class WEmailAccountBean extends CoreManagedBean {
 

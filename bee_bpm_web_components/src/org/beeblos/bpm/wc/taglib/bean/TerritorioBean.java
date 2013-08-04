@@ -8,7 +8,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 import org.beeblos.security.auxiliar.bl.PaisBL;
 import org.beeblos.security.auxiliar.bl.TerritorioBL;
 import org.beeblos.security.auxiliar.bl.TipoTerritorioBL;

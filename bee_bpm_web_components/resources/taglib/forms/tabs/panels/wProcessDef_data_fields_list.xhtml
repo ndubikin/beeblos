@@ -16,17 +16,17 @@
 					<fieldset>
 						<legend class="demo_legend">#{msg.label_data_fields}</legend>
 					
-						<table width="100%" style="margin-left:5px;">
+						<table>
 							<thead>
 								<tr>
-									<ui:include src="data_field_grid_header.xhtml"/>
+									<ui:include src="wProcessDef_data_field_grid_header.xhtml"/>
 								</tr>
 							</thead>
 							<tbody>
 								<a4j:repeat value="#{wProcessDefFormBean.dataFieldList}" var="dataField">
 									<tr>
 									
-										<ui:include src="data_field_grid_data.xhtml"/>
+										<ui:include src="wProcessDef_data_field_grid_data.xhtml"/>
 					
 										<td align="left">
 											<a4j:commandLink
@@ -43,7 +43,8 @@
 												reRender="mpDeleteDataField"
 												style="margin-left:20px;">
 							                	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.wProcessDataFieldSelected.id}" value="#{dataField.id}"/>
-											</a4j:commandLink></td>
+											</a4j:commandLink>
+										</td>
 											
 									</tr>
 								</a4j:repeat>
@@ -59,7 +60,8 @@
 					styleClass="label_form"
 					rendered="#{empty wProcessDefFormBean.dataFieldList}" />
 		
-				<a4j:commandLink value="#{msg.label_add_data_field}" title="#{msg.label_add_new_data_field}"
+				<a4j:commandLink value="#{msg.label_add_a_data_field}" title="#{msg.label_add_new_data_field}"
+					styleClass="command_link_form"
 					tabindex="-1"
 					action="#{wProcessDefFormBean.initializeDataFieldsAddNew}"
 					reRender="w_process_def_data_fields_add_new${action}, w_process_def_data_fields_form${action}">

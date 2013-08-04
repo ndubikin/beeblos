@@ -1,5 +1,6 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_ANEXA_DEFAULT;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_LISTA_DEFAULT;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_PROCESO_DEFAULT;
@@ -21,15 +22,19 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepWork;
-import org.beeblos.bpm.core.util.UtilesVarios;
+import org.beeblos.bpm.core.util.ListConverters;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.wc.security.error.InyectorException;
 import org.beeblos.bpm.wc.taglib.bean.util.BeeBPMBL;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
+
+import com.sp.common.jsf.util.UtilsVs;
 
 
 /**
@@ -50,12 +55,14 @@ public class InyectorBean  extends CoreManagedBean {
 
 	private Integer usuarioLogueado;
 	
-	private Integer idProcesoSeleccionado;
+	private Integer selectedProcessId;
 	private Integer version;
-	private Integer idPasoSeleccionado;
+	private Integer selectedStepDefId;
 	
-	private WProcessDef procesoSeleccionado;
-	private WStepDef pasoSeleccionado;
+	private WProcessDef selectedProcess;
+	private WStepDef selectedStepDef;
+	
+	private ManagedData managedData;
 	
 	private Boolean botonInyectarDisabled;
 	
@@ -72,8 +79,7 @@ public class InyectorBean  extends CoreManagedBean {
 	
 	private List<SelectItem> lProcesosActivos= new ArrayList<SelectItem>(); // muestra la lista de procesos que están operativos
 	
-	
-	private WStepWork pasoActual = new WStepWork();
+//	private WStepWork pasoActual = new WStepWork();
 	
 	private String paginaProceso;
 	private String paginaLista;
@@ -82,26 +88,26 @@ public class InyectorBean  extends CoreManagedBean {
 	private Integer currentUser;
 
 	public InyectorBean() {
-		
+		init();
 	}
 
 	public void init()  {
 		try {
 			
 			botonInyectarDisabled=true;
-			
+			_limpiarVariablesDelBean();			
+
 		} catch (Exception e) {
-			_limpiarVariablesDelBean();
 			e.printStackTrace();
 		}
 	}
 
 	private void _limpiarVariablesDelBean() {
 		
-		this.idPasoSeleccionado=null;
-		this.idProcesoSeleccionado=null;
-		this.pasoSeleccionado=null;
-		this.procesoSeleccionado=null;
+		this.selectedStepDefId=null;
+		this.selectedProcessId=null;
+		this.selectedStepDef=null;
+		this.selectedProcess=null;
 
 		//rrl 20130729 
 		this.objReference=null;
@@ -110,7 +116,7 @@ public class InyectorBean  extends CoreManagedBean {
 		this.idStepWork=null;
 		this.idObject=null;
 		this.idObjectType=null;
-		this.pasoActual=null;
+//		this.pasoActual=null;
 		this.lPasosValidos=new ArrayList<SelectItem>();
 		this.lProcesosActivos= new ArrayList<SelectItem>();
 		this.currentUser=null;
@@ -128,17 +134,17 @@ public class InyectorBean  extends CoreManagedBean {
 		
 	}
 
-	// set idProcesoSeleccionado and load data for this process
-	public String changeProceso() throws InyectorException {
+	// set selectedProcessId and load data for this process
+	public String changeProcess() throws InyectorException {
 		
 		logger.debug(" id"+objIdUsuario+" ref:"+objReference);
 		logger.debug(" idObject"+idObject+" clase:"+idObjectType);
 		
 		setShowHeaderMessage(false); // nes 20100117 oculta mensajes previos en pantalla
 		
-		// check idProcesoSeleccionado has a valid value
-		if (idProcesoSeleccionado==null || idProcesoSeleccionado==0) {
-			idPasoSeleccionado=null;
+		// check selectedProcessId has a valid value
+		if (selectedProcessId==null || selectedProcessId==0) {
+			selectedStepDefId=null;
 			return null;
 		}
 
@@ -150,42 +156,62 @@ public class InyectorBean  extends CoreManagedBean {
 		
 		try {
 			
-			setProcesoSeleccionado(pdBL.getWProcessDefByPK(idProcesoSeleccionado, null));
+			setProcesoSeleccionado(pdBL.getWProcessDefByPK(selectedProcessId, null));
 			
 			lPasosValidos= 
-					UtilesVarios
+					UtilsVs
 					.castStringPairToSelectitem(
-							wsBL.getComboList(idProcesoSeleccionado, "Seleccionar paso ...", null));
+							wsBL.getComboList(selectedProcessId, "Seleccionar paso ...", null));
 			
+			if (selectedProcess.getBeginStep()!=null 
+					&& selectedProcess.getBeginStep().getId()!=null 
+					&& selectedProcess.getBeginStep().getId()!=0 ){
+				selectedStepDefId=selectedProcess.getBeginStep().getId();
+			}
+			
+			// if exists custom data fields 
+			if (selectedProcess!=null
+					&& selectedProcess.getProcess().getProcessDataFieldDef()!=null
+					&& selectedProcess.getProcess().getProcessDataFieldDef().size()>0) {
+				managedData = new ManagedData();
+				managedData.setDataField( 
+						ListConverters.convertWProcessDataFieldToList
+						 (selectedProcess.getProcess().getProcessDataFieldDef(),null,null,ACTIVE_DATA_FIELDS) );
+				managedData.setChanged(false);
+				managedData.setManagedTableConfiguration(
+						selectedProcess.getProcess().getManagedTableConfiguration());
+			} else {
+				managedData=null;
+			}
 			
 		} catch (WStepSequenceDefException e) {
-			String mensaje = "changeProceso(): Error en la recuperacion del mapa del proceso ...";
+			String mensaje = "changeProcess(): Error en la recuperacion del mapa del proceso ...";
 			agregarMensaje("60",mensaje,null,FGPException.WARN);
-			logger.info("changeProceso:"+mensaje);
+			logger.info("changeProcess:"+mensaje);
 		} catch (WProcessDefException e) {
-			String mensaje = "changeProceso(): Error en la recuperación de la definición del proceso ...";
+			String mensaje = "changeProcess(): Error en la recuperación de la definición del proceso ...";
 			agregarMensaje("60",mensaje,null,FGPException.WARN);
-			logger.info("changeProceso:"+mensaje);
+			logger.info("changeProcess:"+mensaje);
 		}
 
 		return null;
 		
 	}
 	
-	public String changePaso() {
+	public String changeStep() {
 		
-		if (idPasoSeleccionado!=null && idProcesoSeleccionado!=null) {
+		if (selectedStepDefId!=null && selectedProcessId!=null) {
 			
 			botonInyectarDisabled=false;
 			
 			WStepDefBL stepDefBL = new WStepDefBL();
 			
 			try {
-				setPasoSeleccionado(stepDefBL.getWStepDefByPK(idPasoSeleccionado, currentUser));
+				setPasoSeleccionado(stepDefBL.getWStepDefByPK(selectedStepDefId, currentUser));
 			} catch (WStepDefException e) {
-				logger.error("can't get WStepDef for id:"+idPasoSeleccionado+"  >> will be reset to null!!");
-				setIdPasoSeleccionado(null);
-				setIdPasoSeleccionado(0);
+				logger.error("can't get WStepDef for id:"+selectedStepDefId+"  >> will be reset to null!!");
+				setSelectedStepDefId(null);
+				setSelectedStepDefId(0);
 			}
 			
 		} else {
@@ -198,7 +224,7 @@ public class InyectorBean  extends CoreManagedBean {
 
 	
 	// called from xhtml view ...
-	public String inyectar() throws InyectorException {
+	public String launchWork() throws InyectorException {
 		
 		String ret=null;
 		setShowHeaderMessage(false); // nes 20100117 oculta mensajes previos en pantalla
@@ -209,9 +235,9 @@ public class InyectorBean  extends CoreManagedBean {
 			//idStepWork = new WStepWorkBL().add(_setStepWork(), usuarioLogueado) ;
 			idStepWork = new BeeBPMBL()
 								.inyectar(
-										idProcesoSeleccionado, idPasoSeleccionado, 
+										selectedProcessId, selectedStepDefId, 
 										idObject, idObjectType, objReference, objComments, 
-										null,
+										managedData,
 										_getLoggedUser());
 			
 			//rrl 20100114
@@ -240,7 +266,12 @@ public class InyectorBean  extends CoreManagedBean {
 			throw new InyectorException(mensaje);
 			
 		} catch (WProcessWorkException e) {
-			String mensaje = "InyectorBean - inyectar: error intentando arrancar workflow: "+e.getMessage()+" - "+e.getCause();
+			String mensaje = "InyectorBean - inyectar: error intentando arrancar workflow: WProcessWorkException:"+e.getMessage()+" - "+e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("60",mensaje,params,FGPException.WARN);
+			throw new InyectorException(mensaje);
+		} catch (TableManagerException e) {
+			String mensaje = "InyectorBean - inyectar: error intentando arrancar workflow: TableManagerException:"+e.getMessage()+" - "+e.getCause();
 			String params[] = {mensaje};
 			agregarMensaje("60",mensaje,params,FGPException.WARN);
 			throw new InyectorException(mensaje);
@@ -253,7 +284,7 @@ public class InyectorBean  extends CoreManagedBean {
 
 	private void _controlConsistenciaStepALanzar() throws InyectorException {
 		
-		if (idProcesoSeleccionado==null || idProcesoSeleccionado==0) {
+		if (selectedProcessId==null || selectedProcessId==0) {
 			
 			String mensaje = "Debe elegir un proceso de la lista ....\n";
 			mensaje +=" Id:"+objIdUsuario+" ref:"+objReference; // NOTA REVISAR ESTOS objIdUsuario PORQUE LOS ESTABA USANDO MAL ... NES 20111216
@@ -262,7 +293,7 @@ public class InyectorBean  extends CoreManagedBean {
 			
 		}
 		
-		if (idPasoSeleccionado==null || idPasoSeleccionado==0) {
+		if (selectedStepDefId==null || selectedStepDefId==0) {
 			
 			String mensaje = "Debe elegir un paso de la lista para insertar el elemento en el workflow....\n";
 			mensaje +=" Id:"+objIdUsuario+" ref:"+objReference;
@@ -285,7 +316,7 @@ public class InyectorBean  extends CoreManagedBean {
 //	throws AlreadyExistsRunningProcessException, WStepWorkException {
 //		
 //		try {
-//			if ( new WStepWorkBL().existsActiveProcess(idProcesoSeleccionado, idObject, idObjectType, currentUser)) {
+//			if ( new WStepWorkBL().existsActiveProcess(selectedProcessId, idObject, idObjectType, currentUser)) {
 //				
 //				String mensaje = "Ya existe un wofkflow en ejecución para este elemento ....\n";
 //				logger.info("inyectar: "+mensaje);
@@ -302,8 +333,8 @@ public class InyectorBean  extends CoreManagedBean {
 //	private void _definicionObjetosDelEntorno() throws InyectorException {
 //		
 //		try {
-//			procesoSeleccionado = new WProcessDefBL().getWProcessDefByPK(idProcesoSeleccionado, usuarioLogueado);
-//			pasoSeleccionado = new WStepDefBL().getWStepDefByPK(idPasoSeleccionado, usuarioLogueado);
+//			selectedProcess = new WProcessDefBL().getWProcessDefByPK(selectedProcessId, usuarioLogueado);
+//			selectedStepDef = new WStepDefBL().getWStepDefByPK(selectedStepDefId, usuarioLogueado);
 //
 //		} catch (WProcessDefException e) {
 //
@@ -320,7 +351,7 @@ public class InyectorBean  extends CoreManagedBean {
 //			throw new InyectorException( mensaje );
 //
 //		} catch (WStepSequenceDefException e) {
-//			String mensaje = "No se puede cargar el proceso indicado id:"+idProcesoSeleccionado;
+//			String mensaje = "No se puede cargar el proceso indicado id:"+selectedProcessId;
 //			mensaje +=" ERROR:"+e.getMessage()+" - "+ e.getCause();
 //			logger.info("inyectar: _definicionObjetosDelEntorno: "+mensaje);
 //			throw new InyectorException( mensaje );
@@ -331,11 +362,11 @@ public class InyectorBean  extends CoreManagedBean {
 //		
 //		WProcessWork newWorkObject = new WProcessWork();
 //		
-//		newWorkObject.setProcess(procesoSeleccionado);
+//		newWorkObject.setProcess(selectedProcess);
 //		newWorkObject.setVersion(version);
 //		
 ////		pasoAInyectar.setPreviousStep(null);
-////		pasoAInyectar.setCurrentStep(pasoSeleccionado);
+////		pasoAInyectar.setCurrentStep(selectedStepDef);
 //		
 //		newWorkObject.setIdObject(idObject);
 //		newWorkObject.setIdObjectType(idObjectType);
@@ -353,11 +384,11 @@ public class InyectorBean  extends CoreManagedBean {
 //		
 //		WStepWork pasoAInyectar = new WStepWork();
 //		
-//		pasoAInyectar.setProcess(procesoSeleccionado);
+//		pasoAInyectar.setProcess(selectedProcess);
 //		pasoAInyectar.setVersion(version);
 //		
 //		pasoAInyectar.setPreviousStep(null);
-//		pasoAInyectar.setCurrentStep(pasoSeleccionado);
+//		pasoAInyectar.setCurrentStep(selectedStepDef);
 //		
 //		// esta valor se carga en WProcessWorkBL.start si corresponde
 //		// al lanzamiento del workflow
@@ -380,13 +411,13 @@ public class InyectorBean  extends CoreManagedBean {
 //		pasoAInyectar.setPerformer(null);
 //
 //		// TODO: AJUSTAR CUANDO DEJEMOS MODIFICAR ESTO EN EL FORM ...
-//		pasoAInyectar.setTimeUnit(pasoSeleccionado.getTimeUnit());
+//		pasoAInyectar.setTimeUnit(selectedStepDef.getTimeUnit());
 //
-//		pasoAInyectar.setAssignedTime(pasoSeleccionado.getAssignedTime());
-//		pasoAInyectar.setDeadlineDate(pasoSeleccionado.getDeadlineDate());
-//		pasoAInyectar.setDeadlineTime(pasoSeleccionado.getDeadlineTime());
-//		pasoAInyectar.setReminderTimeUnit(pasoSeleccionado.getReminderTimeUnit());
-//		pasoAInyectar.setReminderTime(pasoSeleccionado.getReminderTime()); // en unidades de tiempo indicadas en reminderTimeUnit
+//		pasoAInyectar.setAssignedTime(selectedStepDef.getAssignedTime());
+//		pasoAInyectar.setDeadlineDate(selectedStepDef.getDeadlineDate());
+//		pasoAInyectar.setDeadlineTime(selectedStepDef.getDeadlineTime());
+//		pasoAInyectar.setReminderTimeUnit(selectedStepDef.getReminderTimeUnit());
+//		pasoAInyectar.setReminderTime(selectedStepDef.getReminderTime()); // en unidades de tiempo indicadas en reminderTimeUnit
 //		
 //		pasoAInyectar.setAdminProcess(false); // esto va en true si es un administrador quien decide el paso ( en vez del usuario o grupo asignado )
 //		
@@ -429,12 +460,12 @@ public class InyectorBean  extends CoreManagedBean {
 	public void setIdObjectType(String idObjectType) {
 		this.idObjectType = idObjectType;
 	}
-	public WStepWork getPasoActual() {
-		return pasoActual;
-	}
-	public void setPasoActual(WStepWork pasoActual) {
-		this.pasoActual = pasoActual;
-	}
+//	public WStepWork getPasoActual() {
+//		return pasoActual;
+//	}
+//	public void setPasoActual(WStepWork pasoActual) {
+//		this.pasoActual = pasoActual;
+//	}
 	public String getPaginaProceso() {
 		return paginaProceso;
 	}
@@ -471,10 +502,10 @@ public class InyectorBean  extends CoreManagedBean {
 		if (lPasosValidos==null || lPasosValidos.size()==0) {
 			try {
 				lPasosValidos=
-						UtilesVarios
+						UtilsVs
 						.castStringPairToSelectitem(
 								new WStepDefBL().getComboList(
-										idProcesoSeleccionado, "Seleccionar paso ...", null));
+										selectedProcessId, "Seleccionar paso ...", null));
 			} catch (WProcessDefException e) {
 				e.printStackTrace();
 				lPasosValidos.add(new SelectItem(null,"No se pudo cargar la lista de procesos ..."));
@@ -499,7 +530,7 @@ public class InyectorBean  extends CoreManagedBean {
 		if (lProcesosActivos==null || lProcesosActivos.size()==0) {
 			try {
 				lProcesosActivos=
-						UtilesVarios
+						UtilsVs
 						.castStringPairToSelectitem(
 								new WProcessDefBL().getComboList("Seleccionar ...", null,getCurrentUser()));
 			} catch (WProcessDefException e) {
@@ -516,29 +547,29 @@ public class InyectorBean  extends CoreManagedBean {
 	public void setlProcesosActivos(List<SelectItem> lProcesosActivos) {
 		this.lProcesosActivos = lProcesosActivos;
 	}
-	public Integer getIdProcesoSeleccionado() {
-		return idProcesoSeleccionado;
+	public Integer getSelectedProcessId() {
+		return selectedProcessId;
 	}
-	public void setIdProcesoSeleccionado(Integer idProcesoSeleccionado) {
-		this.idProcesoSeleccionado = idProcesoSeleccionado;
+	public void setSelectedProcessId(Integer selectedProcessId) {
+		this.selectedProcessId = selectedProcessId;
 	}
-	public Integer getIdPasoSeleccionado() {
-		return idPasoSeleccionado;
+	public Integer getSelectedStepDefId() {
+		return selectedStepDefId;
 	}
-	public void setIdPasoSeleccionado(Integer idPasoSeleccionado) {
-		this.idPasoSeleccionado = idPasoSeleccionado;
+	public void setSelectedStepDefId(Integer selectedStepDefId) {
+		this.selectedStepDefId = selectedStepDefId;
 	}
 	public WProcessDef getProcesoSeleccionado() {
-		return procesoSeleccionado;
+		return selectedProcess;
 	}
-	public void setProcesoSeleccionado(WProcessDef procesoSeleccionado) {
-		this.procesoSeleccionado = procesoSeleccionado;
+	public void setProcesoSeleccionado(WProcessDef selectedProcess) {
+		this.selectedProcess = selectedProcess;
 	}
 	public WStepDef getPasoSeleccionado() {
-		return pasoSeleccionado;
+		return selectedStepDef;
 	}
-	public void setPasoSeleccionado(WStepDef pasoSeleccionado) {
-		this.pasoSeleccionado = pasoSeleccionado;
+	public void setPasoSeleccionado(WStepDef selectedStepDef) {
+		this.selectedStepDef = selectedStepDef;
 	}
 	public Integer getVersion() {
 		return version;
@@ -588,5 +619,12 @@ public class InyectorBean  extends CoreManagedBean {
 		this.botonInyectarDisabled = botonInyectarDisabled;
 	}
 
-	
+	public ManagedData getManagedData() {
+		return managedData;
+	}
+
+	public void setManagedData(ManagedData managedData) {
+		this.managedData = managedData;
+	}
+
 }

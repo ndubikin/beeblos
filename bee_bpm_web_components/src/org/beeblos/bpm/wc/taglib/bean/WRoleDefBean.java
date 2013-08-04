@@ -17,7 +17,7 @@ import org.beeblos.bpm.core.model.WUserRole;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 
 
 

@@ -38,5 +38,13 @@
 			<ui:param name="action" value="${action}" />
 		</ui:include>
 	</fieldset>
+	
+	<fieldset class="demo_fieldset">
+		<legend class="demo_legend">#{msg.label_related_system_objects}</legend>
+
+		<ui:include src="panels/wProcessDef_related_system_objects.xhtml">
+			<ui:param name="action" value="${action}" />
+		</ui:include>
+	</fieldset>	
 
 </ui:composition>

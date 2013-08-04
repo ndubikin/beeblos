@@ -51,12 +51,13 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
+import org.beeblos.bpm.core.model.SystemObject;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
-import org.beeblos.bpm.core.model.WProcessHeadManagedData;
+import org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
@@ -73,7 +74,7 @@ import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 public class WProcessDefFormBean extends CoreManagedBean {
@@ -2168,10 +2169,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				processDataField.setDataType(new WDataTypeBL()
 					.getWDataTypeByPK(wProcessDataFieldSelected.getDataType().getId(), this.getCurrentUserId()));
 				processDataField.setName(wProcessDataFieldSelected.getName());
-				processDataField.setRequired(wProcessDataFieldSelected.getRequired());
+				processDataField.setRequired(wProcessDataFieldSelected.isRequired());
 				processDataField.setComments(wProcessDataFieldSelected.getComments());
 				processDataField.setLength(wProcessDataFieldSelected.getLength());
-				processDataField.setActive(wProcessDataFieldSelected.getActive());
+				processDataField.setActive(wProcessDataFieldSelected.isActive());
 				
 				wdfBL.add(processDataField, this.getCurrentUserId());
 				
@@ -2183,10 +2184,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					processDataField.setDataType(new WDataTypeBL()
 						.getWDataTypeByPK(wProcessDataFieldSelected.getDataType().getId(), this.getCurrentUserId()));
 					processDataField.setName(wProcessDataFieldSelected.getName());
-					processDataField.setRequired(wProcessDataFieldSelected.getRequired());
+					processDataField.setRequired(wProcessDataFieldSelected.isRequired());
 					processDataField.setComments(wProcessDataFieldSelected.getComments());
 					processDataField.setLength(wProcessDataFieldSelected.getLength());
-					processDataField.setActive(wProcessDataFieldSelected.getActive());
+					processDataField.setActive(wProcessDataFieldSelected.isActive());
 					
 					wdfBL.update(processDataField, this.getCurrentUserId());
 					
@@ -2271,6 +2272,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 				wProcessDataFieldSelected = wdfBL.getWProcessDataFieldByPK(wProcessDataFieldSelected.getId(), getCurrentUserId());
 						
+
+				// RAUL: SI EL DELETE DA ERROR HAY QUE MOSTRARLO EN PANTALLA (AHORA MISMO NO LO HACE - REVISALO PLIS)
+				// PARA PROBAR SIMPLEMENTE INTENTÁS BORRAR 1 REGISTRO QUE SE ESTÉ UTILIZANDO EN UN W-STEP-DEF
 				wdfBL.delete(wProcessDataFieldSelected, getCurrentUserId() );
 
 				reloadDataFieldList();
@@ -2330,7 +2334,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		if (!checkTableExists(tm)) {
 			System.out.println("Error, can't recreate table because it doesn't exists ...");;
 		}
-		removeManagedTable(tm,currentWProcessDef.getProcess().getManagedTable().getName());
+		
+		removeManagedTable(
+				tm,currentWProcessDef.getProcess().getManagedTableConfiguration().getName());
+		
 		createManagedTable(tm);
 		
 	}
@@ -2347,11 +2354,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	private boolean checkTableExists(TableManager tm) {
-		//currentWProcessDef.process.managedTable.name
+		//currentWProcessDef.process.managedTableConfiguration.name
 		try {
 			Integer qtyRecords = 
 					tm.checkTableExists(
-							currentWProcessDef.getProcess().getManagedTable().getName() );
+							currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
 
 			System.out.println("qty records:"+qtyRecords);
 			if (qtyRecords.equals(-1)) {
@@ -2392,7 +2399,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					+" está inconsistente y no tiene su correspondiente head o no sepuede cargar ...");
 			return false;
 			
-		} else if (currentWProcessDef.getProcess().getManagedTable()==null) {
+		} else if (currentWProcessDef.getProcess().getManagedTableConfiguration()==null) {
 			System.out.println("Error managed table has no valid data ....");
 			return false;
 		}
@@ -2404,23 +2411,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		// if no managedTableData record exist then create it!
 		if (currentWProcessDef!=null 
 				&& currentWProcessDef.getProcess()!=null) {
-			if (currentWProcessDef.getProcess().getManagedTable()==null) {
-				WProcessHeadManagedData managedTable = new WProcessHeadManagedData();
+			if (currentWProcessDef.getProcess().getManagedTableConfiguration()==null) {
+				WProcessHeadManagedDataConfiguration managedTable = new WProcessHeadManagedDataConfiguration();
 				managedTable.setHeadId(currentWProcessDef.getProcess().getId());
 				managedTable.setCatalog(getStringProperty("bee_bpm_core.hibernate.connection.default_catalog"));
 				managedTable.setSchema(getStringProperty("bee_bpm_core.hibernate.connection.default_catalog"));
 				managedTable.setName(_ROOT_MANAGED_TABLE_NAME+currentWProcessDef.getProcess().getId());
 //				managedTable.setWProcessHead(currentWProcessDef.getProcess());
-				currentWProcessDef.getProcess().setManagedTable(managedTable);
+				currentWProcessDef.getProcess().setManagedTableConfiguration(managedTable);
 				
 				// if exists managedTableData record check table name
 			} else {
-				if (currentWProcessDef.getProcess().getManagedTable()==null 
-						|| "".equals(currentWProcessDef.getProcess().getManagedTable()) ) {
-					logger.warn("TableName for process_head:"+currentWProcessDef.getProcess().getId()+" was null or not valid value ...");
+				if (currentWProcessDef.getProcess().getManagedTableConfiguration()==null 
+						|| "".equals(currentWProcessDef.getProcess().getManagedTableConfiguration()) ) {
+					logger.warn("TableName for process_head:"+currentWProcessDef.getProcess().getId()
+							+" was null or not valid value ...");
 					currentWProcessDef
 							.getProcess()
-							.getManagedTable()
+							.getManagedTableConfiguration()
 							.setName(_ROOT_MANAGED_TABLE_NAME+currentWProcessDef.getProcess().getId());
 				}
 			}
@@ -2430,8 +2438,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.update();
 		return currentWProcessDef
 				.getProcess()
-				.getManagedTable()
+				.getManagedTableConfiguration()
 				.getName();
+	}
+
+	public List<SystemObject> getSystemObjectList() {
+
+		List<SystemObject> sol = new ArrayList<SystemObject>();
+
+		if (currentWProcessDef != null
+				&& currentWProcessDef.getSystemObject() != null
+				&& currentWProcessDef.getSystemObject().size() != 0) {
+
+			sol = new ArrayList<SystemObject>(
+					currentWProcessDef.getSystemObject());
+		}
+
+		return sol;
+
 	}
 	
 }

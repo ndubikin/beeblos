@@ -26,21 +26,18 @@
 	<fieldset class="demo_fieldset">
 		<legend class="demo_legend">#{msg.label_step_definition_and_permissions}</legend>
 
-		<h:panelGrid columns="2" styleClass="colStyle50_percent,colStyle50_percent">
-				<h:panelGroup>
-					<ui:include src="panels/wProcessDef_step_definition.xhtml"></ui:include>
-					<ui:include src="panels/wProcessDef_step_data_fields.xhtml"></ui:include>
-				</h:panelGroup>
-				
-				<h:panelGroup>
-					<ui:include src="panels/wProcessDef_step_permissions_responses.xhtml"></ui:include>
-					<ui:include src="panels/wProcessDef_step_permissions_roles.xhtml"></ui:include>
-					<ui:include src="panels/wProcessDef_step_permissions_users.xhtml"></ui:include>
-					<ui:include src="panels/wProcessDef_step_permissions_outgoing_routes.xhtml"></ui:include>
-					<ui:include src="panels/wProcessDef_step_permissions_incoming_routes.xhtml"></ui:include>
-				</h:panelGroup>
-		</h:panelGrid>
-
+		<div class="left_pane">
+			<ui:include src="panels/wProcessDef_step_definition.xhtml"></ui:include>
+			<ui:include src="panels/wProcessDef_step_data_fields.xhtml"></ui:include>
+		</div>
+		<div class="right_pane">
+			<ui:include src="panels/wProcessDef_step_permissions_responses.xhtml"></ui:include>
+			<ui:include src="panels/wProcessDef_step_permissions_roles.xhtml"></ui:include>
+			<ui:include src="panels/wProcessDef_step_permissions_users.xhtml"></ui:include>
+			<ui:include src="panels/wProcessDef_step_permissions_outgoing_routes.xhtml"></ui:include>
+			<ui:include src="panels/wProcessDef_step_permissions_incoming_routes.xhtml"></ui:include>
+		</div>
+		
 	</fieldset>
 
 </ui:composition>

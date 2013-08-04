@@ -15,12 +15,13 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.noper.ManagedData;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.wc.security.error.InyectorException;
 
 /*
@@ -32,8 +33,8 @@ public class BeeBPMBL {
 
 	private static final Log logger = LogFactory.getLog(BeeBPMBL.class);
 	
-	WProcessDef procesoSeleccionado;
-	WStepDef pasoSeleccionado;
+	WProcessDef selectedProcess;
+	WStepDef selectedStepDef;
 
 
 	public BeeBPMBL() {
@@ -45,9 +46,9 @@ public class BeeBPMBL {
 			Integer idProcess, Integer idStep, 
 			Integer idObject, String idObjectType,
 			String objReference, String objComments, 
-			ManagedData processCustomData, Integer userId) 
+			ManagedData managedData, Integer userId) 
 					throws InyectorException, AlreadyExistsRunningProcessException, 
-							WStepWorkException, WProcessWorkException {
+							WStepWorkException, WProcessWorkException, TableManagerException {
 		
 		Integer idStepWork=null;
 		
@@ -66,7 +67,7 @@ public class BeeBPMBL {
 							.start(
 									_setProcessWork(idProcess,  idStep, idObject,  idObjectType, objReference,  objComments,  userId), 
 									_setStepWork(null,userId),
-									processCustomData,
+									managedData,
 									userId) ;
 
 		return idStepWork;
@@ -140,8 +141,8 @@ public class BeeBPMBL {
 			Integer idObject, String idObjectType, Integer userId) throws InyectorException {
 		
 		try {
-			procesoSeleccionado = new WProcessDefBL().getWProcessDefByPK(idProcess, userId);
-			pasoSeleccionado = new WStepDefBL().getWStepDefByPK(idStep, userId);
+			selectedProcess = new WProcessDefBL().getWProcessDefByPK(idProcess, userId);
+			selectedStepDef = new WStepDefBL().getWStepDefByPK(idStep, userId);
 
 		} catch (WProcessDefException e) {
 
@@ -173,11 +174,11 @@ public class BeeBPMBL {
 		
 		WProcessWork newWorkObject = new WProcessWork();
 		
-		newWorkObject.setProcess(procesoSeleccionado);
+		newWorkObject.setProcess(selectedProcess);
 //		newWorkObject.setVersion(version); (obsoleto y ano se usa el idProcess ya implica la version ...)
 		
 //		pasoAInyectar.setPreviousStep(null);
-//		pasoAInyectar.setCurrentStep(pasoSeleccionado);
+//		pasoAInyectar.setCurrentStep(selectedStepDef);
 		
 		newWorkObject.setIdObject(idObject);
 		newWorkObject.setIdObjectType(idObjectType);
@@ -195,11 +196,11 @@ public class BeeBPMBL {
 		
 		WStepWork pasoAInyectar = new WStepWork();
 		
-		pasoAInyectar.setProcess(procesoSeleccionado);
+		pasoAInyectar.setProcess(selectedProcess);
 //		pasoAInyectar.setVersion(version);
 		
 		pasoAInyectar.setPreviousStep(null);
-		pasoAInyectar.setCurrentStep(pasoSeleccionado);
+		pasoAInyectar.setCurrentStep(selectedStepDef);
 		
 		// esta valor se carga en WProcessWorkBL.start si corresponde
 		// al lanzamiento del workflow
@@ -222,13 +223,13 @@ public class BeeBPMBL {
 		pasoAInyectar.setPerformer(null);
 
 		// TODO: AJUSTAR CUANDO DEJEMOS MODIFICAR ESTO EN EL FORM ...
-		pasoAInyectar.setTimeUnit(pasoSeleccionado.getTimeUnit());
+		pasoAInyectar.setTimeUnit(selectedStepDef.getTimeUnit());
 
-		pasoAInyectar.setAssignedTime(pasoSeleccionado.getAssignedTime());
-		pasoAInyectar.setDeadlineDate(pasoSeleccionado.getDeadlineDate());
-		pasoAInyectar.setDeadlineTime(pasoSeleccionado.getDeadlineTime());
-		pasoAInyectar.setReminderTimeUnit(pasoSeleccionado.getReminderTimeUnit());
-		pasoAInyectar.setReminderTime(pasoSeleccionado.getReminderTime()); // en unidades de tiempo indicadas en reminderTimeUnit
+		pasoAInyectar.setAssignedTime(selectedStepDef.getAssignedTime());
+		pasoAInyectar.setDeadlineDate(selectedStepDef.getDeadlineDate());
+		pasoAInyectar.setDeadlineTime(selectedStepDef.getDeadlineTime());
+		pasoAInyectar.setReminderTimeUnit(selectedStepDef.getReminderTimeUnit());
+		pasoAInyectar.setReminderTime(selectedStepDef.getReminderTime()); // en unidades de tiempo indicadas en reminderTimeUnit
 		
 		pasoAInyectar.setAdminProcess(false); // esto va en true si es un administrador quien decide el paso ( en vez del usuario o grupo asignado )
 		

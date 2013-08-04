@@ -140,25 +140,11 @@ public class PasoBean  extends CoreManagedBean {
 		
 	}
 
-
 	// nes 20101003
 	public String irAlMenuPrincipal(){
-		
 		return WELCOME_PAGE;
-		
 	}
 	
-//	// RAUL - HAY QUE MIRAR MUY BIEN PARA QUE SE USA ESTO Y SI NO SE USA QUITARLO
-//	// Y SI SE USA, VER COMO PODEMOS GENERALIZARLO
-//	public String cargarFichaProyecto(){
-//		logger.debug("cargarFichaProyecto ["+(pasoActual!=null?pasoActual.getId():"null")+"]");
-//	
-//		// NESTOR VER Q AFECTA NO TENER ESTO ...
-////		return VER_PROYECTO;
-//		return "VER_PROYECTO";
-//		
-//	}
-
 	// setea el paso en el que se va a trabajar
 	public void setPaso() 
 	throws CantLockTheStepException, WStepLockedByAnotherUserException, WStepWorkException {
@@ -184,6 +170,7 @@ public class PasoBean  extends CoreManagedBean {
 			this.lPasosVivos = _getListActiveSteps();
 			
 //TODO: FALTA CONTROLAR QUE SEA PARA EL USUARIO O PARA EL ROL DEL USUARIO ...
+//TODO: COMENTAR BIEN PARA QUE SIRVE ESTA PARTE DEL IF ... Y LA DE ABAJO TAMBIÉN ...
 			
 			if (this.lPasosVivos!=null) {
 				if (this.lPasosVivos.size()>0){

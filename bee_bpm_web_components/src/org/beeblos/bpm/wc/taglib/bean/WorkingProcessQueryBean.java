@@ -1,11 +1,11 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.PENDING;
 import static org.beeblos.bpm.core.util.Constants.PROCESSING;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGSTEPS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGWORKS_QUERY;
-import static org.beeblos.bpm.core.util.Constants.FAIL;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +21,6 @@ import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
-import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
@@ -39,11 +38,12 @@ import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessWorkUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepWorkUtil;
+
+import com.sp.common.jsf.util.UtilsVs;
 
 
 
