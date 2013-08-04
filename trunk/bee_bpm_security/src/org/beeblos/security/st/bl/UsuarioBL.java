@@ -1,5 +1,5 @@
 package org.beeblos.security.st.bl;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import java.util.Date;
 import java.util.List;
 

@@ -9,7 +9,7 @@ package org.beeblos.security.st.bl;
  */
 
 import java.util.List;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.beeblos.security.st.dao.DepartamentoDao;
 import org.beeblos.security.st.error.DepartamentoException;
 import org.beeblos.security.st.model.Departamento;

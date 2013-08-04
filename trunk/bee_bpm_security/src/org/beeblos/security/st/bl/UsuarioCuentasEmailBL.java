@@ -2,7 +2,7 @@ package org.beeblos.security.st.bl;
 
 // Generado 25-nov-2010 12:52:05 
 
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import java.util.List;
 
 import org.apache.commons.logging.Log;

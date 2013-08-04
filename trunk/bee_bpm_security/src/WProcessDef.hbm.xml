@@ -30,10 +30,10 @@
 		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
 			<column  name="mod_user" />
 		</property>
-		<one-to-one name="managedTable" class="org.beeblos.bpm.core.model.WProcessHeadManagedData"
+		<one-to-one name="managedTableConfiguration" class="org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration"
 				cascade="all">
 		</one-to-one>
-       <set name="processDataFieldDef" table="w_process_data_field" 
+       <set name="processDataFieldDef" table="w_process_head_data_field" 
 				lazy="false" fetch="join" cascade="none">
             <key>
                 <column name="process_head_id" not-null="true" />
@@ -42,7 +42,7 @@
         </set>		
 	</class>
 
-    <class name="org.beeblos.bpm.core.model.WProcessHeadManagedData" table="w_process_head_managed_data">
+    <class name="org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration" table="w_process_head_managed_data">
         <id name="headId" type="java.lang.Integer">
             <column name="head_id" />
             <generator class="assigned" />
@@ -158,6 +158,12 @@
 			<column name="process_map" />
 		</property>
 
+		<set name="systemObject" cascade="save-update" lazy="false"
+			table="w_process_system_object">
+			<key column="process_id" />
+			<many-to-many class="org.beeblos.bpm.core.model.SystemObject" column="system_object_id" />
+		</set>
+
 		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WProcessHead"
 			column="head_id"  name="process" fetch="join" lazy="false"/>
 	
@@ -237,7 +243,6 @@
 		        </property>
 			</composite-element>
 		</set>		
-
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.WRoleDef" table="w_role_def">
@@ -341,7 +346,7 @@
         </property>
         
         <many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcessDataField"
-			column="process_data_field_id" name="dataField" fetch="join" lazy="false"/>
+			column="process_head_data_field_id" name="dataField" fetch="join" lazy="false"/>
     </class>	
 
 	<class name="org.beeblos.bpm.core.model.WStepHead" table="w_step_head">
@@ -1293,7 +1298,7 @@
 
 	</class>
 	
-	<class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_data_field">
+	<class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_head_data_field">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -1304,7 +1309,7 @@
 		</property>
 
         
-        <many-to-one name="dataType" class="org.beeblos.bpm.core.model.WDataType" fetch="join" lazy="false">
+        <many-to-one name="dataType" class="com.sp.common.model.WDataType" fetch="join" lazy="false">
             <column name="data_type_id" not-null="true" />
         </many-to-one>
 
@@ -1337,7 +1342,7 @@
         </property>
     </class>
 	
-   <class name="org.beeblos.bpm.core.model.WDataType" table="w_data_type">
+   <class name="com.sp.common.model.WDataType" table="w_data_type">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
@@ -1390,18 +1395,7 @@
         <property name="comments" type="string">
             <column name="comments" />
         </property>
-        <property name="addDate" type="timestamp">
-            <column name="add_date" length="0" not-null="true" />
-        </property>
-        <property name="addUser" type="java.lang.Integer">
-            <column name="add_user" />
-        </property>
-        <property name="modDate" type="timestamp">
-            <column name="mod_date" length="0" not-null="true" />
-        </property>
-        <property name="modUser" type="java.lang.Integer">
-            <column name="mod_user" />
-        </property>
+ 
 
     </class>    
     
