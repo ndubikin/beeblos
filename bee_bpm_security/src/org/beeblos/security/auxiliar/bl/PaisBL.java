@@ -2,7 +2,7 @@ package org.beeblos.security.auxiliar.bl;
 
 import java.util.List;
 
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.beeblos.security.auxiliar.dao.PaisDao;
 import org.beeblos.security.auxiliar.error.PaisException;
 import org.beeblos.security.auxiliar.model.Pais;
