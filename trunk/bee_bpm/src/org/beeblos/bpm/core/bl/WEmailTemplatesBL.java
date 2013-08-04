@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WEmailTemplatesDao;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.model.WEmailTemplates;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 public class WEmailTemplatesBL {
 

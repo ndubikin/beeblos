@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WUserDefDao;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WUserDef;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 
 

@@ -10,6 +10,9 @@ import org.joda.time.DateTime;
 
 public class Constants {
 	
+	// nes 20130803
+	public static final int ACTIVE_DATA_FIELDS = 1;
+	
 	// dml 20130709
 	public static String PROCESS_XML_MAP_LOCATION = getStringProperty("process.xml.map.location","/processXmlMapTmp.xml");
 	public static String WORKFLOW_EDITOR_URI = getStringProperty("workflow.editor.uri","/general/javascript/work/editors/workfloweditor.html");

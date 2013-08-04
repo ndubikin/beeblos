@@ -8,8 +8,8 @@ import org.beeblos.bpm.core.dao.WDataTypeDao;
 import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WStepDefException;
-import org.beeblos.bpm.core.model.WDataType;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.model.WDataType;
+import com.sp.common.util.StringPair;
 
 
 

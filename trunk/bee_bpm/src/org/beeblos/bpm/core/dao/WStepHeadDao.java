@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.model.WStepHead;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;

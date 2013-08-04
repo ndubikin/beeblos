@@ -11,7 +11,7 @@ import org.beeblos.bpm.core.dao.WStepHeadDao;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.model.WStepHead;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 public class WStepHeadBL {
 

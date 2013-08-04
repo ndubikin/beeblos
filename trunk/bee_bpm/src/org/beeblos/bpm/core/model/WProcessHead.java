@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.beeblos.bpm.tm.model.Table;
-
 public class WProcessHead implements java.io.Serializable {
 
 	/**
@@ -18,9 +16,9 @@ public class WProcessHead implements java.io.Serializable {
 	private String name;	
 	private String comments;
 	
-	private WProcessHeadManagedData managedTable; // data fields table
+	private WProcessHeadManagedDataConfiguration managedTableConfiguration; // data fields table
 	
-	Set<WProcessHeadManagedData> processDataFieldDef = new HashSet<WProcessHeadManagedData>(0);
+	Set<WProcessDataField> processDataFieldDef = new HashSet<WProcessDataField>(0);
 	
 	private Date insertDate;
 	private Integer insertUser;
@@ -123,23 +121,22 @@ public class WProcessHead implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
-	public WProcessHeadManagedData getManagedTable() {
-		return managedTable;
+	public WProcessHeadManagedDataConfiguration getManagedTableConfiguration() {
+		return managedTableConfiguration;
 	}
 
-
-	public void setManagedTable(WProcessHeadManagedData managedTable) {
-		this.managedTable = managedTable;
+	public void setManagedTableConfiguration(
+			WProcessHeadManagedDataConfiguration managedTableConfiguration) {
+		this.managedTableConfiguration = managedTableConfiguration;
 	}
 
-
-	public Set<WProcessHeadManagedData> getProcessDataFieldDef() {
+	public Set<WProcessDataField> getProcessDataFieldDef() {
 		return processDataFieldDef;
 	}
 
 
 	public void setProcessDataFieldDef(
-			Set<WProcessHeadManagedData> processDataFieldDef) {
+			Set<WProcessDataField> processDataFieldDef) {
 		this.processDataFieldDef = processDataFieldDef;
 	}
 
@@ -148,13 +145,24 @@ public class WProcessHead implements java.io.Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result
+				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result + ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime
+				* result
+				+ ((managedTableConfiguration == null) ? 0
+						: managedTableConfiguration.hashCode());
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime
+				* result
+				+ ((processDataFieldDef == null) ? 0 : processDataFieldDef
+						.hashCode());
 		return result;
 	}
 
@@ -165,7 +173,7 @@ public class WProcessHead implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WProcessHead))
 			return false;
 		WProcessHead other = (WProcessHead) obj;
 		if (comments == null) {
@@ -188,6 +196,12 @@ public class WProcessHead implements java.io.Serializable {
 				return false;
 		} else if (!insertUser.equals(other.insertUser))
 			return false;
+		if (managedTableConfiguration == null) {
+			if (other.managedTableConfiguration != null)
+				return false;
+		} else if (!managedTableConfiguration
+				.equals(other.managedTableConfiguration))
+			return false;
 		if (modDate == null) {
 			if (other.modDate != null)
 				return false;
@@ -203,15 +217,30 @@ public class WProcessHead implements java.io.Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (processDataFieldDef == null) {
+			if (other.processDataFieldDef != null)
+				return false;
+		} else if (!processDataFieldDef.equals(other.processDataFieldDef))
+			return false;
 		return true;
 	}
 
 
 	@Override
 	public String toString() {
-		return "WProcessHead [id=" + id + ", name=" + name + ", comments=" + comments + ", insertDate="
-				+ insertDate + ", insertUser=" + insertUser + ", modDate=" + modDate + ", modUser="
-				+ modUser + "]";
+		return "WProcessHead ["
+				+ (id != null ? "id=" + id + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (comments != null ? "comments=" + comments + ", " : "")
+				+ (managedTableConfiguration != null ? "managedTableConfiguration="
+						+ managedTableConfiguration + ", "
+						: "")
+				+ (processDataFieldDef != null ? "processDataFieldDef="
+						+ processDataFieldDef + ", " : "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
 

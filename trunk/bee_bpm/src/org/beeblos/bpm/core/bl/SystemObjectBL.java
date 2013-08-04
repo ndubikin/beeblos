@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 import org.beeblos.bpm.core.dao.SystemObjectDao;
 import org.beeblos.bpm.core.error.SystemObjectException;
 import org.beeblos.bpm.core.model.SystemObject;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 public class SystemObjectBL {
 

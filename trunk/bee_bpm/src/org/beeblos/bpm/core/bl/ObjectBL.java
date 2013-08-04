@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.ObjectDao;
 import org.beeblos.bpm.core.error.ObjectException;
 import org.beeblos.bpm.core.model.ObjectM;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 
 public class ObjectBL {

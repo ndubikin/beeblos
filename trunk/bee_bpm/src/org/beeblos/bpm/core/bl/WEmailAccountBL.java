@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WEmailAccountDao;
 import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.model.WEmailAccount;
-import org.beeblos.bpm.core.model.noper.StringPair;
+import com.sp.common.util.StringPair;
 
 public class WEmailAccountBL {
 
