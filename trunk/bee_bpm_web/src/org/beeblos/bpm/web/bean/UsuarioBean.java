@@ -15,7 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 import org.beeblos.security.st.bl.DepartamentoBL;
 import org.beeblos.security.st.bl.UsuarioBL;
 import org.beeblos.security.st.bl.UsuarioCuentasEmailBL;

@@ -19,7 +19,8 @@
 			<h:panelGrid columns="1" style="width:100%;">
 				<rich:spacer height="10px;"/>
 				<h:panelGroup>
-					<h:outputText value="#{msg.label_process_task}" styleClass="title_style" style="margin-left:35px;"/>
+					<h:outputText value="#{msg.label_process_task} " styleClass="title_style" style="margin-left:35px;"/>
+					<h:outputText value=" (#{msg.label_processing_as_admin_}) " styleClass="label_form_bold" style="margin-left:5px;color:red;"/>
 				</h:panelGroup>
 				<rich:spacer height="10" />
 				<ui:include src="processor/tabs/panels/default_step_wo_form.xhtml"/>

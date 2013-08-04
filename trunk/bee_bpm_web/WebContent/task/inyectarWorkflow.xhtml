@@ -34,15 +34,22 @@
 	</h:panelGrid>
 		
  
-	<h:panelGrid columns="1">
-		<rich:spacer height="10" />
+
+	<div style="margin-top:15px;magin-bottom:10px;">
 		<h:outputText value="Inyectar nuevo elemento en worklfow:" styleClass="title_style" />
-		<rich:spacer height="15" />
+	</div>		
+	<div style="margin-top:15px;magin-bottom:10px;">
 		<ui:include src="inyector/tabs/panels/inyector_default.xhtml"/>
-		<rich:spacer height="10" />
+	</div>
+	<ui:fragment rendered="#{not empty inyectorBean.managedData.dataField}">
+		<div style="margin-top:15px;magin-bottom:10px;">
+			<ui:include src="inyector/tabs/panels/inyector_data_fields.xhtml"/>
+		</div>
+	</ui:fragment>
+	<div style="margin-top:15px;magin-bottom:10px;">
 		<ui:include src="inyector/tabs/panels/inyector_launch_button.xhtml"/>
-		<rich:spacer height="10" />
-	</h:panelGrid>
+	</div>
+
 
 </h:form>	
 </ui:define>

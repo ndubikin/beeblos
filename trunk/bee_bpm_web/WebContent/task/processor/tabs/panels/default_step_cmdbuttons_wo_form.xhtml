@@ -31,9 +31,10 @@
 	 </h:panelGroup>
 
 
-	<h:panelGrid id="filtros" columns="1" style="#{pasoBean.instruccionesYComentariosEnabled ? 'display:block;' : 'display:none;'}" >
-		<h:panelGrid columns="2" style=" width : auto; height : auto; padding-left: 7px;margin-left:25px;" 
-				columnClasses="colStylesc1,colStylesc2"
+	<h:panelGrid id="filtros" columns="1" 
+		style="width:100%; #{pasoBean.instruccionesYComentariosEnabled ? 'display:block;' : 'display:none;'}" >
+		<h:panelGrid columns="2" style=" width:90%; height:auto; padding-left: 7px;margin-left:25px;" 
+				columnClasses="column15percent,column85percent"
 				>
 				
 			<rich:spacer height="10" />	<rich:spacer height="10" /> 
@@ -47,7 +48,7 @@
 			</h:panelGroup>
 			<h:outputText value="#{msg.label_notes} / #{msg.label_comments}" />
 			<h:inputTextarea value="#{pasoBean.pasoActual.userNotes}" 
-							 style="width:98%; height:100px;  font-size: 14px;"/>
+							 style="width:90%; height:100px;  font-size: 14px;"/>
 			
 				
 			<rich:spacer height="10" />	<rich:spacer height="10" />
