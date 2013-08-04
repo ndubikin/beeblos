@@ -475,6 +475,12 @@ table.doctable td {
 	margin: 0px;
 }
 
+.colStyle50_percent_verticalAligntop {
+	width: 50%;
+	margin: 0px;
+	vertical-align: top;
+}
+
 .column05percent {
 	width: 5%;
 }
@@ -561,6 +567,20 @@ table.doctable td {
 	margin: 0px;
 }
 
+.left_pane {
+width: 50%;
+height:auto;
+float: left;
+vertical-align: top;
+}     
+
+.right_pane {
+width: 50%;
+height:auto;
+float:left;
+}
+
+
 /*
 *
 * CALENDAR INPUT COMMON STYLE
@@ -587,4 +607,40 @@ table.doctable td {
 	cursor: pointer;
 	color: #7795AF;
 	text-decoration: underline
+}
+
+.command_link_form {
+	font-size: 12px;
+	text-decoration: none;
+	font-family: Arial;
+
+}
+.label_form {
+	font-size:12px;
+
+}
+.label_form_bold {
+	font-size:12px;
+	font-weight:bold;
+
+}
+
+.fieldset_block_info {
+	border-width: 1px;
+	margin-bottom:15px;
+}
+
+.fieldset_block_info_wo_line {
+	border:none;
+	width:100%;
+	padding-bottom:10px; /* 0 para contrarrestar el padding que tiene el skin de richfaces */
+					  /* 10 de margen inferior para dejar separaciones verticales entre elementos ... */
+					 
+}
+
+.fieldset_nopadding_block_info_wo_line {
+	border:none;
+	width:100%;
+	padding:0px;
+					 
 }

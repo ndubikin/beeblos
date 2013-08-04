@@ -25,7 +25,7 @@ import org.beeblos.bpm.wc.taglib.bean.util.TareaWorkflowUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
-import org.beeblos.bpm.wc.taglib.util.UtilsVs;
+import com.sp.common.jsf.util.UtilsVs;
 
 
 public class ConsultaTareaBean extends CoreManagedBean {
@@ -41,7 +41,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 	//dml 20111219
 	private List<SelectItem> lPasosValidos= new ArrayList<SelectItem>();
 	private Integer version;
-	private Integer idPasoSeleccionado;
+	private Integer selectedStepDefId;
 	private String filtroComentariosYReferencia;
 
 	private Integer idObject; // id del objeto correspondiente al paso
@@ -79,7 +79,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 
 		//dml 20111219
 		this.lPasosValidos = new ArrayList<SelectItem>();
-		this.setIdPasoSeleccionado(null);
+		this.setSelectedStepDefId(null);
 		this.filtroComentariosYReferencia = "";
 		
 		//rrl: 20101222
@@ -321,7 +321,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			lTareas = (ArrayList<WStepWork>)
 							new WStepWorkBL()
 									.getWorkListByProcess(
-											idProceso, idPasoSeleccionado, ALIVE, usuarioLogueado, 
+											idProceso, selectedStepDefId, ALIVE, usuarioLogueado, 
 											false, procesoFechaLlegado, procesoFechaRevisado,
 											proyectoFechaLimite,filtroComentariosYReferencia);
 			
@@ -520,12 +520,12 @@ public class ConsultaTareaBean extends CoreManagedBean {
 		this.version = version;
 	}
 
-	public Integer getIdPasoSeleccionado() {
-		return idPasoSeleccionado;
+	public Integer getSelectedStepDefId() {
+		return selectedStepDefId;
 	}
 
-	public void setIdPasoSeleccionado(Integer idPasoSeleccionado) {
-		this.idPasoSeleccionado = idPasoSeleccionado;
+	public void setSelectedStepDefId(Integer selectedStepDefId) {
+		this.selectedStepDefId = selectedStepDefId;
 	}
 		
 	public void cambiarPaso() {

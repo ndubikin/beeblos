@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+
+		<h:outputText value="#{msg.label_data_fields}" styleClass="title_style"/>
+	
+		<table width="100%" style="margin-left:-2px;" >
+
+			<tbody>
+				<a4j:repeat value="#{inyectorBean.managedData.dataField}" var="inputDataField">
+					<tr>
+						<ui:include src="iny_data_field_grid_data.xhtml"/>
+					</tr>
+				</a4j:repeat>
+			</tbody>
+		</table>
+
+</ui:composition>
