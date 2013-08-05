@@ -7,38 +7,62 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:beecomp="http://www.beeblos.org/bee_bpm_web_components">
 
-	<h:form id="w_process_def_data_fields_form" style="margin-left: 16px;">
+	<h:form id="w_process_def_step_data_fields_form" style="margin-left: 16px;">
 
-		<div class="fieldset_block_info_wo_line">
-			<rich:dataTable id="w_step_data_field"
-				value="#{wStepDefFormBean.stepDataFieldList}"
-				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
-				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
-				var="sdf" width="100%" columnClasses="center" rows="5"
-				rendered="#{wStepDefFormBean.stepDataFieldListSize gt 0}">
-			
-				<f:facet name="header">
-					<h:outputText value="#{msg.label_data_field}" />
-				</f:facet>
-	
-				<rich:column sortBy="#{sdf.dataField.name}"
-					style="width:250px; text-align: left;">
-					<f:facet name="header">
-						<h:outputText value="#{msg.label_name}" />
-					</f:facet>
-					<h:outputText value="#{sdf.dataField.name}" />
-				</rich:column>
-	
-			</rich:dataTable>
-	
+		<h:panelGroup id="w_process_def_data_fields_table">
+
+			<ui:fragment
+				rendered="#{not empty wStepDefFormBean.stepDataFieldList}">
+		
+				<fieldset>
+					<legend class="demo_legend">#{msg.label_data_fields}</legend>
+				
+					<table>
+						<thead>
+							<tr>
+								<th width="30%" align="left"><h:outputText
+										value="#{msg.label_name}" styleClass="label_form" /></th>
+								<th width="60%" align="left"><h:outputText
+										value="#{msg.label_data_type}" styleClass="label_form" /></th>
+								<th width="10%" align="left"><h:outputText
+										value="" styleClass="label_form" /></th>
+							</tr>
+						</thead>
+						<tbody>
+							<a4j:repeat value="#{wStepDefFormBean.stepDataFieldList}" var="sdf">
+								<tr>
+								
+									<td align="left"><h:outputText
+											value="#{sdf.dataField.name}" styleClass="label_form" style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"/></td>
+									<td align="left"><h:outputText
+											value="#{sdf.dataField.dataType.name} (#{sdf.dataField.length})" styleClass="label_form" style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"/></td>
+				
+									<td align="left">
+										<a4j:commandLink
+											value="#{msg.label_edit}" styleClass="command_link_form"
+											action="#{wStepDefFormBean.loadDataField}"
+											reRender="w_process_def_step_data_fields_add_new">
+						                	<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.wStepDataFieldSelected.id}" value="#{sdf.id}"/>
+										</a4j:commandLink>
+									</td>
+										
+								</tr>
+							</a4j:repeat>
+						</tbody>
+					</table>
+				</fieldset>
+					
+			</ui:fragment>
+				
 			<h:outputText value="#{msg.label_no_data_fields_related}" 
 						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.stepDataFieldListSize eq 0}"
 						styleClass="label_form_bold"/>
-		</div>
+
+		</h:panelGroup>
 
 		<div class="fieldset_block_info_wo_line">
 			<a4j:jsFunction name="onsubmitSearchDataField" action="#{wStepDefFormBean.updateDataFieldsRelated}"
-				reRender="w_process_def_data_fields_form">
+				reRender="w_process_def__step_data_fields_form">
 				<a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strDataFieldList}"  />
 			</a4j:jsFunction>			
 			<a4j:commandLink id="insert_w_step_data_Field" value="#{msg.label_add_a_data_field}"

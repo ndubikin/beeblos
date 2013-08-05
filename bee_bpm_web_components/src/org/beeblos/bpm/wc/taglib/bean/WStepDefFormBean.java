@@ -32,6 +32,7 @@ import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -116,6 +117,10 @@ public class WStepDefFormBean extends CoreManagedBean {
 	//rrl 20130801
 	private Integer currentProcessHeadId;
 	
+	//rrl 20130805
+	private boolean visibleButtonEditDataField;
+	private WStepDataField wStepDataFieldSelected;
+	
 	
 	public WStepDefFormBean() {		
 		super();
@@ -173,7 +178,10 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 		//		HelperUtil.recreateBean("documentacionBean", "com.softpoint.taglib.common.DocumentacionBean");
 
-	
+		//rrl 20130805
+		visibleButtonEditDataField = true;
+		wStepDataFieldSelected = new WStepDataField(EMPTY_OBJECT); 
+
 	}
 	
 	
@@ -1128,6 +1136,24 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.currentProcessHeadId = currentProcessHeadId;
 	}
 	
+	//rrl 20130805
+	public boolean isVisibleButtonEditDataField() {
+		return visibleButtonEditDataField;
+	}
+
+	public void setVisibleButtonEditDataField(boolean visibleButtonEditDataField) {
+		this.visibleButtonEditDataField = visibleButtonEditDataField;
+	}
+	
+	public WStepDataField getwStepDataFieldSelected() {
+		return wStepDataFieldSelected;
+	}
+	
+	public void setwStepDataFieldSelected(
+			WStepDataField wStepDataFieldSelected) {
+		this.wStepDataFieldSelected = wStepDataFieldSelected;
+	}
+	
 	public void deleteWStepUser(){
 		
 		if (currentWStepDef != null && currentWStepDef.getUsersRelated() != null
@@ -1480,12 +1506,19 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	}
 
-	//rrl 20130801 - nes 20130803
+	//rrl 20130801 - nes 20130803 
 	public List<WStepDataField> getStepDataFieldList() {
 
-		return new ArrayList<WStepDataField>(
-				currentWStepDef.getStepHead().getStepDataFieldList());
+		List<WStepDataField> stepDataFieldList = new ArrayList<WStepDataField>();
+		
+		//rrl 20130805 verified before currentWStepDef is not null
+		if (currentWStepDef !=null &&
+				currentWStepDef.getStepHead()!=null &&
+				currentWStepDef.getStepHead().getStepDataFieldList()!=null) {
+			stepDataFieldList = currentWStepDef.getStepHead().getStepDataFieldList();
+		}
 
+		return stepDataFieldList;
 	}
 
 	public Integer getStepDataFieldListSize() {
@@ -1598,5 +1631,91 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}
 		}
 	}
+
+	//rrl 20130805
+	public void initializeDataFieldsAddNew() {
+		
+		this.wStepDataFieldSelected = new WStepDataField(EMPTY_OBJECT);
+		visibleButtonEditDataField = false;
+		
+	}
+	
+	public void initializeDataFieldsCloseAddNew() {
+	
+		this.wStepDataFieldSelected = new WStepDataField(EMPTY_OBJECT);
+		visibleButtonEditDataField = true;
+		
+	}
+
+	public String saveEditDataField() {
+		WStepDataFieldBL wdfBL = new WStepDataFieldBL();
+		WStepDataField stepDataField = null;
+
+		try {
+		
+			if (wStepDataFieldSelected.getId() != null && 
+					wStepDataFieldSelected.getId() != 0) {
+				
+				stepDataField = wdfBL.
+						getWStepDataFieldByPK(wStepDataFieldSelected.getId(), this.getCurrentUserId());
+				if (stepDataField!=null) {
+					
+					stepDataField.setActive(wStepDataFieldSelected.isActive());
+					stepDataField.setReadOnly(wStepDataFieldSelected.isReadOnly());
+					stepDataField.setRequired(wStepDataFieldSelected.isRequired());
+					stepDataField.setName(wStepDataFieldSelected.getName());
+					stepDataField.setDefaultValue(wStepDataFieldSelected.getDefaultValue());
+					stepDataField.setLength(wStepDataFieldSelected.getLength());
+					stepDataField.setComments(wStepDataFieldSelected.getComments());
+					
+					wdfBL.update(stepDataField, this.getCurrentUserId());
+					
+				}
+				
+			}
+			
+			this.loadObject();
+			
+			initializeDataFieldsCloseAddNew();
+			
+		} catch (WStepDataFieldException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public String cancelNewDataField() {
+
+		initializeDataFieldsCloseAddNew();
+		
+		return null;
+	}
+	
+	public void loadDataField(){
+		WStepDataFieldBL wdfBL = new WStepDataFieldBL();
+		
+		try {
+
+			if (wStepDataFieldSelected != null && wStepDataFieldSelected.getId() != null && 
+					wStepDataFieldSelected.getId() != 0) {
+			
+				wStepDataFieldSelected = wdfBL.getWStepDataFieldByPK(wStepDataFieldSelected.getId(), getCurrentUserId());
+
+				visibleButtonEditDataField = false;
+				
+			}
+			
+		} catch (WStepDataFieldException e) {
+
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".loadDataField() WStepDataFieldException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+
+		}
+	}
+	
 	
 }
