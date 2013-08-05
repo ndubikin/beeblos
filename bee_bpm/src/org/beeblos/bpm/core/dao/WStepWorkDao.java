@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.dao;
 
+import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
@@ -13,12 +14,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
+
 import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
+import org.beeblos.bpm.core.util.ListConverters;
+import org.beeblos.bpm.tm.TableManager;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -32,13 +39,32 @@ public class WStepWorkDao {
 		
 	}
 	
+	// note: stepw must arrive full filled & controlled (null object,etc)
 	public Integer add(WStepWork stepw) throws WStepWorkException {
+		logger.debug("add() WStepWork - CurrentStep-Work:["+(stepw.getCurrentStep()!=null?stepw.getCurrentStep().getName():"null")
+				+" processWork reference:"
+				+(stepw.getwProcessWork()!=null?stepw.getwProcessWork().getReference():"null")+"]");
 		
-		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getId()+"]");
+		Integer id=null;
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(stepw));
+			id = Integer.valueOf(HibernateUtil.guardar(stepw));
+			
+			/*
+			 *  set process custom data
+			 *  idWork & idStepWork is assigned in add method
+			 */
+			if (stepw.getStepWorkManagedData()!=null) {
+				stepw.getStepWorkManagedData().setIdWork(stepw.getwProcessWork().getId());
+				stepw.getStepWorkManagedData().setCurrentStepWorkId(stepw.getId());
+				if (stepw.getStepWorkManagedData().getPk()!=null && stepw.getStepWorkManagedData().getPk()!=0){
+					logger.error("WStepWorkDao: add - trying insert managed custom data with assigned pk id:"+stepw.getStepWorkManagedData().getPk()
+							+" pk will be forced to null.");
+					stepw.getStepWorkManagedData().setPk(null);
+				}
+				_persistStepWorkManagedData(stepw);
+			}
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkDao: add - Can't store stepw definition record "+ 
@@ -48,17 +74,31 @@ public class WStepWorkDao {
 
 		}
 
+		return id;
 	}
 	
 	
 	public void update(WStepWork stepw) throws WStepWorkException {
-		
-		logger.debug("update() WStepWork < id = "+stepw.getId()+">");
+		logger.debug("update() WStepWork  id:["+(stepw!=null?stepw.getId():"null")+"]");
 		
 		try {
 
 			HibernateUtil.actualizar(stepw);
 
+			/*
+			 *  set process custom data
+			 *  idWork & idStepWork is assigned in add method
+			 */
+			if (stepw.getStepWorkManagedData()!=null) {
+				stepw.getStepWorkManagedData().setIdWork(stepw.getwProcessWork().getId());
+				stepw.getStepWorkManagedData().setCurrentStepWorkId(stepw.getId());
+				if (stepw.getStepWorkManagedData().getPk()==null || stepw.getStepWorkManagedData().getPk()==0){
+					logger.error("WStepWorkDao: update - trying update managed custom data with null pk id - "
+							+" A new record will be inserted in table:"+stepw.getStepWorkManagedData().getManagedTableConfiguration().getName());
+					stepw.getStepWorkManagedData().setPk(null);
+				}
+				_persistStepWorkManagedData(stepw);
+			}
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkDao: update - Can't update stepw definition record "+ 
@@ -71,11 +111,118 @@ public class WStepWorkDao {
 		}
 					
 	}
+
+	public void lockStepWork( 
+			Integer id, Date modDate, Integer modUser, boolean isAdmin ) 
+					throws WStepWorkException {
+		logger.debug("unlock() WStepWork  id:["+(id!=null?id:"null")+"]");
+		
+		if (id==null || id==0) throw new WStepWorkException("Error trying update wstepwork with id=null or 0!!");
+		
+		Transaction tx = null;
+		try {
+
+			Session session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			//			Integer id, boolean locked, Integer lockedBy, 
+			// Date lockedSince, 	Date modDate, Integer modUser
+			String hql = "UPDATE WStepWork "
+							+ "Set locked= :locked,  "
+							+ " lockedBy= :lockedBy, "
+							+ " lockedSince= :lockedSince, "
+							+ " modDate= :modDate, "
+							+ " modUser= :modUser, "
+							+ " adminProcess= :adminProcess "
+							+ "Where id= :id";
+
+			Query query = session.createQuery(hql);
+			query.setInteger("id", id);
+			query.setInteger("modUser", modUser);
+			query.setInteger("lockedBy", modUser);
+			query.setTimestamp("modDate", modDate);
+			query.setTimestamp("lockedSince", modDate);
+			query.setBoolean("adminProcess", isAdmin);
+			query.setBoolean("locked", true);
+
+			int rowCount = query.executeUpdate();
+
+			tx.commit();
+
+			logger.debug("lock() updated [rowCount =  "
+					+ rowCount + "]");
+
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+			if (tx != null)
+				tx.rollback();
+			logger.error("WStepWorkDao: lock - can't update database table w_step_work - id = "
+					+ (id!=null?id:"null")
+					+ "\n - " + ex.getMessage() + " - " + ex.getCause());
+			throw new WStepWorkException(ex);
+
+		}
+					
+	}
 	
+	public void unlockStepWork( 
+			Integer id, Date modDate, Integer modUser, boolean isAdmin ) 
+					throws WStepWorkException {
+		logger.debug("unlock() WStepWork  id:["+(id!=null?id:"null")+"]");
+		
+		if (id==null || id==0) throw new WStepWorkException("Error trying update wstepwork with id=null or 0!!");
+		
+		Transaction tx = null;
+		try {
+
+			Session session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			//			Integer id, boolean locked, Integer lockedBy, 
+			// Date lockedSince, 	Date modDate, Integer modUser
+			String hql = "UPDATE WStepWork Set "
+								+ " locked='false', "
+								+ " lockedBy= 'null', "
+								+ " lockedSince= 'null', "
+								+ " modDate= :modDate, "
+								+ " modUser= :modUser, "
+								+ " adminProcess= :adminProcess "
+							+ " Where id= :id ";
+
+			Query query = session.createQuery(hql);
+			query.setInteger("id", id);
+			query.setInteger("modUser", modUser);
+			query.setTimestamp("modDate", modDate);
+			query.setBoolean("adminProcess", isAdmin);
+
+			int rowCount = query.executeUpdate();
+
+			tx.commit();
+
+			logger.debug("unlock() updated [rowCount =  "
+					+ rowCount + "]");
+
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+			if (tx != null)
+				tx.rollback();
+			logger.error("WStepWorkDao: unlock - can't update database table w_step_work - id = "
+					+ (id!=null?id:"null")
+					+ "\n - " + ex.getMessage() + " - " + ex.getCause());
+			throw new WStepWorkException(ex);
+
+		}
+					
+	}
 	
 	public void delete(WStepWork stepw) throws WStepWorkException {
 
-		logger.debug("delete() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+"]");
+		logger.debug("delete() WStepWork - CurrentStep-Work: ["
+						+(stepw.getCurrentStep()!=null?stepw.getCurrentStep().getName():"null")
+						+" processWork reference:"
+						+(stepw.getwProcessWork()!=null?stepw.getwProcessWork().getReference():"null")+"]");
 		
 		try {
 
@@ -124,6 +271,13 @@ public class WStepWorkDao {
 					id + " - " + ex.getMessage()+"\n"+ex.getCause());
 
 		}
+		
+		// set process custom data
+		if (stepw.getCurrentStep().getStepHead().getDataFieldDef()!=null
+				&& stepw.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
+			_loadStepWorkManagedData(stepw);
+		}
+		
 
 		return stepw;
 	}
@@ -156,6 +310,12 @@ public class WStepWorkDao {
 			throw new WStepWorkException("getWStepWorkByName;  can't obtain stepw name: " + 
 					name + " - " + ex.getMessage()+"\n"+ex.getCause());
 
+		}
+
+		// set process custom data
+		if (stepw.getCurrentStep().getStepHead().getDataFieldDef()!=null
+				&& stepw.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
+			_loadStepWorkManagedData(stepw);
 		}
 
 		return stepw;
@@ -191,7 +351,87 @@ public class WStepWorkDao {
 
 		}
 
+		// set process custom data
+		for (WStepWork stepw: stepws) {
+			if (stepw.getCurrentStep().getStepHead().getDataFieldDef()!=null
+					&& stepw.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
+				_loadStepWorkManagedData(stepw);
+			}
+		}
+		
 		return stepws;
+	}
+	
+	
+	// load managed data for stepWork
+	private void _loadStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
+		if (stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null 
+				&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0){
+
+			// if there is defined custom data fields for a step(def) && managed table is defined ...
+			// then load stepWorkManagedData
+			if ( stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null
+					&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0
+					&& stepWork.getProcess().getProcess().getManagedTableConfiguration()!=null
+					&& stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()!=null
+					&& !"".equals(stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()) ) {
+				
+				ManagedData md = new ManagedData();
+				md.setDataField( 
+						ListConverters.convertWStepDataFieldToList
+						 (stepWork.getCurrentStep().getStepHead().getDataFieldDef(),null,null,ACTIVE_DATA_FIELDS) );
+				md.setChanged(false);				
+				md.setCurrentStepWorkId(stepWork.getId()); // step work id
+				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id
+				md.setProcessId(stepWork.getProcess().getProcess().getId()); // process head id
+				md.setManagedTableConfiguration(stepWork.getProcess().getProcess().getManagedTableConfiguration());
+
+				// IMPLEMENTAR
+				TableManager tm = new TableManager();
+				try {
+					tm.loadRecord(md);
+					stepWork.setStepWorkManagedData(md);
+				
+				} catch (TableManagerException e) {
+					String message = "TableManagerException: can't retrieve stored custom data from manaed table:"
+							+ (md.getManagedTableConfiguration()!=null?(md.getManagedTableConfiguration().getName()!=null?md.getManagedTableConfiguration().getName():"null"):"managed table data is null")
+							+ e.getMessage() + " - "
+							+ e.getCause();
+						logger.warn(message);
+
+						throw new WStepWorkException(message);
+				}
+			}
+		} 
+	}
+	
+	// load managed data for stepWork
+	private void _persistStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
+		if (stepWork.getStepWorkManagedData()!=null
+				&& stepWork.getStepWorkManagedData().getDataField()!=null 
+				&& stepWork.getStepWorkManagedData().getDataField().size()>0){
+
+			TableManager tm = new TableManager();
+			try {
+				
+				tm.persist(stepWork.getStepWorkManagedData());
+//				stepWork.setStepWorkManagedData(md);
+			
+			} catch (TableManagerException e) {
+				String message = "TableManagerException: can't persis custom data at managed table:"
+						+ (stepWork.getStepWorkManagedData().getManagedTableConfiguration()!=null
+								?(stepWork.getStepWorkManagedData().getManagedTableConfiguration().getName()!=null
+									?stepWork.getStepWorkManagedData().getManagedTableConfiguration().getName()
+									:"null")
+								: "managed table data is null")
+						+ e.getMessage() + " - "
+						+ e.getCause();
+					logger.warn(message);
+
+					throw new WStepWorkException(message);
+			}
+
+		} 
 	}
 	
 	// ALL WORKITEMS
