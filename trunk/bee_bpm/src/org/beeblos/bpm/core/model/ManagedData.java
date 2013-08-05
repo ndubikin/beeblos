@@ -6,6 +6,8 @@ import com.sp.common.model.ManagedDataField;
 
 public class ManagedData {
 
+	private Integer pk;
+	
 	private Integer currentWorkId; // used like as pk because 1 work must have only 1 managed-data-record
 	private Integer currentStepWorkId; // used for tracking purposes: stores las step-work-id update the managed-data-record 
 	private Integer processId; // version - for external access reference ...
@@ -23,6 +25,14 @@ public class ManagedData {
 	
 	public ManagedData() {
 		changed=false;
+	}
+
+	public Integer getPk() {
+		return pk;
+	}
+
+	public void setPk(Integer pk) {
+		this.pk = pk;
 	}
 
 	public Integer getCurrentWorkId() {
@@ -110,6 +120,7 @@ public class ManagedData {
 						: managedTableConfiguration.hashCode());
 		result = prime * result
 				+ ((operation == null) ? 0 : operation.hashCode());
+		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
 		result = prime * result
 				+ ((processId == null) ? 0 : processId.hashCode());
 		return result;
@@ -157,6 +168,11 @@ public class ManagedData {
 				return false;
 		} else if (!operation.equals(other.operation))
 			return false;
+		if (pk == null) {
+			if (other.pk != null)
+				return false;
+		} else if (!pk.equals(other.pk))
+			return false;
 		if (processId == null) {
 			if (other.processId != null)
 				return false;
@@ -168,6 +184,7 @@ public class ManagedData {
 	@Override
 	public String toString() {
 		return "ManagedData ["
+				+ (pk != null ? "pk=" + pk + ", " : "")
 				+ (currentWorkId != null ? "currentWorkId=" + currentWorkId
 						+ ", " : "")
 				+ (currentStepWorkId != null ? "currentStepWorkId="

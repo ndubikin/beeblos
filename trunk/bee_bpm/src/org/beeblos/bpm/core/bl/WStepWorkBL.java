@@ -1,6 +1,5 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
@@ -52,7 +51,6 @@ import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
-import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.core.util.Resourceutil;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
@@ -140,7 +138,7 @@ public class WStepWorkBL {
 		
 		logger.debug("update() WStepWork < id = "+stepw.getId()+">");
 		
-		if (!stepw.equals(new WStepWorkDao().getWStepWorkByPK(stepw.getId())) ) {
+		if ( !stepw.equals(new WStepWorkDao().getWStepWorkByPK(stepw.getId())) ) {
 
 			// timestamp & trace info
 			stepw.setModDate(new Date());
@@ -404,6 +402,8 @@ public class WStepWorkBL {
 		
 	}
 	
+	
+	// IMPLEMENTAR CORRECTAMENTE isAdmin
 	// devuelve 1 paso y lo deja lockeado
 	public WStepWork getStepWithLock (
 			Integer idStepWork, Integer currentUser ) 
@@ -435,13 +435,9 @@ public class WStepWorkBL {
 
 			_setOpenInfo(currentUser, storedStep);
 			
-			this._lockStep(storedStep, currentUser);
-			
-			// set process custom data
-			if (storedStep.getCurrentStep().getStepHead().getDataFieldDef()!=null
-					&& storedStep.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
-				_loadStepWorkManagedData(storedStep);
-			}
+			// TODO IMPLEMENTAR CORRECTAMENTE ESTO ...
+			boolean isAdmin=false;
+			_lockStep(storedStep.getId(), currentUser, isAdmin);
 			
 		} catch ( WStepWorkException swe ) {  // if can't lock it returns exception ...
 				
@@ -523,7 +519,7 @@ public class WStepWorkBL {
 						isAdmin ||
 						currentUser.equals(OMNIADMIN) ) ) {
 
-			this._unlockStep(stepToUnlock, currentUser, isAdmin);
+			this._unlockStep(stepToUnlock, currentUser, (isAdmin || currentUser.equals(OMNIADMIN)));
 
 		} else if ( ! stepToUnlock.isLocked() ){
 			String message = "The indicated step ("+ stepToUnlock.getId() +")is not locked " ;
@@ -540,6 +536,10 @@ public class WStepWorkBL {
 
 	}
 	
+	// IMPLEMENTAR CORRECTAMENTE EL LOCK Y EL UNLOCK!!!!!!!!!!!!!!!!!
+	// Y VER BIEN COMO DEFINIR SI ES ADMIN USER O SI ES USUARIO NORMAL EN USO DE SUS FACULTADES (PERMISOS)
+	// DEFINIDOS ...
+	
 	// lock given step
 	// isAdmin 
 	public Boolean lockStep (
@@ -547,53 +547,15 @@ public class WStepWorkBL {
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
 	
 		// get the step
-		WStepWork stepToLock = 
-				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+//		WStepWork stepToLock = 
+//				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 		
 		// 1st check user permissions
 		
 
-		_lockStep(stepToLock, currentUser);
+		_lockStep(idStepWork, currentUser, isAdminUser);
 		
 		return true;
-
-	}
-	
-	// load managed data for stepWork
-	private void _loadStepWorkManagedData(WStepWork stepWork){
-		if (stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null 
-				&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0){
-
-			// if there is defined custom data fields for a step(def) && managed table is defined ...
-			// then load stepWorkManagedData
-			if ( stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null
-					&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0
-					&& stepWork.getProcess().getProcess().getManagedTableConfiguration()!=null
-					&& stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()!=null
-					&& !"".equals(stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()) ) {
-				
-				ManagedData md = new ManagedData();
-				md.setDataField( 
-						ListConverters.convertWStepDataFieldToList
-						 (stepWork.getCurrentStep().getStepHead().getDataFieldDef(),null,null,ACTIVE_DATA_FIELDS) );
-				md.setChanged(false);				
-				md.setCurrentStepWorkId(stepWork.getId()); // step work id
-				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id
-				md.setProcessId(stepWork.getProcess().getProcess().getId()); // process head id
-//				List<ManagedDataField> fieldList = new ArrayList<ManagedDataField>();
-//				fieldList = TableManager.loadRecord(md);
-//				md.setDataField(dataField)
-
-				// IMPLEMENTAR
-				TableManager tm = new TableManager();
-//				tm.loadRecord(md);
-				
-				
-				stepWork.setStepWorkManagedData(md);				
-				
-			}
-			
-		} 
 
 	}
 	
@@ -605,30 +567,38 @@ public class WStepWorkBL {
 		}
 	}
 	
-	// locks a step. If the step is locked by same user nothing to do but don't return exception ...
-	private void _lockStep( WStepWork stepToLock, Integer currentUser ) throws WStepWorkException, WStepLockedByAnotherUserException {
+	private boolean _checkCurrentLockStatus(Integer id) {
+		return true;
+	}
+	
+	// locks a step. If the step is locked by same user nothing to do but doesn't return exception ...
+//	private void _lockStep( WStepWork stepToLock, Integer currentUser, boolean isAdmin ) 
+	private void _lockStep( Integer id, Integer currentUser, boolean isAdmin )
+			throws WStepWorkException, WStepLockedByAnotherUserException {
+
+		// IMPLEMENTAR BIEN ESTO Y CHEQUEAR EL USUARIO QUE LOCKEA EL PASO
 		
 		// if step is not locked then locks it !
-		if ( !stepToLock.isLocked() ) {
+		if ( _checkCurrentLockStatus(id) ) {
+
 			Date now = new Date();
+
+			new WStepWorkDao()
+						.lockStepWork( id, now, currentUser, isAdmin );
 			
-			stepToLock.setLocked(true);
-			stepToLock.setLockedBy(new WUserDef(currentUser));
-			stepToLock.setLockedSince(now);
-			
-			this.update(stepToLock, currentUser);
 			
 		} else {
-			if ( !stepToLock.getLockedBy().getId().equals(currentUser)) { 
-				String message = "The indicated step ("+ stepToLock.getId() +") is already locked by another user ..." ;
+			//if ( !stepToLock.getLockedBy().getId().equals(currentUser)) { 
+				String message = "The indicated step ("+ id +") is already locked by another user ..." ;
 				logger.info(message);
 				throw new WStepLockedByAnotherUserException(message);
-			}
+			//}
 		}
 	}
 	
 	// unlocks a step. 
-	private void _unlockStep( WStepWork stepToUnlock, Integer currentUser, boolean isAdmin ) throws WStepWorkException, WStepLockedByAnotherUserException {
+	private void _unlockStep( WStepWork stepToUnlock, Integer currentUser, boolean isAdmin ) 
+			throws WStepWorkException, WStepLockedByAnotherUserException {
 		
 		// if step is not locked then locks it !
 		if ( stepToUnlock.isLocked() ) {
@@ -636,7 +606,18 @@ public class WStepWorkBL {
 			stepToUnlock.setLocked(false);
 			stepToUnlock.setLockedBy(null);
 			stepToUnlock.setLockedSince(null);
-			this.update(stepToUnlock, currentUser);
+
+			// nota nes 20130805 - no puedo mandarlo al update porque se pasa por la managed table
+			// y lee varias veces el paso lo q le mete un overhead importante ...
+//			this.update(stepToUnlock, currentUser);
+			
+			// timestamp & trace info
+			stepToUnlock.setModDate(new Date());
+			stepToUnlock.setModUser(currentUser);
+			
+			new WStepWorkDao().unlockStepWork(
+									  stepToUnlock.getId(),stepToUnlock.getModDate(),
+									  stepToUnlock.getModUser(), isAdmin);
 						
 			if ( isAdmin ) {
 				logger.info("Step: "+stepToUnlock.getId()+" was unlocked by admin:"+currentUser);
