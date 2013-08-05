@@ -601,8 +601,8 @@ float:left;
 
 .viewFilters {
 	text-align: left; 
-	margin-left:25px; 
-	padding-left: 10px;
+	#margin-left:25px; 
+	#padding-left: 10px;
 	font-size: 11px;
 	cursor: pointer;
 	color: #7795AF;
@@ -629,6 +629,11 @@ float:left;
 	border-width: 1px;
 	margin-bottom:15px;
 }
+.fieldset_block_info_35px {
+	border-width: 1px;
+	margin-bottom:15px;
+	margin-left:35px;
+}
 
 .fieldset_block_info_wo_line {
 	border:none;
@@ -637,6 +642,18 @@ float:left;
 					  /* 10 de margen inferior para dejar separaciones verticales entre elementos ... */
 					 
 }
+
+/* para cambiar luego por el de arriba*/
+.fieldset_block_info_wo_line_35px {
+	border:none;
+	width:100%;
+	padding-bottom:10px; /* 0 para contrarrestar el padding que tiene el skin de richfaces */
+					  /* 10 de margen inferior para dejar separaciones verticales entre elementos ... */
+
+	margin-left:35px;
+}
+
+
 
 .fieldset_nopadding_block_info_wo_line {
 	border:none;

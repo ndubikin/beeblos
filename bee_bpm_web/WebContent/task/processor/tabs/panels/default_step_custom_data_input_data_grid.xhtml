@@ -1,0 +1,23 @@
+<!DOCTYPE html >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+
+	<td align="left" style="width:25%;">
+		<h:outputText
+			value="#{inputDataField.required ? '!' : ''}" style="color:red;"/>
+		<h:outputText
+			value="#{inputDataField.name}" styleClass="label_form" 
+			title="#{inputDataField.dataType.name} (#{inputDataField.length}) #{inputDataField.required ? msg.label_mandatory_field : ''}"/>
+	</td>
+
+	<td align="left" style="width:75%;">
+		<h:inputText value="#{inputDataField.value}" style="width:250px; height:22px;" 
+			size="#{inputDataField.dataType.maxLength>0?inputDataField.length:20}"/>
+	</td>
+
+</ui:composition>

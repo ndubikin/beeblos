@@ -13,25 +13,31 @@
 <ui:define name="current">Workflow inyector</ui:define>
 <ui:define name="body" >
 				
-	<h:form id="frm_procesador_principal">
+<h:form id="frm_procesador_principal">
 	
-		<h:panelGroup>
-			<h:panelGrid columns="1" style="width:100%;">
-				<rich:spacer height="10px;"/>
-				<h:panelGroup>
-					<h:outputText value="#{msg.label_process_task} " styleClass="title_style" style="margin-left:35px;"/>
-					<h:outputText value=" (#{msg.label_processing_as_admin_}) " styleClass="label_form_bold" style="margin-left:5px;color:red;"/>
-				</h:panelGroup>
-				<rich:spacer height="10" />
-				<ui:include src="processor/tabs/panels/default_step_wo_form.xhtml"/>
-			</h:panelGrid>
-		</h:panelGroup>
-		<rich:panel id="process_panel" style="margin: 15px; padding: 4px; border: none;">
-				<ui:include src="#{pasoBean.paginaProceso}"/>
-		</rich:panel>
+	<div>
+		<div class="fieldset_block_info_wo_line_35px" >
+			<h:outputText value="#{msg.label_process_task} " styleClass="title_style"/>
+			<h:outputText value=" (#{msg.label_processing_as_admin_}) " styleClass="label_form_bold" style="margin-left:5px;color:red;"/>
+		</div>
+		<div class="fieldset_block_info_wo_line_35px">
+			<ui:include src="processor/tabs/panels/default_step_wo_form.xhtml"/>
+		</div>
+		<ui:fragment rendered="#{not empty pasoBean.pasoActual.stepWorkManagedData.dataField}">
+			<div class="fieldset_block_info_wo_line_35px">
+				<ui:include src="processor/tabs/panels/default_step_custom_data_form.xhtml"/>
+			</div>
+		</ui:fragment>		
+	</div>
+
+	<div class="fieldset_block_info_wo_line_35px">
+			<ui:include src="#{pasoBean.paginaProceso}"/>
+	</div>
+	<div class="fieldset_block_info_wo_line_35px">
 		<ui:include src="processor/tabs/panels/default_step_cmdbuttons_wo_form.xhtml"/>
+	</div>
 	
-	</h:form>
+</h:form>
 
 </ui:define>
 </ui:composition>
