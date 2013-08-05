@@ -49,7 +49,7 @@ public class WStepDataField implements java.io.Serializable {
 	public WStepDataField(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
-			this.dataField = new WProcessDataField();
+			this.dataField = new WProcessDataField(createEmtpyObjects);
 		}	
 	}
 	
