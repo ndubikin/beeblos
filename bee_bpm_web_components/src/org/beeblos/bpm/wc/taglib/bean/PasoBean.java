@@ -743,10 +743,14 @@ public class PasoBean  extends CoreManagedBean {
 	}
 
 	private void setMensajeproceso() {
+		if (this.pasoActual!=null) {
 		this.mensajeProceso=	this.pasoActual.getwProcessWork().getReference()+" - "
 				+ pasoActual.getwProcessWork().getComments()+ "\n ("
 				+ pasoActual.getCurrentStep().getName()+") \n ("
 				+ pasoActual.getCurrentStep().getStepComments()+ " )";
+		} else {
+			this.mensajeProceso="current step is null ...";
+		}
 	}	
 	
 	private void cargaRespuestasCombo() {
