@@ -5,16 +5,16 @@
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:rich="http://richfaces.org/rich">
 	
-	<h:outputText value="( Paso devuelto )" style="color: red; font-size:13px; font-weight: bold; margin-left:207px;" 
+	<p class="fieldset_block_info_wo_line">
+		<h:outputText value="( #{msg.label_this_task_has_been_returned} )" style="color: red; font-size:13px; font-weight: bold; margin-left:207px;" 
 					rendered="#{pasoBean.pasoActual.sentBack eq true}"/>
-	<rich:spacer height="10" rendered="#{pasoBean.pasoActual.sentBack eq true}"/>		
+	</p>	
 	
-	<h:panelGrid columns="5" style=" width : 100%; height : auto; padding-left: 7px;margin-left:25px;" 
+	<h:panelGrid columns="5" style=" width : 100%; height : auto; margin-left:-2px;" 
 			columnClasses="column60percent,column05percent,column10percent,column20percent,column05percent"
 			>
 			
-		<rich:spacer height="10" />	<rich:spacer height="10" />
-		<rich:spacer height="10" />	<rich:spacer height="10" />	<rich:spacer height="10" />
+		<h:outputText value="" /><h:outputText value="" /><h:outputText value="" /><h:outputText value="" /><h:outputText value="" />
 
 
 		<h:outputText value="#{msg.label_step}:#{pasoBean.pasoActual.currentStep.name}" 
@@ -55,9 +55,5 @@
 		<h:outputText value="#{pasoBean.pasoActual.userInstructions}" 
 						 style="width:100%; height:auto; font-size: 13px;"/>
 	</h:panelGroup>
-
-
-
-
 
 </ui:composition>
