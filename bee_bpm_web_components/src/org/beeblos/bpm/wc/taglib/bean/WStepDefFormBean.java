@@ -992,14 +992,16 @@ public class WStepDefFormBean extends CoreManagedBean {
 		this.strUserList = strUserList;
 	}
 
-	//rrl 20130801
+	//rrl 20130805
 	public String getStrDataFieldList() {
 
 		strDataFieldList="";
 		if ( currentWStepDef.getStepHead()!=null
 				&& currentWStepDef.getStepHead().getDataFieldDef() != null ) {
 			for ( WStepDataField su: this.currentWStepDef.getStepHead().getDataFieldDef()) {
-				strDataFieldList+=(strDataFieldList!=null && !"".equals(strDataFieldList)?",":"")+su.getId();
+				if (su.getDataField()!=null) {
+					strDataFieldList+=(strDataFieldList!=null && !"".equals(strDataFieldList)?",":"")+su.getDataField().getId();
+				}
 			}
 		}
 		
@@ -1495,7 +1497,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 							: 0);
 	}
 
-	//rrl 20130802
+	//rrl 20130805
 	public String updateDataFieldsRelated() {
 		
 		try {
@@ -1517,6 +1519,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 				updateStepDataFieldRelatedList();
 				
 			}
+			
+			loadObject();
 			
 		} catch (NumberFormatException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
@@ -1541,7 +1545,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return null;
 	}
 	
-	
+	//rrl 20130805
 	private void updateStepDataFieldRelatedList() throws NumberFormatException, WStepDataFieldException, WProcessDataFieldException {
 				
 		WStepDataFieldBL wStepDataFieldBL = new WStepDataFieldBL();
@@ -1555,7 +1559,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 				isInList = false;
 				for (WStepDataField wsdf : dataFieldRelated) {
-					if (wsdf.getId().equals(Integer.parseInt(s))) {
+					if (wsdf.getDataField()!=null && wsdf.getDataField().getId().equals(Integer.parseInt(s))) {
 						isInList = true;
 						break;
 					}
@@ -1578,7 +1582,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 				for (String s : strDataFieldList.split(",")) {
 
-					if (wsdf.getId().equals(Integer.parseInt(s))) {
+					if (wsdf.getDataField().getId().equals(Integer.parseInt(s))) {
 						isInList = true;
 						break;
 					}
