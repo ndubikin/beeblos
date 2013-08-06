@@ -69,6 +69,7 @@ import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
 import org.beeblos.bpm.tm.TableManager;
+import org.beeblos.bpm.tm.model.Column;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -101,6 +102,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private WProcessDef currentWProcessDef;
 	private Integer currentId; // current object managed by this bb
 
+	// nes 20130806
+	// fields to present managed table information
+	private List<Column> columnListTM;
+	private Integer reccountTM;
+	
 	// auxiliar properties
 
 	private BeeblosAttachment attachment;
@@ -799,6 +805,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setAttachment(BeeblosAttachment attachment) {
 		this.attachment = attachment;
+	}
+
+	public List<Column> getColumnListTM() {
+		return columnListTM;
+	}
+
+	public void setColumnListTM(List<Column> columnListTM) {
+		this.columnListTM = columnListTM;
+	}
+
+	public Integer getReccountTM() {
+		return reccountTM;
+	}
+
+	public void setReccountTM(Integer reccountTM) {
+		this.reccountTM = reccountTM;
 	}
 
 	public String getDocumentLink() {
@@ -2135,7 +2157,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.dataFieldList = dataFieldList;
 	}
 	
-	public void initializeDataFieldsCloseAddNew() {
+	public void initNewDataFieldFormObjects() {
 		
 		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
 		visibleButtonNewDataField = true;
@@ -2157,51 +2179,43 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public String saveNewDataField() {
 
 		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
-		WProcessDataField processDataField = null;
 
 		try {
 		
 			if (wProcessDataFieldSelected.getId() == null || 
 					wProcessDataFieldSelected.getId() == 0) {
 				
-				processDataField = new WProcessDataField();
-				processDataField.setProcessHeadId(currentWProcessDef.getProcess().getId());
-				processDataField.setDataType(new WDataTypeBL()
-					.getWDataTypeByPK(wProcessDataFieldSelected.getDataType().getId(), this.getCurrentUserId()));
-				processDataField.setName(wProcessDataFieldSelected.getName());
-				processDataField.setRequired(wProcessDataFieldSelected.isRequired());
-				processDataField.setComments(wProcessDataFieldSelected.getComments());
-				processDataField.setLength(wProcessDataFieldSelected.getLength());
-				processDataField.setActive(wProcessDataFieldSelected.isActive());
-				
-				wdfBL.add(processDataField, this.getCurrentUserId());
+				wProcessDataFieldSelected
+					.setProcessHeadId(currentWProcessDef.getProcess().getId());
+				wProcessDataFieldSelected
+					.setDataType(new WDataTypeBL()
+											.getWDataTypeByPK(
+													wProcessDataFieldSelected.getDataType().getId(), 
+													this.getCurrentUserId()));
+
+				wdfBL.add(wProcessDataFieldSelected, this.getCurrentUserId());
 				
 			} else {
+
+				// update existing dataField
+				wProcessDataFieldSelected
+					.setDataType(new WDataTypeBL()
+											.getWDataTypeByPK(
+													wProcessDataFieldSelected.getDataType().getId(), 
+													this.getCurrentUserId()));
 				
-				processDataField = wdfBL.
-						getWProcessDataFieldByPK(wProcessDataFieldSelected.getId(), this.getCurrentUserId());
-				if (processDataField!=null) {
-					processDataField.setDataType(new WDataTypeBL()
-						.getWDataTypeByPK(wProcessDataFieldSelected.getDataType().getId(), this.getCurrentUserId()));
-					processDataField.setName(wProcessDataFieldSelected.getName());
-					processDataField.setRequired(wProcessDataFieldSelected.isRequired());
-					processDataField.setComments(wProcessDataFieldSelected.getComments());
-					processDataField.setLength(wProcessDataFieldSelected.getLength());
-					processDataField.setActive(wProcessDataFieldSelected.isActive());
-					
-					wdfBL.update(processDataField, this.getCurrentUserId());
-					
-				}
-				
+				wdfBL.update(wProcessDataFieldSelected, this.getCurrentUserId());
+			
 			}
 			
 			reloadDataFieldList();
 			
-			initializeDataFieldsCloseAddNew();
+			initNewDataFieldFormObjects();
 			
-		} catch (WDataTypeException e) {
-			e.printStackTrace();
 		} catch (WProcessDataFieldException e) {
+			e.printStackTrace();
+		} catch (WDataTypeException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -2210,7 +2224,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	public String cancelNewDataField() {
 
-		initializeDataFieldsCloseAddNew();
+		initNewDataFieldFormObjects();
 		
 		return null;
 	}
@@ -2279,7 +2293,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 				reloadDataFieldList();
 				
-				initializeDataFieldsCloseAddNew();
+				initNewDataFieldFormObjects();
 				
 			}		
 			
@@ -2295,6 +2309,44 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void switchButtonAdvancedConfiguration() {
 		visibleButtonAdvancedConfiguration=!visibleButtonAdvancedConfiguration;
+		
+		if (currentWProcessDef!=null
+				&& currentWProcessDef.getProcess()!=null
+				&& currentWProcessDef.getProcess().getManagedTableConfiguration()!=null
+				&& currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema()!=null
+				&& currentWProcessDef.getProcess().getManagedTableConfiguration().getName()!=null ){
+
+			TableManager tm = new TableManager();
+			try {
+				reccountTM = 
+						tm.checkTableExists(
+								currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
+								currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
+				
+				columnListTM = new ArrayList<org.beeblos.bpm.tm.model.Column>();
+				// if table exists
+				if (reccountTM>=0) {
+					columnListTM = tm.getTableColumns(currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
+								currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
+				}				
+
+			// TODO implementar mensajes de error en pantalla q correspondan ...
+			} catch (ClassNotFoundException e) {
+				columnListTM=null;
+				reccountTM=null;
+				e.printStackTrace();
+			} catch (SQLException e) {
+				columnListTM=null;
+				reccountTM=null;
+				e.printStackTrace();
+			}
+			
+
+		} else {	
+			columnListTM=null;
+			reccountTM=null;
+		}
+		
 	}
 
 	// generates managed table for custom properties
@@ -2358,6 +2410,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		try {
 			Integer qtyRecords = 
 					tm.checkTableExists(
+							currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
 							currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
 
 			System.out.println("qty records:"+qtyRecords);

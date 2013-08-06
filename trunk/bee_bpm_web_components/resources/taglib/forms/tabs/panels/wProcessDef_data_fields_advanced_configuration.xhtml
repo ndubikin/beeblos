@@ -57,8 +57,8 @@
 					    reRender="w_process_def_data_fields_advanced_configuration${action}"/>
 			</h:panelGroup>
 
-			<h:panelGroup rendered="#{(wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration != null)}">
-
+<ui:fragment rendered="#{(wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration != null)}">
+			<div>
 				<h:outputText value="#{msg.label_process_managed_data}:" styleClass="column20percent label_form_bold"/>
 				<br/>
 				<br/>
@@ -74,18 +74,30 @@
 				<h:outputText value="#{msg.label_last_update}:" styleClass="column20percent label_form"/>
 				<h:outputText value="#{wProcessDefFormBean.currentWProcessDef.process.managedTableConfiguration.modDate}" styleClass="label_form_bold"/>
 				<br/>
+			</div>
 
-				<a4j:commandButton value="#{msg.label_recreate_managed_table}"
+			<div class="fieldset_block_info">
+				<label class="title_style fieldset_block_info">#{msg.label_managed_table_information}</label>
+				<br/>
+				<label>#{msg.label_qty_records}:<b><h:outputText value="#{wProcessDefFormBean.reccountTM eq null || wProcessDefFormBean.reccountTM eq 0 ? 0 : wProcessDefFormBean.reccountTM}" />
+					</b></label>
+				<p>
+				
+				</p>
+			</div>
+				
+			<a4j:commandButton value="#{msg.label_recreate_managed_table}"
 					    style="width:180px; margin-bottom: 10px; margin-top:10px;height:22px;"
 					    action="#{wProcessDefFormBean.recreateManagedTable}"  />
 				
 
-			</h:panelGroup>
+
 			
 			<div style=" margin-top:10px;margin-bottom:10px;">
 
 			</div>
-		</h:panelGroup>
+</ui:fragment>
+	</h:panelGroup>
 
 	</h:form>
 </div>
