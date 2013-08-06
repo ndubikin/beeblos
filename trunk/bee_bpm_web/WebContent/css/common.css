@@ -191,6 +191,8 @@ input, select, textarea, button, keygen, isindex, legend, a {
 .title_style{
 	font-size: 14px;
 	font-weight: bold;
+	margin-top:8px;
+	margin-bottom:12px;
 }
 
 .left_menu{
