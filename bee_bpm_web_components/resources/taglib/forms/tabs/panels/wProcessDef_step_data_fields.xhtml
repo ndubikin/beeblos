@@ -56,10 +56,10 @@
 										<h:outputText
 											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form" 
 											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"
-											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
+											rendered="#{(sdf.name!=null or sdf.length!=null) and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
 										<h:outputText
 											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form_bold" 
-											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
+											rendered="#{(sdf.name!=null or sdf.length!=null) and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
 									</td>
 				
 									<td align="left">
