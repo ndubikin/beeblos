@@ -1649,34 +1649,23 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	public String saveEditDataField() {
 		WStepDataFieldBL wdfBL = new WStepDataFieldBL();
-		WStepDataField stepDataField = null;
 
 		try {
 		
-			if (wStepDataFieldSelected.getId() != null && 
-					wStepDataFieldSelected.getId() != 0) {
-				
-				stepDataField = wdfBL.
-						getWStepDataFieldByPK(wStepDataFieldSelected.getId(), this.getCurrentUserId());
-				if (stepDataField!=null) {
-					
-					stepDataField.setActive(wStepDataFieldSelected.isActive());
-					stepDataField.setReadOnly(wStepDataFieldSelected.isReadOnly());
-					stepDataField.setRequired(wStepDataFieldSelected.isRequired());
-					stepDataField.setName(wStepDataFieldSelected.getName());
-					stepDataField.setDefaultValue(wStepDataFieldSelected.getDefaultValue());
-					stepDataField.setLength(wStepDataFieldSelected.getLength());
-					stepDataField.setComments(wStepDataFieldSelected.getComments());
-					
-					wdfBL.update(stepDataField, this.getCurrentUserId());
-					
-				}
-				
+			//rrl 20130806 Length is greater than allowable maximum
+			boolean validationSave = true;
+			if (wStepDataFieldSelected.getDataField()!=null &&
+				wStepDataFieldSelected.getDataField().getLength()!=null &&
+				wStepDataFieldSelected.getLength()!=null &&
+				wStepDataFieldSelected.getLength() > wStepDataFieldSelected.getDataField().getLength()) {
+					validationSave = false;
 			}
 			
-			this.loadObject();
-			
-			initializeDataFieldsCloseAddNew();
+			if (validationSave) {
+				wdfBL.update(wStepDataFieldSelected, this.getCurrentUserId());
+				this.loadObject();
+				initializeDataFieldsCloseAddNew();
+			}
 			
 		} catch (WStepDataFieldException e) {
 			e.printStackTrace();
@@ -1685,7 +1674,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		return null;
 	}
 	
-	public String cancelNewDataField() {
+	public String cancelEditDataField() {
 
 		initializeDataFieldsCloseAddNew();
 		
