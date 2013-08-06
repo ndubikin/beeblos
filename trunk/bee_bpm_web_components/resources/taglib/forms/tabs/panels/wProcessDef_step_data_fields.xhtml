@@ -17,13 +17,15 @@
 				<fieldset>
 					<legend class="demo_legend">#{msg.label_data_fields}</legend>
 				
-					<table>
+					<table style="width:100%">
 						<thead>
 							<tr>
-								<th width="30%" align="left"><h:outputText
+								<th width="20%" align="left"><h:outputText
 										value="#{msg.label_name}" styleClass="label_form" /></th>
-								<th width="60%" align="left"><h:outputText
+								<th width="30%" align="left"><h:outputText
 										value="#{msg.label_data_type}" styleClass="label_form" /></th>
+								<th width="40%" align="left"><h:outputText
+										value="#{msg.label_step_personalization}" styleClass="label_form" /></th>
 								<th width="10%" align="left"><h:outputText
 										value="" styleClass="label_form" /></th>
 							</tr>
@@ -32,16 +34,39 @@
 							<a4j:repeat value="#{wStepDefFormBean.stepDataFieldList}" var="sdf">
 								<tr>
 								
-									<td align="left"><h:outputText
-											value="#{sdf.dataField.name}" styleClass="label_form" style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"/></td>
-									<td align="left"><h:outputText
-											value="#{sdf.dataField.dataType.name} (#{sdf.dataField.length})" styleClass="label_form" style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"/></td>
+									<td align="left">
+										<h:outputText 
+											value="#{sdf.dataField.name}" styleClass="label_form" 
+											style="#{(sdf.dataField.active ? '' : 'font-style:italic;')}"
+											rendered="#{sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
+										<h:outputText
+											value="#{sdf.dataField.name}" styleClass="label_form_bold" 
+											rendered="#{sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
+									</td>
+									<td align="left">
+										<h:outputText
+											value="#{sdf.dataField.dataType.name} (#{sdf.dataField.length})" styleClass="label_form" 
+											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"
+											rendered="#{sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
+										<h:outputText
+											value="#{sdf.dataField.dataType.name} (#{sdf.dataField.length})" styleClass="label_form_bold" 
+											rendered="#{sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
+									</td>
+									<td align="left">
+										<h:outputText
+											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form" 
+											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"
+											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
+										<h:outputText
+											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form_bold" 
+											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
+									</td>
 				
 									<td align="left">
 										<a4j:commandLink
 											value="#{msg.label_edit}" styleClass="command_link_form"
 											action="#{wStepDefFormBean.loadDataField}"
-											reRender="w_process_def_step_data_fields_add_new">
+											reRender="w_process_def_step_data_fields_form, w_process_def_step_data_fields_edit">
 						                	<a4j:actionparam name="det" assignTo="#{wStepDefFormBean.wStepDataFieldSelected.id}" value="#{sdf.id}"/>
 										</a4j:commandLink>
 									</td>
