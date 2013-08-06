@@ -53,7 +53,7 @@ public class WStepWorkDao {
 			
 			/*
 			 *  set process custom data
-			 *  idWork & idStepWork is assigned in add method
+			 *  idWork & idStepWork is assigned in previous add method
 			 */
 			if (stepw.getStepWorkManagedData()!=null) {
 				stepw.getStepWorkManagedData().setIdWork(stepw.getwProcessWork().getId());

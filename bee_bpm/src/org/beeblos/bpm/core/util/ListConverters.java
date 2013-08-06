@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.util;
 
+import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
+import static org.beeblos.bpm.core.util.Constants.ALL_DATA_FIELDS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,8 @@ public class ListConverters {
 		
 		List<ManagedDataField> mdfList = new ArrayList<ManagedDataField>(convSet.size());
 		for(WProcessDataField processDataField: convSet) {
-			if ( mode==0 || mode==1 && processDataField.isActive() ) {
+			if ( mode==ALL_DATA_FIELDS 
+					|| mode==ACTIVE_DATA_FIELDS && processDataField.isActive() ) {
 				ManagedDataField mdf = new ManagedDataField(
 						currentWorkId, 
 						currentStepWorkId, 
@@ -59,7 +62,8 @@ public class ListConverters {
 		
 		List<ManagedDataField> mdfList = new ArrayList<ManagedDataField>(stepDataFieldDef.size());
 		for(WStepDataField stepDatField: stepDataFieldDef) {
-			if ( mode==0 || mode==1 && stepDatField.getDataField().isActive() ) {
+			if ( mode==ALL_DATA_FIELDS 
+					|| mode==ACTIVE_DATA_FIELDS && stepDatField.getDataField().isActive() ) {
 				ManagedDataField mdf = new ManagedDataField(
 						currentWorkId, 
 						currentStepWorkId, 

@@ -12,6 +12,7 @@ public class Constants {
 	
 	// nes 20130803
 	public static final int ACTIVE_DATA_FIELDS = 1;
+	public static final int ALL_DATA_FIELDS = 0;
 	
 	// dml 20130709
 	public static String PROCESS_XML_MAP_LOCATION = getStringProperty("process.xml.map.location","/processXmlMapTmp.xml");
