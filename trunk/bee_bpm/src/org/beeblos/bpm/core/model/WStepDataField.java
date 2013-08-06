@@ -55,7 +55,7 @@ public class WStepDataField implements java.io.Serializable {
 	
 	public WStepDataField(Integer id, Integer stepHeadId,
 			WProcessDataField dataField, String name, Boolean required,
-			String comments, Boolean active, Integer length, String defaultValue) {
+			String comments, Boolean active, Boolean readOnly, Integer length, String defaultValue) {
 		this.id = id;
 		this.stepHeadId = stepHeadId;
 		this.dataField = dataField;
@@ -63,6 +63,7 @@ public class WStepDataField implements java.io.Serializable {
 		this.required = required;
 		this.comments = comments;
 		this.active = active;
+		this.readOnly= readOnly; 
 		this.length = length;
 		this.defaultValue = defaultValue;
 	}
