@@ -321,6 +321,9 @@
         <property name="active" type="java.lang.Boolean">
             <column name="active" />
         </property>
+        <property name="readOnly" type="java.lang.Boolean">
+            <column name="read_only" />
+        </property>
         <property name="length" type="java.lang.Integer">
             <column name="length"  />
         </property>        
@@ -344,6 +347,10 @@
         <property name="modUser" type="java.lang.Integer">
             <column name="mod_user" not-null="true" />
         </property>
+        
+		<property name="order" type="java.lang.Integer">
+			<column name="display_order"/>
+		</property>
         
         <many-to-one cascade="none" class="org.beeblos.bpm.core.model.WProcessDataField"
 			column="process_head_data_field_id" name="dataField" fetch="join" lazy="false"/>
