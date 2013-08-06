@@ -66,6 +66,17 @@ public class Column implements Serializable, Cloneable {
 		setName(columnName);
 	}
 
+	public Column(Column col) {
+		setLength(col.getLength());
+		setName(col.getName());
+		setNullable(col.isNullable());
+		setUnique(col.isUnique());
+		setSqlType(col.getSqlType());
+		setSqlTypeCode(col.getSqlTypeCode());
+		setComment(col.getComment());
+		setDefaultValue(col.getDefaultValue());
+	}
+	
 	public Column(int length, String name, boolean nullable, boolean unique,
 			String sqlType, Integer sqlTypeCode, String comment,
 			String defaultValue) {

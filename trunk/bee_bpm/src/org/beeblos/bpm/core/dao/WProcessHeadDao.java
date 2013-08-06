@@ -28,7 +28,7 @@ public class WProcessHeadDao {
 		
 	}
 	
-	public Integer add(WProcessHead process, Integer currentUserId) throws WProcessException {
+	public Integer add(WProcessHead process) throws WProcessException {
 		
 		logger.debug("add() WProcessHead - Name: ["+process.getName()+"]");
 		
@@ -47,7 +47,7 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public void update(WProcessHead process, Integer currentUserId) throws WProcessException {
+	public void update(WProcessHead process) throws WProcessException {
 		
 		logger.debug("update() WProcessHead < id = "+process.getId()+">");
 		
@@ -69,7 +69,7 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public void delete(WProcessHead process, Integer currentUserId) throws WProcessException {
+	public void delete(WProcessHead process) throws WProcessException {
 
 		logger.debug("delete() WProcessHead - Name: ["+process.getName()+"]");
 		
@@ -95,7 +95,7 @@ public class WProcessHeadDao {
 
 	}
 
-	public WProcessHead getWProcessByPK(Integer id, Integer currentUserId) throws WProcessException {
+	public WProcessHead getWProcessByPK(Integer id) throws WProcessException {
 
 		WProcessHead process = null;
 		org.hibernate.Session session = null;
@@ -125,7 +125,7 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public WProcessHead getWProcessByName(String name, Integer currentUserId) throws WProcessException {
+	public WProcessHead getWProcessByName(String name) throws WProcessException {
 
 		WProcessHead  process = null;
 		org.hibernate.Session session = null;
@@ -159,7 +159,7 @@ public class WProcessHeadDao {
 
 
 	// id=processId
-	public String getProcessName(Integer id, Integer currentUserId) throws WProcessDefException {
+	public String getProcessName(Integer id) throws WProcessDefException {
 
 		String name = null;
 		org.hibernate.Session session = null;
