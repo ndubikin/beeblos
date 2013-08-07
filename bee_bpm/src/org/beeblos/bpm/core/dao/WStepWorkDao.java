@@ -183,9 +183,9 @@ public class WStepWorkDao {
 			//			Integer id, boolean locked, Integer lockedBy, 
 			// Date lockedSince, 	Date modDate, Integer modUser
 			String hql = "UPDATE WStepWork Set "
-								+ " locked='false', "
-								+ " lockedBy= 'null', "
-								+ " lockedSince= 'null', "
+								+ " locked=0, "
+								+ " lockedBy= :null1, "
+								+ " lockedSince= :null2, "
 								+ " modDate= :modDate, "
 								+ " modUser= :modUser, "
 								+ " adminProcess= :adminProcess "
@@ -194,8 +194,11 @@ public class WStepWorkDao {
 			Query query = session.createQuery(hql);
 			query.setInteger("id", id);
 			query.setInteger("modUser", modUser);
+			query.setString("null1", null);
+			query.setString("null2", null);
 			query.setTimestamp("modDate", modDate);
 			query.setBoolean("adminProcess", isAdmin);
+			
 
 			int rowCount = query.executeUpdate();
 
