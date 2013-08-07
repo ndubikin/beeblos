@@ -320,14 +320,14 @@ public class WProcessHeadDao {
 			
 			filter = (( filter != null && !"".equals(filter)) ? " WHERE ":"") + filter;
 			
-			System.out.println(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
-			System.out.println(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
-			System.out.println(" ---->>>>>>>>>> filter:["+filter+"]");
+			logger.debug(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
+			logger.debug(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
+			logger.debug(" ---->>>>>>>>>> filter:["+filter+"]");
 			
 			// load base query phrase
 			String query = getBaseQuery( isAdmin );
 			
-			System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
+			logger.debug(" ---->>>>>>>>>> base query:["+query+"]");
 
 			// builds full query phrase
 			query += filter+getSQLOrder(action);
@@ -539,7 +539,7 @@ public class WProcessHeadDao {
 					" WHERE wpd.head_id = :processHeadId " +
 					" GROUP BY wpd.head_id ";
 
-			System.out.println("[QUERY]: "+query);
+			logger.debug("[QUERY]: "+query);
 			
 			result = (BigInteger) session.createSQLQuery(query)
 					.setParameter("processHeadId", processHeadId)

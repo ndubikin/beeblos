@@ -37,6 +37,11 @@ public class WProcessDataFieldBL {
 			throw new WProcessDataFieldException("Trying to add an existing datafield as new one. Not permitted operation ... id:["+processDataField.getId()+"]");
 		}
 		
+		// check for duplicated names (not allowed)
+		WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
+		if (pdf.getName()!=null && pdf.getName().equalsIgnoreCase(processDataField.getName()) ) {
+			throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists for this process!! Not permitted operation ... ");
+		}
 		
 		// timestamp & trace info
 		processDataField.setInsertDate(new Date());
@@ -64,6 +69,14 @@ public class WProcessDataFieldBL {
 		if (!processDataField.equals(
 				new WProcessDataFieldDao()
 						.getWProcessDataFieldByPK( processDataField.getId() )) ) {
+			
+			// check for duplicated names (not allowed)
+			WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
+			if (pdf.getName()!=null
+					&& pdf.getId()!=processDataField.getId()
+					&& pdf.getName().equals(processDataField.getName()) ) {
+				throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists!! Not permitted operation ... ");
+			}
 
 			// timestamp & trace info
 			processDataField.setModDate(new Date());
