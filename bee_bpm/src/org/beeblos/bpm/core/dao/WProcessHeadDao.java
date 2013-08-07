@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.model.WProcessHead;
 import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
@@ -28,74 +28,74 @@ public class WProcessHeadDao {
 		
 	}
 	
-	public Integer add(WProcessHead process) throws WProcessException {
+	public Integer add(WProcessHead processHead) throws WProcessHeadException {
 		
-		logger.debug("add() WProcessHead - Name: ["+process.getName()+"]");
+		logger.debug("add() WProcessHead - Name: ["+processHead.getName()+"]");
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(process));
+			return Integer.valueOf(HibernateUtil.guardar(processHead));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: add - Can't store process definition record "+ 
-					process.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessException("WProcessHeadDao: add - Can't store process definition record "+ 
-					process.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
+					processHead.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessHeadException("WProcessHeadDao: add - Can't store process definition record "+ 
+					processHead.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
 
 	}
 	
 	
-	public void update(WProcessHead process) throws WProcessException {
+	public void update(WProcessHead processHead) throws WProcessHeadException {
 		
-		logger.debug("update() WProcessHead < id = "+process.getId()+">");
+		logger.debug("update() WProcessHead < id = "+processHead.getId()+">");
 		
 		try {
 
-			HibernateUtil.actualizar(process);
+			HibernateUtil.actualizar(processHead);
 
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: update - Can't update process definition record "+ 
-					process.getName()  +
-					" - id = "+process.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WProcessException("WProcessHeadDao: update - Can't update process definition record "+ 
-					process.getName()  +
-					" - id = "+process.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+					processHead.getName()  +
+					" - id = "+processHead.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
+			throw new WProcessHeadException("WProcessHeadDao: update - Can't update process definition record "+ 
+					processHead.getName()  +
+					" - id = "+processHead.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
 					
 	}
 	
 	
-	public void delete(WProcessHead process) throws WProcessException {
+	public void delete(WProcessHead processHead) throws WProcessHeadException {
 
-		logger.debug("delete() WProcessHead - Name: ["+process.getName()+"]");
+		logger.debug("delete() WProcessHead - Name: ["+processHead.getName()+"]");
 		
 		try {
 
 			//process = getWProcessByPK(process.getId());
 
-			HibernateUtil.borrar(process);
+			HibernateUtil.borrar(processHead);
 
 		} catch (HibernateException ex) {
-			logger.error("WProcessHeadDao: delete - Can't delete proccess definition record "+ process.getName() +
-					" <id = "+process.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessException("WProcessHeadDao:  delete - Can't delete proccess definition record  "+ process.getName() +
-					" <id = "+process.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			logger.error("WProcessHeadDao: delete - Can't delete proccess head definition record "+ processHead.getName() +
+					" <id = "+processHead.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessHeadException("WProcessHeadDao:  delete - Can't delete proccess head definition record  "+ processHead.getName() +
+					" <id = "+processHead.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-//		} catch (WProcessException ex1) {
+//		} catch (WProcessHeadException ex1) {
 //			logger.error("WProcessHeadDao: delete - Exception in deleting process rec "+ process.getName() +
 //					" <id = "+process.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
-//			throw new WProcessException("WProcessHeadDao: delete - Exception in deleting process rec "+ process.getName() +
+//			throw new WProcessHeadException("WProcessHeadDao: delete - Exception in deleting process rec "+ process.getName() +
 //					" <id = "+process.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
 
 		} 
 
 	}
 
-	public WProcessHead getWProcessByPK(Integer id) throws WProcessException {
+	public WProcessHead getWProcessHeadByPK(Integer id) throws WProcessHeadException {
 
 		WProcessHead process = null;
 		org.hibernate.Session session = null;
@@ -116,7 +116,7 @@ public class WProcessHeadDao {
 				tx.rollback();
 			logger.warn("WProcessHeadDao: getWProcessByPK - we can't obtain the required id = "+
 					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessException("WProcessHeadDao: getWProcessByPK - we can't obtain the required id : " + 
+			throw new WProcessHeadException("WProcessHeadDao: getWProcessByPK - we can't obtain the required id : " + 
 					id + " - " + ex.getMessage()+"\n"+ex.getCause());
 
 		}
@@ -125,7 +125,7 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public WProcessHead getWProcessByName(String name) throws WProcessException {
+	public WProcessHead getWProcessHeadByName(String name) throws WProcessHeadException {
 
 		WProcessHead  process = null;
 		org.hibernate.Session session = null;
@@ -149,7 +149,7 @@ public class WProcessHeadDao {
 				tx.rollback();
 			logger.warn("WProcessHeadDao: getWProcessByName - can't obtain process name = " +
 					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessException("getWProcessByName;  can't obtain process name: " + 
+			throw new WProcessHeadException("getWProcessByName;  can't obtain process name: " + 
 					name + " - " + ex.getMessage()+"\n"+ex.getCause());
 
 		}
@@ -192,7 +192,7 @@ public class WProcessHeadDao {
 		return name;
 	}
 	
-	public List<WProcessHead> getWProcessList(Integer currentUserId) throws WProcessException {
+	public List<WProcessHead> getWProcessHeadList(Integer currentUserId) throws WProcessHeadException {
 
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -215,7 +215,7 @@ public class WProcessHeadDao {
 				tx.rollback();
 			logger.warn("WProcessHeadDao: getWProcesss() - can't obtain process list - " +
 					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessException("WProcessHeadDao: getWProcesss() - can't obtain process list: "
+			throw new WProcessHeadException("WProcessHeadDao: getWProcesss() - can't obtain process list: "
 					+ ex.getMessage()+"\n"+ex.getCause());
 
 		}
@@ -227,7 +227,7 @@ public class WProcessHeadDao {
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String firstLineText, String blank, Integer currentUserId)
-	throws WProcessException {
+	throws WProcessHeadException {
 		 
 			List<WProcessHead> lwph = null;
 			List<StringPair> retorno = new ArrayList<StringPair>(10);
@@ -278,7 +278,7 @@ public class WProcessHeadDao {
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();
-				throw new WProcessException(
+				throw new WProcessHeadException(
 						"Can't obtain WProcessHead combo list "
 						+ex.getMessage()+"\n"+ex.getCause());
 			} catch (Exception e) {}
@@ -289,10 +289,10 @@ public class WProcessHeadDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WProcessHead> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	public List<WProcessHead> getProcessHeadListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
-					throws WProcessException {
+					throws WProcessHeadException {
 
 			org.hibernate.Session session = null;
 			org.hibernate.Transaction tx = null;
@@ -375,7 +375,7 @@ public class WProcessHeadDao {
 				String message="WProcessHeadDao: 002 getWProcesss() - can't obtain process list - " +
 						ex.getMessage()+"\n"+ex.getCause();
 				logger.warn(message );
-				throw new WProcessException(message);
+				throw new WProcessHeadException(message);
 
 			} catch (Exception ex) {
 				if (tx != null)
@@ -383,7 +383,7 @@ public class WProcessHeadDao {
 				String message="WProcessHeadDao: 002B getWProcesss() - can't obtain process list - " +
 						ex.getMessage()+"\n"+ex.getCause();
 				logger.warn(message );
-				throw new WProcessException(message);
+				throw new WProcessHeadException(message);
 			}
 			
 			return lprocess;
@@ -519,8 +519,8 @@ public class WProcessHeadDao {
 	}
 
 	// dml 20130507
-	public boolean headProcessHasWProcessDef(Integer processHeadId, Integer currentUserId)
-			throws WProcessException {
+	public boolean processHeadHasWProcessDef(Integer processHeadId, Integer currentUserId)
+			throws WProcessHeadException {
 
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -552,7 +552,7 @@ public class WProcessHeadDao {
 				tx.rollback();
 			logger.warn("WProcessHeadDao: headProcessHasWProcessDef() - can't obtain result: "
 					+ ex.getMessage() + "\n" + ex.getCause());
-			throw new WProcessException(
+			throw new WProcessHeadException(
 					"WProcessHeadDao: headProcessHasWProcessDef() - can't obtain result: "
 							+ ex.getMessage() + "\n" + ex.getCause());
 

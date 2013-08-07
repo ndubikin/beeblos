@@ -5,6 +5,7 @@ import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -14,20 +15,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
-import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.tm.TableManager;
+
+import com.sp.common.util.StringPair;
 
 
 
@@ -40,7 +44,7 @@ public class WProcessDefBL {
 	}
 	
 	public Integer add(WProcessDef process, Integer currentUserId) 
-			throws WProcessDefException, WProcessException, WStepSequenceDefException {
+			throws WProcessDefException, WProcessHeadException, WStepSequenceDefException {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
 		
@@ -128,13 +132,13 @@ public class WProcessDefBL {
 	
 	// dml 20130430
 	private void _setFirstWProcessDefData(WProcessDef process, Integer processHeadId, Integer currentUserId) 
-			throws WProcessException {
+			throws WProcessHeadException {
 		
 		if (process != null){
 			
 			process.setActive(true);
 
-			process.setProcess(new WProcessHeadBL().getProcessByPK(processHeadId, currentUserId));
+			process.setProcess(new WProcessHeadBL().getProcessHeadByPK(processHeadId, currentUserId));
 			
 			if (process.getVersion() == null
 					|| process.getVersion().equals(0)){
@@ -147,7 +151,7 @@ public class WProcessDefBL {
 	
 	// dml 20130430
 	public void createFirstWProcessDef(Integer processHeadId, Integer currentUserId) 
-			throws WProcessDefException, WProcessException, WStepSequenceDefException{
+			throws WProcessDefException, WProcessHeadException, WStepSequenceDefException{
 
 		WProcessDef wpd = new WProcessDef(EMPTY_OBJECT);
 
@@ -194,7 +198,7 @@ public class WProcessDefBL {
 						
 						process.getProcess().getManagedTableConfiguration().setHeadId(id);
 					
-					} catch (WProcessException e) {
+					} catch (WProcessHeadException e) {
 						logger.error("Can't add process head managed table name:"
 										+(process.getProcess()
 													.getManagedTableConfiguration()
@@ -244,7 +248,7 @@ public class WProcessDefBL {
 
 	public List<String> delete(Integer processId, boolean deleteRelatedSteps, Integer currentUserId) 
 			throws WProcessWorkException, WProcessDefException, WStepSequenceDefException, 
-			WStepWorkException, WProcessException, WStepDefException, WStepHeadException {
+			WStepWorkException, WProcessHeadException, WStepDefException, WStepHeadException {
 
 		logger.debug("delete() WProcessDef - Name: ["+processId+"]");
 		
@@ -295,7 +299,7 @@ public class WProcessDefBL {
 		}
 		
 		
-		this._deleteRelatedSequences(processId, currentUserId);
+		this._deleteRelatedSequences(processId, currentUserId);// this is estrictly version related info 
 		
 		WProcessDef process = this.getWProcessDefByPK(processId, currentUserId);
 		Integer processHeadId = process.getProcess().getId();
@@ -384,17 +388,21 @@ public class WProcessDefBL {
 		
 	}
 
-	// dml 20130507
-	private void _checkAndDeleteProcessHead(Integer processHeadId, Integer currentUserId) throws WProcessException{
+	// dml 20130507 - nes 20130807
+	private void _checkAndDeleteProcessHead(Integer processHeadId, Integer currentUserId) 
+			throws WProcessHeadException{
 		
-		WProcessHeadBL wpBL = new WProcessHeadBL();
-		
-		if (!wpBL.headProcessHasWProcessDef(processHeadId, currentUserId)){
-			
-			wpBL.delete(wpBL.getProcessByPK(processHeadId, currentUserId), currentUserId);
-			logger.info("The WProcessHead " + processHeadId + " has been correctly deleted by user " + currentUserId);
-			
+		if (processHeadId==null) {
+			throw new WProcessHeadException("Error: trying delete process head with id=null");
 		}
+		
+		WProcessHeadBL phBL = new WProcessHeadBL();
+		WProcessHead processHead = phBL.getProcessHeadByPK(processHeadId, currentUserId);		
+		
+		phBL.delete(processHead, currentUserId);
+		
+		logger.info("The WProcessHead " + processHeadId + " has been correctly deleted by user " + currentUserId);
+			
 		
 	}
 
@@ -696,7 +704,7 @@ public class WProcessDefBL {
 	// clone a process version (w_process_def, related users and roles, related steps and routes ...)
 	// returns new process id
 	public Integer cloneWProcessDef(Integer processId, Integer processHeadId, Integer currentUserId) 
-			throws  WProcessException, WStepSequenceDefException, WProcessDefException  {
+			throws  WProcessHeadException, WStepSequenceDefException, WProcessDefException  {
 		
 		Integer clonedId=null,newversion=0;
 		WProcessDef newprocver,procver;
@@ -755,10 +763,10 @@ public class WProcessDefBL {
 			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+processId
 					+" - "+e.getMessage()+" - "+e.getCause();
 			throw new WProcessDefException(mess);
-		} catch (WProcessException e) {
+		} catch (WProcessHeadException e) {
 			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+processId
 					+" - "+e.getMessage()+" - "+e.getCause();
-			throw new WProcessException(mess);
+			throw new WProcessHeadException(mess);
 		}			
 		
 		// clone routes (the workflow map really ...)

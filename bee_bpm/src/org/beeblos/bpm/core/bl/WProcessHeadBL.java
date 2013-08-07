@@ -2,6 +2,7 @@ package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +10,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessHeadDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessHead;
+import org.beeblos.bpm.tm.TableManager;
+
 import com.sp.common.util.StringPair;
 
 
@@ -24,7 +27,7 @@ public class WProcessHeadBL {
 		
 	}
 	
-	public Integer add(WProcessHead processHead, Integer currentUserId) throws WProcessException, WProcessDefException {
+	public Integer add(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException, WProcessDefException {
 		
 		logger.debug("add() WProcessHead - Name: ["+processHead.getName()+"]");
 		
@@ -39,7 +42,7 @@ public class WProcessHeadBL {
 	}
 		
 	// dml 20130506
-	public Integer addProcessAndFirstWProcessDef(WProcessHead processHead, Integer currentUserId) throws WProcessException, WProcessDefException, WStepSequenceDefException {
+	public Integer addProcessAndFirstWProcessDef(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException, WProcessDefException, WStepSequenceDefException {
 		
 		logger.debug("addProcessAndFirstWProcessDef() WProcessHead - Name: ["+processHead.getName()+"]");
 		
@@ -52,11 +55,11 @@ public class WProcessHeadBL {
 
 	}
 		
-	public void update(WProcessHead processHead, Integer currentUserId) throws WProcessException {
+	public void update(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException {
 		
 		logger.debug("update() WProcessHead < id = "+processHead.getId()+">");
 		
-		if (!processHead.equals(new WProcessHeadDao().getWProcessByPK(processHead.getId())) ) {
+		if (!processHead.equals(new WProcessHeadDao().getWProcessHeadByPK(processHead.getId())) ) {
 
 			// timestamp & trace info
 			processHead.setModDate(new Date());
@@ -71,23 +74,70 @@ public class WProcessHeadBL {
 	}
 	
 	
-	public void delete(WProcessHead processHead, Integer currentUserId) throws WProcessException {
+	public void delete(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException {
 
-		logger.debug("delete() WProcessHead - Name: ["+processHead.getName()+"]");
+		if (processHead==null) {
+			throw new WProcessHeadException("Error: can't delete null process head...");			
+		} 
+		if (processHead.getId()==null) {
+			throw new WProcessHeadException("Error: can't delete process head with null id...");
+		}		
+		
+		logger.debug("delete() WProcessHead - Name: ["+processHead.getId()+"]");
+		
+		// check existence of alive wprocesdef for this process head
+		if (processHeadHasWProcessDef(processHead.getId(), currentUserId)){
+			throw new WProcessHeadException("Error: can't delete process head:"+processHead.getId()
+					+" This process head has active versions. Must delete it first...");
+		}
+		
+		// check for existence of managed table and loaded data for this process head
+		if (processHead.getManagedTableConfiguration()!=null) {
+
+			if (processHead.getManagedTableConfiguration().getName()!=null) {
+				
+				try {
+					Integer qty= 
+							new TableManager().
+								countNotNullRecords(null,processHead.getManagedTableConfiguration().getName(),null);
+
+					if (qty>0) {
+						throw new WProcessHeadException("Error: can't delete process head:"
+												+processHead.getId()+" Managed table "+processHead.getManagedTableConfiguration().getName()
+												+" has records with data!");
+					}
+				
+				} catch (ClassNotFoundException e) {
+					logger.error("ClassNotFoundException: error trying count # records of managed table...processHeadId:"
+								+processHead.getId()+" managed table:"+processHead.getManagedTableConfiguration().getName()
+								+" ERROR:"+e.getMessage()+" - "+e.getCause());
+				} catch (SQLException e) {
+					logger.error("ClassNotFoundException: error trying count # records of managed table...processHeadId:"
+							+processHead.getId()+" managed table:"+processHead.getManagedTableConfiguration().getName()
+							+" ERROR:"+e.getMessage()+" - "+e.getCause());
+				}
+			}
+		}
+
+		// TODO no tengo claro que chekear aqui, si hay que chekear algo ...
+		if (processHead.getProcessDataFieldDef()!=null) {
+			
+		}
+		
 		
 		new WProcessHeadDao().delete(processHead);
 
 	}
 
-	public WProcessHead getProcessByPK(Integer id, Integer currentUserId) throws WProcessException {
+	public WProcessHead getProcessHeadByPK(Integer id, Integer currentUserId) throws WProcessHeadException {
 
-		return new WProcessHeadDao().getWProcessByPK(id);
+		return new WProcessHeadDao().getWProcessHeadByPK(id);
 	}
 	
 	
-	public WProcessHead getProcessByName(String name, Integer currentUserId) throws WProcessException {
+	public WProcessHead getProcessHeadByName(String name, Integer currentUserId) throws WProcessHeadException {
 
-		return new WProcessHeadDao().getWProcessByName(name);
+		return new WProcessHeadDao().getWProcessHeadByName(name);
 	}
 
 	public String getProcessName(Integer id, Integer currentUserId) throws WProcessDefException {
@@ -95,25 +145,26 @@ public class WProcessHeadBL {
 	}
 	
 	
-	public List<WProcessHead> getProcessList(Integer currentUserId) throws WProcessException {
+	public List<WProcessHead> getProcessHeadList(Integer currentUserId) throws WProcessHeadException {
 
-		return new WProcessHeadDao().getWProcessList(currentUserId);
+		return new WProcessHeadDao().getWProcessHeadList(currentUserId);
 	
 	}
 	
 	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion, Integer currentUserId )
-	throws WProcessException {
+	throws WProcessHeadException {
 		 
 		return new WProcessHeadDao().getComboList(textoPrimeraLinea, separacion, currentUserId);
 		
 	}
 
 	// dml 20130129
-	public boolean headProcessHasWProcessDef(Integer processHeadId, Integer currentUserId) throws WProcessException{
+	public boolean processHeadHasWProcessDef(Integer processHeadId, Integer currentUserId) 
+			throws WProcessHeadException{
 		
-		return new WProcessHeadDao().headProcessHasWProcessDef(processHeadId, currentUserId);
+		return new WProcessHeadDao().processHeadHasWProcessDef(processHeadId, currentUserId);
 		
 	}
 	

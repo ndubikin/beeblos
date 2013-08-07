@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessHead;
@@ -59,7 +59,7 @@ public class WProcessDataFieldDao {
 			 */
 			if ( managedData!=null ) {
 				try {
-					tm.updateTableSynchro(managedData,null, processDataField);
+					tm.updateFieldSynchro(managedData,null, processDataField);
 				} catch (TableManagerException e) {
 					// TODO IMPLEMENTAR!!
 					e.printStackTrace();
@@ -115,7 +115,7 @@ public class WProcessDataFieldDao {
 			 */
 			if ( managedData!=null ) {
 				try {
-					tm.updateTableSynchro(managedData,storedDataField, processDataField);
+					tm.updateFieldSynchro(managedData,storedDataField, processDataField);
 				} catch (TableManagerException e) {
 					// TODO IMPLEMENTAR!!
 					e.printStackTrace();
@@ -169,7 +169,7 @@ public class WProcessDataFieldDao {
 			 */
 			if ( managedData!=null && qtyRecsNotNull==0 ) {
 				try {
-					tm.deleteFieldSynchro(managedData, processDataField);
+					tm.deleteFieldSynchro(managedData, processDataField, false);
 				} catch (TableManagerException e) {
 					// TODO IMPLEMENTAR!!
 					e.printStackTrace();
@@ -404,7 +404,7 @@ public class WProcessDataFieldDao {
 			WProcessHead processHead = new WProcessHead();
 			
 			processHead = new WProcessHeadDao()
-								.getWProcessByPK(processHeadId);
+								.getWProcessHeadByPK(processHeadId);
 	
 			if (processHead!=null
 					&& processHead.getManagedTableConfiguration()!=null
@@ -430,7 +430,7 @@ public class WProcessDataFieldDao {
 			} else {
 				managedData=null;
 			}
-		} catch (WProcessException e) {
+		} catch (WProcessHeadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
