@@ -107,6 +107,9 @@ public class PasoBean  extends CoreManagedBean {
 	
 	//rrl 20111220
 	private boolean instruccionesYComentariosEnabled;
+	
+	//rrl 20130807
+	private String buttonPress;
 
 	public PasoBean() {
 		
@@ -1260,4 +1263,13 @@ public class PasoBean  extends CoreManagedBean {
 		this.procesadorPaso = procesadorPaso;
 	}
 	
+	//rrl 20130806
+	public String getButtonPress() {
+		return buttonPress;
+	}
+
+	public void setButtonPress(String buttonPress) {
+		this.buttonPress = buttonPress;
+	}
+
 }

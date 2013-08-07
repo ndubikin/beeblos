@@ -2183,7 +2183,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
 
 		try {
-		
+			
 			if (wProcessDataFieldSelected.getId() == null || 
 					wProcessDataFieldSelected.getId() == 0) {
 				
@@ -2215,14 +2215,28 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			initNewDataFieldFormObjects();
 			
 		} catch (WProcessDataFieldException e) {
-			e.printStackTrace();
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".saveNewDataField() WProcessDataFieldException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			
 		} catch (WDataTypeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".saveNewDataField() WDataTypeException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 		}
 		
 		return null;
 	}
+	
+	//rrl 20130807
+//	private boolean validationSave() {
+//		
+//		boolean result = true;
+//		
+//		return result;
+//	}
 	
 	public String cancelNewDataField() {
 
