@@ -55,30 +55,33 @@
 								title="Limpia la pantalla pero no guarda ni procesa nada de lo que está a la vista"
 				                style="align:top; width: 80px; margin-right: 10px;"
 				                action="#{pasoBean.cancelar}"
-
-				                reRender="procesarProyectoDAP_form, frmListaPpdap" />
+				                reRender="procesarProyectoDAP_form, frmListaPpdap">
+			<a4j:actionparam name="param1" assignTo="#{pasoBean.buttonPress}" value="#{msg.label_cancel}" />
+		</a4j:commandButton>
 
 		<a4j:commandButton id="btnDevolverPaso" value="#{msg.label_send_back}"
 								title="Devuelve al paso anterior"
 				                style="align:top; width: 100px; margin-right: 5px;"
 				                action="#{pasoBean.devolver}" 
-
-				                reRender="procesarProyectoDAP_form, frmListaPpdap"/>	
+				                reRender="procesarProyectoDAP_form, frmListaPpdap">	
+			<a4j:actionparam name="param1" assignTo="#{pasoBean.buttonPress}" value="#{msg.label_send_back}" />
+		</a4j:commandButton>
 
 		<a4j:commandButton id="btnGuardarPaso" value="#{msg.label_save}"
 								title="Guarda el nuevo estado sugerido para el proyecto y las indicaciones pero deja el workflow en el paso actual"
 				                style="align:top; width: 100px; margin-right: 5px;"
 				                action="#{pasoBean.guardar}" 
-
-				                reRender="procesarProyectoDAP_form, frmListaPpdap"/>	
+				                reRender="procesarProyectoDAP_form, frmListaPpdap">	
+			<a4j:actionparam name="param1" assignTo="#{pasoBean.buttonPress}" value="#{msg.label_save}" />
+		</a4j:commandButton>
 				                
 		<a4j:commandButton id="btnProcesarPaso" value="#{msg.label_process_step}"  
 								title="Guarda las desiciones indicadas y avanza al paso siguiente ... Una vez ejecutado no podrá volver a coger esta tarea a menos que el destinatario se la devuelva ..."
 				                style="align:top;width: 100px; margin-right: 5px;"
 				                action="#{pasoBean.procesar}" 
-
 				                reRender="procesarProyectoDAP_form, frmListaPpdap">	
 				                
+				<a4j:actionparam name="param1" assignTo="#{pasoBean.buttonPress}" value="#{msg.label_process_step}" />
 				<a4j:actionparam name="task_list" assignTo="#{workingProcessQueryBean.stepWorkLightList}" value="#{null}" />
 
 <!--				<f:ajax event="onclick" execute="step_process_form:hiddenCmdSave"  render="step_process_form,step_buttons_form"/>-->

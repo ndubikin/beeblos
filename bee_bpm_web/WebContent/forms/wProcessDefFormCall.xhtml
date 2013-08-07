@@ -12,8 +12,10 @@
 	<ui:define name="current">wProcessDefForm</ui:define>
 	<ui:define name="body">
 	
+	<h:form id="errorPanel_form">
 		<ui:include src="/common/errorPanel.xhtml" />
 		<h:messages  style="#{wProcessDefFormBean.messageStyle}"/>
+	</h:form>
 		
 		<beecomp:wProcessDefForm />
 		

@@ -13,8 +13,15 @@
 	<ui:define name="current">wellcome page</ui:define>
 	<ui:define name="body" >
 	
-		<h:outputText value="Tarea procesada correctamente ..." />	
-
+		<h:outputLabel value="#{msg.label_task_processing_was_cancelled_no_changes_was_saved}" rendered="#{pasoBean.buttonPress eq msg.label_cancel}"
+				styleClass="labelHeaderErrorMessage"/>
+		<h:outputLabel value="#{msg.label_task_was_sent_back}" rendered="#{pasoBean.buttonPress eq msg.label_send_back}"
+				styleClass="labelHeaderErrorMessage"/>
+		<h:outputLabel value="#{msg.label_task_data_was_saved}" rendered="#{pasoBean.buttonPress eq msg.label_save}"
+				styleClass="labelHeaderErrorMessage"/>
+		<h:outputLabel value="#{msg.label_task_was_processed_ok}" rendered="#{pasoBean.buttonPress eq msg.label_process_step}"
+				styleClass="labelHeaderErrorMessage"/>
+	
 	</ui:define>
 </ui:composition>
 </html>
