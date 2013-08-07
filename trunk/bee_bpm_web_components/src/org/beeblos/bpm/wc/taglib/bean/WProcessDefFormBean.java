@@ -45,7 +45,7 @@ import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
@@ -1973,7 +1973,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			this.wProcessComboList = UtilsVs.castStringPairToSelectitem(
 					new WProcessHeadBL().getComboList("Select ...", null, getCurrentUserId()));
 			
-		} catch (WProcessException e) {
+		} catch (WProcessHeadException e) {
 			
 			this.wProcessComboList = new ArrayList<SelectItem>();
 			
@@ -1991,7 +1991,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			try {
 				
-				WProcessHead process = new WProcessHeadBL().getProcessByPK(this.currentProcessIdSelected, null);
+				WProcessHead process = new WProcessHeadBL().getProcessHeadByPK(this.currentProcessIdSelected, null);
 			
 				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected, getCurrentUserId());
 				
@@ -2001,7 +2001,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				
 				this.currentWProcessDef.setVersion(lastVersion + 1);
 				
-			} catch (WProcessException e) {
+			} catch (WProcessHeadException e) {
 				
 				messageStyle=errorMessageStyle();
 				setShowHeaderMessage(true);

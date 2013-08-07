@@ -20,7 +20,7 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
@@ -366,7 +366,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			agregarMensaje("220", message, params, FGPException.ERROR);
 			logger.error(message);
 			
-		} catch (WProcessException e) {
+		} catch (WProcessHeadException e) {
 
 			String message = e.getMessage() + " - " + e.getCause();
 			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
@@ -434,7 +434,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				agregarMensaje(message);
 				logger.error(message);
 				
-			} catch (WProcessException e) {
+			} catch (WProcessHeadException e) {
 
 				String message = e.getMessage() + " - " + e.getCause();
 				this.messageStyle = errorMessageStyle();
