@@ -58,7 +58,7 @@
            			action="#{wProcessDefQueryBean.loadWProcessDefObject}"
            			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteWProcessDef');"
            			reRender="mpDeleteWProcessDef">
-                 	<b> #{msg.label_delete} #{msg.label_process}</b> {currentRowId} (version: {currentRowVersion}) 
+                 	<b> #{msg.label_delete_process}</b> {currentRowId} (version: {currentRowVersion}) 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
              	</rich:menuItem>
             	<rich:menuSeparator />         

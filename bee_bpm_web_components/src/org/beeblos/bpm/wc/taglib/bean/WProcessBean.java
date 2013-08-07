@@ -35,7 +35,7 @@ import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
@@ -286,10 +286,10 @@ public class WProcessBean extends CoreManagedBean {
 
 		try {
 
-			currentWProcess = wpbl.getProcessByPK(this.currentId,
+			currentWProcess = wpbl.getProcessHeadByPK(this.currentId,
 					getCurrentUserId());
 			
-		} catch (WProcessException ex1) {
+		} catch (WProcessHeadException ex1) {
 
 			String message = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = {
@@ -589,7 +589,7 @@ public class WProcessBean extends CoreManagedBean {
 
 				result = add_w_process();
 
-			} catch (WProcessException e) {
+			} catch (WProcessHeadException e) {
 				result = FAIL;
 			}
 		}
@@ -692,7 +692,7 @@ public class WProcessBean extends CoreManagedBean {
 	}
 
 	// dml 20130430
-	public String add_w_process() throws WProcessException {
+	public String add_w_process() throws WProcessHeadException {
 
 		logger.debug("WProcessDefFormBean: add: currentWProcessId:["
 				+ this.currentId + "] ");
@@ -744,13 +744,13 @@ public class WProcessBean extends CoreManagedBean {
 
 			setShowHeaderMessage(true);
 
-		} catch (WProcessException ex1) {
+		} catch (WProcessHeadException ex1) {
 
 			String message = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { message + ",", ".Please confirm input values." };
 			agregarMensaje("203", message, params, FGPException.ERROR);
 
-			throw new WProcessException(message);
+			throw new WProcessHeadException(message);
 
 		} catch (Exception e) {
 
@@ -758,7 +758,7 @@ public class WProcessBean extends CoreManagedBean {
 			String params[] = { message + ",", ".Error inserting object ..." };
 			agregarMensaje("203", message, params, FGPException.ERROR);
 
-			throw new WProcessException(message);
+			throw new WProcessHeadException(message);
 
 		}
 
@@ -835,7 +835,7 @@ public class WProcessBean extends CoreManagedBean {
 			ret = SUCCESS_FORM_WPROCESS;
 			this.setReadOnly(true);
 
-		} catch (WProcessException ex1) {
+		} catch (WProcessHeadException ex1) {
 
 			String message = "Error updating object: "
 					+ currentWProcess.getId() + " - "
@@ -2072,7 +2072,7 @@ public class WProcessBean extends CoreManagedBean {
 			this.wProcessComboList = UtilsVs.castStringPairToSelectitem(
 					new WProcessHeadBL().getComboList("Select ...", null, getCurrentUserId()));
 			
-		} catch (WProcessException e) {
+		} catch (WProcessHeadException e) {
 			
 			this.wProcessComboList = new ArrayList<SelectItem>();
 			
@@ -2090,7 +2090,7 @@ public class WProcessBean extends CoreManagedBean {
 			
 			try {
 				
-				WProcessHead process = new WProcessHeadBL().getProcessByPK(this.currentProcessIdSelected, null);
+				WProcessHead process = new WProcessHeadBL().getProcessHeadByPK(this.currentProcessIdSelected, null);
 			
 				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected, getCurrentUserId());
 				
@@ -2100,7 +2100,7 @@ public class WProcessBean extends CoreManagedBean {
 				
 				this.currentWProcessDef.setVersion(lastVersion + 1);
 				
-			} catch (WProcessException e) {
+			} catch (WProcessHeadException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (WProcessDefException e) {
