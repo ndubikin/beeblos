@@ -6,7 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	
-	<rich:modalPanel  id="mpDeleteDataField" width="400" height="300">
+	<rich:modalPanel  id="mpDeleteProcessDataField" width="400" height="300">
 	    <f:facet name="header">
 	        <h:panelGroup id="deleteDataFieldTitlePanel">
 	            <h:outputText id="deleteDataFieldTitle"  value="#{msg.label_remove_data_field}"></h:outputText>
@@ -15,11 +15,11 @@
 		<f:facet name="controls">
 		    <h:panelGroup id="deleteDataFieldSequence">
 		        <h:graphicImage value="/images/modal/close.png" styleClass="hidelink" id="hidelink_delete_data_field"/>
-		        <rich:componentControl id="deleteDataFieldControl" for="mpDeleteDataField" attachTo="hidelink_delete_data_field" operation="hide" event="onclick"/>
+		        <rich:componentControl id="deleteDataFieldControl" for="mpDeleteProcessDataField" attachTo="hidelink_delete_data_field" operation="hide" event="onclick"/>
 		    </h:panelGroup>
 		</f:facet>
 
-		<ui:include src="processDeleteDataField.xhtml"/>
+		<ui:include src="deleteProcessDataField.xhtml"/>
 	
 	</rich:modalPanel>	
 	

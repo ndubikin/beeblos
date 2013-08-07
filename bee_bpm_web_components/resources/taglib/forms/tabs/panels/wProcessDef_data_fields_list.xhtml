@@ -39,8 +39,8 @@
 											<a4j:commandLink
 												value="#{msg.label_delete}" styleClass="command_link_form"
 												action="#{wProcessDefFormBean.loadDataField}"
-												oncomplete="javascript:Richfaces.showModalPanel('mpDeleteDataField');"
-												reRender="mpDeleteDataField"
+												oncomplete="javascript:Richfaces.showModalPanel('mpDeleteProcessDataField');"
+												reRender="mpDeleteProcessDataField"
 												style="margin-left:20px;">
 							                	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.wProcessDataFieldSelected.id}" value="#{dataField.id}"/>
 											</a4j:commandLink>

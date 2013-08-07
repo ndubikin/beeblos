@@ -56,10 +56,10 @@
 										<h:outputText
 											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form" 
 											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"
-											rendered="#{(sdf.name!=null or sdf.length!=null) and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
+											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
 										<h:outputText
 											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form_bold" 
-											rendered="#{(sdf.name!=null or sdf.length!=null) and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
+											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
 									</td>
 				
 									<td align="left">
@@ -87,7 +87,7 @@
 
 		<div class="fieldset_block_info_wo_line">
 			<a4j:jsFunction name="onsubmitSearchDataField" action="#{wStepDefFormBean.updateDataFieldsRelated}"
-				reRender="w_process_def__step_data_fields_form">
+				reRender="w_process_def_step_data_fields_form">
 				<a4j:actionparam name="param1" assignTo="#{wStepDefFormBean.strDataFieldList}"  />
 			</a4j:jsFunction>			
 			<a4j:commandLink id="insert_w_step_data_Field" value="#{msg.label_add_a_data_field}"

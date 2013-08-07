@@ -2144,6 +2144,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void initializeDataFieldsAddNew() {
 		
 		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
+		this.wProcessDataFieldSelected.setActive(true); //rrl 20130807 Default TRUE to add a data field
 		visibleButtonNewDataField = false;
 		
 	}
@@ -2160,6 +2161,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void initNewDataFieldFormObjects() {
 		
 		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
+		this.wProcessDataFieldSelected.setActive(true); //rrl 20130807 Default TRUE to add a data field
 		visibleButtonNewDataField = true;
 		
 	}
