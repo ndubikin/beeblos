@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.error.WProcessException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.model.WStepHead;
 import com.sp.common.util.StringPair;

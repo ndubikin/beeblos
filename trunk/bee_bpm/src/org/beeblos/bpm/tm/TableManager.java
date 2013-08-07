@@ -25,8 +25,8 @@ import com.sp.common.model.ManagedDataField;
 public class TableManager {
 	
 	private static final String ADD_COLUMN = "ADD_COLUMN";
-
 	private static final String CHANGE_COLUMN = "CHANGE_COLUMN";
+	private static final String DROP_COLUMN = "DROP_COLUMN";
 
 	private static final Log logger = LogFactory
 			.getLog(TableManager.class.getName());
@@ -485,7 +485,10 @@ public class TableManager {
 				
 		connect();
 		
-		String sql ="SELECT COUNT("+fieldName+") AS COUNT FROM "+tableName +" WHERE "+fieldName+" IS NOT NULL";
+		String sql ="SELECT COUNT(";
+		sql +=(fieldName!=null?fieldName:"*");
+		sql +=") AS COUNT FROM "+tableName ;
+		sql+=(fieldName!=null?" WHERE "+fieldName+" IS NOT NULL":" ");
 		System.out.println("------>>>"+sql);
 		
 		try {
@@ -604,8 +607,8 @@ public class TableManager {
 	}
 
 	// syncrhonize managed table structure (update of a dataField definition)
-	public Integer updateTableSynchro(
-			ManagedData managedData, WProcessDataField storedDataField, WProcessDataField updatedDataField) 
+	public Integer updateFieldSynchro(
+			ManagedData managedData, WProcessDataField storedDataField, WProcessDataField newDataField) 
 					throws TableManagerException {
 		
 		if (managedData==null) throw new TableManagerException("can't synchronize null managedData!");
@@ -621,25 +624,26 @@ public class TableManager {
 			managedData.setOperation(CHANGE_COLUMN);
 			generateAlterTableForColumnMgmt(CHANGE_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					storedDataField.getName(), updatedDataField.getName(), 
-					updatedDataField.getDataType().getSqlType(), updatedDataField.getDataType().getSqlTypeName(), 
-					updatedDataField.getLength(), updatedDataField.getDefaultValue(),
+					storedDataField.getName(), newDataField.getName(), 
+					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
+					newDataField.getLength(), newDataField.getDefaultValue(),
 					managedData.getDataField().size());
 		} else {
 			managedData.setOperation(ADD_COLUMN);
 			generateAlterTableForColumnMgmt(ADD_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					null, updatedDataField.getName(), 
-					updatedDataField.getDataType().getSqlType(), updatedDataField.getDataType().getSqlTypeName(), 
-					updatedDataField.getLength(), updatedDataField.getDefaultValue(),
+					null, newDataField.getName(), 
+					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
+					newDataField.getLength(), newDataField.getDefaultValue(),
 					managedData.getDataField().size());					
 		}
 
 		return null;
 	}	
 
-	public Integer deleteFieldSynchro(ManagedData managedData, WProcessDataField processDataField) 
-			throws TableManagerException {
+	public Integer deleteFieldSynchro(
+			ManagedData managedData, WProcessDataField dataField, boolean forceDeletion) 
+					throws TableManagerException {
 
 		if (managedData==null) throw new TableManagerException("can't synchronize null managedData!");
 		if (managedData.getManagedTableConfiguration().getName()==null 
@@ -647,6 +651,31 @@ public class TableManager {
 			throw new TableManagerException("can't synchronize managedData: managed table is not defined (managedTableName:"
 					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-"));
 
+		try {
+			if (countNotNullRecords(
+					managedData.getManagedTableConfiguration().getSchema(),
+					managedData.getManagedTableConfiguration().getName(),
+					dataField.getName())==0 || forceDeletion) {
+
+				managedData.setOperation(DROP_COLUMN);
+				dropColumn(DROP_COLUMN, 
+						managedData.getManagedTableConfiguration().getSchema(), 
+						managedData.getManagedTableConfiguration().getName(), 
+						dataField.getName());	
+				
+			}
+		} catch (ClassNotFoundException e) {
+			throw new TableManagerException("ClassNotFoundException: can't delete field from managedData table: "
+					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-")
+					+" field:"+(dataField!=null&&dataField.getName()!=null?dataField.getName():" null ")
+					+" Error:"+e.getMessage()+" - "+e.getClass());
+		} catch (SQLException e) {
+			throw new TableManagerException("SQLException: can't delete field from managedData table: "
+					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-")
+					+" field:"+(dataField!=null&&dataField.getName()!=null?dataField.getName():" null ")
+					+" Error:"+e.getMessage()+" - "+e.getClass());
+		}
+		
 		return null;
 	}
 	
@@ -672,7 +701,7 @@ public class TableManager {
 			String origColName, String newColName, String sqlTypeName, Integer length, 
 			String defaultValue) throws TableManagerException {
 		
-		String sql = buildChangeExistingColumnStatement( operation,  schema,  tableName, 
+		String sql = buildModifyColumnStatement( operation,  schema,  tableName, 
 									 origColName,  newColName,  sqlTypeName,  length, defaultValue);
 		
 		System.out.println("change column: "+sql);
@@ -712,6 +741,42 @@ public class TableManager {
 				 		newColName,  sqlTypeName,  length, defaultValue);
 		
 		System.out.println("add column: "+sql);
+		
+		try {
+			
+			connect();
+			stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}    finally{
+		      //finally block used to close resources
+		      try{
+		         if(stmt!=null)
+		            conn.close();
+		      }catch(SQLException se){
+		      }// do nothing
+		      try{
+		         if(conn!=null)
+		            conn.close();
+		      }catch(SQLException se){
+		         se.printStackTrace();
+		      }//end finally try
+		}
+		
+	}
+	
+	private void dropColumn(String operation, String schema, String tableName, 
+			String colName) throws TableManagerException {
+
+		String sql = buildDropColumnStatement( operation,  schema,  tableName, 
+				colName);
+		
+		System.out.println("drop column: "+sql);
 		
 		try {
 			
@@ -790,6 +855,103 @@ public class TableManager {
 		
 	}
 	
+
+
+	//ALTER TABLE `bee_bpm_dev`.`w_step_data_field` CHANGE COLUMN `active` `active` INT(1) NULL DEFAULT b'1'  ;
+	private String	buildModifyColumnStatement(String operation, String schema, String tableName, 
+			String origColName, String newColName, String sqlTypeName, Integer length, 
+			String defaultValue) throws TableManagerException {
+		
+		String sql = "ALTER TABLE ";
+		
+		sql+=schema+"."+tableName+" ";
+		sql +=" CHANGE COLUMN ";
+		sql += origColName+" "+newColName+" "+sqlTypeName;
+		
+		if (length>0) {
+			sql +="("+length+") ";
+		}
+		if (defaultValue!=null && !"".equals(defaultValue)) {
+			sql+=" DEFAULT '"+defaultValue+"'";
+		}
+		
+		return sql;
+	}
+	
+	//ALTER TABLE `bee_bpm_dev`.`w_step_data_field` CHANGE COLUMN `active` `active` INT(1) NULL DEFAULT b'1'  ;
+	private String	buildAddColumnStatement(String operation, String schema, String tableName, 
+			String newColName, String sqlTypeName, Integer length, String defaultValue) 
+					throws TableManagerException {
+		
+		String sql = "ALTER TABLE ";
+		
+		sql+=schema+"."+tableName+" ";
+		sql +=" ADD COLUMN ";
+		sql += newColName+" "+sqlTypeName;
+		
+		if (length>0) {
+			sql +="("+length+") ";
+		}
+		if (defaultValue!=null && !"".equals(defaultValue)) {
+			sql+=" DEFAULT '"+defaultValue+"'";
+		}
+		
+		return sql;
+	}
+
+	//ALTER TABLE `bee_bpm_dev`.`w_step_data_field` CHANGE COLUMN `active` `active` INT(1) NULL DEFAULT b'1'  ;
+	private String	buildDropColumnStatement(String operation, String schema, String tableName, 
+			String colName) throws TableManagerException {
+		
+		String sql = "ALTER TABLE ";
+		
+		sql+=schema+"."+tableName+" ";
+		sql +=" DROP COLUMN ";
+		sql += colName+" ";
+		
+		return sql;
+	}
+	
+	private String buildCreateTableStatement(String tableName,List<WProcessDataField> columns) {
+
+		String sql 	= "CREATE TABLE "+tableName+" ";
+		sql 		+=" ( id INTEGER AUTO_INCREMENT NOT NULL, "; // mandatory field ...
+		sql 		+=" process_work_id INTEGER NOT NULL, ";   // mandatory field ...
+		sql 		+=" process_id INTEGER NOT NULL, ";   // mandatory field indicates map version
+		for (WProcessDataField column: columns) {
+			sql+=	column.getName()+" "
+					+ column.getDataType().getSqlTypeName()
+					+ getColumnSize(column)+", ";
+		}
+
+//		"CREATE TABLE "+tableName+" " +
+//		"(id INTEGER not NULL, " +
+//		" first VARCHAR(255), " + 
+//		" last VARCHAR(255), " + 
+//		" age INTEGER, " + 
+//		" PRIMARY KEY ( id ))"; 		
+		
+		// mandatory pk and foreign key
+		sql += " PRIMARY KEY ( id ), "; 
+		sql += " CONSTRAINT `fk_"+tableName+"_1` FOREIGN KEY (`process_work_id`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION ";
+		sql += " ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+		
+		System.out.println("sql:"+sql);
+		
+		return sql;
+	}
+	
+	// return length formatted for sql syntax if corresponds to dataType ...
+	private String getColumnSize(WProcessDataField column) {
+		
+		String colsize="";
+		if (column.getDataType().getSqlType().equals(java.sql.Types.VARCHAR)) {
+			if (column.getLength()>0) {
+				colsize = "("+column.getLength()+")";
+			} 
+		}
+		return colsize;
+	}
 
 	public void createTable(String tableName, List<WProcessDataField> columns) throws ClassNotFoundException {
 
@@ -898,87 +1060,4 @@ public class TableManager {
 		}
  
 	}
-	//ALTER TABLE `bee_bpm_dev`.`w_step_data_field` CHANGE COLUMN `active` `active` INT(1) NULL DEFAULT b'1'  ;
-	private String	buildChangeExistingColumnStatement(String operation, String schema, String tableName, 
-			String origColName, String newColName, String sqlTypeName, Integer length, 
-			String defaultValue) throws TableManagerException {
-		
-		String sql = "ALTER TABLE ";
-		
-		sql+=schema+"."+tableName+" ";
-		sql +=" CHANGE COLUMN ";
-		sql += origColName+" "+newColName+" "+sqlTypeName;
-		
-		if (length>0) {
-			sql +="("+length+") ";
-		}
-		if (defaultValue!=null && !"".equals(defaultValue)) {
-			sql+=" DEFAULT '"+defaultValue+"'";
-		}
-		
-		return sql;
-	}
-	
-	//ALTER TABLE `bee_bpm_dev`.`w_step_data_field` CHANGE COLUMN `active` `active` INT(1) NULL DEFAULT b'1'  ;
-	private String	buildAddColumnStatement(String operation, String schema, String tableName, 
-			String newColName, String sqlTypeName, Integer length, String defaultValue) 
-					throws TableManagerException {
-		
-		String sql = "ALTER TABLE ";
-		
-		sql+=schema+"."+tableName+" ";
-		sql +=" ADD COLUMN ";
-		sql += newColName+" "+sqlTypeName;
-		
-		if (length>0) {
-			sql +="("+length+") ";
-		}
-		if (defaultValue!=null && !"".equals(defaultValue)) {
-			sql+=" DEFAULT '"+defaultValue+"'";
-		}
-		
-		return sql;
-	}
-	
-	private String buildCreateTableStatement(String tableName,List<WProcessDataField> columns) {
-
-		String sql 	= "CREATE TABLE "+tableName+" ";
-		sql 		+=" ( id INTEGER AUTO_INCREMENT NOT NULL, "; // mandatory field ...
-		sql 		+=" process_work_id INTEGER NOT NULL, ";   // mandatory field ...
-		sql 		+=" process_id INTEGER NOT NULL, ";   // mandatory field indicates map version
-		for (WProcessDataField column: columns) {
-			sql+=	column.getName()+" "
-					+ column.getDataType().getSqlTypeName()
-					+ getColumnSize(column)+", ";
-		}
-
-//		"CREATE TABLE "+tableName+" " +
-//		"(id INTEGER not NULL, " +
-//		" first VARCHAR(255), " + 
-//		" last VARCHAR(255), " + 
-//		" age INTEGER, " + 
-//		" PRIMARY KEY ( id ))"; 		
-		
-		// mandatory pk and foreign key
-		sql += " PRIMARY KEY ( id ), "; 
-		sql += " CONSTRAINT `fk_"+tableName+"_1` FOREIGN KEY (`process_work_id`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION ";
-		sql += " ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-		
-		System.out.println("sql:"+sql);
-		
-		return sql;
-	}
-	
-	// return length formatted for sql syntax if corresponds to dataType ...
-	private String getColumnSize(WProcessDataField column) {
-		
-		String colsize="";
-		if (column.getDataType().getSqlType().equals(java.sql.Types.VARCHAR)) {
-			if (column.getLength()>0) {
-				colsize = "("+column.getLength()+")";
-			} 
-		}
-		return colsize;
-	}
-
 }
