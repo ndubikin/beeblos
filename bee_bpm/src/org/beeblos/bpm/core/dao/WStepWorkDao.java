@@ -1443,7 +1443,7 @@ public class WStepWorkDao {
 							" FROM w_step_work wsw " +
 							" WHERE (wsw.id_current_step = :stepId OR wsw.id_previous_step = :stepId) ";
 			
-			System.out.println("[QUERY]: "+query);
+			logger.debug("[QUERY]: "+query);
 			
 			processIdList = (ArrayList<Integer>) session.createSQLQuery(query)
 					.setInteger("stepId", stepId)

@@ -155,7 +155,9 @@ public class WProcessDataFieldDao {
 			if(qtyRecsNotNull<0) {
 				logger.warn("Warning: table "+managedData.getManagedTableConfiguration().getName()+" does not exist. No action realized.");
 			} else if(qtyRecsNotNull>0) {
-				String mess = "WProcessDataFieldDao: delete: trying delete managed field name wich has "+qtyRecsNotNull+" records with information in the table. Options you have are to clean manually the table nullating this field, or deactivate the field in ProcessDef form.";
+				String mess = "WProcessDataFieldDao: delete: trying delete managed field "+managedData.getManagedTableConfiguration().getName()
+						+" wich has "+qtyRecsNotNull
+						+" records with information in the table. Options you have are to clean manually the table nullating this field, or deactivate the field in ProcessDef form.";
 				throw new WProcessDataFieldException(mess);
 			}
 			
@@ -256,10 +258,10 @@ public class WProcessDataFieldDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WProcessDataFieldDao: getWProcessDataFieldByName - can't obtain process name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessDataFieldException("getWProcessDataFieldByName;  can't obtain process name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess="WProcessDataFieldDao: getWProcessDataFieldByName - can't obtain process data field name = " +
+							name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+			logger.warn( mess );
+			throw new WProcessDataFieldException( mess );
 
 		}
 

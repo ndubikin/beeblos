@@ -308,7 +308,7 @@ public class WProcessWorkDao {
 			}
 		}
 
-		System.out.println("QUERY FILTER:" + filter);
+		logger.debug("QUERY FILTER:" + filter);
 
 		return filter;
 	}
@@ -339,9 +339,9 @@ public class WProcessWorkDao {
 		} 
 
 		logger.debug("------>> getWorkingProcessWorkListByFinder -> query:" + tmpQuery
-				+ "<<-------");
+						+ "<<-------");
 
-		System.out.println("QUERY:" + tmpQuery);
+		logger.debug("QUERY:" + tmpQuery);
 
 		return tmpQuery;
 	}

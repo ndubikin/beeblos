@@ -493,14 +493,14 @@ public class WProcessDefDao {
 			
 			filter = (( filter != null && !"".equals(filter)) ? " WHERE ":"") + filter;
 			
-			System.out.println(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
-			System.out.println(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
-			System.out.println(" ---->>>>>>>>>> filter:["+filter+"]");
+			logger.debug(" ---->>>>>>>>>> userFilter:["+userFilter+"]");
+			logger.debug(" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]");
+			logger.debug(" ---->>>>>>>>>> filter:["+filter+"]");
 			
 			// load base query phrase
 			String query = getBaseQuery( isAdmin );
 			
-			System.out.println(" ---->>>>>>>>>> base query:["+query+"]");
+			logger.debug(" ---->>>>>>>>>> base query:["+query+"]");
 
 			// builds full query phrase
 			query += filter+getSQLOrder(action);
@@ -875,7 +875,7 @@ public class WProcessDefDao {
 			}
 		}
 		
-		System.out.println("QUERY FILTER:" + filter);
+		logger.debug("QUERY FILTER:" + filter);
 
 		return filter;
 	}
@@ -902,7 +902,7 @@ public class WProcessDefDao {
 			tmpQuery += " ORDER by wpd.id ASC;";
 		}
 
-		System.out.println("QUERY:" + tmpQuery);
+		logger.debug("QUERY:" + tmpQuery);
 
 		return tmpQuery;
 	}
