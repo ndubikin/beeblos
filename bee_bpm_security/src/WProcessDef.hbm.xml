@@ -34,7 +34,7 @@
 				cascade="all">
 		</one-to-one>
        <set name="processDataFieldDef" table="w_process_head_data_field" 
-				lazy="false" fetch="join" cascade="none">
+				lazy="false" fetch="join" cascade="all">
             <key>
                 <column name="process_head_id" not-null="true" />
             </key>
