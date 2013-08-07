@@ -1648,20 +1648,12 @@ public class WStepDefFormBean extends CoreManagedBean {
 	}
 
 	public String saveEditDataField() {
+		
 		WStepDataFieldBL wdfBL = new WStepDataFieldBL();
 
 		try {
 		
-			//rrl 20130806 Length is greater than allowable maximum
-			boolean validationSave = true;
-			if (wStepDataFieldSelected.getDataField()!=null &&
-				wStepDataFieldSelected.getDataField().getLength()!=null &&
-				wStepDataFieldSelected.getLength()!=null &&
-				wStepDataFieldSelected.getLength() > wStepDataFieldSelected.getDataField().getLength()) {
-					validationSave = false;
-			}
-			
-			if (validationSave) {
+			if (validationSave()) {
 				wdfBL.update(wStepDataFieldSelected, this.getCurrentUserId());
 				this.loadObject();
 				initializeDataFieldsCloseAddNew();
@@ -1673,6 +1665,29 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		return null;
 	}
+	
+	//rrl 20130807
+	private boolean validationSave() {
+		
+		boolean result = true;
+
+		//rrl 20130806 Length is greater than allowable maximum
+		if (wStepDataFieldSelected.getDataField()!=null &&
+			wStepDataFieldSelected.getDataField().getLength()!=null &&
+			wStepDataFieldSelected.getLength()!=null &&
+			wStepDataFieldSelected.getLength() > wStepDataFieldSelected.getDataField().getLength()) {
+			result = false;
+		}
+
+		// if the value is ZERO then assign the value of process DataField
+		if (wStepDataFieldSelected.getLength()!=null &&
+			wStepDataFieldSelected.getLength().equals(0)) {
+			wStepDataFieldSelected.setLength( wStepDataFieldSelected.getDataField().getLength() );
+		}
+		
+		return result;
+	}
+	
 	
 	public String cancelEditDataField() {
 
