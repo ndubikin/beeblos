@@ -142,7 +142,8 @@ public class BeeBPMBL {
 		
 		try {
 			selectedProcess = new WProcessDefBL().getWProcessDefByPK(idProcess, userId);
-			selectedStepDef = new WStepDefBL().getWStepDefByPK(idStep, userId);
+			selectedStepDef = new WStepDefBL()
+										.getWStepDefByPK(idStep, selectedProcess.getProcess().getId(), userId);// nes 20130808 por agregado de filtro para step-data-field
 
 		} catch (WProcessDefException e) {
 

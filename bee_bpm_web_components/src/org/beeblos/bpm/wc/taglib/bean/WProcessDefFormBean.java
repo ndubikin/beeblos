@@ -1570,7 +1570,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					currentStepSequence.getFromStep().getId() != null &&
 					currentStepSequence.getFromStep().getId() != 0) {
 			
-				wsd = wsdBL.getWStepDefByPK(currentStepSequence.getFromStep().getId(), getCurrentUserId());
+				wsd = wsdBL.getWStepDefByPK(
+								currentStepSequence.getFromStep().getId(),
+								currentWProcessDef.getProcess().getId(), // nes 2013088 - por agregado de step-data-field
+								getCurrentUserId());
 				
 				currentStepResponseList = setToSelectItemConversor(wsd.getResponse());
 				
