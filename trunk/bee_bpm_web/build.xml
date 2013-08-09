@@ -34,6 +34,9 @@
 
 	<target name="compile">
 
+		<ant dir="../sp_common/build/" target="jar" inheritAll="false" />
+		<ant dir="../sp_common_jsf/build/" target="jar" inheritAll="false" />
+		
 		<ant dir="../bee_bpm/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_security/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_web_components/" target="jar" inheritAll="false" />
@@ -51,6 +54,9 @@
 		 		
 	<target name="deploy" depends="jar">
 
+		<ant dir="../sp_common/build/" target="jar" inheritAll="false" />
+		<ant dir="../sp_common_jsf/build/" target="jar" inheritAll="false" />
+
 		<ant dir="../bee_bpm/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_security/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_web_components/" target="jar" inheritAll="false" />
@@ -64,6 +70,9 @@
 
 		<delete dir="${webAppFolder}/WEB-INF/classes"/>
 
+		<copy file="${spCommon_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${spCommonJsf_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		
 		<copy file="${distFolder}/${jarName}" todir="${webAppFolder}/WEB-INF/lib" />
 		<copy file="${bpmCore_jar}" todir="${webAppFolder}/WEB-INF/lib" />
 		<copy file="${bpmSecurity_jar}" todir="${webAppFolder}/WEB-INF/lib" />
