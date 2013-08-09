@@ -6,17 +6,25 @@ import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_ADDED;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_MODIFIED;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
+import org.hibernate.Filter;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -76,7 +84,7 @@ public class WStepDefDao {
 		
 		try {
 
-			step = getStepDefByPK(step.getId());
+			step = getStepDefByPK(step.getId(), null);// nes 20130808 por el filtro añadido
 
 			HibernateUtil.borrar(step);
 
@@ -138,7 +146,7 @@ public class WStepDefDao {
 
 	}
 
-	public WStepDef getStepDefByPK(Integer id) throws WStepDefException {
+	public WStepDef getStepDefByPK(Integer id, Integer processHeadId) throws WStepDefException {
 
 		WStepDef step = null;
 		org.hibernate.Session session = null;
@@ -147,25 +155,56 @@ public class WStepDefDao {
 		try {
 
 			session = HibernateUtil.obtenerSession();
+			
 			tx = session.getTransaction();
 			tx.begin();
-
-			step = (WStepDef) session.get(WStepDef.class, id);
+			
+			// nes 20130808 - nota: dejo esto como vestigio de que no me funcionó el filter con el mapping
+			// colocado en la coleccion del WSTEPDEF para mapear los dataFieldStep
+			// Paso a cargarlo a mano mas abajo ...
+//			if (processHeadId!=null) {
+//				//session.enableFilter("myFilter").setParameter("myFilterParam", "some-value");
+////				session.enableFilter("byProcessHeadId").setParameter("filterProcessHeadId", processHeadId);
+//		        Filter filter = session.enableFilter("byProcessHeadId");
+//		        filter.setParameter("filterProcessHeadId", processHeadId);
+//		        System.out.println("--->> filtro:"+processHeadId);					
+//			}
+			
+			step = (WStepDef) session.createQuery("From WStepDef where id="+id).uniqueResult();
 
 			tx.commit();
 
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepDefDao: getWStepDefByPK - we can't obtain the required id = "+
+			logger.error("WStepDefDao: getWStepDefByPK - we can't obtain the required id = "+
 					id + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepDefException("WStepDefDao: getWStepDefByPK - we can't obtain the required id : " + id + " - "
+			throw new WStepDefException("WStepDefDao: getWStepDefByPK - HibernateException we can't obtain the required id : " + id + " - "
 					+ ex.getMessage()+"\n"+ex.getCause());
 
+		}
+		
+		try {
+			
+			Set<WStepDataField> dataFields = 
+					new WStepDataFieldDao().getWStepDataFieldSet(processHeadId,step.getStepHead().getId());
+			
+			step.getStepHead().setDataFieldDef(dataFields);
+			
+		} catch (WStepDataFieldException e) {
+			String mess = "WStepDefDao: getWStepDefByPK - WStepDataFieldException can't load related step data fields = "+
+								id + "] - \n"+e.getMessage()+"\n"+e.getCause();
+			logger.error( mess );
+			throw new WStepDefException( mess );
 		}
 
 		return step;
 	}
+	
+//	private static <T> Set<T> filterCollection(Set<T> collection, Session s, Integer id) {
+//		Query filterQuery = s.createFilter(collection, "where processHeadId ="+id);
+//		return new HashSet<T>(filterQuery.list());
+//	}
 	
 /* dml 20130509 metodo pasado a WStepHeadDao	
 	public WStepDef getStepDefByName(String name) throws WStepDefException {

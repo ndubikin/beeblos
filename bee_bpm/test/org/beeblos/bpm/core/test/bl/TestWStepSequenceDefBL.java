@@ -71,8 +71,8 @@ public class TestWStepSequenceDefBL extends TestCase{
 			// cargo la ruta
 			// presupongo que existen los step con id 800 y 20
 			route.setProcess(process);
-			route.setFromStep(stepBL.getWStepDefByPK(800, 1002));
-			route.setToStep(stepBL.getWStepDefByPK(20, 1002));
+			route.setFromStep(stepBL.getWStepDefByPK(800, null, 1002));
+			route.setToStep(stepBL.getWStepDefByPK(20, null, 1002));
 			route.setEnabled(true);
 			
 			iroute = routeBL.add(route,1000);
@@ -101,7 +101,7 @@ public class TestWStepSequenceDefBL extends TestCase{
 		public void testSecuenciaCompleta() throws Exception {
 			
 			// doy de alta un proceso para que la ruta se pueda referir a él ...
-			process.setBeginStep(stepBL.getWStepDefByPK(10, 1000));
+			process.setBeginStep(stepBL.getWStepDefByPK(10, null, 1000));
 			process.setComments("mis comentarios");
 
 			process.setName("Mi primero worflo");
@@ -116,13 +116,13 @@ public class TestWStepSequenceDefBL extends TestCase{
 			// presupongo que existen los step con id 800 y 20
 			
 			
-			WStepDef paso10 = stepBL.getWStepDefByPK(10, 1000);
-			WStepDef paso20 = stepBL.getWStepDefByPK(20, 1000);
-			WStepDef paso24 = stepBL.getWStepDefByPK(24, 1000);
-			WStepDef paso30 = stepBL.getWStepDefByPK(30, 1000);
-			WStepDef paso40 = stepBL.getWStepDefByPK(40, 1000);
-			WStepDef paso50 = stepBL.getWStepDefByPK(50, 1000);
-			WStepDef paso90 = stepBL.getWStepDefByPK(90, 1000);
+			WStepDef paso10 = stepBL.getWStepDefByPK(10, null, 1000);
+			WStepDef paso20 = stepBL.getWStepDefByPK(20, null, 1000);
+			WStepDef paso24 = stepBL.getWStepDefByPK(24, null, 1000);
+			WStepDef paso30 = stepBL.getWStepDefByPK(30, null, 1000);
+			WStepDef paso40 = stepBL.getWStepDefByPK(40, null, 1000);
+			WStepDef paso50 = stepBL.getWStepDefByPK(50, null, 1000);
+			WStepDef paso90 = stepBL.getWStepDefByPK(90, null, 1000);
 			
 //			WStepSequenceDef route1 = new WStepSequenceDef(process,version1,paso10,paso20, true, true, null);
 //			

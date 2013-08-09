@@ -55,7 +55,7 @@ public class ListConverters {
 	}
 
 	public static List<ManagedDataField> convertWStepDataFieldToList(
-			Set<WStepDataField> stepDataFieldDef, Integer currentWorkId, Integer currentStepWorkId, int mode) {
+			List<WStepDataField> stepDataFieldDef, Integer currentWorkId, Integer currentStepWorkId, int mode) {
 		
 		if (stepDataFieldDef==null) return null;
 		if (stepDataFieldDef.size()==0) return null;

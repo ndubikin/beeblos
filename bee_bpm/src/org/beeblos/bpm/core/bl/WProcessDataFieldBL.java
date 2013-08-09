@@ -4,15 +4,13 @@ import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDataFieldDao;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
-import org.beeblos.bpm.core.model.ManagedData;
+import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
-import org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration;
 
 import com.sp.common.util.StringPair;
 
@@ -91,9 +89,28 @@ public class WProcessDataFieldBL {
 			
 	}
 	
-	public void delete(WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException {
+	public void delete(WProcessDataField processDataField, Integer currentUserId) 
+			throws WProcessDataFieldException {
 
-		logger.debug("delete() WProcessDataField - id/name: ["+(processDataField.getId()!=null?processDataField.getId():"null")+"/"+processDataField.getName()+"]");
+		logger.debug("delete() WProcessDataField - id/name: ["+(processDataField.getId()!=null?processDataField.getId():"null")
+						+"/"+processDataField.getName()+"]");
+		// checks if this process data field is being used in some step-data-fields
+		// 
+		WStepDataFieldBL stepDFBL = new WStepDataFieldBL();
+		try {
+			
+			Integer qty = stepDFBL
+								.countWStepDataFieldList(
+										processDataField.getId(), currentUserId);
+			if (qty>0) {
+				throw new WProcessDataFieldException("Error trying delete process-data-field :"+processDataField.getName()
+						+" This process has steps wich are referencing or using this Process Step. Unlink it before try delete !");
+			}
+		
+		} catch (WStepDataFieldException e) {
+			throw new WProcessDataFieldException("WStepDataFieldException trying count # step-data-field related with this process-data-field");
+		}
+		
 		
 		new WProcessDataFieldDao().delete(processDataField);
 

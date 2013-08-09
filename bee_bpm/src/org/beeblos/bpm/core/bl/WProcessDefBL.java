@@ -363,7 +363,7 @@ public class WProcessDefBL {
 				for (WStepDef wsd : stepList){
 					
 					deletedSteps.add(wsd.getName());
-					wsdBL.delete(wsd.getId(), currentUserId);
+					wsdBL.delete(wsd.getId(), null, currentUserId); // nes 20130808 - por agregado de filtro para step-data-field
 					logger.info("The WStepDef " + wsd.getName() + " has been correctly deleted by user " + currentUserId);
 					
 				}

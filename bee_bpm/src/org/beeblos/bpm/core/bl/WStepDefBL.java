@@ -94,11 +94,12 @@ public class WStepDefBL {
 		
 	}
 
-	public void update(WStepDef step, Integer currentUserId) throws WStepDefException {
+	public void update(WStepDef step, Integer processHeadId, Integer currentUserId) 
+			throws WStepDefException {
 		
 		logger.debug("update() WStepDef < id = "+step.getId()+">");
 		
-		if (!step.equals(new WStepDefDao().getStepDefByPK(step.getId())) ) {
+		if (!step.equals(new WStepDefDao().getStepDefByPK(step.getId(), processHeadId)) ) {
 
 			// timestamp & trace info
 			step.setModDate(new Date());
@@ -114,7 +115,7 @@ public class WStepDefBL {
 					
 	}
 	
-	public void delete(Integer stepId, Integer currentUserId) 
+	public void delete(Integer stepId, Integer processHeadId, Integer currentUserId) 
 			throws WStepDefException, WStepWorkException, WProcessDefException, 
 			WStepSequenceDefException, WStepHeadException  {
 
@@ -149,7 +150,7 @@ public class WStepDefBL {
 			throw new WStepSequenceDefException(mess);
 		}
 		
-		WStepDef step = this.getWStepDefByPK(stepId, currentUserId);
+		WStepDef step = this.getWStepDefByPK(stepId, processHeadId, currentUserId);
 		Integer stepHeadId = step.getStepHead().getId();
 		
 		// se borrarán en cascada (por el mapping) los roles y users relacionados con el step
@@ -161,7 +162,7 @@ public class WStepDefBL {
 	}
 	
 	// to use this method previously must delete all incoming and outcoming routes from step to delete...
-	public boolean delete(Integer stepId, Integer processId, Integer currentUserId) 
+	public boolean delete(Integer stepId, Integer processId, Integer processHeadId, Integer currentUserId) 
 			throws WStepDefException, WStepWorkException, WProcessDefException, 
 					WStepSequenceDefException, WStepHeadException 
 			   {
@@ -191,7 +192,7 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 		
-		delete(stepId,currentUserId);
+		delete(stepId, processHeadId, currentUserId);
 
 		
 		// if arrives here, all is ok, return true ...
@@ -230,7 +231,8 @@ public class WStepDefBL {
 	 * returns new step id
 	 * 
 	 */
-	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, Integer userId) 
+	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, Integer processHeadId,
+			Integer userId) 
 			throws  WStepHeadException, WStepSequenceDefException, WStepDefException  {
 		
 		boolean newStep=false; // by default generates a new version of current stepId
@@ -238,7 +240,7 @@ public class WStepDefBL {
 		boolean cloneResponses=true;
 		boolean clonePermissions=true;
 		
-		return cloneWStepDef( stepId,  stepHeadId,  processId,
+		return cloneWStepDef( stepId,  stepHeadId,  processId, processHeadId,
 				 newStep,  cloneRoutes,	cloneResponses, clonePermissions, userId);
 		
 	}
@@ -257,7 +259,7 @@ public class WStepDefBL {
 	 * WStepSequeceDef has incoming and outgoint routes for a step/process
 	 * 
 	 */
-	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, 
+	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, Integer processHeadId,
 									boolean generateNewStep, boolean cloneRoutes,
 									boolean cloneResponses,
 									boolean clonePermissions, Integer userId) 
@@ -268,8 +270,8 @@ public class WStepDefBL {
 		
 		try {
 			
-			newStep = this.getWStepDefByPK(stepId,userId);
-			currentStep = this.getWStepDefByPK(stepId,userId);
+			newStep = this.getWStepDefByPK(stepId,processHeadId,userId);
+			currentStep = this.getWStepDefByPK(stepId,processHeadId, userId);
 
 			// new step or new version ...
 			if (generateNewStep) {
@@ -415,19 +417,20 @@ public class WStepDefBL {
 	
 	
 	// dml 20130509
-	public void deactivateStep(Integer stepId, Integer currentUserId) throws WStepDefException, WStepSequenceDefException{
+	public void deactivateStep(Integer stepId, Integer processHeadId,Integer currentUserId) 
+			throws WStepDefException, WStepSequenceDefException{
 		
 		if (stepId != null
 				&& !stepId.equals(0)){
 			
-			WStepDef wsd = this.getWStepDefByPK(stepId, currentUserId);
+			WStepDef wsd = this.getWStepDefByPK(stepId, processHeadId, currentUserId);
 			
 			if (wsd != null){
 				
 				if (wsd.isActive()){
 					
 					wsd.setActive(false);
-					this.update(wsd, currentUserId);
+					this.update(wsd, processHeadId, currentUserId);
 					
 				} else {
 
@@ -444,19 +447,20 @@ public class WStepDefBL {
 	}
 
 	// dml 20130509
-	public void activateStep(Integer stepId, Integer currentUserId) throws WStepDefException, WStepSequenceDefException{
+	public void activateStep(Integer stepId, Integer processHeadId, Integer currentUserId) 
+			throws WStepDefException, WStepSequenceDefException{
 		
 		if (stepId != null
 				&& !stepId.equals(0)){
 			
-			WStepDef wsd = this.getWStepDefByPK(stepId, currentUserId);
+			WStepDef wsd = this.getWStepDefByPK(stepId, processHeadId, currentUserId);
 			
 			if (wsd != null){
 				
 				if (!wsd.isActive()){
 					
 					wsd.setActive(true);
-					this.update(wsd, currentUserId);
+					this.update(wsd,processHeadId, currentUserId);
 					
 				} else {
 
@@ -479,9 +483,9 @@ public class WStepDefBL {
 	
 	}
 	
-	public WStepDef getWStepDefByPK(Integer id, Integer userId) throws WStepDefException {
+	public WStepDef getWStepDefByPK(Integer id, Integer processHeadId, Integer userId) throws WStepDefException {
 
-		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id);
+		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id,processHeadId);
 		
 //		try {
 //			stepDef.getStepHead().setDataFieldDef(
