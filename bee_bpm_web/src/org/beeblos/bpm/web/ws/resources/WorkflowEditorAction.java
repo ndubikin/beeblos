@@ -365,7 +365,11 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					&& !xmlId.isEmpty()
 					&& xmlId.equals(cellToChangeId)){
 					
-					WStepDef step = new WStepDefBL().getWStepDefByPK(Integer.valueOf(newSpObjectId), currentUserId);
+					WStepDef step = 
+							new WStepDefBL().getWStepDefByPK(
+													Integer.valueOf(newSpObjectId),
+													null, //process.getProcess().getId(), // nes 20130808 por agregado de filter para step-data-field
+													currentUserId);
 					
 					task.setAttribute("spId", newSpObjectId);
 					task.setAttribute("label", newSpObjectName);
@@ -611,7 +615,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				
 					// añadimos el nuevo paso a la lista de pasos del proceso para actualizarlo despues con sus
 					// responses
-					WStepDef step = stepBL.getWStepDefByPK(Integer.valueOf(spId), currentUserId);
+					WStepDef step = stepBL.getWStepDefByPK(Integer.valueOf(spId), null, currentUserId); // nes 20130808 por agregado de filter para step-data-field
 					
 					step.setName(spName);
 					step.setRules(spRules);
@@ -1050,7 +1054,10 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				}
 				
 				System.out.println("WS Save wsrdBL.update(): " + step.getName());
-				new WStepDefBL().update(step, currentUserId);
+				new WStepDefBL().update(
+										step,
+										process.getProcess().getId(), // nes 20130808 por agregado de filter para step-data-field
+										currentUserId);
 			}
 		}
 		
@@ -1075,7 +1082,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		}
 		
 		for (Integer removeStepId : removeStepIdList){
-			boolean deletedOk = new WStepDefBL().delete(removeStepId, process.getId(), currentUserId);
+			boolean deletedOk = new WStepDefBL().delete(removeStepId, process.getId(), null, currentUserId); // nes 20130808 por agregado de filter para step-data-field
 			if (deletedOk){
 				System.out.println("WS Save. WStepDefBL().delete() It is not possible to delete the step, it is used in other place. id: " + removeStepId);
 			} else {
