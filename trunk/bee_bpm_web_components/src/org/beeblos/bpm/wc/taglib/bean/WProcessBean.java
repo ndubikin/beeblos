@@ -1070,8 +1070,7 @@ public class WProcessBean extends CoreManagedBean {
 					+ pr.getRole().getId();
 		}
 
-		System.out
-				.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"
+		logger.debug("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"
 						+ strRoleList);
 		return strRoleList;
 	}
@@ -1702,7 +1701,10 @@ public class WProcessBean extends CoreManagedBean {
 					currentStepSequence.getFromStep().getId() != null &&
 					currentStepSequence.getFromStep().getId() != 0) {
 			
-				wsd = wsdBL.getWStepDefByPK(currentStepSequence.getFromStep().getId(), getCurrentUserId());
+				wsd = wsdBL.getWStepDefByPK(
+								currentStepSequence.getFromStep().getId(),
+								currentWProcess.getId(), // nes 20130808 - por agregado de filtro para step-data-field
+								getCurrentUserId());
 				
 				currentStepResponseList = setToSelectItemConversor(wsd.getResponse());
 				

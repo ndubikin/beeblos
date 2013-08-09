@@ -207,7 +207,9 @@ public class InyectorBean  extends CoreManagedBean {
 			WStepDefBL stepDefBL = new WStepDefBL();
 			
 			try {
-				setPasoSeleccionado(stepDefBL.getWStepDefByPK(selectedStepDefId, currentUser));
+				setPasoSeleccionado(
+						stepDefBL.getWStepDefByPK(
+								selectedStepDefId, selectedProcess.getProcess().getId(), currentUser));// nes 20130808 - por agregado filtro
 			} catch (WStepDefException e) {
 				logger.error("can't get WStepDef for id:"+selectedStepDefId+"  >> will be reset to null!!");
 				setSelectedStepDefId(null);

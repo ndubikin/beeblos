@@ -32,7 +32,6 @@ import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WTimeUnitException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -44,12 +43,14 @@ import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WTimeUnit;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
+import org.beeblos.bpm.core.model.noper.WProcessHeadLight;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
-import com.sp.common.jsf.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
+
+import com.sp.common.jsf.util.UtilsVs;
 
 public class WStepDefFormBean extends CoreManagedBean {
 
@@ -72,6 +73,10 @@ public class WStepDefFormBean extends CoreManagedBean {
     
 	private WStepDef currentWStepDef; 
 	private Integer currObjId; // current object id managed by this backing bean
+	// dml 20120526
+	private Integer currentProcessDefId;
+	//rrl 20130801
+	private Integer currentProcessHeadId;
 	
 	// auxiliar properties
 
@@ -100,9 +105,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private Integer outgoingRoutesSize;
 	private List<WStepSequenceDef> incomingRoutes;
 	private Integer incomingRoutesSize;
-	
-	// dml 20120526
-	private Integer currentProcessDefId;
 
 	// dml 20130507
 	private Integer currentStepHeadIdSelected;
@@ -113,9 +115,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private String activeFilter;
 	
 	private String messageStyle;
-
-	//rrl 20130801
-	private Integer currentProcessHeadId;
 	
 	//rrl 20130805
 	private boolean visibleButtonEditDataField;
@@ -490,7 +489,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 						
 			setModel();
 			
-			wsdBL.update(currentWStepDef, this.getCurrentUserId() );
+			wsdBL.update(currentWStepDef, currentProcessHeadId, this.getCurrentUserId() ); // nes 20130808 - por agregado de filtro en step-data-field
 			
 			recoverNullObjects();
 			
@@ -530,7 +529,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		try {
 			currentWStepDef = 
 					wsdBL
-						.getWStepDefByPK(this.currObjId, this.getCurrentUserId() );
+						.getWStepDefByPK(this.currObjId, currentProcessHeadId, this.getCurrentUserId() ); // nes 20130808 - por agregado de filtro en step-data-field
 			
 			recoverNullObjects();//new org.beeblos.bpm.core.bl.WStepDataFieldBL().getWStepDataFieldByPK(1, 1000);
 			
@@ -991,7 +990,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}
 		}
 		
-		System.out.println("--------------->>>>>>>>> strUserList ------------>>>>>>>>"+strUserList);
+		logger.debug("--------------->>>>>>>>> strUserList ------------>>>>>>>>"+strUserList);
 
 		return strUserList;
 	}
@@ -1005,7 +1004,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 		strDataFieldList="";
 		if ( currentWStepDef.getStepHead()!=null
-				&& currentWStepDef.getStepHead().getDataFieldDef() != null ) {
+				&& currentWStepDef.getStepHead().getDataFieldDef()!=null ) {
 			for ( WStepDataField su: this.currentWStepDef.getStepHead().getDataFieldDef()) {
 				if (su.getDataField()!=null) {
 					strDataFieldList+=(strDataFieldList!=null && !"".equals(strDataFieldList)?",":"")+su.getDataField().getId();
@@ -1013,7 +1012,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}
 		}
 		
-		System.out.println("--------------->>>>>>>>> strDataFieldList ------------>>>>>>>>"+strDataFieldList);
+		logger.debug("--------------->>>>>>>>> strDataFieldList ------------>>>>>>>>"+strDataFieldList);
 
 		return strDataFieldList;
 	}
@@ -1039,7 +1038,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}
 		}
 		
-		System.out.println("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
+		logger.debug("--------------->>>>>>>>> strRoleList ------------>>>>>>>>"+strRoleList);
 		return strRoleList;
 	}
 
@@ -1399,7 +1398,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 	private void persistCurrentObject() throws WStepDefException {
 		WStepDefBL wsdBL = new WStepDefBL();
 		this.setModel();
-		wsdBL.update(currentWStepDef, getCurrentUserId());
+		wsdBL.update(currentWStepDef, currentProcessHeadId, getCurrentUserId()); // nes 20130808 - por agregado de filtro en step-data-field
 		this.recoverNullObjects();
 	}
 
@@ -1513,8 +1512,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		//rrl 20130805 verified before currentWStepDef is not null
 		if (currentWStepDef !=null &&
-				currentWStepDef.getStepHead()!=null &&
-				currentWStepDef.getStepHead().getStepDataFieldList()!=null) {
+				currentWStepDef.getStepHead()!=null) {
 			stepDataFieldList = currentWStepDef.getStepHead().getStepDataFieldList();
 		}
 
@@ -1540,7 +1538,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 				WStepDataFieldBL wStepDataFieldBL = new WStepDataFieldBL();
 				Set<WStepDataField> dataFieldRelated = 
 						new WStepDataFieldBL()
-								.getWStepDataFieldSet(currentWStepDef.getStepHead().getId(), null);
+								.getWStepDataFieldSet(currentProcessHeadId, currentWStepDef.getStepHead().getId(), null);
 				if (dataFieldRelated != null) {
 					for (WStepDataField wsdf : dataFieldRelated) {
 						wStepDataFieldBL.delete(wsdf, null);
@@ -1579,13 +1577,17 @@ public class WStepDefFormBean extends CoreManagedBean {
 	}
 	
 	//rrl 20130805
-	private void updateStepDataFieldRelatedList() throws NumberFormatException, WStepDataFieldException, WProcessDataFieldException {
+	private void updateStepDataFieldRelatedList() 
+			throws NumberFormatException, WStepDataFieldException, WProcessDataFieldException {
 				
 		WStepDataFieldBL wStepDataFieldBL = new WStepDataFieldBL();
 
 		boolean isInList = false;
 		
-		Set<WStepDataField> dataFieldRelated = new WStepDataFieldBL().getWStepDataFieldSet(currentWStepDef.getStepHead().getId(), null);
+		Set<WStepDataField> dataFieldRelated = 
+				new WStepDataFieldBL()
+						.getWStepDataFieldSet(currentProcessHeadId, currentWStepDef.getStepHead().getId(), null);
+		
 		if (dataFieldRelated != null) {
 
 			for (String s : strDataFieldList.split(",")) {
@@ -1603,6 +1605,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 					WStepDataField stepDataField = new WStepDataField();
 					
 					stepDataField.setStepHeadId(currentWStepDef.getStepHead().getId());
+					stepDataField.setProcessHeadId(currentProcessHeadId);// nes 201030808 por incorporacion del processHeaId en step-data-field
 					stepDataField.setDataField(new WProcessDataFieldBL().getWProcessDataFieldByPK(Integer.parseInt(s), null));
 					wStepDataFieldBL.add(stepDataField, getCurrentUserId());
 				}
@@ -1647,7 +1650,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 	}
 
-	public String saveEditDataField() {
+	public String saveEditedDataField() {
 		
 		WStepDataFieldBL wdfBL = new WStepDataFieldBL();
 
@@ -1679,7 +1682,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			result = false;
 		}
 
-		// if the value is ZERO then assign the value of process DataField
+		// if length is ZERO then assign the value of processDataField
 		if (wStepDataFieldSelected.getLength()!=null &&
 			wStepDataFieldSelected.getLength().equals(0)) {
 			wStepDataFieldSelected.setLength( wStepDataFieldSelected.getDataField().getLength() );
@@ -1704,7 +1707,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 			if (wStepDataFieldSelected != null && wStepDataFieldSelected.getId() != null && 
 					wStepDataFieldSelected.getId() != 0) {
 			
-				wStepDataFieldSelected = wdfBL.getWStepDataFieldByPK(wStepDataFieldSelected.getId(), getCurrentUserId());
+				wStepDataFieldSelected = 
+						wdfBL.getWStepDataFieldByPK(wStepDataFieldSelected.getId(), getCurrentUserId());
 
 				visibleButtonEditDataField = false;
 				

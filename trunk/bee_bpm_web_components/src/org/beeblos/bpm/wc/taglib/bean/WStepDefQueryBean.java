@@ -244,12 +244,12 @@ public class WStepDefQueryBean extends CoreManagedBean {
 	// nes 20130508
 	// force step cloning with all routes for all process ...
 	public void cloneWStepDef() {
-		Integer processId=null;
-		cloneWStepDef(processId);
+		Integer processId=null, processHeadId=null;
+		cloneWStepDef(processId, processHeadId);
 	}
 	
 	// nes 20130508
-	public void cloneWStepDef(Integer processId) {
+	public void cloneWStepDef(Integer processId, Integer processHeadId) {
 
 		try {
 			
@@ -258,7 +258,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			// cloned step ...
 			Integer newId = 
 					new WStepDefBL()
-							.cloneWStepDef(this.id, this.stepHeadId, processId, getCurrentUserId());
+							.cloneWStepDef(this.id, this.stepHeadId, processId, processHeadId, getCurrentUserId());// nes 20130808 - por agregado de filtro
 			
 			this.searchWStepDefs();
 			
@@ -309,7 +309,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			
 			try {
 				
-				new WStepDefBL().delete(this.id, getCurrentUserId());
+				new WStepDefBL().delete(this.id, null, getCurrentUserId()); // nes 20130808 - por agregado del filtro para step-data-field
 				
 				this.tmpDeletingWStepDefPopup = false;
 				this.searchWStepDefs();
@@ -379,7 +379,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			try {
 				
 				this.tmpDeletingWStepDefPopup = false;
-				this.currentWStepDef = new WStepDefBL().getWStepDefByPK(this.id, getCurrentUserId());
+				this.currentWStepDef = new WStepDefBL().getWStepDefByPK(this.id, null, getCurrentUserId());// nes 20130808 - por agregado del filtro para step-data-field
 				
 			} catch (WStepDefException e) {
 
