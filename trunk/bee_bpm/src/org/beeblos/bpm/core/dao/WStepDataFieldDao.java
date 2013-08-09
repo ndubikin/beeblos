@@ -175,7 +175,8 @@ public class WStepDataFieldDao {
 	}
 
 	//rrl 20130730
-	public List<WStepDataField> getWStepDataFieldList(Integer processHeadId) throws WStepDataFieldException {
+	public List<WStepDataField> getWStepDataFieldList(Integer processHeadId, Integer stepHeadId) 
+			throws WStepDataFieldException {
 
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -189,10 +190,23 @@ public class WStepDataFieldDao {
 
 			tx.begin();
 
-			processs = session
-					.createQuery("From WStepDataField pdfi WHERE stepHeadId= ? order by id ")
-					.setInteger(0, processHeadId)
-					.list();
+			if (stepHeadId==null) {
+				processs = session
+						.createQuery("From WStepDataField sdf WHERE processHeadId= ? order by id ")
+						.setInteger(0, processHeadId)
+						.list();
+			} else if (processHeadId==null) {
+				processs = session
+						.createQuery("From WStepDataField sdf WHERE stepHeadId= ? order by id ")
+						.setInteger(0, stepHeadId)
+						.list();
+			} else {
+				processs = session
+						.createQuery("From WStepDataField sdf WHERE processHeadId= ? AND stepHeadId= ? order by id ")
+						.setInteger(0, processHeadId)
+						.setInteger(1, stepHeadId)
+						.list();
+			}
 			
 			tx.commit();
 
@@ -209,11 +223,59 @@ public class WStepDataFieldDao {
 		return processs;
 	}
 	
-	public Set<WStepDataField> getWStepDataFieldSet(Integer stepHeadId) throws WStepDataFieldException {
+	public Integer countWStepDataFieldList(Integer processHeadId) 
+			throws WStepDataFieldException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		Long qty = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			qty = (Long) session
+					.createQuery("Select Count (id) as count From WStepDataField pdfi WHERE stepHeadId= ? ")
+					.setInteger(0, processHeadId)
+					.uniqueResult();
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepDataFieldDao: getWStepDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDataFieldException("WStepDataFieldDao: getWStepDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): "
+					+ ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		return qty.intValue();
+	}
+	
+	public Set<WStepDataField> getWStepDataFieldStepFilteredSet(Integer stepHeadId) throws WStepDataFieldException {
 
 		Set<WStepDataField> dataFieldSet = new HashSet<WStepDataField>(0);
 
-		List<WStepDataField> listDF = getWStepDataFieldList(stepHeadId);
+		List<WStepDataField> listDF = getWStepDataFieldList(null, stepHeadId);
+		for (WStepDataField dataField: listDF) {
+			dataFieldSet.add(dataField);
+		}
+	
+		return dataFieldSet;
+	}
+	
+	public Set<WStepDataField> getWStepDataFieldSet(Integer processHeadId, Integer stepHeadId) 
+			throws WStepDataFieldException {
+
+		Set<WStepDataField> dataFieldSet = new HashSet<WStepDataField>(0);
+
+		List<WStepDataField> listDF = getWStepDataFieldList(processHeadId,stepHeadId);
 		for (WStepDataField dataField: listDF) {
 			dataFieldSet.add(dataField);
 		}

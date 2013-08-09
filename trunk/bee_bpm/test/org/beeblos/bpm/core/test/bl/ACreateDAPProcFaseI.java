@@ -63,7 +63,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 		private void _testCreoElProceso() throws Exception {
 		
 			Date now = new Date();
-			step = stepBL.getWStepDefByPK(10, user);
+			step = stepBL.getWStepDefByPK(10,null,  user);
 			
 			process.setBeginStep(step);
 			process.setComments("Comienzo del workflow de DAP - Fase I ");
@@ -86,7 +86,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			
 			// AGREGA LAS RESPUESTAS Y LAS ASIGNACIONES A LOS PASOS
 			//-----------------------------------------------------------------------------------------------------			
-			WStepDef paso = stepBL.getWStepDefByPK(10, user);
+			WStepDef paso = stepBL.getWStepDefByPK(10,null,  user);
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -97,7 +97,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP","com.softpoint.wf.Role"));
 
-			stepBL.update(paso, user);
+			stepBL.update(paso,null,  user);
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 			
 			// agrega las rutas desde paso 10
@@ -108,7 +108,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(14, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(14, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -123,7 +123,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(20, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(20,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -148,7 +148,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			routeBL.add(ruta, user);	
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(14, user);
+			paso = stepBL.getWStepDefByPK(14,null,  user);
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -157,7 +157,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 			
 			// RUTA OK
@@ -166,7 +166,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(10, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(10, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -178,7 +178,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(20, user);
+			paso = stepBL.getWStepDefByPK(20,null,  user);
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -189,7 +189,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP_D","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 			
 			
@@ -199,7 +199,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(30, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(30, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -214,7 +214,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(710, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(710, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -229,7 +229,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(320, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(320,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -239,7 +239,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			routeBL.add(ruta, user);	
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(320, user);
+			paso = stepBL.getWStepDefByPK(320,null,  user);
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -248,7 +248,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("GTD_M","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso,null,  user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -257,7 +257,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(30, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(30,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -267,7 +267,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			routeBL.add(ruta, user);	
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(710, user);
+			paso = stepBL.getWStepDefByPK(710, null, user);
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -276,7 +276,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DE","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -294,7 +294,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setValidResponses(respuestasValidas);
 			routeBL.add(ruta, user);				
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(30, user);
+			paso = stepBL.getWStepDefByPK(30,null,  user);
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -303,7 +303,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP_D","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso,null,  user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -312,7 +312,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(200, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(200,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -322,7 +322,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			routeBL.add(ruta, user);	
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(200, user);
+			paso = stepBL.getWStepDefByPK(200,null,  user);
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -334,7 +334,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("D","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA A estudio
@@ -343,7 +343,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(22, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(22,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -358,7 +358,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(220, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(220, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -373,7 +373,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(42, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(42,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -389,7 +389,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(222, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(222, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -400,7 +400,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(22, user); // GESTION DE EVALUADORES
+			paso = stepBL.getWStepDefByPK(22, null, user); // GESTION DE EVALUADORES
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -409,7 +409,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP_D","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -418,7 +418,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(24, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(24, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -428,7 +428,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			routeBL.add(ruta, user);
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(24, user); // PDTE EVALUACION EXTERNA
+			paso = stepBL.getWStepDefByPK(24,null,  user); // PDTE EVALUACION EXTERNA
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -437,7 +437,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP_D","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso,null,  user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -446,7 +446,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(200, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(200, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -456,7 +456,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			routeBL.add(ruta, user);
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(220, user); // GTD - PROCESAMIENTO DE PROPUESTA APROBADA
+			paso = stepBL.getWStepDefByPK(220, null, user); // GTD - PROCESAMIENTO DE PROPUESTA APROBADA
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -465,7 +465,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("GTD","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso,null,  user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -474,7 +474,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(50, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(50, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -489,7 +489,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(400, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(400, null, user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -500,7 +500,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(222, user); // GTD - ENVIO CARTA POSTAL AVISO DENEGACIÓN PROPUESTA
+			paso = stepBL.getWStepDefByPK(222, null, user); // GTD - ENVIO CARTA POSTAL AVISO DENEGACIÓN PROPUESTA
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -509,7 +509,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("GTD","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -528,7 +528,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			routeBL.add(ruta, user);
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(42, user); // AVISO DENEGACION POR EMAIL Y ARCHIVO
+			paso = stepBL.getWStepDefByPK(42, null, user); // AVISO DENEGACION POR EMAIL Y ARCHIVO
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -537,7 +537,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP_D","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -559,7 +559,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 		
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(50, user); // AVISO APROBACION - DAP COMUNICA
+			paso = stepBL.getWStepDefByPK(50,null,  user); // AVISO APROBACION - DAP COMUNICA
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -569,7 +569,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DAP_D","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 
@@ -579,7 +579,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(false);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(700, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(700,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = "";
 			for (WStepResponseDef resp: paso.getResponse()) {
@@ -605,7 +605,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(400, user); // DFAG PREPARA BORRADOR
+			paso = stepBL.getWStepDefByPK(400,null,  user); // DFAG PREPARA BORRADOR
 			//-----------------------------------------------------------------------------------------------------
 			
 			// agrego respuestas
@@ -615,7 +615,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DFAG","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso, null, user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			// RUTA OK (AFTERALL)
@@ -624,7 +624,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(250, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(250,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -639,7 +639,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			ruta.setEnabled(true);
 			ruta.setAfterAll(true);
 			ruta.setFromStep(paso);
-			ruta.setToStep(stepBL.getWStepDefByPK(56, user));
+			ruta.setToStep(stepBL.getWStepDefByPK(56,null,  user));
 			ruta.setProcess(process);
 			respuestasValidas = null;
 //			for (WStepResponseDef resp: paso.getResponse()) {
@@ -650,7 +650,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 
 			
 			//-----------------------------------------------------------------------------------------------------
-			paso = stepBL.getWStepDefByPK(700, user); // DE PUBLICA
+			paso = stepBL.getWStepDefByPK(700,null,  user); // DE PUBLICA
 			//-----------------------------------------------------------------------------------------------------
 			
 			// no tiene respuestas ...
@@ -660,7 +660,7 @@ public class ACreateDAPProcFaseI extends TestCase{
 			// agrego asignaciones
 //			paso.getAssigned().add(new WStepAssignedDef("DE","como.softpoint.wf.Rol"));
 
-			stepBL.update(paso, user);			
+			stepBL.update(paso,null,  user);			
 			System.out.println("----->>> actualizado paso:"+paso.getId()+" "+paso.getName());
 
 			

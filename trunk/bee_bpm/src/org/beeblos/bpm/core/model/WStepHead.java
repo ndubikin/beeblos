@@ -12,24 +12,23 @@ public class WStepHead implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private Integer id;
-	
+
 	private String name;	
 	private String comments;
-	
+
 	private Date insertDate;
 	private Integer insertUser;
 	private Date modDate;
 	private Integer modUser;
-	
-	Set<WStepDataField> dataFieldDef = new HashSet<WStepDataField>(0);
-	
+
+	Set<WStepDataField> dataFieldDef=new HashSet<WStepDataField>();
+
 	public WStepHead() {
 		super();
 	}
 
-	
 	public WStepHead(Integer id) {
 		this.id = id;
 	}
@@ -121,6 +120,7 @@ public class WStepHead implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
+
 	public Set<WStepDataField> getDataFieldDef() {
 		return dataFieldDef;
 	}
@@ -206,9 +206,15 @@ public class WStepHead implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WStepHead [id=" + id + ", name=" + name + ", comments=" + comments + ", insertDate="
-				+ insertDate + ", insertUser=" + insertUser + ", modDate=" + modDate + ", modUser="
-				+ modUser + "]";
+		return "WStepHead [" + (id != null ? "id=" + id + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (comments != null ? "comments=" + comments + ", " : "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser + ", " : "")
+				+ (dataFieldDef != null ? "dataFieldDef=" + dataFieldDef : "")
+				+ "]";
 	}
 
 

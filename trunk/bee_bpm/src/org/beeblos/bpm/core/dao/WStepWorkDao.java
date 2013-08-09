@@ -382,7 +382,7 @@ public class WStepWorkDao {
 				ManagedData md = new ManagedData();
 				md.setDataField( 
 						ListConverters.convertWStepDataFieldToList
-						 (stepWork.getCurrentStep().getStepHead().getDataFieldDef(),null,null,ACTIVE_DATA_FIELDS) );
+						 (stepWork.getCurrentStep().getStepHead().getStepDataFieldList(),null,null,ACTIVE_DATA_FIELDS) );
 				md.setChanged(false);				
 				md.setCurrentStepWorkId(stepWork.getId()); // step work id
 				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id

@@ -56,7 +56,7 @@ public class TestWProcessDefBL extends TestCase{
 			WStepDefBL stepBL = new WStepDefBL();
 			Integer idStep = stepBL.add(new WStepDef(null,2,3,"ejecute este paso plis","sincomentarios ...",null,null,null),1000);
 			
-			process.setBeginStep(stepBL.getWStepDefByPK(idStep, 1000));
+			process.setBeginStep(stepBL.getWStepDefByPK(idStep, process.getProcess().getId(), 1000));
 			process.setComments("mis comentarios");
 
 
@@ -79,9 +79,9 @@ public class TestWProcessDefBL extends TestCase{
 			// borrar porque si no queda mal la referencia ... ( restriccion por fk en tabla WStepDef )
 			
 			//WStepDefBL stepBL = new WStepDefBL();
-			WStepDef step = stepBL.getWStepDefByPK(istep, 1000);
+			WStepDef step = stepBL.getWStepDefByPK(istep, process.getProcess().getId(), 1000);
 			try {
-				stepBL.delete(step.getId(), 1001);
+				stepBL.delete(step.getId(), process.getProcess().getId(), 1001);
 				assertNotNull(step);
 			} catch (WStepDefException e) {
 				System.out.println("Sale correctamente por WStepDefException porque no debe dejar borrar el paso si está el proceso apuntando a él ...");
@@ -99,8 +99,8 @@ public class TestWProcessDefBL extends TestCase{
 			new WProcessDefBL().delete( iproc, false,1000) ; // con las cascadas esto borra el proceso y las 2 tablas de relacion asociadas ...
 			assertNull(processBL.getWProcessDefByPK(iproc,1001));
 			
-			stepBL.delete(step.getId(), 1001);
-			assertNull(stepBL.getWStepDefByPK(istep,1000));
+			stepBL.delete(step.getId(), readedProcess.getProcess().getId(), 1001);
+			assertNull(stepBL.getWStepDefByPK(istep, readedProcess.getProcess().getId(), 1000));
 			
 			roleBl.delete(idRol1, 1000);
 			roleBl.delete(idRol2, 1000);

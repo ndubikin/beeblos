@@ -73,20 +73,20 @@ public class TestWTrackWorkBL extends TestCase {
 		// precondiciones: doy de alta un proceso, un mapa y utilizo los pasos
 		// 10,20,24,40,50,90
 		// doy de alta un proceso para que la ruta se pueda referir a él ...
-		process.setBeginStep(stepBL.getWStepDefByPK(10, 1001));
+		process.setBeginStep(stepBL.getWStepDefByPK(10, null, 1001));
 		process.setComments("mis comentarios");
 
 		process.setName("Mi proceso");
 
 		iproc = processBL.add(process, 1000);
 
-		WStepDef paso10 = stepBL.getWStepDefByPK(10, 1001);
-		WStepDef paso20 = stepBL.getWStepDefByPK(20, 1001);
-		WStepDef paso24 = stepBL.getWStepDefByPK(24, 1001);
-		WStepDef paso30 = stepBL.getWStepDefByPK(30, 1001);
-		WStepDef paso40 = stepBL.getWStepDefByPK(40, 1001);
-		WStepDef paso50 = stepBL.getWStepDefByPK(50, 1001);
-		WStepDef paso90 = stepBL.getWStepDefByPK(90, 1001);
+		WStepDef paso10 = stepBL.getWStepDefByPK(10, null, 1001);
+		WStepDef paso20 = stepBL.getWStepDefByPK(20, null, 1001);
+		WStepDef paso24 = stepBL.getWStepDefByPK(24, null, 1001);
+		WStepDef paso30 = stepBL.getWStepDefByPK(30, null, 1001);
+		WStepDef paso40 = stepBL.getWStepDefByPK(40, null, 1001);
+		WStepDef paso50 = stepBL.getWStepDefByPK(50, null, 1001);
+		WStepDef paso90 = stepBL.getWStepDefByPK(90, null, 1001);
 
 		// cargo la ruta
 		// presupongo que existen los step con id 800 y 20

@@ -83,16 +83,23 @@ public class WStepDataFieldBL {
 	
 	}
 
-	public List<WStepDataField> getWStepDataFieldList(Integer processHeadId, Integer currentUserId) throws WStepDataFieldException {
+//	public List<WStepDataField> getWStepDataFieldList(Integer processHeadId, Integer currentUserId) throws WStepDataFieldException {
+//
+//		return new WStepDataFieldDao().getWStepDataFieldList(processHeadId,null);
+//	
+//	}
+	
+	public Integer countWStepDataFieldList(Integer processHeadId, Integer currentUserId) 
+			throws WStepDataFieldException {
 
-		return new WStepDataFieldDao().getWStepDataFieldList(processHeadId);
+		return new WStepDataFieldDao().countWStepDataFieldList(processHeadId);
 	
 	}
 	
-	public Set<WStepDataField> getWStepDataFieldSet( Integer stepHeadId, Integer currentUserId) 
+	public Set<WStepDataField> getWStepDataFieldSet(Integer processHeadId, Integer stepHeadId, Integer currentUserId) 
 			throws WStepDataFieldException {
 
-		return new WStepDataFieldDao().getWStepDataFieldSet(stepHeadId);
+		return new WStepDataFieldDao().getWStepDataFieldSet(null,stepHeadId);
 	
 	}
 	

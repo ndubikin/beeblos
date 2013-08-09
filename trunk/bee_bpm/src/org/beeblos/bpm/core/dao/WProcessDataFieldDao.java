@@ -141,16 +141,19 @@ public class WProcessDataFieldDao {
 			
 			TableManager tm = new TableManager();
 			ManagedData managedData = new ManagedData();
-
+			Integer qtyRecsNotNull=0;
+			
 			// returns managedData if there is defined (processHead) and table exists
 			// if not there is another instance to create the managed table
 			managedData = getAndCheckManagedData(processDataField.getProcessHeadId(), tm, managedData);	
 			
-			Integer qtyRecsNotNull = 
-					tm.countNotNullRecords(
-							managedData.getManagedTableConfiguration().getSchema(),
-							managedData.getManagedTableConfiguration().getName(),
-							processDataField.getName());
+			if (managedData!=null) {
+				qtyRecsNotNull = 
+						tm.countNotNullRecords(
+								managedData.getManagedTableConfiguration().getSchema(),
+								managedData.getManagedTableConfiguration().getName(),
+								processDataField.getName());
+			}
 
 			if(qtyRecsNotNull<0) {
 				logger.warn("Warning: table "+managedData.getManagedTableConfiguration().getName()+" does not exist. No action realized.");
@@ -403,6 +406,7 @@ public class WProcessDataFieldDao {
 	private ManagedData getAndCheckManagedData(
 			Integer processHeadId, TableManager tm,	ManagedData managedData) {
 		try {
+			
 			WProcessHead processHead = new WProcessHead();
 			
 			processHead = new WProcessHeadDao()

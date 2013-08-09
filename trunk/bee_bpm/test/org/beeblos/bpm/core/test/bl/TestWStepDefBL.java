@@ -67,13 +67,13 @@ public class TestWStepDefBL extends TestCase{
 
 			iproc = stepBL.add(step,1000);
 			
-			WStepDef sd = stepBL.getWStepDefByPK(iproc, 1000);
+			WStepDef sd = stepBL.getWStepDefByPK(iproc, null, 1000);
 			
 			System.out.println("---------------- ----------------------------- -------------------------------------");
 			System.out.println("------->>> "+sd.toString());
 			System.out.println("---------------- ----------------------------- -------------------------------------");
 			
-			assertEquals(iproc, stepBL.getWStepDefByPK(iproc, 1000).getId());
+			assertEquals(iproc, stepBL.getWStepDefByPK(iproc, null, 1000).getId());
 			
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -84,7 +84,7 @@ public class TestWStepDefBL extends TestCase{
 			try {
 				
 				WStepDef sd1 = new WStepDef(); 
-				sd1 = new WStepDefBL().getWStepDefByPK(iproc, 1000);
+				sd1 = new WStepDefBL().getWStepDefByPK(iproc, null, 1000);
 
 				for ( WStepRole wsr: sd1.getRolesRelated() ) {
 					stepBL.deleteStepRole(sd1, wsr);			
@@ -134,8 +134,8 @@ public class TestWStepDefBL extends TestCase{
 		public void testErrorBorrarWStepDef() throws Exception {
 		
 
-			new WStepDefBL().delete( iproc,1000) ;
-			assertNull(stepBL.getWStepDefByPK(iproc,1001));
+			new WStepDefBL().delete( iproc, null, 1000) ;
+			assertNull(stepBL.getWStepDefByPK(iproc, null, 1001));
 			
 			
 
