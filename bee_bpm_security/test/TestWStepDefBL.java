@@ -70,7 +70,7 @@ public class TestWStepDefBL extends TestCase {
 
 			iproc = stepBL.add(step, 1000);
 
-			WStepDef sd = stepBL.getWStepDefByPK(iproc, 1000);
+			WStepDef sd = stepBL.getWStepDefByPK(iproc, null, 1000);
 
 			System.out
 					.println("---------------- ----------------------------- -------------------------------------");
@@ -78,35 +78,35 @@ public class TestWStepDefBL extends TestCase {
 			System.out
 					.println("---------------- ----------------------------- -------------------------------------");
 
-			assertEquals(iproc, stepBL.getWStepDefByPK(iproc, 1000).getId());
+			assertEquals(iproc, stepBL.getWStepDefByPK(iproc, null, 1000).getId());
 
-			assertEquals(2, stepBL.getWStepDefByPK(iproc, 1000)
+			assertEquals(2, stepBL.getWStepDefByPK(iproc, null, 1000)
 					.getRolesRelated().size()); // tiene q tener 2 WStepRole
-			assertEquals(1, stepBL.getWStepDefByPK(iproc, 1000)
+			assertEquals(1, stepBL.getWStepDefByPK(iproc, null, 1000)
 					.getUsersRelated().size()); // tiene q tener 1 WStepUser
 
-			WStepDef sd1 = new WStepDefBL().getWStepDefByPK(iproc, 1000);
+			WStepDef sd1 = new WStepDefBL().getWStepDefByPK(iproc, null, 1000);
 
 			sd1.addRole(roleBl.getWRoleDefByPK(idRol3, 1000), false, 55,
 					"tipo-objeto", 1000);
 
-			new WStepDefBL().update(sd1, 1000);
+			new WStepDefBL().update(sd1, null, 1000);
 
-			sd1 = stepBL.getWStepDefByPK(iproc, 1000);
+			sd1 = stepBL.getWStepDefByPK(iproc, null, 1000);
 			assertEquals(3, sd1.getRolesRelated().size()); // tiene q tener 3
 															// WStepRole
 
 			WStepRole wsr = sd1.getRolesRelated().iterator().next();
 			stepBL.deleteStepRole(sd1, wsr);
-			sd1 = stepBL.getWStepDefByPK(iproc, 1000);
+			sd1 = stepBL.getWStepDefByPK(iproc, null, 1000);
 			assertEquals(2, sd1.getRolesRelated().size()); // vuelve a tener 2
 															// WStepRole ...
 
 			wsr = sd1.getRolesRelated().iterator().next();
 
 			sd1.getRolesRelated().remove(wsr);
-			new WStepDefBL().update(sd1, 1000);
-			assertEquals(1, stepBL.getWStepDefByPK(iproc, 1000)
+			new WStepDefBL().update(sd1,null,  1000);
+			assertEquals(1, stepBL.getWStepDefByPK(iproc, null, 1000)
 					.getRolesRelated().size()); // ahora debe tener 1 ...
 
 		} catch (Exception e) {
@@ -117,8 +117,8 @@ public class TestWStepDefBL extends TestCase {
 
 	public void testErrorBorrarWStepDef() throws Exception {
 
-		new WStepDefBL().delete(iproc, 1000);
-		assertNull(stepBL.getWStepDefByPK(iproc, 1001));
+		new WStepDefBL().delete(iproc, null, 1000);
+		assertNull(stepBL.getWStepDefByPK(iproc, null, 1001));
 
 	}
 

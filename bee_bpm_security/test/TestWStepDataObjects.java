@@ -41,7 +41,7 @@ public class TestWStepDataObjects extends TestCase {
 
 		try {
 			
-			WStepDef stepDef = stepBL.getWStepDefByPK(924, 1000);
+			WStepDef stepDef = stepBL.getWStepDefByPK(924, null, 1000);
 			
 			System.out.println(stepDef);
 			
