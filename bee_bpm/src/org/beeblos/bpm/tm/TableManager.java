@@ -617,9 +617,6 @@ public class TableManager {
 			throw new TableManagerException("can't synchronize managedData: managed table is not defined (managedTableName:"
 					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-"));
 
-
-
-			
 		if (storedDataField!=null) {
 			managedData.setOperation(CHANGE_COLUMN);
 			generateAlterTableForColumnMgmt(CHANGE_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
@@ -635,7 +632,7 @@ public class TableManager {
 					null, newDataField.getName(), 
 					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
 					newDataField.getLength(), newDataField.getDefaultValue(),
-					managedData.getDataField().size());					
+					(managedData.getDataField()!=null?managedData.getDataField().size():0));					
 		}
 
 		return null;
