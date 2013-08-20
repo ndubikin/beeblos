@@ -14,16 +14,17 @@
 				rendered="#{wProcessDefFormBean.currentWProcessDef.id==null or wProcessDefFormBean.currentWProcessDef.id==0}"
 				style="margin-left: 32px; margin-bottom: 10px;"/>
 	
-			<h:commandLink value="#{msg.label_process}: #{wProcessDefFormBean.currentWProcessDef.name}" 
+			<h:commandLink id="w_process_def_main_title_name"
+				value="#{msg.label_process}: #{wProcessDefFormBean.currentWProcessDef.name}" 
 				action="#{wProcessDefFormBean.loadWProcessForm}"
 				title="#{msg.label_open_head_process_form}"
 				styleClass="title_style" 
-				rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
+				rendered="#{wProcessDefFormBean.currentId != null and wProcessDefFormBean.currentId != 0}"
 				style="margin-left: 32px; margin-bottom: 10px; text-decoration:none; color:black;"/>
 								
 			<h:outputText value=" (#{msg.label_version}: #{wProcessDefFormBean.currentWProcessDef.version})" 
 				styleClass="title_style" 
-				rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}"
+				rendered="#{wProcessDefFormBean.currentId != null and wProcessDefFormBean.currentId != 0}"
 				style="margin-bottom: 10px;"/>
 	
 			<h:outputText value=" - " 
