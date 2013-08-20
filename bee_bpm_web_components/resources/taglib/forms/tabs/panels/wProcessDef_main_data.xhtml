@@ -184,9 +184,8 @@
 
 				<a4j:commandButton id="refresh_button" value="#{msg.label_refresh}"
 					actionListener="#{wProcessDefFormBean.refreshWProcessDef}"
-					reRender="w_process_def_main_tag_form"
-					style="width:100px; margin-left:20px; " 
-					disabled="#{!wProcessDefFormBean.refreshForm}"/>
+					reRender="w_process_def_main_tag_form, w_process_def_main_title_name"
+					style="width:100px; margin-left:20px;"/>
 
 			</h:panelGroup>
 			

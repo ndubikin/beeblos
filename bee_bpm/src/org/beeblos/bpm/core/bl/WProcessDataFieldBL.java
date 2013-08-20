@@ -26,8 +26,12 @@ public class WProcessDataFieldBL {
 	
 	public Integer add( WProcessDataField processDataField, Integer currentUserId ) 
 			throws WProcessDataFieldException {
-		logger.debug("add() WProcessDataField - Name: ["+(processDataField.getName()==null?processDataField.getName():"null")+"]");
+		logger.debug("add() WProcessDataField - Name: ["+(processDataField!=null&&processDataField.getName()!=null?processDataField.getName():"null")+"]");
 		
+		// dml 20130820
+		if (processDataField == null) {
+			throw new WProcessDataFieldException("Can't add a NULL datafield ...");
+		}
 		if (processDataField.getName()==null || "".equals(processDataField.getName())) {
 			throw new WProcessDataFieldException("Can't add a new datafield with no name or empty name field ...");
 		}

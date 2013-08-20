@@ -92,7 +92,7 @@ public class WProcessDataFieldDao {
 
 			WProcessDataField storedDataField = getWProcessDataFieldByPK(processDataField.getId());
 			
-			if (storedDataField.getProcessHeadId()!=processDataField.getProcessHeadId()) {
+			if (!storedDataField.getProcessHeadId().equals(processDataField.getProcessHeadId())) {
 				throw new WProcessDataFieldException("WProcessDataFieldDao: update - change of process head id is not permitted. You must delete the datafield and create a new one in the other process... ");
 			}
 			

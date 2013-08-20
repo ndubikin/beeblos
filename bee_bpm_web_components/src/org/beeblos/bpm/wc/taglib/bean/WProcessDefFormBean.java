@@ -75,8 +75,9 @@ import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
-import com.sp.common.jsf.util.UtilsVs;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
+
+import com.sp.common.jsf.util.UtilsVs;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
@@ -164,7 +165,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	//rrl 20130729
 	private boolean flagValidate;
-	private boolean refreshForm;
+//	private boolean refreshForm;
 	private boolean visibleButtonNewDataField;
 	private boolean visibleButtonAdvancedConfiguration;
 	private WProcessDataField wProcessDataFieldSelected;
@@ -235,7 +236,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.stepIncomings = false;
 		
 		//rrl 20130729
-		refreshForm=false;
+//		refreshForm=false;
 		visibleButtonNewDataField = true;
 		visibleButtonAdvancedConfiguration = true;
 		wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT); 
@@ -420,6 +421,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					&& (currentWProcessDef.getTotalTimeUnit().empty()
 							|| currentWProcessDef.getTotalTimeUnit().getId() == 0)) {
 				currentWProcessDef.setTotalTimeUnit(null);
+			}
+			
+			// dml 20130820 - si el processDataField es nulo lo vacio para que no de problemas de consistencia
+			if (currentWProcessDef.getProcess() != null
+					&& (this.dataFieldList == null
+						|| this.dataFieldList.isEmpty())){
+					currentWProcessDef.getProcess().setProcessDataFieldDef(null);
 			}
 			
 		}
@@ -917,7 +925,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	//rrl 20130729 When click "Refresh" button reloads the form by loadWProcessForm()
 	public void refreshWProcessDef() {
-		refreshForm=false;
+//		refreshForm=false;
 		loadWProcessForm();
 	}
 	
@@ -2051,7 +2059,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void loadXmlMapAsTmp() {
 		
 		//rrl 20130729 When click "Refresh" button reloads the form by loadWProcessForm()
-		refreshForm=true;
+//		refreshForm=true;
 		
 		if (currentId != null
 				&& !currentId.equals(0)){
@@ -2109,7 +2117,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void setFlagValidate(boolean flagValidate) {
 		this.flagValidate = flagValidate;
 	}
-
+/* dml 20130820 BORRAR
 	public boolean isRefreshForm() {
 		return refreshForm;
 	}
@@ -2117,7 +2125,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void setRefreshForm(boolean refreshForm) {
 		this.refreshForm = refreshForm;
 	}
-
+*/
 	public boolean isVisibleButtonNewDataField() {
 		return visibleButtonNewDataField;
 	}

@@ -534,6 +534,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				Element workflow = (Element) workflowList.item(i);
 				
 				spId = workflow.getAttribute("spId");
+				spName = workflow.getAttribute("label");
 				
 				if (spId != null
 						&& !spId.isEmpty()){
@@ -542,7 +543,15 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 					if (process == null){
 						return false;
-					} 
+					} else {
+						// dml 20130820 - si cambiamos el nombre del mapa cambiamos el del proceso
+						if (process.getProcess() != null
+								&& process.getProcess().getName() != null
+								&& !process.getProcess().getName().equals(spName)){
+							process.getProcess().setName(spName);
+							new WProcessDefBL().update(process, currentUserId);
+						}
+					}
 					
 					break;
 					
