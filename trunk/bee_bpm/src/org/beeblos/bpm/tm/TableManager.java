@@ -486,9 +486,9 @@ public class TableManager {
 		connect();
 		
 		String sql ="SELECT COUNT(";
-		sql +=(fieldName!=null?fieldName:"*");
+		sql +=(fieldName!=null?fieldName.replace(" ", "_"):"*");
 		sql +=") AS COUNT FROM "+tableName ;
-		sql+=(fieldName!=null?" WHERE "+fieldName+" IS NOT NULL":" ");
+		sql+=(fieldName!=null?" WHERE "+fieldName.replace(" ", "_")+" IS NOT NULL":" ");
 		System.out.println("------>>>"+sql);
 		
 		try {
@@ -621,7 +621,7 @@ public class TableManager {
 			managedData.setOperation(CHANGE_COLUMN);
 			generateAlterTableForColumnMgmt(CHANGE_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					storedDataField.getName(), newDataField.getName(), 
+					storedDataField.getName().replace(" ", "_"), newDataField.getName().replace(" ", "_"), 
 					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
 					newDataField.getLength(), newDataField.getDefaultValue(),
 					managedData.getDataField().size());
@@ -629,7 +629,7 @@ public class TableManager {
 			managedData.setOperation(ADD_COLUMN);
 			generateAlterTableForColumnMgmt(ADD_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					null, newDataField.getName(), 
+					null, newDataField.getName().replace(" ", "_"), 
 					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
 					newDataField.getLength(), newDataField.getDefaultValue(),
 					(managedData.getDataField()!=null?managedData.getDataField().size():0));					
@@ -658,7 +658,7 @@ public class TableManager {
 				dropColumn(DROP_COLUMN, 
 						managedData.getManagedTableConfiguration().getSchema(), 
 						managedData.getManagedTableConfiguration().getName(), 
-						dataField.getName());	
+						dataField.getName().replace(" ", "_"));	
 				
 			}
 		} catch (ClassNotFoundException e) {
