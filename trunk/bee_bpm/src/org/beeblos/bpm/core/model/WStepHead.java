@@ -23,8 +23,6 @@ public class WStepHead implements java.io.Serializable {
 	private Date modDate;
 	private Integer modUser;
 
-	Set<WStepDataField> dataFieldDef=new HashSet<WStepDataField>();
-
 	public WStepHead() {
 		super();
 	}
@@ -120,25 +118,12 @@ public class WStepHead implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
-
-	public Set<WStepDataField> getDataFieldDef() {
-		return dataFieldDef;
-	}
-
-
-	public void setDataFieldDef(Set<WStepDataField> dataFieldDef) {
-		this.dataFieldDef = dataFieldDef;
-	}
-
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
-		result = prime * result
-				+ ((dataFieldDef == null) ? 0 : dataFieldDef.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
@@ -164,11 +149,6 @@ public class WStepHead implements java.io.Serializable {
 			if (other.comments != null)
 				return false;
 		} else if (!comments.equals(other.comments))
-			return false;
-		if (dataFieldDef == null) {
-			if (other.dataFieldDef != null)
-				return false;
-		} else if (!dataFieldDef.equals(other.dataFieldDef))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -213,7 +193,6 @@ public class WStepHead implements java.io.Serializable {
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")
-				+ (dataFieldDef != null ? "dataFieldDef=" + dataFieldDef : "")
 				+ "]";
 	}
 
@@ -226,23 +205,5 @@ public class WStepHead implements java.io.Serializable {
 		
 		return true;
 	}
-
-	public List<WStepDataField> getStepDataFieldList() {
-
-		if (dataFieldDef != null
-				&& dataFieldDef.size() > 0) {
-
-			List<WStepDataField> dfl = 
-					new ArrayList<WStepDataField>(dataFieldDef.size()+1);
-			
-			dfl = new ArrayList<WStepDataField>(dataFieldDef);
-
-			return dfl;
-		}
-
-		return null;
-
-	}
-	
 	
 }

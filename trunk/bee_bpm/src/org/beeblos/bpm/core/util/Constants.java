@@ -10,6 +10,9 @@ import org.joda.time.DateTime;
 
 public class Constants {
 	
+	// dml 20130821
+	public static final Integer TEXT_W_DATA_TYPE_ID = 2;
+
 	// nes 20130803
 	public static final int ACTIVE_DATA_FIELDS = 1;
 	public static final int ALL_DATA_FIELDS = 0;

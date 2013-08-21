@@ -945,7 +945,10 @@ public class TableManager {
 		if (column.getDataType().getSqlType().equals(java.sql.Types.VARCHAR)) {
 			if (column.getLength()>0) {
 				colsize = "("+column.getLength()+")";
-			} 
+			} else {
+				// dml 20130821 - si no tiene longitud le ponemos 1 por defecto
+				colsize = "(1)";
+			}
 		}
 		return colsize;
 	}
