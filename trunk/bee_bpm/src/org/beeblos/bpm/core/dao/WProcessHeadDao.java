@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WProcessHeadManagedDataBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.model.WProcessHead;
@@ -69,21 +70,50 @@ public class WProcessHeadDao {
 	}
 	
 	
-	public void delete(WProcessHead processHead) throws WProcessHeadException {
+	public void delete(WProcessHead processHead) throws WProcessHeadException  {
 
 		logger.debug("delete() WProcessHead - Name: ["+processHead.getName()+"]");
 		
 		try {
 
 			//process = getWProcessByPK(process.getId());
+			// nes 20130821 - borro a mano el registro en w_process_head_managed_data porque si no da un error
+			// en el hibernateUtil.delete del processHead. 
+			/*
+			 *  TODO hay que revisar por q da ese error q no tiene mucho sentido pues el cascade está en all
+			 *	y la rel es 1 a 1. En concreto mirando la sql que tira hibernate, ahora mismo está intentando hacer
+			 *  un update sobre  w_process_head_data_field poniendo el head_id a null lo que es inválido y la bd patea:
+			 *  (dejo aquí el update q trata de hacer hibernate antes del delete para tenerlo presente e investigar)
+			 *      update
+					        bee_bpm_dev.w_process_head_data_field 
+					    set
+					        process_head_id=null 
+					    where
+					        process_head_id=?
+			 *  
+			 */
+			if (processHead.getManagedTableConfiguration()!=null) {
+				try {
+				
+					new WProcessHeadManagedDataDao().delete(processHead.getManagedTableConfiguration());
+					processHead.setManagedTableConfiguration(null); // to avoid error in delete processHead ...
+					
+				} catch (WProcessHeadException e) {
+					String mess ="WProcessHeadDao: delete - Can't delete Managed Data Record for proccess head definition record "
+								+ processHead.getName() +
+								" <id = "+processHead.getId()+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause();
+					logger.error(mess);
+					// continues deleting process head record ...
+				}
+			}
 
 			HibernateUtil.borrar(processHead);
 
 		} catch (HibernateException ex) {
-			logger.error("WProcessHeadDao: delete - Can't delete proccess head definition record "+ processHead.getName() +
-					" <id = "+processHead.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessHeadException("WProcessHeadDao:  delete - Can't delete proccess head definition record  "+ processHead.getName() +
-					" <id = "+processHead.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			String mess ="WProcessHeadDao: delete - Can't delete proccess head definition record "+ processHead.getName() +
+							" <id = "+processHead.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause();
+			logger.error( mess );
+			throw new WProcessHeadException( mess );
 
 //		} catch (WProcessHeadException ex1) {
 //			logger.error("WProcessHeadDao: delete - Exception in deleting process rec "+ process.getName() +
@@ -289,7 +319,7 @@ public class WProcessHeadDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WProcessHead> getProcessHeadListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	public List<WProcessHead> finderProcessHead (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
 					throws WProcessHeadException {
@@ -519,7 +549,20 @@ public class WProcessHeadDao {
 	}
 
 	// dml 20130507
-	public boolean processHeadHasWProcessDef(Integer processHeadId, Integer currentUserId)
+	// DAVID: no t parece q esta se arreglaria mejor con un count como le puse al WProcessDef.exists
+	// Además aprovecho para mostrarte: vamos a empezar a agregar comentarios para javadoc que se agregan asi como
+	// te muestro aquí debajo
+	// no es necesario que te pases por todos los métodos agregando esto, simplemente cuando crees un nuevo o cuando
+	// arregles alguno con algún detalle importante o conceptual, ya le vas metiendo esto ok?
+	
+	/**
+	 * returns true if there is 1 or more process versions for given processHeadId
+	 * or false if doesn't have any version
+	 *
+	 * @param  Integer processHeadId
+	 * @return boolean
+	 */
+	public boolean hasVersions(Integer processHeadId)
 			throws WProcessHeadException {
 
 		org.hibernate.Session session = null;

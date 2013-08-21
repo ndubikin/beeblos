@@ -5,6 +5,7 @@ import static org.beeblos.bpm.core.util.Constants.INACTIVE;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_ADDED;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_MODIFIED;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -460,7 +461,7 @@ public class WProcessDefDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	public List<WProcessDef> finderWProcessDef (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
 			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
@@ -763,7 +764,7 @@ public class WProcessDefDao {
 		
 	}
 
-	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyActiveWorkingProcessesFilter, 
+	public List<WProcessDefLight> finderWProcessDefLight(boolean onlyActiveWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
 			Integer processHeadId, String activeFilter, Integer currentUserId) 
@@ -771,7 +772,7 @@ public class WProcessDefDao {
 
 		String filter = "";
 		
-		filter = buildWorkingProcessFilter(onlyActiveWorkingProcessesFilter,
+		filter = buildFinderSQLFilter(onlyActiveWorkingProcessesFilter,
 				processNameFilter, initialProductionDateFilter,
 				finalProductionDateFilter, estrictProductionDateFilter,
 				productionUserFilter, filter, processHeadId, activeFilter);
@@ -781,16 +782,16 @@ public class WProcessDefDao {
 			filter = "WHERE " + filter;
 		}
 
-		String query = buildWorkingProcessQuery(filter, action);
+		String query = buildFinderSQLQuery(filter, action);
 		
 
 		logger.debug("------>> getWorkingProcessListFinder -> query:" + query
 				+ "<<-------");
 
-		return getWorkingProcessListByFinder(query, currentUserId);
+		return getWStepDefLightBySQLQuery(query, currentUserId);
 	}
 
-	private String buildWorkingProcessFilter(
+	private String buildFinderSQLFilter(
 			boolean onlyActiveWorkingProcessesFilter, String processNameFilter,
 			Date initialProductionDateFilter, Date finalProductionDateFilter,
 			boolean estrictProductionDateFilter, Integer productionUserFilter,
@@ -880,7 +881,7 @@ public class WProcessDefDao {
 		return filter;
 	}
 
-	private String buildWorkingProcessQuery(String filter, String action) {
+	private String buildFinderSQLQuery(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
 		tmpQuery += " wpd.id, ";
@@ -907,7 +908,7 @@ public class WProcessDefDao {
 		return tmpQuery;
 	}
 
-	private List<WProcessDefLight> getWorkingProcessListByFinder(String query, Integer currentUserId)
+	private List<WProcessDefLight> getWStepDefLightBySQLQuery(String query, Integer currentUserId)
 			throws WProcessDefException {
 
 		Integer id;
@@ -1041,5 +1042,48 @@ public class WProcessDefDao {
 
 	}
 
-}
+	/**
+	 * returns true if there is 1 or more process versions for this process head id
+	 * or false if doesn't have any version
+	 *
+	 * @param  Integer processHeadId
+	 * @return boolean
+	 */
+	public boolean hasVersions(Integer processHeadId) throws WProcessDefException {
+
+		BigInteger qtyExistingProcesses = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			qtyExistingProcesses = (BigInteger) session.createSQLQuery("SELECT COUNT(id) as count FROM w_process_def WHERE head_id = " + processHeadId)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "WProcessDefDao: existsProcessVersions - can't obtain count of process for process head id = " +
+								processHeadId + "]  "+ex.getMessage()+"\n"+ex.getCause();
+			logger.warn( mess );
+			throw new WProcessDefException(mess);
+
+		}
+
+		if (qtyExistingProcesses == null || qtyExistingProcesses.intValue()==0){
+			return false;
+		}
+		else {
+			return true;
+		}
 	
+	}
+
+}

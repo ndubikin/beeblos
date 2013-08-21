@@ -4,6 +4,7 @@ import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,67 +47,94 @@ public class WStepWorkDao {
 				+(stepw.getwProcessWork()!=null?stepw.getwProcessWork().getReference():"null")+"]");
 		
 		Integer id=null;
+		Serializable res;
 		
+		Transaction tx = null;
 		try {
 
-			id = Integer.valueOf(HibernateUtil.guardar(stepw));
+			Session session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+//			id = Integer.valueOf(HibernateUtil.guardar(stepw));
+			res = session.save(stepw);
 			
 			/*
 			 *  set process custom data
 			 *  idWork & idStepWork is assigned in previous add method
 			 */
-			if (stepw.getStepWorkManagedData()!=null) {
-				stepw.getStepWorkManagedData().setIdWork(stepw.getwProcessWork().getId());
-				stepw.getStepWorkManagedData().setCurrentStepWorkId(stepw.getId());
-				if (stepw.getStepWorkManagedData().getPk()!=null && stepw.getStepWorkManagedData().getPk()!=0){
-					logger.error("WStepWorkDao: add - trying insert managed custom data with assigned pk id:"+stepw.getStepWorkManagedData().getPk()
+			if (stepw.getManagedData()!=null) {
+				stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
+				stepw.getManagedData().setCurrentStepWorkId(stepw.getId());
+				if (stepw.getManagedData().getPk()!=null && stepw.getManagedData().getPk()!=0){
+					logger.error("WStepWorkDao: add - trying insert managed custom data with assigned pk id:"+stepw.getManagedData().getPk()
 							+" pk will be forced to null.");
-					stepw.getStepWorkManagedData().setPk(null);
+					stepw.getManagedData().setPk(null);
 				}
 				_persistStepWorkManagedData(stepw);
 			}
 
+			tx.commit();
+			
 		} catch (HibernateException ex) {
-			logger.error("WStepWorkDao: add - Can't store stepw definition record "+ 
-					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepWorkException("WStepWorkDao: add - Can't store stepw definition record "+ 
-					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause());
+			String mess="WStepWorkDao: add - Can't store stepw definition record "+ 
+								stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause();
+			logger.error( mess );
 
+			if (tx != null)
+				tx.rollback();
+			
+			throw new WStepWorkException( mess );
 		}
 
+		id=Integer.valueOf(res.toString());
 		return id;
+		
 	}
 	
 	
 	public void update(WStepWork stepw) throws WStepWorkException {
 		logger.debug("update() WStepWork  id:["+(stepw!=null?stepw.getId():"null")+"]");
 		
+		// note: add basic transactional control to grant insert in 2 tables (w_step_work & managed table if exists)
+		// or rollback it ...
+		Transaction tx = null;
 		try {
 
-			HibernateUtil.actualizar(stepw);
+			Session session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			session.update(stepw);
+//			HibernateUtil.actualizar(stepw);
 
 			/*
 			 *  set process custom data
 			 *  idWork & idStepWork is assigned in add method
 			 */
-			if (stepw.getStepWorkManagedData()!=null) {
-				stepw.getStepWorkManagedData().setIdWork(stepw.getwProcessWork().getId());
-				stepw.getStepWorkManagedData().setCurrentStepWorkId(stepw.getId());
-				if (stepw.getStepWorkManagedData().getPk()==null || stepw.getStepWorkManagedData().getPk()==0){
+			if (stepw.getManagedData()!=null) {
+				stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
+				stepw.getManagedData().setCurrentStepWorkId(stepw.getId());
+				if (stepw.getManagedData().getPk()==null || stepw.getManagedData().getPk()==0){
 					logger.error("WStepWorkDao: update - trying update managed custom data with null pk id - "
-							+" A new record will be inserted in table:"+stepw.getStepWorkManagedData().getManagedTableConfiguration().getName());
-					stepw.getStepWorkManagedData().setPk(null);
+							+" A new record will be inserted in table:"+stepw.getManagedData().getManagedTableConfiguration().getName());
+					stepw.getManagedData().setPk(null);
 				}
 				_persistStepWorkManagedData(stepw);
 			}
+			
+			tx.commit();
 
 		} catch (HibernateException ex) {
-			logger.error("WStepWorkDao: update - Can't update stepw definition record "+ 
-					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
-					" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WStepWorkException("WStepWorkDao: update - Can't update stepw definition record "+ 
-					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
-					" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+			String mess= "WStepWorkDao: update - Can't update stepw definition record "+ 
+							stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
+							" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause();
+			logger.error( mess );
+
+			if (tx != null)
+				tx.rollback();
+			
+			throw new WStepWorkException( mess );
 
 		}
 					
@@ -399,7 +427,7 @@ public class WStepWorkDao {
 				TableManager tm = new TableManager();
 				try {
 					tm.loadRecord(md);
-					stepWork.setStepWorkManagedData(md);
+					stepWork.setManagedData(md);
 				
 				} catch (TableManagerException e) {
 					String message = "TableManagerException: can't retrieve stored custom data from manaed table:"
@@ -416,21 +444,20 @@ public class WStepWorkDao {
 	
 	// load managed data for stepWork
 	private void _persistStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
-		if (stepWork.getStepWorkManagedData()!=null
-				&& stepWork.getStepWorkManagedData().getDataField()!=null 
-				&& stepWork.getStepWorkManagedData().getDataField().size()>0){
+		if (stepWork.getManagedData()!=null
+				&& stepWork.getManagedData().getDataField()!=null 
+				&& stepWork.getManagedData().getDataField().size()>0){
 
 			TableManager tm = new TableManager();
 			try {
 				
-				tm.persist(stepWork.getStepWorkManagedData());
-//				stepWork.setStepWorkManagedData(md);
+				tm.persist(stepWork.getManagedData());
 			
 			} catch (TableManagerException e) {
-				String message = "TableManagerException: can't persis custom data at managed table:"
-						+ (stepWork.getStepWorkManagedData().getManagedTableConfiguration()!=null
-								?(stepWork.getStepWorkManagedData().getManagedTableConfiguration().getName()!=null
-									?stepWork.getStepWorkManagedData().getManagedTableConfiguration().getName()
+				String message = "TableManagerException: can't persist custom data at managed table:"
+						+ (stepWork.getManagedData().getManagedTableConfiguration()!=null
+								?(stepWork.getManagedData().getManagedTableConfiguration().getName()!=null
+									?stepWork.getManagedData().getManagedTableConfiguration().getName()
 									:"null")
 								: "managed table data is null")
 						+ e.getMessage() + " - "

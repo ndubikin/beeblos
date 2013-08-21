@@ -87,32 +87,32 @@ public class WStepWorkBL {
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
 	public Integer start(WProcessWork work, WStepWork stepw, ManagedData managedData, Integer currentUser) 
-			throws WStepWorkException, WProcessWorkException, TableManagerException {
+			throws WStepWorkException, WProcessWorkException {
 		
 		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"]");
 		
 		Integer workId;
 		
-		if ( work.getId()==null || work.getId()==0 ) {
-			
-			// dml 20120217
-			if (work.getStatus() == null) {
-				work.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
-			}
-			
-			WProcessWorkBL wpbl = new WProcessWorkBL(); 
-			workId = wpbl.add(work, currentUser);
-			work = wpbl.getWProcessWorkByPK(workId	, currentUser); // recovers persisted work to assure all propreties are correctely loaded in the object
-
-			if (managedData!=null) {
-				managedData.setCurrentWorkId(work.getId()); // process-work id
-				managedData.setProcessId(work.getProcess().getId()); // version id
-				managedData.setOperation(INSERT);
-			}
-
-		} else {
+		if ( work.getId()!=null && work.getId()!=0 ) {
 			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+work.getId()+")");
+		}			
+			
+		if (work.getStatus() == null) {
+			work.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
 		}
+		
+		WProcessWorkBL wpbl = new WProcessWorkBL(); 
+		workId = wpbl.add(work, currentUser);
+		work = wpbl.getWProcessWorkByPK(workId, currentUser); // checks all properties was correctly stored in the object
+
+		// if exists managed data set with created work id
+		if (managedData!=null) {
+			managedData.setCurrentWorkId(work.getId()); // process-work id
+			managedData.setProcessId(work.getProcess().getId()); // process version
+			managedData.setOperation(INSERT);
+			stepw.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
+		}
+
 		
 		// if work persisted ok continue with step-work
 		stepw.setwProcessWork(work);
@@ -121,11 +121,6 @@ public class WStepWorkBL {
 		stepw.setInsertUser( new WUserDef(currentUser) );
 		stepw.setModDate( DEFAULT_MOD_DATE);
 		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
-
-		if (managedData!=null) {
-			TableManager tm = new TableManager();
-			tm.process(managedData);
-		}
 		
 		_sendEmailNotification(stepw);
 

@@ -12,6 +12,7 @@ import org.beeblos.bpm.core.dao.WProcessHeadDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.tm.TableManager;
 
@@ -86,22 +87,27 @@ public class WProcessHeadBL {
 		logger.debug("delete() WProcessHead - Name: ["+processHead.getId()+"]");
 		
 		// check existence of alive wprocesdef for this process head
-		if (processHeadHasWProcessDef(processHead.getId(), currentUserId)){
+		if (hasVersions(processHead.getId(), currentUserId)){
 			throw new WProcessHeadException("Error: can't delete process head:"+processHead.getId()
 					+" This process head has active versions. Must delete it first...");
 		}
 		
 		// check for existence of managed table and loaded data for this process head
+		// if there is no data then drop it!
 		if (processHead.getManagedTableConfiguration()!=null) {
 
 			if (processHead.getManagedTableConfiguration().getName()!=null) {
 				
+				TableManager tm = new TableManager();
+				String tableName = processHead.getManagedTableConfiguration().getName();
+				
 				try {
 					Integer qty= 
-							new TableManager().
-								countNotNullRecords(null,processHead.getManagedTableConfiguration().getName(),null);
+								tm.countNotNullRecords(null,tableName,null);
 
-					if (qty>0) {
+					if (qty<=0) {
+						tm.removeTable(tableName);
+					} else {
 						throw new WProcessHeadException("Error: can't delete process head:"
 												+processHead.getId()+" Managed table "+processHead.getManagedTableConfiguration().getName()
 												+" has records with data!");
@@ -123,8 +129,7 @@ public class WProcessHeadBL {
 		if (processHead.getProcessDataFieldDef()!=null) {
 			
 		}
-		
-		
+
 		new WProcessHeadDao().delete(processHead);
 
 	}
@@ -151,6 +156,13 @@ public class WProcessHeadBL {
 	
 	}
 	
+	public List<WProcessDef> getProcessDefList(Integer processHeadId, Integer currentUserId) 
+			throws WProcessHeadException {
+
+//		return new WProcessDefBL().getW
+	return null;
+	}
+	
 	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion, Integer currentUserId )
@@ -160,11 +172,17 @@ public class WProcessHeadBL {
 		
 	}
 
-	// dml 20130129
-	public boolean processHeadHasWProcessDef(Integer processHeadId, Integer currentUserId) 
+	/**
+	 * returns true if there is 1 or more process versions for given processHeadId
+	 * or false if doesn't have any version
+	 *
+	 * @param  Integer processHeadId, Integer currentUserId
+	 * @return boolean
+	 */
+	public boolean hasVersions(Integer processHeadId, Integer currentUserId) 
 			throws WProcessHeadException{
 		
-		return new WProcessHeadDao().processHeadHasWProcessDef(processHeadId, currentUserId);
+		return new WProcessHeadDao().hasVersions(processHeadId);
 		
 	}
 	
