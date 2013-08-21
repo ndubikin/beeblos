@@ -67,7 +67,7 @@ public class WProcessHeadManagedDataBL {
 
 		logger.debug("delete() WProcessHeadManagedDataConfiguration - Name: ["+managedTableDef.getName()+"]");
 		
-		new WProcessHeadManagedDataDao().delete(managedTableDef, currentUserId);
+		new WProcessHeadManagedDataDao().delete(managedTableDef);
 
 	}
 

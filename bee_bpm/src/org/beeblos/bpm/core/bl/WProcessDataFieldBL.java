@@ -15,7 +15,6 @@ import org.beeblos.bpm.core.model.WProcessDataField;
 import com.sp.common.util.StringPair;
 
 
-
 public class WProcessDataFieldBL {
 	
 	private static final Log logger = LogFactory.getLog(WProcessDataFieldBL.class.getName());
@@ -45,6 +44,10 @@ public class WProcessDataFieldBL {
 			throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists for this process!! Not permitted operation ... ");
 		}
 		
+		// DAVID:
+		// default checks
+		_processDataFieldDefaultADDChecks(processDataField);
+		
 		// timestamp & trace info
 		processDataField.setInsertDate(new Date());
 		processDataField.setModDate( DEFAULT_MOD_DATE );
@@ -53,6 +56,12 @@ public class WProcessDataFieldBL {
 		
 		return new WProcessDataFieldDao().add( processDataField );
 
+	}
+	
+	private void _processDataFieldDefaultADDChecks(WProcessDataField processDataField) {
+		// chequear el tema de que si viene el tipo de dato en null le ponés text
+		// si el largo viene en null le ponés el default de la tabla de DATATYPE ok?
+		
 	}
 	
 	
@@ -80,6 +89,9 @@ public class WProcessDataFieldBL {
 					&& pdf.getName().equals(processDataField.getName()) ) {
 				throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists!! Not permitted operation ... ");
 			}
+			
+			// DAVID:
+			_processDataFieldDefaultUPDATEChecks(processDataField);
 
 			// timestamp & trace info
 			processDataField.setModDate(new Date());
@@ -92,6 +104,13 @@ public class WProcessDataFieldBL {
 			logger.debug("WProcessDataFieldBL.update - no changed object has arrived: nothing to do ...");
 		}
 			
+	}
+	
+	private void _processDataFieldDefaultUPDATEChecks(WProcessDataField processDataField) {
+		// chequear el tema de que si viene el tipo de dato en null mandás exception: no es aceptable que en un update
+		// se carguen el tipo de dato de 1 propiedad ok?
+		// si el largo viene en null idem, tirás exception y decís qeu no se puede updatear el largo del tipo de dato a null o 0
+		
 	}
 	
 	public void delete(WProcessDataField processDataField, Integer currentUserId) 

@@ -5,7 +5,6 @@ import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,7 +28,6 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.tm.TableManager;
 
 import com.sp.common.util.StringPair;
 
@@ -310,6 +308,7 @@ public class WProcessDefBL {
 
 		List<String> deletedSteps = this._deleteRelatedSteps(stepsToDelete, currentUserId);
 		
+		// delete processHead and related managed table only if all process-def has already deleted
 		this._checkAndDeleteProcessHead(processHeadId, currentUserId);
 		
 		
@@ -388,21 +387,26 @@ public class WProcessDefBL {
 		
 	}
 
-	// dml 20130507 - nes 20130807
+	// dml 20130507 - nes 20130821
 	private void _checkAndDeleteProcessHead(Integer processHeadId, Integer currentUserId) 
-			throws WProcessHeadException{
+			throws WProcessHeadException, WProcessDefException{
 		
 		if (processHeadId==null) {
 			throw new WProcessHeadException("Error: trying delete process head with id=null");
 		}
 		
-		WProcessHeadBL phBL = new WProcessHeadBL();
-		WProcessHead processHead = phBL.getProcessHeadByPK(processHeadId, currentUserId);		
-		
-		phBL.delete(processHead, currentUserId);
-		
-		logger.info("The WProcessHead " + processHeadId + " has been correctly deleted by user " + currentUserId);
+		// if don't exists another process versions for this processHead, then delete processHead and ManagedTable ...
+		if (!hasVersions(processHeadId)) {
+
+			WProcessHeadBL phBL = new WProcessHeadBL();
 			
+			WProcessHead processHead = phBL.getProcessHeadByPK(processHeadId, currentUserId);		
+
+			phBL.delete(processHead, currentUserId);
+			
+			logger.info("The WProcessHead " + processHeadId + " has been correctly deleted by user " + currentUserId);
+			
+		}
 		
 	}
 
@@ -668,25 +672,25 @@ public class WProcessDefBL {
 	
 	}	
 	
-	public List<WProcessDef> getProcessListByFinder (Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	public List<WProcessDef> finderWProcessDefLight (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
 			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
 	throws WProcessDefException {
 		
-		return new WProcessDefDao().getProcessListByFinder(initialInsertDateFilter, finalInsertDateFilter, 
+		return new WProcessDefDao().finderWProcessDef(initialInsertDateFilter, finalInsertDateFilter, 
 				strictInsertDateFilter, nameFilter, commentFilter, listZoneFilter, 
 				workZoneFilter, additinalZoneFilter, userId, isAdmin, action, currentUserId);
 
 	}
 
-	public List<WProcessDefLight> getWorkingProcessListFinder(boolean onlyWorkingProcessesFilter, 
+	public List<WProcessDefLight> finderWProcessDefLight(boolean onlyWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
 			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
 			Integer processHeadId, String activeFilter, Integer currentUserId)
 	throws WProcessDefException {
 		
-		return new WProcessDefDao().getWorkingProcessListFinder(onlyWorkingProcessesFilter, 
+		return new WProcessDefDao().finderWProcessDefLight(onlyWorkingProcessesFilter, 
 				processNameFilter, initialProductionDateFilter, finalProductionDateFilter,
 				estrictProductionDateFilter, productionUserFilter, action, processHeadId, 
 				activeFilter, currentUserId);
@@ -843,6 +847,10 @@ public class WProcessDefBL {
 
 		}
 		return routes;
+	}
+	
+	public boolean hasVersions(Integer processHeadId) throws WProcessDefException {
+		return new WProcessDefDao().hasVersions(processHeadId);
 	}
 }
 	
