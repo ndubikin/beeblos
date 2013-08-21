@@ -1003,9 +1003,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public String getStrDataFieldList() {
 
 		strDataFieldList="";
-		if ( currentWStepDef.getStepHead()!=null
-				&& currentWStepDef.getStepHead().getDataFieldDef()!=null ) {
-			for ( WStepDataField su: this.currentWStepDef.getStepHead().getDataFieldDef()) {
+		if ( currentWStepDef != null
+				&& currentWStepDef.getDataFieldDef()!=null ) {
+			for ( WStepDataField su: this.currentWStepDef.getDataFieldDef()) {
 				if (su.getDataField()!=null) {
 					strDataFieldList+=(strDataFieldList!=null && !"".equals(strDataFieldList)?",":"")+su.getDataField().getId();
 				}
@@ -1511,9 +1511,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 		List<WStepDataField> stepDataFieldList = new ArrayList<WStepDataField>();
 		
 		//rrl 20130805 verified before currentWStepDef is not null
-		if (currentWStepDef !=null &&
-				currentWStepDef.getStepHead()!=null) {
-			stepDataFieldList = currentWStepDef.getStepHead().getStepDataFieldList();
+		if (currentWStepDef !=null) {
+			stepDataFieldList = currentWStepDef.getStepDataFieldList();
 		}
 
 		return stepDataFieldList;
@@ -1522,9 +1521,8 @@ public class WStepDefFormBean extends CoreManagedBean {
 	public Integer getStepDataFieldListSize() {
 		
 		return (currentWStepDef!=null 
-					&& currentWStepDef.getStepHead()!=null 
-					&& currentWStepDef.getStepHead().getDataFieldDef() != null 
-							? currentWStepDef.getStepHead().getDataFieldDef().size()
+					&& currentWStepDef.getDataFieldDef() != null 
+							? currentWStepDef.getDataFieldDef().size()
 							: 0);
 	}
 

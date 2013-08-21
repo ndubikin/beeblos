@@ -189,7 +189,7 @@ public class WStepDefDao {
 			Set<WStepDataField> dataFields = 
 					new WStepDataFieldDao().getWStepDataFieldSet(processHeadId,step.getStepHead().getId());
 			
-			step.getStepHead().setDataFieldDef(dataFields);
+			step.setDataFieldDef(dataFields);
 			
 		} catch (WStepDataFieldException e) {
 			String mess = "WStepDefDao: getWStepDefByPK - WStepDataFieldException can't load related step data fields = "+

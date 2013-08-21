@@ -107,7 +107,7 @@ public class WProcessDataFieldBL {
 			Integer qty = stepDFBL
 								.countWStepDataFieldList(
 										processDataField.getId(), currentUserId);
-			if (qty>0) {
+			if (qty != null && qty > 0) {
 				throw new WProcessDataFieldException("Error trying delete process-data-field :"+processDataField.getName()
 						+" This process has steps wich are referencing or using this Process Step. Unlink it before try delete !");
 			}

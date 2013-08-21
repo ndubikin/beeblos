@@ -276,8 +276,10 @@ public class WStepWorkDao {
 		}
 		
 		// set process custom data
-		if (stepw.getCurrentStep().getStepHead().getDataFieldDef()!=null
-				&& stepw.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
+		if (stepw != null
+				&& stepw.getCurrentStep() != null
+				&& stepw.getCurrentStep().getDataFieldDef()!=null
+				&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
 			_loadStepWorkManagedData(stepw);
 		}
 		
@@ -316,8 +318,10 @@ public class WStepWorkDao {
 		}
 
 		// set process custom data
-		if (stepw.getCurrentStep().getStepHead().getDataFieldDef()!=null
-				&& stepw.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
+		if (stepw != null
+				&& stepw.getCurrentStep() != null
+				&& stepw.getCurrentStep().getDataFieldDef()!=null
+				&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
 			_loadStepWorkManagedData(stepw);
 		}
 
@@ -356,8 +360,9 @@ public class WStepWorkDao {
 
 		// set process custom data
 		for (WStepWork stepw: stepws) {
-			if (stepw.getCurrentStep().getStepHead().getDataFieldDef()!=null
-					&& stepw.getCurrentStep().getStepHead().getDataFieldDef().size()>0) {
+			if (stepw.getCurrentStep() != null
+					&& stepw.getCurrentStep().getDataFieldDef() != null
+					&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
 				_loadStepWorkManagedData(stepw);
 			}
 		}
@@ -368,13 +373,14 @@ public class WStepWorkDao {
 	
 	// load managed data for stepWork
 	private void _loadStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
-		if (stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null 
-				&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0){
+		
+		if (stepWork.getCurrentStep().getDataFieldDef()!=null 
+				&& stepWork.getCurrentStep().getDataFieldDef().size()>0){
 
 			// if there is defined custom data fields for a step(def) && managed table is defined ...
 			// then load stepWorkManagedData
-			if ( stepWork.getCurrentStep().getStepHead().getDataFieldDef()!=null
-					&& stepWork.getCurrentStep().getStepHead().getDataFieldDef().size()>0
+			if ( stepWork.getCurrentStep().getDataFieldDef()!=null
+					&& stepWork.getCurrentStep().getDataFieldDef().size()>0
 					&& stepWork.getProcess().getProcess().getManagedTableConfiguration()!=null
 					&& stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()!=null
 					&& !"".equals(stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()) ) {
@@ -382,7 +388,7 @@ public class WStepWorkDao {
 				ManagedData md = new ManagedData();
 				md.setDataField( 
 						ListConverters.convertWStepDataFieldToList
-						 (stepWork.getCurrentStep().getStepHead().getStepDataFieldList(),null,null,ACTIVE_DATA_FIELDS) );
+						 (stepWork.getCurrentStep().getStepDataFieldList(),null,null,ACTIVE_DATA_FIELDS) );
 				md.setChanged(false);				
 				md.setCurrentStepWorkId(stepWork.getId()); // step work id
 				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id

@@ -4,10 +4,12 @@ package org.beeblos.bpm.core.model;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -86,6 +88,9 @@ public class WStepDef implements java.io.Serializable {
 	private String rules;
 	private String preconditions;
 	private String postconditions;
+
+	// dml 20130821
+	Set<WStepDataField> dataFieldDef=new HashSet<WStepDataField>();
 
 	// dml 20120113
 	private Date insertDate;
@@ -413,6 +418,8 @@ public class WStepDef implements java.io.Serializable {
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
 		result = prime * result + (backingBean ? 1231 : 1237);
 		result = prime * result + (customValidation ? 1231 : 1237);
+		result = prime * result
+				+ ((dataFieldDef == null) ? 0 : dataFieldDef.hashCode());
 		result = prime
 				* result
 				+ ((customValidationMethod == null) ? 0
@@ -495,6 +502,11 @@ public class WStepDef implements java.io.Serializable {
 		if (arrivingAdminNotice != other.arrivingAdminNotice)
 			return false;
 		if (arrivingUserNotice != other.arrivingUserNotice)
+			return false;
+		if (dataFieldDef == null) {
+			if (other.dataFieldDef != null)
+				return false;
+		} else if (!dataFieldDef.equals(other.dataFieldDef))
 			return false;
 		if (assignedTime == null) {
 			if (other.assignedTime != null)
@@ -682,6 +694,7 @@ public class WStepDef implements java.io.Serializable {
 				+ ", backingBean=" + backingBean + ", customSaveMethod=" + customSaveMethod
 				+ ", customSaveRefClass=" + customSaveRefClass + ", insertDate=" + insertDate
 				+ ", insertUser=" + insertUser + ", modDate=" + modDate + ", modUser=" + modUser
+				+ (dataFieldDef != null ? "dataFieldDef=" + dataFieldDef : "")
 				+ "]";
 	}
 
@@ -975,5 +988,31 @@ public class WStepDef implements java.io.Serializable {
 	public void setPostconditions(String postconditions) {
 		this.postconditions = postconditions;
 	}
+
+	public Set<WStepDataField> getDataFieldDef() {
+		return dataFieldDef;
+	}
+
+	public void setDataFieldDef(Set<WStepDataField> dataFieldDef) {
+		this.dataFieldDef = dataFieldDef;
+	}
+	
+	public List<WStepDataField> getStepDataFieldList() {
+
+		if (dataFieldDef != null
+				&& dataFieldDef.size() > 0) {
+
+			List<WStepDataField> dfl = 
+					new ArrayList<WStepDataField>(dataFieldDef.size()+1);
+			
+			dfl = new ArrayList<WStepDataField>(dataFieldDef);
+
+			return dfl;
+		}
+
+		return null;
+
+	}
+	
 
 }

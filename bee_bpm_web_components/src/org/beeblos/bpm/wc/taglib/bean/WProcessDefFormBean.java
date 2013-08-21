@@ -4,6 +4,7 @@ import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
+import static org.beeblos.bpm.core.util.Constants.TEXT_W_DATA_TYPE_ID;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
@@ -78,6 +79,7 @@ import org.beeblos.bpm.wc.taglib.util.ListUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 import com.sp.common.jsf.util.UtilsVs;
+import com.sp.common.model.WDataType;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
@@ -780,8 +782,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		try {
 			setDataTypes(
 					UtilsVs.castStringPairToSelectitem(
-							new WDataTypeBL()
-									.getComboList("Select data type...", null)));
+							new WDataTypeBL().getComboList(null, null)));
+			
 		} catch (WDataTypeException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
@@ -2155,7 +2157,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void initializeDataFieldsAddNew() {
 		
 		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
-		this.wProcessDataFieldSelected.setActive(true); //rrl 20130807 Default TRUE to add a data field
+		this.wProcessDataFieldSelected.setActive(true); //rrl 20130807 Default TRUE to add a data fields
+		
+		this.wProcessDataFieldSelected.setDataType(new WDataType(TEXT_W_DATA_TYPE_ID));
 		visibleButtonNewDataField = false;
 		
 	}
@@ -2193,10 +2197,23 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
 
+		// dml 20130821 - chequeamos los datos básicos
+		if (wProcessDataFieldSelected != null){
+			// dml 20130821 - si el maxLenght es "0" para un VARCHAR le ponemos 1 por defecto
+			if (wProcessDataFieldSelected.getDataType() != null
+					&& wProcessDataFieldSelected.getDataType().getId() != null
+					&& (wProcessDataFieldSelected.getDataType().getId().equals("Text")
+							|| wProcessDataFieldSelected.getDataType().getId().equals("CVS"))
+					&& (wProcessDataFieldSelected.getLength() == null
+					|| wProcessDataFieldSelected.getLength().equals(0))){
+				wProcessDataFieldSelected.setLength(45);
+			}
+		}
+		
 		try {
 			
 			if (wProcessDataFieldSelected.getId() == null || 
-					wProcessDataFieldSelected.getId() == 0) {
+					wProcessDataFieldSelected.getId().equals(0)) {
 				
 				wProcessDataFieldSelected
 					.setProcessHeadId(currentWProcessDef.getProcess().getId());
@@ -2224,20 +2241,29 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			reloadDataFieldList();
 			
 			initNewDataFieldFormObjects();
-			
+					
+			this.createWindowMessage("OK_MESSAGE", 
+					"Campo correctamente guardado.");
+
 		} catch (WProcessDataFieldException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".saveNewDataField() WProcessDataFieldException ..." };
 			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"Error al guardar el campo: " + e.getMessage());
+			
 		} catch (WDataTypeException e) {
 			String mensaje = e.getMessage() + " - " + e.getCause();
 			String params[] = { mensaje + ",",
 					".saveNewDataField() WDataTypeException ..." };
 			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"Error al guardar el campo: " + e.getMessage());
 		}
-		
+
 		return null;
 	}
 	
@@ -2313,9 +2339,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 				wProcessDataFieldSelected = wdfBL.getWProcessDataFieldByPK(wProcessDataFieldSelected.getId(), getCurrentUserId());
 						
-
-				// RAUL: SI EL DELETE DA ERROR HAY QUE MOSTRARLO EN PANTALLA (AHORA MISMO NO LO HACE - REVISALO PLIS)
-				// PARA PROBAR SIMPLEMENTE INTENTÁS BORRAR 1 REGISTRO QUE SE ESTÉ UTILIZANDO EN UN W-STEP-DEF
 				wdfBL.delete(wProcessDataFieldSelected, getCurrentUserId() );
 
 				reloadDataFieldList();
@@ -2324,14 +2347,41 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				
 			}		
 			
+			this.createWindowMessage("OK_MESSAGE", 
+					"Campo borrado correctamente.");
+
 		} catch (WProcessDataFieldException ex1) {
 			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = { mensaje + ",",
-					".deleteStepFromSequence() WStepSequenceDefException ..." };
+					".deleteDataField() WStepSequenceDefException ..." };
 			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
-		}
+			this.createWindowMessage("ERROR_MESSAGE", ex1.getMessage());
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"El campo indicado no se puede eliminar porque contiene datos. Se le ha colocado el atributo 'active'=false para evitar su uso en los procesos de aquí en adelante.");
+			
+			wProcessDataFieldSelected.setActive(false);
+			this.saveNewDataField();
+			
+		} 
 		
+		
+	}
+
+	// dml 20130821
+	private void createWindowMessage(String messageType, String message) {
+
+		if (messageType.equals("ERROR_MESSAGE")) {
+			this.messageStyle = errorMessageStyle();
+			logger.error(message);
+		} else if (messageType.equals("OK_MESSAGE")) {
+			this.messageStyle = normalMessageStyle();
+			logger.info(message);
+		}
+
+		setShowHeaderMessage(true);
+		this.agregarMensaje(message);
+
 	}
 
 	public void switchButtonAdvancedConfiguration() {
@@ -2379,7 +2429,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// generates managed table for custom properties
 
 	public void createManagedTable() {
-		if ( !_checkValidProcessConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+		
+		String errors = _checkValidTableConfiguration();
+		if ( errors != null ) {
+			this.createWindowMessage("ERROR_MESSAGE", errors);
+			return;
+		}
 		
 		TableManager tm = new TableManager();
 
@@ -2387,7 +2442,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	public void createManagedTable( TableManager tm ) { 
-		if ( !_checkValidProcessConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+
+		String errors = _checkValidTableConfiguration();
+		if ( errors != null ) {
+			this.createWindowMessage("ERROR_MESSAGE", errors);
+			return;
+		}
 
 		String tableName = checkTableName(); // checks tablename and update currentWProcessDef if corresponds...
 		reloadDataFieldList(); // refresh dataFieldList
@@ -2406,23 +2466,86 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	public void recreateManagedTable() {
 
-		if ( !_checkValidTableConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+		String errors = _checkValidTableConfiguration();
+		if ( errors != null ) {
+			this.createWindowMessage("ERROR_MESSAGE", errors);
+			return;
+		}
 		
 		TableManager tm = new TableManager();
 		
 		if (!checkTableExists(tm)) {
-			System.out.println("Error, can't recreate table because it doesn't exists ...");;
+			this.createWindowMessage("ERROR_MESSAGE", "Error, can't recreate table because it doesn't exists ...");
 		}
 		
-		removeManagedTable(
-				tm,currentWProcessDef.getProcess().getManagedTableConfiguration().getName());
+		if (checkTableHasRecords(tm)) {
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"La tabla contiene datos, no se puede hacer recreate ...");
+		} else {
+			
+			removeManagedTable(
+					tm,currentWProcessDef.getProcess().getManagedTableConfiguration().getName());
+			
+			createManagedTable(tm);
+
+			this.createWindowMessage("OK_MESSAGE", 
+					"Tabla reconstruida correctamente.");
+			
+		}
+
 		
-		createManagedTable(tm);
 		
+	}
+	
+	public boolean checkTableHasRecords(TableManager tm){
+		
+		boolean returnValue = false;
+		
+		if (currentWProcessDef.getProcess().getId() != null
+				&& !currentWProcessDef.getProcess().getId().equals(0)){
+			
+			Integer qtyData;
+			try {
+
+				qtyData = tm.countNotNullRecords(
+						null, currentWProcessDef.getProcess().getManagedTableConfiguration().getName(), null);
+
+				if (qtyData != null
+						&& !qtyData.equals(0)){
+					returnValue = true;
+				}
+				
+			} catch (ClassNotFoundException ex1) {
+				String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+				String params[] = { mensaje + ",",
+						".checkTableHasRecords() WStepSequenceDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+				ex1.printStackTrace();
+				this.createWindowMessage("ERROR_MESSAGE", 
+						"checkTableHasRecords() WStepSequenceDefException: " + ex1.getMessage());
+			} catch (SQLException ex1) {
+				String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+				String params[] = { mensaje + ",",
+						".checkTableHasRecords() WStepSequenceDefException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+				ex1.printStackTrace();
+				this.createWindowMessage("ERROR_MESSAGE", 
+						"checkTableHasRecords() WStepSequenceDefException: " + ex1.getMessage());
+			}
+						
+		}
+		
+		return returnValue;
+
 	}
 
 	public void removeManagedTable( TableManager tm, String tableName ) { 
-		if ( !_checkValidTableConfiguration() ) return; // RAUL AQUI HAY QUE PONER MENSAJE D ERROR EN PANTALLA ...
+		
+		String errors = _checkValidTableConfiguration();
+		if ( errors != null ) {
+			this.createWindowMessage("ERROR_MESSAGE", errors);
+			return;
+		}
 
 		try {
 			tm.removeTable(tableName);
@@ -2469,21 +2592,20 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	
-	private boolean _checkValidTableConfiguration() {
+	private String _checkValidTableConfiguration() {
+		String returnValue = null;
 		if (currentWProcessDef == null) {
-			System.out.println("Error no hay un proceso cargado ...");
-			return false;
+			returnValue = "Error no hay un proceso cargado ...";
 		} else if (currentWProcessDef.getProcess() == null) {
-			System.out.println("Error el proceso corriente con el id:"
-					+(currentWProcessDef.getId()!=null?currentWProcessDef.getId():"null")
-					+" está inconsistente y no tiene su correspondiente head o no sepuede cargar ...");
-			return false;
-			
-		} else if (currentWProcessDef.getProcess().getManagedTableConfiguration()==null) {
-			System.out.println("Error managed table has no valid data ....");
-			return false;
+			returnValue = "Error el proceso corriente con el id:"
+					+ (currentWProcessDef.getId() != null ? currentWProcessDef.getId() : "null")
+					+ " está inconsistente y no tiene su correspondiente head o no sepuede cargar ...";
+
+		} else if (currentWProcessDef.getProcess().getManagedTableConfiguration() == null) {
+			returnValue = "Error managed table has no valid data ....";
 		}
-		return true;
+		System.out.println(returnValue);
+		return returnValue;
 	}
 
 	private String checkTableName() {
