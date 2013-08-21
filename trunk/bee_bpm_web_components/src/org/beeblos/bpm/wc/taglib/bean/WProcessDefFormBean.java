@@ -312,7 +312,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		try {
 			
  			this.relatedProcessDefList = new WProcessDefBL()
-				.getWorkingProcessListFinder(false, null, null, null, false, null, null, 
+				.finderWProcessDefLight(false, null, null, null, false, null, null, 
 						this.currentWProcessDef.getProcess().getId(), this.activeFilter, getCurrentUserId());
 			
 		} catch (WProcessDefException e) {
@@ -2154,6 +2154,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.wProcessDataFieldSelected = wProcessDataFieldSelected;
 	}
 
+	
 	public void initializeDataFieldsAddNew() {
 		
 		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
@@ -2197,6 +2198,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
 
+		// DAVID: ESTO AQUÍ PODRIA SER PERO DONDE ME INTERESA RESOLVER EL TEMA ES EN LA BL
+		// O SEA: CUANDO DECIMOS: SI EL USUARIO NO INGRESA UN TIPO DE DATO PONEMOS VARCHAR POR DEFECTO
+		// Y SI EL USUARIO EN VARCHAR NO LE PONE UN LARGO LE PONEMOS 45 POR DEFECTO, ESO LO HACEMOS EN LA BL OK?
+		// PORQUE EL PROBLEMA EN ESTE CASO NO ES EN LA PANTALLA, ES EN EL SAVE DE LA PROPERTY
+		// O SEA: SI YO NO PASO POR ESTE MÉTODO Y VOY POR OTRO, LE PUEDO METER CUALQUIER COSA, ME EXPLICO?
+		// ADEMÁS NO DEJES 45 HARDCODEADO, GENERATE UNA CONSTANTE: DEFAULT_VARCHAR_SIZE POR EJEMPLO OK?
+		// IDEM CON TEXT Y CON CVS Y ADEMÁS HABRIA QUE GENERALIZAR ESTO, NO SEPUEDE PONER HARDCODEADO, HAY QUE DEJARLO
+		// PARAMETRIZADO, ENTONCES EN EL DATATYPE POR EJEMPLO SE PUEDE AGREGAR UN PARÁMETRO QUE SEA: LARGO POR DEFECTO
+		// Y PONEMOS UN DEFAULT DE 1 PARA NO DEJAR ESO EN CERO, Y EN EL CASO DE VARCHAR LE DEJAMOS EL DEFAULT EN 45 OK?
+		// TODO ESTO EN LA BL
 		// dml 20130821 - chequeamos los datos básicos
 		if (wProcessDataFieldSelected != null){
 			// dml 20130821 - si el maxLenght es "0" para un VARCHAR le ponemos 1 por defecto
