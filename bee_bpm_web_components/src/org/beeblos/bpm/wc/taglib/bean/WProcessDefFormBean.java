@@ -2201,9 +2201,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		if (wProcessDataFieldSelected != null){
 			// dml 20130821 - si el maxLenght es "0" para un VARCHAR le ponemos 1 por defecto
 			if (wProcessDataFieldSelected.getDataType() != null
-					&& wProcessDataFieldSelected.getDataType().getId() != null
-					&& (wProcessDataFieldSelected.getDataType().getId().equals("Text")
-							|| wProcessDataFieldSelected.getDataType().getId().equals("CVS"))
+					&& wProcessDataFieldSelected.getDataType().getName() != null
+					&& (wProcessDataFieldSelected.getDataType().getName().equals("Text")
+							|| wProcessDataFieldSelected.getDataType().getName().equals("CVS"))
 					&& (wProcessDataFieldSelected.getLength() == null
 					|| wProcessDataFieldSelected.getLength().equals(0))){
 				wProcessDataFieldSelected.setLength(45);
