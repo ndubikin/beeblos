@@ -156,10 +156,12 @@ public class TableManager {
 	}
 	
 	// only can arrives here if all required data was previously checked!
-	private Integer insert(ManagedData managedData) throws ClassNotFoundException, SQLException {
+	private Integer insert(ManagedData managedData) 
+			throws ClassNotFoundException, SQLException, TableManagerException {
 		logger.debug("TableManager:insert managedData");
 
 		Integer qty=null, id=null;
+		String mess=null;
 
 		String sql = buildInsertDataQuery(managedData);
 		
@@ -186,12 +188,13 @@ public class TableManager {
 			logger.debug("--------->> generated id:"+id);
 			
 		} catch (MySQLSyntaxErrorException e1) {
-			
-			logger.error("Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
-
+			mess="Error MySQLSyntaxErrorException: TableManager:insert "+e1.getMessage()+" - "+e1.getCause();
+			logger.error(mess);
+			throw new TableManagerException(mess);
 			
 		} catch (SQLException e) {
-			logger.error("Error SQLException "+e.getMessage()+" - "+e.getCause());
+			mess="Error SQLException: TableManager:insert "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
 			id=-1;
 		}    finally{
 		      //finally block used to close resources
@@ -199,15 +202,19 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
-		      }// do nothing
+		    	  mess+=" >> nested error:"+se.getMessage()+" - "+se.getCause()+"\n";
+		      }
 		      try{
 		         if(conn!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  mess+=" >> nested error:"+se.getMessage()+" - "+se.getCause()+"\n";
 		         se.printStackTrace();
 		      }//end finally try
 		}
-			
+		if (mess!=null && !"".equals(mess)) {
+			throw new TableManagerException(mess);
+		}
 		return id;
 	}
 	
