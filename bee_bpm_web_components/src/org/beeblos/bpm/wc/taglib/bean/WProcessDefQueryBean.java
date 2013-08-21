@@ -169,7 +169,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		try {
 
 			wProcessDefList = (ArrayList<WProcessDef>) new WProcessDefBL()
-					.getProcessListByFinder(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
+					.finderWProcessDefLight(initialInsertDateFilter, finalInsertDateFilter, strictInsertDateFilter, 
 							nameFilter, commentsFilter, listZoneFilter, workZoneFilter, additionalZoneFilter, 
 							getCurrentUserId(), true, action, getCurrentUserId());
 
