@@ -30,13 +30,14 @@
 		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
 			<column  name="mod_user" />
 		</property>
-		<one-to-one name="managedTableConfiguration" class="org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration"
-				cascade="all">
+		<one-to-one name="managedTableConfiguration" 
+						class="org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration"
+				cascade="save-update">
 		</one-to-one>
        <set name="processDataFieldDef" table="w_process_head_data_field" 
 				lazy="false" fetch="join" cascade="all">
             <key>
-                <column name="process_head_id" not-null="true" />
+                <column name="process_head_id" />
             </key>
             <one-to-many class="org.beeblos.bpm.core.model.WProcessDataField" />
         </set>		
