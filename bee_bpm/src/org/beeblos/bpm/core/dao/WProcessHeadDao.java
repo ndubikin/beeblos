@@ -11,8 +11,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
+import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -107,6 +109,21 @@ public class WProcessHeadDao {
 				}
 			}
 
+			// dml 20130822 
+			if (processHead.getProcessDataFieldDef()!=null) {
+				try {
+					for (WProcessDataField pdf : processHead.getProcessDataFieldDef()){
+						new WProcessDataFieldDao().delete(pdf);	
+					}
+					processHead.setProcessDataFieldDef(null); // to avoid error in delete processHead ...
+				} catch (WProcessDataFieldException e) {
+					String mess ="WProcessHeadDao: delete - Can't delete process data field record for proccess head definition record "
+								+ processHead.getName() +
+								" <id = "+processHead.getId()+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause();
+					logger.error(mess);
+					// continues deleting process head record ...
+				}
+			}
 			HibernateUtil.borrar(processHead);
 
 		} catch (HibernateException ex) {
@@ -550,11 +567,7 @@ public class WProcessHeadDao {
 
 	// dml 20130507
 	// DAVID: no t parece q esta se arreglaria mejor con un count como le puse al WProcessDef.exists
-	// Además aprovecho para mostrarte: vamos a empezar a agregar comentarios para javadoc que se agregan asi como
-	// te muestro aquí debajo
-	// no es necesario que te pases por todos los métodos agregando esto, simplemente cuando crees un nuevo o cuando
-	// arregles alguno con algún detalle importante o conceptual, ya le vas metiendo esto ok?
-	
+
 	/**
 	 * returns true if there is 1 or more process versions for given processHeadId
 	 * or false if doesn't have any version
