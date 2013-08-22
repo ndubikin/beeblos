@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static org.beeblos.bpm.core.util.Constants.TEXT_W_DATA_TYPE_ID;
 
 import java.util.Date;
 import java.util.List;
@@ -8,10 +9,12 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDataFieldDao;
+import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
 
+import com.sp.common.model.WDataType;
 import com.sp.common.util.StringPair;
 
 
@@ -24,7 +27,7 @@ public class WProcessDataFieldBL {
 	}
 	
 	public Integer add( WProcessDataField processDataField, Integer currentUserId ) 
-			throws WProcessDataFieldException {
+			throws WProcessDataFieldException, WDataTypeException {
 		logger.debug("add() WProcessDataField - Name: ["+(processDataField!=null&&processDataField.getName()!=null?processDataField.getName():"null")+"]");
 		
 		// dml 20130820
@@ -44,9 +47,8 @@ public class WProcessDataFieldBL {
 			throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists for this process!! Not permitted operation ... ");
 		}
 		
-		// DAVID:
 		// default checks
-		_processDataFieldDefaultADDChecks(processDataField);
+		_processDataFieldDefaultADDChecks(processDataField, currentUserId);
 		
 		// timestamp & trace info
 		processDataField.setInsertDate(new Date());
@@ -58,21 +60,62 @@ public class WProcessDataFieldBL {
 
 	}
 	
-	private void _processDataFieldDefaultADDChecks(WProcessDataField processDataField) {
+	/**
+	 * @author dmuleiro - 20130822
+	 * 
+	 * Checks if the processDataField to be added has correct params and format it if it has not
+	 *
+	 * @param  WProcessDataField processDataField
+	 * @param  Integer currentUserId
+	 * @return void
+	 * 
+	 */
+	private void _processDataFieldDefaultADDChecks(WProcessDataField processDataField, Integer currentUserId) throws WDataTypeException {
+		
 		// chequear el tema de que si viene el tipo de dato en null le ponés text
 		// si el largo viene en null le ponés el default de la tabla de DATATYPE ok?
+		if (processDataField != null){
+			
+			// dml 20130821 - si no tiene nombre le ponemos "Text" y defaultLenght del text
+			if (processDataField.getDataType() == null
+					|| processDataField.getDataType().getName() == null){
+				
+				WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
+						TEXT_W_DATA_TYPE_ID, currentUserId);
+				
+				processDataField.setDataType(currentDataType);
+				processDataField.setLength(currentDataType.getDefaultLength());
+						
+			// dml 20130822 - si tiene nombre y el lenght es null o "0" le ponemos el defaultLength del dato
+			} else{
+				
+				WDataType currentDataType = new WDataTypeBL().getWDataTypeByName(
+						processDataField.getDataType().getName(), currentUserId);
+				
+				if (currentDataType.getDefaultLength() == null
+						|| processDataField.getLength() == null
+						|| processDataField.getLength().equals(0)){
+					
+					processDataField.setLength(currentDataType.getDefaultLength());
+					
+				}
+
+			}
+			
+		}
 		
 	}
 	
 	
 	public void update(
-			WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException {
+			WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException, WDataTypeException {
 		
 		logger.debug("update() WProcessDataField < id = "+(processDataField.getId()!=null?processDataField.getId():"null")+">");
 
 		if (processDataField.getName()==null || "".equals(processDataField.getName())) {
 			throw new WProcessDataFieldException("Can't add or update a datafield with no name or empty name field ...");
 		}
+
 		if (processDataField.getId()==null || processDataField.getId().equals(0)) {
 			throw new WProcessDataFieldException("Trying to update a datafield but id has an illegal value :["+(processDataField.getId()==null?"null":processDataField.getId())+"]");
 		}
@@ -81,17 +124,7 @@ public class WProcessDataFieldBL {
 				new WProcessDataFieldDao()
 						.getWProcessDataFieldByPK( processDataField.getId() )) ) {
 			
-			// check for duplicated names (not allowed)
-			WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
-			if (pdf != null
-					&& pdf.getName()!=null
-					&& pdf.getId()!=processDataField.getId()
-					&& pdf.getName().equals(processDataField.getName()) ) {
-				throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists!! Not permitted operation ... ");
-			}
-			
-			// DAVID:
-			_processDataFieldDefaultUPDATEChecks(processDataField);
+			_processDataFieldDefaultUPDATEChecks(processDataField, currentUserId);
 
 			// timestamp & trace info
 			processDataField.setModDate(new Date());
@@ -106,10 +139,43 @@ public class WProcessDataFieldBL {
 			
 	}
 	
-	private void _processDataFieldDefaultUPDATEChecks(WProcessDataField processDataField) {
-		// chequear el tema de que si viene el tipo de dato en null mandás exception: no es aceptable que en un update
-		// se carguen el tipo de dato de 1 propiedad ok?
-		// si el largo viene en null idem, tirás exception y decís qeu no se puede updatear el largo del tipo de dato a null o 0
+	/**
+	 * @author dmuleiro - 20130822
+	 * 
+	 * Checks if the processDataField to be updated has correct params and throws an exception if it has not
+	 * 
+	 * @param  WProcessDataField processDataField
+	 * @param  Integer currentUserId
+	 * @return void
+	 * 
+	 */
+	private void _processDataFieldDefaultUPDATEChecks(WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException, WDataTypeException {
+		
+		// check for duplicated names (not allowed)
+		WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
+		if (pdf != null
+				&& pdf.getName()!=null
+				&& pdf.getId()!=processDataField.getId()
+				&& pdf.getName().equals(processDataField.getName()) ) {
+			throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists!! Not permitted operation ... ");
+		}
+		
+		// dml 20130822 - empty name is not allowed
+		if (processDataField.getDataType().getName() == null){
+			throw new WProcessDataFieldException("Process data field has not a valid name!! Not permitted operation ... ");
+		}
+		
+		WDataType currentDataType = new WDataTypeBL().getWDataTypeByName(
+				processDataField.getDataType().getName(), currentUserId);
+
+		// dml 20130822 - empty length is not allowed
+		if (currentDataType.getDefaultLength() == null
+				&& processDataField.getLength() != null
+				&& !processDataField.getLength().equals(0)){
+			throw new WProcessDataFieldException("Process data field has not a valid length!! Not permitted operation ... ");
+		} else if (processDataField.getLength().equals(0)){
+			processDataField.setLength(null);
+		}
 		
 	}
 	

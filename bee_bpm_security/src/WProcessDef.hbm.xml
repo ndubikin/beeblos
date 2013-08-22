@@ -1376,6 +1376,9 @@
         <property name="maxLength" type="java.lang.Integer">
             <column name="max_length" />
         </property>
+        <property name="defaultLength" type="java.lang.Integer">
+            <column name="default_length" />
+        </property>
         <property name="showName" type="string">
             <column name="show_name" />
         </property>
