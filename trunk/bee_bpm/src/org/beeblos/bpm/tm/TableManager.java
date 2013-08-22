@@ -872,10 +872,10 @@ public class TableManager {
 		sql +=" CHANGE COLUMN ";
 		sql += origColName+" "+newColName+" "+sqlTypeName;
 		
-		if (length>0) {
+		if (length != null && length > 0) {
 			sql +="("+length+") ";
 		}
-		if (defaultValue!=null && !"".equals(defaultValue)) {
+		if (defaultValue != null && !"".equals(defaultValue)) {
 			sql+=" DEFAULT '"+defaultValue+"'";
 		}
 		
@@ -893,10 +893,10 @@ public class TableManager {
 		sql +=" ADD COLUMN ";
 		sql += newColName+" "+sqlTypeName;
 		
-		if (length>0) {
+		if (length != null && length > 0) {
 			sql +="("+length+") ";
 		}
-		if (defaultValue!=null && !"".equals(defaultValue)) {
+		if (defaultValue != null && !"".equals(defaultValue)) {
 			sql+=" DEFAULT '"+defaultValue+"'";
 		}
 		

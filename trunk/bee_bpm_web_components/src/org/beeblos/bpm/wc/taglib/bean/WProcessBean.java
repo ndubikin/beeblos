@@ -236,13 +236,6 @@ public class WProcessBean extends CoreManagedBean {
 					getCurrentUserId());
 
 			if (currentWProcessDef != null) {
-
-// NOTA PARA DAVID: esto creo q estaria mal que lo hagamos aquí, esto debe resolverlo la BL
-// o sea, la BL dice que devuelve un WProcessDef, pero resulta que viene "a medio cargar ..."
-// lo que no está bien ...				
-//				loadLSteps();
-//				
-//				loadStepSequenceList();
 				
 				// DAVID: ESTO ESTABA EN EL METODO loadStepSequenceList() y no se bien para q es ...
 				this.stepOutgoings = false;
@@ -272,9 +265,17 @@ public class WProcessBean extends CoreManagedBean {
 
 			logger.error(message);
 			
-		} catch (WStepSequenceDefException e) {
-			// DAVID TE DEJO PARA QUE ARREGLES ESTE ERROR Y Q SE PRESENTE EN PANTALLA OK?
-			e.printStackTrace();
+		} catch (WStepSequenceDefException ex1) {
+
+			String message = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = {
+					message + ",",
+					".Error loading current WProcessDef ..."
+							+ currentWProcessDef.getId() };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+
+			logger.error(message);
+			
 		}
 
 	}
@@ -1593,14 +1594,18 @@ public class WProcessBean extends CoreManagedBean {
 				.setStepSequenceList(
 						new WStepSequenceDefBL()
 							.getStepSequenceList(currentWProcessDef.getId(), this.getCurrentUserId() ) );
-		} catch (WStepSequenceDefException e) {
+		} catch (WStepSequenceDefException ex1) {
+			
 			// DAVID HAY QUE VER ESTE ERROR DE LA RECARGA DE LA LISTA DE STEPS DE DONDE SE LLAMA PARA 
 			// PRESENTAR MENSAJE EN PANTALLA Y GRABAR LOG OK?
-			
-			String mess= "Error reloading step sequence list :"+e.getMessage();
-			logger.error(mess);
-			
-			e.printStackTrace();
+			String message = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = {
+					message + ",",
+					".Error reloading step sequence list ..."
+							+ currentWProcessDef.getId() };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+			logger.error(message);
+			ex1.printStackTrace();
 		}
 				
 		
