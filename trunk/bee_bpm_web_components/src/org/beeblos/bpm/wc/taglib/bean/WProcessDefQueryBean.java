@@ -393,15 +393,16 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				&& !this.id.equals(0)){
 			
 			try {
-				
+				String processName = this.currentWProcessDef.getProcess().getName();
+				Integer processVersion = this.currentWProcessDef.getVersion();
+
 				new WProcessDefBL().delete(this.id, this.tmpDeleteRelatedStepsPopup, getCurrentUserId());
 				
 				this.tmpDeleteRelatedStepsPopup = false;
 				this.tmpDeletingWProcessDefPopup = false;
 				this.searchWProcessDefs();
 				
-				String message = "The process '" + this.currentWProcessDef.getProcess().getName() 
-						+ "' version: '" + this.currentWProcessDef.getVersion() + "' has been correctly deleted";
+				String message = "The process '" + processName + "' version: '" + processVersion + "' has been correctly deleted";
 				this.messageStyle = normalMessageStyle();
 				agregarMensaje(message);
 				logger.info(message);

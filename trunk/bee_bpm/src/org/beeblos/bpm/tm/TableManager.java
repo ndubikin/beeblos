@@ -628,7 +628,7 @@ public class TableManager {
 			managedData.setOperation(CHANGE_COLUMN);
 			generateAlterTableForColumnMgmt(CHANGE_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					storedDataField.getName().replace(" ", "_"), newDataField.getName().replace(" ", "_"), 
+					storedDataField.getName(), newDataField.getName(), 
 					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
 					newDataField.getLength(), newDataField.getDefaultValue(),
 					managedData.getDataField().size());
@@ -636,7 +636,7 @@ public class TableManager {
 			managedData.setOperation(ADD_COLUMN);
 			generateAlterTableForColumnMgmt(ADD_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					null, newDataField.getName().replace(" ", "_"), 
+					null, newDataField.getName(), 
 					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
 					newDataField.getLength(), newDataField.getDefaultValue(),
 					(managedData.getDataField()!=null?managedData.getDataField().size():0));					
@@ -665,7 +665,7 @@ public class TableManager {
 				dropColumn(DROP_COLUMN, 
 						managedData.getManagedTableConfiguration().getSchema(), 
 						managedData.getManagedTableConfiguration().getName(), 
-						dataField.getName().replace(" ", "_"));	
+						dataField.getName());	
 				
 			}
 		} catch (ClassNotFoundException e) {
@@ -870,7 +870,7 @@ public class TableManager {
 		
 		sql+=schema+"."+tableName+" ";
 		sql +=" CHANGE COLUMN ";
-		sql += origColName+" "+newColName+" "+sqlTypeName;
+		sql += origColName.replace(" ", "_")+" "+newColName.replace(" ", "_")+" "+sqlTypeName;
 		
 		if (length != null && length > 0) {
 			sql +="("+length+") ";
@@ -891,7 +891,7 @@ public class TableManager {
 		
 		sql+=schema+"."+tableName+" ";
 		sql +=" ADD COLUMN ";
-		sql += newColName+" "+sqlTypeName;
+		sql += newColName.replace(" ", "_")+" "+sqlTypeName;
 		
 		if (length != null && length > 0) {
 			sql +="("+length+") ";
@@ -911,7 +911,7 @@ public class TableManager {
 		
 		sql+=schema+"."+tableName+" ";
 		sql +=" DROP COLUMN ";
-		sql += colName+" ";
+		sql += colName.replace(" ", "_")+" ";
 		
 		return sql;
 	}
@@ -923,7 +923,7 @@ public class TableManager {
 		sql 		+=" process_work_id INTEGER NOT NULL, ";   // mandatory field ...
 		sql 		+=" process_id INTEGER NOT NULL, ";   // mandatory field indicates map version
 		for (WProcessDataField column: columns) {
-			sql+=	column.getName()+" "
+			sql+=	column.getName().replace(" ", "_")+" "
 					+ column.getDataType().getSqlTypeName()
 					+ getColumnSize(column)+", ";
 		}

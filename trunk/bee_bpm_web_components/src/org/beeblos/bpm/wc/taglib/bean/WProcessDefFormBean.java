@@ -1926,14 +1926,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		WEmailTemplatesBL wetBL = new WEmailTemplatesBL();
 		
 		try {
-			if (this.currentWProcessDef.getArrivingUserNoticeTemplate() != null
+			if (this.currentWProcessDef != null
+					&& this.currentWProcessDef.getArrivingUserNoticeTemplate() != null
 					&& this.currentWProcessDef.getArrivingUserNoticeTemplate().getId() != null) {
 				arrivingUserNoticeTemplate = wetBL.getWEmailTemplatesByPK(this.currentWProcessDef.getArrivingUserNoticeTemplate().getId());
 			} else {
 				arrivingUserNoticeTemplate = new WEmailTemplates();
 			}
 
-			if (this.currentWProcessDef.getArrivingAdminNoticeTemplate() != null
+			if (this.currentWProcessDef != null
+					&& this.currentWProcessDef.getArrivingAdminNoticeTemplate() != null
 					&& this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId() != null) {
 				arrivingAdminNoticeTemplate = wetBL.getWEmailTemplatesByPK(this.currentWProcessDef.getArrivingAdminNoticeTemplate().getId());
 			} else {
@@ -2227,6 +2229,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 			reloadDataFieldList();
+			// dml 20130822 - recargamos el proceso para tener los cambios en la lista
+			this.loadCurrentWProcessDef();
 			
 			initNewDataFieldFormObjects();
 					
@@ -2254,14 +2258,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		return null;
 	}
-	
-	//rrl 20130807
-//	private boolean validationSave() {
-//		
-//		boolean result = true;
-//		
-//		return result;
-//	}
 	
 	public String cancelNewDataField() {
 
@@ -2330,6 +2326,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				wdfBL.delete(wProcessDataFieldSelected, getCurrentUserId() );
 
 				reloadDataFieldList();
+				// dml 20130822 - recargamos el proceso para tener los cambios en la lista
+				this.loadCurrentWProcessDef();
 				
 				initNewDataFieldFormObjects();
 				
@@ -2417,8 +2415,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// generates managed table for custom properties
 
 	public void createManagedTable() {
+		this.setShowHeaderMessage(false);
 		
-		String errors = _checkValidTableConfiguration();
+		String errors = _checkValidProcessConfiguration();
 		if ( errors != null ) {
 			this.createWindowMessage("ERROR_MESSAGE", errors);
 			return;
@@ -2430,8 +2429,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	public void createManagedTable( TableManager tm ) { 
+		this.setShowHeaderMessage(false);
 
-		String errors = _checkValidTableConfiguration();
+		String errors = _checkValidProcessConfiguration();
 		if ( errors != null ) {
 			this.createWindowMessage("ERROR_MESSAGE", errors);
 			return;
@@ -2453,6 +2453,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	public void recreateManagedTable() {
+		this.setShowHeaderMessage(false);
 
 		String errors = _checkValidTableConfiguration();
 		if ( errors != null ) {
@@ -2565,31 +2566,27 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	
-	private boolean _checkValidProcessConfiguration() {
-		if (currentWProcessDef == null) {
-			System.out.println("Error no hay un proceso cargado ...");
-			return false;
-		} else if (currentWProcessDef.getProcess() == null) {
-			System.out.println("Error el proceso corriente con el id:"
-					+(currentWProcessDef.getId()!=null?currentWProcessDef.getId():"null")
-					+" está inconsistente y no tiene su correspondiente head o no sepuede cargar ...");
-			return false;
-			
-		} 
-		return true;
-	}
+	private String _checkValidProcessConfiguration() {
 
-	
-	private String _checkValidTableConfiguration() {
 		String returnValue = null;
 		if (currentWProcessDef == null) {
+			System.out.println("Error no hay un proceso cargado ...");
 			returnValue = "Error no hay un proceso cargado ...";
 		} else if (currentWProcessDef.getProcess() == null) {
 			returnValue = "Error el proceso corriente con el id:"
 					+ (currentWProcessDef.getId() != null ? currentWProcessDef.getId() : "null")
-					+ " está inconsistente y no tiene su correspondiente head o no sepuede cargar ...";
+					+ " está inconsistente y no tiene su correspondiente head o no sepuede cargar ...";		
+		} 
+		System.out.println(returnValue);
+		return returnValue;
+	}
 
-		} else if (currentWProcessDef.getProcess().getManagedTableConfiguration() == null) {
+	
+	private String _checkValidTableConfiguration() {
+		
+		String returnValue = _checkValidProcessConfiguration();
+		if (returnValue == null
+				&& currentWProcessDef.getProcess().getManagedTableConfiguration() == null) {
 			returnValue = "Error managed table has no valid data ....";
 		}
 		System.out.println(returnValue);

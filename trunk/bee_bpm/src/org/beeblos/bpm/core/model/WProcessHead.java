@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -132,6 +133,11 @@ public class WProcessHead implements java.io.Serializable {
 
 	public Set<WProcessDataField> getProcessDataFieldDef() {
 		return processDataFieldDef;
+	}
+
+	// dml 20130822
+	public ArrayList<WProcessDataField> getProcessDataFieldDefAsList() {
+		return new ArrayList<WProcessDataField>(processDataFieldDef);
 	}
 
 
