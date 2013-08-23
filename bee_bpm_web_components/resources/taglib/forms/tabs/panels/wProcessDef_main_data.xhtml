@@ -164,6 +164,13 @@
 					style="width:100px; margin-left:2px; " 
 					rendered="#{wProcessDefFormBean.readOnly}"/>
 
+				<a4j:commandButton id="view_xml_map_button" value="#{msg.label_view_xml_map}"
+					oncomplete="openInNewTab('#{wProcessDefQueryBean.workflowViewXmlMapUrl}');"
+					actionListener="#{wProcessDefFormBean.loadXmlMapAsTmp}"
+					reRender="w_process_def_main_tag_form"
+					style="width:100px; margin-left:2px; " 
+					rendered="#{wProcessDefFormBean.readOnly}"/>
+
 				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
 					action="#{wProcessDefFormBean.cancel}"
 					reRender="w_process_def_main_tag_form"

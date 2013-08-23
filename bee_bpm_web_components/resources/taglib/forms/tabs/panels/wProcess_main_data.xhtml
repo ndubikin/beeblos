@@ -151,7 +151,7 @@
 
 				<a4j:commandButton id="update_button" value="#{msg.label_update}"
 					actionListener="#{wProcessDefFormBean.update}"
-					reRender="w_process_def_main_tag_form"
+					reRender="w_process_def_main_tag_form, w_process_main_title_name"
 					style="margin-right: 0px; width:120px; " 
 					rendered="#{!wProcessDefFormBean.readOnly and (wProcessDefFormBean.currentId != null) and (wProcessDefFormBean.currentId != 0)}"/>
 

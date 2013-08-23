@@ -4,6 +4,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
+import static org.beeblos.bpm.core.util.Constants.WORKFLOW_VIEW_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.io.BufferedWriter;
@@ -545,6 +546,10 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	public String getWorkflowEditorUrl(){
 		return this._getRequestContextPath() + WORKFLOW_EDITOR_URI;
+	}
+	
+	public String getWorkflowViewXmlMapUrl(){
+		return this._getRequestContextPath() + WORKFLOW_VIEW_URI;
 	}
 	
 	public String _getRequestContextPath() {
