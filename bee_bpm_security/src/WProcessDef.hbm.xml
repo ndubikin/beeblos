@@ -765,6 +765,51 @@
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
 			column="process_id" lazy="false" name="process" />
 	</class>
+
+ 	<class name="org.beeblos.bpm.core.model.WStepWorkSequence" table="w_step_work_sequence">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="sentBack"
+			type="java.lang.Boolean">
+			<column name="sent_back" />
+		</property>
+
+		<property generated="never" lazy="false" name="executionDate"
+			type="timestamp">
+			<column name="execution_date" not-null="true" />
+		</property>
+
+		<property generated="never" lazy="false" name="insertDate"
+			type="timestamp">
+			<column name="insert_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" type="timestamp">
+			<column name="mod_date"  />
+		</property>
+		<property generated="never" lazy="false" name="modUser" type="java.lang.Integer">
+			<column  name="mod_user" />
+		</property>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WStepWork"
+			column="step_work_id" lazy="false" name="stepWork" />
+			
+		<many-to-one class="org.beeblos.bpm.core.model.WStepSequenceDef"
+			column="step_sequence_def_id" lazy="false" name="stepSequence" />
+			
+		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
+			column="begin_step_id" lazy="false" name="beginStep" />
+			
+		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
+			column="end_step_id" lazy="false" name="endStep" />
+			
+	</class>
+	
 	<class name="org.beeblos.bpm.core.model.WTimeUnit" table="w_time_unit">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" unique="true" />

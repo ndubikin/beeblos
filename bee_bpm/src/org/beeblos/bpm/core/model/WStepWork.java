@@ -2,6 +2,8 @@ package org.beeblos.bpm.core.model;
 
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -71,6 +73,24 @@ public class WStepWork implements java.io.Serializable {
 		super();
 	}
 	
+	public WStepWork(boolean createEmtpyObjects ){
+		super();
+		if ( createEmtpyObjects ) {
+			this.wProcessWork=new WProcessWork( EMPTY_OBJECT );
+			this.managedData=new ManagedData( EMPTY_OBJECT );
+			this.process=new WProcessDef( EMPTY_OBJECT );
+			this.previousStep=new WStepDef( EMPTY_OBJECT );
+			this.currentStep=new WStepDef( EMPTY_OBJECT );
+			this.openerUser=new WUserDef( EMPTY_OBJECT );
+			this.performer=new WUserDef( EMPTY_OBJECT );
+			this.timeUnit=new WTimeUnit( EMPTY_OBJECT );
+			this.reminderTimeUnit=new WTimeUnit( EMPTY_OBJECT );
+			this.lockedBy=new WUserDef( EMPTY_OBJECT );
+			this.insertUser=new WUserDef( EMPTY_OBJECT );
+			
+		}	
+	}
+
 	public WStepWork(WStepWork step) {
 
 		this.id = step.id;
@@ -99,6 +119,11 @@ public class WStepWork implements java.io.Serializable {
 		this.insertUser = step.insertUser;
 		this.modDate = step.modDate;
 		this.modUser = step.modUser;
+	}
+
+	public WStepWork(Integer id) {
+
+		this.id = id;
 	}
 
 
@@ -575,222 +600,222 @@ public class WStepWork implements java.io.Serializable {
 
 	
 	
-//	@Override
-//	public int hashCode() {
-//		final int prime = 31;
-//		int result = 1;
-//		result = prime * result + (adminProcess ? 1231 : 1237);
-//		result = prime * result
-//				+ ((arrivingDate == null) ? 0 : arrivingDate.hashCode());
-//		result = prime * result
-//				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
-//		result = prime * result
-//				+ ((assignedTo == null) ? 0 : assignedTo.hashCode());
-//		result = prime * result
-//				+ ((currentStep == null) ? 0 : currentStep.hashCode());
-//		result = prime * result
-//				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
-//		result = prime * result
-//				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
-//		result = prime * result
-//				+ ((decidedDate == null) ? 0 : decidedDate.hashCode());
-//		result = prime * result + ((id == null) ? 0 : id.hashCode());
-//		result = prime * result
-//				+ ((insertUser == null) ? 0 : insertUser.hashCode());
-//		result = prime * result + (locked ? 1231 : 1237);
-//		result = prime * result
-//				+ ((lockedBy == null) ? 0 : lockedBy.hashCode());
-//		result = prime * result
-//				+ ((lockedSince == null) ? 0 : lockedSince.hashCode());
-//		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-//		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
-//		result = prime * result + (myNotes ? 1231 : 1237);
-//		result = prime
-//				* result
-//				+ ((nextStepInstructions == null) ? 0 : nextStepInstructions
-//						.hashCode());
-//		result = prime * result
-//				+ ((openedDate == null) ? 0 : openedDate.hashCode());
-//		result = prime * result
-//				+ ((openerUser == null) ? 0 : openerUser.hashCode());
-//		result = prime * result
-//				+ ((performer == null) ? 0 : performer.hashCode());
-//		result = prime * result
-//				+ ((previousStep == null) ? 0 : previousStep.hashCode());
-//		result = prime * result + ((process == null) ? 0 : process.hashCode());
-//		result = prime * result
-//				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
-//		result = prime
-//				* result
-//				+ ((reminderTimeUnit == null) ? 0 : reminderTimeUnit.hashCode());
-//		result = prime * result
-//				+ ((response == null) ? 0 : response.hashCode());
-//		result = prime * result + (sendUserNotesToNextStep ? 1231 : 1237);
-//		result = prime * result + (sentBack ? 1231 : 1237);
-//		result = prime * result
-//				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
-//		result = prime
-//				* result
-//				+ ((userInstructions == null) ? 0 : userInstructions.hashCode());
-//		result = prime * result
-//				+ ((userNotes == null) ? 0 : userNotes.hashCode());
-//		result = prime * result
-//				+ ((wProcessWork == null) ? 0 : wProcessWork.hashCode());
-//		return result;
-//	}
-//
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (!(obj instanceof WStepWork))
-//			return false;
-//		WStepWork other = (WStepWork) obj;
-//		if (adminProcess != other.adminProcess)
-//			return false;
-//		if (arrivingDate == null) {
-//			if (other.arrivingDate != null)
-//				return false;
-//		} else if (!arrivingDate.equals(other.arrivingDate))
-//			return false;
-//		if (assignedTime == null) {
-//			if (other.assignedTime != null)
-//				return false;
-//		} else if (!assignedTime.equals(other.assignedTime))
-//			return false;
-//		if (assignedTo == null) {
-//			if (other.assignedTo != null)
-//				return false;
-//		} else if (!assignedTo.equals(other.assignedTo))
-//			return false;
-//		if (currentStep == null) {
-//			if (other.currentStep != null)
-//				return false;
-//		} else if (!currentStep.equals(other.currentStep))
-//			return false;
-//		if (deadlineDate == null) {
-//			if (other.deadlineDate != null)
-//				return false;
-//		} else if (!deadlineDate.equals(other.deadlineDate))
-//			return false;
-//		if (deadlineTime == null) {
-//			if (other.deadlineTime != null)
-//				return false;
-//		} else if (!deadlineTime.equals(other.deadlineTime))
-//			return false;
-//		if (decidedDate == null) {
-//			if (other.decidedDate != null)
-//				return false;
-//		} else if (!decidedDate.equals(other.decidedDate))
-//			return false;
-//		if (id == null) {
-//			if (other.id != null)
-//				return false;
-//		} else if (!id.equals(other.id))
-//			return false;
-//		if (insertUser == null) {
-//			if (other.insertUser != null)
-//				return false;
-//		} else if (!insertUser.equals(other.insertUser))
-//			return false;
-//		if (locked != other.locked)
-//			return false;
-//		if (lockedBy == null) {
-//			if (other.lockedBy != null)
-//				return false;
-//		} else if (!lockedBy.equals(other.lockedBy))
-//			return false;
-//		if (lockedSince == null) {
-//			if (other.lockedSince != null)
-//				return false;
-//		} else if (!lockedSince.equals(other.lockedSince))
-//			return false;
-//		if (modDate == null) {
-//			if (other.modDate != null)
-//				return false;
-//		} else if (!modDate.equals(other.modDate))
-//			return false;
-//		if (modUser == null) {
-//			if (other.modUser != null)
-//				return false;
-//		} else if (!modUser.equals(other.modUser))
-//			return false;
-//		if (myNotes != other.myNotes)
-//			return false;
-//		if (nextStepInstructions == null) {
-//			if (other.nextStepInstructions != null)
-//				return false;
-//		} else if (!nextStepInstructions.equals(other.nextStepInstructions))
-//			return false;
-//		if (openedDate == null) {
-//			if (other.openedDate != null)
-//				return false;
-//		} else if (!openedDate.equals(other.openedDate))
-//			return false;
-//		if (openerUser == null) {
-//			if (other.openerUser != null)
-//				return false;
-//		} else if (!openerUser.equals(other.openerUser))
-//			return false;
-//		if (performer == null) {
-//			if (other.performer != null)
-//				return false;
-//		} else if (!performer.equals(other.performer))
-//			return false;
-//		if (previousStep == null) {
-//			if (other.previousStep != null)
-//				return false;
-//		} else if (!previousStep.equals(other.previousStep))
-//			return false;
-//		if (process == null) {
-//			if (other.process != null)
-//				return false;
-//		} else if (!process.equals(other.process))
-//			return false;
-//		if (reminderTime == null) {
-//			if (other.reminderTime != null)
-//				return false;
-//		} else if (!reminderTime.equals(other.reminderTime))
-//			return false;
-//		if (reminderTimeUnit == null) {
-//			if (other.reminderTimeUnit != null)
-//				return false;
-//		} else if (!reminderTimeUnit.equals(other.reminderTimeUnit))
-//			return false;
-//		if (response == null) {
-//			if (other.response != null)
-//				return false;
-//		} else if (!response.equals(other.response))
-//			return false;
-//		if (sendUserNotesToNextStep != other.sendUserNotesToNextStep)
-//			return false;
-//		if (sentBack != other.sentBack)
-//			return false;
-//		if (timeUnit == null) {
-//			if (other.timeUnit != null)
-//				return false;
-//		} else if (!timeUnit.equals(other.timeUnit))
-//			return false;
-//		if (userInstructions == null) {
-//			if (other.userInstructions != null)
-//				return false;
-//		} else if (!userInstructions.equals(other.userInstructions))
-//			return false;
-//		if (userNotes == null) {
-//			if (other.userNotes != null)
-//				return false;
-//		} else if (!userNotes.equals(other.userNotes))
-//			return false;
-//		if (wProcessWork == null) {
-//			if (other.wProcessWork != null)
-//				return false;
-//		} else if (!wProcessWork.equals(other.wProcessWork))
-//			return false;
-//		return true;
-//	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (adminProcess ? 1231 : 1237);
+		result = prime * result
+				+ ((arrivingDate == null) ? 0 : arrivingDate.hashCode());
+		result = prime * result
+				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
+		result = prime * result
+				+ ((assignedTo == null) ? 0 : assignedTo.hashCode());
+		result = prime * result
+				+ ((currentStep == null) ? 0 : currentStep.hashCode());
+		result = prime * result
+				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
+		result = prime * result
+				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
+		result = prime * result
+				+ ((decidedDate == null) ? 0 : decidedDate.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + (locked ? 1231 : 1237);
+		result = prime * result
+				+ ((lockedBy == null) ? 0 : lockedBy.hashCode());
+		result = prime * result
+				+ ((lockedSince == null) ? 0 : lockedSince.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result + (myNotes ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((nextStepInstructions == null) ? 0 : nextStepInstructions
+						.hashCode());
+		result = prime * result
+				+ ((openedDate == null) ? 0 : openedDate.hashCode());
+		result = prime * result
+				+ ((openerUser == null) ? 0 : openerUser.hashCode());
+		result = prime * result
+				+ ((performer == null) ? 0 : performer.hashCode());
+		result = prime * result
+				+ ((previousStep == null) ? 0 : previousStep.hashCode());
+		result = prime * result + ((process == null) ? 0 : process.hashCode());
+		result = prime * result
+				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
+		result = prime
+				* result
+				+ ((reminderTimeUnit == null) ? 0 : reminderTimeUnit.hashCode());
+		result = prime * result
+				+ ((response == null) ? 0 : response.hashCode());
+		result = prime * result + (sendUserNotesToNextStep ? 1231 : 1237);
+		result = prime * result + (sentBack ? 1231 : 1237);
+		result = prime * result
+				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
+		result = prime
+				* result
+				+ ((userInstructions == null) ? 0 : userInstructions.hashCode());
+		result = prime * result
+				+ ((userNotes == null) ? 0 : userNotes.hashCode());
+		result = prime * result
+				+ ((wProcessWork == null) ? 0 : wProcessWork.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof WStepWork))
+			return false;
+		WStepWork other = (WStepWork) obj;
+		if (adminProcess != other.adminProcess)
+			return false;
+		if (arrivingDate == null) {
+			if (other.arrivingDate != null)
+				return false;
+		} else if (!arrivingDate.equals(other.arrivingDate))
+			return false;
+		if (assignedTime == null) {
+			if (other.assignedTime != null)
+				return false;
+		} else if (!assignedTime.equals(other.assignedTime))
+			return false;
+		if (assignedTo == null) {
+			if (other.assignedTo != null)
+				return false;
+		} else if (!assignedTo.equals(other.assignedTo))
+			return false;
+		if (currentStep == null) {
+			if (other.currentStep != null)
+				return false;
+		} else if (!currentStep.equals(other.currentStep))
+			return false;
+		if (deadlineDate == null) {
+			if (other.deadlineDate != null)
+				return false;
+		} else if (!deadlineDate.equals(other.deadlineDate))
+			return false;
+		if (deadlineTime == null) {
+			if (other.deadlineTime != null)
+				return false;
+		} else if (!deadlineTime.equals(other.deadlineTime))
+			return false;
+		if (decidedDate == null) {
+			if (other.decidedDate != null)
+				return false;
+		} else if (!decidedDate.equals(other.decidedDate))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (locked != other.locked)
+			return false;
+		if (lockedBy == null) {
+			if (other.lockedBy != null)
+				return false;
+		} else if (!lockedBy.equals(other.lockedBy))
+			return false;
+		if (lockedSince == null) {
+			if (other.lockedSince != null)
+				return false;
+		} else if (!lockedSince.equals(other.lockedSince))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
+			return false;
+		if (myNotes != other.myNotes)
+			return false;
+		if (nextStepInstructions == null) {
+			if (other.nextStepInstructions != null)
+				return false;
+		} else if (!nextStepInstructions.equals(other.nextStepInstructions))
+			return false;
+		if (openedDate == null) {
+			if (other.openedDate != null)
+				return false;
+		} else if (!openedDate.equals(other.openedDate))
+			return false;
+		if (openerUser == null) {
+			if (other.openerUser != null)
+				return false;
+		} else if (!openerUser.equals(other.openerUser))
+			return false;
+		if (performer == null) {
+			if (other.performer != null)
+				return false;
+		} else if (!performer.equals(other.performer))
+			return false;
+		if (previousStep == null) {
+			if (other.previousStep != null)
+				return false;
+		} else if (!previousStep.equals(other.previousStep))
+			return false;
+		if (process == null) {
+			if (other.process != null)
+				return false;
+		} else if (!process.equals(other.process))
+			return false;
+		if (reminderTime == null) {
+			if (other.reminderTime != null)
+				return false;
+		} else if (!reminderTime.equals(other.reminderTime))
+			return false;
+		if (reminderTimeUnit == null) {
+			if (other.reminderTimeUnit != null)
+				return false;
+		} else if (!reminderTimeUnit.equals(other.reminderTimeUnit))
+			return false;
+		if (response == null) {
+			if (other.response != null)
+				return false;
+		} else if (!response.equals(other.response))
+			return false;
+		if (sendUserNotesToNextStep != other.sendUserNotesToNextStep)
+			return false;
+		if (sentBack != other.sentBack)
+			return false;
+		if (timeUnit == null) {
+			if (other.timeUnit != null)
+				return false;
+		} else if (!timeUnit.equals(other.timeUnit))
+			return false;
+		if (userInstructions == null) {
+			if (other.userInstructions != null)
+				return false;
+		} else if (!userInstructions.equals(other.userInstructions))
+			return false;
+		if (userNotes == null) {
+			if (other.userNotes != null)
+				return false;
+		} else if (!userNotes.equals(other.userNotes))
+			return false;
+		if (wProcessWork == null) {
+			if (other.wProcessWork != null)
+				return false;
+		} else if (!wProcessWork.equals(other.wProcessWork))
+			return false;
+		return true;
+	}
 
 
 

@@ -3,6 +3,7 @@ package org.beeblos.bpm.core.bl;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
@@ -36,6 +37,7 @@ import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WEmailAccount;
@@ -48,12 +50,11 @@ import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.core.util.Resourceutil;
-import org.beeblos.bpm.tm.TableManager;
-import org.beeblos.bpm.tm.exception.TableManagerException;
 
 import com.sp.common.util.StringPair;
 
@@ -298,11 +299,11 @@ public class WStepWorkBL {
 	}
 	
 	//rrl 20110118: recupera los workitems de 1 objeto dado
-	public List<WStepWork> getWorkListByIdWork(
-			Integer idWork, Integer currentUser) 
+	public List<WStepWork> getWorkListByIdWorkAndStatus(
+			Integer idWork, String status, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
-		return new WStepWorkDao().getWorkListByIdWork(idWork, currentUser);
+		return new WStepWorkDao().getWorkListByIdWorkAndStatus(idWork, status, currentUser);
 		
 	}
 	
@@ -357,7 +358,7 @@ public class WStepWorkBL {
 			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUser,
 			boolean isAdminProcess, String typeOfProcess) 
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
-			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, WStepAlreadyProcessedException {
+			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, WStepAlreadyProcessedException, WStepWorkSequenceException {
 
 		Date now = new Date();
 		Integer qtyNewRoutes=0;
@@ -623,7 +624,7 @@ public class WStepWorkBL {
 	private Integer _executeProcessStep(
 			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
 			Integer idResponse, boolean isAdminProcess, Date now ) 
-	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException {
+	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
 		
 		Integer qty=0;
 
@@ -660,6 +661,10 @@ public class WStepWorkBL {
 								currentUser, currentStepWork, isAdminProcess,
 								now, newStepWork, route);
 						
+						// dml 20130827 - si vamos hacia adelante (procesamos) el beginStep y el endStep los marca la ruta
+						this.createStepWorkSequenceLog(route, currentStepWork, false, 
+								route.getFromStep(), route.getToStep(), currentUser);
+
 						_sendEmailNotification(newStepWork);
 					}
 				} else {
@@ -669,10 +674,30 @@ public class WStepWorkBL {
 					// if ret arrives here with true it indicates there are another valid routes for this step
 					// but no action is required
 				}
+								
 			}
 		}
 		
 		return qty;
+		
+	}
+	
+	// dml 20130827 - creamos el log en WStepWorkSequence de la nueva ruta creada
+	private void createStepWorkSequenceLog(WStepSequenceDef route, WStepWork stepWork, boolean sentBack, 
+			WStepDef beginStep, WStepDef endStep, Integer currentUserId) throws WStepWorkSequenceException{
+		
+		WStepWorkSequence sws = new WStepWorkSequence(EMPTY_OBJECT);
+		sws.setStepSequence((route != null)?new WStepSequenceDef(route.getId()):null);
+		sws.setStepWork((stepWork != null)?new WStepWork(stepWork.getId()):null);
+
+		sws.setSentBack(sentBack);
+		
+		sws.setBeginStep((beginStep != null)?new WStepDef(beginStep.getId()):null);
+		sws.setEndStep((endStep != null)?new WStepDef(endStep.getId()):null);
+		
+		sws.setExecutionDate(new Date());
+
+		new WStepWorkSequenceBL().add(sws, currentUserId);
 		
 	}
 
@@ -702,7 +727,7 @@ public class WStepWorkBL {
 	private void _executeTurnBack (
 			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
 			Integer idResponse, boolean isAdminProcess, Date now ) 
-	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException {
+	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
 
 		WStepWork newStep = new WStepWork();
 		
@@ -712,6 +737,10 @@ public class WStepWorkBL {
 		
 		this.add(newStep, currentUser);
 	
+		// dml 20130827 - si vamos hacia atras (turnBack) el beginStep y el endStep los marca el currentStepWork
+		this.createStepWorkSequenceLog(null, currentStepWork, true, currentStepWork.getCurrentStep(),
+				currentStepWork.getPreviousStep(), currentUser);
+		
 		_sendEmailNotification(newStep);
 		
 	}

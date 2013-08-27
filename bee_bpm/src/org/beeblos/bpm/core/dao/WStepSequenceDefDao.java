@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
@@ -129,7 +130,42 @@ public class WStepSequenceDefDao {
 
 	}
 	
+	// dml 20130827
+	public boolean existsRoute(Integer routeId) throws WStepSequenceDefException {
 	
+		Integer storedId = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			storedId = (Integer) session.createSQLQuery("SELECT id FROM w_step_sequence_def WHERE id = " + routeId)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepSequenceDefDao: existsRoute - can't obtain route id = " +
+					routeId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepSequenceDefException("WStepSequenceDefDao: existsRoute - can't obtain route id: " + 
+					routeId + " - " + ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		if (storedId == null){
+			return false;
+		} else {
+			return true;
+		}
+		
+	}	
 
 	public WStepSequenceDef getWStepSequenceDefByPK(Integer id) throws WStepSequenceDefException {
 

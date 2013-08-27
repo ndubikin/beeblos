@@ -7,8 +7,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.dao.WStepSequenceDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
@@ -82,6 +84,13 @@ public class WStepSequenceDefBL {
 
 	}
 
+	// dml 20130827
+	public boolean existsRoute(Integer routeId) throws WStepSequenceDefException {
+
+		return new WStepSequenceDefDao().existsRoute(routeId);
+	
+	}
+	
 	public WStepSequenceDef getWStepSequenceDefByPK(Integer id, Integer currentUser) throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao().getWStepSequenceDefByPK(id);
