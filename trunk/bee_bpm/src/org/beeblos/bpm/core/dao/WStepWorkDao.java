@@ -1061,8 +1061,8 @@ public class WStepWorkDao {
 	
 	// dml 20120130
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getWorkListByIdWork(
-			Integer idWork, Integer currentUser ) 
+	public List<WStepWork> getWorkListByIdWorkAndStatus(
+			Integer idWork, String status, Integer currentUser ) 
 	throws WStepWorkException {
 
 		org.hibernate.Session session = null;
@@ -1077,10 +1077,26 @@ public class WStepWorkDao {
 
 			tx.begin();
 
-			stepws = session
-				.createQuery("From WStepWork where wProcessWork.id = :idWork order by openedDate ")
-				.setParameter("idWork", idWork)
-				.list();
+			// dml 20130826 - le añado el status porque me hará falta para pintar el editor
+			if ( status==null || "".equals(status) ) {
+				stepws = session
+						.createQuery("From WStepWork where wProcessWork.id = :idWork Order By openedDate ")
+						.setParameter("idWork", idWork)
+						.list();
+			} else {
+
+				if ( status.equals(PROCESSED)) {
+					stepws = session
+							.createQuery("From WStepWork Where wProcessWork.id = :idWork And decidedDate IS NOT NULL Order By openedDate")
+							.setParameter("idWork", idWork)
+							.list();
+				} else { // ALIVE
+					stepws = session
+							.createQuery("From WStepWork Where wProcessWork.id = :idWork And decidedDate IS NULL Order By openedDate")
+							.setParameter("idWork", idWork)
+							.list();					
+				}
+			}
 
 			tx.commit();
 

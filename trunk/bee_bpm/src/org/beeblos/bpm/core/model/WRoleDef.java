@@ -152,22 +152,11 @@ public class WRoleDef implements java.io.Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((idObject == null) ? 0 : idObject.hashCode());
-		result = prime * result
-				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result + ((idObject == null) ? 0 : idObject.hashCode());
+		result = prime * result + ((idObjectType == null) ? 0 : idObjectType.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
 		return result;
 	}
 
@@ -195,7 +184,7 @@ public class WRoleDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WRoleDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WRoleDef other = (WRoleDef) obj;
 		if (description == null) {
@@ -218,35 +207,10 @@ public class WRoleDef implements java.io.Serializable {
 				return false;
 		} else if (!idObjectType.equals(other.idObjectType))
 			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser == null) {
-			if (other.insertUser != null)
-				return false;
-		} else if (!insertUser.equals(other.insertUser))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
-			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (usersRelated == null) {
-			if (other.usersRelated != null)
-				return false;
-		} else if (!usersRelated.equals(other.usersRelated))
 			return false;
 		return true;
 	}		

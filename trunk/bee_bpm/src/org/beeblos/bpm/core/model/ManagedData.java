@@ -27,6 +27,13 @@ public class ManagedData {
 		changed=false;
 	}
 
+	public ManagedData(boolean createEmtpyObjects ){
+		super();
+		if ( createEmtpyObjects ) {
+			this.managedTableConfiguration=new WProcessHeadManagedDataConfiguration();			
+		}	
+	}
+
 	public Integer getPk() {
 		return pk;
 	}

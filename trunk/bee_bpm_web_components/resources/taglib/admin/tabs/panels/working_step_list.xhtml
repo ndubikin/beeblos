@@ -6,6 +6,17 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<script type="text/javascript">
+	//<![CDATA[
+	function openInNewTab(url)
+	{
+
+		var win=window.open(url, '_blank');
+		win.focus();
+	}
+	//]]>
+	</script>	
+
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
@@ -21,6 +32,14 @@
                 	<b> #{msg.label_view_step_work} </b> ( {reference} ) 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idStepWork}" value="{idStepWork}"/>
             	</rich:menuItem>
+				<rich:menuItem
+					oncomplete="openInNewTab('#{workingProcessQueryBean.workflowViewXmlMapUrl}');"
+					action="#{workingProcessQueryBean.loadXmlMapAsTmp}"
+					submitMode="ajax">
+					<b> #{msg.label_load_process_xml_map}</b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}" />
+                	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.idStepWork}" value="{idStepWork}"/>
+				</rich:menuItem>
             	<rich:menuSeparator />         
            		<rich:menuItem ajaxSingle="false" style="{styleIsAlive}"
            			action="#{workingProcessQueryBean.loadStepWork}">

@@ -307,6 +307,43 @@ public class WStepDefDao {
 		return version;
 	}	
 
+	// dml 20130827
+	public boolean existsStep(Integer stepId) throws WStepDefException {
+	
+		Integer storedId = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			storedId = (Integer) session.createSQLQuery("SELECT id FROM w_step_def WHERE id = " + stepId)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepDefDao: existsStep - can't obtain step id = " +
+					stepId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("existsStep;  can't obtain step id: " + 
+					stepId + " - " + ex.getMessage()+"\n"+ex.getCause());
+
+		}
+
+		if (storedId == null){
+			return false;
+		} else {
+			return true;
+		}
+		
+	}	
+
 	// nes 20130502 - ajustado al nuevo formato de campos de la sequence
 	@SuppressWarnings("unchecked")
 	public List<WStepDef> getStepDefs(Integer processId) throws WStepDefException {

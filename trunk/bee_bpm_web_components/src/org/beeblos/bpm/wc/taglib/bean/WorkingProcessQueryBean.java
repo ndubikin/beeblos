@@ -3,16 +3,24 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.PENDING;
 import static org.beeblos.bpm.core.util.Constants.PROCESSING;
+import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
+import static org.beeblos.bpm.core.util.Constants.WORKFLOW_VIEW_URI;
 import static org.beeblos.bpm.core.util.Constants.WORKINGPROCESS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGSTEPS_QUERY;
 import static org.beeblos.bpm.core.util.Constants.WORKINGWORKS_QUERY;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
@@ -20,6 +28,7 @@ import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.bl.WorkflowEditorBL;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -42,6 +51,7 @@ import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessWorkUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepWorkUtil;
+import org.xml.sax.SAXException;
 
 import com.sp.common.jsf.util.UtilsVs;
 
@@ -1003,4 +1013,89 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	}
 	
+	public void loadXmlMapAsTmp() {
+		
+		if (currentProcessId != null
+				&& !currentProcessId.equals(0)
+				&& idStepWork != null
+				&& !idStepWork.equals(0)){
+			try {
+				
+				this.currentWStepWork = new WStepWorkBL().getWStepWorkByPK(idStepWork, getCurrentUserId());
+				
+				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.currentProcessId, getCurrentUserId());
+				
+				if (this.currentWStepWork != null
+						&& this.currentWStepWork.getwProcessWork() != null
+						&& this.currentWStepWork.getwProcessWork().getId() != null
+						&& !this.currentWStepWork.getwProcessWork().getId().equals(0)
+						&& xmlMapTmp != null){
+					
+					xmlMapTmp = new WorkflowEditorBL().paintXmlMap(
+							xmlMapTmp, this.currentWStepWork.getwProcessWork().getId(), currentUserId);
+					
+					String path = CONTEXTPATH + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+					File temp = new File(path);
+					
+					// if file doesnt exists, then create it
+					if (!temp.exists()) {
+						temp.createNewFile();
+					}
+					
+					FileWriter fw = new FileWriter(temp.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					bw.write(xmlMapTmp);
+					bw.flush();
+					bw.close();
+					
+				}
+
+			} catch (IOException e) {
+
+				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+				String params[] = {mensaje};
+				agregarMensaje("61",mensaje,params,FGPException.WARN);
+				logger.error("loadXmlMapAsTmp: "+mensaje);
+				
+			} catch (WProcessDefException e) {
+
+				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+				String params[] = {mensaje};
+				agregarMensaje("61",mensaje,params,FGPException.WARN);
+				logger.error("loadXmlMapAsTmp: "+mensaje);
+				
+			} catch (ParserConfigurationException e) {
+				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+				String params[] = {mensaje};
+				agregarMensaje("61",mensaje,params,FGPException.WARN);
+				logger.error("loadXmlMapAsTmp: "+mensaje);
+			} catch (SAXException e) {
+				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+				String params[] = {mensaje};
+				agregarMensaje("61",mensaje,params,FGPException.WARN);
+				logger.error("loadXmlMapAsTmp: "+mensaje);
+			} catch (WStepWorkException e) {
+				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
+				String params[] = {mensaje};
+				agregarMensaje("61",mensaje,params,FGPException.WARN);
+				logger.error("loadXmlMapAsTmp: "+mensaje);
+			}
+		}
+		
+	}
+
+	public String getWorkflowViewXmlMapUrl(){
+		return this._getRequestContextPath() + WORKFLOW_VIEW_URI;
+	}
+	
+	public String _getRequestContextPath() {
+		return FacesContext.getCurrentInstance().getExternalContext()
+				.getRequestContextPath().trim().replaceAll("\\\\", "/");
+	}
+
 }

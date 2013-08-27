@@ -141,66 +141,45 @@ public class WUserDef implements java.io.Serializable {
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result + insertUser;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		WUserDef other = (WUserDef) obj;
-//		if (active != other.active)
-//			return false;
-//		if (email == null) {
-//			if (other.email != null)
-//				return false;
-//		} else if (!email.equals(other.email))
-//			return false;
-//		if (insertDate == null) {
-//			if (other.insertDate != null)
-//				return false;
-//		} else if (!insertDate.equals(other.insertDate))
-//			return false;
-//		if (insertUser != other.insertUser)
-//			return false;
-//		if (login == null) {
-//			if (other.login != null)
-//				return false;
-//		} else if (!login.equals(other.login))
-//			return false;
-//		if (modDate == null) {
-//			if (other.modDate != null)
-//				return false;
-//		} else if (!modDate.equals(other.modDate))
-//			return false;
-//		if (modUser == null) {
-//			if (other.modUser != null)
-//				return false;
-//		} else if (!modUser.equals(other.modUser))
-//			return false;
-//		if (name == null) {
-//			if (other.name != null)
-//				return false;
-//		} else if (!name.equals(other.name))
-//			return false;
-//		if (rolesRelated == null) {
-//			if (other.rolesRelated != null)
-//				return false;
-//		} else if (!rolesRelated.equals(other.rolesRelated))
-//			return false;
-//		return true;
-//	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WUserDef other = (WUserDef) obj;
+		if (active != other.active)
+			return false;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (login == null) {
+			if (other.login != null)
+				return false;
+		} else if (!login.equals(other.login))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
 
 	public boolean empty() {
 

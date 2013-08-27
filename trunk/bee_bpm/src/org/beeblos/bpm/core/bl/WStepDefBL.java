@@ -483,6 +483,13 @@ public class WStepDefBL {
 	
 	}
 	
+	// dml 20130827
+	public boolean existsStep(Integer stepId) throws WStepDefException {
+
+		return new WStepDefDao().existsStep(stepId);
+	
+	}
+	
 	//note: this method may be called from a processDef or without a processDef
 	// if the methos is called with a defined process def, it nees processHeadId to
 	// return step data fields related only with indicated processHeadId
