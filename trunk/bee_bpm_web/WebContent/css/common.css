@@ -637,7 +637,7 @@ float:left;
 	margin-left:35px;
 }
 
-.fieldset_block_info_wo_line {
+.fieldset_block_info_noBorder_noPadding {
 	border:none;
 	width:100%;
 	padding-bottom:10px; /* 0 para contrarrestar el padding que tiene el skin de richfaces */
@@ -646,7 +646,7 @@ float:left;
 }
 
 /* para cambiar luego por el de arriba*/
-.fieldset_block_info_wo_line_35px {
+.fieldset_block_info_noBorder_noPadding_35px {
 	border:none;
 	width:100%;
 	padding-bottom:10px; /* 0 para contrarrestar el padding que tiene el skin de richfaces */
