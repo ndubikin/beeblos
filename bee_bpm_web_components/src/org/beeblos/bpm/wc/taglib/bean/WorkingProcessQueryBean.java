@@ -685,7 +685,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {
 
 			processWorkLightList = (ArrayList<ProcessWorkLight>) new WProcessWorkBL()
-					.getWorkingWorkListFinder(processIdFilter, workTypeFilter, onlyActiveWorkingProcessesFilter, 
+					.finderWorkingWork(processIdFilter, workTypeFilter, onlyActiveWorkingProcessesFilter, 
 							initialStartedDateFilter, finalStartedDateFilter, estrictStartedDateFilter, 
 							initialFinishedDateFilter, finalFinishedDateFilter, estrictFinishedDateFilter, 
 							action);
@@ -722,7 +722,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {	
 			
 			stepWorkLightList = (ArrayList<StepWorkLight>) new WStepWorkBL()
-					.workingStepFinder(processIdFilter, stepIdFilter, 
+					.finderStepWork(processIdFilter, stepIdFilter, 
 							stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 							finalArrivingDateFilter, estrictArrivingDateFilter, 
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
@@ -751,7 +751,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		try {	
 			
 			stepWorkLightList = (ArrayList<StepWorkLight>) new WStepWorkBL()
-					.workingStepFinder(processIdFilter, stepIdFilter, 
+					.finderStepWork(processIdFilter, stepIdFilter, 
 							stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 							finalArrivingDateFilter, estrictArrivingDateFilter, 
 							initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
