@@ -193,7 +193,7 @@ public class WProcessWorkDao {
 		return processs;
 	}
 	
-	public List<ProcessWorkLight> getWorkingWorkListFinder(Integer idProcess, 
+	public List<ProcessWorkLight> finderWorkingWork(Integer idProcess, 
 			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
 			Date initialStartedDateFilter, Date finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
@@ -210,7 +210,7 @@ public class WProcessWorkDao {
 			filter = "WHERE " + filter;
 		}
 
-		String query = _buildWorkingWorkQuery(idProcess, filter, action);
+		String query = _buildFinderWorkingWorkQuery(idProcess, filter, action);
 		
 		logger.debug("------>> getWorkingWorkListFinder -> query:" + query
 				+ "<<-------");
@@ -313,19 +313,19 @@ public class WProcessWorkDao {
 		return filter;
 	}
 
-	private String _buildWorkingWorkQuery(Integer idProcess, String filter, String action) {
+	private String _buildFinderWorkingWorkQuery(Integer idProcess, String filter, String action) {
 
-		
 		String tmpQuery = "SELECT ";
-		tmpQuery += " pw.id_process, ";
+		tmpQuery += " pw.id_process, "; // 0
 		tmpQuery += " ph.name, ";
 		tmpQuery += " pw.reference, ";
-		tmpQuery += " pw.comments, ";
+		tmpQuery += " pw.comments, "; // 3
 		tmpQuery += " (SELECT COUNT(id) FROM w_step_work sw WHERE sw.decided_date IS NULL AND sw.id_process = pw.id_process AND sw.id_work = pw.id ) AS liveSteps, ";
 		tmpQuery += " pw.starting_time, ";
-		tmpQuery += " ps.name, ";
+		tmpQuery += " ps.id, "; // status id 6 	nes 20130828
+		tmpQuery += " ps.name as statusName, "; // status name // DAVID: AQUI HAY QUE PONER UN AS PORQUE AL HABER DOS "NAME" EL TIO PIYA SOLO E 1ERO
 		tmpQuery += " pw.end_time, ";
-		tmpQuery += " pw.id ";		
+		tmpQuery += " pw.id ";		// 9
 
 		tmpQuery += " FROM w_process_work pw ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
@@ -349,21 +349,9 @@ public class WProcessWorkDao {
 	private List<ProcessWorkLight> getWorkingWorkList(String query)
 			throws WProcessWorkException {
 
-		Integer idProcess;
-		String processName;
-		String workReference;
-		String workComments;
-
-		Integer liveSteps;
-		
-		Date started;
-		
-		String status;
-		
-		Date finished;
-		
-		Integer idWork;
-		
+		Integer idProcess,idWork,statusId, liveSteps;
+		String processName, workReference, workComments, stausName;
+		Date started, finished;
 		
 		Session session = null;
 		Transaction tx = null;
@@ -391,20 +379,23 @@ public class WProcessWorkDao {
 
 
 					idProcess = (cols[0] != null ? new Integer(
-							cols[0].toString()) : null);
+									cols[0].toString()) : null);
 					processName = (cols[1] != null ? cols[1].toString() : "");
 					workReference = (cols[2] != null ? cols[2].toString() : "");
 					workComments = (cols[3] != null ? cols[3].toString() : "");
 					liveSteps = (cols[4] != null ? new Integer(
-							cols[4].toString()) : null);
+									cols[4].toString()) : null);
 					started = (cols[5] != null ? (Date) cols[5] : null);
-					status = (cols[6] != null ? cols[6].toString() : "");
-					finished = (cols[7] != null ? (Date) cols[7] : null);
-					idWork = (cols[8] != null ? new Integer(
-							cols[8].toString()) : null);
+					// nes 20130828
+					statusId = (cols[6] != null ? new Integer(
+								cols[6].toString()) : null);
+					stausName = (cols[7] != null ? cols[7].toString() : "");
+					finished = (cols[8] != null ? (Date) cols[8] : null);
+					idWork = (cols[9] != null ? new Integer(
+								cols[9].toString()) : null);
 
 					returnList.add(new ProcessWorkLight(idProcess, processName, workReference, 
-							workComments, liveSteps, started, status, finished, idWork));
+							workComments, liveSteps, started, stausName, finished, idWork));
 				}
 
 			} else {

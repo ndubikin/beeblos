@@ -18,6 +18,7 @@ public class WProcessDataField implements java.io.Serializable {
 	private Integer processHeadId;
 	private WDataType dataType;
 	private String name;
+	private String columnName;
 	private Integer order;
 	private boolean required;
 	private String comments;
@@ -87,6 +88,14 @@ public class WProcessDataField implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getColumnName() {
+		return columnName;
+	}
+
+	public void setColumnName(String columnName) {
+		this.columnName = columnName;
 	}
 
 	public Integer getOrder() {
@@ -210,6 +219,7 @@ public class WProcessDataField implements java.io.Serializable {
 						+ ", " : "")
 				+ (dataType != null ? "dataType=" + dataType + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
+				+ (columnName != null ? "columnName=" + columnName + ", " : "")
 				+ (order != null ? "order=" + order + ", " : "")
 				+ "required="
 				+ required
@@ -239,6 +249,8 @@ public class WProcessDataField implements java.io.Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
+		result = prime * result
+				+ ((columnName == null) ? 0 : columnName.hashCode());
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result
@@ -274,6 +286,11 @@ public class WProcessDataField implements java.io.Serializable {
 			return false;
 		WProcessDataField other = (WProcessDataField) obj;
 		if (active != other.active)
+			return false;
+		if (columnName == null) {
+			if (other.columnName != null)
+				return false;
+		} else if (!columnName.equals(other.columnName))
 			return false;
 		if (comments == null) {
 			if (other.comments != null)

@@ -10,6 +10,7 @@ public class ProcessWorkLight {
 	private String workComments;
 	private Integer liveSteps;
 	private Date started;
+	private Integer statusId;
 	private String status;
 	private Date finished;
 	
@@ -83,6 +84,14 @@ public class ProcessWorkLight {
 		this.started = started;
 	}
 
+	public Integer getStatusId() {
+		return statusId;
+	}
+
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
+	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -109,11 +118,20 @@ public class ProcessWorkLight {
 
 	@Override
 	public String toString() {
-		return "ProcessWorkLight [idProcess=" + idProcess + ", processName="
-				+ processName + ", workReference=" + workReference
-				+ ", workComments=" + workComments + ", liveSteps=" + liveSteps
-				+ ", started=" + started + ", status=" + status + ", finished="
-				+ finished + ", idWork=" + idWork + "]";
+		return "ProcessWorkLight ["
+				+ (idProcess != null ? "idProcess=" + idProcess + ", " : "")
+				+ (processName != null ? "processName=" + processName + ", "
+						: "")
+				+ (workReference != null ? "workReference=" + workReference
+						+ ", " : "")
+				+ (workComments != null ? "workComments=" + workComments + ", "
+						: "")
+				+ (liveSteps != null ? "liveSteps=" + liveSteps + ", " : "")
+				+ (started != null ? "started=" + started + ", " : "")
+				+ (statusId != null ? "statusId=" + statusId + ", " : "")
+				+ (status != null ? "status=" + status + ", " : "")
+				+ (finished != null ? "finished=" + finished + ", " : "")
+				+ (idWork != null ? "idWork=" + idWork : "") + "]";
 	}
 
 	@Override
@@ -132,6 +150,8 @@ public class ProcessWorkLight {
 		result = prime * result + ((started == null) ? 0 : started.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result
+				+ ((statusId == null) ? 0 : statusId.hashCode());
+		result = prime * result
 				+ ((workComments == null) ? 0 : workComments.hashCode());
 		result = prime * result
 				+ ((workReference == null) ? 0 : workReference.hashCode());
@@ -144,7 +164,7 @@ public class ProcessWorkLight {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof ProcessWorkLight))
 			return false;
 		ProcessWorkLight other = (ProcessWorkLight) obj;
 		if (finished == null) {
@@ -181,6 +201,11 @@ public class ProcessWorkLight {
 			if (other.status != null)
 				return false;
 		} else if (!status.equals(other.status))
+			return false;
+		if (statusId == null) {
+			if (other.statusId != null)
+				return false;
+		} else if (!statusId.equals(other.statusId))
 			return false;
 		if (workComments == null) {
 			if (other.workComments != null)
