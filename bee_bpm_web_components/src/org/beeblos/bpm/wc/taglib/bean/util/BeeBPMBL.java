@@ -15,6 +15,7 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -48,7 +49,7 @@ public class BeeBPMBL {
 			String objReference, String objComments, 
 			ManagedData managedData, Integer userId) 
 					throws InyectorException, AlreadyExistsRunningProcessException, 
-							WStepWorkException, WProcessWorkException, TableManagerException {
+							WStepWorkException, WProcessWorkException, TableManagerException, WStepWorkSequenceException {
 		
 		Integer idStepWork=null;
 		

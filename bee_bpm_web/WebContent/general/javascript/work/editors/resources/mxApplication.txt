@@ -1,4 +1,5 @@
 // Use http://centricle.com/tools/ascii-hex/ for hex codes
+checkMapIntegrity=Check map integrity
 spObjectListPopup=Softpoint object list
 properties=Properties
 console=Console

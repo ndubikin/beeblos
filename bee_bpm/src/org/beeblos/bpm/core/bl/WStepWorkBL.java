@@ -88,7 +88,7 @@ public class WStepWorkBL {
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
 	public Integer start(WProcessWork work, WStepWork stepw, ManagedData managedData, Integer currentUser) 
-			throws WStepWorkException, WProcessWorkException {
+			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
 		
 		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"]");
 		
@@ -123,6 +123,10 @@ public class WStepWorkBL {
 		stepw.setModDate( DEFAULT_MOD_DATE);
 		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
 		
+		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
+		this.createStepWorkSequenceLog(null, stepw, false, 
+				null, stepw.getCurrentStep(), currentUser);
+
 		_sendEmailNotification(stepw);
 
 		return idGeneratedStep;

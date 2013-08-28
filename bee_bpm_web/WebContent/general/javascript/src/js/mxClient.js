@@ -13463,7 +13463,7 @@ mxSession.prototype.notifyWithResponse = function(changes, editor, onLoad, onErr
  * 
  * Sends out the specified XML to <urlNotify> and fires a <notify> event.
  */
-mxSession.prototype.save = function(url, data, editor, onLoad, onError)
+mxSession.prototype.postXmlMap = function(url, data, editor, onLoad, onError)
 {
 	if (data != null &&
 		data.length > 0)
@@ -71249,6 +71249,14 @@ mxEditor.prototype.urlPost = "/bee_bpm_web/rest/wf/Save";
 mxEditor.prototype.urlImage = "/bee_bpm_web/rest/wf/ShowImageMap";
 
 /**
+ * Variable: urlCheckMapIntegrity
+ *
+ * Specifies the URL to be used forposting the diagram
+ * to a backend in <checkMapIntegrity>.
+ */
+mxEditor.prototype.urlCheckMapIntegrity = "/bee_bpm_web/rest/wf/CheckMapIntegrity";
+
+/**
  * Variable: urlInit
  *
  * Specifies the URL to be used for initializing the session.
@@ -71593,6 +71601,12 @@ mxEditor.prototype.addActions = function ()
 	{
 
 		editor.saveNew();
+		
+	});
+	
+	this.addAction('checkMapIntegrity', function(editor)
+	{
+		editor.checkMapIntegrity();
 		
 	});
 	
@@ -72907,6 +72921,7 @@ mxEditor.prototype.readGraphModel = function (node)
 };
 
 /**
+ * dml 20130828 - DEPRECATED (USE saveNew JUST BELOW)
  * Function: save
  * 
  * Posts the string returned by <writeGraphModel> to the given URL or the
@@ -72976,7 +72991,68 @@ mxEditor.prototype.saveNew = function (url, linefeed)
 		mxUtils.showSplash();
 		this.hideSpObjectListPopup();
 
-		this.session.save(url, data, this, 
+		this.session.postXmlMap(url, data, this, 
+			// dml 20130723 - si todo va bien el save hace el hideSplash cuando le llega la respuesta bien
+			function(req, editor){
+				
+				var returnValue = req.getText();
+				if (returnValue.indexOf("EXCEPTION") != -1){
+					mxUtils.alert(returnValue);
+				}
+
+				var xmlString = returnValue;
+				var doc = mxUtils.parseXml(xmlString);
+				var node = doc.documentElement;
+				var dec = new mxCodec(node.ownerDocument);
+				dec.decode(node, editor.graph.getModel());
+
+				editor.execute('showFixProperties', editor.graph.getSelectionCell());
+
+//				setTimeout(function(){this.openProcessXmlMapTmp()},1000);
+				mxUtils.hideSplash(0);
+
+		
+			}
+		)
+
+		// Resets the modified flag
+		this.setModified(false);
+	}
+
+
+};
+
+/**
+ * Function: checkMapIntegrity
+ * 
+ * 
+ * (code)
+ * try
+ * {
+ *   editor.checkMapIntegrity(name);
+ * }
+ * catch (e)
+ * {
+ *   mxUtils.error('Cannot checkMapIntegrity : ' + e.message, 280, true);
+ * }
+ * (end)
+ */
+mxEditor.prototype.checkMapIntegrity = function (url, linefeed)
+{
+
+	// Gets the URL to post the data to
+	url = url || this.getUrlCheckMapIntegrity();
+
+
+	// Posts the data if the URL is not empty
+	if (url != null && url.length > 0)
+	{
+		var data = this.writeGraphModel(linefeed);
+		
+		mxUtils.showSplash();
+		this.hideSpObjectListPopup();
+
+		this.session.postXmlMap(url, data, this, 
 			// dml 20130723 - si todo va bien el save hace el hideSplash cuando le llega la respuesta bien
 			function(req, editor){
 				
@@ -73162,6 +73238,22 @@ mxEditor.prototype.getUrlPost = function ()
 mxEditor.prototype.getUrlImage = function ()
 {
 	return this.urlImage;
+};
+
+/**
+ * dml 20130828
+ *
+ * Function: getUrlCheckMapIntegrity
+ * 
+ * Returns the URL to create the image with. This is typically
+ * the URL of a backend which accepts an XML representation
+ * of a graph view to create an image. The function is used
+ * in the image action to create an image. This implementation
+ * returns <urlImage>.
+ */
+mxEditor.prototype.getUrlCheckMapIntegrity = function ()
+{
+	return this.urlCheckMapIntegrity;
 };
 
 /**

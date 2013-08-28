@@ -123,6 +123,7 @@ public class WorkflowEditorBL {
 				if (spName != null
 						&& spName.equals("Begin")){
 					beginSymbolId = symbol.getAttribute("id");
+					symbol = _setXmlElementDefaultNameAndColor(symbol, null, false, "strokeColor", GREEN);
 					break;
 				}
 				
