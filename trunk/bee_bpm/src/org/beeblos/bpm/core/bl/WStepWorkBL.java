@@ -1281,7 +1281,7 @@ public class WStepWorkBL {
 		return new WStepWorkDao().getStepListByProcessName(idProcess, arrivingDate, openedDate, deadlineDate, status, currentUser);
 	}
 	
-	public List<StepWorkLight> workingStepFinder(Integer processIdFilter, 
+	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
@@ -1290,7 +1290,7 @@ public class WStepWorkBL {
 			String action, boolean onlyActiveWorkingProcessesFilter)
 	throws WStepWorkException {
 
-		return new WStepWorkDao().workingStepFinder(processIdFilter, stepIdFilter, 
+		return new WStepWorkDao().finderStepWork(processIdFilter, stepIdFilter, 
 				stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 				finalArrivingDateFilter, estrictArrivingDateFilter, 
 				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,

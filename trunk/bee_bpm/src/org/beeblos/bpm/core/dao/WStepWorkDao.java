@@ -1514,7 +1514,7 @@ public class WStepWorkDao {
 	
 	}	
 
-	public List<StepWorkLight> workingStepFinder(Integer processIdFilter, 
+	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
 			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
@@ -1540,7 +1540,7 @@ public class WStepWorkDao {
 
 		String query = buildWorkingStepQuery(filter, action);
 		
-		logger.debug("------>> getWorkingStepListFinder -> query:" + query
+		System.out.println("------>> getWorkingStepListFinder -> query:" + query
 				+ "<<-------");
 
 		return getWorkingStepList(query);
@@ -1754,7 +1754,7 @@ public class WStepWorkDao {
 		tmpQuery += filter;
 
 		if (action == null || action.equals("")) {
-			tmpQuery += " ORDER by sw.decided_date DESC; ";
+			tmpQuery += " ORDER by sw.arriving_date DESC; ";
 		} 
 
 		logger.debug("------>> getWorkingProcessStepListByFinder -> query:" + tmpQuery

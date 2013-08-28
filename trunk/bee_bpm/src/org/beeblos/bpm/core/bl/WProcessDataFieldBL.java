@@ -1,10 +1,13 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
-import static org.beeblos.bpm.core.util.Constants.TEXT_W_DATA_TYPE_ID;
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_VARCHAR_LENGHT;
+import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +53,8 @@ public class WProcessDataFieldBL {
 		// default checks
 		_processDataFieldDefaultADDChecks(processDataField, currentUserId);
 		
+		_generateColumnName(processDataField, currentUserId);
+		
 		// timestamp & trace info
 		processDataField.setInsertDate(new Date());
 		processDataField.setModDate( DEFAULT_MOD_DATE );
@@ -60,6 +65,33 @@ public class WProcessDataFieldBL {
 
 	}
 	
+	/**
+	 * @author dmuleiro - 20130822
+	 * 
+	 * Checks if the processDataField to be added has correct params and format it if it has not
+	 *
+	 * @param  WProcessDataField processDataField
+	 * @param  Integer currentUserId
+	 * @return void
+	 * 
+	 */
+	private void _generateColumnName(WProcessDataField processDataField, Integer currentUserId) 
+			throws WDataTypeException {
+		
+		if (processDataField.getName()!=null) {
+//			String[] col = processDataField.getName().toCharArray();
+//			
+//			String colname=processDataField.getName().toLowerCase();
+//			if ()
+			
+		} else {
+			Random rand = new Random(); 
+			rand.setSeed(new Date().getTime());
+			int val = rand.nextInt(50); 
+			processDataField.setColumnName(""+processDataField.getClass().getName()+val);
+		}
+
+	}
 	/**
 	 * @author dmuleiro - 20130822
 	 * 
@@ -81,27 +113,34 @@ public class WProcessDataFieldBL {
 					|| processDataField.getDataType().getName() == null){
 				
 				WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
-						TEXT_W_DATA_TYPE_ID, currentUserId);
+						TEXT_DATA_TYPE, currentUserId);
 				
 				processDataField.setDataType(currentDataType);
-				processDataField.setLength(currentDataType.getDefaultLength());
+				
+				processDataField.setLength((currentDataType.getDefaultLength()!=null 
+						&& currentDataType.getDefaultLength()>0
+						? currentDataType.getDefaultLength()
+								: DEFAULT_VARCHAR_LENGHT));
 						
 			// dml 20130822 - si tiene nombre y el lenght es null o "0" le ponemos el defaultLength del dato
 			} else{
 				
-				WDataType currentDataType = new WDataTypeBL().getWDataTypeByName(
-						processDataField.getDataType().getName(), currentUserId);
+				// DAVID: NO ENTENDI POR QUE DEJASTE AQUÍ EL ENGANCHE CON EL DATATYPE POR NOMBRE ... 
+				WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
+						processDataField.getDataType().getId(), currentUserId);
 				
-				if (currentDataType.getDefaultLength() == null
-						|| processDataField.getLength() == null
-						|| processDataField.getLength().equals(0)){
-					
-					processDataField.setLength(currentDataType.getDefaultLength());
-					
+				// si en la tabla datatype está en null el defaultLength considero que no debe ir asi que lo anulo
+				if (currentDataType.getDefaultLength() == null ) {
+					processDataField.setLength(null);
+				} else { // si el currentDataType.getDefaultLength() es diferente de nulo entonces veo
+					if (processDataField.getLength()==null 
+							|| processDataField.getLength()<1) {
+						processDataField.setLength(currentDataType.getDefaultLength());
+					} else if (processDataField.getLength() > currentDataType.getMaxLength()) {
+						processDataField.setLength(currentDataType.getMaxLength());
+					} 
 				}
-
 			}
-			
 		}
 		
 	}
@@ -165,15 +204,22 @@ public class WProcessDataFieldBL {
 			throw new WProcessDataFieldException("Process data field has not a valid name!! Not permitted operation ... ");
 		}
 		
-		WDataType currentDataType = new WDataTypeBL().getWDataTypeByName(
-				processDataField.getDataType().getName(), currentUserId);
+		// DAVID: NO ENTENDI POR QUE RECUPERABAS EL DATA TYPE POR NOMBRE ...???
+		WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
+				processDataField.getDataType().getId(), currentUserId);
 
-		// dml 20130822 - empty length is not allowed
-		if (currentDataType.getDefaultLength() == null
+		// dml 20130822 - empty length is not allowed >> DAVID: DEJO ESTE MENSAJE PERO NO SE LO QUE QUISISTE PONER/HACER - LO AJUSTO A MI ENTENDER ...
+		
+		// checks if datatype must have length or not (HAY QUE ARREGLALO QUEDA INCOMPLETO)
+		if (currentDataType.getMaxLength() != null
 				&& processDataField.getLength() != null
-				&& !processDataField.getLength().equals(0)){
+				&& processDataField.getLength() > currentDataType.getMaxLength()){
 			throw new WProcessDataFieldException("Process data field has not a valid length!! Not permitted operation ... ");
-		} else if (processDataField.getLength().equals(0)){
+		} 
+
+		// si el default length está en nulo considero q ese campo no puede tener largo
+		// asi que lo anulo para que no reviente el create ...
+		if ( currentDataType.getDefaultLength() == null ){
 			processDataField.setLength(null);
 		}
 		

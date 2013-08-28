@@ -2,8 +2,6 @@ package org.beeblos.bpm.core.model;
 
 import java.util.Date;
 
-import org.hibernate.type.descriptor.sql.TinyIntTypeDescriptor;
-
 
 public class EnvType implements java.io.Serializable{
 

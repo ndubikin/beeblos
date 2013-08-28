@@ -188,7 +188,7 @@ public class TableManager {
 			logger.debug("--------->> generated id:"+id);
 			
 		} catch (MySQLSyntaxErrorException e1) {
-			mess="Error MySQLSyntaxErrorException: TableManager:insert "+e1.getMessage()+" - "+e1.getCause();
+			mess="insert: Error MySQLSyntaxErrorException: TableManager:insert "+e1.getMessage()+" - "+e1.getCause();
 			logger.error(mess);
 			throw new TableManagerException(mess);
 			
@@ -241,7 +241,7 @@ public class TableManager {
 			
 		} catch (MySQLSyntaxErrorException e1) {
 			
-			logger.error("Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+			logger.error("update: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
 
 			
 		} catch (SQLException e) {
@@ -293,11 +293,11 @@ public class TableManager {
 
 		} catch (MySQLSyntaxErrorException e1) {
 			
-			logger.error("Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+			logger.error("load: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
 
 			
 		} catch (SQLException e) {
-			logger.error("Error SQLException "+e.getMessage()+" - "+e.getCause());
+			logger.error("load: Error SQLException "+e.getMessage()+" - "+e.getCause());
 			id=-1;
 		}    finally{
 		      //finally block used to close resources
@@ -452,12 +452,12 @@ public class TableManager {
 			
 		} catch (MySQLSyntaxErrorException e1) {
 			
-			System.out.println("Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+			System.out.println("checkTableExists: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
 			
 			qty=-1;
 			
 		} catch (SQLException e) {
-			System.out.println("Error SQLException "+e.getMessage()+" - "+e.getCause());
+			System.out.println("checkTableExists: Error SQLException "+e.getMessage()+" - "+e.getCause());
 			qty=-1;
 			
 		}    finally{
@@ -512,12 +512,12 @@ public class TableManager {
 			
 		} catch (MySQLSyntaxErrorException e1) {
 			
-			System.out.println("Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+			System.out.println("checkTableExists: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
 			
 			qty=-1;
 			
 		} catch (SQLException e) {
-			System.out.println("Error SQLException "+e.getMessage()+" - "+e.getCause());
+			System.out.println("checkTableExists: Error SQLException "+e.getMessage()+" - "+e.getCause());
 			qty=-1;
 			
 		}    finally{
@@ -950,7 +950,7 @@ public class TableManager {
 		
 		String colsize="";
 		if (column.getDataType().getSqlType().equals(java.sql.Types.VARCHAR)) {
-			if (column.getLength()>0) {
+			if (column!=null && column.getLength()>0) { // nes 20130828
 				colsize = "("+column.getLength()+")";
 			} else {
 				// dml 20130821 - si no tiene longitud le ponemos 1 por defecto
