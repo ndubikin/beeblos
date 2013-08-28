@@ -88,9 +88,9 @@ public class WorkflowEditorBL {
 								&& wsws.getBeginStep().getId().equals(Integer.valueOf(spId))){
 							
 							if (wsws.isSentBack()){
-								_setXmlElementDefaultNameAndColor(task, task.getAttribute("label") + "(SB)", "strokeColor", BROWN);
+								task = _setXmlElementDefaultNameAndColor(task, task.getAttribute("label"), true, "strokeColor", BROWN);
 							} else {
-								_setXmlElementDefaultNameAndColor(task, null, "strokeColor", GREEN);								
+								task = _setXmlElementDefaultNameAndColor(task, null, false, "strokeColor", GREEN);								
 							}
 							
 						}
@@ -99,7 +99,7 @@ public class WorkflowEditorBL {
 								&& wsws.getEndStep().getId() != null
 								&& wsws.getEndStep().getId().equals(Integer.valueOf(spId))){
 							
-							_setXmlElementDefaultNameAndColor(task, null, "strokeColor", RED);
+							task = _setXmlElementDefaultNameAndColor(task, null, false, "strokeColor", RED);
 							
 						}
 
@@ -162,7 +162,7 @@ public class WorkflowEditorBL {
 						if (xmlFromStepId != null
 								&& beginSymbolId != null
 								&& beginSymbolId.equals(xmlFromStepId)){
-							_setXmlElementDefaultNameAndColor(edge, null, "strokeColor", GREEN);
+							edge = _setXmlElementDefaultNameAndColor(edge, null, false, "strokeColor", GREEN);
 							continue;
 						}
 						
@@ -170,12 +170,12 @@ public class WorkflowEditorBL {
 						if (xmlToStepId == null
 							|| xmlToStepId.isEmpty()){
 							spName = DEFAULT_ERROR;
-							edge = this._setXmlElementDefaultNameAndColor(edge, "fontColor", DEFAULT_ERROR, RED);
+							edge = this._setXmlElementDefaultNameAndColor(edge, "fontColor", false, DEFAULT_ERROR, RED);
 						} else {
 							if (spName != null
 									&& spName.equals(DEFAULT_ERROR)){
 								spName = "";
-								edge = this._setXmlElementDefaultNameAndColor(edge, "fontColor", "", null);
+								edge = this._setXmlElementDefaultNameAndColor(edge, "fontColor", false, "", null);
 							}
 						}
 	
@@ -228,17 +228,17 @@ public class WorkflowEditorBL {
 						if (wsws.getStepSequence() != null){
 	
 							if (wsws.getStepSequence().getFromStep() != null
-									&& wsws.getStepSequence().getFromStep().getId() != null
-									&& wsws.getStepSequence().getFromStep().getId().equals(Integer.valueOf(spFromStepId))
-									&& wsws.getStepSequence().getToStep() != null
-									&& wsws.getStepSequence().getToStep().getId() != null
-									&& wsws.getStepSequence().getToStep().getId().equals(Integer.valueOf(spToStepId))
-									&& !wsws.isSentBack()){
+								&& wsws.getStepSequence().getFromStep().getId() != null
+								&& wsws.getStepSequence().getFromStep().getId().equals(Integer.valueOf(spFromStepId))
+								&& wsws.getStepSequence().getToStep() != null
+								&& wsws.getStepSequence().getToStep().getId() != null
+								&& wsws.getStepSequence().getToStep().getId().equals(Integer.valueOf(spToStepId))
+								&& !wsws.isSentBack()){
 									
-									_setXmlElementDefaultNameAndColor(edge, null, "strokeColor", GREEN);
-									break;
+								edge = _setXmlElementDefaultNameAndColor(edge, null, false, "strokeColor", GREEN);
+								break;
 								
-								}			
+							}			
 							
 						// si es null es que es un TURNBACK hacia atras
 						} else if (wsws.getBeginStep() != null
@@ -249,7 +249,7 @@ public class WorkflowEditorBL {
 							&& wsws.getEndStep().getId().equals(Integer.valueOf(spFromStepId))
 							&& wsws.isSentBack()){
 							
-							_setXmlElementDefaultNameAndColor(edge, edge.getAttribute("label") + "(SB)", "strokeColor", BROWN);
+							edge = _setXmlElementDefaultNameAndColor(edge, edge.getAttribute("label"), true, "strokeColor", BROWN);
 							break;
 						
 						}
@@ -269,7 +269,25 @@ public class WorkflowEditorBL {
 
 	}
 
-	private Element _setXmlElementDefaultNameAndColor(Element element, String defaultName, String property, String color){
+	private Element _setXmlElementDefaultNameAndColor(Element element, String defaultName, boolean sentBack, String property, String color){
+
+		if (sentBack){
+			
+			if (defaultName == null){
+				defaultName = "";
+			}
+			
+			if (defaultName.contains("(")
+					&& defaultName.contains(")")){
+				String n = defaultName.substring(defaultName.indexOf("("), defaultName.indexOf(")")+1);
+				String number = n.substring(1, n.length()-1);
+				Integer newNumber = Integer.valueOf(number) + 1;
+				defaultName = defaultName.replace(n, "(" + newNumber + ")");
+			} else {
+				defaultName += "(1)";
+			}
+			
+		}
 
 		if (defaultName != null
 				&& !"".equals(defaultName)){
