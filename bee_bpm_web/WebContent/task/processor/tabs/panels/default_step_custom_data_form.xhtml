@@ -5,11 +5,11 @@
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:rich="http://richfaces.org/rich">
 	
-	<p class="fieldset_block_info_wo_line">
+	<p class="fieldset_block_info_noBorder_noPadding">
 		<h:outputText value="#{msg.label_data_fields}" styleClass="title_style"/>
 	</p>	
 	
-	<table width="100%" style="margin-left:-2px;" >
+	<table>
 		<tbody>
 			<a4j:repeat value="#{pasoBean.pasoActual.managedData.dataField}" var="inputDataField">
 				<tr>
