@@ -35,7 +35,7 @@
 				<h:panelGrid id="emailButtonPanel" columns="2">
 					<a4j:commandButton id="cancel_email_search" value="#{msg.label_cancel}" 
 						reRender="w_process_def_notifications_form" onclick="javascript:Richfaces.hideModalPanel('mpSearchEmail');" 
-						style="width: 80px; margin-left: -4px;" immediate="true" />
+						style="width: 80px; " immediate="true" />
 				 	<a4j:commandButton id="email_search" value="#{msg.label_search}" type="submit"
 						actionListener="#{wProcessDefFormBean.searchEmails}"
 						reRender="#{email_list_form}"

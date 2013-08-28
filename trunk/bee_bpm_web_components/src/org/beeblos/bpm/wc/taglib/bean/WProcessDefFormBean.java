@@ -4,7 +4,7 @@ import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
-import static org.beeblos.bpm.core.util.Constants.TEXT_W_DATA_TYPE_ID;
+import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
@@ -2162,7 +2162,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT);
 		this.wProcessDataFieldSelected.setActive(true); //rrl 20130807 Default TRUE to add a data fields
 		
-		this.wProcessDataFieldSelected.setDataType(new WDataType(TEXT_W_DATA_TYPE_ID));
+		this.wProcessDataFieldSelected.setDataType(new WDataType(TEXT_DATA_TYPE));
 		visibleButtonNewDataField = false;
 		
 	}
@@ -2463,24 +2463,34 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		TableManager tm = new TableManager();
 		
-		if (!checkTableExists(tm)) {
-			this.createWindowMessage("ERROR_MESSAGE", "Error, can't recreate table because it doesn't exists ...");
-		}
+		// nes 20130828
+		if (checkTableExists(tm)) {
 		
-		if (checkTableHasRecords(tm)) {
-			this.createWindowMessage("ERROR_MESSAGE", 
-					"La tabla contiene datos, no se puede hacer recreate ...");
+		
+			if (checkTableHasRecords(tm)) {
+				this.createWindowMessage("ERROR_MESSAGE", 
+						"La tabla contiene datos, no se puede hacer recreate ...");
+			} else {
+				
+				removeManagedTable(
+						tm,currentWProcessDef.getProcess().getManagedTableConfiguration().getName());
+
+				createManagedTable(tm);
+
+				this.createWindowMessage("OK_MESSAGE", 
+						"Tabla reconstruida correctamente.");
+
+				
+			}
+
 		} else {
-			
-			removeManagedTable(
-					tm,currentWProcessDef.getProcess().getManagedTableConfiguration().getName());
-			
+
 			createManagedTable(tm);
 
-			this.createWindowMessage("OK_MESSAGE", 
-					"Tabla reconstruida correctamente.");
+			this.createWindowMessage("OK_MESSAGE","Se ha creado la tabla.");
 			
 		}
+		
 
 		
 		
