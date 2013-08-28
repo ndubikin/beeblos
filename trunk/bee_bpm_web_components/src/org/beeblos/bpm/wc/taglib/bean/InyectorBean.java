@@ -22,6 +22,7 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -274,6 +275,11 @@ public class InyectorBean  extends CoreManagedBean {
 			throw new InyectorException(mensaje);
 		} catch (TableManagerException e) {
 			String mensaje = "InyectorBean - inyectar: error intentando arrancar workflow: TableManagerException:"+e.getMessage()+" - "+e.getCause();
+			String params[] = {mensaje};
+			agregarMensaje("60",mensaje,params,FGPException.WARN);
+			throw new InyectorException(mensaje);
+		} catch (WStepWorkSequenceException e) {
+			String mensaje = e.getMessage()+" - "+e.getCause();
 			String params[] = {mensaje};
 			agregarMensaje("60",mensaje,params,FGPException.WARN);
 			throw new InyectorException(mensaje);
