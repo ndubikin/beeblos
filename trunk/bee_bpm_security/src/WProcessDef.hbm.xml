@@ -1375,7 +1375,6 @@
 		<property name="processHeadId" type="java.lang.Integer">
 			<column name="process_head_id" />
 		</property>
-
         
         <many-to-one name="dataType" class="com.sp.common.model.WDataType" fetch="join" lazy="false">
             <column name="data_type_id" not-null="true" />
@@ -1384,6 +1383,9 @@
          <property name="name" type="string">
             <column name="name" length="120" />
         </property>
+         <property name="columnName" type="string">
+            <column name="col_name" length="120" />
+        </property>        
         <property name="required" type="java.lang.Boolean">
             <column name="required" />
         </property>
