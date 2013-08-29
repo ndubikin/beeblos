@@ -39,7 +39,8 @@ public class ListConverters {
 						currentWorkId, 
 						currentStepWorkId, 
 						processDataField.getDataType(), 
-						processDataField.getName(), 
+						processDataField.getName(),
+						processDataField.getColumnName(),
 						"", // value
 						processDataField.getOrder(), // display order
 						processDataField.getLength(),
@@ -74,6 +75,9 @@ public class ListConverters {
 							&& !"".equals(stepDatField.getName())
 								?stepDatField.getName()
 								:stepDatField.getDataField().getName()), 
+						
+						stepDatField.getDataField().getColumnName(), // column name must not be null ...
+						
 						"", // value
 
 						// if step has his own order, use it, then use processHead defined order

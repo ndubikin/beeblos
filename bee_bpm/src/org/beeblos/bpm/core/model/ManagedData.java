@@ -4,6 +4,21 @@ import java.util.List;
 
 import com.sp.common.model.ManagedDataField;
 
+/**
+ * @author nes - 20130829
+ *
+ * This object represents a table residing in a schema/database wich manages
+ * user data fields related with a process.
+ * The information is loaded from processHead.getManagedTableConfiguration() wich has
+ * the managed table confirutarion info like tableName, schema, catalog, etc, and
+ * the data field list (List<ManagedDataField> dataField) wich is loaded from 
+ * processHead.getProcessDataFieldDef() and must be match with database engine field
+ * list for this table.
+ * 
+ * @field 
+ * 
+ */
+
 public class ManagedData {
 
 	private Integer pk;
@@ -17,6 +32,8 @@ public class ManagedData {
 	WProcessHeadManagedDataConfiguration managedTableConfiguration;
 
 	private boolean changed;
+	
+	private Integer reccount;
 	
 	List<ManagedDataField> dataField;
 	
@@ -56,6 +73,14 @@ public class ManagedData {
 
 	public void setCurrentStepWorkId(Integer currentStepWorkId) {
 		this.currentStepWorkId = currentStepWorkId;
+	}
+
+	public Integer getReccount() {
+		return reccount;
+	}
+
+	public void setReccount(Integer reccount) {
+		this.reccount = reccount;
 	}
 
 	public Integer getProcessId() {
@@ -130,6 +155,8 @@ public class ManagedData {
 		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
 		result = prime * result
 				+ ((processId == null) ? 0 : processId.hashCode());
+		result = prime * result
+				+ ((reccount == null) ? 0 : reccount.hashCode());
 		return result;
 	}
 
@@ -185,6 +212,11 @@ public class ManagedData {
 				return false;
 		} else if (!processId.equals(other.processId))
 			return false;
+		if (reccount == null) {
+			if (other.reccount != null)
+				return false;
+		} else if (!reccount.equals(other.reccount))
+			return false;
 		return true;
 	}
 
@@ -201,6 +233,7 @@ public class ManagedData {
 				+ (managedTableConfiguration != null ? "managedTableConfiguration="
 						+ managedTableConfiguration + ", "
 						: "") + "changed=" + changed + ", "
+				+ (reccount != null ? "reccount=" + reccount + ", " : "")
 				+ (dataField != null ? "dataField=" + dataField + ", " : "")
 				+ (idWork != null ? "idWork=" + idWork : "") + "]";
 	}

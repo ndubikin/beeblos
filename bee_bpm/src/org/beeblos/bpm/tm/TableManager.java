@@ -1,6 +1,7 @@
 package org.beeblos.bpm.tm;
 
 //import org.hibernate.Hibernate;
+import static org.beeblos.bpm.core.util.Constants.DEFAULT_VARCHAR_LENGHT;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -126,10 +127,12 @@ public class TableManager {
 	public Integer persist(ManagedData managedData) throws TableManagerException {
 		
 		if (managedData==null) throw new TableManagerException("can't process null managedData!");
+
 		if (managedData.getCurrentWorkId()==null 
 				|| managedData.getCurrentWorkId()==0) 
 				throw new TableManagerException("can't process managedData: current work is not defined (currentWorkId:"
 													+(managedData.getCurrentWorkId()==null?"null":"0"));
+
 		if (managedData.getManagedTableConfiguration().getName()==null 
 				|| "".equals(managedData.getManagedTableConfiguration().getName()))  
 			throw new TableManagerException("can't process managedData: managed table is not defined (managedTableName:"
@@ -331,14 +334,14 @@ public class TableManager {
 
 			dataType=mdf.getDataType().getName().toLowerCase();
 			if (dataType.equals("text")) {
-				mdf.setValue(rs.getString(mdf.getName()));
+				mdf.setValue(rs.getString(mdf.getColumnName()));
 			} else if (dataType.equals("integer")) {
-				mdf.setValue(String.valueOf(new Integer(rs.getInt(mdf.getName()))));
+				mdf.setValue(String.valueOf(new Integer(rs.getInt(mdf.getColumnName()))));
 			} else if (dataType.equals("boolean")) {
-				Boolean b = rs.getBoolean(mdf.getName());
+				Boolean b = rs.getBoolean(mdf.getColumnName());
 				mdf.setValue(b.toString());
 			} else {
-				mdf.setValue(rs.getString(mdf.getName()));
+				mdf.setValue(rs.getString(mdf.getColumnName()));
 			}
 		}
 	}
@@ -358,7 +361,7 @@ public class TableManager {
 		Iterator<ManagedDataField> it = managedData.getDataField().iterator();
 		while(it.hasNext()) {
 			ManagedDataField dataField = it.next();
-			sql+=", "+dataField.getName();
+			sql+=", "+dataField.getColumnName();
 		}
 		
 		sql+=" FROM ";
@@ -385,7 +388,7 @@ public class TableManager {
 		String sqlValues=managedData.getCurrentWorkId()+", "+managedData.getProcessId()+" ";
 		while(it.hasNext()) {
 			ManagedDataField dataField = it.next();
-			sql+=", "+dataField.getName();
+			sql+=", "+dataField.getColumnName();
 			sqlValues+=", '"+dataField.getValue()+"' ";
 		}
 		sql+=" ) VALUES ( ";
@@ -414,7 +417,7 @@ public class TableManager {
 		while(it.hasNext()) {
 			if (i>0)  {sql+=", ";} // comma (field separator)
 			ManagedDataField dataField = it.next();
-			sql+=" "+dataField.getName();
+			sql+=" "+dataField.getColumnName();
 			sql+="= '"+dataField.getValue()+"' ";
 			i++;
 		}
@@ -423,42 +426,71 @@ public class TableManager {
 		return sql;
 	}
 	
-	/*
-	 * try select count qty of records of the table and returns it.
-	 * If the table doesn't exist db engine will throw exception and this method will
-	 * return -1
+	/**
+	 * @author nes
 	 * 
-	 */
-	public Integer checkTableExists(String schema, String tableName) throws ClassNotFoundException, SQLException {
+	 * Check table existence. If does not exist return -1
+	 * If table exists return qty records in table
+	 * 
+	 * TableManagerException is thrown if can't obtain connection with engine
+	 * If exception line SQLException comes in the query execution, returns -1 and logs error
+	 * 
+	 * @param String schema
+	 * @param String tableName
+	 *
+	 * @return Integer
+	 * 
+	 */		
+	public Integer checkTableExists(String schema, String tableName) 
+			throws TableManagerException {
 
 		Integer qty=null;
 				
-		connect();
-		
-		String sql ="SELECT COUNT(id) AS COUNT FROM "+tableName;
-		
-		
 		try {
-			
-			stmt = conn.createStatement();
-			
-			ResultSet rs = stmt.executeQuery(sql);
+			connect();
+		} catch (ClassNotFoundException e2) {
+			throw new TableManagerException("checkTableExists: ClassNotFoundException: can't connect with database. "
+					+e2.getMessage()+" - "+e2.getCause());
+		} catch (SQLException e2) {
+			throw new TableManagerException("checkTableExists: SQLException : can't obtain database connection: "
+					+e2.getMessage()+" - "+e2.getCause());
+		}
 
-			while(rs.next()) {
-				qty = rs.getInt("COUNT");
-			   System.out.println("The count is " + qty);
+		DatabaseMetaData dbm;
+		try {
+			dbm = conn.getMetaData();
+
+			// check if tableName table is there
+			ResultSet tables = dbm.getTables(null, schema, tableName, null);
+			
+			if ( tables.next() ) {
+
+				// Table exists
+				String sql ="SELECT COUNT(id) AS COUNT FROM "+tableName;
+					
+				stmt = conn.createStatement();
+				
+				ResultSet rs = stmt.executeQuery(sql);
+
+				while(rs.next()) {
+					qty = rs.getInt("COUNT");
+				   System.out.println("The count is " + qty);
+				}				
+				
 			}
-			
-			
+			else {
+			  // Table does not exist
+				qty=-1;
+			}			
 		} catch (MySQLSyntaxErrorException e1) {
 			
-			System.out.println("checkTableExists: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+			throw new TableManagerException("checkTableExists: MySQLSyntaxErrorException: can't check table existence "
+					+e1.getMessage()+" - "+e1.getCause());
 			
-			qty=-1;
-			
+
 		} catch (SQLException e) {
-			System.out.println("checkTableExists: Error SQLException "+e.getMessage()+" - "+e.getCause());
-			qty=-1;
+			throw new TableManagerException("checkTableExists: SQLException: can't check table existence "
+					+e.getMessage()+" - "+e.getCause());
 			
 		}    finally{
 		      //finally block used to close resources
@@ -479,21 +511,45 @@ public class TableManager {
 		return qty;
 	}
 	
-	/*
-	 * try select count qty of records of the table and returns it.
-	 * If the table doesn't exist db engine will throw exception and this method will
+
+	/**
+	 * @author nes
+	 * 
+	 * tries select count qty of records of the table and returns it.
+	 * If fieldName has value count qty of records has value not null for this field
+	 * If fieldName is null (or "") count all records in the table
+	 * If the table doesn't exists db engine will throw exception and this method will
 	 * return -1
 	 * 
-	 */
+	 * TableManagerException is thrown if can't obtain connection with engine
+	 * If exception line SQLException comes in the query execution, returns -1 and logs error
+	 * 
+	 * @param WProcessDataField processDataField
+	 *
+	 * @return Integer
+	 * 
+	 */	
 	public Integer countNotNullRecords(String schema, String tableName, String fieldName) 
-			throws ClassNotFoundException, SQLException {
+			throws TableManagerException {
 
 		Integer qty=null;
 				
-		connect();
+		try {
+			connect();
+		} catch (ClassNotFoundException e2) {
+			String mess="countNotNullRecords ClassNotFoundException: can't connect with database. "
+							+e2.getMessage()+" - "+e2.getCause();
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		} catch (SQLException e2) {
+			String mess="tableManager: countNotNullRecords SQLException : can't obtain database connection: "
+							+e2.getMessage()+" - "+e2.getCause();
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 		
 		String sql ="SELECT COUNT(";
-		sql +=(fieldName!=null?fieldName.replace(" ", "_"):"*");
+		sql += fieldName;
 		sql +=") AS COUNT FROM "+tableName ;
 		sql+=(fieldName!=null?" WHERE "+fieldName.replace(" ", "_")+" IS NOT NULL":" ");
 		System.out.println("------>>>"+sql);
@@ -512,12 +568,12 @@ public class TableManager {
 			
 		} catch (MySQLSyntaxErrorException e1) {
 			
-			System.out.println("checkTableExists: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+			logger.error("countNotNullRecords: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
 			
 			qty=-1;
 			
 		} catch (SQLException e) {
-			System.out.println("checkTableExists: Error SQLException "+e.getMessage()+" - "+e.getCause());
+			logger.error("countNotNullRecords: Error SQLException "+e.getMessage()+" - "+e.getCause());
 			qty=-1;
 			
 		}    finally{
@@ -539,13 +595,22 @@ public class TableManager {
 		return qty;
 	}
 	
-	public List<Column> getTableColumns(String schema, String tableName) throws ClassNotFoundException {
+	public List<Column> getTableColumns(String schema, String tableName) 
+			throws TableManagerException {
 
 		List<Column> colList = new ArrayList<Column>();
 		
 		try {
 
-			connect();
+			try {
+				connect();
+			} catch (ClassNotFoundException e2) {
+				throw new TableManagerException("tableManager: getTableColumns ClassNotFoundException: can't connect with database. "
+						+e2.getMessage()+" - "+e2.getCause());
+			} catch (SQLException e2) {
+				throw new TableManagerException("tableManager: getTableColumns SQLException : can't obtain database connection: "
+						+e2.getMessage()+" - "+e2.getCause());
+			}
 			
 			md = conn.getMetaData();
 			rs = md.getColumns(null, schema, tableName, "%");
@@ -593,7 +658,8 @@ public class TableManager {
 			}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new TableManagerException("tableManager: getTableColumns SQLException : can't obtain table column list: "
+					+e.getMessage()+" - "+e.getCause());
 		}    finally{
 		      //finally block used to close resources
 		      try{
@@ -628,7 +694,7 @@ public class TableManager {
 			managedData.setOperation(CHANGE_COLUMN);
 			generateAlterTableForColumnMgmt(CHANGE_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					storedDataField.getName(), newDataField.getName(), 
+					storedDataField.getColumnName(), newDataField.getColumnName(), 
 					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
 					newDataField.getLength(), newDataField.getDefaultValue(),
 					managedData.getDataField().size());
@@ -636,7 +702,7 @@ public class TableManager {
 			managedData.setOperation(ADD_COLUMN);
 			generateAlterTableForColumnMgmt(ADD_COLUMN, managedData.getManagedTableConfiguration().getSchema(), 
 					managedData.getManagedTableConfiguration().getName(), 
-					null, newDataField.getName(), 
+					null, newDataField.getColumnName(), 
 					newDataField.getDataType().getSqlType(), newDataField.getDataType().getSqlTypeName(), 
 					newDataField.getLength(), newDataField.getDefaultValue(),
 					(managedData.getDataField()!=null?managedData.getDataField().size():0));					
@@ -645,42 +711,25 @@ public class TableManager {
 		return null;
 	}	
 
-	public Integer deleteFieldSynchro(
-			ManagedData managedData, WProcessDataField dataField, boolean forceDeletion) 
+	public String deleteFieldSynchro(
+			String schemaName, String tableName, String dataFieldName, boolean forceDeletion) 
 					throws TableManagerException {
 
-		if (managedData==null) throw new TableManagerException("can't synchronize null managedData!");
-		if (managedData.getManagedTableConfiguration().getName()==null 
-				|| "".equals(managedData.getManagedTableConfiguration().getName()))  
-			throw new TableManagerException("can't synchronize managedData: managed table is not defined (managedTableName:"
-					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-"));
-
-		try {
-			if (countNotNullRecords(
-					managedData.getManagedTableConfiguration().getSchema(),
-					managedData.getManagedTableConfiguration().getName(),
-					dataField.getName())==0 || forceDeletion) {
-
-				managedData.setOperation(DROP_COLUMN);
-				dropColumn(DROP_COLUMN, 
-						managedData.getManagedTableConfiguration().getSchema(), 
-						managedData.getManagedTableConfiguration().getName(), 
-						dataField.getName());	
-				
-			}
-		} catch (ClassNotFoundException e) {
-			throw new TableManagerException("ClassNotFoundException: can't delete field from managedData table: "
-					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-")
-					+" field:"+(dataField!=null&&dataField.getName()!=null?dataField.getName():" null ")
-					+" Error:"+e.getMessage()+" - "+e.getClass());
-		} catch (SQLException e) {
-			throw new TableManagerException("SQLException: can't delete field from managedData table: "
-					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-")
-					+" field:"+(dataField!=null&&dataField.getName()!=null?dataField.getName():" null ")
-					+" Error:"+e.getMessage()+" - "+e.getClass());
+		if (tableName==null || "".equals(tableName) || "".equals(tableName.trim()) ) {
+			throw new TableManagerException("can't synchronize null table name!");
 		}
+
+
+		if (countNotNullRecords(
+				schemaName,tableName,dataFieldName)==0 || forceDeletion) {
+
+			dropColumn(DROP_COLUMN, 
+					schemaName, tableName, dataFieldName );	
+			
+		}
+
 		
-		return null;
+		return DROP_COLUMN;
 	}
 	
 	/*
@@ -738,11 +787,11 @@ public class TableManager {
 	}
 	
 	private void addColumn(String operation, String schema, String tableName, 
-			String newColName, String sqlTypeName, Integer length, 
+			String newColName, String sqlTypeName, Integer sqlType, Integer length, 
 			String defaultValue) throws TableManagerException {
 
-		String sql = buildAddColumnStatement( operation,  schema,  tableName, 
-				 		newColName,  sqlTypeName,  length, defaultValue);
+		String sql = buildAddColumnStatement( operation, schema, tableName, 
+				 		newColName, sqlTypeName, sqlType, length, defaultValue);
 		
 		System.out.println("add column: "+sql);
 		
@@ -823,10 +872,11 @@ public class TableManager {
 		// load current col scheme
 		try {
 			lc = getTableColumns(schema,tableName);
-		} catch (ClassNotFoundException e) {
+		} catch (TableManagerException e) {
 			throw new 
-				TableManagerException("AlterTable exception: can't get current table definition for table:"
-										+schema+"."+tableName);
+				TableManagerException("generateAlterTableForColumnMgmt: AlterTable exception: can't get current table definition for table:"
+										+schema+"."+tableName
+										+e.getMessage()+" - "+e.getCause());
 		} 
 		
 		// check existence of old column to determine if must execute CHANGE COLUMN or ADD COLUMN
@@ -854,7 +904,7 @@ public class TableManager {
 									origColName, newColName, sqlTypeName, length, defaultValue);
 		} else {
 		// add column
-			addColumn(operation, schema, tableName, newColName, sqlTypeName, length, defaultValue);
+			addColumn(operation, schema, tableName, newColName, sqlTypeName, sqlType, length, defaultValue);
 		}
 		
 	}
@@ -884,18 +934,17 @@ public class TableManager {
 	
 	//ALTER TABLE `bee_bpm_dev`.`w_step_data_field` CHANGE COLUMN `active` `active` INT(1) NULL DEFAULT b'1'  ;
 	private String	buildAddColumnStatement(String operation, String schema, String tableName, 
-			String newColName, String sqlTypeName, Integer length, String defaultValue) 
+			String newColName, String sqlTypeName, Integer sqlType, Integer length, String defaultValue) 
 					throws TableManagerException {
 		
 		String sql = "ALTER TABLE ";
 		
 		sql+=schema+"."+tableName+" ";
-		sql +=" ADD COLUMN ";
-		sql += newColName.replace(" ", "_")+" "+sqlTypeName;
-		
-		if (length != null && length > 0) {
-			sql +="("+length+") ";
-		}
+		sql += " ADD COLUMN ";
+		sql += newColName+" ";
+		sql += sqlTypeName+" ";
+		sql += getColumnSize(sqlType,length)+" ";
+
 		if (defaultValue != null && !"".equals(defaultValue)) {
 			sql+=" DEFAULT '"+defaultValue+"'";
 		}
@@ -923,18 +972,11 @@ public class TableManager {
 		sql 		+=" process_work_id INTEGER NOT NULL, ";   // mandatory field ...
 		sql 		+=" process_id INTEGER NOT NULL, ";   // mandatory field indicates map version
 		for (WProcessDataField column: columns) {
-			sql+=	column.getName().replace(" ", "_")+" "
-					+ column.getDataType().getSqlTypeName()
+			sql+=	column.getColumnName()+" "
+					+ column.getDataType().getSqlTypeName()+" "
 					+ getColumnSize(column)+", ";
 		}
 
-//		"CREATE TABLE "+tableName+" " +
-//		"(id INTEGER not NULL, " +
-//		" first VARCHAR(255), " + 
-//		" last VARCHAR(255), " + 
-//		" age INTEGER, " + 
-//		" PRIMARY KEY ( id ))"; 		
-		
 		// mandatory pk and foreign key
 		sql += " PRIMARY KEY ( id ), "; 
 		sql += " CONSTRAINT `fk_"+tableName+"_1` FOREIGN KEY (`process_work_id`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION ";
@@ -945,39 +987,83 @@ public class TableManager {
 		return sql;
 	}
 	
-	// return length formatted for sql syntax if corresponds to dataType ...
+	/**
+	 * @author nes
+	 * 
+	 * Returns a string with column name enclosed in brackets () if the sqlType
+	 * accepts this parameter.
+	 * If not returns ""
+	 * 
+	 * @param WProcessDataField column
+	 *
+	 * @return String
+	 * 
+	 */	
 	private String getColumnSize(WProcessDataField column) {
+	
+		return getColumnSize(
+					column.getDataType().getSqlType(),
+					column.getLength() );
+	}
+
+	/**
+	 * @author nes
+	 * 
+	 * Returns a string with column name enclosed in brackets () if the sqlType
+	 * accepts this parameter.
+	 * If not returns ""
+	 * 
+	 * @param Integer sqlType
+	 * @param Integer length
+	 *
+	 * @return String
+	 * 
+	 */	
+	private String getColumnSize(Integer sqlType, Integer length) {
 		
 		String colsize="";
-		if (column.getDataType().getSqlType().equals(java.sql.Types.VARCHAR)) {
-			if (column!=null && column.getLength()>0) { // nes 20130828
-				colsize = "("+column.getLength()+")";
+		if (sqlType.equals(java.sql.Types.VARCHAR)) {
+			if (length>0) { // nes 20130828
+				colsize = "("+length+")";
 			} else {
-				// dml 20130821 - si no tiene longitud le ponemos 1 por defecto
-				colsize = "(1)";
+				// default length
+				colsize = "("+DEFAULT_VARCHAR_LENGHT+")";
 			}
 		}
 		return colsize;
 	}
 
-	public void createTable(String tableName, List<WProcessDataField> columns) throws ClassNotFoundException {
+	/**
+	 * @author nes
+	 * 
+	 * Creates a new table tableName in schema schemaName with list of given columns
+	 * 
+	 * There is responsability of caller checks table existence to avoid exception
+	 * 
+	 * 
+	 * @param String schema
+	 * @param String tableName
+	 * @param List<WProcessDataField> columns
+	 *
+	 * @return Integer
+	 * 
+	 */		
+	public void createTable( String schemaName, String tableName,  List<WProcessDataField> columns) 
+			throws TableManagerException {
 
-		String sql = buildCreateTableStatement(tableName,columns);
-
-		try {
-
-			connect();
-			
-			// check if table exists
-			md = conn.getMetaData();
-			rs = md.getColumns(null, null, tableName, "%");
-			if (rs!=null && rs.last()) {
-				if (rs.getRow()>0) {
-					System.out.println("table "+tableName+" exists ... can't create it !");
-					return;
-				}
+			try {
+				connect();
+			} catch (ClassNotFoundException e2) {
+				throw new TableManagerException("createTable: ClassNotFoundException: can't connect with database. "
+						+e2.getMessage()+" - "+e2.getCause());
+			} catch (SQLException e2) {
+				throw new TableManagerException("createTable: SQLException : can't obtain database connection: "
+						+e2.getMessage()+" - "+e2.getCause());
 			}
 
+		try {
+		
+			String sql = buildCreateTableStatement(tableName,columns);
 			
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
@@ -986,8 +1072,6 @@ public class TableManager {
 			
 			md = conn.getMetaData();
 			rs = md.getColumns(null, null, tableName, "%");
-
-
 			
 			while(rs.next()) { 
 			    String column = rs.getString("COLUMN_NAME");
@@ -1009,7 +1093,7 @@ public class TableManager {
 			}
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new TableManagerException("tableManager:create SQLException "+e.getMessage()+" - "+e.getCause());
 		}    finally{
 		      //finally block used to close resources
 		      try{
@@ -1028,17 +1112,25 @@ public class TableManager {
 	}
 	
 
-	public void removeTable(String tableName) throws ClassNotFoundException {
+	public void removeTable(String schemaName, String tableName) 
+			throws TableManagerException {
 
-		String sql = "DROP TABLE "+tableName+" " ; 
+		String sql = "DROP TABLE "+schemaName+"."+tableName+" " ; 
 
 		try {
-
 			connect();
-			
+		} catch (ClassNotFoundException e2) {
+			throw new TableManagerException("removeTable: ClassNotFoundException: can't connect with database. "
+					+e2.getMessage()+" - "+e2.getCause());
+		} catch (SQLException e2) {
+			throw new TableManagerException("removeTable: SQLException : can't obtain database connection: "
+					+e2.getMessage()+" - "+e2.getCause());
+		}
+		
+		try {
 			// check if table exists
 			md = conn.getMetaData();
-			rs = md.getColumns(null, null, tableName, "%");
+			rs = md.getColumns(null, schemaName, tableName, "%");
 			if (rs==null) {
 				System.out.println("table "+tableName+" doesn't exists ... can't drop it !");
 				return;
@@ -1050,7 +1142,8 @@ public class TableManager {
 			System.out.println("table:"+tableName+" was dropped ...");
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new TableManagerException("removeTable: SQLException : Error removing table!! "
+					+e.getMessage()+" - "+e.getCause());
 		}    finally{
 		      //finally block used to close resources
 		      try{

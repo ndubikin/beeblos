@@ -133,32 +133,47 @@ public class WProcessDataFieldDao {
 		}
 	}
 
+	/**
+	 * @author nes
+	 * 
+	 * Delete a processDataField from Managed Table using TableManager manager
+	 * 
+	 * @param WProcessDataField processDataField
+	 *
+	 * @return void
+	 * 
+	 */
 	public void delete(WProcessDataField processDataField) throws WProcessDataFieldException {
 
 		logger.debug("delete() WProcessDataField - Name: ["+processDataField.getName()+"]");
 		
+		String tableName="", schemaName="", fieldName="";
+		
 		try {
 			
+			// @TODO revisar si esto es necesario aqui, traer todo para el final hacer drop de 1 campo
 			TableManager tm = new TableManager();
 			ManagedData managedData = new ManagedData();
 			Integer qtyRecsNotNull=0;
 			
 			// returns managedData if there is defined (processHead) and table exists
 			// if not there is another instance to create the managed table
-			managedData = getAndCheckManagedData(processDataField.getProcessHeadId(), tm, managedData);	
+			managedData = getAndCheckManagedData(processDataField.getProcessHeadId(), tm, managedData);
+			tableName=managedData.getManagedTableConfiguration().getName();
+			schemaName=managedData.getManagedTableConfiguration().getSchema();
+			fieldName=processDataField.getColumnName();
 			
 			if (managedData!=null) {
+				
 				qtyRecsNotNull = 
-						tm.countNotNullRecords(
-								managedData.getManagedTableConfiguration().getSchema(),
-								managedData.getManagedTableConfiguration().getName(),
-								processDataField.getName());
+						tm.countNotNullRecords(	schemaName, tableName, fieldName);
+
 			}
 
 			if(qtyRecsNotNull<0) {
-				logger.warn("Warning: table "+managedData.getManagedTableConfiguration().getName()+" does not exist. No action realized.");
+				logger.warn("Warning: table: "+tableName+" does not exist. No action realized.");
 			} else if(qtyRecsNotNull>0) {
-				String mess = "WProcessDataFieldDao: delete: trying delete managed field "+managedData.getManagedTableConfiguration().getName()
+				String mess = "WProcessDataFieldDao: delete: trying delete managed field "+tableName
 						+" wich has "+qtyRecsNotNull
 						+" records with information in the table. Options you have are to clean manually the table nullating this field, or deactivate the field in ProcessDef form.";
 				throw new WProcessDataFieldException(mess);
@@ -173,11 +188,16 @@ public class WProcessDataFieldDao {
 			 *  
 			 */
 			if ( managedData!=null && qtyRecsNotNull==0 ) {
+				
 				try {
-					tm.deleteFieldSynchro(managedData, processDataField, false);
+					
+					tm.deleteFieldSynchro(schemaName, tableName, fieldName, false);
+
 				} catch (TableManagerException e) {
-					// TODO IMPLEMENTAR!!
-					e.printStackTrace();
+					String mess = "delete: TableManagerException Can't delete process data field:"+(processDataField!=null?processDataField.getName():"null")+" " 
+							+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					throw new WProcessDataFieldException(mess);
 				}
 			}
 
@@ -195,16 +215,12 @@ public class WProcessDataFieldDao {
 			throw new WProcessDataFieldException("WProcessDataFieldDao:  delete - Can't delete process definition record  "+ processDataField.getName() +
 					" <id = "+processDataField.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (ClassNotFoundException e) {
-			logger.error("WProcessDataFieldDao:ClassNotFoundException delete - Can't delete process definition record "+ processDataField.getName() +
-					" <id = "+processDataField.getId()+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause() );
-			throw new WProcessDataFieldException("WProcessDataFieldDao:ClassNotFoundException  delete - Can't delete process definition record  "+ processDataField.getName() +
-					" <id = "+processDataField.getId()+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause() );
-		} catch (SQLException e) {
-			logger.error("SQLException delete - Can't delete process definition record "+ processDataField.getName() +
-					" <id = "+processDataField.getId()+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause() );
-			throw new WProcessDataFieldException("SQLException  delete - Can't delete process definition record  "+ processDataField.getName() +
-					" <id = "+processDataField.getId()+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause() );
+		} catch (TableManagerException e) {
+			String mess = "delete: TableManagerException Can't check table existence or existing records in table ..."
+					+ tableName +" in schema "+schemaName
+					+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WProcessDataFieldException(mess);
 		} 
 
 	}
@@ -404,7 +420,11 @@ public class WProcessDataFieldDao {
 	// if exists managed data definition and exists managed table in schema
 	// then returns managedData object loaded, else return null
 	private ManagedData getAndCheckManagedData(
-			Integer processHeadId, TableManager tm,	ManagedData managedData) {
+			Integer processHeadId, TableManager tm,	ManagedData managedData) 
+					throws WProcessDataFieldException {
+
+		String tableName=null, schemaName=null;
+		
 		try {
 			
 			WProcessHead processHead = new WProcessHead();
@@ -417,14 +437,22 @@ public class WProcessDataFieldDao {
 					&& processHead.getManagedTableConfiguration().getName()!=null
 					&& !"".equals(processHead.getManagedTableConfiguration().getName())) {
 	
+
+				tableName=processHead.getManagedTableConfiguration().getName();
+				schemaName=processHead.getManagedTableConfiguration().getSchema();
+
 				Integer reccount = 
-						tm.checkTableExists(
-								processHead.getManagedTableConfiguration().getSchema(),
-								processHead.getManagedTableConfiguration().getName() );
+						tm.checkTableExists(schemaName,tableName);
+
+				// if table exists creates managedData object ...
 				if (reccount>=0) {
+					
 					managedData
 						.setManagedTableConfiguration(
 								processHead.getManagedTableConfiguration() );
+					
+					managedData.setReccount(reccount);
+					
 					managedData
 						.setDataField(
 								ListConverters.convertWProcessDataFieldToList
@@ -439,12 +467,12 @@ public class WProcessDataFieldDao {
 		} catch (WProcessHeadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (TableManagerException e) {
+			String mess = "getAndCheckManagedData: TableManagerException Can't access managed table:"
+					+(tableName!=null?tableName:"null")+" " 
+					+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WProcessDataFieldException(mess);
 		}
 		return managedData;
 	}
