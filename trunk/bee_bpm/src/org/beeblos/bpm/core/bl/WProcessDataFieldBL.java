@@ -4,10 +4,8 @@ import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_VARCHAR_LENGHT;
 import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +14,8 @@ import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
+import org.beeblos.bpm.tm.TableManagerUtil;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 
 import com.sp.common.model.WDataType;
 import com.sp.common.util.StringPair;
@@ -30,8 +30,9 @@ public class WProcessDataFieldBL {
 	}
 	
 	public Integer add( WProcessDataField processDataField, Integer currentUserId ) 
-			throws WProcessDataFieldException, WDataTypeException {
-		logger.debug("add() WProcessDataField - Name: ["+(processDataField!=null&&processDataField.getName()!=null?processDataField.getName():"null")+"]");
+			throws WProcessDataFieldException, WDataTypeException, TableManagerException {
+		logger.debug("add() WProcessDataField - Name: ["
+			+(processDataField!=null&&processDataField.getName()!=null?processDataField.getName():"null")+"]");
 		
 		// dml 20130820
 		if (processDataField == null) {
@@ -53,7 +54,7 @@ public class WProcessDataFieldBL {
 		// default checks
 		_processDataFieldDefaultADDChecks(processDataField, currentUserId);
 		
-		_generateColumnName(processDataField, currentUserId);
+		_generateColumnName(processDataField);
 		
 		// timestamp & trace info
 		processDataField.setInsertDate(new Date());
@@ -66,30 +67,24 @@ public class WProcessDataFieldBL {
 	}
 	
 	/**
-	 * @author dmuleiro - 20130822
+	 * @author nes - 20130829
 	 * 
-	 * Checks if the processDataField to be added has correct params and format it if it has not
+	 * generates a column name with lowercase and change space by underscore
+	 * and set received processDataField.ColumnName 
 	 *
 	 * @param  WProcessDataField processDataField
-	 * @param  Integer currentUserId
+	 * 
 	 * @return void
+	 * @throws TableManagerException 
 	 * 
 	 */
-	private void _generateColumnName(WProcessDataField processDataField, Integer currentUserId) 
-			throws WDataTypeException {
+	private void _generateColumnName(WProcessDataField processDataField) 
+			throws WDataTypeException, TableManagerException {
 		
-		if (processDataField.getName()!=null) {
-//			String[] col = processDataField.getName().toCharArray();
-//			
-//			String colname=processDataField.getName().toLowerCase();
-//			if ()
-			
-		} else {
-			Random rand = new Random(); 
-			rand.setSeed(new Date().getTime());
-			int val = rand.nextInt(50); 
-			processDataField.setColumnName(""+processDataField.getClass().getName()+val);
-		}
+		String colname = TableManagerUtil
+				.generateColumnName(processDataField.getName(), processDataField.getClass().getName(), 45);
+		
+		processDataField.setColumnName(colname);
 
 	}
 	/**

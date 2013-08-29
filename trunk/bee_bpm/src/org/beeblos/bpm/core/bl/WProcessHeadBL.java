@@ -15,6 +15,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.tm.TableManager;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 
 import com.sp.common.util.StringPair;
 
@@ -100,27 +101,42 @@ public class WProcessHeadBL {
 				
 				TableManager tm = new TableManager();
 				String tableName = processHead.getManagedTableConfiguration().getName();
-				
+				String schemaName = processHead.getManagedTableConfiguration().getSchema();
+				Integer qty;
 				try {
-					Integer qty= 
-								tm.countNotNullRecords(null,tableName,null);
 
-					if (qty<=0) {
-						tm.removeTable(tableName);
-					} else {
-						throw new WProcessHeadException("Error: can't delete process head:"
-												+processHead.getId()+" Managed table "+processHead.getManagedTableConfiguration().getName()
-												+" has records with data!");
+					qty = tm.countNotNullRecords(schemaName,tableName,null);
+
+					try{
+
+						if (qty<=0) {
+							tm.removeTable(schemaName,tableName);
+						} else {
+							throw new WProcessHeadException("Error: can't delete process head:"
+													+processHead.getId()+" Managed table "+processHead.getManagedTableConfiguration().getName()
+													+" has records with data!");
+						}
+					
+					} catch (TableManagerException e) {
+						String mess = "TableManagerException: error trying delete managed table of processHeadId:"
+										+processHead.getId()+" managed table:"+processHead.getManagedTableConfiguration().getName()
+										+" ERROR:"+e.getMessage()+" - "+e.getCause();
+						logger.error(mess);
+						//throw new WProcessHeadException(mess);
+						// dejo seguir para que pueda borrar el proceso y si queda la tabla colgada q la borren por fuera
+						// igual queda el log
 					}
-				
-				} catch (ClassNotFoundException e) {
-					logger.error("ClassNotFoundException: error trying count # records of managed table...processHeadId:"
-								+processHead.getId()+" managed table:"+processHead.getManagedTableConfiguration().getName()
-								+" ERROR:"+e.getMessage()+" - "+e.getCause());
-				} catch (SQLException e) {
-					logger.error("ClassNotFoundException: error trying count # records of managed table...processHeadId:"
-							+processHead.getId()+" managed table:"+processHead.getManagedTableConfiguration().getName()
-							+" ERROR:"+e.getMessage()+" - "+e.getCause());
+
+					
+				} catch (TableManagerException e) {
+					String mess="TableManagerException: error trying count # records of managed table...processHeadId:"
+									+processHead.getId()+" managed table:"+processHead.getManagedTableConfiguration().getName()
+									+" ERROR:"+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					//throw new WProcessHeadException(mess);
+					// dejo seguir para que pueda borrar el proceso y si queda la tabla colgada q la borren por fuera
+					// igual queda el log
+					
 				}
 			}
 		}
