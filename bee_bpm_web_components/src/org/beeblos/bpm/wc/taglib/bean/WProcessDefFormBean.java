@@ -13,7 +13,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.TableManagerBL;
 import org.beeblos.bpm.core.bl.WDataTypeBL;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
@@ -69,7 +69,9 @@ import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
-import org.beeblos.bpm.tm.TableManager;
+import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
+import org.beeblos.bpm.tm.exception.TableHasRecordsException;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.model.Column;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -2196,7 +2198,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	//rrl 20130730
-	public String saveNewDataField() {
+	public String saveNewDataField() throws TableManagerException {
 
 		WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
 
@@ -2346,8 +2348,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			this.createWindowMessage("ERROR_MESSAGE", 
 					"El campo indicado no se puede eliminar porque contiene datos. Se le ha colocado el atributo 'active'=false para evitar su uso en los procesos de aquí en adelante.");
 			
-			wProcessDataFieldSelected.setActive(false);
-			this.saveNewDataField();
+
+			// try to set the datafield to "inactive" to avoid drop it because may be contains data
+			try {
+				wProcessDataFieldSelected.setActive(false);
+				this.saveNewDataField();
+			} catch (TableManagerException e) {
+				logger.warn("deleteDataField: call to saveNewDataField in CATCH block says error:"+e.getMessage()+" - "+e.getCause());
+				e.printStackTrace();
+			}
 			
 		} 
 		
@@ -2379,29 +2388,31 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				&& currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema()!=null
 				&& currentWProcessDef.getProcess().getManagedTableConfiguration().getName()!=null ){
 
-			TableManager tm = new TableManager();
+
 			try {
-				reccountTM = 
-						tm.checkTableExists(
+				
+				TableManagerBL tmBL = new TableManagerBL();
+				reccountTM = tmBL.countTableRecords(
 								currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
 								currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
 				
 				columnListTM = new ArrayList<org.beeblos.bpm.tm.model.Column>();
 				// if table exists
 				if (reccountTM>=0) {
-					columnListTM = tm.getTableColumns(currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
-								currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
+
+					columnListTM = tmBL.getTableColumns(
+											currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
+											currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
 				}				
 
-			// TODO implementar mensajes de error en pantalla q correspondan ...
-			} catch (ClassNotFoundException e) {
-				columnListTM=null;
-				reccountTM=null;
+			} catch (TableManagerException e) {
+				String mensaje = e.getMessage() + " - " + e.getCause();
+				String params[] = { mensaje + ",",
+						".switchButtonAdvancedConfiguration() TableManagerException ..." };
+				agregarMensaje("205", mensaje, params, FGPException.ERROR);
 				e.printStackTrace();
-			} catch (SQLException e) {
-				columnListTM=null;
-				reccountTM=null;
-				e.printStackTrace();
+				this.createWindowMessage("ERROR_MESSAGE", 
+						"switchButtonAdvancedConfiguration() TableManagerException: " + e.getMessage());
 			}
 			
 
@@ -2413,7 +2424,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	// generates managed table for custom properties
-
 	public void createManagedTable() {
 		this.setShowHeaderMessage(false);
 		
@@ -2423,34 +2433,58 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			return;
 		}
 		
-		TableManager tm = new TableManager();
-
-		createManagedTable(tm);
-	}
-	
-	public void createManagedTable( TableManager tm ) { 
-		this.setShowHeaderMessage(false);
-
-		String errors = _checkValidProcessConfiguration();
-		if ( errors != null ) {
-			this.createWindowMessage("ERROR_MESSAGE", errors);
-			return;
-		}
-
 		String tableName = checkTableName(); // checks tablename and update currentWProcessDef if corresponds...
 		reloadDataFieldList(); // refresh dataFieldList
-		
+
 		try {
-			
-			tm.createTable(tableName,dataFieldList);
-			
-			System.out.println("table: "+tableName+" was created ...");
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			new TableManagerBL()
+					.createManagedTable(
+							currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(), 
+							tableName, 
+							dataFieldList);
+		} catch (TableAlreadyExistsException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".createManagedTable() TableAlreadyExistsException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"createManagedTable() TableAlreadyExistsException: " + e.getMessage());		
+			
+		} catch (TableManagerException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".createManagedTable() TableManagerException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"createManagedTable() TableManagerException: " + e.getMessage());				
 		}
 	}
+	
+//	public void createManagedTable( TableManager tm ) { 
+//		this.setShowHeaderMessage(false);
+//
+//		String errors = _checkValidProcessConfiguration();
+//		if ( errors != null ) {
+//			this.createWindowMessage("ERROR_MESSAGE", errors);
+//			return;
+//		}
+//
+//		String tableName = checkTableName(); // checks tablename and update currentWProcessDef if corresponds...
+//		reloadDataFieldList(); // refresh dataFieldList
+//		
+//		try {
+//			
+//			tm.createTable(tableName,dataFieldList);
+//			
+//			System.out.println("table: "+tableName+" was created ...");
+//			
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public void recreateManagedTable() {
 		this.setShowHeaderMessage(false);
@@ -2460,120 +2494,110 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			this.createWindowMessage("ERROR_MESSAGE", errors);
 			return;
 		}
-		
-		TableManager tm = new TableManager();
-		
-		// nes 20130828
-		if (checkTableExists(tm)) {
-		
-		
-			if (checkTableHasRecords(tm)) {
-				this.createWindowMessage("ERROR_MESSAGE", 
-						"La tabla contiene datos, no se puede hacer recreate ...");
-			} else {
-				
-				removeManagedTable(
-						tm,currentWProcessDef.getProcess().getManagedTableConfiguration().getName());
-
-				createManagedTable(tm);
-
-				this.createWindowMessage("OK_MESSAGE", 
-						"Tabla reconstruida correctamente.");
-
-				
-			}
-
-		} else {
-
-			createManagedTable(tm);
-
-			this.createWindowMessage("OK_MESSAGE","Se ha creado la tabla.");
-			
-		}
-		
-
-		
-		
-	}
-	
-	public boolean checkTableHasRecords(TableManager tm){
-		
-		boolean returnValue = false;
-		
-		if (currentWProcessDef.getProcess().getId() != null
-				&& !currentWProcessDef.getProcess().getId().equals(0)){
-			
-			Integer qtyData;
-			try {
-
-				qtyData = tm.countNotNullRecords(
-						null, currentWProcessDef.getProcess().getManagedTableConfiguration().getName(), null);
-
-				if (qtyData != null
-						&& !qtyData.equals(0)){
-					returnValue = true;
-				}
-				
-			} catch (ClassNotFoundException ex1) {
-				String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { mensaje + ",",
-						".checkTableHasRecords() WStepSequenceDefException ..." };
-				agregarMensaje("205", mensaje, params, FGPException.ERROR);
-				ex1.printStackTrace();
-				this.createWindowMessage("ERROR_MESSAGE", 
-						"checkTableHasRecords() WStepSequenceDefException: " + ex1.getMessage());
-			} catch (SQLException ex1) {
-				String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { mensaje + ",",
-						".checkTableHasRecords() WStepSequenceDefException ..." };
-				agregarMensaje("205", mensaje, params, FGPException.ERROR);
-				ex1.printStackTrace();
-				this.createWindowMessage("ERROR_MESSAGE", 
-						"checkTableHasRecords() WStepSequenceDefException: " + ex1.getMessage());
-			}
-						
-		}
-		
-		return returnValue;
-
-	}
-
-	public void removeManagedTable( TableManager tm, String tableName ) { 
-		
-		String errors = _checkValidTableConfiguration();
-		if ( errors != null ) {
-			this.createWindowMessage("ERROR_MESSAGE", errors);
-			return;
-		}
 
 		try {
-			tm.removeTable(tableName);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			new TableManagerBL()
+					.recreateManagedTable(
+							currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(), 
+							currentWProcessDef.getProcess().getManagedTableConfiguration().getName(), 
+							dataFieldList);
+		} catch (TableHasRecordsException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".recreateManagedTable() TableHasRecordsException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			e.printStackTrace();
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"recreateManagedTable() TableHasRecordsException: " + e.getMessage());
+		} catch (TableManagerException e) {
+			String mensaje = e.getMessage() + " - " + e.getCause();
+			String params[] = { mensaje + ",",
+					".recreateManagedTable() TableManagerException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			e.printStackTrace();
+			this.createWindowMessage("ERROR_MESSAGE", 
+					"recreateManagedTable() TableManagerException: " + e.getMessage());
 		}
 	}
 	
-	private boolean checkTableExists(TableManager tm) {
-		//currentWProcessDef.process.managedTableConfiguration.name
-		try {
-			Integer qtyRecords = 
-					tm.checkTableExists(
-							currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
-							currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
+//	public boolean checkTableHasRecords(TableManager tm){
+//		
+//		boolean returnValue = false;
+//		
+//		if (currentWProcessDef.getProcess().getId() != null
+//				&& !currentWProcessDef.getProcess().getId().equals(0)){
+//			
+//			Integer qtyData;
+//			try {
+//
+//				qtyData = tm.countNotNullRecords(
+//						null, currentWProcessDef.getProcess().getManagedTableConfiguration().getName(), null);
+//
+//				if (qtyData != null
+//						&& !qtyData.equals(0)){
+//					returnValue = true;
+//				}
+//				
+//			} catch (ClassNotFoundException ex1) {
+//				String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+//				String params[] = { mensaje + ",",
+//						".checkTableHasRecords() WStepSequenceDefException ..." };
+//				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+//				ex1.printStackTrace();
+//				this.createWindowMessage("ERROR_MESSAGE", 
+//						"checkTableHasRecords() WStepSequenceDefException: " + ex1.getMessage());
+//			} catch (SQLException ex1) {
+//				String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+//				String params[] = { mensaje + ",",
+//						".checkTableHasRecords() WStepSequenceDefException ..." };
+//				agregarMensaje("205", mensaje, params, FGPException.ERROR);
+//				ex1.printStackTrace();
+//				this.createWindowMessage("ERROR_MESSAGE", 
+//						"checkTableHasRecords() WStepSequenceDefException: " + ex1.getMessage());
+//			}
+//						
+//		}
+//		
+//		return returnValue;
+//
+//	}
 
-			System.out.println("qty records:"+qtyRecords);
-			if (qtyRecords.equals(-1)) {
-				return false;
-			} 
-			return true;
-		} catch (ClassNotFoundException e) {
-			System.out.println("Error ClassNotFoundException "+e.getMessage()+" - "+e.getCause());
-		} catch (SQLException e) {
-			System.out.println("Error SQLException:"+e.getMessage()+" - "+e.getCause());
-		}
-		return false;
-	}
+//	public void removeManagedTable( TableManager tm, String tableName ) { 
+//		
+//		String errors = _checkValidTableConfiguration();
+//		if ( errors != null ) {
+//			this.createWindowMessage("ERROR_MESSAGE", errors);
+//			return;
+//		}
+//
+//		try {
+//			tm.removeTable(tableName);
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
+//	private boolean checkTableExists(TableManager tm) {
+//		//currentWProcessDef.process.managedTableConfiguration.name
+//		try {
+//			Integer qtyRecords = 
+//					tm.checkTableExists(
+//							currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
+//							currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
+//
+//			System.out.println("qty records:"+qtyRecords);
+//			if (qtyRecords.equals(-1)) {
+//				return false;
+//			} 
+//			return true;
+//		} catch (ClassNotFoundException e) {
+//			System.out.println("Error ClassNotFoundException "+e.getMessage()+" - "+e.getCause());
+//		} catch (SQLException e) {
+//			System.out.println("Error SQLException:"+e.getMessage()+" - "+e.getCause());
+//		}
+//		return false;
+//	}
 
 	
 	private String _checkValidProcessConfiguration() {
