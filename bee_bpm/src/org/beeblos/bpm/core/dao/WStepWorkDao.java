@@ -1312,7 +1312,19 @@ public class WStepWorkDao {
 		return 0;		
 	}
 	
-	// returns # existing works in WStepWork
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * Returns the number of "WStepWork" registers related to a concrete "WStepDef"
+	 *
+	 * @param  Integer stepId
+	 * @param  String mode
+	 * 
+	 * @return Integer
+	 * 
+	 * @throws WStepWorkException
+	 * 
+	 */
 	public Integer getWorkCountByStep(Integer stepId, String mode) 
 			throws WStepWorkException {
 
@@ -1324,10 +1336,12 @@ public class WStepWorkDao {
 		String query = "SELECT COUNT(*) FROM w_step_work wsw WHERE wsw.id_current_step = " 
 				+ stepId + " OR wsw.id_previous_step = " + stepId;
 		
-		if (mode.equals(ALIVE)) {
-			query += " AND wsw.decided_date is null";
-		} else if (mode.equals(PROCESSED)) {
-			query += " AND wsw.decidedDate is not null";
+		if (mode != null){
+			if (mode.equals(ALIVE)) {
+				query += " AND wsw.decided_date is null";
+			} else if (mode.equals(PROCESSED)) {
+				query += " AND wsw.decidedDate is not null";
+			}
 		}
 		
 		try {

@@ -1,7 +1,5 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.PROCESSED;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +8,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.util.XmlConverterUtil;
 import org.w3c.dom.Document;
@@ -24,7 +21,19 @@ public class WorkflowEditorBL {
 
 	private static final Log logger = LogFactory.getLog(WorkflowEditorBL.class.getName());
 
+	public static String LABEL = "label";
+	public static String TASK = "Task";
+	public static String SYMBOL = "Symbol";
+	public static String EDGE = "Edge";
+	
+	public static String STROKE_COLOR_PROPERTY = "strokeColor";
+	public static String FONT_COLOR_PROPERTY = "fontColor";
+	
+	public static String IMAGE_PROPERTY = "image";
+	public static String BEGIN_SYMBOL_STYLE = "images/symbols/event-green.png";
+
 	private final static String DEFAULT_ERROR = "ERROR";
+	
 	private final static String RED = "red";
 	private final static String GREEN = "green";
 	private final static String BROWN = "brown";
@@ -68,7 +77,7 @@ public class WorkflowEditorBL {
 			List<StringPair> stepXmlIdsList = new ArrayList<StringPair>();
 
 			// 2. Primero parseo y pinto los tasks
-			NodeList taskList = xmlParsedDoc.getElementsByTagName("Task");
+			NodeList taskList = xmlParsedDoc.getElementsByTagName(TASK);
 
 			// iterate the tasks (steps)
 			for (int i = 0; i < taskList.getLength(); i++) {
@@ -88,9 +97,9 @@ public class WorkflowEditorBL {
 								&& wsws.getBeginStep().getId().equals(Integer.valueOf(spId))){
 							
 							if (wsws.isSentBack()){
-								task = _setXmlElementDefaultNameAndColor(task, task.getAttribute("label"), true, "strokeColor", BROWN);
+								task = _setXmlElementStylePropertyValue(task, task.getAttribute(LABEL), true, STROKE_COLOR_PROPERTY, BROWN);
 							} else {
-								task = _setXmlElementDefaultNameAndColor(task, null, false, "strokeColor", GREEN);								
+								task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, GREEN);								
 							}
 							
 						}
@@ -99,7 +108,7 @@ public class WorkflowEditorBL {
 								&& wsws.getEndStep().getId() != null
 								&& wsws.getEndStep().getId().equals(Integer.valueOf(spId))){
 							
-							task = _setXmlElementDefaultNameAndColor(task, null, false, "strokeColor", RED);
+							task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, RED);
 							
 						}
 
@@ -114,16 +123,16 @@ public class WorkflowEditorBL {
 			
 			String spName = "";
 			// 3. Ahora parseo los "Symbol" para ver si tenemos "Begin"
-			NodeList symbolList = xmlParsedDoc.getElementsByTagName("Symbol");
+			NodeList symbolList = xmlParsedDoc.getElementsByTagName(SYMBOL);
 			String beginSymbolId = null;
 			// iterate the symbols
 			for (int i = 0; i < symbolList.getLength(); i++) {
 				Element symbol = (Element) symbolList.item(i);
-				spName = symbol.getAttribute("label");
+				spName = symbol.getAttribute(LABEL);
 				if (spName != null
 						&& spName.equals("Begin")){
 					beginSymbolId = symbol.getAttribute("id");
-					symbol = _setXmlElementDefaultNameAndColor(symbol, null, false, "strokeColor", GREEN);
+					symbol = _setXmlElementStylePropertyValue(symbol, null, false, IMAGE_PROPERTY, BEGIN_SYMBOL_STYLE);
 					break;
 				}
 				
@@ -139,7 +148,7 @@ public class WorkflowEditorBL {
 				String spFromStepId = "";
 				String spToStepId = "";
 				
-				NodeList edgeList = xmlParsedDoc.getElementsByTagName("Edge");
+				NodeList edgeList = xmlParsedDoc.getElementsByTagName(EDGE);
 	
 				// iterate the edges (sequences)
 				for (int i = 0; i < edgeList.getLength(); i++) {
@@ -163,7 +172,7 @@ public class WorkflowEditorBL {
 						if (xmlFromStepId != null
 								&& beginSymbolId != null
 								&& beginSymbolId.equals(xmlFromStepId)){
-							edge = _setXmlElementDefaultNameAndColor(edge, null, false, "strokeColor", GREEN);
+							edge = _setXmlElementStylePropertyValue(edge, null, false, STROKE_COLOR_PROPERTY, GREEN);
 							continue;
 						}
 						
@@ -171,12 +180,12 @@ public class WorkflowEditorBL {
 						if (xmlToStepId == null
 							|| xmlToStepId.isEmpty()){
 							spName = DEFAULT_ERROR;
-							edge = this._setXmlElementDefaultNameAndColor(edge, "fontColor", false, DEFAULT_ERROR, RED);
+							edge = this._setXmlElementStylePropertyValue(edge, FONT_COLOR_PROPERTY, false, DEFAULT_ERROR, RED);
 						} else {
 							if (spName != null
 									&& spName.equals(DEFAULT_ERROR)){
 								spName = "";
-								edge = this._setXmlElementDefaultNameAndColor(edge, "fontColor", false, "", null);
+								edge = this._setXmlElementStylePropertyValue(edge, FONT_COLOR_PROPERTY, false, "", null);
 							}
 						}
 	
@@ -236,7 +245,7 @@ public class WorkflowEditorBL {
 								&& wsws.getStepSequence().getToStep().getId().equals(Integer.valueOf(spToStepId))
 								&& !wsws.isSentBack()){
 									
-								edge = _setXmlElementDefaultNameAndColor(edge, null, false, "strokeColor", GREEN);
+								edge = _setXmlElementStylePropertyValue(edge, null, false, STROKE_COLOR_PROPERTY, GREEN);
 								break;
 								
 							}			
@@ -250,7 +259,7 @@ public class WorkflowEditorBL {
 							&& wsws.getEndStep().getId().equals(Integer.valueOf(spFromStepId))
 							&& wsws.isSentBack()){
 							
-							edge = _setXmlElementDefaultNameAndColor(edge, edge.getAttribute("label"), true, "strokeColor", BROWN);
+							edge = _setXmlElementStylePropertyValue(edge, edge.getAttribute(LABEL), true, STROKE_COLOR_PROPERTY, BROWN);
 							break;
 						
 						}
@@ -270,7 +279,8 @@ public class WorkflowEditorBL {
 
 	}
 
-	private Element _setXmlElementDefaultNameAndColor(Element element, String defaultName, boolean sentBack, String property, String color){
+	private Element _setXmlElementStylePropertyValue(
+			Element element, String defaultName, boolean sentBack, String property, String value){
 
 		if (sentBack){
 			
@@ -293,7 +303,7 @@ public class WorkflowEditorBL {
 		if (defaultName != null
 				&& !"".equals(defaultName)){
 			
-			element.setAttribute("label", defaultName); // le corregimos el name al step para que el usuario se de cuenta del fallo
+			element.setAttribute(LABEL, defaultName); // le corregimos el name al step para que el usuario se de cuenta del fallo
 		
 		}
 
@@ -303,16 +313,17 @@ public class WorkflowEditorBL {
 		// usuario que este nombre lo ha rellenado el propio sistema ya que estaba vacío
 		if (mxCellList != null
 				&& mxCellList.getLength() == 1){
+			
 			Element mxCell = ((Element) mxCellList.item(0));
 			String style = mxCell.getAttribute("style");
 			
-			String fontColor = "";
-			if (color != null){
-				fontColor = property+"=" + color + ";";			
+			String propertyAndValue = "";
+			if (value != null){
+				propertyAndValue = property+"=" + value + ";";			
 			}
 			
 			if (style.isEmpty()){
-				mxCell.setAttribute("style", mxCell.getAttribute("style") + fontColor);
+				mxCell.setAttribute("style", mxCell.getAttribute("style") + propertyAndValue);
 			} else {
 				// si el style ya tiene fontColor elimino el que tenia y lo pongo en rojo pero 
 				// dejo el resto de estilos que pudiera tener la celda
@@ -321,15 +332,15 @@ public class WorkflowEditorBL {
 					String[] items = style.split(";");
 					for(int i = 0; i < items.length ; i++){
 						if (items[i].contains(property)){
-							  newStyle += fontColor;
+							  newStyle += propertyAndValue;
 						} else {
 							  newStyle += items[i]+";";
 						}
 					}
 					mxCell.setAttribute("style", newStyle);
 				} else {
-					if (color != null){
-						mxCell.setAttribute("style", mxCell.getAttribute("style") + ";" + fontColor);
+					if (value != null){
+						mxCell.setAttribute("style", mxCell.getAttribute("style") + ";" + propertyAndValue);
 					}
 				}
 			}

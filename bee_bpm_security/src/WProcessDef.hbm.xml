@@ -420,12 +420,16 @@
 			<column name="version"  />
 		</property>
 	
-		<property name="active"	type="java.lang.Boolean">
+		<property name="active" type="java.lang.Boolean">
 			<column name="active"/>
 		</property>
 	
-		<property name="shared"	type="java.lang.Boolean">
+		<property name="shared" type="java.lang.Boolean">
 			<column name="shared"/>
+		</property>
+	
+		<property name="deleted" type="java.lang.Boolean">
+			<column name="deleted"/>
 		</property>
 	
 		<property generated="never" lazy="false" name="rules" type="string">
@@ -724,6 +728,10 @@
 		<property generated="never" lazy="false" name="afterAll"
 			type="java.lang.Boolean">
 			<column name="after_all" />
+		</property>
+		<property generated="never" lazy="false" name="deleted"
+			type="java.lang.Boolean">
+			<column name="deleted" />
 		</property>
 		<property generated="never" lazy="false" name="validResponses"
 			type="string">

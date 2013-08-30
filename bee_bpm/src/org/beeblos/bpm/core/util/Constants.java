@@ -10,6 +10,10 @@ import org.joda.time.DateTime;
 
 public class Constants {
 	
+	// dml 20130830
+	public static final boolean DELETED = true;
+	public static final boolean NOT_DELETED = false;
+
 	// dml 20130821
 	public static final Integer TEXT_DATA_TYPE = 2; // VARCHAR
 	public static final int DEFAULT_VARCHAR_LENGHT = 45;

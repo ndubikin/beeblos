@@ -2,8 +2,9 @@ package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.ALL;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static org.beeblos.bpm.core.util.Constants.DELETED;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
+import static org.beeblos.bpm.core.util.Constants.NOT_DELETED;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,17 +15,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
-import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
+
 import com.sp.common.util.StringPair;
 
 
@@ -115,9 +116,37 @@ public class WStepDefBL {
 					
 	}
 	
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * Updates the step's "logic delete" putting the field "delete" as the user wants. 
+	 *
+	 * @param  Integer stepId
+	 * @param  boolean deleted
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepDefException 
+	 * 
+	 */
+	private void _updateStepDeletedField(Integer stepId, boolean deleted, Integer currentUserId)
+			throws WStepDefException {
+
+		logger.debug("updateStepDeletedField() WStepDef < id = " + stepId + ">");
+
+		if (stepId != null 
+				&& !stepId.equals(0)) {
+
+			new WStepDefDao().updateStepDeletedField(stepId, deleted, currentUserId, new Date());
+
+		}
+
+	}
+
 	public void delete(Integer stepId, Integer processHeadId, Integer currentUserId) 
 			throws WStepDefException, WStepWorkException, WProcessDefException, 
-			WStepSequenceDefException, WStepHeadException  {
+			WStepSequenceDefException, WStepHeadException, WStepWorkSequenceException  {
 
 		logger.debug("delete(stepid) WProcessDef - Name: ["+stepId+"]");
 		
@@ -127,9 +156,38 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 		
+		boolean deleteFromBD = true;
+		
+		// dml 20130830 - si el step tiene rutas no se puede eliminar de la BD. Si todas las rutas estan deleted se podrá marcar
+		// como "deleted", de lo contrario devuelve exception.
+		if (this._stepHasRoutes(stepId, currentUserId)){
+			
+			// dml 20130830 - si tiene rutas y ninguna tiene "deleted=false" entonces se marca como deleted, en caso contrario
+			// tira exception porque no se puede "borrar" un step con rutas "activas" asociadas
+			if (!this._stepHasUndeletedRoutes(stepId, currentUserId)){
+				
+				deleteFromBD = false;
+				
+			} else {
+				String mess = "Delete step with related NOT DELETED step sequence is not allowed ...";
+				logger.error(mess);
+				throw new WStepDefException(mess);
+			}
+			
+		}
+		
+		// dml 20130830 - si el step se esta usando en algun otro proceso no se puede ni borrar ni marcar como borrado (para PURGE)
+		if (this.stepIsShared(stepId, currentUserId)) {
+			String mess = "Delete step with related step sequence is not allowed because this step belongs few processes ...";
+			logger.error(mess);
+			throw new WStepSequenceDefException(mess);
+		}
+
 		Integer qtyWorks;
 		try {
+			
 			qtyWorks = new WStepWorkBL().getWorkCountByStep(stepId,ALL);
+		
 		} catch (WStepWorkException e) {
 			String mess = "Error verifiyng existence of works related with this step id:"+stepId
 					+ " "+e.getMessage()+" - "+e.getCause();
@@ -137,43 +195,47 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 		
-		if (qtyWorks > 0) {
-			String mess = "Delete step with works is not allowed ... This step has "+qtyWorks+" works";
-			logger.error(mess);
-			throw new WStepWorkException(mess);
+		// dml 20130830 - si el step se usa en algun work no se puede borrar de la BD pero si marcar como borrado (para PURGE)
+		if (qtyWorks != null && qtyWorks > 0) {
+			deleteFromBD = false;
 		}
 
-		// si el step se esta usando en alguna StepSequence no se permite borrarlo
-		if (this.isAnotherProcessUsingStep(stepId, null, currentUserId)) {
-			String mess = "Delete step with related step sequence is not allowed ...";
-			logger.error(mess);
-			throw new WStepSequenceDefException(mess);
-		}
+		Integer workingSteps = new WStepWorkSequenceBL().countStepRelatedStepWorkSequences(stepId, currentUserId);
 		
+		// dml 20130830 - si tiene works no se puede borrar pero si marcar como borrado (para PURGE)
+		if (workingSteps != null
+				&& workingSteps > 0){
+			deleteFromBD = false;
+		} 
+
 		WStepDef step = this.getWStepDefByPK(stepId, processHeadId, currentUserId);
 		Integer stepHeadId = step.getStepHead().getId();
 		
-		// se borrarán en cascada (por el mapping) los roles y users relacionados con el step
-		new WStepDefDao().delete(step);
-		logger.info("The WProcessDef " + step.getName() + " has been correctly deleted by user " + currentUserId);
+		// dml 20130830 - si llega aqui (no sale por exception) pero no se puede borrar definitivamente de la BD se marca como "deleted" (para PURGE)
+		if (!deleteFromBD){
+			this._updateStepDeletedField(stepId, DELETED, currentUserId);
+		} else {
+			// se borrarán en cascada (por el mapping) los roles y users relacionados con el step
+			new WStepDefDao().delete(step);
+			logger.info("The WProcessDef " + step.getName() + " has been correctly deleted by user " + currentUserId);
 
-		this._checkAndDeleteStepHead(stepHeadId, currentUserId);
-		
-	}
-	
-	// to use this method previously must delete all incoming and outcoming routes from step to delete...
-	public boolean delete(Integer stepId, Integer processId, Integer processHeadId, Integer currentUserId) 
-			throws WStepDefException, WStepWorkException, WProcessDefException, 
-					WStepSequenceDefException, WStepHeadException 
-			   {
-
-		logger.debug("delete(stepid,processid) WProcessDef - Name: ["+stepId+"/processId:"+processId+"]");
-		
-		if (stepId==null || stepId==0) {
-			String mess = "Error: deleting step with id null or 0 ...";
-			logger.error(mess);
-			throw new WStepDefException(mess);
+			this._checkAndDeleteStepHead(stepHeadId, currentUserId);
 		}
+							
+	}	
+	
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * If the step has any route returns true else false
+	 *
+	 * @param  Integer stepId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return Integer
+	 * 
+	 */
+	private boolean _stepHasRoutes(Integer stepId, Integer currentUserId) throws WStepDefException{
 		
 		// checks if step is used in other process or in the same process in other routes ...
 		Integer qtyRoutes=0;
@@ -181,10 +243,15 @@ public class WStepDefBL {
 
 		// send null processId to count all routes in all processes. If
 		try {
-			qtyRoutes = routesBL.countIncomingRoutes(stepId, null, currentUserId);
-			if (qtyRoutes>0) return false;
-			qtyRoutes = routesBL.countOutgoingRoutes(stepId, null, currentUserId);
-			if (qtyRoutes>0) return false;	
+			
+			qtyRoutes = routesBL.countIncomingRoutes(stepId, null, null, currentUserId);
+			
+			if (qtyRoutes != null && qtyRoutes > 0) return true;
+			
+			qtyRoutes = routesBL.countOutgoingRoutes(stepId, null, null, currentUserId);
+			
+			if (qtyRoutes != null && qtyRoutes > 0) return true;
+			
 		} catch (WStepSequenceDefException e) {
 			String mess = "Error verifiyng existence of another uses for this step id:"+stepId
 							+ " "+e.getMessage()+" - "+e.getCause();
@@ -192,14 +259,68 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 		
-		delete(stepId, processHeadId, currentUserId);
+		return false;
 
-		
-		// if arrives here, all is ok, return true ...
-		return true;
-		
 	}
-	
+
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * If the step has routes marked as "NOT DELETED" it returns true, if it has not routes or they are all deleted returns false
+	 *
+	 * @param  Integer stepId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return Integer
+	 * 
+	 */
+	private boolean _stepHasUndeletedRoutes(Integer stepId, Integer currentUserId) throws WStepDefException{
+		
+		WStepSequenceDefBL routesBL = new WStepSequenceDefBL();
+
+		// checks if step is used in other process or in the same process in other routes ... and if they are deleted
+		List<WStepSequenceDef> routes = null;
+
+		// send null processId to count all routes in all processes. If
+		try {
+			
+			routes = routesBL.getIncomingRoutes(stepId, null, null, currentUserId);
+			
+			if (routes != null && !routes.isEmpty()) {
+				
+				for (WStepSequenceDef route : routes){
+					// si hay alguna ruta y no esta marcada como borrada no se hace nada
+					if (!route.isDeleted()){
+						return true;
+					}
+					
+				}
+			}
+			
+			routes = routesBL.getOutgoingRoutes(stepId, null, null, currentUserId);
+			
+			if (routes != null && !routes.isEmpty()) {
+				
+				for (WStepSequenceDef route : routes){
+					// si hay alguna ruta y no esta marcada como borrada no se hace nada
+					if (!route.isDeleted()){
+						return true;
+					}
+					
+				}
+			}
+		
+		} catch (WStepSequenceDefException e) {
+			String mess = "Error verifiyng existence of another uses for this step id:"+stepId
+							+ " "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		return false;
+
+	}
+
 	// dml 20130507
 	private void _checkAndDeleteStepHead(Integer stepHeadId, Integer currentUserId) throws WStepHeadException{
 		
@@ -343,7 +464,7 @@ public class WStepDefBL {
 			WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
 			// clone outgoing routes
 			try {
-				routes = new WStepSequenceDefBL().getOutgoingRoutes(stepId, processId, userId);
+				routes = new WStepSequenceDefBL().getOutgoingRoutes(stepId, NOT_DELETED, processId, userId);
 				if (routes.size()>0){
 					for (WStepSequenceDef route: routes) {
 						route.setFromStep(new WStepDef(clonedId));
@@ -359,7 +480,7 @@ public class WStepDefBL {
 
 			// clone ingoing routes
 			try {
-				routes = new WStepSequenceDefBL().getIncomingRoutes(stepId, processId, userId);
+				routes = new WStepSequenceDefBL().getIncomingRoutes(stepId, NOT_DELETED, processId, userId);
 				if (routes.size()>0){
 					for (WStepSequenceDef route: routes) {
 						route.setToStep(new WStepDef(clonedId));
@@ -527,9 +648,9 @@ public class WStepDefBL {
 	
 	}
 	
-	public List<WStepDef> getStepDefs(Integer processId, Integer userId) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer processId, Boolean deleted, Integer userId) throws WStepDefException {
 
-		return new WStepDefDao().getStepDefs(processId);
+		return new WStepDefDao().getStepDefs(processId, deleted);
 	
 	}
 	
@@ -540,9 +661,20 @@ public class WStepDefBL {
 		
 	}
 	
-	// dml 20130507
-	public boolean isAnotherProcessUsingStep(Integer stepId, Integer processId, Integer userId) 
-			throws WStepDefException, WProcessDefException {
+	/**
+	 * @author dmuleiro - 20130507
+	 * 
+	 * If the step is used by more than one process it is shared.
+	 *
+	 * @param  Integer stepId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return boolean
+	 * 
+	 * @throws WStepDefException 
+	 * 
+	 */
+	public boolean stepIsShared(Integer stepId, Integer currentUserId) throws WStepDefException {
 
 		if (stepId == null
 				|| stepId.equals(0)){
@@ -551,30 +683,21 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 
-		List<Integer> processIdList = this.getProcessIdList(stepId, userId);
+		List<Integer> processIdList = this.getProcessIdList(stepId, currentUserId);
 		
 		if (processIdList == null){
-			String mess = "Error trying to retrieve the processIdList:"+processId;
+			String mess = "Error trying to retrieve the processIdList for step: "+stepId;
 			logger.error(mess);
-			throw new WProcessDefException(mess);
+			throw new WStepDefException(mess);
 		}
 		
 		// si le pasamos processId nulo, si la lista no esta vacia devuelve "true"
-		if ((processId == null
-				|| processId.equals(0))
-				&& !processIdList.isEmpty()){
+		if (processIdList != null
+				&& processIdList.size() > 1){
 			return true;
+		} else {
+			return false;
 		}
-			
-		for (Integer pid : processIdList){
-			
-			if (!pid.equals(processId)){
-				return true;
-			}
-			
-		} 
-
-		return false;
 	
 	}	
 	

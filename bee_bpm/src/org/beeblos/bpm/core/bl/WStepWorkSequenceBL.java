@@ -57,7 +57,7 @@ public class WStepWorkSequenceBL {
 
 	}
 
-	public void delete(WStepWorkSequence stepWorkSequence) throws WStepWorkSequenceException {
+	public void delete(WStepWorkSequence stepWorkSequence, Integer currentUserId) throws WStepWorkSequenceException {
 
 		logger.debug("delete() WStepWorkSequence < id = " + stepWorkSequence.getId() + ">");
 
@@ -76,11 +76,77 @@ public class WStepWorkSequenceBL {
 
 	}
 
-	// dml 20130827
+	/**
+	 * @author dmuleiro - 20130827
+	 * 
+	 * Returns the List<WStepWorkSequence> related with a concrete WProcessWork.
+	 *
+	 * @param  Integer processId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return List<WStepWorkSequence>
+	 * 
+	 */
 	public List<WStepWorkSequence> getWStepWorkSequencesByWorkingProcessId(Integer workingProcessId, Integer currentUserId) 
 			throws WStepWorkSequenceException {
 
 		return new WStepWorkSequenceDao().getWStepWorkSequencesByWorkingProcessId(workingProcessId);
+
+	}
+
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Returns the List<WStepWorkSequence> related with a concrete WProcessDef.
+	 *
+	 * @param  Integer processId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return List<WStepWorkSequence>
+	 * 
+	 */
+	public List<WStepWorkSequence> getWStepWorkSequencesByProcessId(Integer processId, Integer currentUserId) 
+			throws WStepWorkSequenceException {
+
+		return new WStepWorkSequenceDao().getWStepWorkSequencesByProcessId(processId);
+
+	}
+
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Returns the number of "WStepWorkSequence" registers related to a concrete "WStepSequenceDef"
+	 *
+	 * @param  Integer routeId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return Integer
+	 * 
+	 * @throws WStepWorkSequenceException
+	 * 
+	 */
+	public Integer countRouteRelatedStepWorkSequences(Integer routeId, Integer currentUserId) 
+			throws WStepWorkSequenceException {
+
+		return new WStepWorkSequenceDao().countRouteRelatedStepWorkSequences(routeId);
+
+	}
+
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Returns the number of "WStepWorkSequence" registers related to a concrete "WStepDef"
+	 *
+	 * @param  Integer stepId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return Integer
+	 * 
+	 */
+	public Integer countStepRelatedStepWorkSequences(Integer stepId, Integer currentUserId) 
+			throws WStepWorkSequenceException {
+
+		return new WStepWorkSequenceDao().countStepRelatedStepWorkSequences(stepId);
 
 	}
 

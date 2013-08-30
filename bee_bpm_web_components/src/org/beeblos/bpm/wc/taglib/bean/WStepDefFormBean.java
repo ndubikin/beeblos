@@ -2,6 +2,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.NOT_DELETED;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.WSTEPDEF_QUERY;
 
@@ -43,7 +44,6 @@ import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WTimeUnit;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
-import org.beeblos.bpm.core.model.noper.WProcessHeadLight;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.FGPException;
@@ -861,7 +861,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			 * 
 			 * Por ese motivo en este método seteo process_id a null porque no hay nada que indique que estamos parados en 1 proceso...
 			 */
-			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, currentProcessDefId, getCurrentUserId());
+			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, NOT_DELETED, currentProcessDefId, getCurrentUserId());
 
 			if (outgoingRoutes != null){
 				outgoingRoutesSize = outgoingRoutes.size();
@@ -885,7 +885,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		try {
 
-			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, currentProcessDefId, getCurrentUserId());
+			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, NOT_DELETED, currentProcessDefId, getCurrentUserId());
 
 			if (incomingRoutes != null){
 				incomingRoutesSize = incomingRoutes.size();

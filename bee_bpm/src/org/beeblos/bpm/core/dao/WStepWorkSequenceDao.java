@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,7 +170,17 @@ public class WStepWorkSequenceDao {
 		return stepWorkSequenceList;
 	}
 
-	// dml 20130827
+	/**
+	 * @author dmuleiro - 20130827
+	 * 
+	 * Returns the List<WStepWorkSequence> related with a concrete WProcessWork.
+	 *
+	 * @param  Integer processId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return List<WStepWorkSequence>
+	 * 
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWorkSequence> getWStepWorkSequencesByWorkingProcessId(Integer workingProcessId) throws WStepWorkSequenceException {
 
@@ -194,15 +205,168 @@ public class WStepWorkSequenceDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepWorkSequenceDao: getWStepWorkSequences() - can't obtain stepWorkSequence list - "
+			logger.warn("WStepWorkSequenceDao: getWStepWorkSequencesByWorkingProcessId() - can't obtain stepWorkSequence list - "
 					+ ex.getMessage() + "\n" + ex.getCause());
 			throw new WStepWorkSequenceException(
-					"WStepWorkSequenceDao: getWStepWorkSequences() - can't obtain stepWorkSequence list: "
+					"WStepWorkSequenceDao: getWStepWorkSequencesByWorkingProcessId() - can't obtain stepWorkSequence list: "
 							+ ex.getMessage() + "\n" + ex.getCause());
 
 		}
 
 		return stepWorkSequenceList;
+	}
+
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Returns the List<WStepWorkSequence> related with a concrete WProcessDef.
+	 *
+	 * @param  Integer processId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return List<WStepWorkSequence>
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public List<WStepWorkSequence> getWStepWorkSequencesByProcessId(Integer processId) throws WStepWorkSequenceException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WStepWorkSequence> stepWorkSequenceList = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			stepWorkSequenceList = session.createQuery("From WStepWorkSequence Where stepWork.wProcessWork.process.id = :processId Order By executionDate ASC")
+					.setInteger("processId", processId)
+					.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepWorkSequenceDao: getWStepWorkSequencesByProcessId() - can't obtain stepWorkSequence list - "
+					+ ex.getMessage() + "\n" + ex.getCause());
+			throw new WStepWorkSequenceException(
+					"WStepWorkSequenceDao: getWStepWorkSequencesByProcessId() - can't obtain stepWorkSequence list: "
+							+ ex.getMessage() + "\n" + ex.getCause());
+
+		}
+
+		return stepWorkSequenceList;
+	}
+
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Returns the number of "WStepWorkSequence" registers related to a concrete "WStepSequenceDef"
+	 *
+	 * @param  Integer routeId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return Integer
+	 * 
+	 */
+	public Integer countRouteRelatedStepWorkSequences(Integer routeId) 
+			throws WStepWorkSequenceException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		BigInteger count = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			String sqlQuery = "SELECT COUNT(*) FROM w_step_work_sequence WHERE step_sequence_def_id = " + routeId;
+
+			count = (BigInteger) session.createSQLQuery(sqlQuery)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepWorkSequenceDao: countRouteRelatedStepWorkSequences() - can't count stepWorkSequence - "
+					+ ex.getMessage() + "\n" + ex.getCause());
+			throw new WStepWorkSequenceException(
+					"WStepWorkSequenceDao: countRouteRelatedStepWorkSequences() - can't count stepWorkSequence: "
+							+ ex.getMessage() + "\n" + ex.getCause());
+
+		}
+
+		if (count == null || count.intValue() == 0){
+			return 0;
+		} else {
+			return count.intValue();
+		}
+
+	}
+
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * Returns the number of "WStepWorkSequence" registers related to a concrete "WStepDef"
+	 *
+	 * @param  Integer stepId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return Integer
+	 * 
+	 * @throws WStepWorkSequenceException
+	 * 
+	 */
+	public Integer countStepRelatedStepWorkSequences(Integer stepId) 
+			throws WStepWorkSequenceException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		BigInteger count = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			String sqlQuery = "SELECT COUNT(*) FROM w_step_work_sequence " +
+					"WHERE begin_step_id = " + stepId + " OR end_step_id = " + stepId;;
+
+			count = (BigInteger) session.createSQLQuery(sqlQuery)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WStepWorkSequenceDao: countStepRelatedStepWorkSequences() - can't count stepWorkSequence - "
+					+ ex.getMessage() + "\n" + ex.getCause());
+			throw new WStepWorkSequenceException(
+					"WStepWorkSequenceDao: countStepRelatedStepWorkSequences() - can't count stepWorkSequence: "
+							+ ex.getMessage() + "\n" + ex.getCause());
+
+		}
+
+		if (count == null || count.intValue() == 0){
+			return 0;
+		} else {
+			return count.intValue();
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
