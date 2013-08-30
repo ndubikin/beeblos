@@ -23,7 +23,7 @@ public class WProcessWorkBL {
 		
 	}
 	
-	public Integer add(WProcessWork process, Integer currentUser) throws WProcessWorkException {
+	public Integer add(WProcessWork process, Integer currentUserId) throws WProcessWorkException {
 		
 		logger.debug("add() WProcessWork - Name: ["+process.getId()+"]");
 		
@@ -31,8 +31,8 @@ public class WProcessWorkBL {
 		// timestamp & trace info
 		process.setInsertDate(new Date());
 		process.setModDate( DEFAULT_MOD_DATE );
-		process.setInsertUser(currentUser);
-		process.setModUser(currentUser);
+		process.setInsertUser(currentUserId);
+		process.setModUser(currentUserId);
 		if ( process.getStatus()==null ) {
 			process.setStatus(new WProcessStatus(1));
 		}
@@ -48,7 +48,7 @@ public class WProcessWorkBL {
 		}
 	}
 	
-	public void update(WProcessWork process, Integer currentUser) throws WProcessWorkException {
+	public void update(WProcessWork process, Integer currentUserId) throws WProcessWorkException {
 		
 		logger.debug("update() WProcessWork < id = "+process.getId()+">");
 		
@@ -56,7 +56,7 @@ public class WProcessWorkBL {
 
 			// timestamp & trace info
 			process.setModDate(new Date());
-			process.setModUser(currentUser);
+			process.setModUser(currentUserId);
 			new WProcessWorkDao().update(process);
 			
 		} else {
@@ -67,7 +67,7 @@ public class WProcessWorkBL {
 	}
 	
 	
-	public void delete(WProcessWork process, Integer currentUser) throws WProcessWorkException {
+	public void delete(WProcessWork process, Integer currentUserId) throws WProcessWorkException {
 
 		logger.debug("delete() WProcessWork - Name: ["+process.getReference()+"]");
 		
@@ -75,17 +75,34 @@ public class WProcessWorkBL {
 
 	}
 
-	public WProcessWork getWProcessWorkByPK(Integer id, Integer currentUser) throws WProcessWorkException {
+	public WProcessWork getWProcessWorkByPK(Integer id, Integer currentUserId) throws WProcessWorkException {
 
 		return new WProcessWorkDao().getWProcessWorkByPK(id);
 	}
 	
 	
-	public WProcessWork getWProcessWorkByName(String name, Integer currentUser) throws WProcessWorkException {
+	public WProcessWork getWProcessWorkByName(String name, Integer currentUserId) throws WProcessWorkException {
 
 		return new WProcessWorkDao().getWProcessWorkByName(name);
 	}
 
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Returns the List<WProcessWork> related with a concrete WProcessDef.
+	 *
+	 * @param  Integer processId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return List<WProcessWork>
+
+	 * @throws WProcessWorkException 
+	 * 
+	 */
+	public List<WProcessWork> getWProcessWorkListByProcessId(Integer processId, Integer currentUserId) throws WProcessWorkException {
+
+		return new WProcessWorkDao().getWProcessWorkListByProcessId(processId);
+	}
 	
 	public List<WProcessWork> getWProcessWorks(Integer currentUser) throws WProcessWorkException {
 

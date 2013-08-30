@@ -14,6 +14,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -355,6 +356,11 @@ public class WStepDefQueryBean extends CoreManagedBean {
 				agregarMensaje(message);
 				logger.error(message);
 				
+			} catch (WStepWorkSequenceException e) {
+				String message = e.getMessage() + " - " + e.getCause();
+				this.messageStyle = errorMessageStyle();
+				agregarMensaje(message);
+				logger.error(message);
 			} 
 			
 		}

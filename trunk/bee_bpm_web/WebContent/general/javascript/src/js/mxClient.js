@@ -10088,7 +10088,7 @@ mxXmlRequest.prototype.sendWithEditor = function(onload, onerror, editor)
 				}
 			});
 		}
-
+		
 		this.request.open(this.method, this.url, this.async,
 			this.username, this.password);
 		this.setRequestHeaders(this.request, this.params);
@@ -10179,7 +10179,7 @@ mxXmlRequest.prototype.simulate = function(doc, target)
 			
 			var textarea = doc.createElement('textarea');
 			textarea.setAttribute('name', name);
-			value = value.replace(/\n/g, '&#xa;');
+			value = value.replace(/\n/g, '	');
 			
 			var content = doc.createTextNode(value);
 			textarea.appendChild(content);
@@ -13459,7 +13459,7 @@ mxSession.prototype.notifyWithResponse = function(changes, editor, onLoad, onErr
 /**
  * dml 20130725
  *
- * Function: save
+ * Function: postXmlMap
  * 
  * Sends out the specified XML to <urlNotify> and fires a <notify> event.
  */
@@ -13477,6 +13477,10 @@ mxSession.prototype.postXmlMap = function(url, data, editor, onLoad, onError)
 			}
 			else
 			{
+				if (this.escapePostData)
+				{
+					data = encodeURIComponent(data);
+				}
 				mxUtils.postWithEditor(url, 'xml='+data, editor, onLoad, onError);
 
 			}
@@ -72986,9 +72990,11 @@ mxEditor.prototype.saveNew = function (url, linefeed)
 	// Posts the data if the URL is not empty
 	if (url != null && url.length > 0)
 	{
-		var data = this.writeGraphModel(linefeed);
-		
+
 		mxUtils.showSplash();
+
+		var data = this.writeGraphModel(linefeed);
+
 		this.hideSpObjectListPopup();
 
 		this.session.postXmlMap(url, data, this, 
@@ -73048,7 +73054,7 @@ mxEditor.prototype.checkMapIntegrity = function (url, linefeed)
 	if (url != null && url.length > 0)
 	{
 		var data = this.writeGraphModel(linefeed);
-		
+
 		mxUtils.showSplash();
 		this.hideSpObjectListPopup();
 

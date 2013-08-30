@@ -19,10 +19,14 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private Integer id;
 	private WProcessDef process; // refers directly a version of the process
 	private String name;
+	
 	private WStepDef fromStep;
 	private WStepDef toStep;
+	
 	private boolean enabled;
 	private boolean afterAll;
+	private boolean deleted; // dml 20130829 - si se intenta borrar y tiene "w_step_work_sequence" asociados se marca como deleted para hacer PURGE en caso de que este activo (SOLO DESARROLLO)
+	
 	private String validResponses; // indicates a list of idResponse comma separated
 	
 	// dml 20130727
@@ -49,7 +53,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 	public WStepSequenceDef(Integer id, WProcessDef process,// Integer version,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
-			boolean afterAll, String validResponses, String name) {
+			boolean afterAll, boolean deleted, String validResponses, String name) {
 		super();
 		this.id = id;
 		this.process = process;
@@ -58,6 +62,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.toStep = toStep;
 		this.enabled = enabled;
 		this.afterAll = afterAll;
+		this.deleted = deleted;
 		this.validResponses = validResponses;
 		this.name = name;
 	}
@@ -69,7 +74,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 	public WStepSequenceDef(WProcessDef process, //Integer version,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
-			boolean afterAll, String validResponses, String name) {
+			boolean afterAll, boolean deleted, String validResponses, String name) {
 		super();
 	
 		this.process = process;
@@ -78,6 +83,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.toStep = toStep;
 		this.enabled = enabled;
 		this.afterAll = afterAll;
+		this.deleted = deleted;
 		this.validResponses = validResponses;
 		this.name = name;
 	}
@@ -216,6 +222,16 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 
 
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+
 	/**
 	 * @return the validResponses
 	 */
@@ -289,6 +305,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (afterAll ? 1231 : 1237);
+		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
@@ -314,6 +331,8 @@ public class WStepSequenceDef implements java.io.Serializable {
 			return false;
 		WStepSequenceDef other = (WStepSequenceDef) obj;
 		if (afterAll != other.afterAll)
+			return false;
+		if (deleted != other.deleted)
 			return false;
 		if (enabled != other.enabled)
 			return false;
@@ -363,7 +382,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 //				+ ", version=" + version 
 				+ ", name=" + name + ", fromStep="
 				+ fromStep + ", toStep=" + toStep + ", enabled=" + enabled
-				+ ", afterAll=" + afterAll + ", validResponses="
+				+ ", afterAll=" + afterAll + ", deleted=" + deleted + ", validResponses="
 				+ validResponses + ", insertUser=" + insertUser
 				+ ", insertDate=" + insertDate + ", modUser=" + modUser
 				+ ", modDate=" + modDate + "]";

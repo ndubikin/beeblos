@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static org.beeblos.bpm.core.util.Constants.DELETED;
 
 import java.util.Date;
 import java.util.List;
@@ -12,8 +13,10 @@ import org.beeblos.bpm.core.dao.WStepSequenceDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+
 import com.sp.common.util.StringPair;
 
 
@@ -26,7 +29,7 @@ public class WStepSequenceDefBL {
 		
 	}
 	
-	public Integer add(WStepSequenceDef route, Integer currentUser) throws WStepSequenceDefException {
+	public Integer add(WStepSequenceDef route, Integer currentUserId) throws WStepSequenceDefException {
 		
 		logger.debug("add() WStepSequenceDef - Name: [Proc Version Id:"+
 				route.getProcess().getId()+"-fromStepId:"
@@ -35,14 +38,14 @@ public class WStepSequenceDefBL {
 		// timestamp & trace info
 		route.setInsertDate(new Date());
 		route.setModDate(DEFAULT_MOD_DATE);
-		route.setInsertUser(currentUser);
-		route.setModUser(currentUser);
+		route.setInsertUser(currentUserId);
+		route.setModUser(currentUserId);
 		return new WStepSequenceDefDao().add(route);
 
 	}
 	
 	
-	public void update(WStepSequenceDef route, Integer currentUser) throws WStepSequenceDefException {
+	public void update(WStepSequenceDef route, Integer currentUserId) throws WStepSequenceDefException {
 		
 		logger.debug("update() WStepSequenceDef < id = "+(route!=null?route.getId():"xx.xx")+">");
 		
@@ -50,7 +53,7 @@ public class WStepSequenceDefBL {
 
 			// timestamp & trace info
 			route.setModDate(new Date());
-			route.setModUser(currentUser);
+			route.setModUser(currentUserId);
 			new WStepSequenceDefDao().update(route);
 			
 		} else {
@@ -62,20 +65,72 @@ public class WStepSequenceDefBL {
 					
 	}
 	
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * Updates the step's sequence "logic delete" putting the field "delete" as the user wants. 
+	 *
+	 * @param  Integer stepSequenceId
+	 * @param  boolean deleted
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepSequenceDefException 
+	 * 
+	 */
+	private void _updateStepSequenceDeletedField(Integer stepSequenceId, boolean deleted, Integer currentUserId)
+			throws WStepSequenceDefException {
+
+		logger.debug("updateStepSequenceDeletedField() WStepDef < id = " + stepSequenceId + ">");
+
+		if (stepSequenceId != null 
+				&& !stepSequenceId.equals(0)) {
+
+			new WStepSequenceDefDao().updateStepSequenceDeletedField(stepSequenceId, deleted, currentUserId, new Date());
+
+		}
+
+	}
+
 	
-	public void deleteRoute(WStepSequenceDef route, Integer userId) throws WStepSequenceDefException {
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Deletes the route from the database if it has not related "w_step_work_sequences". In this case
+	 * it makes a "logic delete" putting the field "delete" as "true". 
+	 *
+	 * @param  WStepSequenceDef route
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepSequenceDefException 
+	 * @throws WStepWorkSequenceException 
+	 * 
+	 */
+	public void deleteRoute(WStepSequenceDef route, Integer currentUserId) throws WStepSequenceDefException, WStepWorkSequenceException {
 
 		logger.info("delete() WStepSequenceDef - VersionId: [" +
 					route.getProcess().getId()
 					+"-fromStepId:"
 					+((route!=null && route.getFromStep()!=null)?route.getFromStep().getId():"xx..xx")+"]");
 		
-		new WStepSequenceDefDao().deleteRoute(route);
+		Integer workingRoutes = new WStepWorkSequenceBL().countRouteRelatedStepWorkSequences(route.getId(), currentUserId);
+		
+		if (workingRoutes != null
+				&& workingRoutes > 0){
+			this._updateStepSequenceDeletedField(route.getId(), DELETED, currentUserId);
+		} else {
+			new WStepSequenceDefDao().deleteRoute(route);
+		}
+		
 
 	}
 	
-	// deletes all map (routes) for a given process and version ...
-	public void deleteRoutesFromProcess(WProcessDef process, Integer currentUser) throws WStepSequenceDefException {
+	@Deprecated 
+	// DAVID - CAMBIAR Y SI TIENE WSTEPWORKSEQUENCES MARCARLAS COMO DELETED EN LUGAR DE BORRARLAS
+	public void deleteRoutesFromProcess(WProcessDef process, Integer currentUserId) throws WStepSequenceDefException {
 
 		logger.debug("delete() WStepSequenceDef - ProcId: [" +
 					process.getId() + "]");
@@ -91,19 +146,19 @@ public class WStepSequenceDefBL {
 	
 	}
 	
-	public WStepSequenceDef getWStepSequenceDefByPK(Integer id, Integer currentUser) throws WStepSequenceDefException {
+	public WStepSequenceDef getWStepSequenceDefByPK(Integer id, Integer currentUserId) throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao().getWStepSequenceDefByPK(id);
 	}
 	
 	
-//	public WStepSequenceDef getWStepSequenceDefByName(String name, Integer currentUser) throws WStepSequenceDefException {
+//	public WStepSequenceDef getWStepSequenceDefByName(String name, Integer currentUserId) throws WStepSequenceDefException {
 //
 //		return new WStepSequenceDefDao().getWStepSequenceDefByName(name);
 //	}
 
 	
-	public List<WStepSequenceDef> getWStepSequenceDefs(Integer currentUser) throws WStepSequenceDefException {
+	public List<WStepSequenceDef> getWStepSequenceDefs(Integer currentUserId) throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao().getWStepSequenceDefs();
 	
@@ -111,32 +166,46 @@ public class WStepSequenceDefBL {
 	
 	// retrieves all routes from passed step  ( enabled and disabled )
 	public List<WStepSequenceDef> getStepSequenceDefs(
-			Integer processId, Integer fromStepId , Integer userId  ) 
+			Integer processId, Integer fromStepId , Integer currentUserId  ) 
 	throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao().getStepSequenceDefs(processId, fromStepId);
 	 
 	}	
 
+	/**
+	 * @author dmuleiro 20130829
+	 * 
+	 * Returns the List<WStepSequenceDef> related with a concrete WProcessDef.
+	 *
+	 * @param Integer processId
+	 * @param Boolean deleted
+	 * @param Integer currentUserId
+	 * 
+	 * @return List<WStepDef>
+	 * 
+	 * @throws WStepDefException
+	 * 
+	 */
 	public List<WStepSequenceDef> getStepSequenceList(
-			Integer processId , Integer userId ) 
+			Integer processId , Boolean deleted, Integer currentUserId ) 
 	throws WStepSequenceDefException {
 
-		return new WStepSequenceDefDao().getStepSequenceList(processId);
+		return new WStepSequenceDefDao().getStepSequenceList(processId, deleted);
 		
 	}
 	
 	public List<WStepSequenceDef> getOutgoingRoutes(
-			Integer stepId, Integer processId, Integer userId ) 
+			Integer stepId, Boolean deleted, Integer processId, Integer currentUserId ) 
 	throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao()
-			.getOutgoingRoutes(stepId, processId);
+			.getOutgoingRoutes(stepId, deleted, processId);
 		
 	}
 	
 	public Integer countOutgoingRoutes(
-			Integer stepId, Integer processId, Integer userId ) 
+			Integer stepId, Boolean deleted, Integer processId, Integer currentUserId ) 
 	throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao()
@@ -146,17 +215,17 @@ public class WStepSequenceDefBL {
 	
 	// returns a list with incoming routes pointing to a step
 	public List<WStepSequenceDef> getIncomingRoutes(
-			Integer stepId, Integer processId, Integer userId ) 
+			Integer stepId, Boolean deleted, Integer processId, Integer currentUserId ) 
 	throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao()
-				.getIncomingRoutes(stepId, processId);
+				.getIncomingRoutes(stepId, deleted, processId);
 		
 	}
 	
 	// returns qty routes incoming to this step. If processId=null will return all # of incoming routes
 	public Integer countIncomingRoutes(
-			Integer stepId, Integer processId, Integer userId ) 
+			Integer stepId, Boolean deleted, Integer processId, Integer currentUserId ) 
 	throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao()

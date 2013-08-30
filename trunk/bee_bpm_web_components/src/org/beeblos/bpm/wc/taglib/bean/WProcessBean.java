@@ -39,6 +39,7 @@ import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.WEmailAccount;
@@ -1574,6 +1575,12 @@ public class WProcessBean extends CoreManagedBean {
 					".deleteStepFromSequence() WStepSequenceDefException ..." };
 			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
+		} catch (WStepWorkSequenceException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".deleteStepFromSequence() WStepSequenceDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		}
 		
 	}
@@ -1593,11 +1600,9 @@ public class WProcessBean extends CoreManagedBean {
 			currentWProcessDef
 				.setStepSequenceList(
 						new WStepSequenceDefBL()
-							.getStepSequenceList(currentWProcessDef.getId(), this.getCurrentUserId() ) );
+							.getStepSequenceList(currentWProcessDef.getId(), null, this.getCurrentUserId() ) );
 		} catch (WStepSequenceDefException ex1) {
 			
-			// DAVID HAY QUE VER ESTE ERROR DE LA RECARGA DE LA LISTA DE STEPS DE DONDE SE LLAMA PARA 
-			// PRESENTAR MENSAJE EN PANTALLA Y GRABAR LOG OK?
 			String message = ex1.getMessage() + " - " + ex1.getCause();
 			String params[] = {
 					message + ",",

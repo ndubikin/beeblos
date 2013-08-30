@@ -161,7 +161,54 @@ public class WProcessWorkDao {
 		return process;
 	}
 
-	
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Returns the List<WProcessWork> related with a concrete WProcessDef.
+	 *
+	 * @param  Integer processId
+	 * @param  Integer currentUserId
+	 * 
+	 * @return List<WProcessWork>
+	 * 
+	 * @throws WProcessWorkException 
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public List<WProcessWork> getWProcessWorkListByProcessId(Integer processId) throws WProcessWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WProcessWork> processWorkList = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			processWorkList = session.createQuery("From WProcessWork Where process.id = :processId Order By id")
+					.setInteger("processId", processId)
+					.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("WProcessWorkDao: getWProcessWorksByProcessId() - can't obtain processWork list - "
+					+ ex.getMessage() + "\n" + ex.getCause());
+			throw new WProcessWorkException(
+					"WProcessWorkDao: getWProcessWorksByProcessId() - can't obtain processWork list: "
+							+ ex.getMessage() + "\n" + ex.getCause());
+
+		}
+
+		return processWorkList;
+	}
+
 	public List<WProcessWork> getWProcessWorks() throws WProcessWorkException {
 
 		org.hibernate.Session session = null;
@@ -323,7 +370,7 @@ public class WProcessWorkDao {
 		tmpQuery += " (SELECT COUNT(id) FROM w_step_work sw WHERE sw.decided_date IS NULL AND sw.id_process = pw.id_process AND sw.id_work = pw.id ) AS liveSteps, ";
 		tmpQuery += " pw.starting_time, ";
 		tmpQuery += " ps.id, "; // status id 6 	nes 20130828
-		tmpQuery += " ps.name as statusName, "; // status name // DAVID: AQUI HAY QUE PONER UN AS PORQUE AL HABER DOS "NAME" EL TIO PIYA SOLO E 1ERO
+		tmpQuery += " ps.name as statusName, "; // status name
 		tmpQuery += " pw.end_time, ";
 		tmpQuery += " pw.id ";		// 9
 

@@ -19,6 +19,7 @@ import java.util.TimeZone;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
+import org.beeblos.bpm.core.bl.DevelopmentBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
@@ -27,6 +28,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
@@ -505,8 +507,8 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	
 	public void loadXmlMapAsTmp() {
 		
-		if (id != null
-				&& !id.equals(0)){
+		if (this.id != null
+				&& !this.id.equals(0)){
 			try {
 				
 				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.id, getCurrentUserId());
@@ -557,5 +559,40 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				.getRequestContextPath().trim().replaceAll("\\\\", "/");
 	}
 
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * Deletes all the process information like "process works", "step works", "step_sequence_works" and the obsolete
+	 * steps and step sequences related. 
+	 *
+	 * @return void
+	 * 
+	 */
+	public void purgeWProcessDef() {
+		
+		if (this.id != null
+				&& !this.id.equals(0)){
+
+			try {
+				
+				WProcessDef processDef = new WProcessDefBL().getWProcessDefByPK(this.id, this.currentUserId);
+
+				new DevelopmentBL().purgeProcessDef(processDef, currentUserId);
+
+			} catch (WProcessDefException e) {
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to do purge for id=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+			} catch (WStepSequenceDefException e) {
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error trying to do purge for id=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+			}
+		
+		}
+		
+	}
 
 }

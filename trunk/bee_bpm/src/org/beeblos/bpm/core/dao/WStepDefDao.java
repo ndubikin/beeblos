@@ -7,6 +7,7 @@ import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_MODIFIED;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,6 +78,55 @@ public class WStepDefDao {
 					
 	}
 	
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * Updates the step's "logic delete" putting the field "delete" as the user wants. 
+	 *
+	 * @param  Integer stepId
+	 * @param  boolean deleted
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepDefException 
+	 * 
+	 */
+	public void updateStepDeletedField(Integer stepId, boolean deleted, Integer modUserId,
+			Date modDate) throws WStepDefException {
+
+		logger.debug("updateStepDeletedField() WStepDef < id = " + stepId + ">");
+
+		try {
+
+			org.hibernate.Session session = null;
+			org.hibernate.Transaction tx = null;
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			session.createQuery(
+					"UPDATE WStepDef SET deleted = :deleted, modUser = :modUserId, modDate = :modDate WHERE id = :stepId")
+					.setParameter("deleted", deleted)
+					.setParameter("stepId", stepId)
+					.setParameter("modUserId", modUserId)
+					.setParameter("modDate", modDate)
+					.executeUpdate();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			String message = "SlaDao: update - Can't update deleted field for step " + stepId
+					+ " - and deleted = " + deleted + "\n - " + ex.getMessage() + "\n"
+					+ ex.getCause();
+			logger.error(message);
+			throw new WStepDefException(message);
+
+		}
+
+	}
 	
 	public void delete(WStepDef step) throws WStepDefException {
 
@@ -344,9 +394,23 @@ public class WStepDefDao {
 		
 	}	
 
-	// nes 20130502 - ajustado al nuevo formato de campos de la sequence
+	/**
+	 * @author nes 20130502 (dml 20130829 - added the deleted where clause)
+	 * 
+	 * Returns the List<WStepDef> related with a concrete WProcessDef.
+	 * NOTA: ajustado al nuevo formato de campos de la sequence
+	 *
+	 * @param  Integer processId
+	 * @param Boolean deleted
+	 * @param  Integer currentUserId
+	 * 
+	 * @return List<WStepDef>
+	 * 
+	 * @throws WStepDefException
+	 * 
+	 */
 	@SuppressWarnings("unchecked")
-	public List<WStepDef> getStepDefs(Integer processId) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer processId, Boolean deleted) throws WStepDefException {
 	
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -360,13 +424,24 @@ public class WStepDefDao {
 
 			tx.begin();
 			
+			// dml 20130829 - se añade para devolver filtrando "deleted" si es necesario
+			String deletedWhereClause = "";
+			if (deleted != null){
+				if (deleted){
+					deletedWhereClause = "AND sd.deleted IS TRUE";
+				} else {
+					deletedWhereClause = "AND sd.deleted IS NOT TRUE";
+				}
+			}
+			
 			// NES 20130726 - ajustada query para que traiga los pasos que no tengan rutas "salientes" (que con la anterior no los traía...)
 			String query =  "SELECT sd.* FROM w_step_def sd " 
 							+ "WHERE sd.id IN ("
 							+ "SELECT DISTINCT wsd.id_origin_step FROM  w_step_sequence_def wsd WHERE wsd.process_id = :processId "
 							+ "UNION "
 							+ "SELECT DISTINCT id_dest_step FROM w_step_sequence_def WHERE process_id = :processId "
-							+ ")";
+							+ ")" 
+							+ deletedWhereClause; // dml 20130829 - si es != "", solo devuelve los "deleted" o los no "deleted"
 		
 			System.out.println("[QUERY]: "+query);
 			

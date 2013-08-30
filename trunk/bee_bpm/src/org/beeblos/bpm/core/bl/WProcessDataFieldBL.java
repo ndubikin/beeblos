@@ -120,7 +120,6 @@ public class WProcessDataFieldBL {
 			// dml 20130822 - si tiene nombre y el lenght es null o "0" le ponemos el defaultLength del dato
 			} else{
 				
-				// DAVID: NO ENTENDI POR QUE DEJASTE AQUÍ EL ENGANCHE CON EL DATATYPE POR NOMBRE ... 
 				WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
 						processDataField.getDataType().getId(), currentUserId);
 				
@@ -199,13 +198,14 @@ public class WProcessDataFieldBL {
 			throw new WProcessDataFieldException("Process data field has not a valid name!! Not permitted operation ... ");
 		}
 		
-		// DAVID: NO ENTENDI POR QUE RECUPERABAS EL DATA TYPE POR NOMBRE ...???
 		WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
 				processDataField.getDataType().getId(), currentUserId);
 
-		// dml 20130822 - empty length is not allowed >> DAVID: DEJO ESTE MENSAJE PERO NO SE LO QUE QUISISTE PONER/HACER - LO AJUSTO A MI ENTENDER ...
-		
 		// checks if datatype must have length or not (HAY QUE ARREGLALO QUEDA INCOMPLETO)
+		// NESTOR: yo lo que hacia aquí es comprobar si se le mete un valor en el campo
+		// pero este tiene que ser null que saque error por pantalla...tal como esta ahora
+		// si se mete un valor y el dato no lo acepta simplemente se pone a "null" (en el 
+		// siguiente if)
 		if (currentDataType.getMaxLength() != null
 				&& processDataField.getLength() != null
 				&& processDataField.getLength() > currentDataType.getMaxLength()){
@@ -214,7 +214,12 @@ public class WProcessDataFieldBL {
 
 		// si el default length está en nulo considero q ese campo no puede tener largo
 		// asi que lo anulo para que no reviente el create ...
-		if ( currentDataType.getDefaultLength() == null ){
+		// dml 20130829 - NESTOR si se pone un cero también hay que ponerlo a null para que no
+		// intente poner ese cero en la query (porque la query si es != null intenta meterlo)
+		// el cero también lo pone automáticamente el jsf en el campo de la vista cuando no
+		// se completa el formulario...
+		if ( currentDataType.getDefaultLength() == null
+			|| processDataField.getLength().equals(0) ){
 			processDataField.setLength(null);
 		}
 		

@@ -50,6 +50,7 @@ import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.model.SystemObject;
@@ -1453,6 +1454,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					".deleteStepFromSequence() WStepSequenceDefException ..." };
 			agregarMensaje("205", mensaje, params, FGPException.ERROR);
 			ex1.printStackTrace();
+		} catch (WStepWorkSequenceException ex1) {
+			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
+			String params[] = { mensaje + ",",
+					".deleteStepFromSequence() WStepSequenceDefException ..." };
+			agregarMensaje("205", mensaje, params, FGPException.ERROR);
+			ex1.printStackTrace();
 		}
 		
 	}
@@ -1473,7 +1480,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			currentWProcessDef
 				.setStepSequenceList(
 						new WStepSequenceDefBL()
-							.getStepSequenceList(currentWProcessDef.getId(), this.getCurrentUserId() ) );
+							.getStepSequenceList(currentWProcessDef.getId(), null, this.getCurrentUserId() ) );
 
 		} catch (WStepSequenceDefException e) {
 

@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -65,7 +66,56 @@ public class WStepSequenceDefDao {
 					
 	}
 	
-	
+	/**
+	 * @author dmuleiro - 20130830
+	 * 
+	 * Updates the step's sequence "logic delete" putting the field "delete" as the user wants. 
+	 *
+	 * @param  Integer stepSequenceId
+	 * @param  boolean deleted
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepSequenceDefException 
+	 * 
+	 */
+	public void updateStepSequenceDeletedField(Integer stepSequenceId, boolean deleted, Integer modUserId,
+			Date modDate) throws WStepSequenceDefException {
+
+		logger.debug("updateStepSequenceDeletedField() WStepSequenceDef < id = " + stepSequenceId + ">");
+
+		try {
+
+			org.hibernate.Session session = null;
+			org.hibernate.Transaction tx = null;
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			session.createQuery(
+					"UPDATE WStepSequenceDef SET deleted = :deleted, modUser = :modUserId, modDate = :modDate WHERE id = :stepSequenceId")
+					.setParameter("deleted", deleted)
+					.setParameter("stepSequenceId", stepSequenceId)
+					.setParameter("modUserId", modUserId)
+					.setParameter("modDate", modDate)
+					.executeUpdate();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			String message = "SlaDao: update - Can't update deleted field for stepSequence " + stepSequenceId
+					+ " - and deleted = " + deleted + "\n - " + ex.getMessage() + "\n"
+					+ ex.getCause();
+			logger.error(message);
+			throw new WStepSequenceDefException(message);
+
+		}
+
+	}
+
 	public void deleteRoute(WStepSequenceDef stepSeq) throws WStepSequenceDefException {
 
 		logger.debug("delete() WStepSequenceDef - Name: ["+stepSeq.getFromStep()+"/"+stepSeq.getToStep()+"]");
@@ -357,10 +407,23 @@ public class WStepSequenceDefDao {
 		return stepSeqs;
 	}
 
-	// dml 20120125
+	/**
+	 * @author dmuleiro 20130125 (dml 20130829 - added deleted where clause)
+	 * 
+	 * Returns the List<WStepSequenceDef> related with a concrete WProcessDef.
+	 *
+	 * @param Integer processId
+	 * @param Boolean deleted
+	 * @param Integer currentUserId
+	 * 
+	 * @return List<WStepSequenceDef>
+	 * 
+	 * @throws WStepSequenceDefException
+	 * 
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getStepSequenceList(
-			Integer processId ) 
+			Integer processId, Boolean deleted) 
 	throws WStepSequenceDefException {
 
 		org.hibernate.Session session = null;
@@ -374,11 +437,24 @@ public class WStepSequenceDefDao {
 			tx = session.getTransaction();
 
 			tx.begin();
+			
+			if (deleted == null){
+				stepSeqs = session
+						.createQuery("From WStepSequenceDef Where process.id=? Order By fromStep.id")
+						.setParameter(0, processId)
+						.list();				
+			} else if (deleted){
+				stepSeqs = session
+						.createQuery("From WStepSequenceDef Where process.id=? And deleted IS TRUE Order By fromStep.id")
+						.setParameter(0, processId)
+						.list();				
+			} else if (!deleted){
+				stepSeqs = session
+						.createQuery("From WStepSequenceDef Where process.id=? And deleted IS NOT TRUE Order By fromStep.id")
+						.setParameter(0, processId)
+						.list();				
+			}
 
-			stepSeqs = session
-							.createQuery("FROM WStepSequenceDef WHERE process.id=? ORDER BY fromStep.id")
-							.setParameter(0, processId)
-							.list();
 
 			tx.commit();
 
@@ -405,8 +481,9 @@ public class WStepSequenceDefDao {
 	}
 
 	// dml 20120323
+	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getOutgoingRoutes(
-			Integer stepId, Integer processId ) 
+			Integer stepId, Boolean deleted, Integer processId ) 
 	throws WStepSequenceDefException {
 	
 		if (stepId==null || stepId.equals(0)) {
@@ -425,20 +502,28 @@ public class WStepSequenceDefDao {
 			tx = session.getTransaction();
 
 			tx.begin();
-
-			if (processId != null && !processId.equals(0)) {
-				stepSeqs = session
-								.createQuery("FROM WStepSequenceDef WHERE fromStep.id = ? and process.id=? ORDER BY fromStep.id")
-								.setParameter(0, stepId)
-								.setParameter(1, processId)
-								.list();
-			} else {
-				stepSeqs = session
-						.createQuery("FROM WStepSequenceDef WHERE fromStep.id = ? ORDER BY fromStep.id")
-						.setParameter(0, stepId)
-						.list();
-			}
 			
+			String processWhereClause = "";
+			if (processId != null) {
+				processWhereClause = " AND process_id= " + processId;
+			} 
+
+			String deletedWhereClause = "";
+			if (deleted != null) {
+				if (deleted){
+					deletedWhereClause = " AND deleted IS TRUE ";
+				} else {
+					deletedWhereClause = " AND deleted IS NOT TRUE ";
+				}
+			} 
+			
+			String sqlQuery = " SELECT * FROM w_step_sequence_def ";
+			sqlQuery += "WHERE id_origin_step = " + stepId;
+			sqlQuery += processWhereClause + deletedWhereClause;
+			sqlQuery += " ORDER BY id_origin_step ";
+			
+			stepSeqs = session.createSQLQuery(sqlQuery).addEntity(WStepSequenceDef.class).list();
+
 			tx.commit();
 
 		} catch (HibernateException ex) {
@@ -528,8 +613,9 @@ public class WStepSequenceDefDao {
 	}	
 	
 	// dml 20120323
+	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getIncomingRoutes(
-			Integer stepId, Integer processId) 
+			Integer stepId, Boolean deleted, Integer processId) 
 	throws WStepSequenceDefException {
 	
 		if (stepId==null || stepId.equals(0)) {
@@ -548,19 +634,27 @@ public class WStepSequenceDefDao {
 			tx = session.getTransaction();
 
 			tx.begin();
-
+			
+			String processWhereClause = "";
 			if (processId != null) {
-				stepSeqs = session
-								.createQuery("FROM WStepSequenceDef WHERE toStep.id = ? and process.id=? ORDER BY toStep.id")
-								.setParameter(0, stepId)
-								.setParameter(1, processId)
-								.list();
-			} else {
-				stepSeqs = session
-						.createQuery("FROM WStepSequenceDef WHERE toStep.id = ? ORDER BY toStep.id")
-						.setParameter(0, stepId)
-						.list();
-			}
+				processWhereClause = " AND process_id= " + processId;
+			} 
+
+			String deletedWhereClause = "";
+			if (deleted != null) {
+				if (deleted){
+					deletedWhereClause = " AND deleted IS TRUE ";
+				} else {
+					deletedWhereClause = " AND deleted IS NOT TRUE ";
+				}
+			} 
+			
+			String sqlQuery = " SELECT * FROM w_step_sequence_def ";
+			sqlQuery += "WHERE id_dest_step = " + stepId;
+			sqlQuery += processWhereClause + deletedWhereClause;
+			sqlQuery += " ORDER BY id_dest_step ";
+			
+			stepSeqs = session.createSQLQuery(sqlQuery).addEntity(WStepSequenceDef.class).list();
 
 			tx.commit();
 

@@ -1,5 +1,8 @@
 package org.beeblos.bpm.web.ws.resources;
 
+import static org.beeblos.bpm.core.util.Constants.DELETED;
+import static org.beeblos.bpm.core.util.Constants.NOT_DELETED;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +33,7 @@ import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WorkflowEditorActionException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -65,6 +69,16 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	
 	Document xmlParsed = null;
 
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * WS in charge of reading a xml map (String format), processing it and saving its information in the database.
+	 *
+	 * @param String inputMap
+	 * 
+	 * @return javax.ws.rs.core.Response
+	 * 
+	 */
 	@Path("/Save")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -80,7 +94,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 			xmlParsed = XmlConverterUtil.loadXMLFromString(xml);
 			
-			this.parseAndPersistXmlMap();
+			this._parseAndPersistXmlMap();
 			
 			xml = XmlConverterUtil.loadStringFromXml(xmlParsed);
 			
@@ -112,6 +126,16 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * WS in charge of checking if a xml map (String format) is correctly built.
+	 *
+	 * @param String inputMap
+	 * 
+	 * @return javax.ws.rs.core.Response
+	 * 
+	 */
 	@Path("/CheckMapIntegrity")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -127,7 +151,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 			xmlParsed = XmlConverterUtil.loadXMLFromString(xml);
 
-			this.checkXmlMapIntegrity();
+			this._checkXmlMapIntegrity();
 			
 			xml = XmlConverterUtil.loadStringFromXml(xmlParsed);
 			
@@ -159,6 +183,19 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * 
+	 * WS NOT IMPLEMENTED AND CALLED.
+	 * This WS has to receive a process id, it has to search and load it from the database and return it to the
+	 * WS caller. 
+	 *
+	 * @param String inputMap
+	 * 
+	 * @return javax.ws.rs.core.Response
+	 * 
+	 */
 	@Path("/InicialiceSession/{processId}")
 	@GET
 	@Consumes(MediaType.TEXT_HTML)
@@ -199,6 +236,16 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 	
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * This WS has to return the Softpoint WStepDef object list related with the step id required. 
+	 *
+	 * @param String data
+	 * 
+	 * @return javax.ws.rs.core.Response
+	 * 
+	 */
 	@Path("/getSpObjectList")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -252,6 +299,18 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 	
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * WS NOT IMPLEMENTED
+	 * This WS has to process the change petitions from the caller
+	 *
+	 * @param String changes
+	 * @param String newMap
+	 * 
+	 * @return javax.ws.rs.core.Response
+	 * 
+	 */
 	@Path("/Notify")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -294,6 +353,17 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * This WS has to process the change petitions from the caller, process and save theme and return the new map to the WS caller
+	 *
+	 * @param String changes
+	 * @param String newMap
+	 * 
+	 * @return javax.ws.rs.core.Response
+	 * 
+	 */
 	@Path("/NotifyWithResponse")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -341,7 +411,44 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 
-	// dml 20130726
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * WS NOT IMPLEMENTED
+	 *
+	 * @param String changes
+	 * @param String newMap
+	 * 
+	 * @return javax.ws.rs.core.Response
+	 * 
+	 */
+	@Path("/Poll")
+	@GET
+	@Consumes(MediaType.TEXT_HTML)
+	public Response poll() {
+		
+		System.out.println("------- INIT WS /Poll -------");
+		System.out.println("WS Poll inputMap: ");
+		System.out.println("------- END WS /Poll -------");
+
+		return 	Response.ok("WS /Poll NOT IMPLEMENTED",MediaType.TEXT_XML).build();
+
+	}
+	
+	/**
+	 * @author dmuleiro - 20130726
+	 * 
+	 * It has to receive a xml map and search in database the related object list, format it and return it
+	 *
+	 * @param org.w3c.dom.Document newXmlMapParsed
+	 * 
+	 * @return org.w3c.dom.Document
+	 * 
+	 * @throws NumberFormatException
+	 * @throws WStepDefException
+	 * @throws WStepSequenceDefException
+	 * 
+	 */
 	private Document _changeSpObject(Document newXmlMapParsed) 
 			throws NumberFormatException, WStepDefException, WStepSequenceDefException{
 		
@@ -495,7 +602,22 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		
 	}
 	
-	// dml 20130726
+	/**
+	 * @author dmuleiro - 20130726
+	 * 
+	 * It has to receive a xml map and persist all involved in it in database and complete the map with the new information.
+	 * Then it returns the new map.
+	 *
+	 * @param org.w3c.dom.Document newXmlMapParsed
+	 * 
+	 * @return String
+	 * 
+	 * @throws IOException
+	 * @throws NumberFormatException
+	 * @throws WProcessDefException
+	 * @throws WStepSequenceDefException
+	 * 
+	 */
 	private String _persistXmlMapAndPublishChanges(Document newXmlMapParsed) 
 			throws IOException, NumberFormatException, WProcessDefException, WStepSequenceDefException{
 
@@ -532,21 +654,20 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		
 	}
 	
-	@Path("/Poll")
-	@GET
-	@Consumes(MediaType.TEXT_HTML)
-	public Response poll() {
-		
-		System.out.println("------- INIT WS /Poll -------");
-		System.out.println("WS Poll inputMap: ");
-		System.out.println("------- END WS /Poll -------");
-
-		return 	Response.ok("WS /Poll SIN IMPLEMENTAR",MediaType.TEXT_XML).build();
-
-	}
-	
-	// dml 20130828
-	private boolean checkXmlMapIntegrity() 
+	/**
+	 * @author dmuleiro - 20130828
+	 * 
+	 * It has to receive a xml map and check if all the involved objets in the map are correct
+	 *
+	 * @return boolean
+	 * 
+	 * @throws NumberFormatException
+	 * @throws DOMException
+	 * @throws WStepDefException
+	 * @throws WStepSequenceDefException
+	 * 
+	 */
+	private boolean _checkXmlMapIntegrity() 
 			throws NumberFormatException, DOMException, WStepDefException, WStepSequenceDefException {
 
 		boolean returnValue = true;
@@ -671,11 +792,23 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 
-	private boolean parseAndPersistXmlMap() 
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * It has to process the xml map "xmlParsed" and persist all involved in it in database. 
+	 * Then it has to complete the map with the new information.
+	 * Then it returns the new map.
+	 *
+	 * @return boolean
+	 * 
+	 * @throws WStepDefException, WStepWorkException, WProcessDefException, WStepSequenceDefException, WStepHeadException, WStepResponseDefException, WorkflowEditorActionException
+	 * 
+	 */
+	private boolean _parseAndPersistXmlMap() 
 			throws WStepDefException, WStepWorkException, WProcessDefException, 
 			WStepSequenceDefException, WStepHeadException, WStepResponseDefException, WorkflowEditorActionException {
 
-		String returnValue = "";
+		boolean returnValue = true;
 		
 		if (xmlParsed == null){
 			throw new WorkflowEditorActionException(
@@ -836,7 +969,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 							}
 							 
 						}
-						 
+						
 					}
 					
 					step.setResponse(xmlMapResponses);
@@ -1023,6 +1156,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 						}
 					} 
 					
+				// dml 20130829 - si la ruta no tiene responses le ponemos el "afterAll=true"	
+				} else {
+					route.setAfterAll(true);
 				}
 					
 				// AÑADIR NUEVO WStepSequenceDef
@@ -1060,7 +1196,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		// una a una vamos a ver si tenemos las secuencias ya en BD para ver si lo único que tenemos que
 		// hacer es actualizarla (cambiarle las responses que tiene la misma), añadirla nueva o borrarla
 		// si dejamos de usarla
-		errorValue += this._maangedtepSequenceList(xmlMapStepSequenceList);
+		errorValue += this._managedStepSequenceList(xmlMapStepSequenceList);
 
 		// una a una vamos a ver si tenemos las secuencias ya en BD para ver si lo único que tenemos que
 		// hacer es actualizarla (cambiarle las responses que tiene la misma), añadirla nueva o borrarla
@@ -1079,7 +1215,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			throw new WStepSequenceDefException(errorValue);
 		}
 
-		return true;
+		return returnValue;
 
 	}
 
@@ -1131,7 +1267,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	}
 	
 	// los steps que ya no estan relacionados con este process se borrarán
-	private String _maangedtepSequenceList(List<WStepSequenceDef> xmlMapStepSequenceList) {
+	private String _managedStepSequenceList(List<WStepSequenceDef> xmlMapStepSequenceList) {
 		
 		String returnValue = "";
 		
@@ -1151,6 +1287,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 					bdWssd.setName(xmlWssd.getName());
 					
+					bdWssd.setEnabled(xmlWssd.isEnabled());
+					bdWssd.setAfterAll(xmlWssd.isAfterAll());
+
 					bdWssd.setFromStep((xmlWssd.getFromStep() != null)?new WStepDef(xmlWssd.getFromStep().getId()):null);
 					bdWssd.setToStep((xmlWssd.getToStep() != null)?new WStepDef(xmlWssd.getToStep().getId()):null);
 
@@ -1191,6 +1330,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			try {
 				stepSequenceDefBL.deleteRoute(deletedRoute, currentUserId);
 			} catch (WStepSequenceDefException e) {
+				e.printStackTrace();
+				returnValue += "WS _deleteUnusuedStepSequenceList.deleteRoute() ERROR: " + e.getMessage() + "\n";
+			} catch (WStepWorkSequenceException e) {
 				e.printStackTrace();
 				returnValue += "WS _deleteUnusuedStepSequenceList.deleteRoute() ERROR: " + e.getMessage() + "\n";
 			}
@@ -1260,6 +1402,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	// se actualizan los responses).
 	private String _manageStepList(List<WStepDef> bdStepList, List<WStepDef> xmlStepList) {
 		
+		WStepSequenceDefBL routeBL = new WStepSequenceDefBL();
+		WStepDefBL stepBL = new WStepDefBL();
+
 		String returnValue = "";
 		
 		// bucle para persistir los "id_step" en los WStepResponseDef nuevos
@@ -1275,10 +1420,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				
 				System.out.println("WS Save wsrdBL.update(): " + step.getName());
 				try {
-					new WStepDefBL().update(
-											step,
-											process.getProcess().getId(), // nes 20130808 por agregado de filter para step-data-field
-											currentUserId);
+					stepBL.update(step,
+							process.getProcess().getId(), // nes 20130808 por agregado de filter para step-data-field
+							currentUserId);
 				} catch (WStepDefException e) {
 					e.printStackTrace();
 					returnValue += "WS _manageStepList.update() ERROR: " + e.getMessage() + "\n";
@@ -1306,16 +1450,30 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			
 		}
 		
+		// dml 20130830 - borramos (o marcamos como deleted) los steps de la lista asi como sus secuencias asociadas
 		for (Integer removeStepId : removeStepIdList){
 
+			List<WStepSequenceDef> stepRoutesList = null;
 			try {
-				boolean deletedOk = new WStepDefBL().delete(removeStepId, process.getId(), null, currentUserId);
 
-				if (deletedOk){
-					System.out.println("WS Save. WStepDefBL().delete() It is not possible to delete the step, it is used in other place. id: " + removeStepId);
-				} else {
-					System.out.println("WS Save. WStepDefBL().delete() Step deleted. id: " + removeStepId);
+				// vemos si tiene tanto rutas entrantes y salientes
+				stepRoutesList = routeBL.getIncomingRoutes(removeStepId, NOT_DELETED, null, currentUserId);
+				stepRoutesList.addAll(routeBL.getOutgoingRoutes(removeStepId, NOT_DELETED, null, currentUserId));
+				
+				if (stepRoutesList != null && !stepRoutesList.isEmpty()) {
+					// dml 20130830 - si tiene rutas se borran (el "deleteRoute" ya tiene implementado el marcar como "deleted" si se usa en otros sitios
+					for (WStepSequenceDef route : stepRoutesList){
+						routeBL.deleteRoute(route, currentUserId);
+					}
+
 				}
+					
+				// dml 20130830 - solo se intenta borrar si no lo usa ningún otro proceso
+				if (!stepBL.stepIsShared(removeStepId, currentUserId)){
+					stepBL.delete(removeStepId, process.getProcess().getId(), currentUserId);
+				}
+
+				System.out.println("WS Save. WStepDefBL().delete() Step deleted. id: " + removeStepId);
 
 			} catch (WStepDefException e) {
 				e.printStackTrace();
@@ -1330,6 +1488,9 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				e.printStackTrace();
 				returnValue += "WS _manageStepList.delete() ERROR: " + e.getMessage() + "\n";
 			} catch (WStepHeadException e) {
+				e.printStackTrace();
+				returnValue += "WS _manageStepList.delete() ERROR: " + e.getMessage() + "\n";
+			} catch (WStepWorkSequenceException e) {
 				e.printStackTrace();
 				returnValue += "WS _manageStepList.delete() ERROR: " + e.getMessage() + "\n";
 			} 
@@ -1372,13 +1533,4 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	}
 	
-	@Path("/ShowImageMap")
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response showImageMap(@FormParam("xml") String inputMap) {
-
-		return Response.ok("WS /ShowImageMap SIN IMPLEMENTAR",MediaType.TEXT_PLAIN).build();
-
-	}
-
 }

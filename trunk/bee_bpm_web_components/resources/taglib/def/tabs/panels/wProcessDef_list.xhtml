@@ -61,6 +61,11 @@
                  	<b> #{msg.label_delete_process}</b> {currentRowId} (version: {currentRowVersion}) 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
              	</rich:menuItem>
+          		<rich:menuItem submitMode="ajax"
+           			action="#{wProcessDefQueryBean.purgeWProcessDef}">
+                 	<b> #{msg.label_purge_process}</b> {currentRowId} (version: {currentRowVersion}) 
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+             	</rich:menuItem>
             	<rich:menuSeparator />         
            	<rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.generateXmlWProcessDef}" submitMode="server">

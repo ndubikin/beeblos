@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
+import org.beeblos.bpm.core.dao.WStepWorkSequenceDao;
 import org.beeblos.bpm.core.dao.WUserRoleDao;
 import org.beeblos.bpm.core.email.bl.SendEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
@@ -202,10 +203,23 @@ public class WStepWorkBL {
 		return new WStepWorkDao().getWorkCountByProcess(processId, mode);
 	}
 	
-	public Integer getWorkCountByStep (Integer stepId, String mode) throws WStepWorkException {
+	/**
+	 * @author dmuleiro
+	 * 
+	 * Returns the number of "WStepWork" registers related to a concrete "WStepDef"
+	 *
+	 * @param  Integer stepId
+	 * @param  String mode
+	 * 
+	 * @return Integer
+	 * 
+	 * @throws WStepWorkException
+	 * 
+	 */
+	public Integer getWorkCountByStep(Integer stepId, String mode) throws WStepWorkException {
 		return new WStepWorkDao().getWorkCountByStep(stepId, mode);
 	}
-	
+		
 	/*
 	 ********************** MÉTODOS PARA RECUPERAR LISTAS DE PASOS  ****************************************
 	 */

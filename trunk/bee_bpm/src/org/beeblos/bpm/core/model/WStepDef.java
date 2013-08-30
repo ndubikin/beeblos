@@ -31,6 +31,7 @@ public class WStepDef implements java.io.Serializable {
 	
 	private boolean active;
 	private boolean shared;
+	private boolean deleted; // dml 20130830
 	
 	private Integer idDept;
 	private Integer idPhase;
@@ -196,6 +197,14 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setShared(boolean shared) {
 		this.shared = shared;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	public void setIdDept(Integer idDept) {
@@ -413,6 +422,7 @@ public class WStepDef implements java.io.Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (arrivingAdminNotice ? 1231 : 1237);
+		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
@@ -514,6 +524,8 @@ public class WStepDef implements java.io.Serializable {
 		} else if (!assignedTime.equals(other.assignedTime))
 			return false;
 		if (backingBean != other.backingBean)
+			return false;
+		if (deleted != other.deleted)
 			return false;
 		if (customValidation != other.customValidation)
 			return false;
@@ -672,8 +684,8 @@ public class WStepDef implements java.io.Serializable {
 	@Override
 	public String toString() {
 		return "WStepDef [id=" + id + ", stepHead=" + stepHead + ", version=" + version
-				+ ", active=" + active + ", shared=" + shared + ", idDept=" + idDept + ", idPhase="
-				+ idPhase + ", instructions=" + instructions + ", stepComments=" + stepComments
+				+ ", active=" + active + ", shared=" + shared + ", deleted=" + deleted + ", idDept=" + idDept 
+				+ ", idPhase=" + idPhase + ", instructions=" + instructions + ", stepComments=" + stepComments
 				+ ", idListZone=" + idListZone + ", idWorkZone=" + idWorkZone
 				+ ", idAdditionalZone=" + idAdditionalZone + ", idDefaultProcessor="
 				+ idDefaultProcessor + ", submitForm=" + submitForm + ", timeUnit=" + timeUnit

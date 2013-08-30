@@ -20,6 +20,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessRole;
@@ -306,7 +307,7 @@ public class WProcessDefBL {
 		new WProcessDefDao().delete(process, currentUserId);
 		logger.info("The WProcessDef " + process.getName() + " has been correctly deleted by user " + currentUserId);
 
-		List<String> deletedSteps = this._deleteRelatedSteps(stepsToDelete, currentUserId);
+		List<String> deletedSteps = this._deleteRelatedSteps(stepsToDelete, processHeadId, processId, currentUserId);
 		
 		// delete processHead and related managed table only if all process-def has already deleted
 		this._checkAndDeleteProcessHead(processHeadId, currentUserId);
@@ -325,7 +326,7 @@ public class WProcessDefBL {
 		
 		try {
 			
-			wssdList = new WStepSequenceDefBL().getStepSequenceList(processId, null);
+			wssdList = new WStepSequenceDefBL().getStepSequenceList(processId, null, currentUserId);
 			
 			if (wssdList != null
 					&& !wssdList.isEmpty()){
@@ -342,12 +343,16 @@ public class WProcessDefBL {
 			String mess = "Impossible to delete process " + processId + " step sequence defs";
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
+		} catch (WStepWorkSequenceException e) {
+			String mess = "Impossible to delete process " + processId + " step sequence defs because it has related WStepWorkSequences";
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
 		}
 		
 	}
 
 	// dml 20130507
-	private List<String> _deleteRelatedSteps(List<WStepDef> stepList, Integer currentUserId) 
+	private List<String> _deleteRelatedSteps(List<WStepDef> stepList, Integer processHeadId, Integer processId, Integer currentUserId) 
 			throws WStepDefException, WStepWorkException, WStepHeadException, 
 			WProcessDefException, WStepSequenceDefException {
 				
@@ -362,7 +367,7 @@ public class WProcessDefBL {
 				for (WStepDef wsd : stepList){
 					
 					deletedSteps.add(wsd.getName());
-					wsdBL.delete(wsd.getId(), null, currentUserId); // nes 20130808 - por agregado de filtro para step-data-field
+					wsdBL.delete(wsd.getId(), processHeadId, currentUserId); // nes 20130808 - por agregado de filtro para step-data-field
 					logger.info("The WStepDef " + wsd.getName() + " has been correctly deleted by user " + currentUserId);
 					
 				}
@@ -378,6 +383,10 @@ public class WProcessDefBL {
 			logger.error(mess);
 			throw new WProcessDefException(mess);
 		} catch (WStepSequenceDefException e) {
+			String mess = "Impossible to delete step defs";
+			logger.error(mess);
+			throw new WStepSequenceDefException(mess);
+		} catch (WStepWorkSequenceException e) {
 			String mess = "Impossible to delete step defs";
 			logger.error(mess);
 			throw new WStepSequenceDefException(mess);
@@ -410,18 +419,18 @@ public class WProcessDefBL {
 		
 	}
 
-	private List<WStepDef> _checkAndDeleteRelatedSteps(Integer processId, Integer userId) 
+	private List<WStepDef> _checkAndDeleteRelatedSteps(Integer processId, Integer currentUserId) 
 			throws WProcessWorkException, WStepSequenceDefException, WStepWorkException {
 		
 		List<WStepDef> returnValue = new ArrayList<WStepDef>();
 		try {
 			
-			List<WStepDef> stepDefList = loadStepList(processId, userId);
+			List<WStepDef> stepDefList = loadStepList(processId, currentUserId);
 			
 			for (WStepDef stepDef: stepDefList) {
 				
-				if ( !checkSharedStep(stepDef.getId(), processId, userId) 
-						&& !checkWorkReferral(stepDef.getId(),processId, userId) ) {
+				if ( !checkSharedStep(stepDef.getId(), processId, currentUserId) 
+						&& !checkWorkReferral(stepDef.getId(),processId, currentUserId) ) {
 					
 					returnValue.add(stepDef);
 					
@@ -439,11 +448,11 @@ public class WProcessDefBL {
 	}
 	
 
-	public boolean checkSharedStep(Integer stepId, Integer processId, Integer userId) throws WStepSequenceDefException {
+	public boolean checkSharedStep(Integer stepId, Integer processId, Integer currentUserId) throws WStepSequenceDefException {
 		
 		try {
 
-			return new WStepDefBL().isAnotherProcessUsingStep(stepId, processId, userId);
+			return new WStepDefBL().stepIsShared(stepId, currentUserId);
 		
 		} catch (Exception e) {
 			String mess = "Error checking shared steps for process id:"+processId;
@@ -452,11 +461,11 @@ public class WProcessDefBL {
 
 	}
 	
-	public boolean checkWorkReferral(Integer stepId, Integer processId, Integer userId) throws WStepWorkException {
+	public boolean checkWorkReferral(Integer stepId, Integer processId, Integer currentUserId) throws WStepWorkException {
 		
 		try {
 
-			return new WStepWorkBL().isAnotherProcessUsingWorkStep(stepId, processId, userId);
+			return new WStepWorkBL().isAnotherProcessUsingWorkStep(stepId, processId, currentUserId);
 			
 		} catch (Exception e) {
 			String mess = "Error checking shared work steps for process id:"+processId;
@@ -776,7 +785,7 @@ public class WProcessDefBL {
 		// clone routes (the workflow map really ...)
 		WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
 		try {
-			routes = new WStepSequenceDefBL().getStepSequenceList(processId, currentUserId);
+			routes = new WStepSequenceDefBL().getStepSequenceList(processId, null, currentUserId);
 			if (routes.size()>0){
 				for (WStepSequenceDef route: routes) {
 					route.setProcess(new WProcessDef());
@@ -804,7 +813,7 @@ public class WProcessDefBL {
 	
 	
 	// nes 20130502 - traido desde el backing bean ...
-	private List<WStepDef> loadStepList(Integer processId, Integer userId) 
+	private List<WStepDef> loadStepList(Integer processId, Integer currentUserId) 
 			throws WStepDefException {
 
 		List<WStepDef> lsteps=new ArrayList<WStepDef>();
@@ -812,7 +821,7 @@ public class WProcessDefBL {
 
 			if (processId != null && processId != 0) {
 
-				lsteps = new WStepDefBL().getStepDefs(processId, userId);
+				lsteps = new WStepDefBL().getStepDefs(processId, null, currentUserId);
 
 			}
 		} catch (WStepDefException ex1) {
@@ -834,8 +843,7 @@ public class WProcessDefBL {
 
 			if (processId != null && processId != 0) {
 
-				// dml 20120326 NOTA: LA VERSION ESTA HARDCODEADA A 1
-				routes = new WStepSequenceDefBL().getStepSequenceList(processId, currentUserId);
+				routes = new WStepSequenceDefBL().getStepSequenceList(processId, null, currentUserId);
 				
 			}
 			
