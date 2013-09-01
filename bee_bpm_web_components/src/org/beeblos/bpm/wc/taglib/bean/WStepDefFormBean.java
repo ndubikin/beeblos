@@ -556,7 +556,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		try {
 			
  			this.relatedStepDefList = new WStepDefBL()
-				.getStepListByFinder(null, null, null, null, false, null, 
+				.finderWStepDef(null, null, null, null, false, null, 
 						this.currentWStepDef.getStepHead().getId(), this.activeFilter);
 				
 		} catch (WStepDefException ex1) {

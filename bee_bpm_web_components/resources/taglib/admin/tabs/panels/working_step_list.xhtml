@@ -36,7 +36,7 @@
 					oncomplete="openInNewTab('#{workingProcessQueryBean.workflowViewXmlMapUrl}');"
 					action="#{workingProcessQueryBean.loadXmlMapAsTmp}"
 					submitMode="ajax">
-					<b> #{msg.label_load_process_xml_map}</b> {currentRowId} 
+					<b> #{msg.label_view_map}</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}" />
                 	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.idStepWork}" value="{idStepWork}"/>
 				</rich:menuItem>

@@ -63,13 +63,12 @@ public class BeeBPMBL {
 		
 		_definicionObjetosDelEntorno(idProcess,  idStep, idObject,  idObjectType,  userId);
 		
+		WProcessWork processWork = _setProcessWork(idProcess,  idStep, idObject,  idObjectType, objReference,  objComments,  userId);
+		WStepWork stepWork = _setStepWork(processWork,userId, managedData);
+
 		//idStepWork = new WStepWorkBL().add(_setStepWork(), usuarioLogueado) ;
 		idStepWork = new WStepWorkBL()
-							.start(
-									_setProcessWork(idProcess,  idStep, idObject,  idObjectType, objReference,  objComments,  userId), 
-									_setStepWork(null,userId),
-									managedData,
-									userId) ;
+							.start( processWork, stepWork, userId) ;
 
 		return idStepWork;
 		
@@ -176,7 +175,7 @@ public class BeeBPMBL {
 		
 		WProcessWork newWorkObject = new WProcessWork();
 		
-		newWorkObject.setProcess(selectedProcess);
+		newWorkObject.setProcessDef(selectedProcess.getAsProcessDefThin());
 //		newWorkObject.setVersion(version); (obsoleto y ano se usa el idProcess ya implica la version ...)
 		
 //		pasoAInyectar.setPreviousStep(null);
@@ -194,19 +193,27 @@ public class BeeBPMBL {
 		
 	}
 	
-	private WStepWork _setStepWork(WProcessWork work, Integer userId) {
+	private WStepWork _setStepWork(WProcessWork processWork, Integer userId, ManagedData md) {
 		
 		WStepWork pasoAInyectar = new WStepWork();
 		
-		pasoAInyectar.setProcess(selectedProcess);
-//		pasoAInyectar.setVersion(version);
+		pasoAInyectar.setManagedData(md);// nes 20130830
+		
+		if (processWork!=null) {
+			pasoAInyectar.setwProcessWork(processWork);
+		}
+		if (pasoAInyectar.getwProcessWork()!=null) {
+			pasoAInyectar.getwProcessWork().setProcessDef( selectedProcess.getAsProcessDefThin() );
+		}
+
+		//		pasoAInyectar.setVersion(version);
 		
 		pasoAInyectar.setPreviousStep(null);
 		pasoAInyectar.setCurrentStep(selectedStepDef);
 		
 		// esta valor se carga en WProcessWorkBL.start si corresponde
 		// al lanzamiento del workflow
-		pasoAInyectar.setwProcessWork(work); // nes 20120126
+		pasoAInyectar.setwProcessWork(processWork); // nes 20120126
 
 //		pasoAInyectar.setIdObject(idObject);
 //		pasoAInyectar.setIdObjectType(idObjectType);

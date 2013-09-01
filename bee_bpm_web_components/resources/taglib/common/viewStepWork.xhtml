@@ -5,82 +5,78 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<h:panelGrid width="100%" columns="2"
-		style=" margin-left: 16px;"
-		columnClasses="colStyle140px, colStyle480px">
-
-		<rich:spacer height="10" />
-		<rich:spacer height="10" />
-
-		<h:outputText value="#{msg.label_process}: "/>
+	<p class="fieldset_block_info_noBorder_noPadding_35px">
+	
+		<h:outputText value="#{msg.label_process}: " styleClass="label_form left_column_20" />
 		<h:outputText id="step_work_name"
-				value="#{wStepWorkFormBean.currentWStepWork.process.name}"
-				style="font-weight:bold; font-size:13px;" />
+				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.name}"
+				styleClass="data_form_bold"/>
+		<br />
+		<br />
 
-		<rich:spacer height="10" />
-		<rich:spacer height="10" />
+		<h:outputText value="#{msg.label_step}: " styleClass="label_form left_column_20" />
+		<h:outputText 
+				value="#{wStepWorkFormBean.currentWStepWork.currentStep.name}"
+				styleClass="data_form_bold" />
+		<br />
+		<br />
 
-		<h:outputText value="#{msg.label_reference}: " />
+		<h:outputText value="#{msg.label_reference}: " styleClass="label_form left_column_20" />
 		<h:outputText id="process_work_reference"
 			value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.reference}"
-			style="font-weight:bold; font-size:13px;" />
-
-		<h:outputText value="#{msg.label_comments}: " />
+			styleClass="data_form_bold" />
+		<br />
+		
+		<h:outputText value="#{msg.label_comments}: " styleClass="label_form left_column_20" />
 		<h:outputText id="process_work_comments"
 			value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.comments}"
-			style="font-weight:bold; font-size:13px;" />
+			styleClass="data_form_bold" />
+		<br />
+		<br />
 
-		<rich:spacer height="10" />
-		<rich:spacer height="10" />
-
-		<h:outputText value="#{msg.label_arrived}: "/>
+		<h:outputText value="#{msg.label_arrived}: " styleClass="label_form left_column_20" />
 		<h:outputText
 			value="#{wStepWorkFormBean.currentWStepWork.arrivingDate}"
-			style="font-weight:bold; font-size:13px;">
+			styleClass="data_form_bold" >
 			<f:convertDateTime pattern="#{msg.label_date_time_format}"
 				timeZone="#{wStepWorkFormBean.timeZone}" />
 		</h:outputText>
-
-		<h:outputText value="#{msg.label_from}: "   />
-		<h:panelGroup>
-			<h:outputText id="previous_step"
-				value="#{wStepWorkFormBean.currentWStepWork.previousStep.name}"
-				style="font-weight:bold; font-size:13px;" />
-			<h:outputText value=" #{msg.label_by}: " style="margin-left:10px;"
-				rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser != null}" />
-			<h:outputText id="insert_user"
-				value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser}"
-				style="font-weight:bold; margin-left:10px; font-size:13px;"
-				rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser != null}" />
-		</h:panelGroup>
-
-		<rich:spacer height="10" />
-		<rich:spacer height="10" />
+		<br />
 		
-		<h:outputText value="#{msg.label_opened_date}: " />
-		<h:panelGroup>
-			<h:outputText
-				value="#{wStepWorkFormBean.currentWStepWork.openedDate}"
-				style="font-weight:bold; font-size:13px;">
-				<f:convertDateTime pattern="#{msg.label_date_time_format}"
-					timeZone="#{wStepWorkFormBean.timeZone}" />
-			</h:outputText>
-			<h:outputText value=" #{msg.label_by}: "
-				rendered="#{wStepWorkFormBean.currentWStepWork.openedDate != null}" />
-			<h:outputText id="opener_user"
-				value="#{wStepWorkFormBean.currentWStepWork.openerUser.login}"
-				style="font-weight:bold; font-size:13px;"
-				rendered="#{wStepWorkFormBean.currentWStepWork.openerUser != null}"/>
-		</h:panelGroup>
-
-		<rich:spacer height="10" />
-		<rich:spacer height="10" />
+		<h:outputText value="#{msg.label_from}: " styleClass="label_form left_column_20" />
+		<h:outputText id="previous_step"
+			value="#{wStepWorkFormBean.currentWStepWork.previousStep.name}"
+			styleClass="data_form_bold" />
+		<h:outputText value=" #{msg.label_by}: " style="margin-left:10px;"
+			rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser != null}" />
+		<h:outputText id="insert_user"
+			value="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser}"
+			styleClass="data_form_bold"
+			style="margin-left:10px;"
+			rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser != null}" />
+		<br />
+		<br />
 		
-		<h:outputText value="#{msg.label_decided_date}: " />
+		<h:outputText value="#{msg.label_opened_date}: " styleClass="label_form left_column_20" />
+		<h:outputText
+			value="#{wStepWorkFormBean.currentWStepWork.openedDate}"
+			styleClass="data_form_bold" >
+			<f:convertDateTime pattern="#{msg.label_date_time_format}"
+				timeZone="#{wStepWorkFormBean.timeZone}" />
+		</h:outputText>
+		<h:outputText value=" #{msg.label_by}: "
+			rendered="#{wStepWorkFormBean.currentWStepWork.openedDate != null}" />
+		<h:outputText id="opener_user"
+			value="#{wStepWorkFormBean.currentWStepWork.openerUser.login}"
+			styleClass="data_form_bold" 
+			rendered="#{wStepWorkFormBean.currentWStepWork.openerUser != null}"/>
+		<br />
+		
+		<h:outputText value="#{msg.label_decided_date}: " styleClass="label_form left_column_20" />
 		<h:panelGroup>
 			<h:outputText
 				value="#{wStepWorkFormBean.currentWStepWork.decidedDate}"
-				style="font-weight:bold; font-size:13px;">
+				styleClass="data_form_bold" >
 				<f:convertDateTime pattern="#{msg.label_date_time_format}"
 					timeZone="#{wStepWorkFormBean.timeZone}" />
 			</h:outputText>
@@ -88,21 +84,20 @@
 				rendered="#{wStepWorkFormBean.currentWStepWork.decidedDate != null}" />
 			<h:outputText id="performer_user"
 				value="#{wStepWorkFormBean.currentWStepWork.performer.login} "
-				style="font-weight:bold; font-size:13px;"
+				styleClass="data_form_bold" 
 				rendered="#{wStepWorkFormBean.currentWStepWork.performer != null}" />
 		</h:panelGroup>
-
-		<rich:spacer height="10"
-			rendered="#{wStepWorkFormBean.currentWStepWork.adminProcess}" />
+		<br />
+		
+		<h:outputText value=""
+			rendered="#{wStepWorkFormBean.currentWStepWork.adminProcess}" styleClass="label_form left_column_20" />
 		<h:outputText value="#{msg.label_processed_by_administrator}"
-			style="font-weight:bold; font-size:13px;"
+			styleClass="data_form_bold" 
 			rendered="#{wStepWorkFormBean.currentWStepWork.adminProcess}" />
-
-		<rich:spacer height="10" />
-		<rich:spacer height="10" />
+		<br />
 
 		<h:outputText value="#{msg.label_locked_by}: "
-				rendered="#{wStepWorkFormBean.currentWStepWork.lockedBy != null}" />
+				rendered="#{wStepWorkFormBean.currentWStepWork.lockedBy != null}" styleClass="label_form left_column_20" />
 		<h:panelGroup>
 			<h:outputText value="#{wStepWorkFormBean.currentWStepWork.lockedBy.name}" 
 				style="color: red; font-weight:bold; font-size:13px;"
@@ -120,45 +115,37 @@
 					timeZone="#{wStepWorkFormBean.timeZone}" />
 			</h:outputText>
 		</h:panelGroup>
+		<br />
 
-		<rich:spacer height="10" />
-		<rich:spacer height="10" />
-
-		<h:outputText value="#{msg.label_received_instructions}: " 
+		<h:outputText value="#{msg.label_received_instructions}: " styleClass="label_form left_column_20" 
 			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}"/>
 		<h:outputText
 			value="#{wStepWorkFormBean.currentWStepWork.userInstructions}"
-			style="font-weight:bold; font-size:13px;" 
+			styleClass="data_form_bold" 
 			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}">
 		</h:outputText>
-
-		<rich:spacer height="10" 
-			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}"/>
-		<rich:spacer height="10" 
-			rendered="#{wStepWorkFormBean.currentWStepWork.userInstructions != null}"/>
-
-		<h:outputText value="#{msg.label_sent_instructions}: " 
+		<br />
+		
+		<h:outputText value="#{msg.label_sent_instructions}: " styleClass="label_form left_column_20"
 			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}"/>
 		<h:outputText
 			value="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions}"
-			style="font-weight:bold; font-size:13px;" 
+			styleClass="data_form_bold"
 			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}">
 		</h:outputText>
+		<br />		
 
-		<rich:spacer height="10" 
-			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}"/>
-		<rich:spacer height="10" 
-			rendered="#{wStepWorkFormBean.currentWStepWork.nextStepInstructions != null}"/>
-
+	</p>
+	<p>
 		<h:form id="w_view_step_work_form">
-				<a4j:commandButton id="close_button_sr" value="#{msg.label_close}"
-					action="#{wStepWorkFormBean.cancel}"
-					onclick="javascript:Richfaces.hideModalPanel('mpViewStepWork')"
-					style="width:80px; height:24px;"/>
-				<rich:spacer height="40" />	
+			<a4j:commandButton id="close_button_sr" value="#{msg.label_close}"
+				action="#{wStepWorkFormBean.cancel}"
+				onclick="javascript:Richfaces.hideModalPanel('mpViewStepWork')"
+				style="width:80px; height:24px;"/>
 		</h:form>
-
-	</h:panelGrid>
+		<br />
+		
+	</p>
 
 </ui:composition>
 
