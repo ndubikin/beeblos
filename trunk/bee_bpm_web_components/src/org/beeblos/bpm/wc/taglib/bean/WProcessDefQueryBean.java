@@ -21,6 +21,7 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.DevelopmentBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.error.DevelopmentException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -397,7 +398,6 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			
 			try {
 				String processName = this.currentWProcessDef.getProcess().getName();
-				Integer processVersion = this.currentWProcessDef.getVersion();
 
 				new WProcessDefBL().delete(this.id, this.tmpDeleteRelatedStepsPopup, getCurrentUserId());
 				
@@ -405,7 +405,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				this.tmpDeletingWProcessDefPopup = false;
 				this.searchWProcessDefs();
 				
-				String message = "The process '" + processName + "' version: '" + processVersion + "' has been correctly deleted";
+				String message = "The process '" + processName + "' has been correctly deleted";
 				this.messageStyle = normalMessageStyle();
 				agregarMensaje(message);
 				logger.info(message);
@@ -575,18 +575,24 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 			try {
 				
-				WProcessDef processDef = new WProcessDefBL().getWProcessDefByPK(this.id, this.currentUserId);
+				WProcessDef processDef = 
+						new WProcessDefBL().getWProcessDefByPK(this.id, this.currentUserId);
 
 				new DevelopmentBL().purgeProcessDef(processDef, currentUserId);
 
 			} catch (WProcessDefException e) {
 				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error trying to do purge for id=" + this.id};
+				String params[] = { message + ",", ".Error cleaning process processDefId=" + this.id};
 				agregarMensaje("220", message, params, FGPException.ERROR);
 				logger.error(message);
 			} catch (WStepSequenceDefException e) {
 				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error trying to do purge for id=" + this.id};
+				String params[] = { message + ",", ".Error cleaning process processDefId=" + this.id};
+				agregarMensaje("220", message, params, FGPException.ERROR);
+				logger.error(message);
+			} catch (DevelopmentException e) {
+				String message = e.getMessage() + " - " + e.getCause();
+				String params[] = { message + ",", ".Error cleaning process processDefId=" + this.id};
 				agregarMensaje("220", message, params, FGPException.ERROR);
 				logger.error(message);
 			}

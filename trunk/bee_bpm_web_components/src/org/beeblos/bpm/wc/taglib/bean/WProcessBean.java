@@ -515,9 +515,7 @@ public class WProcessBean extends CoreManagedBean {
 
 		if (this.currentWProcessDef != null
 				&& this.currentWProcessDef.getName() != null
-				&& !"".equals(this.currentWProcessDef.getName())
-				&& this.currentWProcessDef.getVersion() != null
-				&& !"".equals(this.currentWProcessDef.getVersion())) {
+				&& !"".equals(this.currentWProcessDef.getName()) ) {
 
 			result = true;
 
@@ -2109,8 +2107,6 @@ public class WProcessBean extends CoreManagedBean {
 				this.currentWProcessDef = new WProcessDef(EMPTY_OBJECT);
 
 				this.currentWProcessDef.setProcess(process);
-				
-				this.currentWProcessDef.setVersion(lastVersion + 1);
 				
 			} catch (WProcessHeadException e) {
 				// TODO Auto-generated catch block

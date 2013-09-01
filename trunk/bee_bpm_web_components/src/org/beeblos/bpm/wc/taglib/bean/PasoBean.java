@@ -871,10 +871,10 @@ public class PasoBean  extends CoreManagedBean {
 			}
 			
 		// si no el del proceso			
-		} else if (pasoActual.getProcess().getIdWorkZone()!=null && 
-				! "".equals(pasoActual.getProcess().getIdWorkZone())) {
+		} else if (pasoActual.getwProcessWork().getProcessDef().getWorkZoneId()!=null && 
+				! "".equals(pasoActual.getwProcessWork().getProcessDef().getWorkZoneId())) {
 			
-			paginaProceso=pasoActual.getProcess().getIdWorkZone();
+			paginaProceso=pasoActual.getwProcessWork().getProcessDef().getWorkZoneId();
 			
 		// y si tampoco uso el default			
 		} else { 
@@ -894,10 +894,10 @@ public class PasoBean  extends CoreManagedBean {
 			}
 			
 		// si no el del proceso
-		} else if (pasoActual.getProcess().getIdListZone()!=null && 
-				! "".equals(pasoActual.getProcess().getIdListZone())) {
+		} else if (pasoActual.getwProcessWork().getProcessDef().getListZoneId()!=null && 
+				! "".equals(pasoActual.getwProcessWork().getProcessDef().getListZoneId())) {
 			
-			paginaLista=pasoActual.getProcess().getIdListZone();
+			paginaLista=pasoActual.getwProcessWork().getProcessDef().getListZoneId();
 			
 		// y si tampoco uso el default
 		} else { 
@@ -916,10 +916,10 @@ public class PasoBean  extends CoreManagedBean {
 				paginaAnexa=null;				
 			}
 			
-		} else if (pasoActual.getProcess().getIdAdditionalZone()!=null && 
-				! "".equals(pasoActual.getProcess().getIdAdditionalZone())) {
+		} else if (pasoActual.getwProcessWork().getProcessDef().getAdditionalZoneId()!=null && 
+				! "".equals(pasoActual.getwProcessWork().getProcessDef().getAdditionalZoneId())) {
 			
-			paginaAnexa=pasoActual.getProcess().getIdAdditionalZone();
+			paginaAnexa=pasoActual.getwProcessWork().getProcessDef().getAdditionalZoneId();
 			
 		} else { // setea la página por defecto que tengamos en el proyecto (Constantes)
 			

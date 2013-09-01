@@ -41,12 +41,12 @@
 					value="#{workingProcessQueryBean.finalProductionDateFilter}"
 					datePattern="#{msg.label_date_format}" enableManualInput="true"
 					locale="ES" timeZone="#{workingProcessQueryBean.timeZone}"
-					disabled="#{workingProcessQueryBean.estrictProductionDateFilter}" />
+					disabled="#{workingProcessQueryBean.strictProductionDateFilter}" />
 
 				<h:outputText value="#{msg.label_only_from} :"
 					styleClass="firstLeftText" style="margin-left: 10px;" />
 				<h:selectBooleanCheckbox id="estrict_production_date_filter"
-					value="#{workingProcessQueryBean.estrictProductionDateFilter}">
+					value="#{workingProcessQueryBean.strictProductionDateFilter}">
 					<a4j:support event="onclick" reRender="final_production_date" />
 				</h:selectBooleanCheckbox>
 			</h:panelGroup>

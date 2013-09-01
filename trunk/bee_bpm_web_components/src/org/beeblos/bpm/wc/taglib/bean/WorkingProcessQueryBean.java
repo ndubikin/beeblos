@@ -89,7 +89,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	private Date initialProductionDateFilter;
 	private Date finalProductionDateFilter;
-	private boolean estrictProductionDateFilter;
+	private boolean strictProductionDateFilter;
 	
 	private Date initialStartedDateFilter;
 	private Date finalStartedDateFilter;
@@ -172,7 +172,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 		this.initialProductionDateFilter = null;
 		this.finalProductionDateFilter = null;
-		this.estrictProductionDateFilter = false;
+		this.strictProductionDateFilter = false;
 		
 		this.initialStartedDateFilter = null;
 		this.finalStartedDateFilter = null;
@@ -351,12 +351,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		this.finalProductionDateFilter = finalProductionDateFilter;
 	}
 
-	public boolean isEstrictProductionDateFilter() {
-		return estrictProductionDateFilter;
+	public boolean isStrictProductionDateFilter() {
+		return strictProductionDateFilter;
 	}
 
-	public void setEstrictProductionDateFilter(boolean estrictProductionDateFilter) {
-		this.estrictProductionDateFilter = estrictProductionDateFilter;
+	public void setStrictProductionDateFilter(boolean strictProductionDateFilter) {
+		this.strictProductionDateFilter = strictProductionDateFilter;
 	}
 
 	public Date getInitialStartedDateFilter() {
@@ -589,7 +589,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
 					.finderWProcessDefLight(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
-							estrictProductionDateFilter, productionUserFilter, action, null, null, getCurrentUserId());
+							strictProductionDateFilter, productionUserFilter, action, null, null, getCurrentUserId());
 
 			nResults = wProcessDefLightList.size();
 
@@ -613,7 +613,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			wProcessDefLightList = (ArrayList<WProcessDefLight>) new WProcessDefBL()
 					.finderWProcessDefLight(onlyActiveWorkingProcessesFilter, processNameFilter, 
 							initialProductionDateFilter, finalProductionDateFilter, 
-							estrictProductionDateFilter, productionUserFilter, action, null, null, getCurrentUserId());
+							strictProductionDateFilter, productionUserFilter, action, null, null, getCurrentUserId());
 
 			nResults = wProcessDefLightList.size();
 

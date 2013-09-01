@@ -101,10 +101,11 @@ public class WStepWorkFormBean extends CoreManagedBean {
 				currentWStepWork.setPreviousStep(null);
 			}
 
-			if (currentWStepWork.getProcess() != null
-					|| currentWStepWork.getProcess().empty()) {
-				currentWStepWork.setProcess(null);
-			}
+			// nes 20130830 quité el process de aqui porque ya hay uno adentro del wProcessWork
+//			if (currentWStepWork.getwProcessWork() != null
+//					|| currentWStepWork.getProcess().empty()) {
+//				currentWStepWork.setProcess(null);
+//			}
 
 			if (currentWStepWork.getwProcessWork() != null
 					|| currentWStepWork.getwProcessWork().empty()) {
@@ -156,9 +157,10 @@ public class WStepWorkFormBean extends CoreManagedBean {
 				currentWStepWork.setPreviousStep(new WStepDef(EMPTY_OBJECT));
 			}
 
-			if (currentWStepWork.getProcess() == null) {
-				currentWStepWork.setProcess(new WProcessDef(EMPTY_OBJECT));
-			}
+			// nes 20130830 quité el process de aqui porque ya hay uno adentro del wProcessWork
+//			if (currentWStepWork.getProcess() == null) {
+//				currentWStepWork.setProcess(new WProcessDef(EMPTY_OBJECT));
+//			}
 
 			if (currentWStepWork.getwProcessWork() == null) {
 				currentWStepWork

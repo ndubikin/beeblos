@@ -531,11 +531,9 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 		// 20110217:titulo del proceso, dado q todos los pasos pertenence al
 		// mismo proceso
 		// he cogido el primer elemento de la lista
-		String tituloChart = workProcesses.get(0).getProcess().getName();
+		String tituloChart = workProcesses.get(0).getwProcessWork().getProcessDef().getName();
 
-		JFreeChart chart = ChartFactory.createGanttChart(tituloChart, // 20110217:Nombre
-																		// del
-																		// proceso
+		JFreeChart chart = ChartFactory.createGanttChart(tituloChart, // 20110217:Nombre del proceso
 				"Steps", "", null, true, true, true);
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		plot.setDataset(collection);
