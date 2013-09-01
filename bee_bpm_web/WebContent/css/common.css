@@ -663,3 +663,32 @@ float:left;
 	padding:0px;
 					 
 }
+
+.data_form {
+	font-family: arial;
+	font-size: 13px;
+}
+
+.data_form_bold {
+	font-family: arial;
+	font-size: 13px;
+	font-weight:bold;
+}
+
+.label_form {
+	font-size:12px;
+
+}
+.label_form_bold {
+	font-size:12px;
+	font-weight:bold;
+
+}
+.label_for_input_text {
+	font-size:12px;
+	height: 24px;
+
+}
+.left_column_20 {
+	width:20%;float:left;
+}
