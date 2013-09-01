@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.DevelopmentException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
@@ -39,9 +40,11 @@ public class DevelopmentBL {
 	 * @param Integer currentUserId
 	 * 
 	 * @return boolean
+	 * @throws WProcessDefException 
 	 * 
 	 */
-	public boolean purgeProcessDefList(List<WProcessDef> processDefList, Integer currentUserId) {
+	public boolean purgeProcessDefList(List<WProcessDef> processDefList, Integer currentUserId) 
+			throws DevelopmentException {
 
 		logger.info("DevelopmentBL.purgeProcessDef() - Begin Purge"); 
 		
@@ -63,23 +66,27 @@ public class DevelopmentBL {
 	/**
 	 * @author dmuleiro - 20130829
 	 * 
-	 * This method has to delete old information from a WProcessDef.
+	 * This method clean all work data and obsolete data (as deleted sequences or step def) for a given
+	 * process definition (processDef)
 	 * 
 	 * @param WProcessDef processDef
 	 * @param Integer currentUserId
 	 * 
 	 * @return boolean
+	 * @throws WProcessDefException 
+	 * @throws DevelopmentException 
 	 * 
 	 */
-	public boolean purgeProcessDef(WProcessDef processDef, Integer currentUserId) {
+	public boolean purgeProcessDef(WProcessDef processDef, Integer currentUserId) throws DevelopmentException {
 		
-		logger.info("DevelopmentBL.purgeProcessDef() - Begin Purge"); 
+		logger.info("DevelopmentBL.purgeProcessDef() - Beginning purge of:"+(processDef!=null?processDef.getId():"null")); 
+		
+		// DAVID: si viene en null debería ser error y no false ... (por lo menos en este caso, no te pueden mandar a limpiar un null
+		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
+			throw new DevelopmentException("Can't purge null process!!");
+		}
 		
 		boolean returnValue = true;
-
-		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
-			return false;
-		}
 
 		try {
 			
@@ -116,7 +123,7 @@ public class DevelopmentBL {
 	 * 
 	 * Deletes the List<WStepWorkSequence> related with the WProcessDef with "processId"
 	 *
-	 * @param  Integer processId
+	 * @param  Integer processDefId
 	 * @param  Integer currentUserId
 	 * 
 	 * @return void
@@ -124,13 +131,14 @@ public class DevelopmentBL {
 	 * @throws WStepWorkSequenceException
 	 * 
 	 */
-	private void _deleteWStepWorkSequenceList(Integer processId, Integer currentUserId) throws WStepWorkSequenceException{
+	// DAVID: el parametro no se puede llamar processId porque queda ambiguo y no sabemos si es processDefId o processHeadId ok?
+	private void _deleteWStepWorkSequenceList(Integer processDefId, Integer currentUserId) throws WStepWorkSequenceException{
 		
-		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step work sequences related to process : " + processId); 
+		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step work sequences related to process : " + processDefId); 
 
 		WStepWorkSequenceBL wswsBL = new WStepWorkSequenceBL();
 		
-		List<WStepWorkSequence> stepWorkSequenceList = wswsBL.getWStepWorkSequencesByProcessId(processId, currentUserId);
+		List<WStepWorkSequence> stepWorkSequenceList = wswsBL.getWStepWorkSequencesByProcessId(processDefId, currentUserId);
 		
 		if (stepWorkSequenceList == null || stepWorkSequenceList.isEmpty()){
 			return;
@@ -149,7 +157,7 @@ public class DevelopmentBL {
 	 * 
 	 * Deletes the List<WStepWork> related with the WProcessDef with "processId"
 	 *
-	 * @param  Integer processId
+	 * @param  Integer processDefId
 	 * @param  Integer currentUserId
 	 * 
 	 * @return void
@@ -159,14 +167,14 @@ public class DevelopmentBL {
 	 * @throws WProcessDefException 
 	 * 
 	 */
-	private void _deleteWStepWorkList(Integer processId, Integer currentUserId) 
+	private void _deleteWStepWorkList(Integer processDefId, Integer currentUserId) 
 			throws WProcessDefException, WStepDefException, WStepWorkException {
 		
-		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step works related to process : " + processId); 
+		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step works related to process : " + processDefId); 
 
 		WStepWorkBL wswBL = new WStepWorkBL();
 		
-		List<WStepWork> stepWorkList = wswBL.getWorkListByProcessAndStatus(processId, null, currentUserId);
+		List<WStepWork> stepWorkList = wswBL.getWorkListByProcessAndStatus(processDefId, null, currentUserId);
 		
 		if (stepWorkList == null || stepWorkList.isEmpty()){
 			return;
@@ -185,7 +193,7 @@ public class DevelopmentBL {
 	 * 
 	 * Deletes the List<WProcessWork> related with the WProcessDef with "processId"
 	 *
-	 * @param  Integer processId
+	 * @param  Integer processDefId
 	 * @param  Integer currentUserId
 	 * 
 	 * @return void
@@ -193,13 +201,13 @@ public class DevelopmentBL {
 	 * @throws WProcessWorkException 
 	 * 
 	 */
-	private void _deleteWProcessWorkList(Integer processId, Integer currentUserId) throws WProcessWorkException {
+	private void _deleteWProcessWorkList(Integer processDefId, Integer currentUserId) throws WProcessWorkException {
 		
-		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting process works related to process : " + processId); 
+		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting process works related to process : " + processDefId); 
 
 		WProcessWorkBL wpwBL = new WProcessWorkBL();
 		
-		List<WProcessWork> processWorkList = wpwBL.getWProcessWorkListByProcessId(processId, currentUserId);
+		List<WProcessWork> processWorkList = wpwBL.getWProcessWorkListByProcessId(processDefId, currentUserId);
 		
 		if (processWorkList == null || processWorkList.isEmpty()){
 			return;
@@ -218,7 +226,7 @@ public class DevelopmentBL {
 	 * 
 	 * Deletes the List<WStepSequenceDef> related with the WProcessDef with "processId"
 	 *
-	 * @param  Integer processId
+	 * @param  Integer processDefId
 	 * @param  Integer currentUserId
 	 * 
 	 * @return void
@@ -231,18 +239,18 @@ public class DevelopmentBL {
 	 * @throws WStepWorkException 
 	 * 
 	 */
-	private void _deleteWStepSequenceDefsAndStepDefs(Integer processId, Integer processHeadId, Integer currentUserId) 
+	private void _deleteWStepSequenceDefsAndStepDefs(Integer processDefId, Integer processHeadId, Integer currentUserId) 
 			throws WStepSequenceDefException, WStepWorkSequenceException, WStepDefException, WStepWorkException, WProcessDefException, WStepHeadException {
 		
-		logger.info("DevelopmentBL._deleteWStepSequenceDefAndStepDefsList() - deleting step sequence defs (checked as 'deleted') related to process : " + processId); 
+		logger.info("DevelopmentBL._deleteWStepSequenceDefAndStepDefsList() - deleting step sequence defs (checked as 'deleted') related to process : " + processDefId); 
 
 		WStepSequenceDefBL wpsdBL = new WStepSequenceDefBL();
 		WStepDefBL wpdBL = new WStepDefBL();
 		
 		// antes de borrar las rutas vemos los steps relacionados con el proceso para borrarlos despues de las secuencias		
-		List<WStepDef> stepDefList = wpdBL.getStepDefs(processId, DELETED, currentUserId);
+		List<WStepDef> stepDefList = wpdBL.getStepDefs(processDefId, DELETED, currentUserId);
 		
-		List<WStepSequenceDef> stepSequenceDefList = wpsdBL.getStepSequenceList(processId, DELETED, currentUserId);
+		List<WStepSequenceDef> stepSequenceDefList = wpsdBL.getStepSequenceList(processDefId, DELETED, currentUserId);
 		
 		if (stepSequenceDefList != null && !stepSequenceDefList.isEmpty()){
 			for (WStepSequenceDef stepSequenceDef : stepSequenceDefList){				

@@ -7,7 +7,7 @@ import com.sp.common.model.ManagedDataField;
 /**
  * @author nes - 20130829
  *
- * This object represents a table residing in a schema/database wich manages
+ * This object represents a table residing in a schema/database which manages
  * user data fields related with a process.
  * The information is loaded from processHead.getManagedTableConfiguration() wich has
  * the managed table confirutarion info like tableName, schema, catalog, etc, and

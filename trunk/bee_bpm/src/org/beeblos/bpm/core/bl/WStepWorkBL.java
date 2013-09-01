@@ -55,6 +55,7 @@ import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
+import org.beeblos.bpm.core.model.thin.WProcessDefThin;
 import org.beeblos.bpm.core.util.Resourceutil;
 
 import com.sp.common.util.StringPair;
@@ -88,7 +89,7 @@ public class WStepWorkBL {
 	
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
-	public Integer start(WProcessWork work, WStepWork stepw, ManagedData managedData, Integer currentUser) 
+	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUser) 
 			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
 		
 		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"]");
@@ -107,12 +108,13 @@ public class WStepWorkBL {
 		workId = wpbl.add(work, currentUser);
 		work = wpbl.getWProcessWorkByPK(workId, currentUser); // checks all properties was correctly stored in the object
 
-		// if exists managed data set with created work id
-		if (managedData!=null) {
-			managedData.setCurrentWorkId(work.getId()); // process-work id
-			managedData.setProcessId(work.getProcess().getId()); // process version
-			managedData.setOperation(INSERT);
-			stepw.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
+		// if exists managed data set with just created work id
+		if (stepw.getManagedData()!=null) {
+			stepw.getManagedData().setCurrentWorkId(work.getId()); // process-work id
+			System.out.println("TESTEAR ESTO QUE ESTE CARGANDO BIEN EL PROCESS-HEAD-ID");
+			stepw.getManagedData().setProcessId(work.getProcessHeadId()); // process head id
+			stepw.getManagedData().setOperation(INSERT);
+//			stepw.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
 		}
 
 		
@@ -166,12 +168,6 @@ public class WStepWorkBL {
 	public WStepWork getWStepWorkByPK(Integer id, Integer currentUser) throws WStepWorkException {
 
 		return new WStepWorkDao().getWStepWorkByPK(id);
-	}
-	
-	
-	public WStepWork getWStepWorkByName(String name, Integer currentUser) throws WStepWorkException {
-
-		return new WStepWorkDao().getWStepWorkByName(name);
 	}
 
 	
@@ -649,10 +645,12 @@ public class WStepWorkBL {
 		// create an emty object to build new steps
 		WStepWork newStepWork = new WStepWork();
 		
+		
+		System.out.println("VERIFICAR QUE CARGUE CORRECTAMENTE LAS RUTAS PARA EL RUTEO DEL STEP ...");
 		// load routes from current step
 		List<WStepSequenceDef> routes = new WStepSequenceDefBL()
 												.getStepSequenceDefs(
-														currentStepWork.getProcess().getId(), 
+														currentStepWork.getwProcessWork().getProcessDef().getId(), 
 														currentStepWork.getCurrentStep().getId(),
 														currentUser);
 		
@@ -805,7 +803,10 @@ public class WStepWorkBL {
 		
 		newStepWork.setArrivingDate(now);
 		newStepWork.setAdminProcess(isAdminProcess);
-		newStepWork.setProcess( currentStepWork.getProcess() );
+		
+		System.out.println("VERIFICAR QUE EL WPROCESSWORK QUE ESTOY SETEANDO AQUÍ SEA EL DATO CORRECTO ...");
+		
+		newStepWork.setwProcessWork( currentStepWork.getwProcessWork() );
 //		newStepWork.setVersion( currentStepWork.getVersion() );
 
 		newStepWork.setwProcessWork(currentStepWork.getwProcessWork());
@@ -853,7 +854,7 @@ public class WStepWorkBL {
 		if ( ! stepWork.getCurrentStep().isArrivingAdminNotice() && 
 				! stepWork.getCurrentStep().isArrivingUserNotice()) return; 
 
-		WProcessDef process = stepWork.getwProcessWork().getProcess();
+		WProcessDefThin process = stepWork.getwProcessWork().getProcessDef();// nes 20130830
 		
 		if ( process == null ) {
 			logger.error("there is trying to send an email and process arrives null ...");

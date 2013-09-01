@@ -20,11 +20,21 @@ public class WStepWork implements java.io.Serializable {
 	
 	private Integer id;
 	
-	private WProcessWork wProcessWork;
-	private ManagedData managedData; // nes 20130803
+	/**
+	 * Header of this process work. Common for all stepWork items
+	 * 
+	 */	
+	private WProcessWork wProcessWork; //
+	
+	/**
+	 * to manage custom data fields related with this step work
+	 * also contains table configuration data to access this info
+	 * 
+	 */
+	private ManagedData managedData;  
 	
 	// TODO - QUITAR ESTAS DOS PROPIEDADES Q YA LAS TENEMOS EN WPROCESSWORK
-	private WProcessDef process;
+//	private WProcessDef process;
 	
 //	@Deprecated
 //	private Integer version;
@@ -78,7 +88,7 @@ public class WStepWork implements java.io.Serializable {
 		if ( createEmtpyObjects ) {
 			this.wProcessWork=new WProcessWork( EMPTY_OBJECT );
 			this.managedData=new ManagedData( EMPTY_OBJECT );
-			this.process=new WProcessDef( EMPTY_OBJECT );
+//			this.process=new WProcessDef( EMPTY_OBJECT );
 			this.previousStep=new WStepDef( EMPTY_OBJECT );
 			this.currentStep=new WStepDef( EMPTY_OBJECT );
 			this.openerUser=new WUserDef( EMPTY_OBJECT );
@@ -94,7 +104,7 @@ public class WStepWork implements java.io.Serializable {
 	public WStepWork(WStepWork step) {
 
 		this.id = step.id;
-		this.process = step.process;
+//		this.process = step.process;
 //		this.version = step.version;
 		this.previousStep = step.previousStep;
 		this.currentStep = step.currentStep;
@@ -127,7 +137,7 @@ public class WStepWork implements java.io.Serializable {
 	}
 
 
-	public WStepWork(Integer id, WProcessDef process, /*Integer version,*/
+	public WStepWork(Integer id,/* WProcessDef process, Integer version,*/
 			WStepDef previousStep, WStepDef currentStep, String reference, String comments,
 			Date arrivingDate, Date openedDate, WUserDef openerUser,
 			Date decidedDate, WUserDef performer, String response,
@@ -138,7 +148,7 @@ public class WStepWork implements java.io.Serializable {
 			Date lockedSince, Set<WStepWorkAssignment> assignedTo,
 			WUserDef insertUser, Date modDate, Integer modUser) {
 		this.id = id;
-		this.process = process;
+//		this.process = process;
 //		this.version = version;
 		this.previousStep = previousStep;
 		this.currentStep = currentStep;
@@ -196,19 +206,19 @@ public class WStepWork implements java.io.Serializable {
 		this.wProcessWork = wProcessWork;
 	}
 
-	/**
-	 * @return the process
-	 */
-	public WProcessDef getProcess() {
-		return process;
-	}
-
-	/**
-	 * @param process the process to set
-	 */
-	public void setProcess(WProcessDef process) {
-		this.process = process;
-	}
+//	/**
+//	 * @return the process
+//	 */
+//	public WProcessDef getProcess() {
+//		return process;
+//	}
+//
+//	/**
+//	 * @param process the process to set
+//	 */
+//	public void setProcess(WProcessDef process) {
+//		this.process = process;
+//	}
 
 //	/**
 //	 * @return the version
@@ -550,7 +560,7 @@ public class WStepWork implements java.io.Serializable {
 						: "")
 				+ (managedData != null ? "managedData="
 						+ managedData + ", " : "")
-				+ (process != null ? "process=" + process + ", " : "")
+//				+ (process != null ? "process=" + process + ", " : "")
 				+ (previousStep != null ? "previousStep=" + previousStep + ", "
 						: "")
 				+ (currentStep != null ? "currentStep=" + currentStep + ", "
@@ -642,7 +652,7 @@ public class WStepWork implements java.io.Serializable {
 				+ ((performer == null) ? 0 : performer.hashCode());
 		result = prime * result
 				+ ((previousStep == null) ? 0 : previousStep.hashCode());
-		result = prime * result + ((process == null) ? 0 : process.hashCode());
+//		result = prime * result + ((process == null) ? 0 : process.hashCode());
 		result = prime * result
 				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
 		result = prime
@@ -770,11 +780,11 @@ public class WStepWork implements java.io.Serializable {
 				return false;
 		} else if (!previousStep.equals(other.previousStep))
 			return false;
-		if (process == null) {
-			if (other.process != null)
-				return false;
-		} else if (!process.equals(other.process))
-			return false;
+//		if (process == null) {
+//			if (other.process != null)
+//				return false;
+//		} else if (!process.equals(other.process))
+//			return false;
 		if (reminderTime == null) {
 			if (other.reminderTime != null)
 				return false;

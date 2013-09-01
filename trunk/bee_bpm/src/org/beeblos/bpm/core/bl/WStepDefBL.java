@@ -732,12 +732,12 @@ public class WStepDefBL {
 		
 	}
 
-	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
+	public List<WStepDef> finderWStepDef (String nameFilter, String commentFilter, 
 			String instructionsFilter, Integer userId, boolean isAdmin, String action, 
 			Integer stepHeadId, String activeFilter) 
 	throws WStepDefException {
 		
-		return new WStepDefDao().getStepListByFinder(nameFilter, commentFilter, instructionsFilter, 
+		return new WStepDefDao().finderWStepDef(nameFilter, commentFilter, instructionsFilter, 
 				userId, isAdmin, action, stepHeadId, activeFilter);
 
 	}

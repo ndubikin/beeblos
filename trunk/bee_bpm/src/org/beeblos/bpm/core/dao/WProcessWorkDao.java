@@ -29,29 +29,29 @@ public class WProcessWorkDao {
 		
 	}
 	
-	public Integer add(WProcessWork workProcess) throws WProcessWorkException {
+	public Integer add(WProcessWork processWork) throws WProcessWorkException {
 		
-		logger.debug("add() WProcessWork - Name: ["+workProcess.getReference()+"]");
+		logger.debug("add() WProcessWork - Name: ["+processWork.getReference()+"]");
 		Integer id=null;
 
 		try {
 			// if no object related, relate object itself
-			if (workProcess.getIdObjectType()==WProcessWork.class.getName()) {
-				workProcess.setIdObject(1);
+			if (processWork.getIdObjectType()==WProcessWork.class.getName()) {
+				processWork.setIdObject(1);
 			}
 
-			id = Integer.valueOf(HibernateUtil.guardar(workProcess));
+			id = Integer.valueOf(HibernateUtil.guardar(processWork));
 			
-			if (workProcess.getIdObjectType()==WProcessWork.class.getName()) {
-				workProcess.setIdObject(id);
-				HibernateUtil.actualizar(workProcess);
+			if (processWork.getIdObjectType()==WProcessWork.class.getName()) {
+				processWork.setIdObject(id);
+				HibernateUtil.actualizar(processWork);
 			}
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessWorkDao: add - Can't store process definition record "+ 
-					workProcess.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause() );
+					processWork.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WProcessWorkException("WProcessWorkDao: add - Can't store process definition record "+ 
-					workProcess.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause());
+					processWork.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
 
@@ -59,41 +59,41 @@ public class WProcessWorkDao {
 	}
 	
 	
-	public void update(WProcessWork workProcess) throws WProcessWorkException {
+	public void update(WProcessWork processWork) throws WProcessWorkException {
 		
-		logger.debug("update() WProcessWork < id = "+workProcess.getId()+">");
+		logger.debug("update() WProcessWork < id = "+processWork.getId()+">");
 		
 		try {
 
-			HibernateUtil.actualizar(workProcess);
+			HibernateUtil.actualizar(processWork);
 
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessWorkDao: update - Can't update process definition record "+ 
-					workProcess.getReference()  +
-					" - id = "+workProcess.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
+					processWork.getReference()  +
+					" - id = "+processWork.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
 			throw new WProcessWorkException("WProcessWorkDao: update - Can't update process definition record "+ 
-					workProcess.getReference()  +
-					" - id = "+workProcess.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+					processWork.getReference()  +
+					" - id = "+processWork.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
 
 		}
 					
 	}
 	
 	
-	public void delete(WProcessWork workProcess) throws WProcessWorkException {
+	public void delete(WProcessWork processWork) throws WProcessWorkException {
 
-		logger.debug("delete() WProcessWork - Name: ["+workProcess.getReference()+"]");
+		logger.debug("delete() WProcessWork - Name: ["+processWork.getReference()+"]");
 		
 		try {
 
-			HibernateUtil.borrar(workProcess);
+			HibernateUtil.borrar(processWork);
 
 		} catch (HibernateException ex) {
-			logger.error("WProcessWorkDao: delete - Can't delete proccess definition record "+ workProcess.getReference() +
-					" <id = "+workProcess.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessWorkException("WProcessWorkDao:  delete - Can't delete proccess definition record  "+ workProcess.getReference() +
-					" <id = "+workProcess.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			logger.error("WProcessWorkDao: delete - Can't delete proccess definition record "+ processWork.getReference() +
+					" <id = "+processWork.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WProcessWorkException("WProcessWorkDao:  delete - Can't delete proccess definition record  "+ processWork.getReference() +
+					" <id = "+processWork.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
 		} 
 

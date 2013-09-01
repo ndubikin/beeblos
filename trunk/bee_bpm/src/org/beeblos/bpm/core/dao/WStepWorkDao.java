@@ -10,12 +10,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.WStepDataFieldException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
+import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 
@@ -303,60 +307,45 @@ public class WStepWorkDao {
 
 		}
 		
-		// set process custom data
-		if (stepw != null
-				&& stepw.getCurrentStep() != null
-				&& stepw.getCurrentStep().getDataFieldDef()!=null
+		if ( stepw != null && stepw.getCurrentStep() != null ) {
+
+			try {
+	
+				Set<WStepDataField> dataFields = 
+						new WStepDataFieldDao()
+								.getWStepDataFieldSet(
+										stepw.getwProcessWork().getProcessHeadId(),
+										stepw.getCurrentStep().getStepHead().getId() );
+	
+				stepw.getCurrentStep().setDataFieldDef(dataFields);
+	
+			} catch (WStepDataFieldException e) {
+				String mess = "WStepWorkDao: getWStepWorkByPK - WStepDataFieldException can't load related step data fields = "+
+									id + "] - \n"+e.getMessage()+"\n"+e.getCause();
+				logger.error( mess );
+				throw new WStepWorkException( mess );
+			}		
+			
+			// set process custom data
+			if (stepw.getCurrentStep().getDataFieldDef()!=null
 				&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
-			_loadStepWorkManagedData(stepw);
+				
+				_loadStepWorkManagedData(stepw);
+			
+			}
+		
 		}
 		
-
-		return stepw;
-	}
-	
-	
-	public WStepWork getWStepWorkByName(String name) throws WStepWorkException {
-
-		WStepWork  stepw = null;
-		org.hibernate.Session session = null;
-		org.hibernate.Transaction tx = null;
-
-		try {
-
-			session = HibernateUtil.obtenerSession();
-			tx = session.getTransaction();
-
-			tx.begin();
-
-			stepw = (WStepWork) session.createCriteria(WStepWork.class).add(
-					Restrictions.naturalId().set("name", name))
-					.uniqueResult();
-
-			tx.commit();
-
-		} catch (HibernateException ex) {
-			if (tx != null)
-				tx.rollback();
-			logger.warn("WStepWorkDao: getWStepWorkByName - can't obtain stepw name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepWorkException("getWStepWorkByName;  can't obtain stepw name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
-
-		}
-
-		// set process custom data
-		if (stepw != null
-				&& stepw.getCurrentStep() != null
-				&& stepw.getCurrentStep().getDataFieldDef()!=null
-				&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
-			_loadStepWorkManagedData(stepw);
-		}
-
 		return stepw;
 	}
 
-	
+	/**
+	 * Returns a list with all existing step works without any filter nor condition ...
+	 * 
+	 * 
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWStepWorks() throws WStepWorkException {
 
@@ -399,7 +388,10 @@ public class WStepWorkDao {
 	}
 	
 	
-	// load managed data for stepWork
+	// load managed data for stepWork:
+	// >>ManagedTableConfiguration with managed table info 
+	// >>data field list (definition) for this step
+	// >>current data from managed table
 	private void _loadStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
 		
 		if (stepWork.getCurrentStep().getDataFieldDef()!=null 
@@ -407,21 +399,19 @@ public class WStepWorkDao {
 
 			// if there is defined custom data fields for a step(def) && managed table is defined ...
 			// then load stepWorkManagedData
-			if ( stepWork.getCurrentStep().getDataFieldDef()!=null
-					&& stepWork.getCurrentStep().getDataFieldDef().size()>0
-					&& stepWork.getProcess().getProcess().getManagedTableConfiguration()!=null
-					&& stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()!=null
-					&& !"".equals(stepWork.getProcess().getProcess().getManagedTableConfiguration().getName()) ) {
+			if ( stepWork.getwProcessWork().getManagedTableConfiguration()!=null
+					&& stepWork.getwProcessWork().getManagedTableConfiguration().getName()!=null
+					&& !"".equals(stepWork.getwProcessWork().getManagedTableConfiguration().getName()) ) {
 				
 				ManagedData md = new ManagedData();
 				md.setDataField( 
 						ListConverters.convertWStepDataFieldToList
 						 (stepWork.getCurrentStep().getStepDataFieldList(),null,null,ACTIVE_DATA_FIELDS) );
 				md.setChanged(false);				
-				md.setCurrentStepWorkId(stepWork.getId()); // step work id
-				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id
-				md.setProcessId(stepWork.getProcess().getProcess().getId()); // process head id
-				md.setManagedTableConfiguration(stepWork.getProcess().getProcess().getManagedTableConfiguration());
+				md.setCurrentStepWorkId(stepWork.getId()); // step work id (work)
+				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id (work)
+				md.setProcessId(stepWork.getwProcessWork().getProcessHeadId()); // process head id (def)
+				md.setManagedTableConfiguration(stepWork.getwProcessWork().getManagedTableConfiguration());
 
 				// IMPLEMENTAR
 				TableManager tm = new TableManager();
@@ -430,7 +420,7 @@ public class WStepWorkDao {
 					stepWork.setManagedData(md);
 				
 				} catch (TableManagerException e) {
-					String message = "TableManagerException: can't retrieve stored custom data from manaed table:"
+					String message = "TableManagerException: can't retrieve stored custom data from managed table:"
 							+ (md.getManagedTableConfiguration()!=null?(md.getManagedTableConfiguration().getName()!=null?md.getManagedTableConfiguration().getName():"null"):"managed table data is null")
 							+ e.getMessage() + " - "
 							+ e.getCause();
@@ -1585,7 +1575,7 @@ public class WStepWorkDao {
 			if (!"".equals(filter)) {
 				filter += " AND ";
 			}
-			filter += " sw.id_process = " + processIdFilter;
+			filter += " pw.id_process = " + processIdFilter;
 		}
 		
 		if (stepIdFilter != null && stepIdFilter != 0) {
@@ -1737,7 +1727,7 @@ public class WStepWorkDao {
 	private String buildWorkingStepQuery(String filter, String action) {
 
 		String tmpQuery = "SELECT ";
-		tmpQuery += " sw.id_process, ";  //0
+		tmpQuery += " pw.id_process AS idProcess, ";  //0
 		tmpQuery += " sw.id_current_step, "; //1
 		tmpQuery += " sh.name step_name, "; //2
 		tmpQuery += " sw.arriving_date, "; //3
@@ -1750,7 +1740,7 @@ public class WStepWorkDao {
 		tmpQuery += " pw.reference, "; //10
 		tmpQuery += " sw.locked, "; //11
 		tmpQuery += " sw.locked_by, "; //12
-		tmpQuery += " sw.id, "; //13
+		tmpQuery += " sw.id AS stepWorkId, "; //13
 		tmpQuery += " opener.login, "; //14
 		tmpQuery += " opener.name opener_name, "; //15
 		tmpQuery += " performer.login, ";//16
@@ -1761,7 +1751,7 @@ public class WStepWorkDao {
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
 		tmpQuery += " LEFT OUTER JOIN w_step_head sh  ON step.head_id = sh.id ";
 		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = sw.id_work ";
-		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = sw.id_process ";
+		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
 		tmpQuery += " LEFT OUTER JOIN w_user_def opener ON opener.id = sw.opener_user "; 
 		tmpQuery += " LEFT OUTER JOIN w_user_def performer ON performer.id = sw.performer_user_id "; 
 
@@ -1771,10 +1761,8 @@ public class WStepWorkDao {
 			tmpQuery += " ORDER by sw.arriving_date DESC; ";
 		} 
 
-		logger.debug("------>> getWorkingProcessStepListByFinder -> query:" + tmpQuery
+		logger.debug("------>> finderStepWork -> query:" + tmpQuery
 				+ "<<-------");
-
-		logger.debug("QUERY:" + tmpQuery);
 
 		return tmpQuery;
 	}
