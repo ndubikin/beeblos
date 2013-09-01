@@ -233,14 +233,14 @@ public class WStepDefDao {
 					+ ex.getMessage()+"\n"+ex.getCause());
 
 		}
-		
+
 		try {
-			
+
 			Set<WStepDataField> dataFields = 
 					new WStepDataFieldDao().getWStepDataFieldSet(processHeadId,step.getStepHead().getId());
-			
+
 			step.setDataFieldDef(dataFields);
-			
+
 		} catch (WStepDataFieldException e) {
 			String mess = "WStepDefDao: getWStepDefByPK - WStepDataFieldException can't load related step data fields = "+
 								id + "] - \n"+e.getMessage()+"\n"+e.getCause();
@@ -250,7 +250,7 @@ public class WStepDefDao {
 
 		return step;
 	}
-	
+
 //	private static <T> Set<T> filterCollection(Set<T> collection, Session s, Integer id) {
 //		Query filterQuery = s.createFilter(collection, "where processHeadId ="+id);
 //		return new HashSet<T>(filterQuery.list());
@@ -318,6 +318,8 @@ public class WStepDefDao {
 
 		}
 
+		// TODO HAY QUE CARGAR EL MANAGED DATA PARA CADA STEP-DEF
+		
 		return steps;
 	}
 	
@@ -410,7 +412,7 @@ public class WStepDefDao {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public List<WStepDef> getStepDefs(Integer processId, Boolean deleted) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer processDefId, Boolean deleted) throws WStepDefException {
 	
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -447,7 +449,7 @@ public class WStepDefDao {
 			
 			steps = session.createSQLQuery(query)
 					.addEntity("WStepDef", WStepDef.class)
-					.setParameter("processId", processId)
+					.setParameter("processId", processDefId)
 					.list();
 
 			tx.commit();
@@ -575,7 +577,7 @@ public class WStepDefDao {
 	// returns a list with step names
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
-			Integer processId, String firstLineText, String blank )
+			Integer processDefId, String firstLineText, String blank )
 	throws WProcessDefException {
 		 
 			List<Object> lwsd = null;
@@ -592,7 +594,7 @@ public class WStepDefDao {
 
 				lwsd = session
 							.createQuery("Select Distinct w.id, w.stepHead.name, w.stepComments from WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.stepHead.name")
-							.setParameter(0, processId)
+							.setParameter(0, processDefId)
 							.list();
 
 				if (lwsd!=null) {
@@ -647,7 +649,7 @@ public class WStepDefDao {
 	// dml 20130129
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
-			Integer processId, Integer versionId, Integer userId, boolean userIsProcessAdmin, boolean allItems, 
+			Integer processDefId, Integer versionId, Integer userId, boolean userIsProcessAdmin, boolean allItems, 
 			String firstLineText, String blank )
 	throws WProcessDefException {
 		 
@@ -670,7 +672,7 @@ public class WStepDefDao {
 				query += " LEFT OUTER JOIN w_step_user wsu ON s.id = wsu.id_step ";
 				query += " WHERE s.id IN ";
 				query += " (SELECT DISTINCT id_origin_step FROM w_step_sequence_def ws WHERE ws.process_id = " 
-							+ processId + " AND ws.version_id = " + versionId + " ) ";
+							+ processDefId + " AND ws.version_id = " + versionId + " ) ";
 
 				// dml 20130129
 				if (userId != null
@@ -744,7 +746,7 @@ public class WStepDefDao {
 
 	}
 
-	public List<WStepDef> getStepListByFinder (String nameFilter, String commentFilter, 
+	public List<WStepDef> finderWStepDef (String nameFilter, String commentFilter, 
 			String instructionsFilter, Integer userId, boolean isAdmin, String action, 
 			Integer stepHeadId, String activeFilter ) 
 	throws WStepDefException {

@@ -766,7 +766,7 @@ public class WProcessDefDao {
 
 	public List<WProcessDefLight> finderWProcessDefLight(boolean onlyActiveWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
-			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
+			boolean strictProductionDateFilter, Integer productionUserFilter, String action, 
 			Integer processHeadId, String activeFilter, Integer currentUserId) 
 	throws WProcessDefException {
 
@@ -774,7 +774,7 @@ public class WProcessDefDao {
 		
 		filter = buildFinderSQLFilter(onlyActiveWorkingProcessesFilter,
 				processNameFilter, initialProductionDateFilter,
-				finalProductionDateFilter, estrictProductionDateFilter,
+				finalProductionDateFilter, strictProductionDateFilter,
 				productionUserFilter, filter, processHeadId, activeFilter);
 		
 		
@@ -794,7 +794,7 @@ public class WProcessDefDao {
 	private String buildFinderSQLFilter(
 			boolean onlyActiveWorkingProcessesFilter, String processNameFilter,
 			Date initialProductionDateFilter, Date finalProductionDateFilter,
-			boolean estrictProductionDateFilter, Integer productionUserFilter,
+			boolean strictProductionDateFilter, Integer productionUserFilter,
 			String filter, Integer processHeadId, String activeFilter) {
 		
 		if (onlyActiveWorkingProcessesFilter) {
@@ -819,7 +819,7 @@ public class WProcessDefDao {
 			
 			java.sql.Date initialProductionDateFilterSQL=new java.sql.Date(initialProductionDateFilter.getTime());
 			
-			if (estrictProductionDateFilter) {
+			if (strictProductionDateFilter) {
 				if (!"".equals(filter)) {
 					filter+=" AND ";
 				}
@@ -889,8 +889,9 @@ public class WProcessDefDao {
 		tmpQuery += " wpd.comments, ";
 		tmpQuery += " wpd.production_date, ";
 		tmpQuery += " wpd.production_user, ";
-		tmpQuery += " (SELECT COUNT(id) FROM w_process_work pw WHERE pw.end_time IS NULL AND pw.id_process = wpd.id) AS liveWorks, ";
-		tmpQuery += " (SELECT COUNT(id) FROM w_step_work sw WHERE sw.decided_date IS NULL AND sw.id_process = wpd.id) AS liveSteps, ";
+		tmpQuery += " (SELECT COUNT(pw.id) FROM w_process_work pw WHERE pw.end_time IS NULL AND pw.id_process = wpd.id) AS liveWorks, ";
+		// nes 20130830 - agregado left join porque quité el campo id_process de la tabla w_step_work
+		tmpQuery += " (SELECT COUNT(sw.id) FROM w_step_work sw LEFT OUTER JOIN w_process_work wpw ON sw.id_work = wpw.id WHERE sw.decided_date IS NULL AND wpw.id_process = wpd.id) AS liveSteps, ";
 		tmpQuery += " wpd.active, ";
 		tmpQuery += " wpd.version ";
 
@@ -975,7 +976,7 @@ public class WProcessDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WProcessDefDao: getWorkingProcessListByFinder() - It cannot be posible to get the WProcessDefLight list - "
+			logger.error("WProcessDefDao: getWorkingProcessListByFinder() - Can't get the WProcessDefLight list - "
 					+ ex.getMessage()
 					+ "\n"
 					+ ex.getLocalizedMessage()

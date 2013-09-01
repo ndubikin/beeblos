@@ -138,12 +138,7 @@ public class WProcessDefBL {
 			process.setActive(true);
 
 			process.setProcess(new WProcessHeadBL().getProcessHeadByPK(processHeadId, currentUserId));
-			
-			if (process.getVersion() == null
-					|| process.getVersion().equals(0)){
-				process.setVersion(FIRST_WPROCESSDEF_VERSION);
-			}
-		
+
 		}
 		
 	}
@@ -564,19 +559,19 @@ public class WProcessDefBL {
 		
 	}
 	
-	private void loadManagedDataDef( WProcessDef wpd ) {
-
-		if (wpd.getProcess().getId()==null  
-				|| wpd.getProcess().getId()==0 
-				|| wpd.getProcess().getManagedTableConfiguration()==null
-				|| wpd.getProcess().getManagedTableConfiguration().getName()==null
-				|| "".equals(wpd.getProcess().getManagedTableConfiguration().getName())) {
-			wpd.setManagedDataDef(null);
-			return;
-		}
-		
-		
-	}
+//	private void loadManagedDataDef( WProcessDef wpd ) {
+//
+//		if (wpd.getProcess().getId()==null  
+//				|| wpd.getProcess().getId()==0 
+//				|| wpd.getProcess().getManagedTableConfiguration()==null
+//				|| wpd.getProcess().getManagedTableConfiguration().getName()==null
+//				|| "".equals(wpd.getProcess().getManagedTableConfiguration().getName())) {
+//			wpd.setManagedDataDef(null);
+//			return;
+//		}
+//		
+//		
+//	}
 	
 	public void _createManagedDataObject(WProcessDef wpd) {
 		
@@ -695,13 +690,13 @@ public class WProcessDefBL {
 
 	public List<WProcessDefLight> finderWProcessDefLight(boolean onlyWorkingProcessesFilter, 
 			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
-			boolean estrictProductionDateFilter, Integer productionUserFilter, String action, 
+			boolean strictProductionDateFilter, Integer productionUserFilter, String action, 
 			Integer processHeadId, String activeFilter, Integer currentUserId)
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().finderWProcessDefLight(onlyWorkingProcessesFilter, 
 				processNameFilter, initialProductionDateFilter, finalProductionDateFilter,
-				estrictProductionDateFilter, productionUserFilter, action, processHeadId, 
+				strictProductionDateFilter, productionUserFilter, action, processHeadId, 
 				activeFilter, currentUserId);
 		
 	}
@@ -738,7 +733,6 @@ public class WProcessDefBL {
 		
 		try {
 			newprocver.setId(null);
-			newprocver.setVersion(newversion); // new version number ....
 			newprocver.setRolesRelated(new HashSet<WProcessRole>());
 			newprocver.setUsersRelated(new HashSet<WProcessUser>());
 			
