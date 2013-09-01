@@ -255,7 +255,101 @@
 			</composite-element>
 		</set>		
 	</class>
+
+	<class name="org.beeblos.bpm.core.model.thin.WProcessDefThin" table="w_process_def">
+
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<property name="active" type="java.lang.Boolean">
+			<column name="active" sql-type="bit" />
+		</property>
+		
+		<property generated="never" lazy="false" name="version" type="java.lang.Integer">
+			<column name="version"  />
+		</property>
+		
+		<property name="productionDate" type="timestamp">
+			<column name="production_date" length="0" />
+		</property>
+
+		<property name="productionUser" type="java.lang.Integer">
+			<column name="production_user" />
+		</property>
+
+		<property name="comments" generated="never" lazy="false" 
+			type="string">
+			<column name="comments" />
+		</property>
+
+		<property name="listZoneId" generated="never" lazy="false" 
+			type="string">
+			<column name="id_list_zone">
+				<comment>Default:La lista del step processor que se asocia a este
+					paso.</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="workZoneId"
+			type="string">
+			<column name="id_work_zone">
+				<comment>Default:La pagina que contiene el trabajo a realizar del
+					step processor.</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="additionalZoneId"
+			type="string">
+			<column name="id_additional_zone">
+				<comment>Default:La pagina que contiene la informacion adicional
+					para el step processor.</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="processorStepId"
+			type="string">
+			<column name="id_processor_step" />
+		</property>
+		<property generated="never" lazy="false" name="adminEmail"
+			type="string">
+			<column name="admin_email" />
+		</property>
+		<property name="totalTime" type="java.lang.Integer">
+			<column name="total_time" />
+		</property>
+		<property name="globalDeadlineDate" type="java.lang.String">
+			<column name="global_deadline_date" />
+		</property>
+		<property name="beginStepId" type="java.lang.Integer">
+			<column name="id_begin" />
+		</property>
+		
+		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WProcessHead"
+			column="head_id"  name="processHead" fetch="join" lazy="false"/>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
+			lazy="false" name="totalTimeUnit">
+			<column name="total_time_unit" />
+		</many-to-one>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WEmailAccount"
+			lazy="false" name="systemEmailAccount">
+			<column name="id_system_email"/>
+		</many-to-one>
+			
+		<!-- dml 20120306 -->
+		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
+			lazy="false" name="arrivingAdminNoticeTemplate">
+			<column name="id_arriving_admin_notice_template"/>
+		</many-to-one>
 	
+		<!-- dml 20120306 -->
+		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
+			lazy="false" name="arrivingUserNoticeTemplate">
+			<column name="id_arriving_user_notice_template"/>
+		</many-to-one>		
+	
+	</class>
+
 	<class name="org.beeblos.bpm.core.model.WRoleDef" table="w_role_def">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -904,8 +998,9 @@
 			</column>
 		</property>
 
-		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
-			column="id_process" lazy="false" name="process" fetch="join"/>
+		<many-to-one class="org.beeblos.bpm.core.model.thin.WProcessDefThin"
+			column="id_process" lazy="false" name="processDef" fetch="join"/>
+			
         <many-to-one name="status" class="org.beeblos.bpm.core.model.WProcessStatus" fetch="join">
             <column name="id_status" >
                 <comment>1-processing / 2 - paused / 3 - finished / 4 - foced end / 5 - others ( ver tabla w_status_type)</comment>
@@ -1059,8 +1154,11 @@
 			<key column="id_step_work" />
 			<one-to-many class="org.beeblos.bpm.core.model.WStepWorkAssignment" />
 		</set>
-		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
-			column="id_process" lazy="false" name="process" fetch="join"/>
+		
+<!-- 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef" -->
+<!-- 			column="id_process" lazy="false" name="process" fetch="join"/> -->
+
+
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef" lazy="false"
 			name="previousStep" fetch="join">
 			<column name="id_previous_step" not-null="false">
