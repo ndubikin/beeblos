@@ -678,7 +678,7 @@ public class WStepWorkBL {
 								now, newStepWork, route);
 						
 						// dml 20130827 - si vamos hacia adelante (procesamos) el beginStep y el endStep los marca la ruta
-						this.createStepWorkSequenceLog(route, currentStepWork, false, 
+						this.createStepWorkSequenceLog(route, newStepWork, false, 
 								route.getFromStep(), route.getToStep(), currentUser);
 
 						_sendEmailNotification(newStepWork);

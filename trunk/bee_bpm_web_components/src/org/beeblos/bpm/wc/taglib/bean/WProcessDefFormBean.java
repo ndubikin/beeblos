@@ -165,8 +165,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private Integer currentProcessIdSelected;
 	private List<SelectItem> wProcessComboList;
 	
-	// dml 20130508
-//	private List<WProcessDefLight> relatedProcessDefList;
+	// dml 20130508 - Esta lista "relatedProcessDefList" es la lista de WProcessDef relacionados con un WProcessHead. 
+	// O sea, este bean además de para la ficha de WProcessDef también está para los WProcessHead (o por lo menos lo 
+	// reutilizamos en su momento para ello para no crear otro nuevo) y en la ficha de ese WProcessHead tenemos una 
+	// grilla donde tenemos todos los WProcessDef de ese head y es en esa lista del bean donde los tenemos todos
+	// TENEMOS QUE CREAR UN BEAN PROPIO PARA LA GESTIÓN DE LOS WPROCESSHEAD
+	private List<WProcessDefLight> relatedProcessDefList;
 
 	//rrl 20130729
 	private boolean flagValidate;
@@ -284,21 +288,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			// dml 20120306
 			loadEmailTemplateVariables();
 
-// DAVID: DEJÉ COMENTADA ESTA LLAMADA Y EL MISMO MÉTODO reloadRelatedProcessDefList PORQUE NO ME HE PODIDO DAR
-// CUENTA DE PARA QUE COSA SIRVE NI QUE ESTÁ CONTANDO.
-// O SEA: ESTOY EN 1 PROCESS-DEF FORM, O SEA QUE DEBERIA TENER 1 currentProcessDef (que lo hay) y sus cosas por ejemplo
-// SU currentStepSequence.
-// PERO NO ME DOY CUENTA PARA QUE SE NECESITA UNA relatedProcessDefList ¿QUE TIPO DE LISTA DE PROCESS-DEF RELACIONADOS
-// TIENE 1 PROCESS DEF CUANDO LO ESTOY EDITANDO ... ?
-//
-// APARTE: DEBERÍAS INTENTAR COMENTAR EN LA DEFINICIÓN DE LA PROPIEDAD PARA QUE SE USA O CUAL SERÍA SU COMETIDO, SOBRE
-// TODO SI SON PROPIEDADES ASI QUE NO SON LAS NORMALES O HABITUALES DE LA CLASE EN CUESTION.
-// POR EJEMPLO EL currentProcessDef no sería necesario comentarlo porque es bastante obvio en el process-def-form
-// así como la currentProcessDefList puede ser obvia en el backing bean de consulta
-// Ahora aquí en un processDef tener la lista de relatedProcessDef como q no resulta del todo intuitivo (por lo menos para mi)
-// el saber pa q sería necesaria ... si?
-			
-//			this.reloadRelatedProcessDefList(); // dml 20130508
+			this.reloadRelatedProcessDefList(); // dml 20130508
 			this.reloadDataFieldList();         // rrl 20130730
 			
 		} catch (WProcessDefException ex1) {
@@ -324,26 +314,26 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 	
 	// dml 20130508
-//	public void reloadRelatedProcessDefList(){
-//		
-//		try {
-//			
-// 			this.relatedProcessDefList = new WProcessDefBL()
-//				.finderWProcessDefLight(false, null, null, null, false, null, null, 
-//						this.currentWProcessDef.getProcess().getId(), this.activeFilter, getCurrentUserId());
-//			
-//		} catch (WProcessDefException e) {
-//
-//			this.relatedProcessDefList = new ArrayList<WProcessDefLight>();
-//			
-//			String message = e.getMessage() + " - " + e.getCause();
-//			String params[] = { message + ",", ".Error trying to load current WProcessDef ..." };
-//			agregarMensaje("203", message, params, FGPException.ERROR);
-//			logger.error(message);
-//			
-//		}
-//		
-//	}
+	public void reloadRelatedProcessDefList(){
+		
+		try {
+			
+ 			this.relatedProcessDefList = new WProcessDefBL()
+				.finderWProcessDefLight(false, null, null, null, false, null, null, 
+						this.currentWProcessDef.getProcess().getId(), this.activeFilter, getCurrentUserId());
+			
+		} catch (WProcessDefException e) {
+
+			this.relatedProcessDefList = new ArrayList<WProcessDefLight>();
+			
+			String message = e.getMessage() + " - " + e.getCause();
+			String params[] = { message + ",", ".Error trying to load current WProcessDef ..." };
+			agregarMensaje("203", message, params, FGPException.ERROR);
+			logger.error(message);
+			
+		}
+		
+	}
 
 	//rrl 20120228 Bermuda Triangle mystery on the loss of source code Castor XML the process Marshall
 	public void generateXMLCurrentWProcessDef() {
@@ -1993,13 +1983,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.wProcessComboList = wProcessComboList;
 	}
 	
-//	public List<WProcessDefLight> getRelatedProcessDefList() {
-//		return relatedProcessDefList;
-//	}
-//
-//	public void setRelatedProcessDefList(List<WProcessDefLight> relatedProcessDefList) {
-//		this.relatedProcessDefList = relatedProcessDefList;
-//	}
+	public List<WProcessDefLight> getRelatedProcessDefList() {
+		return relatedProcessDefList;
+	}
+
+	public void setRelatedProcessDefList(List<WProcessDefLight> relatedProcessDefList) {
+		this.relatedProcessDefList = relatedProcessDefList;
+	}
 
 	// dml 20130430
 	public void _loadWProcessComboList(){

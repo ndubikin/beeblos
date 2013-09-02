@@ -104,7 +104,7 @@ public class TestWStepWorkBL extends TestCase{
 						
 			iproc = processBL.add(process,1000);
 			
-			processWork.setProcess(process);
+			processWork.setProcessDef(process.getAsProcessDefThin());
 //			processWork.setVersion(1);
 			processWork.setStartingTime(new Date());
 			processWork.setReference("process work reference");
@@ -277,7 +277,7 @@ public class TestWStepWorkBL extends TestCase{
 			System.out.println("--------------- RECUPERO LISTA DE WORKITEMS DE UN OBJETO ---------------------------");
 			
 			lsw = new ArrayList<WStepWork>();
-			lsw = stepwBL.getWorkListByProcess(stepw.getProcess().getId(), stepw.getwProcessWork().getIdObject(), stepw.getwProcessWork().getIdObjectType(), 1000);
+			lsw = stepwBL.getWorkListByProcess(stepw.getwProcessWork().getProcessDef().getId(), stepw.getwProcessWork().getIdObject(), stepw.getwProcessWork().getIdObjectType(), 1000);
 			for (WStepWork wsw: lsw) {
 				System.out.println(wsw);
 			}

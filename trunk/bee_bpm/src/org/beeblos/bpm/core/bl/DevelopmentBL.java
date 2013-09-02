@@ -81,7 +81,6 @@ public class DevelopmentBL {
 		
 		logger.info("DevelopmentBL.purgeProcessDef() - Beginning purge of:"+(processDef!=null?processDef.getId():"null")); 
 		
-		// DAVID: si viene en null debería ser error y no false ... (por lo menos en este caso, no te pueden mandar a limpiar un null
 		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
 			throw new DevelopmentException("Can't purge null process!!");
 		}
@@ -131,7 +130,6 @@ public class DevelopmentBL {
 	 * @throws WStepWorkSequenceException
 	 * 
 	 */
-	// DAVID: el parametro no se puede llamar processId porque queda ambiguo y no sabemos si es processDefId o processHeadId ok?
 	private void _deleteWStepWorkSequenceList(Integer processDefId, Integer currentUserId) throws WStepWorkSequenceException{
 		
 		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step work sequences related to process : " + processDefId); 
