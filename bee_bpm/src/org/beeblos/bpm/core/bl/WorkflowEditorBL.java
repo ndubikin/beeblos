@@ -8,6 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.util.XmlConverterUtil;
 import org.w3c.dom.Document;
@@ -54,14 +55,14 @@ public class WorkflowEditorBL {
 		try {
 
 			// lista para pintar los "Task"
-/*			List<WStepWork> wswList = 
+			List<WStepWork> wswList = 
 					new WStepWorkBL().getWorkListByIdWorkAndStatus(workId, null, currentUserId);
 			
 			if (wswList == null
 					|| wswList.isEmpty()){
 				return returnValue;
 			}
-*/
+
 			// lista para pintar los "Edge" ( no devuelve null si no hay porque puede que no haya ninguna ruta procesada aun)
 			List<WStepWorkSequence> wswsList = 
 					new WStepWorkSequenceBL().getWStepWorkSequencesByWorkingProcessId(workId, currentUserId);
@@ -90,26 +91,22 @@ public class WorkflowEditorBL {
 				// el nombre no puede ser vacío, por lo tanto le ponemos el que tenemos por defecto
 				if (spId != null
 					&& !spId.isEmpty()){
-					for (WStepWorkSequence wsws : wswsList){
+					for (WStepWork wsw : wswList){
 						
-						if (wsws.getBeginStep() != null
-								&& wsws.getBeginStep().getId() != null
-								&& wsws.getBeginStep().getId().equals(Integer.valueOf(spId))){
+						if (wsw.getPreviousStep() != null
+								&& wsw.getPreviousStep().getId() != null
+								&& wsw.getPreviousStep().getId().equals(Integer.valueOf(spId))){
 							
-							if (wsws.isSentBack()){
-								task = _setXmlElementStylePropertyValue(task, task.getAttribute(LABEL), true, STROKE_COLOR_PROPERTY, BROWN);
-							} else {
-								task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, GREEN);								
-							}
+							task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, GREEN);								
 							
 						}
 
-						if (wsws.getEndStep() != null
-								&& wsws.getEndStep().getId() != null
-								&& wsws.getEndStep().getId().equals(Integer.valueOf(spId))){
+						if (wsw.getCurrentStep() != null
+								&& wsw.getCurrentStep().getId() != null
+								&& wsw.getCurrentStep().getId().equals(Integer.valueOf(spId))){
 							
 							// si tiene decided date se pone como acabado
-							if (wsws.getStepWork().getDecidedDate() != null){
+							if (wsw.getDecidedDate() != null){
 								task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, GREEN);
 							} else {
 								task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, RED);
@@ -154,12 +151,18 @@ public class WorkflowEditorBL {
 				String spToStepId = "";
 				
 				NodeList edgeList = xmlParsedDoc.getElementsByTagName(EDGE);
+				
+				List<Element> paintedEdgeList = new ArrayList<Element>();
+				List<Element> notPaintedEdgeList = new ArrayList<Element>();
+				boolean actualEdgeWasPainted = false;
 	
 				// iterate the edges (sequences)
 				for (int i = 0; i < edgeList.getLength(); i++) {
 					spId = "";
 					xmlFromStepId = "";
 					spFromStepId = "";
+					
+					actualEdgeWasPainted = false;
 					
 					Element edge = (Element) edgeList.item(i);
 	
@@ -178,6 +181,8 @@ public class WorkflowEditorBL {
 								&& beginSymbolId != null
 								&& beginSymbolId.equals(xmlFromStepId)){
 							edge = _setXmlElementStylePropertyValue(edge, null, false, STROKE_COLOR_PROPERTY, GREEN);
+							actualEdgeWasPainted = true;
+							paintedEdgeList.add(edge);
 							continue;
 						}
 						
@@ -251,6 +256,8 @@ public class WorkflowEditorBL {
 								&& !wsws.isSentBack()){
 									
 								edge = _setXmlElementStylePropertyValue(edge, null, false, STROKE_COLOR_PROPERTY, GREEN);
+								actualEdgeWasPainted = true;
+								paintedEdgeList.add(edge);
 								break;
 								
 							}			
@@ -265,12 +272,33 @@ public class WorkflowEditorBL {
 							&& wsws.isSentBack()){
 							
 							edge = _setXmlElementStylePropertyValue(edge, edge.getAttribute(LABEL), true, STROKE_COLOR_PROPERTY, BROWN);
+							actualEdgeWasPainted = true;
+							paintedEdgeList.add(edge);
 							break;
 						
 						}
 	
 					}
+					
+					if (!actualEdgeWasPainted){
+						notPaintedEdgeList.add(edge);
+					}
+					
 				}
+				
+				// elimino todos los nodos para colocar primero los no pintados y despues los pintados
+/*				for (int i = 0; i < edgeList.getLength(); i++) {
+					xmlParsedDoc.removeChild(edgeList.item(i));
+				}
+				// añado los nodos no pintados
+				for (Element notPaintedNode : notPaintedEdgeList){
+					xmlParsedDoc.appendChild((Node) notPaintedNode);
+				}
+				// añado los nodos pintados
+				for (Element paintedNode : paintedEdgeList){
+					xmlParsedDoc.appendChild((Node) paintedNode);
+				}
+*/				
 			}
 			
 			returnValue = XmlConverterUtil.loadStringFromXml(xmlParsedDoc);

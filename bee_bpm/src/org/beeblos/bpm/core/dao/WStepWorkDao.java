@@ -548,19 +548,19 @@ public class WStepWorkDao {
 // nes 20101210
 			if ( status==null || "".equals(status) ) {
 				stepws = session
-							.createQuery("From WStepWork where process.id=? order by deadlineDate, deadlineTime")
+							.createQuery("From WStepWork where wProcessWork.processDef.id=? order by deadlineDate, deadlineTime")
 							.setParameter(0, idProcess)
 							.list();
 			} else {
 
 				if ( status==PROCESSED ) {
 					stepws = session
-								.createQuery("From WStepWork where process.id=? And decidedDate IS NOT NULL order by deadlineDate, deadlineTime")
+								.createQuery("From WStepWork where wProcessWork.processDef.id=? And decidedDate IS NOT NULL order by deadlineDate, deadlineTime")
 								.setParameter(0, idProcess)
 								.list();
 				} else { // ALIVE
 					stepws = session
-								.createQuery("From WStepWork where process.id=? And decidedDate IS NULL order by deadlineDate, deadlineTime")
+								.createQuery("From WStepWork where wProcessWork.processDef.id=? And decidedDate IS NULL order by deadlineDate, deadlineTime")
 								.setParameter(0, idProcess)
 								.list();
 					
@@ -802,7 +802,7 @@ public class WStepWorkDao {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter +=" process.id= "+idProcess;
+			filter +=" wProcessWork.processDef.id= "+idProcess;
 		}
 
 		if ( idCurrentStep!=null ) {
@@ -989,7 +989,7 @@ public class WStepWorkDao {
 			tx.begin();
 
 			stepws = session
-				.createQuery("From WStepWork where process.id=? AND wProcessWork.idObject=? and wProcessWork.idObjectType=? ")
+				.createQuery("From WStepWork where wProcessWork.processDef.id=? AND wProcessWork.idObject=? and wProcessWork.idObjectType=? ")
 				.setParameter(0, idProcess)
 				.setParameter(1, idObject)
 				.setParameter(2, idObjectType)
@@ -1029,7 +1029,7 @@ public class WStepWorkDao {
 			tx.begin();
 
 			stepws = session
-				.createQuery("From WStepWork where wProcessWork.idObject=? and wProcessWork.idObjectType=? order by process.id ")
+				.createQuery("From WStepWork where wProcessWork.idObject=? and wProcessWork.idObjectType=? order by wProcessWork.processDef.id ")
 				.setParameter(0, idObject)
 				.setParameter(1, idObjectType)
 				.list();
@@ -1227,7 +1227,7 @@ public class WStepWorkDao {
 
 			int qtyActiveSteps = 
 					session
-						.createQuery("From WStepWork Where process.id=? AND wProcessWork.idObject=? AND wProcessWork.idObjectType=? ")
+						.createQuery("From WStepWork Where wProcessWork.processDef.id=? AND wProcessWork.idObject=? AND wProcessWork.idObjectType=? ")
 						.setParameter(0, idProcess)
 						.setParameter(1, idObject)
 						.setParameter(2, idObjectType.trim())
@@ -1767,6 +1767,7 @@ public class WStepWorkDao {
 		return tmpQuery;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<StepWorkLight> getWorkingStepList(String query)
 			throws WStepWorkException {
 

@@ -200,7 +200,6 @@ public class WUserDef implements java.io.Serializable {
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated : "")
 				+ "]";
 	}
 

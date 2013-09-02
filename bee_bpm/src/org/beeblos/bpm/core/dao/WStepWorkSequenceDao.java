@@ -242,7 +242,7 @@ public class WStepWorkSequenceDao {
 
 			tx.begin();
 
-			stepWorkSequenceList = session.createQuery("From WStepWorkSequence Where stepWork.wProcessWork.process.id = :processId Order By executionDate ASC")
+			stepWorkSequenceList = session.createQuery("From WStepWorkSequence Where stepWork.wProcessWork.processDef.id = :processId Order By executionDate ASC")
 					.setInteger("processId", processId)
 					.list();
 
