@@ -654,7 +654,7 @@ public class WProcessDef implements java.io.Serializable {
 				productionDate,
 				productionUser,
 				comments,
-				beginStep.getId(),
+				(beginStep != null)?beginStep.getId():null,
 				idListZone, idWorkZone,idAdditionalZone,
 				idProcessorStep,
 				adminEmail,

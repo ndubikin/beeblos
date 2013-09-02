@@ -108,7 +108,12 @@ public class WorkflowEditorBL {
 								&& wsws.getEndStep().getId() != null
 								&& wsws.getEndStep().getId().equals(Integer.valueOf(spId))){
 							
-							task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, RED);
+							// si tiene decided date se pone como acabado
+							if (wsws.getStepWork().getDecidedDate() != null){
+								task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, GREEN);
+							} else {
+								task = _setXmlElementStylePropertyValue(task, null, false, STROKE_COLOR_PROPERTY, RED);
+							}
 							
 						}
 
