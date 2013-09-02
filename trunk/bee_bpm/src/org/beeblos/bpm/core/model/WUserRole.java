@@ -124,8 +124,7 @@ public class WUserRole implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WUserRole [" + (user != null ? "user=" + user + ", " : "")
-				+ (role != null ? "role=" + role + ", " : "") + "active="
+		return "WUserRole [" + "active="
 				+ active + ", insertUser=" + insertUser + ", "
 				+ (insertDate != null ? "insertDate=" + insertDate : "") + "]";
 	}

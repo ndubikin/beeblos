@@ -189,7 +189,7 @@ public class WProcessWorkDao {
 
 			tx.begin();
 
-			processWorkList = session.createQuery("From WProcessWork Where process.id = :processId Order By id")
+			processWorkList = session.createQuery("From WProcessWork Where processDef.id = :processId Order By id")
 					.setInteger("processId", processId)
 					.list();
 

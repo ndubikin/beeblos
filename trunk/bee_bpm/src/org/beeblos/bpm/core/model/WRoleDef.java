@@ -170,8 +170,6 @@ public class WRoleDef implements java.io.Serializable {
 				+ (idObject != null ? "idObject=" + idObject + ", " : "")
 				+ (idObjectType != null ? "idObjectType=" + idObjectType + ", "
 						: "")
-				+ (usersRelated != null ? "usersRelated=" + usersRelated + ", "
-						: "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")

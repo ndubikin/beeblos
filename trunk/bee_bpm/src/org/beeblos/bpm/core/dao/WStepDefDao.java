@@ -593,7 +593,7 @@ public class WStepDefDao {
 				tx.begin();
 
 				lwsd = session
-							.createQuery("Select Distinct w.id, w.stepHead.name, w.stepComments from WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.stepHead.name")
+							.createQuery("Select Distinct w.id, w.stepHead.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.stepHead.name")
 							.setParameter(0, processDefId)
 							.list();
 
