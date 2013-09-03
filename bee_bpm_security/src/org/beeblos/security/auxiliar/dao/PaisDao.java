@@ -31,7 +31,7 @@ public class PaisDao {
 		
 		try {
 			// El id de Pais es String
-			HibernateUtil.guardar(pais);
+			HibernateUtil.save(pais);
 			
 			logger.info("agregar() Pais: [nombre: "+ pais.getPaisNombre()+"]");
 
@@ -52,7 +52,7 @@ public class PaisDao {
 		
 		try {
 
-			//HibernateUtil.actualizar;
+			//HibernateUtil.update;
 			
 			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
@@ -81,7 +81,7 @@ public class PaisDao {
 
 			pais = obtenerPaisPorPK(pais.getIdPais());
 
-			HibernateUtil.borrar(pais);
+			HibernateUtil.delete(pais);
 			
 			logger.info("borrar() Pais: [id: "+ pais.getIdPais()+"]");
 
@@ -236,6 +236,8 @@ public class PaisDao {
 //							"select p.idPais,p.paisNombre from Pais p order by p.paisNombre")
 //					.list();
 //			
+//			tx.commit();
+
 //			// nes 20100821
 //			if (ltmp!=null) {
 //				retorno.add(new StringPair(null,"- TODOS -"));
@@ -290,6 +292,8 @@ public class PaisDao {
 									"From Pais order by paisNombre")
 							.list();
 	
+			tx.commit();
+
 			// nes 20100821
 			if (ltmp!=null) {
 				

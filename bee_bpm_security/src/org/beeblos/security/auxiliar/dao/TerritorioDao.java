@@ -28,7 +28,7 @@ public class TerritorioDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(territorio));
+			return Integer.valueOf(HibernateUtil.save(territorio));
 
 		} catch (HibernateException ex) {
 
@@ -46,7 +46,7 @@ public class TerritorioDao {
 		
 		try {
 
-			//HibernateUtil.actualizar;
+			//HibernateUtil.update;
 			
 			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
@@ -85,7 +85,7 @@ public class TerritorioDao {
 
 			System.out.println("borrando ...:"+territorio.getIdTerritorio());
 			
-			HibernateUtil.borrar(territorio);
+			HibernateUtil.delete(territorio);
 			
 			logger.info("borrar Territorio < id = "+territorio.getIdTerritorio()+">");
 
@@ -393,6 +393,8 @@ public class TerritorioDao {
 							.setInteger(1, idTipoTerritorio)
 							.list();
 
+			tx.commit();
+
 			retorno.add(new StringPair(null,"Seleccionar ..."));			
 			for ( Territorio t: ltmp) {
 				retorno.add(new StringPair(t.getIdTerritorio(),t.getTerritorioNombre()));
@@ -448,6 +450,7 @@ public class TerritorioDao {
 		else return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Object[]> obtenerTerritoriosSupremosParaCombo(Territorio territorio) throws TerritorioException {
 
 		List<Object[]> retorno = null;
@@ -466,6 +469,8 @@ public class TerritorioDao {
 				.setInteger(0, territorio.getIdTerritorio())
 				.list();
 					
+			tx.commit();
+
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
@@ -503,6 +508,8 @@ public class TerritorioDao {
 			.setInteger(0, idTerritorio)
 			.uniqueResult();	
 			
+			tx.commit();
+
 			if (t!=null) {
 				retorno.add(t);
 				

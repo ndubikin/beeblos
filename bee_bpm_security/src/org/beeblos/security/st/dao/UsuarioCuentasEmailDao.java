@@ -35,7 +35,7 @@ public class UsuarioCuentasEmailDao {
         logger.debug("agregar() uceNombre: ["+instancia.getUceNombre()+"]" );
         logger.info("agregar() uceNombre: ["+instancia.getUceNombre()+"]" );
         try {
-            return Integer.valueOf(HibernateUtil.guardar(instancia));
+            return Integer.valueOf(HibernateUtil.save(instancia));
         }
         catch (HibernateException ex) {
             logger.error("UsuarioCuentasEmailDao: agregar - No se pudo guardar UsuarioCuentasEmail "+ instancia.getUceNombre());
@@ -49,7 +49,7 @@ public class UsuarioCuentasEmailDao {
 		
 		try {
 
-			HibernateUtil.actualizar(instancia);
+			HibernateUtil.update(instancia);
 			
 			logger.info("actualizar() UsuarioCuentasEmail < id = "+instancia.getIdUce()+">");
 
@@ -71,7 +71,7 @@ public class UsuarioCuentasEmailDao {
 
 			instancia = obtenerUsuarioCuentasEmailPorPK(instancia.getIdUce());
 
-			HibernateUtil.borrar(instancia);
+			HibernateUtil.delete(instancia);
 			
 			logger.info("borrar() UsuarioCuentasEmail < id = "+instancia.getIdUce()+">");
 
@@ -202,6 +202,8 @@ public class UsuarioCuentasEmailDao {
 //				.createQuery("From UsuarioCuentasEmail order by uceNombre")
 //				.list();
 //		
+//				tx.commit();
+
 //				if (ltmp!=null) {
 //					
 //					// inserta los extras
@@ -343,9 +345,8 @@ public class UsuarioCuentasEmailDao {
 								.list();
 					
 				}
+
 				tx.commit();
-		
-				
 				
 			} catch (HibernateException ex) {
 				if (tx != null)

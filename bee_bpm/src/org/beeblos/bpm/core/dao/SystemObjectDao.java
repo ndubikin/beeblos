@@ -26,7 +26,7 @@ public class SystemObjectDao {
 
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(systemObject));
+			return Integer.valueOf(HibernateUtil.save(systemObject));
 
 		} catch (HibernateException ex) {
 			logger.error("SystemObjectDao: add - Can't store systemObject definition record "
@@ -46,7 +46,7 @@ public class SystemObjectDao {
 
 		try {
 
-			HibernateUtil.actualizar(systemObject);
+			HibernateUtil.update(systemObject);
 
 		} catch (HibernateException ex) {
 			logger.error("SystemObjectDao: update - Can't update systemObject definition record "
@@ -69,7 +69,7 @@ public class SystemObjectDao {
 
 			systemObject = getSystemObjectByPK(systemObject.getId());
 
-			HibernateUtil.borrar(systemObject);
+			HibernateUtil.delete(systemObject);
 
 		} catch (HibernateException ex) {
 			logger.error("SystemObjectDao: delete - Can't delete proccess definition record "

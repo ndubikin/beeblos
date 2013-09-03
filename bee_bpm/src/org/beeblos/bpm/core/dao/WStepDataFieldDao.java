@@ -27,7 +27,7 @@ public class WStepDataFieldDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(stepDataField));
+			return Integer.valueOf(HibernateUtil.save(stepDataField));
 
 		} catch (HibernateException ex) {
 			logger.error("WStepDataFieldDao: add - Can't store process stepDataField definition record "+ 
@@ -46,7 +46,7 @@ public class WStepDataFieldDao {
 		
 		try {
 
-			HibernateUtil.actualizar(stepDataField);
+			HibernateUtil.update(stepDataField);
 
 
 		} catch (HibernateException ex) {
@@ -68,7 +68,7 @@ public class WStepDataFieldDao {
 		
 		try {
 
-			HibernateUtil.borrar(stepDataField);
+			HibernateUtil.delete(stepDataField);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepDataFieldDao: delete - Can't delete process definition record "+ stepDataField.getName() +
@@ -143,6 +143,7 @@ public class WStepDataFieldDao {
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	public List<WStepDataField> getWStepDataFieldList() throws WStepDataFieldException {
 
 		org.hibernate.Session session = null;
@@ -175,6 +176,7 @@ public class WStepDataFieldDao {
 	}
 
 	//rrl 20130730
+	@SuppressWarnings("unchecked")
 	public List<WStepDataField> getWStepDataFieldList(Integer processHeadId, Integer stepHeadId) 
 			throws WStepDataFieldException {
 

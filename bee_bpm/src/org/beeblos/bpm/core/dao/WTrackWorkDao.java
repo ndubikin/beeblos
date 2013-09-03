@@ -29,7 +29,7 @@ public class WTrackWorkDao {
 
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(trackw));
+			return Integer.valueOf(HibernateUtil.save(trackw));
 
 		} catch (HibernateException ex) {
 			logger.error("WTrackWorkDao: add - Can't store trackw definition record "
@@ -53,7 +53,7 @@ public class WTrackWorkDao {
 
 		try {
 
-			HibernateUtil.actualizar(trackw);
+			HibernateUtil.update(trackw);
 
 		} catch (HibernateException ex) {
 			logger.error("WTrackWorkDao: update - Can't update trackw definition record "
@@ -85,7 +85,7 @@ public class WTrackWorkDao {
 
 			trackw = getWTrackWorkByPK(trackw.getId());
 
-			HibernateUtil.borrar(trackw);
+			HibernateUtil.delete(trackw);
 
 		} catch (HibernateException ex) {
 			logger.error("WTrackWorkDao: delete - Can't delete proccess definition record "
@@ -247,6 +247,8 @@ public class WTrackWorkDao {
 			tx.begin();
 
 			ltw = session.createQuery("From WTrackWork order by name ").list();
+
+			tx.commit();
 
 			if (ltw != null) {
 

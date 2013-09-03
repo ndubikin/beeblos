@@ -31,7 +31,7 @@ public class ObjectDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(object));
+			return Integer.valueOf(HibernateUtil.save(object));
 
 		} catch (HibernateException ex) {
 			logger.error("ObjectMDao: add - Can't store object definition record "+ 
@@ -50,7 +50,7 @@ public class ObjectDao {
 		
 		try {
 
-			HibernateUtil.actualizar(object);
+			HibernateUtil.update(object);
 
 
 		} catch (HibernateException ex) {
@@ -74,7 +74,7 @@ public class ObjectDao {
 
 			//object = getObjectMByPK(object.getId());
 
-			HibernateUtil.borrar(object);
+			HibernateUtil.delete(object);
 
 		} catch (HibernateException ex) {
 			logger.error("ObjectMDao: delete - Can't delete proccess definition record "+ object.getName() +
@@ -237,7 +237,8 @@ public class ObjectDao {
 					retorno=null;
 				}
 				
-				
+				tx.commit();
+
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();

@@ -44,7 +44,7 @@ public class WStepDefDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(step));
+			return Integer.valueOf(HibernateUtil.save(step));
 
 		} catch (HibernateException ex) {
 			logger.error("WStepDefDao: add - Can't store step definition record "+ 
@@ -63,7 +63,7 @@ public class WStepDefDao {
 		
 		try {
 
-			HibernateUtil.actualizar(step);
+			HibernateUtil.update(step);
 
 
 		} catch (HibernateException ex) {
@@ -136,7 +136,7 @@ public class WStepDefDao {
 
 			step = getStepDefByPK(step.getId(), null);// nes 20130808 por el filtro añadido
 
-			HibernateUtil.borrar(step);
+			HibernateUtil.delete(step);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepDefDao: delete - Can't delete proccess definition record "+ step.getName() +
@@ -531,6 +531,8 @@ public class WStepDefDao {
 						.createQuery("From WStepDef Order By stepHead.name ")
 						.list();
 		
+				tx.commit();
+
 				if (lwpd!=null) {
 					
 					// inserta los extras
@@ -596,6 +598,8 @@ public class WStepDefDao {
 							.createQuery("Select Distinct w.id, w.stepHead.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.stepHead.name")
 							.setParameter(0, processDefId)
 							.list();
+				
+				tx.commit();
 
 				if (lwsd!=null) {
 					
@@ -697,6 +701,8 @@ public class WStepDefDao {
 				lwsd = session
 						.createSQLQuery(query)  
 						.list();
+
+				tx.commit();
 
 				if (lwsd!=null) {
 					

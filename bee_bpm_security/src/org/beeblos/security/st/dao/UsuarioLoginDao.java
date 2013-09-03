@@ -35,7 +35,7 @@ public class UsuarioLoginDao {
     public Integer agregar(UsuarioLogin instancia) throws UsuarioLoginException{
         logger.debug("agregar() UsuarioLogin para usuario: [id: "+instancia.getIdUsuario()+"]" );
         try {
-            return Integer.valueOf(HibernateUtil.guardar(instancia));
+            return Integer.valueOf(HibernateUtil.save(instancia));
         }
         catch (HibernateException ex) {
             logger.error("UsuarioLoginDao: agregar - No se pudo guardar UsuarioLogin para usuario: [id: "+instancia.getIdUsuario()+"]");
@@ -49,7 +49,7 @@ public class UsuarioLoginDao {
 		
 		try {
 
-			HibernateUtil.actualizar(instancia);
+			HibernateUtil.update(instancia);
 
 		} catch (HibernateException ex) {
 			logger.error("UsuarioLoginDao:actualizar - No se pudo actualizar UsuarioLogin de IdUsuario"+ instancia.getIdUsuario() +
@@ -69,7 +69,7 @@ public class UsuarioLoginDao {
 
 			instancia = obtenerUsuarioLoginPorPK(instancia.getId());
 
-			HibernateUtil.borrar(instancia);
+			HibernateUtil.delete(instancia);
 
 		} catch (HibernateException ex) {
 			logger.error("UsuarioLoginDao: borrar - No se pudo borrar la instancia de UsuarioLogin para IdUsuario"+ instancia.getIdUsuario() +

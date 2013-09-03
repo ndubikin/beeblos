@@ -37,7 +37,7 @@ public class WProcessHeadDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(processHead));
+			return Integer.valueOf(HibernateUtil.save(processHead));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: add - Can't store process definition record "+ 
@@ -56,7 +56,7 @@ public class WProcessHeadDao {
 		
 		try {
 
-			HibernateUtil.actualizar(processHead);
+			HibernateUtil.update(processHead);
 
 
 		} catch (HibernateException ex) {
@@ -124,7 +124,7 @@ public class WProcessHeadDao {
 					// continues deleting process head record ...
 				}
 			}
-			HibernateUtil.borrar(processHead);
+			HibernateUtil.delete(processHead);
 
 		} catch (HibernateException ex) {
 			String mess ="WProcessHeadDao: delete - Can't delete proccess head definition record "+ processHead.getName() +
@@ -223,7 +223,6 @@ public class WProcessHeadDao {
 						.setInteger("id",id)
 						.uniqueResult();
 
-
 			tx.commit();
 
 		} catch (HibernateException ex) {
@@ -292,6 +291,8 @@ public class WProcessHeadDao {
 						.createQuery("From WProcessHead Order By name ")
 						.list();
 		
+				tx.commit();
+
 				if (lwph!=null) {
 					
 					// inserta los extras

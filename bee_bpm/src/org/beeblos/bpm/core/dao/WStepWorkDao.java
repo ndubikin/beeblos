@@ -60,7 +60,7 @@ public class WStepWorkDao {
 			tx = session.getTransaction();
 			tx.begin();
 
-//			id = Integer.valueOf(HibernateUtil.guardar(stepw));
+//			id = Integer.valueOf(HibernateUtil.save(stepw));
 			res = session.save(stepw);
 			
 			/*
@@ -110,7 +110,7 @@ public class WStepWorkDao {
 			tx.begin();
 
 			session.update(stepw);
-//			HibernateUtil.actualizar(stepw);
+//			HibernateUtil.update(stepw);
 
 			/*
 			 *  set process custom data
@@ -263,7 +263,7 @@ public class WStepWorkDao {
 
 			stepw = getWStepWorkByPK(stepw.getId());
 
-			HibernateUtil.borrar(stepw);
+			HibernateUtil.delete(stepw);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkDao: delete - Can't delete proccess definition record "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
@@ -1166,6 +1166,8 @@ public class WStepWorkDao {
 						.createQuery("From WStepWork order by name ")
 						.list();
 		
+				tx.commit();
+				
 				if (lsw!=null) {
 					
 					// inserta los extras

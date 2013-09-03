@@ -25,7 +25,7 @@ public class WStepWorkSequenceDao {
 
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(stepWorkSequence));
+			return Integer.valueOf(HibernateUtil.save(stepWorkSequence));
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkSequenceDao: add - Can't store stepWorkSequence definition record "
@@ -49,7 +49,7 @@ public class WStepWorkSequenceDao {
 
 		try {
 
-			HibernateUtil.actualizar(stepWorkSequence);
+			HibernateUtil.update(stepWorkSequence);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkSequenceDao: update - Can't update stepWorkSequence definition record "
@@ -74,7 +74,7 @@ public class WStepWorkSequenceDao {
 
 			stepWorkSequence = getWStepWorkSequenceByPK(stepWorkSequence.getId());
 
-			HibernateUtil.borrar(stepWorkSequence);
+			HibernateUtil.delete(stepWorkSequence);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepWorkSequenceDao: delete - Can't delete proccess definition record "

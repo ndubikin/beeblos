@@ -34,7 +34,7 @@ public class WEmailAccountDao {
 		logger.debug("add() name: [" + instance.getName() + "]");
 		logger.info("add() name: [" + instance.getName() + "]");
 		try {
-			return Integer.valueOf(HibernateUtil.guardar(instance));
+			return Integer.valueOf(HibernateUtil.save(instance));
 		} catch (HibernateException ex) {
 			logger.error("WEmailAccountDao: add - Cannot save WEmailAccount "
 					+ instance.getName());
@@ -50,7 +50,7 @@ public class WEmailAccountDao {
 
 		try {
 
-			HibernateUtil.actualizar(instance);
+			HibernateUtil.update(instance);
 
 			logger.info("update() WEmailAccount < id = "
 					+ instance.getId() + ">");
@@ -76,7 +76,7 @@ public class WEmailAccountDao {
 
 			instance = getWEmailAccountByPK(instance.getId());
 
-			HibernateUtil.borrar(instance);
+			HibernateUtil.delete(instance);
 
 			logger.info("delete() WEmailAccount < id = "
 					+ instance.getId() + ">");
@@ -228,6 +228,7 @@ public class WEmailAccountDao {
 						.setInteger(0, idSpecificUser).list();
 
 			}
+			
 			tx.commit();
 
 			if (wueal != null) {
@@ -299,6 +300,7 @@ public class WEmailAccountDao {
 						.setInteger(0, idSpecificUser).list();
 
 			}
+			
 			tx.commit();
 
 		} catch (HibernateException ex) {
@@ -354,8 +356,6 @@ public class WEmailAccountDao {
 			q = session.createSQLQuery(query).addEntity("WEmailAccount", WEmailAccount.class);
 			
 			result = q.list();
-
-
 			
 			tx.commit();
 
@@ -442,6 +442,7 @@ public class WEmailAccountDao {
 						.setInteger(0, idUser).uniqueResult();
 
 			}
+			
 			tx.commit();
 
 		} catch (HibernateException ex) {
@@ -481,6 +482,7 @@ public class WEmailAccountDao {
 						.setInteger(0, idUser).list();
 
 			}
+			
 			tx.commit();
 
 		} catch (HibernateException ex) {

@@ -24,7 +24,7 @@ public class MonedaDao {
 		logger.info("agregar() MonedaNombre: ["+moneda.getMonedaNombre()+"]");
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(moneda));
+			return Integer.valueOf(HibernateUtil.save(moneda));
 
 		} catch (HibernateException ex) {
 			logger.error("MonedaDao: agregar - No se pudo guardar la moneda "+ moneda.getMonedaNombre());
@@ -44,7 +44,7 @@ public class MonedaDao {
 		
 		try {
 
-			//HibernateUtil.actualizar;
+			//HibernateUtil.update;
 			
 			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
@@ -75,7 +75,7 @@ public class MonedaDao {
 
 			moneda = obtenerMonedaPorPK(moneda.getIdMoneda());
 			
-			HibernateUtil.borrar(moneda);
+			HibernateUtil.delete(moneda);
 			
 			logger.info("borrar() Moneda: ["+moneda.getIdMoneda()+"]");
 

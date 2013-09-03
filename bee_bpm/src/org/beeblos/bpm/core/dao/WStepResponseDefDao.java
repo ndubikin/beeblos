@@ -30,7 +30,7 @@ public class WStepResponseDefDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(response));
+			return Integer.valueOf(HibernateUtil.save(response));
 
 		} catch (HibernateException ex) {
 			logger.error("WStepResponseDefDao: add - Can't store response definition record "+ 
@@ -49,7 +49,7 @@ public class WStepResponseDefDao {
 		
 		try {
 
-			HibernateUtil.actualizar(response);
+			HibernateUtil.update(response);
 
 
 		} catch (HibernateException ex) {
@@ -73,7 +73,7 @@ public class WStepResponseDefDao {
 
 			response = getWStepResponseDefByPK(response.getId());
 
-			HibernateUtil.borrar(response);
+			HibernateUtil.delete(response);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepResponseDefDao: delete - Can't delete proccess definition record "+ response.getName() +
@@ -186,6 +186,7 @@ public class WStepResponseDefDao {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )
 	throws WStepResponseDefException {
@@ -206,6 +207,8 @@ public class WStepResponseDefDao {
 						.createQuery("From WStepResponseDef order by name ")
 						.list();
 		
+				tx.commit();
+
 				if (lwpd!=null) {
 					
 					// inserta los extras

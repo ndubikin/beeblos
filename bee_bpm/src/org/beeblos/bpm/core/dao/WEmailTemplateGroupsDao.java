@@ -34,7 +34,7 @@ public class WEmailTemplateGroupsDao {
 		logger.debug("add() name: [" + instance.getName() + "]");
 		logger.info("add() name: [" + instance.getName() + "]");
 		try {
-			return Integer.valueOf(HibernateUtil.guardar(instance));
+			return Integer.valueOf(HibernateUtil.save(instance));
 		} catch (HibernateException ex) {
 			logger.error("WEmailTemplateGroupsDao: add - Cannot save WEmailTemplateGroups "
 					+ instance.getName());
@@ -50,7 +50,7 @@ public class WEmailTemplateGroupsDao {
 
 		try {
 
-			HibernateUtil.actualizar(instance);
+			HibernateUtil.update(instance);
 
 			logger.info("update() WEmailTemplateGroups < id = "
 					+ instance.getId() + ">");
@@ -76,7 +76,7 @@ public class WEmailTemplateGroupsDao {
 
 			instance = getWEmailTemplateGroupsByPK(instance.getId());
 
-			HibernateUtil.borrar(instance);
+			HibernateUtil.delete(instance);
 
 			logger.info("delete() WEmailTemplateGroups < id = "
 					+ instance.getId() + ">");
@@ -253,6 +253,7 @@ public class WEmailTemplateGroupsDao {
 					retorno=null;
 				}
 				
+				tx.commit();
 				
 			} catch (HibernateException ex) {
 				if (tx != null)
@@ -308,8 +309,6 @@ public class WEmailTemplateGroupsDao {
 			
 			result = q.list();
 
-
-			
 			tx.commit();
 
 		} catch (HibernateException ex) {

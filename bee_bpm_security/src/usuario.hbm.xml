@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	
 	<class name="org.beeblos.security.st.model.Departamento" table="departamento">
@@ -106,8 +106,8 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="userDefaultAccount"
-			type="boolean">
-			<column name="user_default_account">
+			type="java.lang.Boolean">
+			<column name="user_default_account" sql-type="bit">
 				<comment>The default account, only one should be true</comment>
 			</column>
 		</property>
@@ -270,8 +270,8 @@
 		<property name="idUsuario" type="java.lang.Integer">
 			<column name="id_usuario" not-null="true" />
 		</property>
-		<property name="loginExitoso" type="boolean">
-			<column name="login_exitoso" not-null="true">
+		<property name="loginExitoso" type="java.lang.Boolean">
+			<column name="login_exitoso" not-null="true" sql-type="bit">
 				<comment>Indicador de que el login se realiza correctamente o no</comment>
 			</column>
 		</property>
@@ -314,8 +314,8 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="preferida"
-			type="boolean">
-			<column name="preferida">
+			type="java.lang.Boolean">
+			<column name="preferida" sql-type="bit">
 				<comment>Si está en true indica que es la cuenta preferida de ese
 					usuario</comment>
 			</column>

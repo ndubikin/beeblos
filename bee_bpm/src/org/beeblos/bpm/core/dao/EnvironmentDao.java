@@ -26,7 +26,7 @@ public class EnvironmentDao {
 
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(environment));
+			return Integer.valueOf(HibernateUtil.save(environment));
 
 		} catch (HibernateException ex) {
 			logger.error("EnvironmentDao: add - Can't store environment definition record "
@@ -46,7 +46,7 @@ public class EnvironmentDao {
 
 		try {
 
-			HibernateUtil.actualizar(environment);
+			HibernateUtil.update(environment);
 
 		} catch (HibernateException ex) {
 			logger.error("EnvironmentDao: update - Can't update environment definition record "
@@ -69,7 +69,7 @@ public class EnvironmentDao {
 
 			environment = getEnvironmentByPK(environment.getId());
 
-			HibernateUtil.borrar(environment);
+			HibernateUtil.delete(environment);
 
 		} catch (HibernateException ex) {
 			logger.error("EnvironmentDao: delete - Can't delete proccess definition record "

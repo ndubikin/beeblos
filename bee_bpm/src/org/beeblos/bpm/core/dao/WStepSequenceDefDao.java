@@ -32,7 +32,7 @@ public class WStepSequenceDefDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(stepSeq));
+			return Integer.valueOf(HibernateUtil.save(stepSeq));
 
 		} catch (HibernateException ex) {
 			logger.error("WStepSequenceDefDao: add - Can't store stepSeq definition record "+ 
@@ -51,7 +51,7 @@ public class WStepSequenceDefDao {
 		
 		try {
 
-			HibernateUtil.actualizar(stepSeq);
+			HibernateUtil.update(stepSeq);
 
 
 		} catch (HibernateException ex) {
@@ -124,7 +124,7 @@ public class WStepSequenceDefDao {
 
 			stepSeq = getWStepSequenceDefByPK(stepSeq.getId());
 
-			HibernateUtil.borrar(stepSeq);
+			HibernateUtil.delete(stepSeq);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepSequenceDefDao: delete - Can't delete proccess definition record "+ 
@@ -455,7 +455,6 @@ public class WStepSequenceDefDao {
 						.list();				
 			}
 
-
 			tx.commit();
 
 		} catch (HibernateException ex) {
@@ -770,6 +769,8 @@ public class WStepSequenceDefDao {
 							.setParameter(0, idProcess)
 							.setParameter(1, version)
 							.list();
+
+				tx.commit();
 
 				if (lwsd!=null) {
 					

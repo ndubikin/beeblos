@@ -31,7 +31,7 @@ public class WStepHeadDao {
 
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(step));
+			return Integer.valueOf(HibernateUtil.save(step));
 
 		} catch (HibernateException ex) {
 			logger.error("WStepHeadDao: add - Can't store step definition record " + step.getName()
@@ -49,7 +49,7 @@ public class WStepHeadDao {
 
 		try {
 
-			HibernateUtil.actualizar(step);
+			HibernateUtil.update(step);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepHeadDao: update - Can't update step definition record "
@@ -72,7 +72,7 @@ public class WStepHeadDao {
 
 			step = getStepDefByPK(step.getId());
 
-			HibernateUtil.borrar(step);
+			HibernateUtil.delete(step);
 
 		} catch (HibernateException ex) {
 			logger.error("WStepHeadDao: delete - Can't delete proccess definition record "
@@ -204,6 +204,8 @@ public class WStepHeadDao {
 			tx.begin();
 
 			stepList = session.createQuery("From WStepHead Order By name ").list();
+
+			tx.commit();
 
 			if (stepList != null) {
 

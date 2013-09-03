@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated Oct 30, 2010 12:25:06 AM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
 	<class name="org.beeblos.bpm.core.model.WProcessHead" table="w_process_head">
@@ -63,7 +63,7 @@
             <column name="name" length="100" not-null="true"  />
         </property>
         <property name="ignoreCase" type="java.lang.Boolean">
-            <column name="ignore_case" />
+            <column name="ignore_case" sql-type="bit"/>
         </property>
         <property name="schema" type="string">
             <column name="sxema" length="100" not-null="true" />
@@ -100,7 +100,7 @@
 		</property>
 	
 		<property name="active"	type="java.lang.Boolean">
-			<column name="active"/>
+			<column name="active" sql-type="bit"/>
 		</property>
 	
 		<property name="productionDate" type="timestamp">
@@ -210,7 +210,7 @@
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
 					column="id_role" cascade="save-update" lazy="false" />
 				<property name="admin"	type="java.lang.Boolean">
-					<column name="admin">
+					<column name="admin" sql-type="bit">
 						<comment>indicates this role is an admin role for this process</comment>
 					</column>
 				</property>
@@ -236,7 +236,7 @@
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
 					column="id_user" cascade="save-update" lazy="false" />
 				<property name="admin"	type="java.lang.Boolean">
-					<column name="admin">
+					<column name="admin" sql-type="bit">
 						<comment>indicates this role is an admin role for this process</comment>
 					</column>
 				</property>
@@ -394,7 +394,7 @@
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
 					column="id_user" cascade="none" lazy="false" />
 				<property name="active"	type="java.lang.Boolean">
-					<column name="active"/>
+					<column name="active" sql-type="bit"/>
 				</property>
 		        <property name="insertUser" type="java.lang.Integer">
 		            <column name="insert_user" />
@@ -424,13 +424,13 @@
             <column name="name" length="100" />
         </property>
         <property name="required" type="java.lang.Boolean">
-            <column name="required" />
+            <column name="required" sql-type="bit"/>
         </property>
         <property name="active" type="java.lang.Boolean">
-            <column name="active" />
+            <column name="active" sql-type="bit"/>
         </property>
         <property name="readOnly" type="java.lang.Boolean">
-            <column name="read_only" />
+            <column name="read_only" sql-type="bit"/>
         </property>
         <property name="length" type="java.lang.Integer">
             <column name="length"  />
@@ -515,15 +515,15 @@
 		</property>
 	
 		<property name="active" type="java.lang.Boolean">
-			<column name="active"/>
+			<column name="active" sql-type="bit"/>
 		</property>
 	
 		<property name="shared" type="java.lang.Boolean">
-			<column name="shared"/>
+			<column name="shared" sql-type="bit"/>
 		</property>
 	
 		<property name="deleted" type="java.lang.Boolean">
-			<column name="deleted"/>
+			<column name="deleted" sql-type="bit"/>
 		</property>
 	
 		<property generated="never" lazy="false" name="rules" type="string">
@@ -618,8 +618,8 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="runtimeModifiable"
-			type="boolean">
-			<column name="runtime_modifiable" >
+			type="java.lang.Boolean" >
+			<column name="runtime_modifiable" sql-type="bit">
 				<comment>si pueden modificar los deadline en runtime en el step
 					processor</comment>
 			</column>
@@ -640,45 +640,45 @@
 			<column  name="mod_user" />
 		</property>
 
-        <property name="sentAdminNotice" type="boolean">
-            <column name="sent_admin_notice"  />
+        <property name="sentAdminNotice" type="java.lang.Boolean">
+            <column name="sent_admin_notice" sql-type="bit" />
         </property>
-        <property name="arrivingAdminNotice" type="boolean">
-            <column name="arriving_admin_notice"  />
+        <property name="arrivingAdminNotice" type="java.lang.Boolean">
+            <column name="arriving_admin_notice" sql-type="bit" />
         </property>
-        <property name="deadlineAdminNotice" type="boolean">
-            <column name="deadline_admin_notice"  />
+        <property name="deadlineAdminNotice" type="java.lang.Boolean">
+            <column name="deadline_admin_notice" sql-type="bit" />
         </property>
-        <property name="reminderAdminNotice" type="boolean">
-            <column name="reminder_admin_notice"  />
+        <property name="reminderAdminNotice" type="java.lang.Boolean">
+            <column name="reminder_admin_notice" sql-type="bit" />
         </property>
-        <property name="expiredAdminNotice" type="boolean">
-            <column name="expired_admin_notice"  />
+        <property name="expiredAdminNotice" type="java.lang.Boolean">
+            <column name="expired_admin_notice" sql-type="bit" />
         </property>
-        <property name="emailNotification" type="boolean">
-            <column name="email_notification"  />
+        <property name="emailNotification" type="java.lang.Boolean">
+            <column name="email_notification" sql-type="bit" />
         </property>
-        <property name="engineNotification" type="boolean">
-            <column name="engine_notification"  />
+        <property name="engineNotification" type="java.lang.Boolean">
+            <column name="engine_notification" sql-type="bit" />
         </property>
-        <property name="sentUserNotice" type="boolean">
-            <column name="sent_user_notice"  />
+        <property name="sentUserNotice" type="java.lang.Boolean">
+            <column name="sent_user_notice" sql-type="bit" />
         </property>
-        <property name="arrivingUserNotice" type="boolean">
-            <column name="arriving_user_notice"  />
+        <property name="arrivingUserNotice" type="java.lang.Boolean">
+            <column name="arriving_user_notice" sql-type="bit" />
         </property>
-        <property name="deadlineUserNotice" type="boolean">
-            <column name="deadline_user_notice"  />
+        <property name="deadlineUserNotice" type="java.lang.Boolean">
+            <column name="deadline_user_notice" sql-type="bit" />
         </property>
-        <property name="reminderUserNotice" type="boolean">
-            <column name="reminder_user_notice"  />
+        <property name="reminderUserNotice" type="java.lang.Boolean">
+            <column name="reminder_user_notice" sql-type="bit" />
         </property>
-        <property name="expiredUserNotice" type="boolean">
-            <column name="expired_user_notice"  />
+        <property name="expiredUserNotice" type="java.lang.Boolean">
+            <column name="expired_user_notice" sql-type="bit" />
         </property>
         
-         <property name="customValidation" type="boolean">
-            <column name="custom_validation"  />
+         <property name="customValidation" type="java.lang.Boolean">
+            <column name="custom_validation" sql-type="bit" />
         </property>
 		<property generated="never" lazy="false" name="customValidationRefClass"
 			type="string">
@@ -696,8 +696,8 @@
 			type="string">
 			<column name="custom_save_ref_class" />
 		</property>
-        <property name="backingBean" type="boolean">
-            <column name="backing_bean"  />
+        <property name="backingBean" type="java.lang.Boolean">
+            <column name="backing_bean" sql-type="bit" />
         </property>
         
         
@@ -730,7 +730,7 @@
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
 					column="id_role" lazy="false"/>
 				<property name="admin"	type="java.lang.Boolean">
-					<column name="admin">
+					<column name="admin" sql-type="bit" >
 						<comment>indicates this role is an admin role for this process</comment>
 					</column>
 				</property>
@@ -756,7 +756,7 @@
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
 					column="id_user" lazy="false" />
 				<property name="admin"	type="java.lang.Boolean">
-					<column name="admin">
+					<column name="admin" sql-type="bit">
 						<comment>indicates this role is an admin role for this step</comment>
 					</column>
 				</property>
@@ -817,15 +817,15 @@
 		</id>
 		<property generated="never" lazy="false" name="enabled"
 			type="java.lang.Boolean">
-			<column name="enabled" />
+			<column name="enabled" sql-type="bit" />
 		</property>
 		<property generated="never" lazy="false" name="afterAll"
 			type="java.lang.Boolean">
-			<column name="after_all" />
+			<column name="after_all" sql-type="bit" />
 		</property>
 		<property generated="never" lazy="false" name="deleted"
 			type="java.lang.Boolean">
-			<column name="deleted" />
+			<column name="deleted" sql-type="bit" />
 		</property>
 		<property generated="never" lazy="false" name="validResponses"
 			type="string">
@@ -875,7 +875,7 @@
 		</id>
 		<property generated="never" lazy="false" name="sentBack"
 			type="java.lang.Boolean">
-			<column name="sent_back" />
+			<column name="sent_back" sql-type="bit" />
 		</property>
 
 		<property generated="never" lazy="false" name="executionDate"
@@ -1073,14 +1073,14 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="adminProcess"
-			type="boolean">
-			<column name="admin_process" >
+			type="java.lang.Boolean">
+			<column name="admin_process" sql-type="bit" >
 				<comment>si lo procesa el administrador se prende a true</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="locked"
 			type="java.lang.Boolean">
-			<column name="locked">
+			<column name="locked" sql-type="bit">
 				<comment>INDICA SI EL PASO ESTA BLOQUEADO ( ALGUIEN LO ESTÁ
 					PROCESANDO ... )</comment>
 			</column>
@@ -1103,20 +1103,20 @@
 		</property>
 		<property generated="never" lazy="false" name="sentBack"
 			type="java.lang.Boolean">
-			<column name="sent_back">
+			<column name="sent_back" sql-type="bit">
 				<comment>indica que el paso corriente es un paso que ha sido devuelto</comment>
 			</column>
 		</property>	
 		<property generated="never" lazy="false" name="myNotes"
 			type="java.lang.Boolean">
-			<column name="my_notes">
+			<column name="my_notes" sql-type="bit">
 				<comment>indica que las notas guardadas en userNotes son personales para el propio usuario</comment>
 			</column>
 		</property>
 		
 		<property generated="never" lazy="false" name="sendUserNotesToNextStep"
 			type="java.lang.Boolean">
-			<column name="send_user_notes_to_next_step">
+			<column name="send_user_notes_to_next_step" sql-type="bit">
 				<comment>indica que va mandar las user notes como instrucciones al proximo paso</comment>
 			</column>
 		</property>				
@@ -1204,13 +1204,13 @@
 		</property>
 		<property generated="never" lazy="false" name="active"
 			type="java.lang.Boolean">
-			<column name="active">
+			<column name="active" sql-type="bit">
 				<comment>SI ESTA ACTIVA ESTA REGLA (PUEDE ESTAR ACTIVA EN UN MOMENTO Y LUEGO SI EL WORKFLOW DA UNA VUELTA PODRIA QUEDAR OBSOLETA O NO APLICAR ...)</comment>
 			</column>
 		</property>		
 		<property generated="never" lazy="false" name="reassigned"
 			type="java.lang.Boolean">
-			<column name="reassigned">
+			<column name="reassigned" sql-type="bit">
 				<comment>SI LO REASIGNAN SE PRENDE ESTE FLAG QUE INDICARA ESO</comment>
 			</column>
 		</property>
@@ -1228,7 +1228,7 @@
 		</property>
 		<property generated="never" lazy="false" name="fromReassignment"
 			type="java.lang.Boolean">
-			<column name="from_reassignment">
+			<column name="from_reassignment" sql-type="bit">
 				<comment>SI VIENE DE UN PASO REASIGNADO SE INDICA AQUI.</comment>
 			</column>
 		</property>
@@ -1297,7 +1297,7 @@
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
 					column="id_role" cascade="none" lazy="false" />
 				<property name="active"	type="java.lang.Boolean">
-					<column name="active"/>
+					<column name="active" sql-type="bit"/>
 				</property>
 		        <property name="insertUser" type="java.lang.Integer">
 		            <column name="insert_user" />
@@ -1360,8 +1360,8 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="adminProcess"
-			type="boolean">
-			<column name="admin_process" >
+			type="java.lang.Boolean">
+			<column name="admin_process" sql-type="bit">
 				<comment>si lo procesa el administrador se prende a true</comment>
 			</column>
 		</property>
@@ -1493,13 +1493,13 @@
             <column name="col_name" length="120" />
         </property>        
         <property name="required" type="java.lang.Boolean">
-            <column name="required" />
+            <column name="required" sql-type="bit"/>
         </property>
          <property name="comments" type="string">
             <column name="comments" />
         </property>
         <property name="active" type="java.lang.Boolean">
-            <column name="active" />
+            <column name="active" sql-type="bit"/>
         </property>
 		<property name="length" type="java.lang.Integer">
 			<column name="length"/>
