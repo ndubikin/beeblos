@@ -47,7 +47,9 @@ public class WProcessDataFieldBL {
 		
 		// check for duplicated names (not allowed)
 		WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
-		if (pdf != null && pdf.getName()!=null && pdf.getName().equalsIgnoreCase(processDataField.getName()) ) {
+		if (pdf != null && pdf.getName()!=null 
+				&& pdf.getName().equalsIgnoreCase(processDataField.getName()) 
+				&& pdf.getProcessHeadId().equals(processDataField.getProcessHeadId())) {
 			throw new WProcessDataFieldException("Data field name ["+pdf.getName()+"] already exists for this process!! Not permitted operation ... ");
 		}
 		
