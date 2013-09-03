@@ -31,7 +31,7 @@ public class WRoleDefDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(role));
+			return Integer.valueOf(HibernateUtil.save(role));
 
 		} catch (HibernateException ex) {
 			logger.error("WRoleDefDao: add - Can't store role definition record "+ 
@@ -50,7 +50,7 @@ public class WRoleDefDao {
 		
 		try {
 
-			HibernateUtil.actualizar(role);
+			HibernateUtil.update(role);
 
 
 		} catch (HibernateException ex) {
@@ -74,7 +74,7 @@ public class WRoleDefDao {
 
 			role = getWRoleDefByPK(role.getId());
 
-			HibernateUtil.borrar(role);
+			HibernateUtil.delete(role);
 
 		} catch (HibernateException ex) {
 			logger.error("WRoleDefDao: delete - Can't delete role definition record "+ role.getName() +
@@ -100,7 +100,7 @@ public class WRoleDefDao {
 
 			role = getWRoleDefByPK(roleId);
 
-			HibernateUtil.borrar(role);
+			HibernateUtil.delete(role);
 
 		} catch (HibernateException ex) {
 			
@@ -242,6 +242,8 @@ public class WRoleDefDao {
 						.createQuery("From WRoleDef order by name ")
 						.list();
 		
+				tx.commit();
+
 				if (lrole!=null) {
 					
 					// inserta los extras

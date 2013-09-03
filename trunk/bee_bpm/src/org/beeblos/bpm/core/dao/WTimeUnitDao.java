@@ -29,7 +29,7 @@ public class WTimeUnitDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(timeUnit));
+			return Integer.valueOf(HibernateUtil.save(timeUnit));
 
 		} catch (HibernateException ex) {
 			logger.error("WTimeUnitDao: add - Can't store timeUnit definition record "+ 
@@ -48,7 +48,7 @@ public class WTimeUnitDao {
 		
 		try {
 
-			HibernateUtil.actualizar(timeUnit);
+			HibernateUtil.update(timeUnit);
 
 
 		} catch (HibernateException ex) {
@@ -72,7 +72,7 @@ public class WTimeUnitDao {
 
 			timeUnit = getWTimeUnitByPK(timeUnit.getId());
 
-			HibernateUtil.borrar(timeUnit);
+			HibernateUtil.delete(timeUnit);
 
 		} catch (HibernateException ex) {
 			logger.error("WTimeUnitDao: delete - Can't delete proccess definition record "+ timeUnit.getName() +
@@ -185,6 +185,7 @@ public class WTimeUnitDao {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )
 	throws WTimeUnitException {
@@ -205,6 +206,8 @@ public class WTimeUnitDao {
 						.createQuery("From WTimeUnit order by name ")
 						.list();
 		
+				tx.commit();
+
 				if (lwpd!=null) {
 					
 					// inserta los extras

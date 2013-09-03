@@ -25,7 +25,7 @@ public class WProcessStatusDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(status));
+			return Integer.valueOf(HibernateUtil.save(status));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessStatusDao: add - Can't store process status definition record "+ 
@@ -44,7 +44,7 @@ public class WProcessStatusDao {
 		
 		try {
 
-			HibernateUtil.actualizar(status);
+			HibernateUtil.update(status);
 
 
 		} catch (HibernateException ex) {
@@ -66,7 +66,7 @@ public class WProcessStatusDao {
 		
 		try {
 
-			HibernateUtil.borrar(status);
+			HibernateUtil.delete(status);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessStatusDao: delete - Can't delete proccess definition record "+ status.getName() +

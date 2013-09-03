@@ -38,7 +38,7 @@ public class WProcessDefDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(process));
+			return Integer.valueOf(HibernateUtil.save(process));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: add - Can't store process definition record "+ 
@@ -57,7 +57,7 @@ public class WProcessDefDao {
 		
 		try {
 
-			HibernateUtil.actualizar(process);
+			HibernateUtil.update(process);
 
 
 		} catch (HibernateException ex) {
@@ -117,7 +117,7 @@ public class WProcessDefDao {
 
 			//process = getWProcessDefByPK(process.getId());
 
-			HibernateUtil.borrar(process);
+			HibernateUtil.delete(process);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: delete - Can't delete proccess definition record "+ process.getName() +
@@ -354,6 +354,8 @@ public class WProcessDefDao {
 						.createQuery("From WProcessDef Order By process.name ")
 						.list();
 		
+				tx.commit();
+
 				if (lwpd!=null) {
 					
 					// inserta los extras
@@ -417,6 +419,8 @@ public class WProcessDefDao {
 						.createQuery("From WProcessDef Where active IS TRUE order by process.name")
 						.list();
 		
+				tx.commit();
+
 				if (lwpd!=null) {
 					
 					// inserta los extras

@@ -256,18 +256,7 @@ public class HibernateUtil {
 		return ret;
 	}
 
-	@SuppressWarnings("deprecation")
-	public static Connection obtenerConnection() {
-
-		Connection conex = null;
-		tx = obtenerSession().getTransaction();
-		tx.begin();
-		conex = obtenerSession().connection();
-		return conex;
-
-	}
-
-	public static Object obtenerPorPk(Object obj, Integer pk)
+	public static Object getByPK(Object obj, Integer pk)
 			throws HibernateException {
 
 		try {
@@ -296,7 +285,7 @@ public class HibernateUtil {
 
 	}
 
-	public static String guardar(Object obj) throws HibernateException {
+	public static String save(Object obj) throws HibernateException {
 
 		try {
 			session = obtenerSession();
@@ -321,7 +310,7 @@ public class HibernateUtil {
 
 	}
 
-	public static void borrar(Object obj) throws HibernateException {
+	public static void delete(Object obj) throws HibernateException {
 
 		try {
 			session = obtenerSession();
@@ -343,7 +332,7 @@ public class HibernateUtil {
 
 	}
 
-	public static void actualizar(Object obj) throws HibernateException {
+	public static void update(Object obj) throws HibernateException {
 
 		try {
 			session = obtenerSession();

@@ -31,7 +31,7 @@ public class WUserDefDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(user));
+			return Integer.valueOf(HibernateUtil.save(user));
 
 		} catch (HibernateException ex) {
 			logger.error("WUserDefDao: add - Can't store user definition record "+ 
@@ -50,7 +50,7 @@ public class WUserDefDao {
 		
 		try {
 
-			HibernateUtil.actualizar(user);
+			HibernateUtil.update(user);
 
 
 		} catch (HibernateException ex) {
@@ -73,7 +73,7 @@ public class WUserDefDao {
 
 			user = getWUserDefByPK(userId);
 
-			HibernateUtil.borrar(user);
+			HibernateUtil.delete(user);
 
 		} catch (HibernateException ex) {
 			logger.error("WUserDefDao: delete - Can't delete user definition record " +
@@ -99,7 +99,7 @@ public class WUserDefDao {
 
 			user = getWUserDefByPK(user.getId());
 
-			HibernateUtil.borrar(user);
+			HibernateUtil.delete(user);
 
 		} catch (HibernateException ex) {
 			logger.error("WUserDefDao: delete - Can't delete user definition record "+ user.getName() +
@@ -380,6 +380,8 @@ public class WUserDefDao {
 						.createQuery("From WUserDef order by name ")
 						.list();
 		
+				tx.commit();
+
 				if (lwpd!=null) {
 					
 					// inserta los extras

@@ -26,7 +26,7 @@ public class TipoTerritorioDao {
 
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(tipoTerritorio));
+			return Integer.valueOf(HibernateUtil.save(tipoTerritorio));
 
 		} catch (HibernateException ex) {
 
@@ -44,7 +44,7 @@ public class TipoTerritorioDao {
 		
 		try {
 
-			//HibernateUtil.actualizar;
+			//HibernateUtil.update;
 			
 			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
@@ -80,7 +80,7 @@ public class TipoTerritorioDao {
 
 			tipoTerritorio = obtenerTipoTerritorioPorPK(tipoTerritorio.getIdTipoTerritorio());
 
-			HibernateUtil.borrar(tipoTerritorio);
+			HibernateUtil.delete(tipoTerritorio);
 			
 			logger.info("borrar() TipoTerritorio < id = "+tipoTerritorio.getIdTipoTerritorio()+">");
 

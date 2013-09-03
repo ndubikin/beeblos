@@ -32,7 +32,7 @@ public class WProcessHeadManagedDataDao {
 		System.out.println("------------------------------------------------------------------------------------------");
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(managedTableDef));
+			return Integer.valueOf(HibernateUtil.save(managedTableDef));
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: add - Can't store process definition record "+ 
@@ -51,7 +51,7 @@ public class WProcessHeadManagedDataDao {
 		
 		try {
 
-			HibernateUtil.actualizar(managedTableDef);
+			HibernateUtil.update(managedTableDef);
 
 
 		} catch (HibernateException ex) {
@@ -75,7 +75,7 @@ public class WProcessHeadManagedDataDao {
 
 			//process = getWProcessByPK(process.getId());
 
-			HibernateUtil.borrar(managedTableDef);
+			HibernateUtil.delete(managedTableDef);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessHeadDao: delete - Can't delete proccess definition record "+ managedTableDef.getName() +
@@ -174,7 +174,6 @@ public class WProcessHeadManagedDataDao {
 						.setInteger("id",id)
 						.uniqueResult();
 
-
 			tx.commit();
 
 		} catch (HibernateException ex) {
@@ -243,6 +242,8 @@ public class WProcessHeadManagedDataDao {
 						.createQuery("From WProcessHeadManagedDataConfiguration Order By name ")
 						.list();
 		
+				tx.commit();
+
 				if (lwph!=null) {
 					
 					// inserta los extras

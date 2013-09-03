@@ -24,7 +24,7 @@ public class UsuarioDao {
 
 		try {
 
-			HibernateUtil.actualizar(usuario);
+			HibernateUtil.update(usuario);
 			
 			logger.info("actualizar() Usuario < id = "+usuario.getIdUsuario()+">");
 
@@ -68,7 +68,7 @@ public class UsuarioDao {
 
 		try {
 
-			HibernateUtil.guardar(usuario);
+			HibernateUtil.save(usuario);
 			
 			logger.info("agregar() Usuario < nombre = "+usuario.getUsuarioLogin()+">");
 
@@ -129,7 +129,7 @@ public class UsuarioDao {
 
 			usuario = obtenerUsuarioPorPK(usuario.getIdUsuario());
 
-			HibernateUtil.borrar(usuario);
+			HibernateUtil.delete(usuario);
 			
 			logger.info("borrar() Usuario < id = "+usuario.getIdUsuario()+">");
 

@@ -49,7 +49,7 @@ public class WProcessDataFieldDao {
 			managedData = getAndCheckManagedData(processDataField.getProcessHeadId(), tm, managedData);			
 
 			// add new process data field
-			id = Integer.valueOf(HibernateUtil.guardar(processDataField));
+			id = Integer.valueOf(HibernateUtil.save(processDataField));
 			
 			/*
 			 *  synchronize managed table
@@ -105,7 +105,7 @@ public class WProcessDataFieldDao {
 					getAndCheckManagedData(processDataField.getProcessHeadId(), tm, managedData);
 
 			// update process datafield
-			HibernateUtil.actualizar(processDataField);
+			HibernateUtil.update(processDataField);
 
 			/*
 			 *  synchronize managed table
@@ -179,7 +179,7 @@ public class WProcessDataFieldDao {
 				throw new WProcessDataFieldException(mess);
 			}
 			
-			HibernateUtil.borrar(processDataField);
+			HibernateUtil.delete(processDataField);
 			
 			/*
 			 *  synchronize managed table
@@ -377,6 +377,8 @@ public class WProcessDataFieldDao {
 					.setInteger(0, processHeadId)
 					.list();
 	
+			tx.commit();
+
 			if (lpdf!=null) {
 				
 				// inserta los extras

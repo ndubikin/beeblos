@@ -34,7 +34,7 @@ public class DepartamentoDao {
 		
 		try {
 			// martin - 20100714 - A�adido retorno id
-			return Integer.parseInt(HibernateUtil.guardar(departamento));
+			return Integer.parseInt(HibernateUtil.save(departamento));
 
 		} catch (HibernateException ex) {
 
@@ -50,7 +50,7 @@ public class DepartamentoDao {
 		// Corregido el uso del HibernateUtil
 		try {
 	
-			HibernateUtil.actualizar(departamento);
+			HibernateUtil.update(departamento);
 			
 			logger.info("actualizar() Departamento < id = "+departamento.getIdDepartamento()+">");
 
@@ -68,7 +68,7 @@ public class DepartamentoDao {
 		// Corregido el uso del HibernateUtil
 		try {
 			d = this.obtenerDepartamentoPorPK(d.getIdDepartamento());
-			HibernateUtil.borrar(d);
+			HibernateUtil.delete(d);
 			
 			logger.info("borrar() Departamento < id = "+d.getIdDepartamento()+">");
 
@@ -229,9 +229,8 @@ public class DepartamentoDao {
 				.createQuery("From Departamento order by "+order)
 				.list();
 	
-					
-				
-				
+				tx.commit();
+
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();

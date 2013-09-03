@@ -40,11 +40,11 @@ public class WProcessWorkDao {
 				processWork.setIdObject(1);
 			}
 
-			id = Integer.valueOf(HibernateUtil.guardar(processWork));
+			id = Integer.valueOf(HibernateUtil.save(processWork));
 			
 			if (processWork.getIdObjectType()==WProcessWork.class.getName()) {
 				processWork.setIdObject(id);
-				HibernateUtil.actualizar(processWork);
+				HibernateUtil.update(processWork);
 			}
 
 		} catch (HibernateException ex) {
@@ -65,7 +65,7 @@ public class WProcessWorkDao {
 		
 		try {
 
-			HibernateUtil.actualizar(processWork);
+			HibernateUtil.update(processWork);
 
 
 		} catch (HibernateException ex) {
@@ -87,7 +87,7 @@ public class WProcessWorkDao {
 		
 		try {
 
-			HibernateUtil.borrar(processWork);
+			HibernateUtil.delete(processWork);
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessWorkDao: delete - Can't delete proccess definition record "+ processWork.getReference() +

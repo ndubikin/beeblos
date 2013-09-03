@@ -29,7 +29,7 @@ public class WDataTypeDao {
 		
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(dataType));
+			return Integer.valueOf(HibernateUtil.save(dataType));
 
 		} catch (HibernateException ex) {
 			logger.error("WDataTypeDao: add - Can't store process definition record "+ 
@@ -48,7 +48,7 @@ public class WDataTypeDao {
 		
 		try {
 
-			HibernateUtil.actualizar(dataType);
+			HibernateUtil.update(dataType);
 
 
 		} catch (HibernateException ex) {
@@ -70,7 +70,7 @@ public class WDataTypeDao {
 		
 		try {
 
-			HibernateUtil.borrar(dataType);
+			HibernateUtil.delete(dataType);
 
 		} catch (HibernateException ex) {
 			logger.error("WDataTypeDao: delete - Can't delete proccess definition record "+ dataType.getName() +
@@ -226,7 +226,8 @@ public class WDataTypeDao {
 					retorno=null;
 				}
 				
-				
+				tx.commit();
+
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();

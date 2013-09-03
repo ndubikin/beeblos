@@ -26,7 +26,7 @@ public class EnvTypeDao {
 
 		try {
 
-			return Integer.valueOf(HibernateUtil.guardar(envType));
+			return Integer.valueOf(HibernateUtil.save(envType));
 
 		} catch (HibernateException ex) {
 			logger.error("EnvTypeDao: add - Can't store envType definition record "
@@ -46,7 +46,7 @@ public class EnvTypeDao {
 
 		try {
 
-			HibernateUtil.actualizar(envType);
+			HibernateUtil.update(envType);
 
 		} catch (HibernateException ex) {
 			logger.error("EnvTypeDao: update - Can't update envType definition record "
@@ -69,7 +69,7 @@ public class EnvTypeDao {
 
 			envType = getEnvTypeByPK(envType.getId());
 
-			HibernateUtil.borrar(envType);
+			HibernateUtil.delete(envType);
 
 		} catch (HibernateException ex) {
 			logger.error("EnvTypeDao: delete - Can't delete proccess definition record "
