@@ -65,7 +65,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 	private Integer id;
 	private WProcessDef currentWProcessDef; // dml 20130507 - object used to show information in the delete wprocessdef popup (currently, but it would be used by other methods)
-	private Integer processId; // dml 20130506 - id from the "WProcessHead" which is inside the current "WProcessDef" (id=WProcessDef.id)
+	private Integer processHeadId; // dml 20130506 - id from the "WProcessHead" which is inside the current "WProcessDef" (id=WProcessDef.id)
 	private boolean tmpDeletingWProcessDefPopup;
 	
 	private TimeZone timeZone;
@@ -73,6 +73,16 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	private boolean tmpDeleteRelatedStepsPopup;
 
 	private String messageStyle;
+	
+	// nes 20130903 
+	/**
+	 * properties to parametrize creation of new cloned process
+	 */
+	boolean startsNewVersionAt1=false; // if false new verion number will start at the same value of currentProcessDef (cloned process)
+	boolean emptyRoleList=false; // if false the user and role list will be the same as cloned process
+	boolean emptyUserList=false; 
+	Integer createNewClonedSteps=0; // if 0 will reuse current steps, 1 will create a clone of each involved step, and 2 will clean step list
+	boolean emptyWorkflowMap=false; // if false then carry current map, if false then will create an empty map
 	
 	public WProcessDefQueryBean() {
 		super();
@@ -101,7 +111,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		this.additionalZoneFilter = "";
 		
 		this.id = 0;
-		this.processId = 0;
+		this.processHeadId = 0;
 		
 		this.currentWProcessDef = new WProcessDef(EMPTY_OBJECT);
 		
@@ -153,12 +163,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		this.id = id;
 	}
 
-	public Integer getProcessId() {
-		return processId;
+	public Integer getProcessHeadId() {
+		return processHeadId;
 	}
 
-	public void setProcessId(Integer processId) {
-		this.processId = processId;
+	public void setProcessHeadId(Integer processHeadId) {
+		this.processHeadId = processHeadId;
 	}
 
 	public TimeZone getTimeZone() {
@@ -323,11 +333,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 
 	// dml 20120110
-	public String createNewWProcessDef() {
+	public String createNewProcessVersion() {
 
 		try {
 			
-			return new WProcessDefUtil().createNewWProcessDef(this.processId, WPROCESSDEF_QUERY);
+			return new WProcessDefUtil().createNewProcessDef(
+					this.processHeadId, WPROCESSDEF_QUERY);
 			
 		} catch (WProcessDefException e) {
 
@@ -347,7 +358,17 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 
 		try {
 			
-			Integer newId = new WProcessDefBL().cloneWProcessDef(this.id, this.processId,getCurrentUserId());
+			Integer newId = 
+					new WProcessDefBL().cloneWProcessDef(
+								"",						// new process name (null > 'cloned'+current name)
+								this.id, 
+								this.processHeadId,
+								startsNewVersionAt1, 	// default true  
+								emptyRoleList,			// default false
+								emptyUserList,	  
+								createNewClonedSteps,	// default 0  
+								emptyWorkflowMap,		// default false
+								getCurrentUserId());
 			
 			this.searchWProcessDefs();
 			

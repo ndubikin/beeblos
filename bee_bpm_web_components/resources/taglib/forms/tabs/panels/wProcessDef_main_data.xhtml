@@ -36,7 +36,7 @@
 			<h:outputText value="#{msg.label_process_name}:" styleClass="firstLeftText" />
 			<h:panelGroup>
 				<h:selectOneMenu id="w_process_list"
-					value="#{wProcessDefFormBean.currentProcessIdSelected}"
+					value="#{wProcessDefFormBean.currentProcessHeadId}"
 					style="width:250px; height: 24px; font-size:13px;padding: 3px;"
 					rendered="#{!wProcessDefFormBean.readOnly and (wProcessDefFormBean.currentId eq 0 or wProcessDefFormBean.currentId eq null) }">
 					<f:selectItems value="#{wProcessDefFormBean.wProcessComboList}" />

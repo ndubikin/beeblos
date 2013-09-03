@@ -12,58 +12,55 @@
 		<h:outputText value="#{msg.label_no_step_selected}" 
 					rendered="#{wStepDefFormBean.currObjId eq null or wStepDefFormBean.currObjId eq 0}"
 					style="font-weight: bold;"/>
+					
+<ui:fragment rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId !=0}">
 
-		<h:panelGrid width="100%" columns="2" style=" width : 400px; margin-left: 16px;"
-			columnClasses="colStyle100px, colStyle250px" 
-			rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId !=0}">
+	<p class="fieldset_block_info_noBorder_noPadding_20px">
 
-			<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
+			<h:outputText value="#{msg.label_name}:" styleClass="label_form left_column_35" />
 			<h:outputText value="#{wStepDefFormBean.currentWStepDef.name}" style="font-weight: bold;"/>
-
-			<h:outputText value="#{msg.label_id}:" styleClass="firstLeftText" />
+			<br />
+			
+			<h:outputText value="#{msg.label_id}:" styleClass="label_form left_column_35" />
 			<h:outputText value="#{wStepDefFormBean.currentWStepDef.id}" style="font-weight: bold;"/>
-			
-			<h:outputText value="#{msg.label_comments}:" styleClass="firstLeftText" />
-			<h:outputText value="#{wStepDefFormBean.currentWStepDef.stepComments}" style="font-weight: bold;"/>
-			
-			<h:outputText value="#{msg.label_instructions}:" styleClass="firstLeftText" />
-			<h:outputText value="#{wStepDefFormBean.currentWStepDef.instructions}" style="font-weight: bold;"/>
-			
-			<h:outputText value="#{msg.label_assigned_time}:" styleClass="firstLeftText" title="#{msg.label_amount_of_time_user_has_to_realize_the_work}"/>
-			<h:panelGroup>
-				<h:outputText value="#{wStepDefFormBean.currentWStepDef.assignedTime}" style="font-weight: bold;"/>
-				<h:outputText value="#{wStepDefFormBean.currentWStepDef.timeUnit.name}" style="font-weight: bold; margin-left: 10px;"/>
-			</h:panelGroup>
-
-			<h:outputText value="#{msg.label_deadline}:" styleClass="firstLeftText" />
-			<h:panelGroup>
-				<h:outputText value="#{wStepDefFormBean.currentWStepDef.deadlineDate}" style="font-weight: bold;"/>
-				<h:outputText value="#{wStepDefFormBean.currentWStepDef.deadlineTime}" style="font-weight: bold; margin-left: 10px;"/>
-			</h:panelGroup>
-
-			<h:outputText value="#{msg.label_reminder}:" styleClass="firstLeftText" />
-			<h:panelGroup>
-				<h:outputText value="#{wStepDefFormBean.currentWStepDef.reminderTime}" style="font-weight: bold;"/>
-				<h:outputText value="#{wStepDefFormBean.currentWStepDef.reminderTimeUnit.name}" style="font-weight: bold; margin-left: 10px;"/>
-			</h:panelGroup>
-
-			<h:outputText value="#{msg.label_modifiable_at_runtime}:" styleClass="firstLeftText" />
-			<h:outputText value="#{(wStepDefFormBean.currentWStepDef.runtimeModifiable ? 'yes':'none')}" style="font-weight: bold;"/>
+			<br />
 						
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
+			<h:outputText value="#{msg.label_comments}:" styleClass="label_form left_column_35" />
+			<b>#{wStepDefFormBean.currentWStepDef.stepComments!=null and wStepDefFormBean.currentWStepDef.stepComments!=''?wStepDefFormBean.currentWStepDef.stepComments:'-'}</b>
+			<br />
+						
+			<h:outputText value="#{msg.label_instructions}:" styleClass="label_form left_column_35" />
+			<b>#{wStepDefFormBean.currentWStepDef.instructions!=null and wStepDefFormBean.currentWStepDef.instructions!=''?wStepDefFormBean.currentWStepDef.instructions:'-'}</b>
+			<br />
+						
+			<h:outputText value="#{msg.label_assigned_time}:" styleClass="label_form left_column_35"  
+				title="#{msg.label_amount_of_time_user_has_to_realize_the_work}"/>
+			<label><b>#{wStepDefFormBean.currentWStepDef.assignedTime!=null?wStepDefFormBean.currentWStepDef.assignedTime:'-'} #{wStepDefFormBean.currentWStepDef.timeUnit.name} </b>
+			</label>
+			<br />
 			
-			<rich:spacer height="10" />
-			<a4j:commandButton id="edit_wstepdef" value="#{msg.label_edit}" 
-							title="edita el WStepDef y permite cambiar datos en el paso ..."
-							rendered="#{contextoSeguridad.permiteCualquiera['530']}"
-							style="width:120px; height:24px;" 
-							oncomplete=""
-							onclick="javascript:Richfaces.showModalPanel('mpEditWStepDef');"/>
+			<h:outputText value="#{msg.label_deadline}:" styleClass="label_form left_column_35" />
+			<label><b>#{wStepDefFormBean.currentWStepDef.deadlineDate!=null?wStepDefFormBean.currentWStepDef.deadlineDate:'-'} #{wStepDefFormBean.currentWStepDef.deadlineTime}</b>
+			</label>
+			<br />
+
+			<h:outputText value="#{msg.label_reminder}:" styleClass="label_form left_column_35" />
+			<label><b>#{wStepDefFormBean.currentWStepDef.reminderTime!=null and wStepDefFormBean.currentWStepDef.reminderTime!=''?wStepDefFormBean.currentWStepDef.reminderTime:'-'} #{wStepDefFormBean.currentWStepDef.reminderTimeUnit.name}</b>
+			</label>
+			<br />
 			
-			<rich:spacer height="10" />
-			<rich:spacer height="10" />
-		</h:panelGrid>
+			<h:outputText value="#{msg.label_modifiable_at_runtime}:" styleClass="label_form left_column_35" />
+			<h:outputText value="#{(wStepDefFormBean.currentWStepDef.runtimeModifiable ? 'yes':'none')}" style="font-weight: bold;"/>
+			<br />
+
+			<a4j:commandLink id="edit_wstepdef" value="#{msg.label_edit}" 
+						title="edita el WStepDef y permite cambiar datos en el paso ..."
+						rendered="#{contextoSeguridad.permiteCualquiera['530']}"
+						oncomplete=""
+						onclick="javascript:Richfaces.showModalPanel('mpEditWStepDef');"/>		
+		</p>
+
+</ui:fragment>
 
 	</h:form>
 

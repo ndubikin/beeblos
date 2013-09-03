@@ -86,8 +86,6 @@ import com.sp.common.model.WDataType;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
-	private static final String _ROOT_MANAGED_TABLE_NAME = "wmt_";
-
 	private static final long serialVersionUID = 1L;
 
 	private static final Log logger = LogFactory
@@ -106,8 +104,13 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// main properties:
 
 	private WProcessDef currentWProcessDef;
-	private Integer currentId; // current object managed by this bb
+	private Integer currentId; // current object (processDef) managed by this bb
+	private Integer currentStepId;
+	private Integer currentProcessHeadId; // current process head id corresp with processDef
 
+	private WProcessRole currentWProcessRole;
+	private WProcessUser currentWProcessUser;
+	
 	// nes 20130806
 	// fields to present managed table information
 	private List<Column> columnListTM;
@@ -122,8 +125,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	private boolean readOnly;
 
-	private WProcessRole currentWProcessRole;
-	private WProcessUser currentWProcessUser;
 	// dml 20120125
 	private WStepSequenceDef currentStepSequence;
 	
@@ -157,12 +158,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private List<SelectItem> arrivingNoticeEmailTemplatesCombo = new ArrayList<SelectItem>();
 	
 	// dml 20120326
-	private Integer currentStepId;
 	private boolean stepOutgoings;
 	private boolean stepIncomings;
 	
 	// dml 20130507
-	private Integer currentProcessIdSelected;
 	private List<SelectItem> wProcessComboList;
 	
 	// dml 20130508 - Esta lista "relatedProcessDefList" es la lista de WProcessDef relacionados con un WProcessHead. 
@@ -1967,12 +1966,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	}
 
-	public Integer getCurrentProcessIdSelected() {
-		return currentProcessIdSelected;
+	public Integer getCurrentProcessHeadId() {
+		return currentProcessHeadId;
 	}
 
-	public void setCurrentProcessIdSelected(Integer currentProcessIdSelected) {
-		this.currentProcessIdSelected = currentProcessIdSelected;
+	public void setCurrentProcessHeadId(Integer currentProcessHeadId) {
+		this.currentProcessHeadId = currentProcessHeadId;
 	}
 
 	public List<SelectItem> getwProcessComboList() {
@@ -2009,21 +2008,28 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 	
-	// dml 20130430
-	public void setProcessInWProcessDef(){
+	/**
+	 * Set processHead in a new currentWProcessDef to create a new version of the process
+	 * MUST be loaded class properties: currentProcessHeadId and currentWProcessDef
+	 * 
+	 */
+	public void createEmptyNewProcessDefVersion(){
 		
-		if (this.currentProcessIdSelected != null
-				&& !this.currentProcessIdSelected.equals(0)){
+		if (this.currentProcessHeadId != null
+				&& !this.currentProcessHeadId.equals(0)){
 			
 			try {
 				
-				WProcessHead process = new WProcessHeadBL().getProcessHeadByPK(this.currentProcessIdSelected, null);
+				WProcessHead process = 
+						new WProcessHeadBL().getProcessHeadByPK(this.currentProcessHeadId, null);
 			
-				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessIdSelected, getCurrentUserId());
+				Integer lastVersion = new WProcessDefBL().getLastVersionNumber(this.currentProcessHeadId, getCurrentUserId());
 				
 				this.currentWProcessDef = new WProcessDef(EMPTY_OBJECT);
 
 				this.currentWProcessDef.setProcess(process);
+				
+				this.currentWProcessDef.setVersion(lastVersion+1);
 				
 			} catch (WProcessHeadException e) {
 				
@@ -2440,7 +2446,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			return;
 		}
 		
-		String tableName = checkTableName(); // checks tablename and update currentWProcessDef if corresponds...
+		String tableName = checkTableNameAndCreate(); // checks tablename and update currentWProcessDef if corresponds...
 		reloadDataFieldList(); // refresh dataFieldList
 
 		try {
@@ -2634,7 +2640,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return returnValue;
 	}
 
-	private String checkTableName() {
+	/**
+	 * Checks if exists Managed table configuration in ProcessHead and create it (updating record)
+	 * 
+	 * @see currentProcessDef
+	 * @see currentProcessDef.process.managedTableConfiguration
+	 * 
+	 * @return tableName (created table name)
+	 */
+	private String checkTableNameAndCreate() {
 		
 		// if no managedTableData record exist then create it!
 		if (currentWProcessDef!=null 
@@ -2644,7 +2658,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				managedTable.setHeadId(currentWProcessDef.getProcess().getId());
 				managedTable.setCatalog(getStringProperty("bee_bpm_core.hibernate.connection.default_catalog"));
 				managedTable.setSchema(getStringProperty("bee_bpm_core.hibernate.connection.default_catalog"));
-				managedTable.setName(_ROOT_MANAGED_TABLE_NAME+currentWProcessDef.getProcess().getId());
+				managedTable.setName(null);
 //				managedTable.setWProcessHead(currentWProcessDef.getProcess());
 				currentWProcessDef.getProcess().setManagedTableConfiguration(managedTable);
 				
@@ -2657,7 +2671,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					currentWProcessDef
 							.getProcess()
 							.getManagedTableConfiguration()
-							.setName(_ROOT_MANAGED_TABLE_NAME+currentWProcessDef.getProcess().getId());
+							.setName(null);
 				}
 			}
 		}
