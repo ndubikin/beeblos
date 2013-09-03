@@ -1,8 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -201,5 +201,4 @@ public class WProcessHeadBL {
 		return new WProcessHeadDao().hasVersions(processHeadId);
 		
 	}
-	
 }

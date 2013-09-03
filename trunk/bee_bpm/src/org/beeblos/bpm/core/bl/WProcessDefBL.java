@@ -9,10 +9,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessDefDao;
+import org.beeblos.bpm.core.error.WDataTypeException;
+import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -21,15 +24,19 @@ import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
+import org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 
+import com.sp.common.util.IntegerPair;
 import com.sp.common.util.StringPair;
 
 
@@ -37,6 +44,8 @@ import com.sp.common.util.StringPair;
 public class WProcessDefBL {
 	
 	private static final Log logger = LogFactory.getLog(WProcessDefBL.class.getName());
+	
+	private static final String _ROOT_MANAGED_TABLE_NAME = "wmt_";
 	
 	public WProcessDefBL (){
 		
@@ -176,39 +185,50 @@ public class WProcessDefBL {
 			// check head && managed data table changes ...
 			// managed table only can be added if the WProcessDef and WProcessHead already exists
 			// There is not possible to add it in "add" method for WProcessDef ...
-			if (process.getProcess()!=null && process.getProcess().getManagedTableConfiguration()!=null) {
+			if (process.getProcess()!=null) {
 				
-				if (process.getProcess().getManagedTableConfiguration().getHeadId()==0
-						|| storedProcess.getProcess().getManagedTableConfiguration()==null
-						|| storedProcess.getProcess().getManagedTableConfiguration().getHeadId()==0) {
-					
-					try {
+				if (process.getProcess().getManagedTableConfiguration()!=null) {
+				
+					if (process.getProcess().getManagedTableConfiguration().getHeadId()==0
+							|| storedProcess.getProcess().getManagedTableConfiguration()==null
+							|| storedProcess.getProcess().getManagedTableConfiguration().getHeadId()==0) {
 						
-						// set pk (same id that process-head-id
-						process.getProcess().getManagedTableConfiguration().setHeadId(process.getProcess().getId());
+						try {
+							
+							// set pk (same id that process-head-id
+							process.getProcess().getManagedTableConfiguration().setHeadId(process.getProcess().getId());
+							process.getProcess().getManagedTableConfiguration()
+										.setName(_ROOT_MANAGED_TABLE_NAME+process.getProcess().getId());
+							
+							Integer id = new WProcessHeadManagedDataBL()
+													.add(process.getProcess().getManagedTableConfiguration(), currentUserId);
+							if ( id!=process.getProcess().getId() ) {
+								logger.error("WProcessDef:update Error trying persist ManagedTable for process head id:"
+										+(process.getProcess().getId()!=null?process.getProcess().getId():"null")
+										+". The w_process_head_managed_data was added with id:"+(id!=null?id:"null"));
+							}
+							
+							process.getProcess().getManagedTableConfiguration().setHeadId(id);
 						
-						Integer id = new WProcessHeadManagedDataBL()
-												.add(process.getProcess().getManagedTableConfiguration(), currentUserId);
-						if ( id!=process.getProcess().getId() ) {
-							logger.error("WProcessDef:update Error trying persist ManagedTable for process head id:"
-									+(process.getProcess().getId()!=null?process.getProcess().getId():"null")
-									+". The w_process_head_managed_data was added with id:"+(id!=null?id:"null"));
+						} catch (WProcessHeadException e) {
+							logger.error("Can't add process head managed table name:"
+											+(process.getProcess()
+														.getManagedTableConfiguration()
+														.getName()!=null 
+																? process.getProcess().getManagedTableConfiguration().getName()
+																: "null")
+											+ e.getMessage()+" - "+e.getCause());
 						}
 						
-						process.getProcess().getManagedTableConfiguration().setHeadId(id);
-					
-					} catch (WProcessHeadException e) {
-						logger.error("Can't add process head managed table name:"
-										+(process.getProcess()
-													.getManagedTableConfiguration()
-													.getName()!=null 
-															? process.getProcess().getManagedTableConfiguration().getName()
-															: "null")
-										+ e.getMessage()+" - "+e.getCause());
-					}
-					
-				} 
+					} 
 			
+				}
+				
+				if ( process.getProcess().getProcessDataFieldDef()!=null ) {
+					for (WProcessDataField pdf: process.getProcess().getProcessDataFieldDef()){
+						
+					}
+				}
 			}
 			
 			
@@ -714,93 +734,364 @@ public class WProcessDefBL {
 	}
 	
 	
-	// clone a process version (w_process_def, related users and roles, related steps and routes ...)
-	// returns new process id
-	public Integer cloneWProcessDef(Integer processId, Integer processHeadId, Integer currentUserId) 
+	/**
+	 *  create a new version from current wprocessdef (w_process_def, related users and roles, related steps and routes ...)
+	 *  generating a new Process Head for cloned version. Cloned new version starts at version=1
+	 *  
+	 *  Status: ahora mismo simplemente clona el proceso pero reutiliza los steps actuales. Falta el ajuste de los spid en los
+	 *  edge del mapa.
+	 *  TODO: implementar el clonar los steps y correspondientemente clonar las sequences con los nuevos step-id
+	 *  
+	 *  returns new process id
+	 *  
+	 * @param processDefId
+	 * @param processHeadId
+	 * @param currentUserId
+	 * @param boolean startsNewVersionAt1 -> true: new version =1, false: new version = current version
+	 * @param boolean emptyRoleList
+	 * @param boolean emptyUserList
+	 * @param Integer createNewClonedSteps  --> 0: use existing steps, 1: yes create a clone of each existing step, 
+	 * 											 2: empty step list
+	 * @param boolean emptyWorkflowMap 
+	 * @param boolean persistNewVersion -> if true persiste the new version, if not only returns full loaded object ...
+	 * 
+	 * @return
+	 * @throws WProcessHeadException
+	 * @throws WStepSequenceDefException
+	 * @throws WProcessDefException
+	 * 
+	 */
+	public Integer cloneWProcessDef(
+			String newProcessName,
+			Integer processDefId, Integer processHeadId, boolean startsNewVersionAt1, boolean emptyRoleList, 
+			boolean emptyUserList, int createNewClonedSteps, boolean emptyWorkflowMap, Integer currentUserId ) 
 			throws  WProcessHeadException, WStepSequenceDefException, WProcessDefException  {
 		
-		Integer clonedId=null,newversion=0;
+		Integer clonedId=null, newversion=1;
 		WProcessDef newprocver,procver;
+		WProcessHeadManagedDataConfiguration mdf=null;
+		Set<WProcessDataField> dataFieldDef=null;
 		List<WStepSequenceDef> routes = new ArrayList<WStepSequenceDef>();
 		try {
-			newprocver = this.getWProcessDefByPK(processId, currentUserId);
-			procver = this.getWProcessDefByPK(processId, currentUserId);
-			newversion=this.getLastVersionNumber(processHeadId, currentUserId)+1;
+			newprocver = this.getWProcessDefByPK(processDefId, currentUserId);
+			procver = this.getWProcessDefByPK(processDefId, currentUserId);
+			if ( !startsNewVersionAt1 ) {
+				newversion=this.getLastVersionNumber(processHeadId, currentUserId)+1;				
+			}
 		} catch (WProcessDefException e) {
-			String mess = "Error cloning process version: can't get original process version id:"+processId
+			String mess = "Error cloning process version: can't get original process version id:"+processDefId
 							+" - "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
 			throw new WProcessDefException(mess);
 		} catch (WStepSequenceDefException e) {
-			String mess = "Error cloning process version: can't get original process version id:"+processId
+			String mess = "Error cloning process version: can't get original process version id:"+processDefId
 					+" - "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
 			throw new WStepSequenceDefException(mess);
+		}
+
+		// if not a new process name then add "cloned" to existing process name ...
+		if (newProcessName==null || "".equals(newProcessName)) {
+			newProcessName="Cloned "+procver.getName();
 		}
 		
 		try {
-			newprocver.setId(null);
-			newprocver.setRolesRelated(new HashSet<WProcessRole>());
-			newprocver.setUsersRelated(new HashSet<WProcessUser>());
 			
-			if ( procver.getRolesRelated().size()>0) {
-				for ( WProcessRole processRole: procver.getRolesRelated() ) {
-					processRole.setProcess(null);
-					newprocver
-						.addRole(
-								processRole.getRole(), processRole.isAdmin(), 
-								processRole.getIdObject(), processRole.getIdObjectType(), 
-								currentUserId);
+			newprocver.setId(null);
+			newprocver.getProcess().setId(null);
+			newprocver.setVersion(newversion);
+			
+			// reserving Managed Data Configuration and Process Data Field list
+			if (newprocver.getProcess().getManagedTableConfiguration()!=null) {
+				mdf = newprocver.getProcess().getManagedTableConfiguration();
+			}
+			if (newprocver.getProcess().getProcessDataFieldDef()!=null) {
+				dataFieldDef = new HashSet<WProcessDataField>();
+				for (WProcessDataField pdf:newprocver.getProcess().getProcessDataFieldDef() ) {
+					pdf.setId(null);
+					pdf.setProcessHeadId(null);
+					dataFieldDef.add(pdf);
 				}
 			}
+			
+			// mandatory: empty process head and set new name to add the new process 
+			newprocver.setProcess(new WProcessHead());
+			newprocver.setName(newProcessName);
 
-			if ( procver.getUsersRelated().size()>0) {
-				for ( WProcessUser processUser: procver.getUsersRelated() ) {
-					processUser.setProcess(null);
-					newprocver
-						.addUser(
-								processUser.getUser(), processUser.isAdmin(), 
-								processUser.getIdObject(), processUser.getIdObjectType(), 
-								currentUserId);
-				}
-			}
+			// replicate user and role list
+			loadUsersAndRoles(currentUserId, emptyRoleList, emptyUserList,
+					newprocver, procver);
 			
 		} catch (Exception e) {
-			String mess = "Error cloning process version:"+processId+" can't clone related role or user list ..."
+			String mess = "Error cloning process version:"+processDefId+" can't clone related role or user list ..."
 					+" - "+e.getClass()+" -" +e.getMessage()+" - "+e.getCause();
 			throw new WProcessDefException(mess);
 		}
+		
+		// clean current process map (must be migrated for spIds of new edges and new steps)
+		if (emptyWorkflowMap) {
+			newprocver.setProcessMap(null);
+		}
+		
+		// persist process def and obtain process head id of new process
+		clonedId = addClonedProcessDef(processDefId, currentUserId, clonedId,
+				newprocver);			
+		
+		// build managed table (if exists)
+		buildManagedTable(currentUserId, newprocver, procver, mdf, dataFieldDef);
+		
+		List<IntegerPair> relClonedSequences=null;
+		// if createNewClonedSteps parameter then clone step list ...
+		if (createNewClonedSteps==1) {
+			// clonar cada paso y reacomodar la nueva secuencia (porque las secuencias tendrán q referir a los nuevos pasos
 			
-		try {
-			clonedId = this.add(newprocver, currentUserId);
-		} catch (WProcessDefException e) {
-			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+processId
-					+" - "+e.getMessage()+" - "+e.getCause();
-			throw new WProcessDefException(mess);
-		} catch (WProcessHeadException e) {
-			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+processId
-					+" - "+e.getMessage()+" - "+e.getCause();
-			throw new WProcessHeadException(mess);
-		}			
+		} else if (createNewClonedSteps==2) {
+			// clean step sequence list
+		} else {
+			relClonedSequences = cloneCurrentRoutes(processDefId,
+					currentUserId, clonedId, newprocver, routes);
+		}
+
+		// to be implemented: migrate xml map
+		// load xml map and for each sequence update edge's spIds
+		if (relClonedSequences!=null) {
+			for (IntegerPair seqPair: relClonedSequences) {
+				//xxxxxx
+			}
+		}
+		
+		return clonedId;
+	}
+
+	// clone each step and update routes with new stepId
+	private List<IntegerPair> cloneStepListAndRoutes(Integer processDefId,
+			Integer currentUserId, Integer clonedId, WProcessDef newprocver,
+			List<WStepSequenceDef> routes) throws WStepSequenceDefException {
+		// obtener la lista de steps (se obtiene a partir de las rutas :( )
 		
 		// clone routes (the workflow map really ...)
 		WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
+		List<IntegerPair> relClonedSequences = new ArrayList<IntegerPair>(); // reserve seq id pairs to migrate map
 		try {
-			routes = new WStepSequenceDefBL().getStepSequenceList(processId, null, currentUserId);
+			routes = new WStepSequenceDefBL().getStepSequenceList(processDefId, null, currentUserId);
 			if (routes.size()>0){
 				for (WStepSequenceDef route: routes) {
 					route.setProcess(new WProcessDef());
 					route.getProcess().setId(clonedId);
-					seqBL.add(route, currentUserId); // insert new cloned route
+					int newRouteId=seqBL.add(route, currentUserId); // insert new cloned route
+					relClonedSequences.add(new IntegerPair(route.getId(),newRouteId));
 					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+ currentUserId);
 				}
 			}			
 		} catch (WStepSequenceDefException e) {
-			String mess = "Error cloning routes for old process id:"+processId+"  newProcessId:"+newprocver
+			String mess = "Error cloning routes for old process id:"+processDefId+"  newProcessId:"+newprocver
 					+" - "+e.getMessage()+" - "+e.getCause();
 			throw new WStepSequenceDefException(mess);
 		}
+		return relClonedSequences;
+	}
+	
+	// clone existing routes and insert in sequence table
+	private List<IntegerPair> cloneCurrentRoutes(Integer processDefId,
+			Integer currentUserId, Integer clonedId, WProcessDef newprocver,
+			List<WStepSequenceDef> routes) throws WStepSequenceDefException {
+		// clone routes (the workflow map really ...)
+		WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
+		List<IntegerPair> relClonedSequences = new ArrayList<IntegerPair>(); // reserve seq id pairs to migrate map
+		try {
+			routes = new WStepSequenceDefBL().getStepSequenceList(processDefId, null, currentUserId);
+			if (routes.size()>0){
+				for (WStepSequenceDef route: routes) {
+					route.setProcess(new WProcessDef());
+					route.getProcess().setId(clonedId);
+					int newRouteId=seqBL.add(route, currentUserId); // insert new cloned route
+					relClonedSequences.add(new IntegerPair(route.getId(),newRouteId));
+					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+ currentUserId);
+				}
+			}			
+		} catch (WStepSequenceDefException e) {
+			String mess = "Error cloning routes for old process id:"+processDefId+"  newProcessId:"+newprocver
+					+" - "+e.getMessage()+" - "+e.getCause();
+			throw new WStepSequenceDefException(mess);
+		}
+		return relClonedSequences;
+	}
 
-		
+	private Integer addClonedProcessDef(Integer processDefId,
+			Integer currentUserId, Integer clonedId, WProcessDef newprocver)
+			throws WStepSequenceDefException, WProcessDefException,
+			WProcessHeadException {
+		try {
+			
+			clonedId = this.add(newprocver, currentUserId);
+			
+		} catch (WProcessDefException e) {
+			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+processDefId
+					+" - "+e.getMessage()+" - "+e.getCause();
+			throw new WProcessDefException(mess);
+		} catch (WProcessHeadException e) {
+			String mess = "Error cloning process version: can't ADD new clone process version original-id:"+processDefId
+					+" - "+e.getMessage()+" - "+e.getCause();
+			throw new WProcessHeadException(mess);
+		}
 		return clonedId;
+	}
+
+	private void buildManagedTable(Integer currentUserId,
+			WProcessDef newprocver, WProcessDef procver,
+			WProcessHeadManagedDataConfiguration mdf,
+			Set<WProcessDataField> dataFieldDef) throws WProcessDefException {
+		if (mdf!=null) {
+			mdf.setComment(
+					(mdf.getComment()!=null?mdf.getComment():"")
+					+" cloned from headid "+procver.getProcess().getId()+" ");
+			mdf.setHeadId(0);
+			mdf.setName(null);
+			newprocver.getProcess().setManagedTableConfiguration(mdf);
+			
+			newprocver.getProcess().setProcessDataFieldDef(null);
+			
+			// updates new process to create managed table
+			update( newprocver,currentUserId );	
+			
+			if (dataFieldDef!=null) {
+				
+				WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
+				int phId = newprocver.getProcess().getId();
+				
+				for (WProcessDataField pdf:dataFieldDef) {
+					pdf.setProcessHeadId(phId);
+					try {
+						wdfBL.add(pdf, currentUserId);
+					} catch (WProcessDataFieldException e) {
+						logger.error("buildManagedTable: Error WProcessDataFieldException adding new process data field to cloned process "+e.getMessage()+" - "+e.getCause());
+					} catch (WDataTypeException e) {
+						logger.error("buildManagedTable: Error WDataTypeException adding new process data field to cloned process "+e.getMessage()+" - "+e.getCause());
+					} catch (TableManagerException e) {
+						logger.error("buildManagedTable: Error TableManagerException adding new process data field to cloned process "+e.getMessage()+" - "+e.getCause());
+					}
+				}
+			}
+		}
+	}
+
+	private void loadUsersAndRoles(Integer currentUserId,
+			boolean emptyRoleList, boolean emptyUserList,
+			WProcessDef newprocver, WProcessDef procver) {
+		// load users and roles
+		newprocver.setRolesRelated(new HashSet<WProcessRole>());
+		newprocver.setUsersRelated(new HashSet<WProcessUser>());				
+		
+		if ( !emptyRoleList && procver.getRolesRelated().size()>0) {
+			for ( WProcessRole processRole: procver.getRolesRelated() ) {
+				processRole.setProcess(null);
+				newprocver
+					.addRole(
+							processRole.getRole(), processRole.isAdmin(), 
+							processRole.getIdObject(), processRole.getIdObjectType(), 
+							currentUserId);
+			}
+		}
+
+		if ( !emptyUserList && procver.getUsersRelated().size()>0) {
+			for ( WProcessUser processUser: procver.getUsersRelated() ) {
+				processUser.setProcess(null);
+				newprocver
+					.addUser(
+							processUser.getUser(), processUser.isAdmin(), 
+							processUser.getIdObject(), processUser.getIdObjectType(), 
+							currentUserId);
+			}
+		}
+	}
+	
+	/**
+	 *  clone a process version (w_process_def, related users and roles, related steps and routes ...)
+	 *  generating a new Process Head for cloned version. Cloned new version starts at version=1
+	 *  
+	 *  returns new process id
+	 *  
+	 * @param processDefId
+	 * @param processHeadId
+	 * @param currentUserId
+	 * @param boolean emptyRoleList
+	 * @param boolean emptyUserList
+	 * @param Integer createNewClonedSteps  --> 0/null: use existing steps, 1: yes create a clone of each existing step, 
+	 * 											 2: empty step list
+	 * @param boolean emptyWorkflowMap 
+	 * 
+	 * @return
+	 * @throws WProcessHeadException
+	 * @throws WStepSequenceDefException
+	 * @throws WProcessDefException
+	 * 
+	 */	
+	public WProcessDef createNewVersion(
+			Integer processDefId, Integer processHeadId, Integer currentUserId,
+			boolean emptyRoleList, boolean emptyUserList, Integer createNewClonedSteps, boolean emptyWorkflowMap,
+			boolean persistNewVersion ) throws WProcessDefException {
+		
+		Integer newVersionId;
+		WProcessDef newprocver,procver;
+		List<WStepSequenceDef> routes = new ArrayList<WStepSequenceDef>();
+		try {
+			newprocver = this.getWProcessDefByPK(processDefId, currentUserId);
+			procver = this.getWProcessDefByPK(processDefId, currentUserId);
+		} catch (WProcessDefException e) {
+			String mess = "Error WProcessDefException creating new process version: can't get original process version [id:"+processDefId
+							+"] - "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		} catch (WStepSequenceDefException e) {
+			String mess = "Error WProcessDefException creating new process version: can't get original process version [id:"+processDefId
+					+"] - "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+		
+
+		try {
+			
+			newprocver.setId(null);
+			
+			Integer lastVersion = 
+					new WProcessDefBL().getLastVersionNumber(processHeadId, currentUserId);
+			
+			newprocver.setVersion(lastVersion+1);
+			
+			loadUsersAndRoles(currentUserId, emptyRoleList, emptyUserList,
+					newprocver, procver);
+			
+		} catch (WProcessDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (persistNewVersion) {
+
+			try {
+				newVersionId = add(newprocver, currentUserId);
+			} catch (WProcessDefException e) {
+				String mess = "Error WProcessDefException creating new process version: can't ADD new processdef object version original-id:"+processDefId
+						+" - "+e.getMessage()+" - "+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException(mess);
+			} catch (WProcessHeadException e) {
+				String mess = "Error WProcessHeadException creating new process version: can't ADD new clone processdef object version original-id:"+processDefId
+						+" - "+e.getMessage()+" - "+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException(mess);
+			} catch (WStepSequenceDefException e) {
+				String mess = "Error WProcessHeadException creating new process version: can't ADD new clone processdef object version original-id:"+processDefId
+						+" - "+e.getMessage()+" - "+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException(mess);
+			}
+			
+		}
+
+		return newprocver;
+		
 	}
 	
 	// dml 20130129
