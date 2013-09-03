@@ -1256,7 +1256,7 @@ public class WStepWorkDao {
 	}
 	
 	// returns # existing works in WStepWork
-	public Integer getWorkCountByProcess(Integer processId, String mode) 
+	public Integer getStepWorkCountByProcess(Integer processDefId, String mode) 
 			throws WStepWorkException {
 
 		org.hibernate.Session session = null;
@@ -1264,7 +1264,8 @@ public class WStepWorkDao {
 
 		BigInteger qtySteps;
 
-		String query = "SELECT COUNT(*) FROM w_step_work wsw WHERE wsw.id_process = " + processId;
+		String query = "SELECT COUNT(*) FROM w_step_work wsw LEFT OUTER JOIN w_process_work wpw ON wpw.id=wsw.id_work "
+							+"WHERE wpw.id_process = " + processDefId;
 		
 		if (mode.equals(ALIVE)) {
 			query += " AND wsw.decided_date is null";

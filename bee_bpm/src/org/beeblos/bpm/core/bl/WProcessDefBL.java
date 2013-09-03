@@ -139,6 +139,11 @@ public class WProcessDefBL {
 
 			process.setProcess(new WProcessHeadBL().getProcessHeadByPK(processHeadId, currentUserId));
 
+			if (process.getVersion() == null
+					|| process.getVersion().equals(0)){
+				process.setVersion(FIRST_WPROCESSDEF_VERSION);
+			}
+		
 		}
 		
 	}
@@ -254,7 +259,7 @@ public class WProcessDefBL {
 		
 		Integer qtyWorks;
 		try {
-			qtyWorks = new WStepWorkBL().getWorkCountByProcess(processId,ALL);
+			qtyWorks = new WStepWorkBL().getStepWorkCountByProcess(processId,ALL);
 		} catch (WStepWorkException e) {
 			String mess = "Error verifiyng existence of works related with this process id:"+processId
 					+ " "+e.getMessage()+" - "+e.getCause();
