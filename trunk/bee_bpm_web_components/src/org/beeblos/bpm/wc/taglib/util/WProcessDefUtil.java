@@ -43,7 +43,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 		return ret;
 	}
 	
-	public String createNewWProcessDef(Integer processId, String returnStatement) throws WProcessDefException {
+	public String createNewProcessDef(Integer processId, String returnStatement) throws WProcessDefException {
 
 		String ret = FAIL;
 
@@ -54,11 +54,13 @@ public class WProcessDefUtil extends CoreManagedBean {
 
 			WProcessDefFormBean wpdfb = (WProcessDefFormBean) valueBinding
 					.getValue(super.getELContext());
+
 			wpdfb.init();
 			wpdfb.initEmptyWProcessDef();
 			
-			wpdfb.setCurrentProcessIdSelected(processId);
-			wpdfb.setProcessInWProcessDef();
+			wpdfb.setCurrentProcessHeadId(processId);
+			
+			wpdfb.createEmptyNewProcessDefVersion();
 			
 			wpdfb.setReturnStatement(returnStatement);
 
