@@ -89,11 +89,11 @@ public class WEmailTemplateGroupsDao {
 					+ "> \n" + " - " + ex.getMessage());
 			throw new WEmailTemplateGroupsException(ex);
 
-		} catch (WEmailTemplateGroupsException ex1) {
+		} catch (WEmailTemplateGroupsException e) {
 			logger.error("WEmailTemplateGroupsDao: delete - The instance "
 					+ instance.getName() + " <id = " + instance.getId()
-					+ "> does not exist \n" + " - " + ex1.getMessage());
-			throw new WEmailTemplateGroupsException(ex1);
+					+ "> does not exist \n" + " - " + e.getMessage());
+			throw new WEmailTemplateGroupsException(e);
 
 		}
 

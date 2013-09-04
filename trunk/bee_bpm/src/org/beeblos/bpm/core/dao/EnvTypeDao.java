@@ -80,14 +80,14 @@ public class EnvTypeDao {
 							+ envType.getName() + " <id = " + envType.getId() + "> \n"
 							+ " - " + ex.getMessage() + "\n" + ex.getCause());
 
-		} catch (EnvTypeException ex1) {
+		} catch (EnvTypeException e) {
 			logger.error("EnvTypeDao: delete - Exception in deleting envType rec "
 					+ envType.getName() + " <id = " + envType.getId()
-					+ "> not stored \n" + " - " + ex1.getMessage() + "\n" + ex1.getCause());
+					+ "> not stored \n" + " - " + e.getMessage() + "\n" + e.getCause());
 			throw new EnvTypeException(
 					"EnvTypeDao: delete - Exception in deleting envType rec "
 							+ envType.getName() + " <id = " + envType.getId()
-							+ "> not stored \n" + " - " + ex1.getMessage() + "\n" + ex1.getCause());
+							+ "> not stored \n" + " - " + e.getMessage() + "\n" + e.getCause());
 
 		}
 

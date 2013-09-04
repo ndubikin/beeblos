@@ -1114,10 +1114,10 @@ public class WProcessDefBL {
 				lsteps = new WStepDefBL().getStepDefs(processId, null, currentUserId);
 
 			}
-		} catch (WStepDefException ex1) {
+		} catch (WStepDefException e) {
 			
 			lsteps=null;
-			String mess = "Error loading step list:"+ ex1.getMessage() + " - " + ex1.getCause();
+			String mess = "Error loading step list:"+ e.getMessage() + " - " + e.getCause();
 			throw new WStepDefException(mess);
 
 		}

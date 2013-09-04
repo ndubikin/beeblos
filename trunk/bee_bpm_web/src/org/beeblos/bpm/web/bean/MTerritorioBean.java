@@ -1,5 +1,6 @@
 package org.beeblos.bpm.web.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_TERRITORIO;
 
@@ -310,14 +311,8 @@ public class MTerritorioBean extends CoreManagedBean {
 			}
 			
 		} catch (TerritorioException e) {
-			logger.warn("no se puede obtener la territorio id: "+this.idTerritorio);
-			
-			String params[] = {this.currentTerritorio.getIdTerritorio() 
-								+ ",", "Error al intentar recuperar la Territorio "+e.getMessage() 
-								+ "\n"+e.getCause() };				
-			agregarMensaje("50",e.getMessage(),params,FGPException.ERROR);		
-			
-			
+			String message = "TerritorioBean.modificarTerritorio() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		disableBtnBorrar = false;
 		modificarValueBtn();
@@ -363,16 +358,8 @@ public class MTerritorioBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (TerritorioException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Actualizar el Territorio: [ id = " 
-					+ this.currentTerritorio.getIdTerritorio() + " ; Nombre: "
-					+ this.currentTerritorio.getTerritorioNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.currentTerritorio.getIdTerritorio() + ",", "Error al actualizar Territorio "+e.getMessage() };				
-			agregarMensaje("50",e.getMessage(),params,FGPException.ERROR);		
-			
+			String message = "TerritorioBean.actualizar() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 	}
@@ -395,16 +382,9 @@ public class MTerritorioBean extends CoreManagedBean {
 			
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
-		} catch (TerritorioException ex2) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Agregar el Territorio: [Nombre: " 
-					+ this.currentTerritorio.getTerritorioNombre()
-					+"] "	+ ex2.getMessage() + " : " + ex2.getCause());
-			
-			String params[] = {"Error al Agregar Territorio "+ex2.getMessage()+ " : " + ex2.getCause() };					
-			agregarMensaje("50",ex2.getMessage(),params,FGPException.ERROR);	
-			
+		} catch (TerritorioException e) {
+			String message = "TerritorioBean.agregar() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 		
 		// nes 20101021 - quite esto porque ahora sincronizamos currentTerritorio directamente contra la vista ...
@@ -455,15 +435,8 @@ public class MTerritorioBean extends CoreManagedBean {
 			recargaListaTerritorios();
 			
 		} catch (TerritorioException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Borrar el Territorio: [ id = " 
-					+ this.currentTerritorio.getIdTerritorio() + " ; Nombre: "
-					+ this.currentTerritorio.getTerritorioNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.currentTerritorio.getIdTerritorio() + ",", "Error al borrar Territorio "+e.getMessage() };				
-			agregarMensaje("50",e.getMessage(),params,FGPException.ERROR);			
+			String message = "TerritorioBean.borra() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return retorno;
@@ -486,12 +459,8 @@ public class MTerritorioBean extends CoreManagedBean {
 		try {
 			this.currentPais = new PaisBL().obtenerPaisPorPK(this.idPais);
 		} catch (PaisException e) {
-			logger.error("Ocurrio Un Error al tratar de cargar el pais seleccionado: [ id = " 
-					+ this.idPais
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.idPais + ",", "Error al cargar el pais seleccionado"+e.getMessage() };				
-			agregarMensaje("50",e.getMessage(),params,FGPException.ERROR);	
+			String message = "TerritorioBean.changePaisListener() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}
@@ -622,12 +591,8 @@ public class MTerritorioBean extends CoreManagedBean {
 						.castStringPairToSelectitem(
 								new PaisBL().obtenerPaisesParaCombo("Seleccionar...", "BLANCO") );
 			} catch (PaisException e) {
-					
-				logger.error("Ocurrio Un Error al recuperar la de paises "+ e.getMessage() + " : " + e.getCause());
-				
-				String params[] = {"Error al recuperar la de paises "+e.getMessage()+ " : " + e.getCause() };					
-				agregarMensaje("50",e.getMessage(),params,FGPException.ERROR);	
-				
+				String message = "TerritorioBean.getListaPais() PaisException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 				}
 			}
 		
@@ -645,13 +610,8 @@ public class MTerritorioBean extends CoreManagedBean {
 			
 										
 			} catch (TerritorioException e) {
-				logger.error("Ocurrio Un Error al recuperar la lista de territorios Tipo: [id: " 
-						+ this.idTipoTerritorio
-						+"] "	+ e.getMessage() + " : " + e.getCause());
-					
-				String params[] = {"Error al recuperar la lista de territorios "+e.getMessage()+ " : " + e.getCause() };					
-				agregarMensaje("50",e.getMessage(),params,FGPException.ERROR);	
-				
+				String message = "TerritorioBean.cargaListaTerritorios() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
 		

@@ -1,5 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESS;
@@ -57,9 +59,9 @@ import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.ListUtil;
+
 import com.sp.common.jsf.util.UtilsVs;
 
 public class WProcessBean extends CoreManagedBean {
@@ -119,9 +121,6 @@ public class WProcessBean extends CoreManagedBean {
 	private Integer wEmailAccountListResults;
 	private String checkingEmailAccount;
 	
-	// dml 20120227
-	private String messageStyle;
-	
 	// dml 20120305
 	private String emailNameFilter;
 	
@@ -148,7 +147,7 @@ public class WProcessBean extends CoreManagedBean {
 	}
 
 	public void init() {
-		super.init();
+		super.init_core();
 
 		setShowHeaderMessage(false);
 		
@@ -255,28 +254,10 @@ public class WProcessBean extends CoreManagedBean {
 			// dml 20120306
 			loadEmailTemplateVariables();
 			
-		} catch (WProcessDefException ex1) {
-
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = {
-					message + ",",
-					".Error loading current WProcessDef ..."
-							+ currentWProcessDef.getId() };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-
-			logger.error(message);
-			
-		} catch (WStepSequenceDefException ex1) {
-
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = {
-					message + ",",
-					".Error loading current WProcessDef ..."
-							+ currentWProcessDef.getId() };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-
-			logger.error(message);
-			
+		} catch (WProcessDefException e) {
+		} catch (WStepSequenceDefException e) {
+			String message = "WProcessBean.loadCurrentWProcessDef() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -291,17 +272,9 @@ public class WProcessBean extends CoreManagedBean {
 			currentWProcess = wpbl.getProcessHeadByPK(this.currentId,
 					getCurrentUserId());
 			
-		} catch (WProcessHeadException ex1) {
-
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = {
-					message + ",",
-					".Error loading current WProcessHead ..."
-							+ currentWProcess.getId() };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-
-			logger.error(message);
-			
+		} catch (WProcessHeadException e) {
+			String message = "WProcessBean.loadCurrentWProcess() WProcessHeadException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -347,20 +320,11 @@ public class WProcessBean extends CoreManagedBean {
 			}
 			
 		}catch(XMLGenerationException e){
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error generate current WProcessDef to XML ..." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-			logger.error(message);
-			
-			
+			String message = "WProcessBean.generateXMLCurrentWProcessDef() XMLGenerationException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}catch(IOException e){
-			
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error produced by failed or interrupted I/O operations current WProcessDef to XML ..." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WProcessBean.generateXMLCurrentWProcessDef() IOException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		logger.debug(">>>>>>>>>> Castor XML process complete Marshall");
@@ -670,20 +634,14 @@ public class WProcessBean extends CoreManagedBean {
 
 			setShowHeaderMessage(true);
 
-		} catch (WProcessDefException ex1) {
-
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { message + ",", ".Please confirm input values." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-
+		} catch (WProcessDefException e) {
+			String message = "WProcessBean.add() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			throw new WProcessDefException(message);
 
 		} catch (Exception e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error inserting object ..." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-
+			String message = "WProcessBean.add() Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			throw new WProcessDefException(message);
 
 		}
@@ -744,19 +702,15 @@ public class WProcessBean extends CoreManagedBean {
 
 			setShowHeaderMessage(true);
 
-		} catch (WProcessHeadException ex1) {
-
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { message + ",", ".Please confirm input values." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
+		} catch (WProcessHeadException e) {
+			String message = "WProcessBean.add_w_process() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WProcessHeadException(message);
 
 		} catch (Exception e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error inserting object ..." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
+			String message = "WProcessBean.add_w_process() Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WProcessHeadException(message);
 
@@ -790,20 +744,14 @@ public class WProcessBean extends CoreManagedBean {
 			ret = SUCCESS_FORM_WPROCESSDEF;
 			this.setReadOnly(true);
 
-		} catch (WProcessDefException ex1) {
+		} catch (WProcessDefException e) {
 
 			String message = "Error updating object: "
 					+ currentWProcessDef.getId() + " - "
-					+ currentWProcessDef.getName() + "\n" + ex1.getMessage()
-					+ "\n" + ex1.getCause();
+					+ currentWProcessDef.getName() + "\n" + e.getMessage()
+					+ "\n" + e.getCause();
 
-			logger.error(message);
-
-			String params[] = { message + ",", ".Please confirm input values." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return ret;
@@ -835,20 +783,14 @@ public class WProcessBean extends CoreManagedBean {
 			ret = SUCCESS_FORM_WPROCESS;
 			this.setReadOnly(true);
 
-		} catch (WProcessHeadException ex1) {
+		} catch (WProcessHeadException e) {
 
 			String message = "Error updating object: "
 					+ currentWProcess.getId() + " - "
-					+ currentWProcess.getName() + "\n" + ex1.getMessage()
-					+ "\n" + ex1.getCause();
+					+ currentWProcess.getName() + "\n" + e.getMessage()
+					+ "\n" + e.getCause();
 
-			logger.error(message);
-
-			String params[] = { message + ",", ".Please confirm input values." };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return ret;
@@ -861,14 +803,9 @@ public class WProcessBean extends CoreManagedBean {
 			setlStepCombo(UtilsVs.castStringPairToSelectitem(new WStepDefBL()
 					.getComboList("Select step...", null)));
 
-		} catch (WStepDefException ex1) {
-
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".loadStepCombo() WStepDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
-
+		} catch (WStepDefException e) {
+			String message = "WProcessBean.loadStepCombo() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 	}
 
@@ -1180,14 +1117,6 @@ public class WProcessBean extends CoreManagedBean {
 		this.checkingEmailAccount = checkingEmailAccount;
 	}
 
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
-	}
-
 	public String getEmailNameFilter() {
 		return emailNameFilter;
 	}
@@ -1286,12 +1215,9 @@ public class WProcessBean extends CoreManagedBean {
 							+ pr.getRole().getId();
 				}
 
-			} catch (WProcessDefException ex1) {
-
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",",
-						".Error deleting WProcessRole ..." };
-				agregarMensaje("203", message, params, FGPException.ERROR);
+			} catch (WProcessDefException e) {
+				String message = "WProcessBean.deleteWProcessRole() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			}
 
@@ -1327,13 +1253,9 @@ public class WProcessBean extends CoreManagedBean {
 
 				persistCurrentObject();
 
-			} catch (WProcessDefException ex1) {
-
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",",
-						".Error changing admin privileges ..." };
-				agregarMensaje("203", message, params, FGPException.ERROR);
-
+			} catch (WProcessDefException e) {
+				String message = "WProcessBean.changeAdminPrivilegesWProcessRole() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 
 		}
@@ -1371,13 +1293,9 @@ public class WProcessBean extends CoreManagedBean {
 							+ pu.getUser().getId();
 				}
 
-			} catch (WProcessDefException ex1) {
-
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",",
-						".Error deleting WProcessUser ..." };
-				agregarMensaje("203", message, params, FGPException.ERROR);
-
+			} catch (WProcessDefException e) {
+				String message = "WProcessBean.deleteWProcessUser() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 
 		}
@@ -1412,13 +1330,9 @@ public class WProcessBean extends CoreManagedBean {
 
 				persistCurrentObject();
 
-			} catch (WProcessDefException ex1) {
-
-				String message = ex1.getMessage() + " - " + ex1.getCause();
-				String params[] = { message + ",",
-						".Error changing admin privileges ..." };
-				agregarMensaje("203", message, params, FGPException.ERROR);
-
+			} catch (WProcessDefException e) {
+				String message = "WProcessBean.changeAdminPrivilegesWProcessUser() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 
 		}
@@ -1443,23 +1357,14 @@ public class WProcessBean extends CoreManagedBean {
 			persistCurrentObject();
 
 		} catch (NumberFormatException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".updateRolesRelated() NumberFormatException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
+			String message = "WProcessBean.updateRolesRelated() NumberFormatException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WRoleDefException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".updateRolesRelated() WRoleDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
+			String message = "WProcessBean.updateRolesRelated() WRoleDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDefException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".updateRolesRelated() WProcessDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
+			String message = "WProcessBean.updateRolesRelated() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return null;
@@ -1483,23 +1388,14 @@ public class WProcessBean extends CoreManagedBean {
 			persistCurrentObject();
 
 		} catch (NumberFormatException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".updateUsersRelated() NumberFormatException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
+			String message = "WProcessBean.updateUsersRelated() NumberFormatException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WUserDefException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".updateUsersRelated() WUserDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
+			String message = "WProcessBean.updateUsersRelated() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDefException e) {
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".updateUsersRelated() WProcessDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
+			String message = "WProcessBean.updateUsersRelated() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return null;
@@ -1540,13 +1436,8 @@ public class WProcessBean extends CoreManagedBean {
 			loadStepFromSequence();
 			
 		} catch (WStepSequenceDefException e) {
-
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".addAndUpdateStepSequence() WStepSequenceDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-
+			String message = "WProcessBean.addAndUpdateStepSequence() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}
@@ -1567,18 +1458,12 @@ public class WProcessBean extends CoreManagedBean {
 				
 			}		
 			
-		} catch (WStepSequenceDefException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".deleteStepFromSequence() WStepSequenceDefException ..." };
-			agregarMensaje("205", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
-		} catch (WStepWorkSequenceException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".deleteStepFromSequence() WStepSequenceDefException ..." };
-			agregarMensaje("205", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WStepSequenceDefException e) {
+			String message = "WProcessBean.deleteStepFromSequence() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WStepWorkSequenceException e) {
+			String message = "WProcessBean.deleteStepFromSequence() WStepWorkSequenceException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}
@@ -1599,16 +1484,9 @@ public class WProcessBean extends CoreManagedBean {
 				.setStepSequenceList(
 						new WStepSequenceDefBL()
 							.getStepSequenceList(currentWProcessDef.getId(), null, this.getCurrentUserId() ) );
-		} catch (WStepSequenceDefException ex1) {
-			
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = {
-					message + ",",
-					".Error reloading step sequence list ..."
-							+ currentWProcessDef.getId() };
-			agregarMensaje("203", message, params, FGPException.ERROR);
-			logger.error(message);
-			ex1.printStackTrace();
+		} catch (WStepSequenceDefException e) {
+			String message = "WProcessBean.cleanStepSequence() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 				
 		
@@ -1670,13 +1548,8 @@ public class WProcessBean extends CoreManagedBean {
 			}
 			
 		} catch (WStepSequenceDefException e) {
-
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".loadStepFromSequence() WStepSequenceDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-
+			String message = "WProcessBean.loadStepFromSequence() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		
@@ -1719,13 +1592,8 @@ public class WProcessBean extends CoreManagedBean {
 			}
 			
 		} catch (WStepDefException e) {
-
-			String mensaje = e.getMessage() + " - " + e.getCause();
-			String params[] = { mensaje + ",",
-					".loadStepResponses() WStepDefException ..." };
-			agregarMensaje("203", mensaje, params, FGPException.ERROR);
-			e.printStackTrace();
-
+			String message = "WProcessBean.loadStepResponses() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -1793,7 +1661,7 @@ public class WProcessBean extends CoreManagedBean {
 	public void detachEmail() {
 
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		this.setCurrEmailAccount(new WEmailAccount(EMPTY_OBJECT));
 		
@@ -1804,15 +1672,8 @@ public class WProcessBean extends CoreManagedBean {
 			persistCurrentObject();
 			
 		} catch (WProcessDefException e) {
-
-			messageStyle=errorMessageStyle();
-			setShowHeaderMessage(true);
-			String message = "WProcessDefException: Method detachEmail in WRoleDefBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WProcessDefException" };
-			agregarMensaje("203", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WProcessBean.detachEmail() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}		
 
 	}
@@ -1821,7 +1682,7 @@ public class WProcessBean extends CoreManagedBean {
 	public void addEmailAccount(){
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		if (currEmailAccount.getId() != null) {
 			
@@ -1833,25 +1694,11 @@ public class WProcessBean extends CoreManagedBean {
 				persistCurrentObject();
 
 			} catch (WEmailAccountException e) {
-
-				messageStyle=errorMessageStyle();
-				setShowHeaderMessage(true);
-				String message = "WEmailAccountException: Method addEmailAccount in WRoleDefBean: "
-									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WEmailAccountException" };
-				agregarMensaje("203", message, params, FGPException.WARN);
-				logger.error(message);
-
+				String message = "WProcessBean.addEmailAccount() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WProcessDefException e) {
-
-				messageStyle=errorMessageStyle();
-				setShowHeaderMessage(true);
-				String message = "WProcessDefException: Method addEmailAccount in WRoleDefBean: "
-									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WProcessDefException" };
-				agregarMensaje("203", message, params, FGPException.WARN);
-				logger.error(message);
-
+				String message = "WProcessBean.addEmailAccount() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
 		}
@@ -1884,7 +1731,7 @@ public class WProcessBean extends CoreManagedBean {
 	public void checkEmailAccount(){
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		Email email = new Email();
 		
@@ -1897,19 +1744,11 @@ public class WProcessBean extends CoreManagedBean {
 				enviar(email);
 				
 				String message = "The email has been sent";
-				agregarMensaje(message);
-				setShowHeaderMessage(true);
+				super.createWindowMessage(OK_MESSAGE, message, null);
 		
 			} catch (SendEmailException e) {
-		
-				messageStyle=errorMessageStyle();
-				setShowHeaderMessage(true);
-				String message = "SendEmailException: Method checkEmailAccount in WRoleDefBean: "
-									+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "SendEmailException" };
-				agregarMensaje("203", message, params, FGPException.WARN);
-				logger.error(message);
-		
+				String message = "WProcessBean.checkEmailAccount() SendEmailException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
 		}
@@ -1940,7 +1779,7 @@ public class WProcessBean extends CoreManagedBean {
 	public void enviar(Email email) throws SendEmailException{
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 				//valida la lista de correos destinatarios separados [,;]
 			email.getListaTo().clear();
@@ -1968,7 +1807,7 @@ public class WProcessBean extends CoreManagedBean {
 			//Limpiar ficheros del email 
 			email.getFiles().clear();
 			
-			email.setContextPath( CONTEXTPATH ); // setea el path de la app por si el email es html para obtener los ficheros locales
+			email.setContextPath( super.getContextPath() ); // setea el path de la app por si el email es html para obtener los ficheros locales
 
 			//rrl 20110803 por defecto TRUE pero no siempre p.e: en Ficha Proyecto en la pestaña Documentacion el usuario elije (Si / No) 
 //			email.setGuardarEnBeeblos(true); // nes 20110429

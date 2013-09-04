@@ -1,5 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,8 +88,6 @@ public class WRoleDefBean extends CoreManagedBean {
 	
 	private String valueBtn;
 	
-	private String messageStyle;
-
 	private List<WUserRole> usersRelated;	// dml 20120508
 	
 	private Integer currentWUserId;	// dml 20120426
@@ -148,7 +149,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" update() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -157,29 +158,16 @@ public class WRoleDefBean extends CoreManagedBean {
 			new WRoleDefBL().update(currentWRoleDef, this.getCurrentUserId());
 			
 			String message = setUpdateOkMessage();
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			reset();
 			
 		} catch (WRoleDefException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method update in WRoleDefBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method update in WRoleDefBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -191,7 +179,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" add() role name:" +this.currentWRoleDef.getName() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 		
@@ -200,29 +188,16 @@ public class WRoleDefBean extends CoreManagedBean {
 			Integer newId = new WRoleDefBL().add(this.currentWRoleDef, this.getCurrentUserId());
 			
 			String message = setAddOkMessage(newId);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			reset();
 
 		 } catch (WRoleDefException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method add in WRoleDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
-			logger.error(message);
-
+				String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method add in WRoleDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -235,7 +210,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" delete() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -248,29 +223,16 @@ public class WRoleDefBean extends CoreManagedBean {
 			// set ok message 
 			String message = getDeleteOkMessage(deletedRoleName); 
 			logger.info(message);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 
 			reset();
 
 		} catch (WRoleDefException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WRoleDefException: Method delete in WRoleDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method delete in WRoleDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WRoleDefException" };
-			agregarMensaje("200", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -282,7 +244,7 @@ public class WRoleDefBean extends CoreManagedBean {
 		logger.debug(" loadRecord() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		if (this.id!=null && this.id!=0){
 			try {
@@ -297,14 +259,8 @@ public class WRoleDefBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (WRoleDefException e) {
-
-				messageStyle=errorMessageStyle();
-				String message = "WRoleDefException: Method loadRecord in WRoleDefBean: "
-										+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WRoleDefException" };
-				agregarMensaje("200", message, params, FGPException.WARN);
-				logger.error(message);
-
+				String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		
 		}
@@ -325,7 +281,7 @@ public class WRoleDefBean extends CoreManagedBean {
 	public List<WRoleDef> getwRoleDefList() {
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		List<WRoleDef> objectList;
 		
@@ -412,14 +368,6 @@ public class WRoleDefBean extends CoreManagedBean {
 		this.roleList = roleList;
 	}
 	
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
-	}
-
 	public List<WUserRole> getUsersRelated() {
 		return usersRelated;
 	}

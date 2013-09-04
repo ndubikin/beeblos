@@ -80,14 +80,14 @@ public class SystemObjectDao {
 							+ systemObject.getName() + " <id = " + systemObject.getId() + "> \n"
 							+ " - " + ex.getMessage() + "\n" + ex.getCause());
 
-		} catch (SystemObjectException ex1) {
+		} catch (SystemObjectException e) {
 			logger.error("SystemObjectDao: delete - Exception in deleting systemObject rec "
 					+ systemObject.getName() + " <id = " + systemObject.getId()
-					+ "> not stored \n" + " - " + ex1.getMessage() + "\n" + ex1.getCause());
+					+ "> not stored \n" + " - " + e.getMessage() + "\n" + e.getCause());
 			throw new SystemObjectException(
 					"SystemObjectDao: delete - Exception in deleting systemObject rec "
 							+ systemObject.getName() + " <id = " + systemObject.getId()
-							+ "> not stored \n" + " - " + ex1.getMessage() + "\n" + ex1.getCause());
+							+ "> not stored \n" + " - " + e.getMessage() + "\n" + e.getCause());
 
 		}
 

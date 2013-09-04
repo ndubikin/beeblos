@@ -271,11 +271,11 @@ public class WStepWorkDao {
 			throw new WStepWorkException("WStepWorkDao:  delete - Can't delete proccess definition record  "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
 					" <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WStepWorkException ex1) {
+		} catch (WStepWorkException e) {
 			logger.error("WStepWorkDao: delete - Exception in deleting stepw rec "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
-					" <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WStepWorkException("WStepWorkDao: delete - Exception in deleting stepw rec "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
-					" <id = "+stepw.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+stepw.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

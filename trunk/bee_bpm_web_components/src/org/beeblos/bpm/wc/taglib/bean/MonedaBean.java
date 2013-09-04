@@ -1,5 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,16 +93,8 @@ public class MonedaBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (MonedaException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Actualizar un Moneda: [ id = " 
-					+ this.moneda.getIdMoneda() + " ; Nombre: "
-					+ this.moneda.getMonedaNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.moneda.getIdMoneda() + ",", "Error en actualizar Moneda "+e.getMessage()+ " , " + e.getCause() };				
-			agregarMensaje("38",e.getMessage(),params,FGPException.ERROR);	
-		
+			String message = "MonedaBean.actualizar() MonedaException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -119,18 +113,9 @@ public class MonedaBean extends CoreManagedBean {
 			
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
-		} catch (MonedaException ex2) {
-
-			// nes 20100930 - aquí el logger es error no info
-			logger.error("Ocurrio Un Error al tratar de Agregar un Moneda: ["
-					+this.moneda.getMonedaNombre()
-					+"] "	+ ex2.getMessage() );
-			// estamos el "alta" por lo q no hay id moneda en un registro q aún no se agregó ...
-			// hay que agregar la cause porq si no no se entiende bien el error ....
-			String params[] = {this.moneda.getMonedaNombre() + ",", ex2.getMessage() };				
-			// hay q definirse 1 mensaje para moneda si no el 30 decia "area"
-			agregarMensaje("38",ex2.getMessage(),params,FGPException.ERROR);		
-				
+		} catch (MonedaException e) {
+			String message = "MonedaBean.agregar() MonedaException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 //		return retorno;   //rrl 20110615 DEPENDENCIA NO NECESARIA
@@ -166,16 +151,8 @@ public class MonedaBean extends CoreManagedBean {
 //			retorno = SUCCESS_MONEDA;   //rrl 20110615 DEPENDENCIA NO NECESARIA
 			_reset();
 		} catch (MonedaException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Borrar un Moneda: [ id = " 
-					+ this.moneda.getIdMoneda() + " ; Nombre: "
-					+ this.moneda.getMonedaNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.moneda.getIdMoneda() + ",", "Error en actualizar Moneda " + e.getMessage()+ "," + e.getCause() };				
-			agregarMensaje("38",e.getMessage(),params,FGPException.ERROR);	
-			
+			String message = "MonedaBean.borra() MonedaException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 //		return retorno;   //rrl 20110615 DEPENDENCIA NO NECESARIA

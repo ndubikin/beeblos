@@ -12,8 +12,7 @@
 	
 	<h:form id="login_caratula_form">
 		<h:panelGrid columns="1" style="align: left;">
-		
-			<ui:include src="/common/errorPanel.xhtml" />
+			<h:messages  style="#{login_x_Bean.messageStyle}"/>
 			<ui:include src="/general/login.xhtml" />
 		</h:panelGrid>
 	</h:form>

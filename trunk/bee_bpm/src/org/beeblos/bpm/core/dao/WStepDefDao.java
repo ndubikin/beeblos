@@ -144,11 +144,11 @@ public class WStepDefDao {
 			throw new WStepDefException("WStepDefDao:  delete - Can't delete proccess definition record  "+ step.getName() +
 					" <id = "+step.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WStepDefException ex1) {
+		} catch (WStepDefException e) {
 			logger.error("WStepDefDao: delete - Exception in deleting step rec "+ step.getName() +
-					" <id = "+step.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+step.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WStepDefException("WStepDefDao: delete - Exception in deleting step rec "+ step.getName() +
-					" <id = "+step.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+step.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

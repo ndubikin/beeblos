@@ -104,7 +104,7 @@ public class WTrackWorkDao {
 							+ "> \n" + " - " + ex.getMessage() + "\n"
 							+ ex.getCause());
 
-		} catch (WTrackWorkException ex1) {
+		} catch (WTrackWorkException e) {
 			logger.error("WTrackWorkDao: delete - Exception in deleting trackw rec "
 					+ trackw.getIdObjectType()
 					+ " "
@@ -112,13 +112,13 @@ public class WTrackWorkDao {
 					+ " <id = "
 					+ trackw.getId()
 					+ "> no esta almacenada \n"
-					+ " - " + ex1.getMessage() + "\n" + ex1.getCause());
+					+ " - " + e.getMessage() + "\n" + e.getCause());
 			throw new WTrackWorkException(
 					"WTrackWorkDao: delete - Exception in deleting trackw rec "
 							+ trackw.getIdObjectType() + " "
 							+ trackw.getIdObject() + " <id = " + trackw.getId()
-							+ "> not stored \n" + " - " + ex1.getMessage()
-							+ "\n" + ex1.getCause());
+							+ "> not stored \n" + " - " + e.getMessage()
+							+ "\n" + e.getCause());
 
 		}
 

@@ -1,5 +1,6 @@
 package org.beeblos.bpm.web.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_PAIS;
 
@@ -82,14 +83,8 @@ public class PaisBean extends CoreManagedBean {
 					agregar();
 				}
 			} catch (PaisException e) {
-				//martin - 20100930
-				logger.error("Ocurrio un Error al tratar de confirmar la presencia o no  del Pais: [ id = " 
-						+ this.pais.getIdPais() + " ; Nombre: "
-						+ this.pais.getPaisNombre()
-						+"] "	+ e.getMessage() + " : " + e.getCause());
-				
-				String params[] = {this.pais.getIdPais() + ",", "Error al intentar actualizar el Pais "+ pais.toString() +" \n"+e.getMessage() };				
-				agregarMensaje("34",e.getMessage(),params,FGPException.ERROR);	
+				String message = "PaisBean.guardar() PaisException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		} 
 		_reset();
@@ -111,16 +106,8 @@ public class PaisBean extends CoreManagedBean {
 						
 			
 		} catch (PaisException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Actualizar el Pais: [ id = " 
-					+ this.pais.getIdPais() + " ; Nombre: "
-					+ this.pais.getPaisNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.pais.getIdPais() + ",", "Error al intentar actualizar el Pais "+ pais.toString() +" \n"+e.getMessage() };				
-			agregarMensaje("34",e.getMessage(),params,FGPException.ERROR);	
-			
+			String message = "PaisBean.actualizar() PaisException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 
@@ -140,17 +127,9 @@ public class PaisBean extends CoreManagedBean {
 
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
-		} catch (PaisException ex2) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Agregar el Pais: [ID: " 
-					+ this.pais.getIdPais() + " ; Nombre: "
-					+ this.pais.getPaisNombre()
-					+"] "	+ ex2.getMessage() + " : " + ex2.getCause());
-			
-			String params[] = {this.pais.getIdPais() + ",", "Error al intentar agregar el Pais "+ pais.toString() +" \n"+ex2.getMessage() };				
-			agregarMensaje("34",ex2.getMessage(),params,FGPException.ERROR);			
-
+		} catch (PaisException e) {
+			String message = "PaisBean.agregar() PaisException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return retorno;
@@ -231,17 +210,8 @@ public class PaisBean extends CoreManagedBean {
 			_reset();
 			
 		} catch (PaisException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Borrar el Pais: [ id = " 
-					+ this.pais.getIdPais() + " ; Nombre: "
-					+ this.pais.getPaisNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.pais.getIdPais() + ",", "Error al intentar borrar Pais "+ pais.toString() +" \n"+e.getMessage() };				
-			agregarMensaje("34",e.getMessage(),params,FGPException.ERROR);		
-			
-
+			String message = "PaisBean.borra() PaisException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return retorno;

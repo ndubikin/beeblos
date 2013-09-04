@@ -76,10 +76,10 @@ public class UsuarioLoginDao {
 					" <id = "+instancia.getId()+ "> \n"+" - "+ex.getMessage() );
 			throw new UsuarioLoginException(ex);
 
-		} catch (UsuarioLoginException ex1) {
+		} catch (UsuarioLoginException e) {
 			logger.error("UsuarioLoginDao: borrar - La instancia de UsuarioLogin para IdUsuario"+ instancia.getIdUsuario() +
-					" <id = "+ instancia.getId() + "> no esta almacenada \n"+" - "+ex1.getMessage() );
-			throw new UsuarioLoginException(ex1);
+					" <id = "+ instancia.getId() + "> no esta almacenada \n"+" - "+e.getMessage() );
+			throw new UsuarioLoginException(e);
 
 		} 
 

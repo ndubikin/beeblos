@@ -9,8 +9,8 @@
 	<ui:define name="title">Task list queries</ui:define>
 	<ui:define name="current">consultaTarea</ui:define>
 	<ui:define name="body">
-	
-	<ui:include src="/common/errorPanel.xhtml" />
+
+	<h:messages  style="#{consultaTareaBean.messageStyle}"/>
 	
 	<rich:tabPanel switchType="server" 
 			selectedTab="#{componentNavigator.currentComponent.activeTab}"

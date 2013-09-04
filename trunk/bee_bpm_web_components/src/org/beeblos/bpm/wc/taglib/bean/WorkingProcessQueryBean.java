@@ -1,5 +1,6 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.PENDING;
 import static org.beeblos.bpm.core.util.Constants.PROCESSING;
@@ -593,12 +594,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			nResults = wProcessDefLightList.size();
 
-		} catch (WProcessDefException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".searchWorkingProcesses() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WProcessDefException e) {
+			String message = "WorkingProcessQueryBean.searchWorkingProcesses() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return WORKINGPROCESS_QUERY;
@@ -617,12 +615,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			nResults = wProcessDefLightList.size();
 
-		} catch (WProcessDefException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".reloadWorkingProcesses() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WProcessDefException e) {
+			String message = "WorkingProcessQueryBean.reloadWorkingProcesses() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -692,12 +687,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			nWorkResults = processWorkLightList.size();
 
-		} catch (WProcessWorkException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".searchProcessWork() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WProcessWorkException e) {
+			String message = "WorkingProcessQueryBean.searchProcessWork() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return WORKINGWORKS_QUERY;
@@ -732,12 +724,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			nStepResults = stepWorkLightList.size();
 
-		} catch (WStepWorkException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".searchStepWorkLights() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WStepWorkException e) {
+			String message = "WorkingProcessQueryBean.searchStepWork() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return WORKINGSTEPS_QUERY;
@@ -761,12 +750,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 			nStepResults = stepWorkLightList.size();
 
-		} catch (WStepWorkException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".reloadStepWorkLightList() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WStepWorkException e) {
+			String message = "WorkingProcessQueryBean.reloadStepWorkLightList() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -788,17 +774,12 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				
 			}
 			
-		} catch (WProcessDefException ex1) {
-			String mess = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mess + ",",
-					".desactivateWProcessDef() WProcessDefException ..." };
-			agregarMensaje("206", mess, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WProcessDefException e) {
+			String message = "WorkingProcessQueryBean.desactivateWProcessDef() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepSequenceDefException e) {
-			String mess = e.getMessage() + " - " + e.getCause();
-			String params[] = { mess + ",",
-					".desactivateWProcessDef() WProcessDefException ..." };
-			agregarMensaje("206", mess, params, FGPException.ERROR);
+			String message = "WorkingProcessQueryBean.desactivateWProcessDef() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -810,12 +791,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			return UtilsVs
 					.castStringPairToSelectitem(new WUserDefBL().getComboList("All users", ""));
 			
-		} catch (WUserDefException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".loadWDefUsers() WUserDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WUserDefException e) {
+			String message = "WorkingProcessQueryBean.getwUsersDef() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		return null;
@@ -839,12 +817,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				
 			}
 			
-		} catch (WProcessDefException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".getwProcessesDef() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WProcessDefException e) {
+			String message = "WorkingProcessQueryBean.getwProcessesDef() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		return null;
@@ -865,12 +840,9 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 			return l;
 			
-		} catch (WProcessDefException ex1) {
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".getValidStepList() WProcessDefException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
+		} catch (WProcessDefException e) {
+			String message = "WorkingProcessQueryBean.getValidStepList() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		return null;
@@ -893,30 +865,15 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 			reloadStepWorkLightList();
 		
-		} catch (WStepNotLockedException ex1) {
-			
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".lockUnlockStep() WStepNotLockedException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
-			
-		} catch (WStepLockedByAnotherUserException ex2) {
-			
-			String mensaje = ex2.getMessage() + " - " + ex2.getCause();
-			String params[] = { mensaje + ",",
-					".lockUnlockStep() WStepLockedByAnotherUserException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex2.printStackTrace();
-			
-		} catch (WStepWorkException ex3) {
-			
-			String mensaje = ex3.getMessage() + " - " + ex3.getCause();
-			String params[] = { mensaje + ",",
-					".lockUnlockStep() WStepWorkException ..." };
-			agregarMensaje("206", mensaje, params, FGPException.ERROR);
-			ex3.printStackTrace();
-			
+		} catch (WStepNotLockedException e) {
+			String message = "WorkingProcessQueryBean.lockUnlockStep() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WStepLockedByAnotherUserException e) {
+			String message = "WorkingProcessQueryBean.lockUnlockStep() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WStepWorkException e) {
+			String message = "WorkingProcessQueryBean.lockUnlockStep() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}
@@ -976,37 +933,38 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			
 		} catch (CantLockTheStepException e) {
 			
-			String mensaje = "No se puede reservar la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "No se puede reservar la tarea indicada ....\n";
+			message +="error:"+e.getMessage()+" - "+ e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);			
+
 			ret=FAIL;
 			
 		} catch (WStepLockedByAnotherUserException e) {
 			
-			String mensaje = "La tarea indicada está bloqueada por otro usuario ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "La tarea indicada está bloqueada por otro usuario ....\n";
+			message +="error:"+e.getMessage()+" - "+ e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);			
+
 			ret=FAIL;
 			
 		} catch (WStepWorkException e) {
 			
-			String mensaje = "No se puede cargar la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "No se puede cargar la tarea indicada ....\n";
+			message +="error:"+e.getMessage()+" - "+ e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);			
+
 			ret=FAIL;
 			
 		} catch (WUserDefException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message = "No se puede cargar la tarea indicada ....\n";
+			message +="error:"+e.getMessage()+" - "+ e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);			
+
+			ret=FAIL;
 		}
 
 		return ret;
@@ -1034,7 +992,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 					xmlMapTmp = new WorkflowEditorBL().paintXmlMap(
 							xmlMapTmp, this.currentWStepWork.getwProcessWork().getId(), currentUserId);
 					
-					String path = CONTEXTPATH + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+					String path = super.getContextPath() + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
 					File temp = new File(path);
 					
 					// if file doesnt exists, then create it
@@ -1051,39 +1009,25 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				}
 
 			} catch (IOException e) {
-
-				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-				String params[] = {mensaje};
-				agregarMensaje("61",mensaje,params,FGPException.WARN);
-				logger.error("loadXmlMapAsTmp: "+mensaje);
-				
+				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				message +="error:"+e.getMessage()+" - "+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WProcessDefException e) {
-
-				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-				String params[] = {mensaje};
-				agregarMensaje("61",mensaje,params,FGPException.WARN);
-				logger.error("loadXmlMapAsTmp: "+mensaje);
-				
+				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				message +="error:"+e.getMessage()+" - "+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (ParserConfigurationException e) {
-				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-				String params[] = {mensaje};
-				agregarMensaje("61",mensaje,params,FGPException.WARN);
-				logger.error("loadXmlMapAsTmp: "+mensaje);
+				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				message +="error:"+e.getMessage()+" - "+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (SAXException e) {
-				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-				String params[] = {mensaje};
-				agregarMensaje("61",mensaje,params,FGPException.WARN);
-				logger.error("loadXmlMapAsTmp: "+mensaje);
+				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				message +="error:"+e.getMessage()+" - "+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WStepWorkException e) {
-				String mensaje = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-				String params[] = {mensaje};
-				agregarMensaje("61",mensaje,params,FGPException.WARN);
-				logger.error("loadXmlMapAsTmp: "+mensaje);
+				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				message +="error:"+e.getMessage()+" - "+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
 		

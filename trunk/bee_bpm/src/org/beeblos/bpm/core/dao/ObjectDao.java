@@ -82,11 +82,11 @@ public class ObjectDao {
 			throw new ObjectException("ObjectMDao:  delete - Can't delete proccess definition record  "+ object.getName() +
 					" <id = "+object.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-//		} catch (ObjectException ex1) {
+//		} catch (ObjectException e) {
 //			logger.error("ObjectMDao: delete - Exception in deleting object rec "+ object.getName() +
-//					" <id = "+object.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+//					" <id = "+object.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 //			throw new ObjectException("ObjectMDao: delete - Exception in deleting object rec "+ object.getName() +
-//					" <id = "+object.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+//					" <id = "+object.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

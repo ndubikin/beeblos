@@ -1518,7 +1518,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 	private void _publishChanges(String xml) throws IOException{
 		
-		String path = CONTEXTPATH + "/bee_bpm_web/processXmlMapTmp.xml";
+		String path = super.getContextPath() + "/bee_bpm_web/processXmlMapTmp.xml";
 		File temp = new File(path);
 		
 		// if file doesnt exists, then create it

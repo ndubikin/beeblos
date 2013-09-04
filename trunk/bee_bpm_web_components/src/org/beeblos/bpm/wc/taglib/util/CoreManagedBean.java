@@ -1,6 +1,8 @@
 package org.beeblos.bpm.wc.taglib.util;
 
 import static org.beeblos.bpm.core.util.Constants.FICHERO_BDC_MENSAJES;
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,11 +46,13 @@ public class CoreManagedBean implements Serializable {
 	private ArrayList<FGPException> exceptionList = new ArrayList<FGPException>();
 	
 	
-	public static final String CONTEXTPATH = setContextPath();
+	public static String contextPath;
 	
-	public static final String CONFIGURATIONPATH = setConfigurationPath(); // nes 20111026
+	public static String configurationPath; // nes 20111026
 	
 	private boolean showHeaderMessage;
+	public String messageStyle;
+	
 	
 	// Wil 20100819
 	private String grupo; 
@@ -75,8 +79,7 @@ public class CoreManagedBean implements Serializable {
 		showHeaderMessage = false;
 	}
 
-	// Wil 20100819 Este metodo sera invocado desde el menu luego de la instanciacion del bean
-	public void init(){
+	public void init_core(){
 
 	}
 	
@@ -89,7 +92,7 @@ public class CoreManagedBean implements Serializable {
 		String strConfPath=null;
 		try {
 		
-			strConfPath = CONTEXTPATH + "/" 
+			strConfPath = contextPath + "/" 
 				+FacesContext.getCurrentInstance()
 					.getExternalContext().getRequestContextPath()
 				+"/WEB-INF/classes";
@@ -104,6 +107,17 @@ public class CoreManagedBean implements Serializable {
 		return strConfPath;
 	}
 	
+	// dml 20130417
+	public String getContextPath(){
+		
+		if (contextPath == null){
+			setContextPath();
+		}
+		
+		return contextPath;
+		
+	}
+
 	// nes 20110503
 	public static String setContextPath() {
 		
@@ -142,7 +156,7 @@ public class CoreManagedBean implements Serializable {
 		System.out.println( "------------>>>>>>>>>>>>>>>  contextPath ELEGIDO:["+contextPath+"]" );
 		return contextPath;
 	}
-	
+/*	
 	public void agregarMensaje(String code,String message,String[] params,int level){
 		
 		ExceptionBean exceptionBean = (ExceptionBean)HelperUtil.getBeanFromSession("exceptionBean");
@@ -161,16 +175,41 @@ public class CoreManagedBean implements Serializable {
 		
 	}
 
-	public void agregarMensaje(String resumen) {
-		FacesMessage facesMessage = new FacesMessage(resumen, null);
-		getContext().addMessage(null, facesMessage);		
-	}
-
 	public void agregarMensaje(String resumen, String detalle) {
 		FacesMessage facesMessage = new FacesMessage(resumen, detalle);
 		getContext().addMessage(null, facesMessage);
 	}
 	
+*/
+	public void addMessage(String resumen) {
+		
+		FacesMessage facesMessage = new FacesMessage(resumen, null);
+		getContext().addMessage(null, facesMessage);		
+	}
+
+	public void createWindowMessage(String messageType, String message, Exception e) {
+
+		if (e != null) {
+
+			message += " "+e.getMessage();
+			
+			e.printStackTrace();
+		}
+
+		if (messageType.equals(ERROR_MESSAGE)) {
+			this.setMessageStyle(errorMessageStyle());
+			logger.error(message);
+		} else if (messageType.equals(OK_MESSAGE)) {
+			this.setMessageStyle(normalMessageStyle());
+			logger.info(message);
+		}
+
+		setShowHeaderMessage(true);
+		this.addMessage(message);
+		
+
+	}
+
 	public String normalMessageStyle() {
 		return "font-weight:bold;";
 	}
@@ -237,6 +276,14 @@ public class CoreManagedBean implements Serializable {
 
 	public void setShowHeaderMessage(boolean showHeaderMessage) {
 		this.showHeaderMessage = showHeaderMessage;
+	}
+
+	public String getMessageStyle() {
+		return messageStyle;
+	}
+
+	public void setMessageStyle(String messageStyle) {
+		this.messageStyle = messageStyle;
 	}
 
 	public String getGrupo() {

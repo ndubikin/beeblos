@@ -82,11 +82,11 @@ public class WRoleDefDao {
 			throw new WRoleDefException("WRoleDefDao:  delete - Can't delete role definition record  "+ role.getName() +
 					" <id = "+role.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WRoleDefException ex1) {
+		} catch (WRoleDefException e) {
 			logger.error("WRoleDefDao: delete - Exception in deleting role rec "+ role.getName() +
-					" <id = "+role.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+role.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WRoleDefException("WRoleDefDao: delete - Exception in deleting role rec "+ role.getName() +
-					" <id = "+role.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+role.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 
@@ -109,10 +109,10 @@ public class WRoleDefDao {
 			logger.error( mess );
 			throw new WRoleDefException(mess );
 
-		} catch (WRoleDefException ex1) {
+		} catch (WRoleDefException e) {
 
 			String mess = "WRoleDefDao: WRoleDefException: Error deleting role rec " 
-					+ " <id = "+roleId+ "> \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause();
+					+ " <id = "+roleId+ "> \n"+" - "+e.getMessage()+"\n"+e.getCause();
 			logger.error( mess );
 			throw new WRoleDefException(mess );
 

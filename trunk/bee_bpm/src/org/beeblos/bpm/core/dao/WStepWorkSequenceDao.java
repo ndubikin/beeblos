@@ -87,20 +87,20 @@ public class WStepWorkSequenceDao {
 							+ stepWorkSequence.getId() + "> \n" + " - " + ex.getMessage() + "\n"
 							+ ex.getCause());
 
-		} catch (WStepWorkSequenceException ex1) {
+		} catch (WStepWorkSequenceException e) {
 			logger.error("WStepWorkSequenceDao: delete - Exception in deleting stepWorkSequence rec "
 					+ stepWorkSequence.getStepSequence().getName()
 					+ " <id = "
 					+ stepWorkSequence.getId()
 					+ "> not stored \n"
 					+ " - "
-					+ ex1.getMessage()
-					+ "\n" + ex1.getCause());
+					+ e.getMessage()
+					+ "\n" + e.getCause());
 			throw new WStepWorkSequenceException(
 					"WStepWorkSequenceDao: delete - Exception in deleting stepWorkSequence rec "
 							+ stepWorkSequence.getStepSequence().getName() + " <id = "
 							+ stepWorkSequence.getId() + "> not stored \n" + " - "
-							+ ex1.getMessage() + "\n" + ex1.getCause());
+							+ e.getMessage() + "\n" + e.getCause());
 
 		}
 

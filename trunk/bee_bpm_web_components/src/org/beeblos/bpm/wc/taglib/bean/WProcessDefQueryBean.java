@@ -1,6 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
@@ -29,11 +31,9 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
-import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
@@ -190,12 +190,9 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			nResults = wProcessDefList.size();
 
 		} catch (WProcessDefException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to search the processes"};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WProcessDefQueryBean.searchWProcessDefs() WProcessDefException: " + 
+					e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 
 		return WPROCESSDEF_QUERY;
@@ -341,12 +338,9 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 					this.processHeadId, WPROCESSDEF_QUERY);
 			
 		} catch (WProcessDefException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to create the new WProcessDef."};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WProcessDefQueryBean.createNewProcessVersion() WProcessDefException: " + 
+					e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 		
 		return null;
@@ -374,30 +368,21 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			
 			String message = "Process version id:"+this.id+" has a new cloned version with id:"+newId;
 			this.messageStyle = normalMessageStyle();
-			agregarMensaje(message);
+			super.createWindowMessage(OK_MESSAGE, message, null);			
 			logger.info(message);
 
 		} catch (WProcessDefException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WProcessDefQueryBean.cloneWProcessDef() WProcessDefException: " + 
+					e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		} catch (WStepSequenceDefException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WProcessDefQueryBean.cloneWProcessDef() WStepSequenceDefException: " + 
+					e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		} catch (WProcessHeadException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WProcessDefQueryBean.cloneWProcessDef() WProcessDefException: " + 
+					e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 		
 	}
@@ -428,58 +413,37 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				
 				String message = "The process '" + processName + "' has been correctly deleted";
 				this.messageStyle = normalMessageStyle();
-				agregarMensaje(message);
+				super.createWindowMessage(OK_MESSAGE, message, null);			
 				logger.info(message);
 				
 			} catch (WProcessWorkException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessWorkException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WProcessDefException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepSequenceDefException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepSequenceDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepWorkException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepWorkException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WProcessHeadException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessHeadException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepDefException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepHeadException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepHeadException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 			
 		}
@@ -507,19 +471,13 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				this.currentWProcessDef = new WProcessDefBL().getWProcessDefByPK(this.id, getCurrentUserId());
 				
 			} catch (WProcessDefException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error trying to load process: id=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.loadWProcessDefObject() WProcessDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepSequenceDefException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error trying to load process: id=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.loadWProcessDefObject() WStepSequenceDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 			
 		}
@@ -534,7 +492,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				
 				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.id, getCurrentUserId());
 				
-				String path = CONTEXTPATH + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+				String path = super.getContextPath() + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
 				File temp = new File(path);
 				
 				// if file doesnt exists, then create it
@@ -549,19 +507,13 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				bw.close();
 				
 			} catch (IOException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error trying to create the xml map temp file for process: id=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() IOException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WProcessDefException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error trying to load the process xml map for id=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
-				
+				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() WProcessDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 		}
 		
@@ -602,20 +554,17 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				new DevelopmentBL().purgeProcessDef(processDef, currentUserId);
 
 			} catch (WProcessDefException e) {
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error cleaning process processDefId=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
+				String message = "WProcessDefQueryBean.purgeWProcessDef() WProcessDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepSequenceDefException e) {
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error cleaning process processDefId=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
+				String message = "WProcessDefQueryBean.purgeWProcessDef() WStepSequenceDefException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (DevelopmentException e) {
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error cleaning process processDefId=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
+				String message = "WProcessDefQueryBean.purgeWProcessDef() DevelopmentException: " + 
+						e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 		
 		}

@@ -1,5 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
+
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -77,9 +80,6 @@ public class WTimeUnitBean extends CoreManagedBean {
 	
 	private String valueBtn;
 	
-	private String messageStyle;
-
-	
 	public WTimeUnitBean() {
 		
 		super();
@@ -131,7 +131,7 @@ public class WTimeUnitBean extends CoreManagedBean {
 		logger.debug(" update() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -140,29 +140,16 @@ public class WTimeUnitBean extends CoreManagedBean {
 			new WTimeUnitBL().update(currentWTimeUnit, this.getCurrentUserId());
 			
 			String message = setUpdateOkMessage();
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			reset();
 			
 		} catch (WTimeUnitException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WTimeUnitException: Method update in WTimeUnitBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WTimeUnitException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method update in WTimeUnitBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WTimeUnitException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -174,7 +161,7 @@ public class WTimeUnitBean extends CoreManagedBean {
 		logger.debug(" add() time unit name:" +this.currentWTimeUnit.getName() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 		
@@ -183,29 +170,16 @@ public class WTimeUnitBean extends CoreManagedBean {
 			Integer newId = new WTimeUnitBL().add(this.currentWTimeUnit, this.getCurrentUserId());
 			
 			String message = setAddOkMessage(newId);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			reset();
 
 		 } catch (WTimeUnitException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WTimeUnitException: Method add in WTimeUnitBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WTimeUnitException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+				String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method add in WTimeUnitBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WTimeUnitException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -218,7 +192,7 @@ public class WTimeUnitBean extends CoreManagedBean {
 		logger.debug(" delete() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -231,29 +205,16 @@ public class WTimeUnitBean extends CoreManagedBean {
 			// set ok message 
 			String message = getDeleteOkMessage(deletedTimeUnitName); 
 			logger.info(message);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 
 			reset();
 
 		} catch (WTimeUnitException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WTimeUnitException: Method delete in WTimeUnitBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WTimeUnitException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method delete in WTimeUnitBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WTimeUnitException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -265,7 +226,7 @@ public class WTimeUnitBean extends CoreManagedBean {
 		logger.debug(" loadRecord() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		if (this.id!=null && this.id!=0){
 			try {
@@ -277,14 +238,8 @@ public class WTimeUnitBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (WTimeUnitException e) {
-
-				messageStyle=errorMessageStyle();
-				String message = "WTimeUnitException: Method loadRecord in WTimeUnitBean: "
-										+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WTimeUnitException" };
-				agregarMensaje("202", message, params, FGPException.WARN);
-				logger.error(message);
-
+				String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		
 		}
@@ -294,7 +249,7 @@ public class WTimeUnitBean extends CoreManagedBean {
 	public List<WTimeUnit> getwTimeUnitList() {
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		List<WTimeUnit> objectList;
 		
@@ -381,14 +336,6 @@ public class WTimeUnitBean extends CoreManagedBean {
 		this.timeUnitList = timeUnitList;
 	}
 	
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
-	}
-
 	public void setCurrentUserId(){
 		
 		ContextoSeguridad cs = (ContextoSeguridad) getSession().getAttribute(

@@ -1,5 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
+
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -77,9 +80,6 @@ public class EnvTypeBean extends CoreManagedBean {
 	
 	private String valueBtn;
 	
-	private String messageStyle;
-
-	
 	public EnvTypeBean() {
 		
 		super();
@@ -131,7 +131,7 @@ public class EnvTypeBean extends CoreManagedBean {
 		logger.debug(" update() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle = normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -140,29 +140,16 @@ public class EnvTypeBean extends CoreManagedBean {
 			new EnvTypeBL().update(currentEnvType, this.getCurrentUserId());
 			
 			String message = setUpdateOkMessage();
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			reset();
 			
 		} catch (EnvTypeException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "EnvTypeException: Method update in EnvTypeBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "EnvTypeException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "EnvTypeBean.update EnvTypeException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method update in EnvTypeBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "EnvTypeException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "EnvTypeBean.update EnvTypeException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -171,54 +158,41 @@ public class EnvTypeBean extends CoreManagedBean {
 
 
 	public String add() {
-		logger.debug(" add() time unit name:" +this.currentEnvType.getName() );
-		
+		logger.debug(" add() time unit name:" + this.currentEnvType.getName());
+
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
-		
+		super.messageStyle = normalMessageStyle();
+
 		String returnValue = null; // always returns null because calls are ajax
-		
-		 try {
-			
+
+		try {
+
 			Integer newId = new EnvTypeBL().add(this.currentEnvType, this.getCurrentUserId());
-			
+
 			String message = setAddOkMessage(newId);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
-			
+			super.createWindowMessage(OK_MESSAGE, message, null);
+
 			reset();
 
-		 } catch (EnvTypeException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "EnvTypeException: Method add in EnvTypeBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "EnvTypeException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+		} catch (EnvTypeException e) {
+			String message = "EnvTypeBean.add EnvTypeException: " + e.getMessage() + " - "
+					+ e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method add in EnvTypeBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "EnvTypeException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
-		} 
+			String message = "EnvTypeBean.add Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		}
 
 		return returnValue;
 
 	}
 
 
-
 	public String delete() {
 		logger.debug(" delete() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -231,29 +205,18 @@ public class EnvTypeBean extends CoreManagedBean {
 			// set ok message 
 			String message = getDeleteOkMessage(deletedTimeUnitName); 
 			logger.info(message);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 
 			reset();
 
 		} catch (EnvTypeException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "EnvTypeException: Method delete in EnvTypeBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "EnvTypeException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "EnvTypeBean.delete EnvTypeException: " + e.getMessage() + " - "
+					+ e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method delete in EnvTypeBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "EnvTypeException" };
-			agregarMensaje("202", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "EnvTypeBean.delete Exception: " + e.getMessage() + " - "
+					+ e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -265,7 +228,7 @@ public class EnvTypeBean extends CoreManagedBean {
 		logger.debug(" loadRecord() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		if (this.id!=null && this.id!=0){
 			try {
@@ -277,14 +240,9 @@ public class EnvTypeBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (EnvTypeException e) {
-
-				messageStyle=errorMessageStyle();
-				String message = "EnvTypeException: Method loadRecord in EnvTypeBean: "
-										+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "EnvTypeException" };
-				agregarMensaje("202", message, params, FGPException.WARN);
-				logger.error(message);
-
+				String message = "EnvTypeBean.loadRecord() EnvTypeException: " + e.getMessage() + " - "
+						+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		
 		}
@@ -294,7 +252,7 @@ public class EnvTypeBean extends CoreManagedBean {
 	public List<EnvType> getEnvTypeList() {
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		List<EnvType> objectList;
 		
@@ -381,14 +339,6 @@ public class EnvTypeBean extends CoreManagedBean {
 		this.envTypeList = envTypeList;
 	}
 	
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
-	}
-
 	public void setCurrentUserId(){
 		
 		ContextoSeguridad cs = (ContextoSeguridad) getSession().getAttribute(
