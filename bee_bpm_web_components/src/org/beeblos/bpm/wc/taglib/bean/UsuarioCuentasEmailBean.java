@@ -1,6 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.PASS_PHRASE;
 
 import java.util.ArrayList;
@@ -129,12 +130,9 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 		//String retorno=FAIL;
 		
 		if (idUsuario==null || idUsuario==0) {
-			//martin - 20100930
-			logger.error("Ocurrio Un Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario [ Nombre: "
-					+ this.currentUCE.getUceNombre());
-			
-			String params[] = {this.currentUCE.getUceNombre() + ",", "Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario." }; // nes 20101013				
-			agregarMensaje("53",null,params,FGPException.ERROR);	
+			String message = "Ocurrio Un Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario [ Nombre: "
+					+ this.currentUCE.getUceNombre();
+			super.createWindowMessage(ERROR_MESSAGE, message, null);
 		} else { 
 				
 			if (idUsuarioCuentasEmail!=null && idUsuarioCuentasEmail!=0) {
@@ -191,16 +189,8 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (UsuarioCuentasEmailException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Actualizar el UsuarioCuentasEmail: [ id = " 
-					+ this.currentUCE.getIdUce() + " ; Nombre: "
-					+ this.currentUCE.getUceNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.currentUCE.getIdUce() + ",", "Error al actualizar UsuarioCuentasEmail "+e.getMessage()+"\n"+e.getCause() }; // nes 20101013				
-			agregarMensaje("53",e.getMessage(),params,FGPException.ERROR);		
-			
+			String message = "UsuarioCuentasEmailBean.actualizar() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 //		return retorno;    //rrl 20110614 DEPENDENCIA NO NECESARIA
@@ -228,18 +218,9 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
 			
-		} catch (UsuarioCuentasEmailException ex2) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Agregar el UsuarioCuentasEmail: [Nombre: " 
-					+ this.currentUCE.getUceNombre()
-					+"] "	+ ex2.getMessage() + " : " + ex2.getCause());
-			
-			String params[] = {this.currentUCE.getUceNombre().toString(), "Error al Agregar UsuarioCuentasEmail "
-						+ex2.getMessage()+"\n"+ex2.getCause() };	// nes 20101013			
-			agregarMensaje("53",ex2.getMessage(),params,FGPException.ERROR);	
-		
-			
+		} catch (UsuarioCuentasEmailException e) {
+			String message = "UsuarioCuentasEmailBean.agregar() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 //		return retorno;    //rrl 20110614 DEPENDENCIA NO NECESARIA
@@ -290,16 +271,8 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 			recargaListaUsuario(); 
 			
 		} catch (UsuarioCuentasEmailException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Borrar el UsuarioCuentasEmail: [ id = " 
-					+ this.currentUCE.getIdUce() + " ; Nombre: "
-					+ this.currentUCE.getUceNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.currentUCE.getIdUce() + ",", "Error al borrar UsuarioCuentasEmail "
-					+e.getMessage()+"\n"+e.getCause() }; // nes 20101013				
-			agregarMensaje("53",e.getMessage(),params,FGPException.ERROR);			
+			String message = "UsuarioCuentasEmailBean.borra() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 //		return retorno;    //rrl 20110614 DEPENDENCIA NO NECESARIA
@@ -366,12 +339,8 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 
 				 		
 		} catch (UsuarioCuentasEmailException e) {
-			logger.error("Ocurrio Un Error: No debe " 
-					+ e.getMessage() + " : " + e.getCause());
-		
-			String params[] = {this.currentUCE.getIdUce().toString(), "Ocurrio Un Error al tratar de obtener la lista de usuarios:" 
-				+ e.getMessage() + " : " + e.getCause() };
-			agregarMensaje("53",e.getMessage(),params,FGPException.ERROR);	
+			String message = "UsuarioCuentasEmailBean.changeUsuario() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 	}
 	
@@ -546,13 +515,8 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 												.obtenerUsuariosParaCombo("Seleccionar ...", null) );
 				
 			} catch (UsuarioException e) {
-				
-				logger.error("Ocurrio Un Error al tratar de obtener la lista de usuarios:" 
-							+ e.getMessage() + " : " + e.getCause());
-				
-				String params[] = {this.currentUCE.getIdUce().toString(), "Ocurrio Un Error al tratar de obtener la lista de usuarios:" 
-						+ e.getMessage() + " : " + e.getCause() };		
-				agregarMensaje("53",e.getMessage(),params,FGPException.ERROR);	
+				String message = "UsuarioCuentasEmailBean.getListaUsuarios() UsuarioException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
 		

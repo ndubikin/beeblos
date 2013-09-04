@@ -83,11 +83,11 @@ public class WProcessHeadManagedDataDao {
 			throw new WProcessHeadException("WProcessHeadDao:  delete - Can't delete proccess definition record  "+ managedTableDef.getName() +
 					" <id = "+managedTableDef.getHeadId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-//		} catch (WProcessHeadException ex1) {
+//		} catch (WProcessHeadException e) {
 //			logger.error("WProcessHeadDao: delete - Exception in deleting process rec "+ process.getName() +
-//					" <id = "+process.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+//					" <id = "+process.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 //			throw new WProcessHeadException("WProcessHeadDao: delete - Exception in deleting process rec "+ process.getName() +
-//					" <id = "+process.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+//					" <id = "+process.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

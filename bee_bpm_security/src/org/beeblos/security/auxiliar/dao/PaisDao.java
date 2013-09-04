@@ -89,9 +89,9 @@ public class PaisDao {
 
 			throw new PaisException(ex);
 
-		} catch (PaisException ex1) {
+		} catch (PaisException e) {
 
-			throw new PaisException(ex1);
+			throw new PaisException(e);
 
 		}
 

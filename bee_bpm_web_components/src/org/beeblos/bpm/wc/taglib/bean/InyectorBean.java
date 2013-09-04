@@ -1,5 +1,6 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_ANEXA_DEFAULT;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_LISTA_DEFAULT;
@@ -186,13 +187,11 @@ public class InyectorBean  extends CoreManagedBean {
 			}
 			
 		} catch (WStepSequenceDefException e) {
-			String mensaje = "changeProcess(): Error en la recuperacion del mapa del proceso ...";
-			agregarMensaje("60",mensaje,null,FGPException.WARN);
-			logger.info("changeProcess:"+mensaje);
+			String message = "InyectorBean.changeProcess(): Error en la recuperacion del mapa del proceso ...";
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDefException e) {
-			String mensaje = "changeProcess(): Error en la recuperación de la definición del proceso ...";
-			agregarMensaje("60",mensaje,null,FGPException.WARN);
-			logger.info("changeProcess:"+mensaje);
+			String message = "InyectorBean.changeProcess(): Error en la recuperación de la definición del proceso ...";
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return null;
@@ -251,38 +250,32 @@ public class InyectorBean  extends CoreManagedBean {
 
 			// setea el mensaje en pantalla al usuario
 		} catch (WStepWorkException e) {
-			String mensaje = e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("60",mensaje,params,FGPException.WARN);
-			throw new InyectorException( mensaje );
+			String message = "InyectorBean.launchWork() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			throw new InyectorException(message);
 			
 		} catch (AlreadyExistsRunningProcessException e) {
-			String mensaje = e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("60",mensaje,params,FGPException.WARN);
-			throw new InyectorException(mensaje);
+			String message = "InyectorBean.launchWork() AlreadyExistsRunningProcessException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			throw new InyectorException(message);
 			
 		} catch (InyectorException e) {
-			String mensaje = e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("60",mensaje,params,FGPException.WARN);
-			throw new InyectorException(mensaje);
+			String message = "InyectorBean.launchWork() InyectorException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			throw new InyectorException(message);
 			
 		} catch (WProcessWorkException e) {
-			String mensaje = "InyectorBean - inyectar: error intentando arrancar workflow: WProcessWorkException:"+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("60",mensaje,params,FGPException.WARN);
-			throw new InyectorException(mensaje);
+			String message = "InyectorBean.launchWork() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			throw new InyectorException(message);
 		} catch (TableManagerException e) {
-			String mensaje = "InyectorBean - inyectar: error intentando arrancar workflow: TableManagerException:"+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("60",mensaje,params,FGPException.WARN);
-			throw new InyectorException(mensaje);
+			String message = "InyectorBean.launchWork() TableManagerException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			throw new InyectorException(message);
 		} catch (WStepWorkSequenceException e) {
-			String mensaje = e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("60",mensaje,params,FGPException.WARN);
-			throw new InyectorException(mensaje);
+			String message = "InyectorBean.launchWork() WStepWorkSequenceException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			throw new InyectorException(message);
 		}
 		
 		return ret;

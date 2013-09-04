@@ -431,7 +431,7 @@ public class ComponentNavigator implements Serializable {
         	Class c = Class.forName(rutaBean);
         	CoreManagedBean newBean = (CoreManagedBean)c.newInstance();    
         	newBean.setGrupo(group);
-        	newBean.init();
+        	newBean.init_core();
         	map.put(beanName, newBean);
         	
         }catch(ClassNotFoundException e) {

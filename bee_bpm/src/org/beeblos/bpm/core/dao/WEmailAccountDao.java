@@ -89,11 +89,11 @@ public class WEmailAccountDao {
 					+ "> \n" + " - " + ex.getMessage());
 			throw new WEmailAccountException(ex);
 
-		} catch (WEmailAccountException ex1) {
+		} catch (WEmailAccountException e) {
 			logger.error("WEmailAccountDao: delete - The instance "
 					+ instance.getName() + " <id = " + instance.getId()
-					+ "> does not exist \n" + " - " + ex1.getMessage());
-			throw new WEmailAccountException(ex1);
+					+ "> does not exist \n" + " - " + e.getMessage());
+			throw new WEmailAccountException(e);
 
 		}
 

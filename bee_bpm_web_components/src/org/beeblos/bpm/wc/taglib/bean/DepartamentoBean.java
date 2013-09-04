@@ -1,6 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,18 +55,8 @@ public class DepartamentoBean extends CoreManagedBean {
 			.actualizar(departamento);
 		
 		} catch (DepartamentoException e) {
-			
-			logger.error("Ocurrio Un Error al tratar de Actualizar el Departamento: [ id = " 
-					+ this.departamento.getIdDepartamento() + " ; Nombre: "
-					+ this.departamento.getDepartamentoNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.departamento.getIdDepartamento() + ",", "Error al tratar de Actualizar el Departamento: [ id = " 
-					+ this.departamento.getIdDepartamento() + " ; Nombre: "
-					+ this.departamento.getDepartamentoNombre()
-					+"] "	+ e.getMessage() + " : " + e.getCause()};
-			agregarMensaje("48",e.getMessage(),params,FGPException.ERROR);	
-
+			String message = "DepartamentoBean. Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}
@@ -98,17 +90,9 @@ public class DepartamentoBean extends CoreManagedBean {
 
 				aBl.agregar(this.departamento);
 			
-			} catch (DepartamentoException ex1) {
-
-				logger.error("Ocurrio Un Error al tratar de Agregar el Departamento: Nombre: "
-						+ this.departamento.getDepartamentoNombre()
-						+"] "	+ ex1.getMessage() + " : " + ex1.getCause());
-				
-				String params[] = {this.departamento.getIdDepartamento() + ",", "Error al tratar de Agregar el Departamento: [ Nombre: "
-						+ this.departamento.getDepartamentoNombre()
-						+"] "	+ ex1.getMessage() + " : " + ex1.getCause()};
-				agregarMensaje("48",ex1.getMessage(),params,FGPException.ERROR);	
-					
+			} catch (DepartamentoException e) {
+				String message = "DepartamentoBean. Exception: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} 
 
 //			retorno = "SUCCESS_DEPARTAMENTO";    //rrl 20110614 DEPENDENCIA NO NECESARIA
@@ -121,15 +105,8 @@ public class DepartamentoBean extends CoreManagedBean {
 //				retorno = "SUCCESS_DEPARTAMENTO";    //rrl 20110614 DEPENDENCIA NO NECESARIA
 
 		} else {
-
-				logger.error("Ocurrio un Error al tratar de confirmar la presencia o no  del Departamento: [ id = " 
-					+ this.departamento.getIdDepartamento() + " ; Nombre: "
-						+ this.departamento.getDepartamentoNombre()
-						+"] ");
-				
-				String params[] = {this.departamento.getIdDepartamento() + ",", "Error al intentar actualizar el Departamento "+ departamento.toString() +" \n" };				
-				agregarMensaje("48","",params,FGPException.ERROR);	
-
+			String message = "DepartamentoBean. Exception";
+			super.createWindowMessage(ERROR_MESSAGE, message, null);
 		}
 
 		_reset()	;

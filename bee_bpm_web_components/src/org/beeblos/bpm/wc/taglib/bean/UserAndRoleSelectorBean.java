@@ -56,7 +56,7 @@ public class UserAndRoleSelectorBean extends CoreManagedBean {
 	}
 
 	public void init() {
-		super.init();
+		super.init_core();
 		
 		inicializeRoleListCombo();
 		inicializeUserListCombo();

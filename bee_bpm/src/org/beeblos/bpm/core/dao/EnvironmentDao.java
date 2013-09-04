@@ -80,14 +80,14 @@ public class EnvironmentDao {
 							+ environment.getName() + " <id = " + environment.getId() + "> \n"
 							+ " - " + ex.getMessage() + "\n" + ex.getCause());
 
-		} catch (EnvironmentException ex1) {
+		} catch (EnvironmentException e) {
 			logger.error("EnvironmentDao: delete - Exception in deleting environment rec "
 					+ environment.getName() + " <id = " + environment.getId()
-					+ "> not stored \n" + " - " + ex1.getMessage() + "\n" + ex1.getCause());
+					+ "> not stored \n" + " - " + e.getMessage() + "\n" + e.getCause());
 			throw new EnvironmentException(
 					"EnvironmentDao: delete - Exception in deleting environment rec "
 							+ environment.getName() + " <id = " + environment.getId()
-							+ "> not stored \n" + " - " + ex1.getMessage() + "\n" + ex1.getCause());
+							+ "> not stored \n" + " - " + e.getMessage() + "\n" + e.getCause());
 
 		}
 

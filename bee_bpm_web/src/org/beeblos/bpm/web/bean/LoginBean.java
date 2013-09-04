@@ -1,5 +1,7 @@
 package org.beeblos.bpm.web.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+
 import javax.faces.application.FacesMessage;
 
 import org.apache.commons.logging.Log;
@@ -74,15 +76,13 @@ public class LoginBean extends CoreManagedBean {
 
 			} else {
 				
-				agregarMensaje(FacesMessage.SEVERITY_ERROR,
-						"errorAutenticacion",null);
+				super.createWindowMessage(ERROR_MESSAGE, "errorAutenticacion", null);
+				
 			}
 
 		} catch (UsuarioException ex) {
 			
-			agregarMensaje(FacesMessage.SEVERITY_ERROR,
-					"errorAutenticacion",null);
-			
+			super.createWindowMessage(ERROR_MESSAGE, "errorAutenticacion", null);
 			logger.info("Error al Autenticar un Usuario: "+ex.getMessage());
 		}
 

@@ -1,5 +1,6 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.PASS_PHRASE;
@@ -172,12 +173,8 @@ public class WEmailAccountBean extends CoreManagedBean {
 					.getWEmailAccountList();				
 				 		
 		} catch (WEmailAccountException e) {
-			logger.error("Ocurrio Un Error: No debe " 
-					+ e.getMessage() + " : " + e.getCause());
-		
-			String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
-				+ e.getMessage() + " : " + e.getCause() };
-			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
+			String message = "WEmailAccountBean.loadWEmailAccountLists() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		
@@ -236,12 +233,9 @@ public class WEmailAccountBean extends CoreManagedBean {
 	public String save() {
 		
 		if (idUser==null || idUser==0) {
-			//martin - 20100930
-			logger.error("Ocurrio Un Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario [ Nombre: "
-					+ this.currEmailAccount.getName());
-			
-			String params[] = {this.currEmailAccount.getName() + ",", "Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario." }; // nes 20101013				
-			agregarMensaje("211",null,params,FGPException.ERROR);	
+			String message = "Ocurrio Un Error: La Cuenta de Correo a almacenar debe estar asociado a un usuario [ Nombre: "
+					+ this.currEmailAccount.getName();
+			super.createWindowMessage(ERROR_MESSAGE, message, null);
 		} else { 
 			
 			if (id!=null && id!=0) {
@@ -328,16 +322,8 @@ public class WEmailAccountBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (WEmailAccountException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Actualizar el WEmailAccount: [ id = " 
-					+ this.currEmailAccount.getId() + " ; Nombre: "
-					+ this.currEmailAccount.getName()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.currEmailAccount.getId() + ",", "Error al actualizar WEmailAccount "+e.getMessage()+"\n"+e.getCause() }; // nes 20101013				
-			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);		
-			
+			String message = "WEmailAccountBean.actualizar() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return retorno;
@@ -384,28 +370,10 @@ public class WEmailAccountBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
 			
-		} catch (WEmailAccountException ex2) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de Agregar el WEmailAccount: [Nombre: " 
-					+ this.currEmailAccount.getName()
-					+"] "	+ ex2.getMessage() + " : " + ex2.getCause());
-			
-			String params[] = {this.currEmailAccount.getName().toString(), "Error al Agregar WEmailAccount "
-						+ex2.getMessage()+"\n"+ex2.getCause() };	// nes 20101013			
-			agregarMensaje("211",ex2.getMessage(),params,FGPException.ERROR);	
-		
-			
-/*		} catch (WUserDefException ex3) {
-
-			logger.error("Ocurrio Un Error al tratar de cargar el WUserDef: [Nombre: " 
-					+ this.currEmailAccount.getName()
-					+"] "	+ ex3.getMessage() + " : " + ex3.getCause());
-			
-			String params[] = {this.currEmailAccount.getName().toString(), "Error al Agregar WEmailAccount "
-						+ex3.getMessage()+"\n"+ex3.getCause() };	// nes 20101013			
-			agregarMensaje("211",ex3.getMessage(),params,FGPException.ERROR);	
-*/		} 
+		} catch (WEmailAccountException e) {
+			String message = "WEmailAccountBean.agregar() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} 
 
 		return retorno;
 
@@ -454,16 +422,8 @@ public class WEmailAccountBean extends CoreManagedBean {
 			recargaListaUsuario(); 
 			
 		} catch (WEmailAccountException e) {
-
-			//martin - 20100930
-			logger.error("Ocurrio Un Error al tratar de delete el WEmailAccount: [ id = " 
-					+ this.currEmailAccount.getId() + " ; Nombre: "
-					+ this.currEmailAccount.getName()
-					+"] "	+ e.getMessage() + " : " + e.getCause());
-			
-			String params[] = {this.currEmailAccount.getId() + ",", "Error al delete WEmailAccount "
-					+e.getMessage()+"\n"+e.getCause() }; // nes 20101013				
-			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);			
+			String message = "WEmailAccountBean.delete() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return retorno;
@@ -641,13 +601,8 @@ public class WEmailAccountBean extends CoreManagedBean {
 				this.wUserDefList = UtilsVs.castStringPairToSelectitem(new WUserDefBL()
 												.getComboList(null, null));
 			} catch (WUserDefException e) {
-				
-				logger.error("Ocurrio Un Error al tratar de get la lista de usuarios:" 
-							+ e.getMessage() + " : " + e.getCause());
-				
-				String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
-						+ e.getMessage() + " : " + e.getCause() };		
-				agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
+				String message = "WEmailAccountBean.getwUserDefList() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
 		
@@ -825,12 +780,8 @@ public class WEmailAccountBean extends CoreManagedBean {
 			this.id = 0;
 				 		
 		} catch (WEmailAccountException e) {
-			logger.error("Ocurrio Un Error: No debe " 
-					+ e.getMessage() + " : " + e.getCause());
-		
-			String params[] = {this.currEmailAccount.getId().toString(), "Ocurrio Un Error al tratar de get la lista de usuarios:" 
-				+ e.getMessage() + " : " + e.getCause() };
-			agregarMensaje("211",e.getMessage(),params,FGPException.ERROR);	
+			String message = "WEmailAccountBean.searchWEmailAccount() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 	}

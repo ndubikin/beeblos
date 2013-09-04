@@ -1,6 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.NONE;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
@@ -368,21 +369,19 @@ public class PasoBean  extends CoreManagedBean {
 		if (lRespuestasCombo!=null && lRespuestasCombo.size()>0 ) {
 			if (idRespuesta==null || idRespuesta==0) {
 				
-				String mensaje = "Debe indicar una respuesta válida para que se pueda procesar el paso";
-				String params[] = {mensaje + ",", ".Por favor, confirme los valores ingresados." };		
-				agregarMensaje("62",mensaje,params,FGPException.WARN);
-				logger.info(mensaje);
+				String message = "Debe indicar una respuesta válida para que se pueda procesar el paso";
+				super.createWindowMessage(ERROR_MESSAGE, message, null);
+				logger.info(message);
 				return PROCESS_TASK;
 				
 			}
 		}
 		
 		if  ( controlPasoHacambiadoEstado() ) {
-			String mensaje = "Este paso ha cambiado el estado mientras usted lo tenia en procesamiento. Avise al administrador id:["
+			String message = "Este paso ha cambiado el estado mientras usted lo tenia en procesamiento. Avise al administrador id:["
 							+pasoActual.getId()+"]";
-			String params[] = {mensaje + ",", ".Por favor, confirme los valores ingresados." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.error(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, null);
+			logger.info(message);
 			return PROCESS_TASK;
 			
 		}
@@ -392,10 +391,9 @@ public class PasoBean  extends CoreManagedBean {
 			//rrl 20120619 si existe guardar personalizado, se ejecuta
 			if ( isCustomSave() ) { 
 				if ( ! customSave() ) {
-					String mensaje = "Error al intentar guardar personalizado el paso actual ...";
-					String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };		
-					agregarMensaje("62",mensaje,params,FGPException.WARN);
-					logger.info(mensaje);
+					String message = "Error al intentar guardar personalizado el paso actual ...";
+					super.createWindowMessage(ERROR_MESSAGE, message, null);
+					logger.info(message);
 					return PROCESS_TASK;					
 				}
 			}
@@ -403,10 +401,9 @@ public class PasoBean  extends CoreManagedBean {
 			// si se definió una custom validation la ejecuta y si no valida sale con error
 			if ( pasoActual.getCurrentStep().isCustomValidation()) { 
 				if ( ! customValidationOK() ) {
-					String mensaje = "Faltan completar datos para poder procesar el paso. Por favor revise las tareas requeridas y asegurese que ha realizado todo correctamente ...";
-					String params[] = {mensaje + ",", "" };		
-					agregarMensaje("62",mensaje,params,FGPException.WARN);
-					logger.info(mensaje);
+					String message = "Faltan completar datos para poder procesar el paso. Por favor revise las tareas requeridas y asegurese que ha realizado todo correctamente ...";
+					super.createWindowMessage(ERROR_MESSAGE, message, null);
+					logger.info(message);
 					return PROCESS_TASK;					
 				}
 			}
@@ -439,76 +436,78 @@ public class PasoBean  extends CoreManagedBean {
 
 		} catch (WStepSequenceDefException e) {
 
-			String mensaje = "Error al intentar obtener la lista de rutas para avanzar al siguiente paso: "
+			String message = "Error al intentar obtener la lista de rutas para avanzar al siguiente paso: "
 							+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
 			ret=null;
 
 		} catch (WStepWorkException e) {
 
-			String mensaje = "Error al intentar establecer el paso actual como 'procesado' : "
+			String message = "Error al intentar establecer el paso actual como 'procesado' : "
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
 			ret=null;
 
 		} catch (WStepDefException e) {
 			
-			String mensaje = "Error al intentar establecer el próximo paso - No se puede leer la definición de la base de datos ... : "
+			String message = "Error al intentar establecer el próximo paso - No se puede leer la definición de la base de datos ... : "
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
 			ret=null;
 
 		} catch (WStepLockedByAnotherUserException e) {
 
-			String mensaje = "El paso está bloqueado por otro usuario."
+			String message = "El paso está bloqueado por otro usuario."
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", "\nPara procesarlo debe salir y seleccionarlo nuevamente de la tarea en la lista de tareas ... \n Si el problema persiste avise al administrador del sistema ..." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
 			ret=null;
 
 		} catch (WStepAlreadyProcessedException e) {
 
-			String mensaje = "Esta tarea ya se ha procesado ..."
-				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", "\nSi piensa que es un error, por favor anote los datos y avise al administrador del sistema ..." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			String message = "Esta tarea ya se ha procesado. Si piensa que es un error, por favor anote los datos y avise al administrador del sistema ...";		
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
+			logger.info(message);
 			ret=null;
 		} catch (CustomValidationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+					+e.getMessage()+" - "+e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				logger.info(message);
+				ret=null;
 		} catch (WProcessDefException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+					+e.getMessage()+" - "+e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				logger.info(message);
+				ret=null;
 		} catch (WStepNotLockedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+					+e.getMessage()+" - "+e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				logger.info(message);
+				ret=null;
 		} catch (WUserDefException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+					+e.getMessage()+" - "+e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				logger.info(message);
+				ret=null;
 		} catch (CustomSaveException e) {
-			e.printStackTrace();
-			String mensaje = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
 			ret=null;
 		} catch (WStepWorkSequenceException e) {
-			e.printStackTrace();
-			String mensaje = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
 			ret=null;
 		}
 				
@@ -527,10 +526,9 @@ public class PasoBean  extends CoreManagedBean {
 			//rrl 20120619 si existe guardar personalizado, se ejecuta
 			if ( isCustomSave() ) { 
 				if ( ! customSave() ) {
-					String mensaje = "Error al intentar guardar personalizado el paso actual ...";
-					String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };		
-					agregarMensaje("62",mensaje,params,FGPException.WARN);
-					logger.info(mensaje);
+					String message = "Error al intentar guardar personalizado el paso actual. Por favor, anote la referencia de la tarea y avise a soporte.";		
+					super.createWindowMessage(ERROR_MESSAGE, message, null);
+					logger.info(message);
 					return PROCESS_TASK;					
 				}
 			}
@@ -548,19 +546,14 @@ public class PasoBean  extends CoreManagedBean {
 			
 		} catch (WStepWorkException e) {
 			
-			String mensaje = "PasoBean:guardar WStepWorkException Error al intentar guardar el paso: "
+			String message = "PasoBean:guardar WStepWorkException Error al intentar guardar el paso: "
 					+e.getMessage()+" - "+e.getCause();
-				String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };		
-				agregarMensaje("62",mensaje,params,FGPException.WARN);
-				logger.error(mensaje);
-				
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (CustomSaveException e) {
 			e.printStackTrace();
-			String mensaje = "PasoBean:guardar CustomSaveException Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+			String message = "PasoBean:guardar CustomSaveException Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		System.out.println("---------->>> guardar <<<-------------");
@@ -577,10 +570,8 @@ public class PasoBean  extends CoreManagedBean {
 		//rrl y nestor 20111222
 		if ( pasoActual.getPreviousStep()==null || pasoActual.getPreviousStep().getId()==null || 
                  pasoActual.getPreviousStep().getId().equals(0) ) {
-	        String mensaje = "Error no se puede devolver porque no hay paso previo en el workflow  id:["+pasoActual.getId()+"]";
-            String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };                
-            agregarMensaje("62",mensaje,params,FGPException.WARN);
-            logger.error(mensaje);
+	        String message = "Error no se puede devolver porque no hay paso previo en el workflow  id:["+pasoActual.getId()+"] . Por favor, anote la referencia de la tarea y avise a soporte." ;                
+			super.createWindowMessage(ERROR_MESSAGE, message, null);
            	return PROCESS_TASK;
 		}
 
@@ -600,7 +591,7 @@ public class PasoBean  extends CoreManagedBean {
 			_startReturnedWorkitem( now ); 
 
 			// set bean to show message and refresh list
-			// antes de limpiar cargo el mensaje que voy a mostrar
+			// antes de limpiar cargo el message que voy a mostrar
 			this.mensajeProceso=	this.pasoActual.getwProcessWork().getReference()+" - "
 									+ pasoActual.getwProcessWork().getComments()+ "\n ("
 									+ pasoActual.getCurrentStep().getName()+") \n ("
@@ -628,7 +619,7 @@ public class PasoBean  extends CoreManagedBean {
 
 			
 			// set bean to show message and refresh list
-			// antes de limpiar cargo el mensaje que voy a mostrar
+			// antes de limpiar cargo el message que voy a mostrar
 			setMensajeproceso();
 						
 			_limpiarVariablesDelBean();
@@ -640,39 +631,29 @@ public class PasoBean  extends CoreManagedBean {
 
 		} catch (WStepWorkException e) {
 
-			String mensaje = "Error al intentar establecer el paso actual como 'procesado' : "
+			String message = "Error al intentar establecer el paso actual como 'procesado' : "
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			ret=null;
-
 		} catch (WStepDefException e) {
 			
-			String mensaje = "Error al intentar establecer el próximo paso - No se puede leer la definición de la base de datos ... : "
+			String message = "Error al intentar establecer el próximo paso - No se puede leer la definición de la base de datos ... : "
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", ".Por favor, anote la referencia de la tarea y avise a soporte." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			ret=null;
 
 		} catch (WStepLockedByAnotherUserException e) {
 
-			String mensaje = "El paso está bloqueado por otro usuario."
+			String message = "El paso está bloqueado por otro usuario."
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", "\nPara procesarlo debe salir y seleccionarlo nuevamente de la tarea en la lista de tareas ... \n Si el problema persiste avise al administrador del sistema ..." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			ret=null;
 
 		} catch (WStepAlreadyProcessedException e) {
 
-			String mensaje = "Esta tarea ya se ha procesado ..."
+			String message = "Esta tarea ya se ha procesado ..."
 				+e.getMessage()+" - "+e.getCause();
-			String params[] = {mensaje + ",", "\nSi piensa que es un error, por favor anote los datos y avise al administrador del sistema ..." };		
-			agregarMensaje("62",mensaje,params,FGPException.WARN);
-			logger.info(mensaje);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			ret=null;
 		} catch (WProcessDefException e) {
 			// TODO Auto-generated catch block

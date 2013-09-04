@@ -80,11 +80,11 @@ public class WTimeUnitDao {
 			throw new WTimeUnitException("WTimeUnitDao:  delete - Can't delete proccess definition record  "+ timeUnit.getName() +
 					" <id = "+timeUnit.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WTimeUnitException ex1) {
+		} catch (WTimeUnitException e) {
 			logger.error("WTimeUnitDao: delete - Exception in deleting timeUnit rec "+ timeUnit.getName() +
-					" <id = "+timeUnit.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+timeUnit.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WTimeUnitException("WTimeUnitDao: delete - Exception in deleting timeUnit rec "+ timeUnit.getName() +
-					" <id = "+timeUnit.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+timeUnit.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

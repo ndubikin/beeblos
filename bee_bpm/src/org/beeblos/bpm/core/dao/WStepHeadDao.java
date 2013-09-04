@@ -83,13 +83,13 @@ public class WStepHeadDao {
 							+ step.getName() + " <id = " + step.getId() + "> \n" + " - "
 							+ ex.getMessage() + "\n" + ex.getCause());
 
-		} catch (WStepHeadException ex1) {
+		} catch (WStepHeadException e) {
 			logger.error("WStepHeadDao: delete - Exception in deleting step rec " + step.getName()
 					+ " <id = " + step.getId() + "> no esta almacenada \n" + " - "
-					+ ex1.getMessage() + "\n" + ex1.getCause());
+					+ e.getMessage() + "\n" + e.getCause());
 			throw new WStepHeadException("WStepHeadDao: delete - Exception in deleting step rec "
 					+ step.getName() + " <id = " + step.getId() + "> not stored \n" + " - "
-					+ ex1.getMessage() + "\n" + ex1.getCause());
+					+ e.getMessage() + "\n" + e.getCause());
 
 		}
 

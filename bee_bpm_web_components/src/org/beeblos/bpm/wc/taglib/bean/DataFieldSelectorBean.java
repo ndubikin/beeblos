@@ -46,7 +46,7 @@ public class DataFieldSelectorBean extends CoreManagedBean {
 	}
 
 	public void init() {
-		super.init();
+		super.init_core();
 		
 		processHeadId=null;
 		selectedAllDataFields=false;

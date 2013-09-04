@@ -278,10 +278,10 @@ public class UsuarioBean extends CoreManagedBean {
 //				}
 //
 //			}
-//		} catch (UsuarioInsertException ex1) {
+//		} catch (UsuarioInsertException e) {
 //
 //			logger.info("Ocurrio Un Error al tratar de insetar un Usuario: "
-//					+ ex1.getMessage());
+//					+ e.getMessage());
 //
 //		} catch (UsuarioException ex2) {
 //

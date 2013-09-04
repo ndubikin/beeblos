@@ -10,7 +10,7 @@
 	<ui:define name="current">consultaUsuarioLogin</ui:define>
 	<ui:define name="body">
 
-	<ui:include src="/common/errorPanel.xhtml" />
+	<h:messages  style="#{consultaUsuarioLoginBean.messageStyle}"/>
 
 	<rich:tabPanel switchType="server" 
 			selectedTab="#{componentNavigator.currentComponent.activeTab}"

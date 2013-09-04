@@ -86,10 +86,10 @@ public class MonedaDao {
 			
 			throw new MonedaException(ex);
 
-		} catch (MonedaException ex1) {
+		} catch (MonedaException e) {
 			logger.error("MonedaDao: borrar - La moneda "+ moneda.getMonedaNombre() +
-					" <id = "+moneda.getIdMoneda()+ "> no esta almacenada \n"+" - "+ex1.getMessage() );
-			throw new MonedaException(ex1);
+					" <id = "+moneda.getIdMoneda()+ "> no esta almacenada \n"+" - "+e.getMessage() );
+			throw new MonedaException(e);
 
 		} 
 

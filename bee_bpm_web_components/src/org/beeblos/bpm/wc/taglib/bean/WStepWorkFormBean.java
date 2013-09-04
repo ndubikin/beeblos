@@ -1,5 +1,6 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
 import java.util.TimeZone;
@@ -54,7 +55,7 @@ public class WStepWorkFormBean extends CoreManagedBean {
 	}
 
 	public void init() {
-		super.init();
+		super.init_core();
 
 		setShowHeaderMessage(false);
 
@@ -293,19 +294,15 @@ public class WStepWorkFormBean extends CoreManagedBean {
 			ret = "OK";
 			setShowHeaderMessage(true);
 
-		} catch (WStepWorkException ex1) {
-
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { message + ",", ".Please confirm input values." };
-			agregarMensaje("207", message, params, FGPException.ERROR);
+		} catch (WStepWorkException e) {
+			String message = "WStepWorkFormBean.add() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WStepWorkException(message);
 
 		} catch (Exception e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error inserting object ..." };
-			agregarMensaje("207", message, params, FGPException.ERROR);
+			String message = "WStepWorkFormBean.add() Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WStepWorkException(message);
 
@@ -332,18 +329,10 @@ public class WStepWorkFormBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			ret = "OK";
 
-		} catch (WStepWorkException ex1) {
+		} catch (WStepWorkException e) {
 
-			String message = "Error updating object: "
-					+ currentWStepWork.getId() + "\n" + ex1.getMessage() + "\n"
-					+ ex1.getCause();
-
-			logger.error(message);
-
-			String params[] = { message + ",", ".Please confirm input values." };
-			agregarMensaje("207", message, params, FGPException.ERROR);
-
-			logger.error(message);
+			String message = "WStepWorkFormBean.update() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 		}
 
@@ -375,9 +364,9 @@ public class WStepWorkFormBean extends CoreManagedBean {
 
 			recoverNullObjects();
 
-		} catch (WStepWorkException ex1) {
+		} catch (WStepWorkException e) {
 			logger.error("Error retrieving object: " + currentWStepWork.getId()
-					+ " : " + ex1.getMessage() + " - " + ex1.getCause());
+					+ " : " + e.getMessage() + " - " + e.getCause());
 		}
 	}
 

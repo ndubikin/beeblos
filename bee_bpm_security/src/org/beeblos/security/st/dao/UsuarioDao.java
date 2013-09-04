@@ -137,9 +137,9 @@ public class UsuarioDao {
 
 			throw new UsuarioException(ex);
 
-		} catch (UsuarioException ex1) {
+		} catch (UsuarioException e) {
 
-			throw new UsuarioException(ex1);
+			throw new UsuarioException(e);
 
 		}
 

@@ -1,5 +1,6 @@
 package org.beeblos.bpm.web.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.CONSULTA_TAREA;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
@@ -90,11 +91,8 @@ public class ConsultaTareaBean extends CoreManagedBean {
 								new WProcessDefBL().getComboList("Todos ...", null, usuarioLogueado));
 			
 		} catch (WProcessDefException e) {
-			String mensaje= "Ocurrio Un Error al tratar de obtener la lista de procesos:" 
-								+ e.getMessage() + " : " + e.getCause();
-			logger.error(mensaje);
-			String params[] = {"", mensaje };			
-			agregarMensaje("61",e.getMessage(),params,FGPException.ERROR);	
+			String message = "ConsultaTareaBean._init() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		try {
@@ -138,43 +136,28 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			nResultadosDepto4=0;
 			
 		} catch (CantLockTheStepException e) {
-			
-			String mensaje = "No se puede reservar la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.cargarPaso() CantLockTheStepException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+
 			retorno=FAIL;
 			
 		} catch (WStepLockedByAnotherUserException e) {
-			
-			String mensaje = "La tarea indicada está bloqueada por otro usuario ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.cargarPaso() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+
 			retorno=FAIL;
 			
 		} catch (WStepWorkException e) {
-			
-			String mensaje = "No se puede cargar la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.cargarPaso() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+
 			retorno=FAIL;
 			
 		} catch (WUserDefException e) {
-
-			String mensaje = "No se puede cargar el usuario indicado ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.cargarPaso() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			
+			retorno=FAIL;
 			
 		}
 
@@ -199,43 +182,28 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			nResultadosDepto4=0;
 			
 		} catch (CantLockTheStepException e) {
-			
-			String mensaje = "No se puede desbloquear la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.desbloquear() CantLockTheStepException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+
 			retorno=FAIL;
 			
 		} catch (WStepLockedByAnotherUserException e) {
-			
-			String mensaje = "La tarea indicada está bloqueada por otro usuario ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.desbloquear() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+
 			retorno=FAIL;
 			
 		} catch (WStepWorkException e) {
-			
-			String mensaje = "No se puede cargar la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.desbloquear() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+
 			retorno=FAIL;
 			
 		} catch (WUserDefException e) {
-
-			String mensaje = "No se puede cargar el usuario indicado ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.desbloquear() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		
+			retorno=FAIL;
 			
 		}
 
@@ -257,41 +225,18 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			nResultadosDepto4=0;
 			
 		} catch (CantLockTheStepException e) {
-			
-			String mensaje = "No se puede desbloquear la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() CantLockTheStepException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 		} catch (WStepLockedByAnotherUserException e) {
-			
-			String mensaje = "La tarea indicada está bloqueada por otro usuario ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
-			
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepWorkException e) {
-			
-			String mensaje = "No se puede cargar la tarea indicada ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
-			
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WUserDefException e) {
-
-			String mensaje = "No se puede cargar el usuario indicado ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			String params[] = {mensaje};
-			agregarMensaje("61",mensaje,params,FGPException.WARN);
-			logger.info("cargarPaso: "+mensaje);
-			//throw new TareaException( mensaje );
-			
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
 		return null;		

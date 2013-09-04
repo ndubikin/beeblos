@@ -80,10 +80,10 @@ public class UsuarioCuentasEmailDao {
 					" <id = "+instancia.getIdUce()+ "> \n"+" - "+ex.getMessage() );
 			throw new UsuarioCuentasEmailException(ex);
 
-		} catch (UsuarioCuentasEmailException ex1) {
+		} catch (UsuarioCuentasEmailException e) {
 			logger.error("UsuarioCuentasEmailDao: borrar - La instancia "+ instancia.getUceNombre() +
-					" <id = "+instancia.getIdUce()+ "> no esta almacenada \n"+" - "+ex1.getMessage() );
-			throw new UsuarioCuentasEmailException(ex1);
+					" <id = "+instancia.getIdUce()+ "> no esta almacenada \n"+" - "+e.getMessage() );
+			throw new UsuarioCuentasEmailException(e);
 
 		} 
 

@@ -1,5 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+
 import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
@@ -57,7 +59,7 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 	}
     
 	public void init(){
-		super.init();
+		super.init_core();
 		
 		setShowHeaderMessage(false);  
 		
@@ -212,19 +214,16 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 			ret="OK";
 			setShowHeaderMessage(true);
 			
-		} catch (ObjectException ex1) {
+		} catch (ObjectException e) {
+			String message = "ComplexObjectManagementBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
-			String message = ex1.getMessage() + " - "+ ex1.getCause();
-			String params[] = {message + ",", ".Please confirm input values." };				
-			agregarMensaje("1001",message,params,FGPException.ERROR);	
-			
 			throw new ObjectException(message);			
 			
 		} catch (Exception e) {
 			
-			String message = e.getMessage() + " - "+ e.getCause();
-			String params[] = {message + ",", ".Error inserting object ..." };
-			agregarMensaje("1001",message,params ,FGPException.ERROR);
+			String message = "ComplexObjectManagementBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new ObjectException(message);			
 			
@@ -255,22 +254,16 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			ret="OK";
 
-		} catch (ObjectException ex1) {
+		} catch (ObjectException e) {
 
 			String message = "Error updating object: "
 					+ currentObject.getId()
 					+ " - "
 					+ currentObject.getName()
 					+ "\n"
-					+ ex1.getMessage() + "\n" + ex1.getCause();
+					+ e.getMessage() + "\n" + e.getCause();
 			
-			logger.error(message);
-			
-			String params[] = {message + ",", ".Please confirm input values." };				
-			agregarMensaje("1001",message,params,FGPException.ERROR);	
-
-			logger.error(message);
-			
+			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 		
 		return ret;
@@ -301,13 +294,13 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 				// etc etc
 			}
 
-		} catch (ObjectException ex1) {
+		} catch (ObjectException e) {
 			logger.error("Error retrieving object: "
 							+ currentObject.getId()
 							+ " : "
-							+ ex1.getMessage()
+							+ e.getMessage()
 							+ " - "
-							+ ex1.getCause());
+							+ e.getCause());
 		}			
 	}
 	

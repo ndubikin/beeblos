@@ -1,5 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -53,7 +56,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	// dml 20120202
 	private String sessionName;
 	private String valueBtn;
-	private String messageStyle;
 	
 	// dml 20120203
 	private boolean recordIsLoaded;
@@ -80,7 +82,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 	public void init() {
 		
-		super.init();
+		super.init_core();
 		setShowHeaderMessage(false);
 		
 		this.loadHibernateConfigurationParametersList(); 
@@ -144,11 +146,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			
 			this.envTypeComboList = new ArrayList<SelectItem>();			
 			
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "EnvTypeException: Method _loadEnvTypeComboList in HibernateConfigurationBean: ";
-			agregarMensaje(message);
-			logger.error(message);				
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 		}
 		
@@ -171,11 +170,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		} else  {
 			
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "Cannot insert an empty session name ";
-			agregarMensaje(message);
-			logger.error(message);
+			super.createWindowMessage(ERROR_MESSAGE, message, null);
 			
 		}
 		return returnValue;
@@ -211,56 +207,40 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 			} else {
 				
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
 				String message = "Element to update cannot be found: Method update in HibernateConfigurationBean: ";
-				agregarMensaje(message);
-				logger.error(message);				
+				super.createWindowMessage(ERROR_MESSAGE, message, null);
 				
 			}
 			
 			String message = setUpdateOkMessage();
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			_reset();
 			this.loadHibernateConfigurationParametersList();
 			
 		} catch (MarshalException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "MarshalException: Method update in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 		} catch (ValidationException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "ValidationException: Method update in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 		} catch (IOException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "IOException: Method update in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 		} catch (EnvironmentException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "EnvironmentException: Method update in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 		} 
 
@@ -283,48 +263,31 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 							this.hibernateConfigurationParametersList, getCurrentUserId());
 
 			String message = setAddOkMessage(sessionName);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 
 			_reset();
 			this.loadHibernateConfigurationParametersList();
 
 		} catch (MarshalException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "MarshalException: Method add in HibernateConfigurationBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "ValidationException: Method add in HibernateConfigurationBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (IOException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "IOException: Method add in HibernateConfigurationBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "EnvironmentException: Method add in HibernateConfigurationBean: "
 					+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -343,12 +306,8 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			 
 			if (currentHibernateConfigurationParameters.isDefaultConfiguration()){
 			
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
 				String message = " It is not possible to delete the default configuration. ";
-				agregarMensaje(message);
-				logger.error(message);				
-				
+				super.createWindowMessage(ERROR_MESSAGE, message, null);
 			} else {
 
 				this.hibernateConfigurationParametersList.remove(this.currentHibernateConfigurationParameters);
@@ -359,8 +318,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				// set ok message 
 				String message = getDeleteOkMessage(currentHibernateConfigurationParameters.getSessionName()); 
 				logger.info(message);
-				agregarMensaje(message);
-				setShowHeaderMessage(true);
+				super.createWindowMessage(OK_MESSAGE, message, null);
 	
 				_reset();
 				this.loadHibernateConfigurationParametersList();
@@ -369,40 +327,24 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			
 		} catch (MarshalException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "MarshalException: Method delete in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "ValidationException: Method delete in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (IOException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "IOException: Method delete in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "EnvironmentException: Method delete in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}  
 
 		return returnValue;
@@ -431,40 +373,24 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 			} catch (MarshalException e) {
 
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
 				String message = "MarshalException: Method loadRecord in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				agregarMensaje(message);
-				logger.error(message);
-
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (ValidationException e) {
 
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
 				String message = "ValidationException: Method loadRecord in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				agregarMensaje(message);
-				logger.error(message);
-
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (FileNotFoundException e) {
 
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
 				String message = "FileNotFoundException: Method loadRecord in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				agregarMensaje(message);
-				logger.error(message);
-
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (EnvironmentException e) {
 
-				setMessageStyle(errorMessageStyle());
-				setShowHeaderMessage(true);
 				String message = "EnvironmentException: Method loadRecord in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				agregarMensaje(message);
-				logger.error(message);
-
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} 
 
 		}
@@ -484,40 +410,24 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		} catch (MarshalException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "MarshalException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "ValidationException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "EnvironmentException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (FileNotFoundException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "FileNotFoundException: Method loadHibernateConfigurationParametersList in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 		
 	}
@@ -567,14 +477,6 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		} else {
 			this.valueBtn = "Save";
 		}
-	}
-
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
 	}
 
 	public BeeblosAttachment getAttachment() {
@@ -642,40 +544,29 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			if(HibernateUtil.checkJDBCConnection(currentHibernateConfigurationParameters)) {
 				
 				String message = setGoodConfiguration();
-				agregarMensaje(message);
-				setShowHeaderMessage(true);
+				super.createWindowMessage(OK_MESSAGE, message, null);
 
 			} else {
 				
-				setMessageStyle(errorMessageStyle());
 				String message = setWrongConfiguration();
-				agregarMensaje(message);
-				setShowHeaderMessage(true);
+				super.createWindowMessage(ERROR_MESSAGE, message, null);
 				
 			}
 			
 		} catch (ClassNotFoundException e) {
 
-			setMessageStyle(errorMessageStyle());
 			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-			setShowHeaderMessage(true);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (SQLException e) {
 
-			setMessageStyle(errorMessageStyle());
 			String message= "SQLException: Method checkConfiguration in HibernateConfigurationBean: ";
 			if (e.getErrorCode() == 0){
 				message+="It is imposible to connect with this URL";
 			} else if (e.getErrorCode() == 1045){
 				message+="The user/password are incorrect";
 			}
-			agregarMensaje(message);
-			logger.error(message);
-			setShowHeaderMessage(true);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}
@@ -758,8 +649,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	
 				String message = "ClassNotFoundException: Method isValidConfiguration in HibernateConfigurationBean: "
 									+ e.getMessage() + " - " + e.getCause();
-				logger.error(message);
-	
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (SQLException e) {
 	
 				String message= "SQLException: Method isValidConfiguration in HibernateConfigurationBean: ";
@@ -768,8 +658,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				} else if (e.getErrorCode() == 1045){
 					message+="The user/password are incorrect";
 				}
-				logger.error(message);
-	
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
 		}
@@ -799,44 +688,28 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 				
 			String message = getUpdatedDefaultConfiguration(); 
 			logger.info(message);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 
 		} catch (MarshalException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "MarshalException: Method setDefaultConfiguration in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "ValidationException: Method setDefaultConfiguration in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (IOException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "IOException: Method setDefaultConfiguration in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);		
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			setMessageStyle(errorMessageStyle());
-			setShowHeaderMessage(true);
 			String message = "EnvironmentException: Method setDefaultConfiguration in HibernateConfigurationBean: "
 								+ e.getMessage() + " - " + e.getCause();
-			agregarMensaje(message);
-			logger.error(message);
-
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 			
 		

@@ -81,11 +81,11 @@ public class WStepResponseDefDao {
 			throw new WStepResponseDefException("WStepResponseDefDao:  delete - Can't delete proccess definition record  "+ response.getName() +
 					" <id = "+response.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WStepResponseDefException ex1) {
+		} catch (WStepResponseDefException e) {
 			logger.error("WStepResponseDefDao: delete - Exception in deleting response rec "+ response.getName() +
-					" <id = "+response.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+response.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WStepResponseDefException("WStepResponseDefDao: delete - Exception in deleting response rec "+ response.getName() +
-					" <id = "+response.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+response.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

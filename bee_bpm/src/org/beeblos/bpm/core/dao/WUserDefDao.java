@@ -81,11 +81,11 @@ public class WUserDefDao {
 			throw new WUserDefException("WUserDefDao:  delete - Can't delete user definition record  " +
 					" <id = "+userId+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WUserDefException ex1) {
+		} catch (WUserDefException e) {
 			logger.error("WUserDefDao: delete - Exception in deleting user rec "+ 
-					" <id = "+userId+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+userId+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WUserDefException("WUserDefDao: delete - Exception in deleting user rec "+ 
-					" <id = "+userId+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+userId+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 
@@ -107,11 +107,11 @@ public class WUserDefDao {
 			throw new WUserDefException("WUserDefDao:  delete - Can't delete user definition record  "+ user.getName() +
 					" <id = "+user.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WUserDefException ex1) {
+		} catch (WUserDefException e) {
 			logger.error("WUserDefDao: delete - Exception in deleting user rec "+ user.getName() +
-					" <id = "+user.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+user.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WUserDefException("WUserDefDao: delete - Exception in deleting user rec "+ user.getName() +
-					" <id = "+user.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+user.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

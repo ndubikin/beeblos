@@ -125,11 +125,11 @@ public class WProcessDefDao {
 			throw new WProcessDefException("WProcessDefDao:  delete - Can't delete proccess definition record  "+ process.getName() +
 					" <id = "+process.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-//		} catch (WProcessDefException ex1) {
+//		} catch (WProcessDefException e) {
 //			logger.error("WProcessDefDao: delete - Exception in deleting process rec "+ process.getName() +
-//					" <id = "+process.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+//					" <id = "+process.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 //			throw new WProcessDefException("WProcessDefDao: delete - Exception in deleting process rec "+ process.getName() +
-//					" <id = "+process.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+//					" <id = "+process.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

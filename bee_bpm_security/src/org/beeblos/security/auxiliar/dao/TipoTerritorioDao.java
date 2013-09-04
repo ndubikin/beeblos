@@ -88,9 +88,9 @@ public class TipoTerritorioDao {
 
 			throw new TipoTerritorioException(ex);
 
-		} catch (TipoTerritorioException ex1) {
+		} catch (TipoTerritorioException e) {
 
-			throw new TipoTerritorioException(ex1);
+			throw new TipoTerritorioException(e);
 
 		}
 

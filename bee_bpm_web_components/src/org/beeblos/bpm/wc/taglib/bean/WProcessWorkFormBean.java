@@ -1,5 +1,6 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 
 import java.awt.Color;
@@ -28,7 +29,6 @@ import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WStepWorkUtil;
@@ -83,7 +83,7 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 	}
     
 	public void init(){
-		super.init();
+		super.init_core();
 		
 		setShowHeaderMessage(false);  
 		
@@ -243,19 +243,17 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			ret="OK";
 			setShowHeaderMessage(true);
 			
-		} catch (WProcessWorkException ex1) {
+		} catch (WProcessWorkException e) {
 
-			String message = ex1.getMessage() + " - "+ ex1.getCause();
-			String params[] = {message + ",", ".Please confirm input values." };				
-			agregarMensaje("208",message,params,FGPException.ERROR);	
+			String message = "WProcessWorkFormBean.add() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new WProcessWorkException(message);			
 			
 		} catch (Exception e) {
 			
-			String message = e.getMessage() + " - "+ e.getCause();
-			String params[] = {message + ",", ".Error inserting object ..." };
-			agregarMensaje("208",message,params ,FGPException.ERROR);
+			String message = "WProcessWorkFormBean.add() Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new WProcessWorkException(message);			
 			
@@ -286,20 +284,16 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			ret="OK";
 
-		} catch (WProcessWorkException ex1) {
+		} catch (WProcessWorkException e) {
 
 			String message = "Error updating object: "
 					+ currentWProcessWork.getId()
 					+ " - "
 					+ currentWProcessWork.getReference()
 					+ "\n"
-					+ ex1.getMessage() + "\n" + ex1.getCause();
+					+ e.getMessage() + "\n" + e.getCause();
 			
-			String params[] = {message + ",", ".Please confirm input values." };				
-			agregarMensaje("208",message,params,FGPException.ERROR);	
-
-			logger.error(message);
-			
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		return ret;
@@ -332,17 +326,9 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 				// etc etc
 			}
 
-		} catch (WProcessWorkException ex1) {
-
-			String message = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = {
-					message + ",",
-					".Error loading current WProcessWork ..."
-							+ currentWProcessWork.getId() };
-			agregarMensaje("208", message, params, FGPException.ERROR);
-
-			logger.error(message);
-
+		} catch (WProcessWorkException e) {
+			String message = "WProcessWorkFormBean.loadWProcessWork() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}			
 	}
 	
@@ -356,30 +342,15 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 
 			}
 			
-		} catch (WStepWorkException ex1) {
-
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".loadWStepWorkList() WStepSequenceDefException ..." };
-			agregarMensaje("208", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
-
-		} catch (WProcessDefException ex1) {
-
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".loadWStepWorkList() WProcessDefException ..." };
-			agregarMensaje("208", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
-
-		} catch (WStepDefException ex1) {
-
-			String mensaje = ex1.getMessage() + " - " + ex1.getCause();
-			String params[] = { mensaje + ",",
-					".loadWStepWorkList() WStepDefException ..." };
-			agregarMensaje("208", mensaje, params, FGPException.ERROR);
-			ex1.printStackTrace();
-
+		} catch (WStepWorkException e) {
+			String message = "WProcessWorkFormBean.loadWStepWorkList() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WProcessDefException e) {
+			String message = "WProcessWorkFormBean.loadWStepWorkList() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WStepDefException e) {
+			String message = "WProcessWorkFormBean.loadWStepWorkList() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}

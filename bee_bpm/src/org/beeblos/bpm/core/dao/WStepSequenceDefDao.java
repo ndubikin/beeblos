@@ -134,13 +134,13 @@ public class WStepSequenceDefDao {
 					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
 					" <id = "+stepSeq.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} catch (WStepSequenceDefException ex1) {
+		} catch (WStepSequenceDefException e) {
 			logger.error("WStepSequenceDefDao: delete - Exception in deleting stepSeq rec "+ 
 					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
-					" <id = "+stepSeq.getId()+ "> no esta almacenada \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+stepSeq.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 			throw new WStepSequenceDefException("WStepSequenceDefDao: delete - Exception in deleting stepSeq rec "+ 
 					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
-					" <id = "+stepSeq.getId()+ "> not stored \n"+" - "+ex1.getMessage()+"\n"+ex1.getCause() );
+					" <id = "+stepSeq.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
 
 		} 
 

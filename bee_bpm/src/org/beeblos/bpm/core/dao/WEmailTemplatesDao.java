@@ -91,11 +91,11 @@ public class WEmailTemplatesDao {
 					+ "> \n" + " - " + ex.getMessage());
 			throw new WEmailTemplatesException(ex);
 
-		} catch (WEmailTemplatesException ex1) {
+		} catch (WEmailTemplatesException e) {
 			logger.error("WEmailTemplatesDao: delete - The instance "
 					+ instance.getName() + " <id = " + instance.getId()
-					+ "> does not exist \n" + " - " + ex1.getMessage());
-			throw new WEmailTemplatesException(ex1);
+					+ "> does not exist \n" + " - " + e.getMessage());
+			throw new WEmailTemplatesException(e);
 
 		}
 

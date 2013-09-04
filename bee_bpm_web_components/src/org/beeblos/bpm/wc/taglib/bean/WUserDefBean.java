@@ -1,5 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +19,7 @@ import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRole;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
+
 import com.sp.common.jsf.util.UtilsVs;
 
 
@@ -85,8 +88,6 @@ public class WUserDefBean extends CoreManagedBean {
 	
 	private String valueBtn;
 	
-	private String messageStyle;
-	
 	private List<WUserRole> rolesRelated;	// dml 20120508
 	
 	private Integer currentRoleId;	// dml 20120426
@@ -147,7 +148,7 @@ public class WUserDefBean extends CoreManagedBean {
 		logger.debug(" update() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -156,29 +157,16 @@ public class WUserDefBean extends CoreManagedBean {
 			new WUserDefBL().update(currentWUserDef, this.getCurrentUserId());
 			
 			String message = setUpdateOkMessage();
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			reset();
 			
 		} catch (WUserDefException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WUserDefException: Method update in WUserDefBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WUserDefException" };
-			agregarMensaje("201", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method update in WUserDefBean: "
-								+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WUserDefException" };
-			agregarMensaje("201", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -190,7 +178,7 @@ public class WUserDefBean extends CoreManagedBean {
 		logger.debug(" add() user name:" +this.currentWUserDef.getName() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		String returnValue = null; // always returns null because calls are ajax
 		
@@ -202,29 +190,16 @@ public class WUserDefBean extends CoreManagedBean {
 			this.loadRolesRelated();
 
 			String message = setAddOkMessage(newId);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			
 			reset();
 
 		 } catch (WUserDefException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WUserDefException: Method add in WUserDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WUserDefException" };
-			agregarMensaje("201", message, params, FGPException.WARN);
-			logger.error(message);
-
+				String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method add in WUserDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WUserDefException" };
-			agregarMensaje("201", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -237,7 +212,7 @@ public class WUserDefBean extends CoreManagedBean {
 		logger.debug(" delete() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		String returnValue = null; // always returns null because calls are ajax
 
@@ -250,29 +225,16 @@ public class WUserDefBean extends CoreManagedBean {
 			// set ok message 
 			String message = getDeleteOkMessage(deletedUserName); 
 			logger.info(message);
-			agregarMensaje(message);
-			setShowHeaderMessage(true);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 
 			reset();
 
 		} catch (WUserDefException e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "WUserDefException: Method delete in WUserDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WUserDefException" };
-			agregarMensaje("201", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-
-			messageStyle=errorMessageStyle();
-			String message = "Exception: Method delete in WUserDefBean: "
-					+ e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", "WUserDefException" };
-			agregarMensaje("201", message, params, FGPException.WARN);
-			logger.error(message);
-
+			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
 		return returnValue;
@@ -284,7 +246,7 @@ public class WUserDefBean extends CoreManagedBean {
 		logger.debug(" loadRecord() :" +this.getId() );
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 		
 		if (this.id!=null && this.id!=0){
 			try {
@@ -299,14 +261,8 @@ public class WUserDefBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (WUserDefException e) {
-
-				messageStyle=errorMessageStyle();
-				String message = "WUserDefException: Method loadRecord in WUserDefBean: "
-										+ e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", "WUserDefException" };
-				agregarMensaje("201", message, params, FGPException.WARN);
-				logger.error(message);
-
+				String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		
 		}
@@ -327,7 +283,7 @@ public class WUserDefBean extends CoreManagedBean {
 	public List<WUserDef> getwUserDefList() {
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		List<WUserDef> objectList;
 		
@@ -353,7 +309,7 @@ public class WUserDefBean extends CoreManagedBean {
 	public void search() {
 		
 		setShowHeaderMessage(false);
-		messageStyle=normalMessageStyle();
+		super.messageStyle=normalMessageStyle();
 
 		try {
 
@@ -437,14 +393,6 @@ public class WUserDefBean extends CoreManagedBean {
 		this.userList = userList;
 	}
 	
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
-	}
-
 	public List<WUserRole> getRolesRelated() {
 		return rolesRelated;
 	}

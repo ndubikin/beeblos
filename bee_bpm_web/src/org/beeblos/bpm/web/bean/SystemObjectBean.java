@@ -72,8 +72,6 @@ public class SystemObjectBean extends CoreManagedBean {
 
 	private String valueBtn;
 
-	private String messageStyle;
-
 	private boolean showAnyMessage;
 
 	public SystemObjectBean() {
@@ -276,14 +274,6 @@ public class SystemObjectBean extends CoreManagedBean {
 
 	public void setSystemObjectList(List<SystemObject> systemObjectList) {
 		this.systemObjectList = systemObjectList;
-	}
-
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
 	}
 
 	public boolean isShowAnyMessage() {

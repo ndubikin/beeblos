@@ -1,6 +1,8 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.WSTEPDEF_QUERY;
 
 import java.util.ArrayList;
@@ -46,8 +48,6 @@ public class WStepDefQueryBean extends CoreManagedBean {
 	private WStepDef currentWStepDef; // dml 20130507 - object used to show information in the delete wprocessdef popup (currently, but it would be used by other methods)
 	private Integer stepHeadId; // dml 20130506 - id from the "WStepHead" which is inside the current "WStepDef" (id=WStepDef.id)
 	private boolean tmpDeletingWStepDefPopup;
-
-	private String messageStyle;
 
 	private TimeZone timeZone;
 
@@ -129,12 +129,8 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			return new WStepDefUtil().createNewWStepDef(this.stepHeadId, WSTEPDEF_QUERY);
 		
 		} catch (WProcessDefException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to create the new WStepDef."};
-			agregarMensaje("221", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WStepDefQueryBean.createNewWStepDef() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 		return null;
@@ -234,14 +230,6 @@ public class WStepDefQueryBean extends CoreManagedBean {
 		this.tmpDeletingWStepDefPopup = tmpDeletingWStepDefPopup;
 	}
 
-	public String getMessageStyle() {
-		return messageStyle;
-	}
-
-	public void setMessageStyle(String messageStyle) {
-		this.messageStyle = messageStyle;
-	}
-	
 	// nes 20130508
 	// force step cloning with all routes for all process ...
 	public void cloneWStepDef() {
@@ -264,31 +252,18 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			this.searchWStepDefs();
 			
 			String message = "Step version id:"+this.id+" has a new cloned version with id:"+newId;
-			this.messageStyle = normalMessageStyle();
-			agregarMensaje(message);
+			super.createWindowMessage(OK_MESSAGE, message, null);
 			logger.info(message);
 
 		} catch (WStepDefException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WStepDefQueryBean.cloneWStepDef() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepSequenceDefException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WStepDefQueryBean.cloneWStepDef() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepHeadException e) {
-
-			String message = e.getMessage() + " - " + e.getCause();
-			String params[] = { message + ",", ".Error trying to clone process: id=" + this.id};
-			agregarMensaje("220", message, params, FGPException.ERROR);
-			logger.error(message);
-			
+			String message = "WStepDefQueryBean.cloneWStepDef() WStepHeadException: " + e.getMessage() + " - " + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}
@@ -317,50 +292,27 @@ public class WStepDefQueryBean extends CoreManagedBean {
 				
 				String message = "The step '" + this.currentWStepDef.getStepHead().getName() 
 						+ "' version: '" + this.currentWStepDef.getVersion() + "' has been correctly deleted";
-				this.messageStyle = normalMessageStyle();
-				agregarMensaje(message);
+				super.createWindowMessage(OK_MESSAGE, message, null);
 				logger.info(message);
 				
 			} catch (WStepDefException e) {
-
 				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WStepWorkException e) {
-
 				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WStepHeadException e) {
-
 				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WProcessDefException e) {
-
 				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WStepSequenceDefException e) {
-
 				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
-				
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WStepWorkSequenceException e) {
 				String message = e.getMessage() + " - " + e.getCause();
-				this.messageStyle = errorMessageStyle();
-				agregarMensaje(message);
-				logger.error(message);
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} 
 			
 		}
@@ -388,12 +340,8 @@ public class WStepDefQueryBean extends CoreManagedBean {
 				this.currentWStepDef = new WStepDefBL().getWStepDefByPK(this.id, null, getCurrentUserId());// nes 20130808 - por agregado del filtro para step-data-field
 				
 			} catch (WStepDefException e) {
-
-				String message = e.getMessage() + " - " + e.getCause();
-				String params[] = { message + ",", ".Error trying to load process: id=" + this.id};
-				agregarMensaje("220", message, params, FGPException.ERROR);
-				logger.error(message);
-				
+				String message = "WStepDefQueryBean.loadWStepDefObject() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} 
 			
 		}
