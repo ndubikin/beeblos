@@ -3,14 +3,12 @@ package org.beeblos.bpm.wc.taglib.util;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WSTEPHEAD;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
-import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESS;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WSTEPHEAD;
 
 import javax.el.ValueExpression;
 
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean;
 import org.beeblos.bpm.wc.taglib.bean.WStepDefFormBean;
 
 public class WStepDefUtil extends CoreManagedBean {

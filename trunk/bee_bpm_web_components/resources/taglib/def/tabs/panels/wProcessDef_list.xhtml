@@ -39,20 +39,20 @@
                 	<b>  #{msg.label_load_process_version}</b> {currentRowId} (version: {currentRowVersion}) 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
             	</rich:menuItem>
-     	      	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessForm}" submitMode="server">
+     	      	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.loadWProcessHeadForm}" submitMode="server">
                 	<b> #{msg.label_load_process}</b> {currentRowId} 
-                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.processHeadId}" value="{currentRowProcessHeadId}"/>
             	</rich:menuItem>
             <rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.createNewWProcessDef}" submitMode="server">
                 	<b> #{msg.label_add_new_version}</b> {currentRowId} (version: {currentRowVersion}) 
-                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.processHeadId}" value="{currentRowProcessId}"/>
+                	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.processHeadId}" value="{currentRowProcessHeadId}"/>
             	</rich:menuItem>
      	      	<rich:menuItem ajaxSingle="false" action="#{wProcessDefQueryBean.cloneWProcessDef}" submitMode="server"
      	      		reRender="w_process_def_list_table, messages">
                 	<b> #{msg.label_clone_this_process_version}</b> {currentRowId} (version: {currentRowVersion}) 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}"/>
-                	<a4j:actionparam name="det2" assignTo="#{wProcessDefQueryBean.processHeadId}" value="{currentRowProcessId}"/>
+                	<a4j:actionparam name="det2" assignTo="#{wProcessDefQueryBean.processHeadId}" value="{currentRowProcessHeadId}"/>
             	</rich:menuItem>
            		<rich:menuItem ajaxSingle="true" 
            			action="#{wProcessDefQueryBean.loadWProcessDefObject}"
@@ -187,7 +187,7 @@
 						for="w_process_def_search_menu" operation="show">
 						<f:param value="#{wpd.id}" name="currentRowId" />
 						<f:param value="#{wpd.version}" name="currentRowVersion" />
-						<f:param value="#{wpd.process.id}" name="currentRowProcessId" />
+						<f:param value="#{wpd.process.id}" name="currentRowProcessHeadId" />
  					</rich:componentControl>
 				</rich:column>
 

@@ -300,9 +300,14 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 	
 	// dml 20120104
-	public String loadWProcessForm() {
+	public String loadWProcessHeadForm() {
 
-		return new WProcessDefUtil().loadWProcessFormBean(id);
+		if (this.processHeadId != null
+				&& !this.processHeadId.equals(0)){
+			return new WProcessDefUtil().loadWProcessHeadFormBean(this.processHeadId, WPROCESSDEF_QUERY);
+		}
+		
+		return null;
 
 	}
 	

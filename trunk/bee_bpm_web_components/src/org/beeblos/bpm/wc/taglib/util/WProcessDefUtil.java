@@ -3,15 +3,15 @@ package org.beeblos.bpm.wc.taglib.util;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESS;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
-import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESS;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
+import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSHEAD;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import javax.el.ValueExpression;
 
-import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean;
+import org.beeblos.bpm.wc.taglib.bean.WProcessHeadFormBean;
 
 public class WProcessDefUtil extends CoreManagedBean {
 
@@ -119,25 +119,24 @@ public class WProcessDefUtil extends CoreManagedBean {
 		return ret;
 	}
 	
-	public String loadWProcessFormBean(Integer idProcess) {
+	public String loadWProcessHeadFormBean(Integer processHeadId, String returnStatement) {
 
 		String ret = FAIL;
 
-		if (idProcess != null && idProcess != 0){
+		if (processHeadId != null && processHeadId != 0){
 			
 			ValueExpression valueBinding = super
-					.getValueExpression("#{wProcessDefFormBean}");
+					.getValueExpression("#{wProcessHeadFormBean}");
 
 			if (valueBinding != null) {
 
-				WProcessDefFormBean wpfb = 
-						(WProcessDefFormBean) valueBinding
-							.getValue(super.getELContext());
+				WProcessHeadFormBean wpfb = (WProcessHeadFormBean) valueBinding.getValue(super.getELContext());
 				wpfb.init();
-				wpfb.setCurrentId(idProcess);
-				wpfb.loadCurrentWProcessDef(idProcess);
+				wpfb.setCurrentId(processHeadId);
+				wpfb.loadCurrentWProcessHead(processHeadId);
+				wpfb.setReturnStatement(returnStatement);
 
-				ret = LOAD_WPROCESS;
+				ret = LOAD_WPROCESSHEAD;
 			
 			}
 		}

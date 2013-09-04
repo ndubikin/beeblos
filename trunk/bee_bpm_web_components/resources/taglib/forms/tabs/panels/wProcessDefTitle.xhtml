@@ -16,7 +16,7 @@
 	
 			<h:commandLink id="w_process_def_main_title_name"
 				value="#{msg.label_process}: #{wProcessDefFormBean.currentWProcessDef.name}" 
-				action="#{wProcessDefFormBean.loadWProcessForm}"
+				action="#{wProcessDefFormBean.loadWProcessHeadForm}"
 				title="#{msg.label_open_head_process_form}"
 				styleClass="title_style" 
 				rendered="#{wProcessDefFormBean.currentId != null and wProcessDefFormBean.currentId != 0}"
