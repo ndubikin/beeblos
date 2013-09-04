@@ -4,6 +4,7 @@ import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
@@ -905,7 +906,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	//rrl 20130729 When click "Refresh" button reloads the form by loadWProcessForm()
 	public void refreshWProcessDef() {
 //		refreshForm=false;
-		loadWProcessForm();
+		loadCurrentWProcessDef();
 	}
 	
 	public String getStrRoleList() {
@@ -1944,9 +1945,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	// dml 20120104
-	public String loadWProcessForm() {
+	public String loadWProcessHeadForm() {
 
-		return new WProcessDefUtil().loadWProcessFormBean(this.currentId);
+		if (this.currentWProcessDef != null
+				&& this.currentWProcessDef.getProcess() != null
+				&& this.currentWProcessDef.getProcess().getId() != null){
+			return new WProcessDefUtil().loadWProcessHeadFormBean(this.currentWProcessDef.getProcess().getId(), LOAD_WPROCESSDEF);
+		}
+		
+		return null;
 
 	}
 	

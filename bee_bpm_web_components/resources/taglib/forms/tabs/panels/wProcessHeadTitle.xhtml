@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich">
+
+	<h:form id="w_process_head_title_form">
+		<div>
+		
+			<h:outputText value="#{msg.label_adding_new_process}" 
+				styleClass="title_style" 
+				rendered="#{wProcessHeadFormBean.currentWProcessHead.id==null or wProcessHeadFormBean.currentWProcessHead.id==0}"
+				style="margin-left: 32px; margin-bottom: 10px;"/>
+	
+			<h:outputText id="w_process_main_title_name"
+				value="#{msg.label_process}: #{wProcessHeadFormBean.currentWProcessHead.name}" 
+				styleClass="title_style" 
+				rendered="#{wProcessHeadFormBean.currentId!=null and wProcessHeadFormBean.currentId!=0}"
+				style="margin-left: 32px; margin-bottom: 10px;"/>
+	
+			<h:outputText value=" - " 
+				styleClass="title_style" 
+				rendered="#{wProcessHeadFormBean.currentId!=null and wProcessHeadFormBean.currentId!=0}"
+				style="margin-bottom: 10px;"/>	
+		
+			<h:outputText value="#{wProcessHeadFormBean.currentWProcessHead.insertDate}" 
+				styleClass="title_style" 
+				rendered="#{wProcessHeadFormBean.currentId!=null and wProcessHeadFormBean.currentId!=0}"
+				style="margin-bottom: 10px;">
+				<f:convertDateTime pattern="#{msg.label_date_format}" timeZone="#{wProcessHeadFormBean.timeZone}"/>
+			</h:outputText>
+	
+			<h:commandLink value="(#{msg.label_return_})" action="#{wProcessHeadFormBean.returnTo}" 
+				style="font-size:12px;	margin-left: 10px; margin-bottom: 10px;"/>
+		</div>
+	</h:form>
+</ui:composition>

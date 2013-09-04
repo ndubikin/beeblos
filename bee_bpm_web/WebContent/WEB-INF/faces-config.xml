@@ -124,20 +124,20 @@
  </navigation-rule>
  <navigation-rule>
   <from-view-id>*</from-view-id>
-	<navigation-case> 
-		<from-outcome>PROCESS_TASK</from-outcome> 
-		<to-view-id>/task/processWithForm.xhtml</to-view-id> 
-	</navigation-case> 
-	<navigation-case>
-		<from-outcome>TASK_PROCESSED_OK</from-outcome>
-		<to-view-id>/task/processWellcomePage.xhtml</to-view-id>
-		<redirect />
-	</navigation-case>	
-	<navigation-case>
-		<from-outcome>PROCESS_WELLCOME_PAGE</from-outcome>
-		<to-view-id>/task/processWellcomePage.xhtml</to-view-id>
-		<redirect />
-	</navigation-case>	
+  <navigation-case>
+   <from-outcome>PROCESS_TASK</from-outcome>
+   <to-view-id>/task/processWithForm.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>TASK_PROCESSED_OK</from-outcome>
+   <to-view-id>/task/processWellcomePage.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>PROCESS_WELLCOME_PAGE</from-outcome>
+   <to-view-id>/task/processWellcomePage.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
   <navigation-case>
    <from-outcome>WELCOME_PAGE</from-outcome>
    <to-view-id>/welcome.xhtml</to-view-id>
@@ -192,8 +192,8 @@
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
-   <from-outcome>LOAD_WPROCESS</from-outcome>
-   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
+   <from-outcome>LOAD_WPROCESSHEAD</from-outcome>
+   <to-view-id>/forms/wProcessHeadFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
    <from-outcome>CREATE_NEW_WPROCESSDEF</from-outcome>
@@ -201,7 +201,7 @@
   </navigation-case>
   <navigation-case>
    <from-outcome>CREATE_NEW_WPROCESS</from-outcome>
-   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
+   <to-view-id>/forms/wProcessHeadFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
    <from-outcome>WSTEPDEF_QUERY</from-outcome>
@@ -248,7 +248,7 @@
   </navigation-case>
   <navigation-case>
    <from-outcome>SUCCESS_FORM_WPROCESS</from-outcome>
-   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
+   <to-view-id>/forms/wProcessHeadFormCall.xhtml</to-view-id>
   </navigation-case>
   <!-- dml 20120305 -->
   <navigation-case>
@@ -258,10 +258,10 @@
  </navigation-rule>
  <navigation-rule>
   <display-name>WProcessForm</display-name>
-  <from-view-id>/forms/wProcessFormCall.xhtml</from-view-id>
+  <from-view-id>/forms/wProcessHeadFormCall.xhtml</from-view-id>
   <navigation-case>
    <from-outcome>FAIL</from-outcome>
-   <to-view-id>/forms/wProcessFormCall.xhtml</to-view-id>
+   <to-view-id>/forms/wProcessHeadFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
    <from-outcome>SUCCESS_FORM_WPROCESSDEF</from-outcome>
