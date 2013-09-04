@@ -146,7 +146,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 	// dml 20120305
 	private String emailNameFilter;
-	private String activeFilter;
 	
 	// dml 20120305
 	private String returnStatement;
@@ -164,13 +163,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	// dml 20130507
 	private List<SelectItem> wProcessComboList;
 	
-	// dml 20130508 - Esta lista "relatedProcessDefList" es la lista de WProcessDef relacionados con un WProcessHead. 
-	// O sea, este bean además de para la ficha de WProcessDef también está para los WProcessHead (o por lo menos lo 
-	// reutilizamos en su momento para ello para no crear otro nuevo) y en la ficha de ese WProcessHead tenemos una 
-	// grilla donde tenemos todos los WProcessDef de ese head y es en esa lista del bean donde los tenemos todos
-	// TENEMOS QUE CREAR UN BEAN PROPIO PARA LA GESTIÓN DE LOS WPROCESSHEAD
-	private List<WProcessDefLight> relatedProcessDefList;
-
 	//rrl 20130729
 	private boolean flagValidate;
 //	private boolean refreshForm;
@@ -287,7 +279,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			// dml 20120306
 			loadEmailTemplateVariables();
 
-			this.reloadRelatedProcessDefList(); // dml 20130508
 			this.reloadDataFieldList();         // rrl 20130730
 			
 		} catch (WProcessDefException e) {
@@ -305,26 +296,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	}
 	
-	// dml 20130508
-	public void reloadRelatedProcessDefList(){
-		
-		try {
-			
- 			this.relatedProcessDefList = new WProcessDefBL()
-				.finderWProcessDefLight(false, null, null, null, false, null, null, 
-						this.currentWProcessDef.getProcess().getId(), this.activeFilter, getCurrentUserId());
-			
-		} catch (WProcessDefException e) {
-
-			this.relatedProcessDefList = new ArrayList<WProcessDefLight>();
-			
-			String message = "WProcessDefFormBean.reloadRelatedProcessDefList() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
-			super.createWindowMessage(ERROR_MESSAGE, message, e);
-		}
-		
-	}
-
 	//rrl 20120228 Bermuda Triangle mystery on the loss of source code Castor XML the process Marshall
 	public void generateXMLCurrentWProcessDef() {
 		
@@ -1042,14 +1013,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 	public void setEmailNameFilter(String emailNameFilter) {
 		this.emailNameFilter = emailNameFilter;
-	}
-
-	public String getActiveFilter() {
-		return activeFilter;
-	}
-
-	public void setActiveFilter(String activeFilter) {
-		this.activeFilter = activeFilter;
 	}
 
 	public String getReturnStatement() {
@@ -1876,14 +1839,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		this.wProcessComboList = wProcessComboList;
 	}
 	
-	public List<WProcessDefLight> getRelatedProcessDefList() {
-		return relatedProcessDefList;
-	}
-
-	public void setRelatedProcessDefList(List<WProcessDefLight> relatedProcessDefList) {
-		this.relatedProcessDefList = relatedProcessDefList;
-	}
-
 	// dml 20130430
 	public void _loadWProcessComboList(){
 		
