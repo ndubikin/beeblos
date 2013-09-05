@@ -71,7 +71,6 @@ import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
-import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.core.util.castor.UtilJavaToXML;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableHasRecordsException;
@@ -1930,7 +1929,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				
 				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.currentId, getCurrentUserId());
 				
-				String path = super.getContextPath() + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+				String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
 				File temp = new File(path);
 				
 				// if file doesnt exists, then create it
@@ -1958,14 +1957,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	public String getWorkflowEditorUrl(){
-		return this._getRequestContextPath() + WORKFLOW_EDITOR_URI;
+		return super.getRequestContextPath() + WORKFLOW_EDITOR_URI;
 	}
 	
-	public String _getRequestContextPath() {
-		return FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestContextPath().trim().replaceAll("\\\\", "/");
-	}
-
 	//rrl 20130729
 	public boolean isFlagValidate() {
 		return flagValidate;

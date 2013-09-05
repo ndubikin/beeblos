@@ -24,6 +24,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sp.common.util.Resourceutil;
+
 //import org.apache.myfaces.shared_impl.util.MessageUtils;
 
 
@@ -46,9 +48,8 @@ public class CoreManagedBean implements Serializable {
 	private ArrayList<FGPException> exceptionList = new ArrayList<FGPException>();
 	
 	
+	private String requestContextPath;
 	public static String contextPath;
-	
-	public static String configurationPath; // nes 20111026
 	
 	private boolean showHeaderMessage;
 	public String messageStyle;
@@ -76,11 +77,13 @@ public class CoreManagedBean implements Serializable {
 	}
 	
 	public CoreManagedBean() {
-		showHeaderMessage = false;
+		this.reset();
+		this.init_core();
 	}
 
 	public void init_core(){
-
+		this.setRequestContextPath();
+		this.setContextPath();
 	}
 	
 	public void reset(){
@@ -110,52 +113,80 @@ public class CoreManagedBean implements Serializable {
 	// dml 20130417
 	public String getContextPath(){
 		
-		if (contextPath == null){
-			setContextPath();
+		if (this.contextPath == null){
+			this.setContextPath();
 		}
 		
 		return contextPath;
 		
 	}
-
+	
 	// nes 20110503
-	public static String setContextPath() {
-		
-		String contextPath=null;
+	public void setContextPath() {
 		
 		try {
-			
+			Resourceutil.getProperties();
 			contextPath = FacesContext.getCurrentInstance()
 								.getExternalContext()
 									.getRealPath("")
 										.replaceAll("\\\\", "/");
-
-			String requestContextPath = FacesContext.getCurrentInstance()
-												.getExternalContext()
-													.getRequestContextPath().trim()
-														.replaceAll("\\\\", "/");
 		
 			System.out.println( "------------>>>>>>>>>>>>>>>  contextPath leido:["+contextPath+"]" );
-			System.out.println( "------------>>>>>>>>>>>>>>> RequestContextPath:["+requestContextPath+"]" +" --> que se buscará en el contextPath");
+
 	    	
-	    	if ( requestContextPath!=null && !"".equals(requestContextPath) ) {
-					contextPath = contextPath.substring(0,contextPath.indexOf( requestContextPath ));
+	    	if ( this.getRequestContextPath() != null 
+	    			&& !"".equals(this.getRequestContextPath()) ) {
+					contextPath = contextPath.substring(0,contextPath.indexOf( this.getRequestContextPath() ));
 	    	} 
-			
-//			email.setContextPath(contextPath);
-//			logger.debug( "------------>>>>>>>>>>>>>>>  contextPath elegido:"+contextPath+"]" );
 			
 		} catch (Exception e) {
 			String mensaje = "ERROR al intentar setear contextPath: "+e.getClass()+" - "+e.getMessage()+" - "+e.getCause()
 								+" \n se setea contextPath a null";
-//			logger.error(mensaje);
+
 			System.out.println(mensaje);
-//			email.setContextPath("");
+
 		}
 		
 		System.out.println( "------------>>>>>>>>>>>>>>>  contextPath ELEGIDO:["+contextPath+"]" );
-		return contextPath;
+
 	}
+
+	// dml 20130417
+	public String getRequestContextPath(){
+		
+		if (this.requestContextPath == null){
+			this.setRequestContextPath();
+		}
+		
+		return requestContextPath;
+		
+	}
+	
+	// nes 20120316
+	public void setRequestContextPath() {
+		
+		try {
+
+			requestContextPath = FacesContext.getCurrentInstance()
+												.getExternalContext()
+													.getRequestContextPath();
+			
+			requestContextPath = requestContextPath.trim().replaceAll("\\\\", "/");
+		
+
+			System.out.println( "------------>>>>>>>>>>>>>>> 2 RequestContextPath:["+requestContextPath+"]" );
+	    	
+
+		} catch (Exception e) {
+			String mensaje = "ERROR al intentar setear requestContextPath: "+e.getClass()+" - "+e.getMessage()+" - "+e.getCause()
+								+" \n se setea requestContextPath a null";
+			logger.error(mensaje);
+			System.out.println(mensaje);
+
+		}
+		
+	}
+	
 /*	
 	public void agregarMensaje(String code,String message,String[] params,int level){
 		
