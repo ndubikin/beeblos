@@ -497,7 +497,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				
 				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.id, getCurrentUserId());
 				
-				String path = super.getContextPath() + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+				String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
 				File temp = new File(path);
 				
 				// if file doesnt exists, then create it
@@ -525,18 +525,13 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 
 	public String getWorkflowEditorUrl(){
-		return this._getRequestContextPath() + WORKFLOW_EDITOR_URI;
+		return super.getRequestContextPath() + WORKFLOW_EDITOR_URI;
 	}
 	
 	public String getWorkflowViewXmlMapUrl(){
-		return this._getRequestContextPath() + WORKFLOW_VIEW_URI;
+		return super.getRequestContextPath() + WORKFLOW_VIEW_URI;
 	}
 	
-	public String _getRequestContextPath() {
-		return FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestContextPath().trim().replaceAll("\\\\", "/");
-	}
-
 	/**
 	 * @author dmuleiro - 20130830
 	 * 

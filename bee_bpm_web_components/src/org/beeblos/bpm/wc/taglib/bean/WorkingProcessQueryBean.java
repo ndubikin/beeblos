@@ -29,7 +29,7 @@ import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
-import org.beeblos.bpm.core.bl.WorkflowEditorBL;
+import org.beeblos.bpm.core.bl.WorkflowEditorMxBL;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -46,7 +46,6 @@ import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.wc.taglib.bean.util.TareaWorkflowUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 import org.beeblos.bpm.wc.taglib.util.WProcessWorkUtil;
@@ -989,10 +988,10 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 						&& !this.currentWStepWork.getwProcessWork().getId().equals(0)
 						&& xmlMapTmp != null){
 					
-					xmlMapTmp = new WorkflowEditorBL().paintXmlMap(
+					xmlMapTmp = new WorkflowEditorMxBL().paintXmlMap(
 							xmlMapTmp, this.currentWStepWork.getwProcessWork().getId(), currentUserId);
 					
-					String path = super.getContextPath() + this._getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+					String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
 					File temp = new File(path);
 					
 					// if file doesnt exists, then create it
@@ -1034,12 +1033,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	}
 
 	public String getWorkflowViewXmlMapUrl(){
-		return this._getRequestContextPath() + WORKFLOW_VIEW_URI;
+		return super.getRequestContextPath() + WORKFLOW_VIEW_URI;
 	}
 	
-	public String _getRequestContextPath() {
-		return FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestContextPath().trim().replaceAll("\\\\", "/");
-	}
-
 }
