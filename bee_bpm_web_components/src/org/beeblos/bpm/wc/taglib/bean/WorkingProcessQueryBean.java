@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -28,7 +29,7 @@ import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
-import org.beeblos.bpm.core.bl.WorkflowEditorBL;
+import org.beeblos.bpm.core.bl.WorkflowEditorMxBL;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -989,7 +990,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 						&& !this.currentWStepWork.getwProcessWork().getId().equals(0)
 						&& xmlMapTmp != null){
 					
-					xmlMapTmp = new WorkflowEditorBL().paintXmlMap(
+					xmlMapTmp = new WorkflowEditorMxBL().paintXmlMap(
 							xmlMapTmp, this.currentWStepWork.getwProcessWork().getId(), currentUserId);
 					
 					String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
