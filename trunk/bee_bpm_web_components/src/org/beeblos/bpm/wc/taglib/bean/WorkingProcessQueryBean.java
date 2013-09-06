@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -29,14 +28,16 @@ import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
-import org.beeblos.bpm.core.bl.WorkflowEditorMxBL;
+import org.beeblos.bpm.core.bl.WorkflowEditorBL;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepWork;
@@ -988,7 +989,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 						&& !this.currentWStepWork.getwProcessWork().getId().equals(0)
 						&& xmlMapTmp != null){
 					
-					xmlMapTmp = new WorkflowEditorMxBL().paintXmlMap(
+					xmlMapTmp = new WorkflowEditorBL().paintXmlMap(
 							xmlMapTmp, this.currentWStepWork.getwProcessWork().getId(), currentUserId);
 					
 					String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
@@ -1024,6 +1025,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 				message +="error:"+e.getMessage()+" - "+ e.getCause();
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WStepWorkException e) {
+				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				message +="error:"+e.getMessage()+" - "+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
+			} catch (WStepDefException e) {
+				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
+				message +="error:"+e.getMessage()+" - "+ e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
+			} catch (WStepWorkSequenceException e) {
 				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
 				message +="error:"+e.getMessage()+" - "+ e.getCause();
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
