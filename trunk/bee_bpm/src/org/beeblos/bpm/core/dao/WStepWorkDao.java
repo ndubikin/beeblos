@@ -1257,7 +1257,14 @@ public class WStepWorkDao {
 		return retorno;
 	}
 	
-	// returns # existing works in WStepWork
+	/**
+	 *  returns qty of existing step works for a given processDefId (process version)
+	 *  
+	 * @param processDefId
+	 * @param mode
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public Integer getStepWorkCountByProcess(Integer processDefId, String mode) 
 			throws WStepWorkException {
 
@@ -1479,9 +1486,21 @@ public class WStepWorkDao {
 		return stepws;
 	}
 	
-	// dml 20130507
+
+	/**
+	 * Returns a list of all process def id which has WORKS referring given stepDefId
+	 * and distinct of processDefId
+	 * 
+	 * @author 	dml 20130507
+	 * 
+	 * @param stepDefId
+	 * @param processDefId
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
-	public List<Integer> getProcessIdList(Integer stepId) throws WStepWorkException {
+	public List<Integer> getRelatedProcessDefIdList(Integer stepDefId, Integer processDefId) 
+			throws WStepWorkException {
 	
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -1495,14 +1514,20 @@ public class WStepWorkDao {
 
 			tx.begin();
 			
-			String query =  " SELECT DISTINCT(wsw.id_process) " +
+			String query =  " SELECT DISTINCT(wpw.id_process) " +
 							" FROM w_step_work wsw " +
+							" LEFT OUTER JOIN w_process_work wpw ON wpw.id=wsw.id_work" +
 							" WHERE (wsw.id_current_step = :stepId OR wsw.id_previous_step = :stepId) ";
+			
+			// nes 20130905
+			if (processDefId!=null && processDefId!=0) {
+				query+="AND wpw.id_process != "+processDefId;
+			}
 			
 			logger.debug("[QUERY]: "+query);
 			
 			processIdList = (ArrayList<Integer>) session.createSQLQuery(query)
-					.setInteger("stepId", stepId)
+					.setInteger("stepId", stepDefId)
 					.list();
 
 			tx.commit();

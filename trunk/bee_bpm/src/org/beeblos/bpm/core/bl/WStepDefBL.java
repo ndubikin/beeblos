@@ -366,19 +366,33 @@ public class WStepDefBL {
 		
 	}
 	
-	/*
+	/**
 	 *clone step with options:
 	 *
 	 * generateNewStep: indicates must generate a new step with your new step_head and version =1
-	 * 	generateNewStep=false -> generates a new version of stepId
-	 *  generateNewStep=true -> generates a new step copying data from stepId and version=1
+	 * generateNewStep=false -> generates a new version of stepId
+	 * generateNewStep=true -> generates a new step copying data from stepId and version=1
 	 * cloneRoutes: indicates must generate new routes copying origin step routes
 	 * cloneResponses: indicates must generate new responses copying origin step responses
 	 * clonePermissions: indicates must generate new permissions copying origin step permissions
 	 * 
 	 * processId must passed if only the routes for 1 process will be cloned .... Remember 
 	 * WStepSequeceDef has incoming and outgoint routes for a step/process
+	 *  
 	 * 
+	 * @param stepId
+	 * @param stepHeadId
+	 * @param processId
+	 * @param processHeadId
+	 * @param generateNewStep
+	 * @param cloneRoutes
+	 * @param cloneResponses
+	 * @param clonePermissions
+	 * @param userId
+	 * @return
+	 * @throws WStepHeadException
+	 * @throws WStepSequenceDefException
+	 * @throws WStepDefException
 	 */
 	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, Integer processHeadId,
 									boolean generateNewStep, boolean cloneRoutes,
@@ -654,17 +668,26 @@ public class WStepDefBL {
 	
 	}
 	
-	// dml 20130507
-	public List<Integer> getProcessIdList(Integer stepId, Integer userId) throws WStepDefException{
+
+	/**
+	 * Returns a list of process def id which use given step def id
+	 * 
+	 * @author dmuleiro - 20130507
+	 * 
+	 * @param stepDefId
+	 * @return
+	 * @throws WStepDefException
+	 */
+	public List<Integer> getProcessIdList(Integer stepDefId, Integer userId) throws WStepDefException{
 		
-		return new WStepDefDao().getProcessIdList(stepId);
+		return new WStepDefDao().getProcessIdList(stepDefId);
 		
 	}
 	
 	/**
 	 * @author dmuleiro - 20130507
 	 * 
-	 * If the step is used by more than one process it is shared.
+	 * If the step is used by more than one process then it's a shared step
 	 *
 	 * @param  Integer stepId
 	 * @param  Integer currentUserId
@@ -674,19 +697,19 @@ public class WStepDefBL {
 	 * @throws WStepDefException 
 	 * 
 	 */
-	public boolean stepIsShared(Integer stepId, Integer currentUserId) throws WStepDefException {
+	public boolean stepIsShared(Integer stepDefId, Integer currentUserId) throws WStepDefException {
 
-		if (stepId == null
-				|| stepId.equals(0)){
+		if (stepDefId == null
+				|| stepDefId.equals(0)){
 			String mess = "stepId cannot be null or zero";
 			logger.error(mess);
 			throw new WStepDefException(mess);
 		}
 
-		List<Integer> processIdList = this.getProcessIdList(stepId, currentUserId);
+		List<Integer> processIdList = this.getProcessIdList(stepDefId, currentUserId);
 		
 		if (processIdList == null){
-			String mess = "Error trying to retrieve the processIdList for step: "+stepId;
+			String mess = "Error trying to retrieve the processIdList for step: "+stepDefId;
 			logger.error(mess);
 			throw new WStepDefException(mess);
 		}

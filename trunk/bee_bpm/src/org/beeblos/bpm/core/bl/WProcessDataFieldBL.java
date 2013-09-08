@@ -46,7 +46,8 @@ public class WProcessDataFieldBL {
 		}
 		
 		// check for duplicated names (not allowed)
-		WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
+		WProcessDataField pdf = getWProcessDataFieldByNameAndProcessHeadId(
+					processDataField.getName(),processDataField.getProcessHeadId(),currentUserId);
 		if (pdf != null && pdf.getName()!=null 
 				&& pdf.getName().equalsIgnoreCase(processDataField.getName()) 
 				&& pdf.getProcessHeadId().equals(processDataField.getProcessHeadId())) {
@@ -265,6 +266,12 @@ public class WProcessDataFieldBL {
 		return new WProcessDataFieldDao().getWProcessDataFieldByName(name);
 	}
 
+	public WProcessDataField getWProcessDataFieldByNameAndProcessHeadId(
+			String name, Integer processHeadId, Integer currentUserId ) 
+					throws WProcessDataFieldException {
+
+		return new WProcessDataFieldDao().getWProcessDataFieldByNameAndProcessHeadId(name,processHeadId);
+	}
 	
 	public List<WProcessDataField> getWProcessDataFieldList(Integer currentUserId) throws WProcessDataFieldException {
 

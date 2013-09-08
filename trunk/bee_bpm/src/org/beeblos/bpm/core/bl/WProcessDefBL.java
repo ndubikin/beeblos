@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.ALL;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
@@ -34,6 +35,7 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 
 import com.sp.common.util.IntegerPair;
@@ -43,6 +45,14 @@ import com.sp.common.util.StringPair;
 
 public class WProcessDefBL {
 	
+	private static final boolean CLONE_PERMISSIONS = true;
+
+	private static final boolean CLONE_RESPONSES = true;
+
+	private static final boolean GENERATE_NEW_STEP = true;
+	
+	boolean DONT_CLONE_ROUTES = false;
+
 	private static final Log logger = LogFactory.getLog(WProcessDefBL.class.getName());
 	
 	private static final String _ROOT_MANAGED_TABLE_NAME = "wmt_";
@@ -265,13 +275,29 @@ public class WProcessDefBL {
 
 	}
 
-	public List<String> delete(Integer processId, boolean deleteRelatedSteps, Integer currentUserId) 
+	/**
+	 * Deletes a process def and all it's relations like sequences, steps (if user like), etc.
+	 * Don't delete related works, then check if exists related works and then throws exception
+	 * 
+	 * @param processDefId
+	 * @param deleteRelatedSteps
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessWorkException
+	 * @throws WProcessDefException
+	 * @throws WStepSequenceDefException
+	 * @throws WStepWorkException
+	 * @throws WProcessHeadException
+	 * @throws WStepDefException
+	 * @throws WStepHeadException
+	 */
+	public List<String> delete(Integer processDefId, boolean deleteRelatedSteps, Integer currentUserId) 
 			throws WProcessWorkException, WProcessDefException, WStepSequenceDefException, 
 			WStepWorkException, WProcessHeadException, WStepDefException, WStepHeadException {
 
-		logger.debug("delete() WProcessDef - Name: ["+processId+"]");
+		logger.debug("delete() WProcessDef - Name: ["+processDefId+"]");
 		
-		if (processId==null || processId==0) {
+		if (processDefId==null || processDefId==0) {
 			String mess = "Trying delete process with id null or 0 ...";
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
@@ -279,24 +305,24 @@ public class WProcessDefBL {
 		
 		Integer qtyWorks;
 		try {
-			qtyWorks = new WStepWorkBL().getStepWorkCountByProcess(processId,ALL);
+			qtyWorks = new WStepWorkBL().getStepWorkCountByProcess(processDefId,ALL);
 		} catch (WStepWorkException e) {
-			String mess = "Error verifiyng existence of works related with this process id:"+processId
+			String mess = "WStepWorkException: Error verifiyng existence of step works related with this process id:"+processDefId
 					+ " "+e.getMessage()+" - "+e.getCause();
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
 		}
 		
 		if (qtyWorks>0) {
-			String mess = "Delete process with works is not allowed ... This process has "+qtyWorks+" works";
+			String mess = "Delete process with works is not allowed ... This process has "+qtyWorks+" step works";
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
 		}
 			
 		try {
-			qtyWorks = new WProcessWorkBL().getWorkCount(processId,ALL);
+			qtyWorks = new WProcessWorkBL().getWorkCount(processDefId,ALL);
 		} catch (WProcessWorkException e) {
-			String mess = "Error verifiyng existence of works related with this process id:"+processId
+			String mess = "Error verifiyng existence of works related with this process id:"+processDefId
 					+ " "+e.getMessage()+" - "+e.getCause();
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
@@ -310,30 +336,28 @@ public class WProcessDefBL {
 			
 		List<WStepDef> stepsToDelete = new ArrayList<WStepDef>(); // to store and return deleted steps
 
-		// check for related steps and delete 
+		// obtains a list of related steps that may be deleted
 		if (deleteRelatedSteps) {
 			
-			stepsToDelete = this._checkAndDeleteRelatedSteps(processId,currentUserId);
+			stepsToDelete = this._loadListOfStepsToDelete(processDefId,currentUserId);
 			
 		}
 		
+		// sequence is strictly version related info -> we can delete it
+		this._deleteRelatedSequences(processDefId, currentUserId); 
 		
-		this._deleteRelatedSequences(processId, currentUserId);// this is estrictly version related info 
-		
-		WProcessDef process = this.getWProcessDefByPK(processId, currentUserId);
+		WProcessDef process = this.getWProcessDefByPK(processDefId, currentUserId);
 		Integer processHeadId = process.getProcess().getId();
 		
 		// se borrarán en cascada (por el mapping) los roles y users relacionados con el process
 		new WProcessDefDao().delete(process, currentUserId);
 		logger.info("The WProcessDef " + process.getName() + " has been correctly deleted by user " + currentUserId);
 
-		List<String> deletedSteps = this._deleteRelatedSteps(stepsToDelete, processHeadId, processId, currentUserId);
+		List<String> deletedSteps = this._deleteRelatedSteps(stepsToDelete, processHeadId, processDefId, currentUserId);
 		
 		// delete processHead and related managed table only if all process-def has already deleted
 		this._checkAndDeleteProcessHead(processHeadId, currentUserId);
 		
-		
-
 		return deletedSteps;
 		
 	}
@@ -371,45 +395,65 @@ public class WProcessDefBL {
 		
 	}
 
-	// dml 20130507
-	private List<String> _deleteRelatedSteps(List<WStepDef> stepList, Integer processHeadId, Integer processId, Integer currentUserId) 
-			throws WStepDefException, WStepWorkException, WStepHeadException, 
-			WProcessDefException, WStepSequenceDefException {
+	/**
+	 * delete stepDef list (step by step)
+	 * 
+	 * @author dml 20130507
+	 * @param stepList
+	 * @param processHeadId
+	 * @param processId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	private List<String> _deleteRelatedSteps(
+			List<WStepDef> stepList, Integer processHeadId, Integer processId, Integer currentUserId) 
+					throws WProcessDefException {
 				
 		WStepDefBL wsdBL = new WStepDefBL();
 		List<String> deletedSteps = new ArrayList<String>();
 		
-		try {
+		if (stepList != null
+				&& !stepList.isEmpty()){
 			
-			if (stepList != null
-					&& !stepList.isEmpty()){
+			for (WStepDef stepDef : stepList){
 				
-				for (WStepDef wsd : stepList){
+				try {
 					
-					deletedSteps.add(wsd.getName());
-					wsdBL.delete(wsd.getId(), processHeadId, currentUserId); // nes 20130808 - por agregado de filtro para step-data-field
-					logger.info("The WStepDef " + wsd.getName() + " has been correctly deleted by user " + currentUserId);
+					wsdBL.delete(stepDef.getId(), processHeadId, currentUserId); // nes 20130808 - por agregado de filtro para step-data-field
+					deletedSteps.add(stepDef.getName());						
+					logger.info("The WStepDef " + stepDef.getName() + " has been correctly deleted by user " + currentUserId);
 					
+				} catch (WStepDefException e) {
+					String mess = "WStepDefException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					throw new WProcessDefException(mess);
+				} catch (WProcessDefException e) {
+					String mess = "WProcessDefException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					throw new WProcessDefException(mess);
+				} catch (WStepSequenceDefException e) {
+					String mess = "WStepSequenceDefException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					throw new WProcessDefException(mess);
+				} catch (WStepWorkSequenceException e) {
+					String mess = "WStepWorkSequenceException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					throw new WProcessDefException(mess);
+				} catch (WStepWorkException e) {
+					String mess = "WStepWorkException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					throw new WProcessDefException(mess);
+				} catch (WStepHeadException e) {
+					String mess = "WStepHeadException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					logger.error(mess);
+					throw new WProcessDefException(mess);
 				}
-				
-			}
 			
-		} catch (WStepDefException e) {
-			String mess = "Impossible to delete step defs";
-			logger.error(mess);
-			throw new WStepDefException(mess);
-		} catch (WProcessDefException e) {
-			String mess = "Impossible to delete step defs";
-			logger.error(mess);
-			throw new WProcessDefException(mess);
-		} catch (WStepSequenceDefException e) {
-			String mess = "Impossible to delete step defs";
-			logger.error(mess);
-			throw new WStepSequenceDefException(mess);
-		} catch (WStepWorkSequenceException e) {
-			String mess = "Impossible to delete step defs";
-			logger.error(mess);
-			throw new WStepSequenceDefException(mess);
+			}
+
+		} else {
+			logger.info("trying to delete an empty step def list .... none to delete ...");
 		}
 		
 		return deletedSteps;
@@ -439,18 +483,32 @@ public class WProcessDefBL {
 		
 	}
 
-	private List<WStepDef> _checkAndDeleteRelatedSteps(Integer processId, Integer currentUserId) 
-			throws WProcessWorkException, WStepSequenceDefException, WStepWorkException {
+	/**
+	 * Load step def list for a processDefId and checks for each step if it is
+	 * used in another process o if there is any work (task) using this step.
+	 * 
+	 * @param processDefId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	private List<WStepDef> _loadListOfStepsToDelete(Integer processDefId, Integer currentUserId) 
+			throws WProcessDefException {
 		
 		List<WStepDef> returnValue = new ArrayList<WStepDef>();
+		
+		Integer ALL_PROCESSES = null;
+		
 		try {
 			
-			List<WStepDef> stepDefList = loadStepList(processId, currentUserId);
+			// load step def list
+			List<WStepDef> stepDefList = loadStepList(processDefId, currentUserId);
+			
 			
 			for (WStepDef stepDef: stepDefList) {
 				
-				if ( !checkSharedStep(stepDef.getId(), processId, currentUserId) 
-						&& !checkWorkReferral(stepDef.getId(),processId, currentUserId) ) {
+				if ( !checkSharedStep(stepDef.getId(), processDefId, currentUserId) 
+						&& !checkWorkReferral(stepDef.getId(), ALL_PROCESSES, currentUserId) ) {
 					
 					returnValue.add(stepDef);
 					
@@ -459,43 +517,74 @@ public class WProcessDefBL {
 			}
 			
 		} catch (WStepDefException e) {
-			String mess = "can't obtain step def list for given process id:"+processId;
-			throw new WProcessWorkException(mess);
+			String mess = "can't obtain step def list for given process id:"+processDefId;
+			throw new WProcessDefException(mess);
 		}
-		
 		
 		return returnValue;
+		
 	}
 	
 
-	public boolean checkSharedStep(Integer stepId, Integer processId, Integer currentUserId) throws WStepSequenceDefException {
+	/**
+	 * Check if a step is shared by more than 1 process (definition level)
+	 * 
+	 * @param stepDefId
+	 * @param processDefId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	public boolean checkSharedStep(Integer stepDefId, Integer processDefId, Integer currentUserId) 
+			throws WProcessDefException {
 		
 		try {
-
-			return new WStepDefBL().stepIsShared(stepId, currentUserId);
-		
-		} catch (Exception e) {
-			String mess = "Error checking shared steps for process id:"+processId;
-			throw new WStepSequenceDefException(mess);
-		}
-
-	}
-	
-	public boolean checkWorkReferral(Integer stepId, Integer processId, Integer currentUserId) throws WStepWorkException {
-		
-		try {
-
-			return new WStepWorkBL().isAnotherProcessUsingWorkStep(stepId, processId, currentUserId);
 			
+			return new WStepDefBL().stepIsShared(stepDefId, currentUserId);
+			
+		} catch (WStepDefException e) {
+			String mess = "WStepDefException: Error checking shared steps for process id:"+processDefId;
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+
 		} catch (Exception e) {
-			String mess = "Error checking shared work steps for process id:"+processId;
-			throw new WStepWorkException(mess);
+			String mess = "Exception: Error checking shared steps for process id:"+processDefId;
+			logger.error(mess);
+			throw new WProcessDefException(mess);
 		}
-		
+
+	}
+	
+	/**
+	 * check if a step has works for another processDefId that given one
+	 * 
+	 * @param stepDefId
+	 * @param processDefId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	public boolean checkWorkReferral(Integer stepDefId, Integer processDefId, Integer currentUserId) 
+			throws WProcessDefException {
+
+		try {
+			
+			return new WStepWorkBL()
+				.stepDefHasWorksRelated(stepDefId, processDefId, currentUserId);
+			
+		} catch (WProcessDefException e) {
+			String mess = "Error checking works for process def id:"+processDefId;
+			throw new WProcessDefException(mess);
+		} catch (WStepWorkException e) {
+			String mess = "Error checking works for process def id:"+processDefId;
+			throw new WProcessDefException(mess);
+		}
+
 	}
 	
 	// dml 20130506
-	public void deactivateProcess(Integer processId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException{
+	public void deactivateProcess(Integer processId, Integer currentUserId) 
+			throws WProcessDefException, WStepSequenceDefException{
 		
 		if (processId != null
 				&& !processId.equals(0)){
@@ -747,7 +836,7 @@ public class WProcessDefBL {
 	 * @param processDefId
 	 * @param processHeadId
 	 * @param currentUserId
-	 * @param boolean startsNewVersionAt1 -> true: new version =1, false: new version = current version
+	 * @param boolean startsNewVersionAtCurrent -> true: new version =1, false: new version = current version
 	 * @param boolean emptyRoleList
 	 * @param boolean emptyUserList
 	 * @param Integer createNewClonedSteps  --> 0: use existing steps, 1: yes create a clone of each existing step, 
@@ -763,7 +852,7 @@ public class WProcessDefBL {
 	 */
 	public Integer cloneWProcessDef(
 			String newProcessName,
-			Integer processDefId, Integer processHeadId, boolean startsNewVersionAt1, boolean emptyRoleList, 
+			Integer processDefId, Integer processHeadId, boolean startsNewVersionAtCurrent, boolean emptyRoleList, 
 			boolean emptyUserList, int createNewClonedSteps, boolean emptyWorkflowMap, Integer currentUserId ) 
 			throws  WProcessHeadException, WStepSequenceDefException, WProcessDefException  {
 		
@@ -772,12 +861,12 @@ public class WProcessDefBL {
 		WProcessHeadManagedDataConfiguration mdf=null;
 		Set<WProcessDataField> dataFieldDef=null;
 		List<WStepSequenceDef> routes = new ArrayList<WStepSequenceDef>();
+		List<IntegerPair> relClonedSequences=null;
+		List<IntegerPair> relClonedSteps=null;
 		try {
 			newprocver = this.getWProcessDefByPK(processDefId, currentUserId);
 			procver = this.getWProcessDefByPK(processDefId, currentUserId);
-			if ( !startsNewVersionAt1 ) {
-				newversion=this.getLastVersionNumber(processHeadId, currentUserId)+1;				
-			}
+			newversion=(startsNewVersionAtCurrent?getLastVersionNumber(processHeadId, currentUserId)+1:1);				
 		} catch (WProcessDefException e) {
 			String mess = "Error cloning process version: can't get original process version id:"+processDefId
 							+" - "+e.getMessage()+" - "+e.getCause();
@@ -796,6 +885,8 @@ public class WProcessDefBL {
 		}
 		
 		try {
+			
+			// initialize newprocver object:
 			
 			newprocver.setId(null);
 			newprocver.getProcess().setId(null);
@@ -840,17 +931,24 @@ public class WProcessDefBL {
 		// build managed table (if exists)
 		buildManagedTable(currentUserId, newprocver, procver, mdf, dataFieldDef);
 		
-		List<IntegerPair> relClonedSequences=null;
 		// if createNewClonedSteps parameter then clone step list ...
 		if (createNewClonedSteps==1) {
 			// clonar cada paso y reacomodar la nueva secuencia (porque las secuencias tendrán q referir a los nuevos pasos
+			relClonedSteps=
+					cloneStepList(
+							newprocver.getProcess().getId(), // head id
+							clonedId, // new process def id
+							procver.getlSteps(), // step list
+							currentUserId);
 			
 		} else if (createNewClonedSteps==2) {
-			// clean step sequence list
-		} else {
-			relClonedSequences = cloneCurrentRoutes(processDefId,
-					currentUserId, clonedId, newprocver, routes);
-		}
+			// clean step && sequence list
+		} 
+		
+		// clone step sequence list
+		relClonedSequences = cloneCurrentRoutes(processDefId,
+					currentUserId, clonedId, newprocver, routes, relClonedSteps);
+		
 
 		// to be implemented: migrate xml map
 		// load xml map and for each sequence update edge's spIds
@@ -864,46 +962,101 @@ public class WProcessDefBL {
 	}
 
 	// clone each step and update routes with new stepId
-	private List<IntegerPair> cloneStepListAndRoutes(Integer processDefId,
-			Integer currentUserId, Integer clonedId, WProcessDef newprocver,
-			List<WStepSequenceDef> routes) throws WStepSequenceDefException {
-		// obtener la lista de steps (se obtiene a partir de las rutas :( )
+	private List<IntegerPair> cloneStepList(Integer processHeadId,
+			Integer clonedProcessDefId, List<WStepDef> stepList, Integer currentUserId) 
+					throws WStepSequenceDefException {
+
+		// clone steps
 		
-		// clone routes (the workflow map really ...)
-		WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
-		List<IntegerPair> relClonedSequences = new ArrayList<IntegerPair>(); // reserve seq id pairs to migrate map
+		WStepDefBL stepDefBL = new WStepDefBL();
+		
+		List<IntegerPair> relClonedSteps = new ArrayList<IntegerPair>(); // reserve step id pairs to migrate map and routes
+		
+		int newStepId=0;
+
 		try {
-			routes = new WStepSequenceDefBL().getStepSequenceList(processDefId, null, currentUserId);
-			if (routes.size()>0){
-				for (WStepSequenceDef route: routes) {
-					route.setProcess(new WProcessDef());
-					route.getProcess().setId(clonedId);
-					int newRouteId=seqBL.add(route, currentUserId); // insert new cloned route
-					relClonedSequences.add(new IntegerPair(route.getId(),newRouteId));
-					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+ currentUserId);
+
+			if (stepList.size()>0){
+				
+				for (WStepDef step:stepList) {
+					
+					try {
+						newStepId = 
+								stepDefBL.cloneWStepDef(
+										step.getId(), 
+										step.getStepHead().getId(), 
+										clonedProcessDefId, 
+										processHeadId,
+										GENERATE_NEW_STEP,  DONT_CLONE_ROUTES,
+										CLONE_RESPONSES, CLONE_PERMISSIONS, currentUserId);
+
+						relClonedSteps.add(new IntegerPair(step.getId(),newStepId));
+
+						logger.debug("inserted (cloned) new step:"+newStepId+" for old step id:"+step.getId()+" user:"+ currentUserId);
+
+					} catch (WStepHeadException e) {
+						String mess = "WStepHeadException: Error cloning stepDef "
+											+step.getId()+"for new process id:"+clonedProcessDefId+" "
+											+e.getMessage()+" - "+e.getCause();
+						logger.error(mess);
+					} catch (WStepDefException e) {
+						String mess = "WStepDefException: Error cloning stepDef "
+								+step.getId()+"for new process id:"+clonedProcessDefId+" "
+								+e.getMessage()+" - "+e.getCause();
+						logger.error(mess);
+					} 
 				}
 			}			
+
 		} catch (WStepSequenceDefException e) {
-			String mess = "Error cloning routes for old process id:"+processDefId+"  newProcessId:"+newprocver
-					+" - "+e.getMessage()+" - "+e.getCause();
+			String mess = "WStepSequenceDefException: Error cloning stepDef for new process id:"+clonedProcessDefId+" "
+						+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
 			throw new WStepSequenceDefException(mess);
 		}
-		return relClonedSequences;
+		
+		if (relClonedSteps.size()<1) relClonedSteps=null;
+		return relClonedSteps;
 	}
 	
-	// clone existing routes and insert in sequence table
+	/**
+	 *  clone existing routes and insert in sequence table
+	 *  
+	 * @param processDefId
+	 * @param currentUserId
+	 * @param clonedId
+	 * @param newprocver
+	 * @param routes
+	 * @param relClonedSteps >> list of id pairs of cloned steps (originalId, newId)
+	 * @return
+	 * @throws WStepSequenceDefException
+	 */
 	private List<IntegerPair> cloneCurrentRoutes(Integer processDefId,
 			Integer currentUserId, Integer clonedId, WProcessDef newprocver,
-			List<WStepSequenceDef> routes) throws WStepSequenceDefException {
-		// clone routes (the workflow map really ...)
+			List<WStepSequenceDef> routes, List<IntegerPair> relClonedSteps) 
+					throws WStepSequenceDefException {
+		
+		// clone routes
 		WStepSequenceDefBL seqBL = new WStepSequenceDefBL();
 		List<IntegerPair> relClonedSequences = new ArrayList<IntegerPair>(); // reserve seq id pairs to migrate map
+		
+		boolean stepsWasCloned = relClonedSteps!=null;
+		
 		try {
-			routes = new WStepSequenceDefBL().getStepSequenceList(processDefId, null, currentUserId);
+			routes = new WStepSequenceDefBL()
+							.getStepSequenceList(processDefId, null, currentUserId);
+
 			if (routes.size()>0){
 				for (WStepSequenceDef route: routes) {
 					route.setProcess(new WProcessDef());
 					route.getProcess().setId(clonedId);
+					if (stepsWasCloned && route.getFromStep()!=null) {
+						route.setFromStep(new WStepDef(getNewStepId(relClonedSteps,route.getFromStep().getId() ) ) );
+					}
+					if (stepsWasCloned && route.getToStep()!=null) {
+						route.setToStep(new WStepDef(getNewStepId(relClonedSteps,route.getToStep().getId() ) ) );
+					}
+
 					int newRouteId=seqBL.add(route, currentUserId); // insert new cloned route
 					relClonedSequences.add(new IntegerPair(route.getId(),newRouteId));
 					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+ currentUserId);
@@ -917,6 +1070,14 @@ public class WProcessDefBL {
 		return relClonedSequences;
 	}
 
+	// returns new cloned step if from previous step id ...
+	private Integer getNewStepId(List<IntegerPair> relClonedSteps, int previousStepId ) {
+		for (IntegerPair ip: relClonedSteps) {
+			if ( ip.getInt1() == previousStepId ) return ip.getInt2();
+		}
+		return previousStepId;
+	}
+	
 	private Integer addClonedProcessDef(Integer processDefId,
 			Integer currentUserId, Integer clonedId, WProcessDef newprocver)
 			throws WStepSequenceDefException, WProcessDefException,
@@ -942,6 +1103,8 @@ public class WProcessDefBL {
 			WProcessHeadManagedDataConfiguration mdf,
 			Set<WProcessDataField> dataFieldDef) throws WProcessDefException {
 		if (mdf!=null) {
+			
+			// initialize managed data configuration in process head
 			mdf.setComment(
 					(mdf.getComment()!=null?mdf.getComment():"")
 					+" cloned from headid "+procver.getProcess().getId()+" ");
@@ -949,11 +1112,13 @@ public class WProcessDefBL {
 			mdf.setName(null);
 			newprocver.getProcess().setManagedTableConfiguration(mdf);
 			
+			// clean data field list in process head
 			newprocver.getProcess().setProcessDataFieldDef(null);
 			
 			// updates new process to create managed table
 			update( newprocver,currentUserId );	
 			
+			// if exists data field list then add it (via WProcessDataFieldBL)
 			if (dataFieldDef!=null) {
 				
 				WProcessDataFieldBL wdfBL = new WProcessDataFieldBL();
@@ -971,9 +1136,24 @@ public class WProcessDefBL {
 						logger.error("buildManagedTable: Error TableManagerException adding new process data field to cloned process "+e.getMessage()+" - "+e.getCause());
 					}
 				}
+
+				// reload newprocver object with process data field list
+				try {
+					newprocver=getWProcessDefByPK(newprocver.getId(), currentUserId);
+				} catch (WStepSequenceDefException e) {
+					String mess="buildManagedTable: Error WStepSequenceDefException reloading newprocver after adding new process data field to cloned process "+e.getMessage()+" - "+e.getCause(); 
+					logger.error(mess);
+					throw new WProcessDefException(mess);
+				}
 			}
+			
+			// create managed table
+			createManagedTable(newprocver.getProcess().getManagedTableConfiguration().getSchema(),
+								newprocver.getProcess().getManagedTableConfiguration().getName(),
+								newprocver.getProcess().getProcessDataFieldDefAsList());
 		}
 	}
+	
 
 	private void loadUsersAndRoles(Integer currentUserId,
 			boolean emptyRoleList, boolean emptyUserList,
@@ -1145,6 +1325,36 @@ public class WProcessDefBL {
 
 		}
 		return routes;
+	}
+	
+	/**
+	 * creates managed table (if doesn't exist - if exist throws error)
+	 * 
+	 * @param schemaName
+	 * @param tableName
+	 * @param dataFieldList
+	 * @throws WProcessDefException 
+	 */
+	public void createManagedTable(String schemaName, String tableName, List<WProcessDataField> dataFieldList) 
+			throws WProcessDefException {
+		try {
+			new TableManagerBL()
+					.createManagedTable(
+							schemaName, 
+							tableName, 
+							dataFieldList);
+		} catch (TableAlreadyExistsException e) {
+			String message = "WProcessDefFormBean.createManagedTable() TableAlreadyExistsException: " + 
+					e.getMessage() + " - " + e.getCause();
+			logger.error(message);
+			throw new WProcessDefException(message);
+		
+		} catch (TableManagerException e) {
+			String message = "WProcessDefFormBean.createManagedTable() TableManagerException: " + 
+					e.getMessage() + " - " + e.getCause();
+			logger.error(message);
+			throw new WProcessDefException(message);
+		}
 	}
 	
 	public boolean hasVersions(Integer processHeadId) throws WProcessDefException {
