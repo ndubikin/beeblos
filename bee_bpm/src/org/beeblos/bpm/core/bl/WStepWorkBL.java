@@ -195,6 +195,14 @@ public class WStepWorkBL {
 		return new WStepWorkDao().existsActiveProcess(processId, idObject, idObjectType);
 	}
 
+	/**
+	 * returns qty of existing step works for a given processDefId (process version)
+	 * 
+	 * @param processId
+	 * @param mode
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public Integer getStepWorkCountByProcess (Integer processId, String mode) throws WStepWorkException {
 		return new WStepWorkDao().getStepWorkCountByProcess(processId, mode);
 	}
@@ -1315,50 +1323,75 @@ public class WStepWorkBL {
 		
 	}
 	
-	// dml 20130507
-	public List<Integer> getProcessIdList(Integer stepId, Integer userId) throws WStepWorkException {
+	/**
+	 * returns a list with all process def id which references (or use) the given stepDefId
+	 *
+	 * @author dml 20130507
+	 * 
+	 * @param stepDefId
+	 * @param userId
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	public List<Integer> getRelatedProcessDefIdList(
+			Integer stepDefId, Integer processDefId, Integer userId) 
+			throws WStepWorkException {
 
-		return new WStepWorkDao().getProcessIdList(stepId);
+		return new WStepWorkDao().getRelatedProcessDefIdList(stepDefId,processDefId);
 	
 	}
 	
-	// dml 20130507
-	public boolean isAnotherProcessUsingWorkStep(Integer stepId, Integer processId, Integer userId) 
-			throws WStepWorkException, WProcessDefException {
+	/**
+	 * Returns true if there is process def different of given processDefId using this stepDefId
+	 * If processDefId is null or zero, then returns true if there is works using this stepDefId
+	 * Admin method
+	 * 
+	 * @param stepDefId
+	 * @param processDefId
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepWorkException
+	 * @throws WProcessDefException
+	 */
+	public boolean stepDefHasWorksRelated(
+			Integer stepDefId, Integer processDefId, Integer currentUserId ) 
+					throws WStepWorkException, WProcessDefException {
 
-		if (stepId == null
-				|| stepId.equals(0)
-				|| processId == null
-				|| processId.equals(0)){
-			String mess = "stepId and processId cannot be null or zero";
+		if (getProcessListReferringThisStep(stepDefId,processDefId,currentUserId).size()>0) return true;
+		else return false;
+	}
+	
+	/**
+	 * Returns a list of id for processes referring a given stepDefId.
+	 * Si processDefId es distinto de nulo devolverá la lista de ids diferentes al 
+	 * processDefId dado.
+	 * Este es un método para administración para determinar si un determinado stepDef 
+	 * tiene works que estén perteneciendo a otros procesos, de cara a limpiar la base
+	 * de datos de procesos antiguos, obsoletos o similar.
+	 * Admin method
+	 * 
+	 * @param stepDefId
+	 * @param processDefId
+	 * @param currentUserId
+	 * 
+	 * @return
+	 * @throws WStepWorkException
+	 * @throws WProcessDefException
+	 */
+	public List<Integer> getProcessListReferringThisStep(
+			Integer stepDefId, Integer processDefId, Integer currentUserId) 
+					throws WStepWorkException, WProcessDefException {
+
+		if (stepDefId == null
+				|| stepDefId.equals(0) ){
+			String mess = "stepDefId cannot be null nor zero";
 			logger.error(mess);
 			throw new WProcessDefException(mess);
 		}
 
-		List<Integer> processIdList = this.getProcessIdList(stepId, userId);
+		List<Integer> processIdList = this.getRelatedProcessDefIdList(stepDefId, processDefId, currentUserId);
 		
-		if (processIdList == null){
-			String mess = "Error trying to retrieve the processIdList:"+processId;
-			logger.error(mess);
-			throw new WProcessDefException(mess);
-		}
-			
-		// si le pasamos processId nulo, si la lista no esta vacia devuelve "true"
-		if ((processId == null
-				|| processId.equals(0))
-				&& !processIdList.isEmpty()){
-			return true;
-		}
-			
-		for (Integer pid : processIdList){
-			
-			if (!pid.equals(processId)){
-				return true;
-			}
-			
-		} 
-
-		return false;
+		return processIdList;
 	
 	}
 

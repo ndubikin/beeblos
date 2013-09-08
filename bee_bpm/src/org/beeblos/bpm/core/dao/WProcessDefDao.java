@@ -1067,8 +1067,9 @@ public class WProcessDefDao {
 
 			tx.begin();
 
-			qtyExistingProcesses = (BigInteger) session.createSQLQuery("SELECT COUNT(id) as count FROM w_process_def WHERE head_id = " + processHeadId)
-					.uniqueResult();
+			qtyExistingProcesses = 
+					(BigInteger) session.createSQLQuery("SELECT COUNT(id) as count FROM w_process_def WHERE head_id = " + processHeadId)
+											.uniqueResult();
 
 			tx.commit();
 

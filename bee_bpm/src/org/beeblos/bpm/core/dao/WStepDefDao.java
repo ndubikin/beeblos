@@ -469,8 +469,15 @@ public class WStepDefDao {
 	}	
 	
 	// dml 20130507
+	/**
+	 * Returns a list of process def id which use given step def id
+	 * 
+	 * @param stepDefId
+	 * @return
+	 * @throws WStepDefException
+	 */
 	@SuppressWarnings("unchecked")
-	public List<Integer> getProcessIdList(Integer stepId) throws WStepDefException {
+	public List<Integer> getProcessIdList(Integer stepDefId) throws WStepDefException {
 	
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -491,7 +498,7 @@ public class WStepDefDao {
 			System.out.println("[QUERY]: "+query);
 			
 			processIdList = (ArrayList<Integer>) session.createSQLQuery(query)
-					.setInteger("stepId", stepId)
+					.setInteger("stepId", stepDefId)
 					.list();
 
 			tx.commit();
@@ -499,7 +506,7 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "WStepDefDao: getProcessIdList() - can't obtain id process list - " +
+			String mess = "WStepDefDao: getProcessIdList() - can't obtain process id list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(mess);
 			throw new WStepDefException(mess);

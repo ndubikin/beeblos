@@ -159,11 +159,12 @@ public class WProcessDataFieldDao {
 			// returns managedData if there is defined (processHead) and table exists
 			// if not there is another instance to create the managed table
 			managedData = getAndCheckManagedData(processDataField.getProcessHeadId(), tm, managedData);
-			tableName=managedData.getManagedTableConfiguration().getName();
-			schemaName=managedData.getManagedTableConfiguration().getSchema();
-			fieldName=processDataField.getColumnName();
-			
+		
 			if (managedData!=null) {
+
+				tableName=managedData.getManagedTableConfiguration().getName();
+				schemaName=managedData.getManagedTableConfiguration().getSchema();
+				fieldName=processDataField.getColumnName();				
 				
 				qtyRecsNotNull = 
 						tm.countNotNullRecords(	schemaName, tableName, fieldName);
@@ -255,7 +256,9 @@ public class WProcessDataFieldDao {
 	}
 
 	
-	public WProcessDataField getWProcessDataFieldByName(String name) throws WProcessDataFieldException {
+	public WProcessDataField getWProcessDataFieldByName(
+			String name ) 
+					throws WProcessDataFieldException {
 
 		WProcessDataField process = null;
 		org.hibernate.Session session = null;
@@ -268,8 +271,8 @@ public class WProcessDataFieldDao {
 
 			tx.begin();
 
-			process = (WProcessDataField) session.createCriteria(WProcessDataField.class).add(
-					Restrictions.naturalId().set("name", name))
+			process = (WProcessDataField) session.createCriteria(WProcessDataField.class)
+						.add(Restrictions.naturalId().set("name", name))
 					.uniqueResult();
 
 			tx.commit();
@@ -287,6 +290,40 @@ public class WProcessDataFieldDao {
 		return process;
 	}
 
+	public WProcessDataField getWProcessDataFieldByNameAndProcessHeadId(
+			String name, Integer processHeadId ) 
+					throws WProcessDataFieldException {
+
+		WProcessDataField process = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			process = (WProcessDataField) session.createCriteria(WProcessDataField.class)
+						.add(Restrictions.naturalId().set("name", name))
+						.add(Restrictions.naturalId().set("processHeadId", processHeadId))
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="WProcessDataFieldDao: getWProcessDataFieldByName - can't obtain process data field name = " +
+							name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+			logger.warn( mess );
+			throw new WProcessDataFieldException( mess );
+
+		}
+
+		return process;
+	}
 	
 	public List<WProcessDataField> getWProcessDataFieldList() throws WProcessDataFieldException {
 
