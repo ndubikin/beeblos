@@ -45,7 +45,7 @@
 		
 		<h:outputText value="#{msg.label_from_step}: " styleClass="label_form left_column_20" />
 		<h:outputText id="previous_step"
-			value="#{wStepWorkFormBean.currentWStepWork.previousStep.name}"
+			value="#{wStepWorkFormBean.currentWStepWork.previousStep.name!=null and wStepWorkFormBean.currentWStepWork.previousStep.name!=''?wStepWorkFormBean.currentWStepWork.previousStep.name:'Starting workflow'}"
 			styleClass="data_form_bold" />
 		<h:outputText value=" #{msg.label_by}: " style="margin-left:10px;"
 			rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser != null}" />
@@ -56,7 +56,8 @@
 			rendered="#{wStepWorkFormBean.currentWStepWork.wProcessWork.insertUser != null}" />
 		<br />
 		<br />
-		
+
+<ui:fragment rendered="#{wStepWorkFormBean.currentWStepWork.openedDate!=null}">
 		<h:outputText value="#{msg.label_opened_date}: " styleClass="label_form left_column_20" />
 		<h:outputText
 			value="#{wStepWorkFormBean.currentWStepWork.openedDate}"
@@ -71,7 +72,13 @@
 			styleClass="data_form_bold" 
 			rendered="#{wStepWorkFormBean.currentWStepWork.openerUser != null}"/>
 		<br />
-		
+</ui:fragment>		
+<ui:fragment rendered="#{wStepWorkFormBean.currentWStepWork.openedDate eq null}">
+	<h:outputText value="-" styleClass="label_form left_column_20" />
+	<h:outputText value="#{msg.label_not_opened_yet} " styleClass="label_form_bold" />
+</ui:fragment>
+
+<ui:fragment rendered="#{wStepWorkFormBean.currentWStepWork.decidedDate!=null}">
 		<h:outputText value="#{msg.label_decided_date}: " styleClass="label_form left_column_20" />
 		<h:panelGroup>
 			<h:outputText
@@ -88,16 +95,15 @@
 				rendered="#{wStepWorkFormBean.currentWStepWork.performer != null}" />
 		</h:panelGroup>
 		<br />
+</ui:fragment>
 		
-		<h:outputText value=""
-			rendered="#{wStepWorkFormBean.currentWStepWork.adminProcess}" styleClass="label_form left_column_20" />
 		<h:outputText value="#{msg.label_processed_by_administrator}"
 			styleClass="data_form_bold" 
 			rendered="#{wStepWorkFormBean.currentWStepWork.adminProcess}" />
 		<br />
 
-		<h:outputText value="#{msg.label_locked_by}: "
-				rendered="#{wStepWorkFormBean.currentWStepWork.lockedBy != null}" styleClass="label_form left_column_20" />
+<ui:fragment rendered="#{wStepWorkFormBean.currentWStepWork.locked eq true}">
+		<h:outputText value="#{msg.label_locked_by}: " styleClass="label_form left_column_20" />
 		<h:panelGroup>
 			<h:outputText value="#{wStepWorkFormBean.currentWStepWork.lockedBy.name}" 
 				style="color: red; font-weight:bold; font-size:13px;"
@@ -115,6 +121,7 @@
 					timeZone="#{wStepWorkFormBean.timeZone}" />
 			</h:outputText>
 		</h:panelGroup>
+</ui:fragment>		
 		<br />
 
 		<h:outputText value="#{msg.label_received_instructions}: " styleClass="label_form left_column_20" 
@@ -136,16 +143,16 @@
 		<br />		
 
 	</p>
-	<p>
-		<h:form id="w_view_step_work_form">
-			<a4j:commandButton id="close_button_sr" value="#{msg.label_close}"
-				action="#{wStepWorkFormBean.cancel}"
-				onclick="javascript:Richfaces.hideModalPanel('mpViewStepWork')"
-				style="width:80px; height:24px;"/>
-		</h:form>
-		<br />
-		
-	</p>
-
+	<h:form id="w_view_step_work_form">
+		<p class="fieldset_block_info_noBorder_noPadding_35px">
+	
+				<a4j:commandButton id="close_button_sr" value="#{msg.label_close}"
+					action="#{wStepWorkFormBean.cancel}"
+					onclick="javascript:Richfaces.hideModalPanel('mpViewStepWork')"
+					style="width:80px; height:24px;"/>
+	
+			<br />
+		</p>
+	</h:form>
 </ui:composition>
 

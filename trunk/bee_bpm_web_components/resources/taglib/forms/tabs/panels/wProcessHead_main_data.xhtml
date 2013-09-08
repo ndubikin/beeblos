@@ -8,7 +8,7 @@
 
 	<h:form>
 	
-		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessHeadFormBean.changeReadOnlyToFalse}" 
+		<a4j:jsFunction name="refreshSaveButton" ajaxSingle="true" actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}" 
 						reRender="cancel_button, save_button" />
 	
 	</h:form>
@@ -24,66 +24,66 @@
 			
 			<h:outputText value="#{msg.label_name}:" styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_name"
-				value="#{wProcessHeadFormBean.currentWProcessHead.name}"
+				value="#{wProcessDefFormBean.currentWProcessDef.process.name}"
 				style="width:350px; font-size:13px;	padding: 4px;"				
-				rendered="#{!wProcessHeadFormBean.readOnly}"/>
+				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
-				value="#{wProcessHeadFormBean.currentWProcessHead.name}"
+				value="#{wProcessDefFormBean.currentWProcessDef.process.name}"
 				style="font-size:13px;"
-				rendered="#{wProcessHeadFormBean.readOnly}"/>
+				rendered="#{wProcessDefFormBean.readOnly}"/>
 
 			<h:outputText value="#{msg.label_comments}:"
 				styleClass="firstLeftText" />
 			<h:inputText id="fact_w_process_def_comments"
-				value="#{wProcessHeadFormBean.currentWProcessHead.comments}"
+				value="#{wProcessDefFormBean.currentWProcessDef.process.comments}"
 				style="width:350px; font-size:13px;	padding: 4px;"
 				 
-				rendered="#{!wProcessHeadFormBean.readOnly}"/>
+				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
-				value="#{wProcessHeadFormBean.currentWProcessHead.comments}"
+				value="#{wProcessDefFormBean.currentWProcessDef.process.comments}"
 				style="font-size:13px;"
-				rendered="#{wProcessHeadFormBean.readOnly}"/>
+				rendered="#{wProcessDefFormBean.readOnly}"/>
 
 		</h:panelGrid>
 		
 		<h:panelGrid width="98%" columns="2" style="width:700px;margin-left:16px;"
 			columnClasses="colStyle200px, colStyle480px"
-			rendered="#{wProcessHeadFormBean.currentId eq null or wProcessHeadFormBean.currentId eq 0}">
+			rendered="#{wProcessDefFormBean.currentId eq null or wProcessDefFormBean.currentId eq 0}">
 				
 			<h:outputText value="#{msg.label_version} #{msg.label_comments}:"
 				styleClass="firstLeftText" />
 			<h:inputText
-				value="#{wProcessHeadFormBean.currentWProcessHead.comments}"
+				value="#{wProcessDefFormBean.currentWProcessDef.comments}"
 				style="width:350px; font-size:13px;	padding: 4px;"
-				rendered="#{!wProcessHeadFormBean.readOnly}"/>
+				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
-				value="#{wProcessHeadFormBean.currentWProcessHead.comments}"
+				value="#{wProcessDefFormBean.currentWProcessDef.comments}"
 				style="font-size:13px;"
-				rendered="#{wProcessHeadFormBean.readOnly}"/>
+				rendered="#{wProcessDefFormBean.readOnly}"/>
 
 			<h:outputText value="#{msg.label_begin_step}:"
 				styleClass="firstLeftText" />
 			<h:selectOneMenu
-				value="#{wProcessHeadFormBean.currentWProcessHead.beginStep.id}"
+				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.id}"
 				style="width:250px; height: 24px; font-size:13px;padding: 3px;"
-				rendered="#{!wProcessHeadFormBean.readOnly}">
-				<f:selectItems value="#{wProcessHeadFormBean.lStepCombo}" />
+				rendered="#{!wProcessDefFormBean.readOnly}">
+				<f:selectItems value="#{wProcessDefFormBean.lStepCombo}" />
 			</h:selectOneMenu>
 			<h:outputText 
-				value="#{wProcessHeadFormBean.currentWProcessHead.beginStep.name}"
+				value="#{wProcessDefFormBean.currentWProcessDef.beginStep.name}"
 				style="font-size:13px;"
-				rendered="#{wProcessHeadFormBean.readOnly}"/>
+				rendered="#{wProcessDefFormBean.readOnly}"/>
 			
 			<h:outputText value="#{msg.label_admin_email}:"
 				styleClass="firstLeftText" />
 			<h:inputText
-				value="#{wProcessHeadFormBean.currentWProcessHead.adminEmail}"
+				value="#{wProcessDefFormBean.currentWProcessDef.adminEmail}"
 				style="width:350px; font-size:13px;	padding: 4px;"
-				rendered="#{!wProcessHeadFormBean.readOnly}"/>
+				rendered="#{!wProcessDefFormBean.readOnly}"/>
 			<h:outputText 
-				value="#{wProcessHeadFormBean.currentWProcessHead.adminEmail}"
+				value="#{wProcessDefFormBean.currentWProcessDef.adminEmail}"
 				style="font-size:13px;"
-				rendered="#{wProcessHeadFormBean.readOnly}"/>				
+				rendered="#{wProcessDefFormBean.readOnly}"/>				
 
 			<rich:spacer height="10" />
 			<rich:spacer height="10" />
@@ -92,7 +92,7 @@
 		
 		<h:panelGrid width="98%" columns="2" style="width:700px;margin-left:16px;"
 			columnClasses="colStyle200px, colStyle480px"
-			rendered="#{wProcessHeadFormBean.currentId ne null and wProcessHeadFormBean.currentId ne 0}">
+			rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}">
 				
 			<rich:spacer height="10"/>
 			<rich:spacer height="10"/>
@@ -101,12 +101,12 @@
 			<h:panelGroup width="100%">
 				<h:outputText value="#{msg.label_created_by}: " />
 				<h:outputText id="fact_w_process_def_insert_user"
-					value="#{wProcessHeadFormBean.currentWProcessHead.insertUser} " />
+					value="#{wProcessDefFormBean.currentWProcessDef.process.insertUser} " />
 				<h:outputText value="#{msg.label_the} " />
 				<h:outputText
-					value="#{wProcessHeadFormBean.currentWProcessHead.insertDate}">
+					value="#{wProcessDefFormBean.currentWProcessDef.process.insertDate}">
 					<f:convertDateTime pattern="#{msg.label_date_format}"
-						timeZone="#{wProcessHeadFormBean.timeZone}" />
+						timeZone="#{wProcessDefFormBean.timeZone}" />
 				</h:outputText>
 			</h:panelGroup>
 
@@ -117,12 +117,12 @@
 			<h:panelGroup>
 				<h:outputText value="#{msg.label_last_modification}: " />
 				<h:outputText id="fact_w_process_def_mod_user"
-					value="#{wProcessHeadFormBean.currentWProcessHead.modUser} " />
+					value="#{wProcessDefFormBean.currentWProcessDef.process.modUser} " />
 				<h:outputText value="#{msg.label_the} " styleClass="firstLeftText" />
 				<h:outputText
-					value="#{wProcessHeadFormBean.currentWProcessHead.modDate}">
+					value="#{wProcessDefFormBean.currentWProcessDef.process.modDate}">
 					<f:convertDateTime pattern="#{msg.label_date_format}"
-						timeZone="#{wProcessHeadFormBean.timeZone}" />
+						timeZone="#{wProcessDefFormBean.timeZone}" />
 				</h:outputText>
 			</h:panelGroup>
 
@@ -138,55 +138,55 @@
 			<rich:spacer height="10" />
 			<h:panelGroup>
 				<a4j:commandButton id="edit_button" value="#{msg.label_edit}"
-					actionListener="#{wProcessHeadFormBean.changeReadOnlyToFalse}"
+					actionListener="#{wProcessDefFormBean.changeReadOnlyToFalse}"
 					reRender="w_process_def_main_tag_form"
 					style="width:80px; margin-right:20px; " 
-					rendered="#{wProcessHeadFormBean.readOnly}"/>
+					rendered="#{wProcessDefFormBean.readOnly}"/>
 			
 				<a4j:commandButton id="cancel_button" value="#{msg.label_cancel}"
-					action="#{wProcessHeadFormBean.cancel}"
+					action="#{wProcessDefFormBean.cancel}"
 					reRender="w_process_def_main_tag_form"
 					style="width:80px; margin-right:20px; " 
-					rendered="#{!wProcessHeadFormBean.readOnly}"/>
+					rendered="#{!wProcessDefFormBean.readOnly}"/>
 
 				<a4j:commandButton id="update_button" value="#{msg.label_update}"
-					actionListener="#{wProcessHeadFormBean.update}"
-					reRender="w_process_def_main_tag_form, w_process_head_title_form"
+					actionListener="#{wProcessDefFormBean.update}"
+					reRender="w_process_def_main_tag_form, w_process_main_title_name"
 					style="margin-right: 0px; width:120px; " 
-					rendered="#{!wProcessHeadFormBean.readOnly and (wProcessHeadFormBean.currentId != null) and (wProcessHeadFormBean.currentId != 0)}"/>
+					rendered="#{!wProcessDefFormBean.readOnly and (wProcessDefFormBean.currentId != null) and (wProcessDefFormBean.currentId != 0)}"/>
 
 				<h:commandButton id="save_continue_button" value="#{msg.label_save}"
-					action="#{wProcessHeadFormBean.save_continue}"
+					action="#{wProcessDefFormBean.save_continue}"
 					style="margin-right: 0px; width:120px; " 
-					rendered="#{!wProcessHeadFormBean.readOnly and ((wProcessHeadFormBean.currentId == null) or (wProcessHeadFormBean.currentId == 0))}"/>
+					rendered="#{!wProcessDefFormBean.readOnly and ((wProcessDefFormBean.currentId == null) or (wProcessDefFormBean.currentId == 0))}"/>
 
 			</h:panelGroup>
 			
 		</h:panelGrid>
 
 		<h:panelGrid columns="1" width="98%" style="margin-left:16px;"
-			rendered="#{wProcessHeadFormBean.currentId ne null and wProcessHeadFormBean.currentId ne 0}">
+			rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}">
 				
 			<rich:spacer height="10" />
 
-			<h:selectOneMenu value="#{wProcessHeadFormBean.activeFilter}"
+			<h:selectOneMenu value="#{wProcessDefFormBean.activeFilter}"
 				style="width:100px; font-size:12px;	padding: 4px;">
 				<f:selectItem itemLabel="#{msg.label_all}" itemValue="ALL" />
 				<f:selectItem itemLabel="#{msg.label_active}" itemValue="#{msg.label_active}" />
 				<f:selectItem itemLabel="#{msg.label_inactive}" itemValue="#{msg.label_inactive}" />
 				<a4j:support event="onchange"
-					actionListener="#{wProcessHeadFormBean.reloadRelatedProcessDefList}"
+					actionListener="#{wProcessDefFormBean.reloadRelatedProcessDefList}"
 					reRender="w_process_def_list_table" />
 			</h:selectOneMenu>
 
 			<rich:dataTable id="w_process_def_list_table"
-				value="#{wProcessHeadFormBean.relatedProcessDefList}"
+				value="#{wProcessDefFormBean.relatedProcessDefList}"
 				onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
 				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
 				var="wpd" width="40%" rows="10" reRender="dseDown">
 				<f:facet name="header">
 					<h:outputText
-						value="#{msg.label_head_related_process_def_list} ( #{wProcessHeadFormBean.relatedProcessDefList.size()} #{msg.label_results} )" />
+						value="#{msg.label_head_related_process_def_list} ( #{wProcessDefFormBean.relatedProcessDefList.size()} #{msg.label_results} )" />
 				</f:facet>
 
 				<rich:column sortBy="#{wpd.id}"
@@ -203,9 +203,9 @@
 						<h:outputText value="#{msg.label_name}" />
 					</f:facet>
 					<h:commandLink value="#{wpd.name}" 
-						action="#{wProcessHeadFormBean.loadWProcessDefForm}"
+						action="#{wProcessDefFormBean.loadWProcessDefForm}"
 						style="text-decoration:none; color:black;">
-                		<a4j:actionparam name="det" assignTo="#{wProcessHeadFormBean.currentId}" value="#{wpd.id}"/>
+                		<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentId}" value="#{wpd.id}"/>
 					</h:commandLink>
 				</rich:column>
 
