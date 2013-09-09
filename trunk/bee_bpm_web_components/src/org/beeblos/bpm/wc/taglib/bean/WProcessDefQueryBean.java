@@ -393,9 +393,9 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 	}
 
 	// dml 20120110
-	public String createNewWProcess() {
+	public String createNewWProcessHead() {
 
-		return new WProcessDefUtil().createNewWProcess(WPROCESSDEF_QUERY);
+		return new WProcessDefUtil().createNewWProcessHead(WPROCESSDEF_QUERY);
 		
 	}
 	

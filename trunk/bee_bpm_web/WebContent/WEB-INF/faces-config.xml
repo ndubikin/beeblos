@@ -200,8 +200,8 @@
    <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
-   <from-outcome>CREATE_NEW_WPROCESS</from-outcome>
-   <to-view-id>/forms/wProcessHeadFormCall.xhtml</to-view-id>
+   <from-outcome>CREATE_NEW_WPROCESSHEAD</from-outcome>
+   <to-view-id>/forms/wProcessDefFormCall.xhtml</to-view-id>
   </navigation-case>
   <navigation-case>
    <from-outcome>WSTEPDEF_QUERY</from-outcome>

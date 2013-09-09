@@ -22,6 +22,7 @@ import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
+import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 public class WProcessHeadFormBean extends CoreManagedBean {
 
@@ -43,7 +44,7 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 	// main properties:
 
 	private WProcessHead currentWProcessHead;
-	private Integer currentId; // current object (processDef) managed by this bb
+	private Integer currentId; // current object (it is used to load a processDef from the dataTable too)
 
 	private boolean readOnly;
 
@@ -340,6 +341,14 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 
 		return ret;
 	}
+	
+	// dml 20130909
+	public String loadWProcessDefForm() {
+
+		return new WProcessDefUtil().loadWProcessDefFormBean(this.currentId);
+
+	}
+
 		
 	public WProcessHead getCurrentWProcessHead() {
 		return currentWProcessHead;
