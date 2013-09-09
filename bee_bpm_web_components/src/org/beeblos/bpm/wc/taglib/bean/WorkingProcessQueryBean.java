@@ -702,7 +702,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 		
 		String ret = searchStepWork();
 		
-		idWorkFilter = 0;
+		this.idWorkFilter = 0;
 	
 		return ret;
 		

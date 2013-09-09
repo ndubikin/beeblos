@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.beeblos.bpm.core.model.WProcessDataField;
@@ -156,6 +157,28 @@ public class TableManagerBL {
 			throws TableManagerException {
 
 		tm.deleteFieldSynchro(schemaName, tableName, fieldName, false);
+	
+	}
+
+	/**
+	 * @author dml 20130909
+	 * 
+	 * Deletes indicated record
+	 * 
+	 * @param String schemaName
+	 * @param String tableName
+	 * @param Integer processWorkId  
+	 *
+	 * @return void
+	 * 
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 * 
+	 */	
+	public void deleteRecord( String schemaName, String tableName, Integer processWorkId) 
+			throws ClassNotFoundException, SQLException {
+
+		tm.delete(schemaName, tableName, processWorkId);
 	
 	}
 

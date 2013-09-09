@@ -94,7 +94,7 @@ public class TableManager {
 			} catch (SQLException e) {
 				throw new TableManagerException("Can't insert managed record: SQLException:"+e.getMessage()+" - "+e.getCause());
 			}
-		}
+		} 
 		
 		return null;
 	}
@@ -324,6 +324,53 @@ public class TableManager {
 		return id;
 	}	
 
+	// only can arrives here if all required data was previously checked!
+	public void delete(String schema, String tableName, Integer processWorkId) throws ClassNotFoundException, SQLException {
+		logger.debug("TableManager:DELETE FROM  schema.tableName WHERE process_work_id = processWorkId");
+
+		Integer qty=null, id=null;
+
+		String sql = buildDeleteDataQuery(schema, tableName, processWorkId);
+		
+		logger.debug("-----> delete data query:"+sql);
+
+		// begin database select
+		connect();
+		
+		try {
+			
+			stmt = conn.createStatement();
+			
+			qty = (Integer) stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			logger.debug("--------->> affected rows:"+qty);
+			
+		} catch (MySQLSyntaxErrorException e1) {
+			
+			logger.error("load: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+
+			
+		} catch (SQLException e) {
+			logger.error("load: Error SQLException "+e.getMessage()+" - "+e.getCause());
+			id=-1;
+		}    finally{
+		      //finally block used to close resources
+		      try{
+		         if(stmt!=null)
+		            conn.close();
+		      }catch(SQLException se){
+		      }// do nothing
+		      try{
+		         if(conn!=null)
+		            conn.close();
+		      }catch(SQLException se){
+		         se.printStackTrace();
+		      }//end finally try
+		}
+			
+
+	}	
+
 	// IMPLEMENTAR
 	private void loadRecord(ResultSet rs, ManagedData managedData) throws SQLException{
 		
@@ -371,6 +418,19 @@ public class TableManager {
 		sql+=" FROM ";
 		sql+=managedData.getManagedTableConfiguration().getSchema()+"."+managedData.getManagedTableConfiguration().getName()+" ";
 		sql+=" WHERE process_work_id = "+managedData.getCurrentWorkId();
+
+		return sql;
+	}
+
+	/*
+	 *  "DELETE FROM {shema}.{tableName} WHERE process_work_id={processWorkId}"
+	 *	
+	 */
+	
+	private String buildDeleteDataQuery(String schema, String tableName, Integer processWorkId){
+		
+		String sql="DELETE FROM " + schema + "." + tableName + " ";
+		sql+=" WHERE process_work_id = "+processWorkId;
 
 		return sql;
 	}

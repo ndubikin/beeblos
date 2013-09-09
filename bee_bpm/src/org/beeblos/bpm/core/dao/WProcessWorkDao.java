@@ -369,10 +369,10 @@ public class WProcessWorkDao {
 		tmpQuery += " pw.comments, "; // 3
 		tmpQuery += " (SELECT COUNT(sw.id) FROM w_step_work sw LEFT OUTER JOIN w_process_work wpw ON sw.id_work=wpw.id WHERE sw.decided_date IS NULL AND wpw.id_process = pw.id_process AND sw.id_work = pw.id ) AS liveSteps, ";
 		tmpQuery += " pw.starting_time, ";
-		tmpQuery += " ps.id, "; // status id 6 	nes 20130828
-		tmpQuery += " ps.name as statusName, "; // status name
+		tmpQuery += " ps.id AS processStatus, "; // status id 6 	nes 20130828
+		tmpQuery += " ps.name AS statusName, "; // status name
 		tmpQuery += " pw.end_time, ";
-		tmpQuery += " pw.id ";		// 9
+		tmpQuery += " pw.id AS idWork";		// 9
 
 		tmpQuery += " FROM w_process_work pw ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
