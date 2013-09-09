@@ -1,6 +1,5 @@
 package org.beeblos.bpm.web.ws.resources;
 
-import static org.beeblos.bpm.core.util.Constants.DELETED;
 import static org.beeblos.bpm.core.util.Constants.NOT_DELETED;
 
 import java.io.BufferedWriter;
@@ -1036,28 +1035,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				xmlFromStepId = ((Element) mxCellList.item(0)).getAttribute("source");
 				xmlToStepId = ((Element) mxCellList.item(0)).getAttribute("target");
 				
-				// si el "edge" sale del begin symbol no lo persistimos
-				if (xmlFromStepId != null
-						&& beginSymbolId != null
-						&& beginSymbolId.equals(xmlFromStepId)){
-					System.out.println("WS Save La ruta no se persiste ya que sale del 'Begin' xmlId: " + xmlId);
-					continue;
-				}
-				
-				// el nombre SI puede ser vacío, pero si la ruta va a ningun sitio se le pone "ERROR"
-				if (xmlToStepId == null
-					|| xmlToStepId.isEmpty()){
-					spName = ROUTE_HAS_NO_END_STEP;
-					edge = this._setXmlElementDefaultNameAndColor(edge, ROUTE_HAS_NO_END_STEP, RED);
-				} else {
-					if (spName != null
-							&& spName.equals(ROUTE_HAS_NO_END_STEP)){
-						spName = "";
-						edge = this._setXmlElementDefaultNameAndColor(edge, "", null);
-					}
-				}
-
-				// comprobamos que viene de un step valido, si no es así no se va a guardar como WStepResponseDef
+				// comprobamos que viene de un step valido, si no es así no se va a guardar como WStepSequenceDef
 				spFromStepId = "";
 				spToStepId = "";
 				for(StringPair stepPair : stepXmlIdsList){
@@ -1074,24 +1052,49 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					
 				}
 				
-				// si viene de un step valido vemos si va a un step valido sino tampoco lo podremos guardar
-				if (spFromStepId != null
-						&& !"".equals(spFromStepId)){
+				for(StringPair stepPair : stepXmlIdsList){
 					
-					for(StringPair stepPair : stepXmlIdsList){
-						
-						// comparamos el xmlId del "target" del Edge con los que tenemos guardados
-						// del bucle anterior para ver si se corresponde a un Task valido o el Edge
-						// llega a un elemento que no es un Task
-						if (xmlToStepId.equals(stepPair.getString1())){
-						
-							spToStepId = stepPair.getString2();
-							break;
-							
-						}
+					// comparamos el xmlId del "target" del Edge con los que tenemos guardados
+					// del bucle anterior para ver si se corresponde a un Task valido o el Edge
+					// llega a un elemento que no es un Task
+					if (xmlToStepId.equals(stepPair.getString1())){
+					
+						spToStepId = stepPair.getString2();
+						break;
 						
 					}
 					
+				}
+
+				if (beginSymbolId != null
+						&& beginSymbolId.equals(xmlFromStepId)){
+
+					// si el xmlFromStepId es el Symbol "Begin" le persistimos al processDef el "spToStepId" como "beginStep"
+					if (spToStepId != null
+							&& !"".equals(spToStepId)
+							&& (process.getBeginStep() == null
+								|| process.getBeginStep().getId() == null
+								|| !process.getBeginStep().getId().equals(Integer.valueOf(spToStepId)))){
+						process.setBeginStep(new WStepDef(Integer.valueOf(spToStepId)));
+						new WProcessDefBL().update(process, currentUserId);
+					}
+
+					// si el "edge" sale del begin symbol no lo persistimos
+					System.out.println("WS Save La ruta no se persiste ya que sale del 'Begin' xmlId: " + xmlId);
+					continue;
+				}
+				
+				// el nombre SI puede ser vacío, pero si la ruta va a ningun sitio se le pone "ERROR"
+				if (xmlToStepId == null
+					|| xmlToStepId.isEmpty()){
+					spName = ROUTE_HAS_NO_END_STEP;
+					edge = this._setXmlElementDefaultNameAndColor(edge, ROUTE_HAS_NO_END_STEP, RED);
+				} else {
+					if (spName != null
+							&& spName.equals(ROUTE_HAS_NO_END_STEP)){
+						spName = "";
+						edge = this._setXmlElementDefaultNameAndColor(edge, "", null);
+					}
 				}
 				
 			}
@@ -1110,7 +1113,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				route.setName(spName);
 				
 				if (spFromStepId != null
-					&& !spFromStepId.isEmpty()){
+					&& !spFromStepId.isEmpty()){					
 					route.setFromStep(new WStepDef(Integer.valueOf(spFromStepId)));
 				}
 				
