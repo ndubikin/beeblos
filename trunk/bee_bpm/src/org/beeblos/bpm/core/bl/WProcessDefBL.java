@@ -6,11 +6,15 @@ import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,10 +38,21 @@ import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import com.mxgraph.io.mxCodec;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxStyleUtils;
+import com.mxgraph.util.mxXmlUtils;
+import com.mxgraph.view.mxGraph;
 import com.sp.common.util.IntegerPair;
 import com.sp.common.util.StringPair;
 
@@ -952,10 +967,15 @@ public class WProcessDefBL {
 
 		// to be implemented: migrate xml map
 		// load xml map and for each sequence update edge's spIds
-		if (relClonedSequences!=null) {
-			for (IntegerPair seqPair: relClonedSequences) {
-				//xxxxxx
-			}
+		if (relClonedSequences != null) {
+			
+			String oldXmlMap = this.getProcessDefXmlMap(processDefId, currentUserId);
+			
+			String newXmlMap = this.reloadXmlMapSpIds(oldXmlMap, clonedId, 
+					relClonedSteps, relClonedSequences, currentUserId);
+			
+			this.updateProcessXmlMap(clonedId, newXmlMap, currentUserId);
+			
 		}
 		
 		return clonedId;
@@ -1046,7 +1066,7 @@ public class WProcessDefBL {
 			routes = new WStepSequenceDefBL()
 							.getStepSequenceList(processDefId, null, currentUserId);
 
-			if (routes.size()>0){
+			if (routes != null && routes.size()>0){
 				for (WStepSequenceDef route: routes) {
 					route.setProcess(new WProcessDef());
 					route.getProcess().setId(clonedId);
@@ -1057,9 +1077,10 @@ public class WProcessDefBL {
 						route.setToStep(new WStepDef(getNewStepId(relClonedSteps,route.getToStep().getId() ) ) );
 					}
 
+					Integer oldRouteId = route.getId();
 					int newRouteId=seqBL.add(route, currentUserId); // insert new cloned route
-					relClonedSequences.add(new IntegerPair(route.getId(),newRouteId));
-					logger.debug("inserted new route:"+route.getId()+":"+route.getProcess().getId()+" user:"+ currentUserId);
+					relClonedSequences.add(new IntegerPair(oldRouteId, newRouteId));
+					logger.debug("inserted new route:"+newRouteId+":"+route.getProcess().getId()+" user:"+ currentUserId);
 				}
 			}			
 		} catch (WStepSequenceDefException e) {
@@ -1281,6 +1302,81 @@ public class WProcessDefBL {
 		
 	}
 	
+	public String reloadXmlMapSpIds(String processXmlMap, Integer newProcessId, 
+			List<IntegerPair> relClonedSteps, List<IntegerPair> relClonedSequences, Integer currentUserId) 
+	{
+		
+		String returnValue = null;
+		
+		if (processXmlMap == null){
+			return returnValue;
+		}
+		
+		mxGraph graph = new mxGraph();
+		
+		Document xmlParsedDoc = mxXmlUtils.parseXml(processXmlMap);
+		mxCodec dec = new mxCodec(xmlParsedDoc.getDocumentElement().getOwnerDocument());
+		dec.decode(xmlParsedDoc.getDocumentElement(), graph.getModel());
+		
+		((mxCell) graph.getModel().getRoot()).setAttribute("spId", newProcessId.toString());
+		
+		if (relClonedSteps != null){
+
+			// change old step spIds to new ones
+
+		}
+		
+		if (relClonedSequences != null){
+			
+			List<Object> xmlMapEdgeList = new ArrayList<Object>(
+					Arrays.asList(mxGraphModel.getChildCells(graph.getModel(), graph.getDefaultParent(), false, true)));
+
+			String spId = "";
+			boolean existSpId = false;
+			mxCell xmlMapEdge = null;
+			for (Object xmlMapEdgeObject : xmlMapEdgeList){
+				
+				xmlMapEdge = (mxCell) xmlMapEdgeObject;
+				
+				if (xmlMapEdge.isEdge()){
+
+					spId = xmlMapEdge.getAttribute("spId");
+					
+					if (spId != null
+							&& !"".equals(spId)){
+						
+						for (IntegerPair routeIds : relClonedSequences){
+							
+							existSpId = false;
+							if (routeIds.getInt1().equals(Integer.valueOf(spId))){
+								
+								xmlMapEdge.setAttribute("spId", routeIds.getInt2().toString());
+								existSpId = true;
+								break;
+								
+							}
+							
+						}
+						
+						if (!existSpId){
+							xmlMapEdge.setAttribute("spId", "");
+						}
+						
+					}
+					
+				}
+			
+			}
+			
+			
+		}
+				
+		// lo codificamos para devolverlo
+		returnValue = mxXmlUtils.getXml(new mxCodec().encode(graph.getModel()));
+			
+		return returnValue;
+
+	}
 	
 	// nes 20130502 - traido desde el backing bean ...
 	private List<WStepDef> loadStepList(Integer processId, Integer currentUserId) 
