@@ -2076,13 +2076,23 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 			reloadDataFieldList();
+
+			// dml 20130909 - si la tabla no existe quiere decir que es el primer data field que insertamos 
+			//por lo tanto la creamos de manera automatica
+			if (currentWProcessDef == null
+					|| currentWProcessDef.getProcess() == null
+					|| currentWProcessDef.getProcess().getManagedTableConfiguration() == null){
+				this.createManagedTable();
+				super.createWindowMessage(OK_MESSAGE, "Campo y tabla correctamente creados.", null);
+			} else {
+				super.createWindowMessage(OK_MESSAGE, "Campo correctamente guardado.", null);
+			}
+
 			// dml 20130822 - recargamos el proceso para tener los cambios en la lista
 			this.loadCurrentWProcessDef();
 			
 			initNewDataFieldFormObjects();
 					
-			super.createWindowMessage(OK_MESSAGE, 
-					"Campo correctamente guardado.", null);
 
 		} catch (WProcessDataFieldException e) {
 			String message = "WProcessDefFormBean.saveNewDataField() Error al guardar el campo: " + 

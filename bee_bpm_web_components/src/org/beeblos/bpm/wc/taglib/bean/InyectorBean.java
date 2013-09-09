@@ -1,6 +1,7 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
+import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_ANEXA_DEFAULT;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_LISTA_DEFAULT;
@@ -226,13 +227,13 @@ public class InyectorBean  extends CoreManagedBean {
 
 	
 	// called from xhtml view ...
-	public String launchWork() throws InyectorException {
+	public String launchWork() {
 		
 		String ret=null;
 		setShowHeaderMessage(false); // nes 20100117 oculta mensajes previos en pantalla
-		_controlConsistenciaStepALanzar(); // controla que los elementos necesarios vengan cargados y si no sale por InyectorException
-		
 		try {
+			
+			_controlConsistenciaStepALanzar(); // controla que los elementos necesarios vengan cargados y si no sale por InyectorException
 			
 			//idStepWork = new WStepWorkBL().add(_setStepWork(), usuarioLogueado) ;
 			idStepWork = new BeeBPMBL()
@@ -242,40 +243,31 @@ public class InyectorBean  extends CoreManagedBean {
 										managedData,
 										_getLoggedUser());
 			
-			//rrl 20100114
-			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
-			
+
 			//rrl 20130729 
 			_limpiarVariablesDelBean();
+
+			super.createWindowMessage(OK_MESSAGE, "New work started successfully", null);
 
 			// setea el mensaje en pantalla al usuario
 		} catch (WStepWorkException e) {
 			String message = "InyectorBean.launchWork() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-			throw new InyectorException(message);
-			
 		} catch (AlreadyExistsRunningProcessException e) {
 			String message = "InyectorBean.launchWork() AlreadyExistsRunningProcessException: " + e.getMessage() + " - " + e.getCause();
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-			throw new InyectorException(message);
-			
 		} catch (InyectorException e) {
 			String message = "InyectorBean.launchWork() InyectorException: " + e.getMessage() + " - " + e.getCause();
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-			throw new InyectorException(message);
-			
 		} catch (WProcessWorkException e) {
 			String message = "InyectorBean.launchWork() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-			throw new InyectorException(message);
 		} catch (TableManagerException e) {
 			String message = "InyectorBean.launchWork() TableManagerException: " + e.getMessage() + " - " + e.getCause();
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-			throw new InyectorException(message);
 		} catch (WStepWorkSequenceException e) {
 			String message = "InyectorBean.launchWork() WStepWorkSequenceException: " + e.getMessage() + " - " + e.getCause();
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-			throw new InyectorException(message);
 		}
 		
 		return ret;

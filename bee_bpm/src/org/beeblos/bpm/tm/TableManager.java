@@ -132,7 +132,11 @@ public class TableManager {
 				|| managedData.getCurrentWorkId()==0) 
 				throw new TableManagerException("can't process managedData: current work is not defined (currentWorkId:"
 													+(managedData.getCurrentWorkId()==null?"null":"0"));
-
+		// dml 20130909
+		if (managedData.getManagedTableConfiguration() == null){
+			throw new TableManagerException("Can't process managedData: managed table does not exist");
+		}
+		
 		if (managedData.getManagedTableConfiguration().getName()==null 
 				|| "".equals(managedData.getManagedTableConfiguration().getName()))  
 			throw new TableManagerException("can't process managedData: managed table is not defined (managedTableName:"

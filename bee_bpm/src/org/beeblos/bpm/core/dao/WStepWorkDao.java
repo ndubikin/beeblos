@@ -89,6 +89,15 @@ public class WStepWorkDao {
 				tx.rollback();
 			
 			throw new WStepWorkException( mess );
+		} catch (WStepWorkException ex) {
+			String mess="WStepWorkDao: add - Can't store stepw definition record "+ 
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause();
+					logger.error( mess );
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new WStepWorkException( mess );
 		}
 
 		id=Integer.valueOf(res.toString());
@@ -452,9 +461,10 @@ public class WStepWorkDao {
 								: "managed table data is null")
 						+ e.getMessage() + " - "
 						+ e.getCause();
-					logger.warn(message);
+	
+				logger.warn(message);
 
-					throw new WStepWorkException(message);
+				throw new WStepWorkException(message);
 			}
 
 		} 

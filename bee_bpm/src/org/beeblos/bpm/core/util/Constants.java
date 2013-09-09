@@ -122,7 +122,7 @@ public class Constants {
 
 	// dml 20120110
 	public static final String CREATE_NEW_WPROCESSDEF = "CREATE_NEW_WPROCESSDEF";
-	public static final String CREATE_NEW_WPROCESS = "CREATE_NEW_WPROCESS";
+	public static final String CREATE_NEW_WPROCESSHEAD = "CREATE_NEW_WPROCESSHEAD";
 	
 	// dml 20120112
 	public static final String SUCCESS_FORM_WSTEPDEF = "SUCCESS_FORM_WSTEPDEF";

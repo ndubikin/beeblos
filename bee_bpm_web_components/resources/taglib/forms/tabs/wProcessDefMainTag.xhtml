@@ -14,8 +14,16 @@
 		<ui:include src="panels/wProcessDefTitle.xhtml" />
 	</div>
 
-	<fieldset class="demo_fieldset">
-		<ui:include src="panels/wProcessDef_main_data.xhtml"/>
-	</fieldset>
+	<ui:fragment rendered="#{wProcessDefFormBean.currentId eq null or wProcessDefFormBean.currentId eq 0}">
+		<fieldset class="demo_fieldset">
+			<ui:include src="panels/wProcessDef_add_new.xhtml"/>
+		</fieldset>
+	</ui:fragment>
+
+	<ui:fragment rendered="#{wProcessDefFormBean.currentId ne null and wProcessDefFormBean.currentId ne 0}">
+		<fieldset class="demo_fieldset">
+			<ui:include src="panels/wProcessDef_main_data.xhtml"/>
+		</fieldset>
+	</ui:fragment>
 
 </ui:composition>

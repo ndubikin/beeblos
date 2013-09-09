@@ -1,6 +1,6 @@
 package org.beeblos.bpm.wc.taglib.util;
 
-import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESS;
+import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSHEAD;
 import static org.beeblos.bpm.core.util.Constants.CREATE_NEW_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
@@ -71,7 +71,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 		return ret;
 	}
 		
-	public String createNewWProcess(String returnStatement) {
+	public String createNewWProcessHead(String returnStatement) {
 
 		String ret = FAIL;
 
@@ -86,7 +86,7 @@ public class WProcessDefUtil extends CoreManagedBean {
 			wpdfb.initEmptyWProcessDef();
 			wpdfb.setReturnStatement(WPROCESSDEF_QUERY);
 
-			ret = CREATE_NEW_WPROCESS;
+			ret = CREATE_NEW_WPROCESSHEAD;
 
 		}
 
