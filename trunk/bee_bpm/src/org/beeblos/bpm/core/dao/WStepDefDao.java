@@ -236,8 +236,8 @@ public class WStepDefDao {
 
 		try {
 
-			Set<WStepDataField> dataFields = 
-					new WStepDataFieldDao().getWStepDataFieldSet(processHeadId,step.getStepHead().getId());
+			List<WStepDataField> dataFields = 
+					new WStepDataFieldDao().getWStepDataFieldList(processHeadId,step.getStepHead().getId());
 
 			step.setDataFieldDef(dataFields);
 

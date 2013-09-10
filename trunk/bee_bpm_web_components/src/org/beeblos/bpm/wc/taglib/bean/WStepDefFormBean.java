@@ -1409,27 +1409,6 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 	}
 
-	//rrl 20130801 - nes 20130803 
-	public List<WStepDataField> getStepDataFieldList() {
-
-		List<WStepDataField> stepDataFieldList = new ArrayList<WStepDataField>();
-		
-		//rrl 20130805 verified before currentWStepDef is not null
-		if (currentWStepDef !=null) {
-			stepDataFieldList = currentWStepDef.getStepDataFieldList();
-		}
-
-		return stepDataFieldList;
-	}
-
-	public Integer getStepDataFieldListSize() {
-		
-		return (currentWStepDef!=null 
-					&& currentWStepDef.getDataFieldDef() != null 
-							? currentWStepDef.getDataFieldDef().size()
-							: 0);
-	}
-
 	//rrl 20130805
 	public String updateDataFieldsRelated() {
 		
@@ -1438,9 +1417,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 			if ("".equals(strDataFieldList)) {
 				
 				WStepDataFieldBL wStepDataFieldBL = new WStepDataFieldBL();
-				Set<WStepDataField> dataFieldRelated = 
+				List<WStepDataField> dataFieldRelated = 
 						new WStepDataFieldBL()
-								.getWStepDataFieldSet(currentProcessHeadId, currentWStepDef.getStepHead().getId(), null);
+								.getWStepDataFieldList(currentProcessHeadId, currentWStepDef.getStepHead().getId(), getCurrentUserId());
 				if (dataFieldRelated != null) {
 					for (WStepDataField wsdf : dataFieldRelated) {
 						wStepDataFieldBL.delete(wsdf, null);
@@ -1477,9 +1456,9 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 		boolean isInList = false;
 		
-		Set<WStepDataField> dataFieldRelated = 
+		List<WStepDataField> dataFieldRelated = 
 				new WStepDataFieldBL()
-						.getWStepDataFieldSet(currentProcessHeadId, currentWStepDef.getStepHead().getId(), null);
+						.getWStepDataFieldList(currentProcessHeadId, currentWStepDef.getStepHead().getId(), getCurrentUserId());
 		
 		if (dataFieldRelated != null) {
 

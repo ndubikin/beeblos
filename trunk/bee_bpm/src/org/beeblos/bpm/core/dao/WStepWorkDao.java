@@ -320,9 +320,9 @@ public class WStepWorkDao {
 
 			try {
 	
-				Set<WStepDataField> dataFields = 
+				List<WStepDataField> dataFields = 
 						new WStepDataFieldDao()
-								.getWStepDataFieldSet(
+								.getWStepDataFieldList(
 										stepw.getwProcessWork().getProcessHeadId(),
 										stepw.getCurrentStep().getStepHead().getId() );
 	

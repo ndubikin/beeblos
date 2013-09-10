@@ -91,7 +91,7 @@ public class WStepDef implements java.io.Serializable {
 	private String postconditions;
 
 	// dml 20130821
-	Set<WStepDataField> dataFieldDef=new HashSet<WStepDataField>();
+	List<WStepDataField> dataFieldDef = new ArrayList<WStepDataField>();
 
 	// dml 20120113
 	private Date insertDate;
@@ -1001,11 +1001,11 @@ public class WStepDef implements java.io.Serializable {
 		this.postconditions = postconditions;
 	}
 
-	public Set<WStepDataField> getDataFieldDef() {
+	public List<WStepDataField> getDataFieldDef() {
 		return dataFieldDef;
 	}
 
-	public void setDataFieldDef(Set<WStepDataField> dataFieldDef) {
+	public void setDataFieldDef(List<WStepDataField> dataFieldDef) {
 		this.dataFieldDef = dataFieldDef;
 	}
 	

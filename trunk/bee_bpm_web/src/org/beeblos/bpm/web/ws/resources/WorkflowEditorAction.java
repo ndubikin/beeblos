@@ -22,11 +22,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WProcessHeadBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepHeadBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
@@ -800,12 +802,19 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	 *
 	 * @return boolean
 	 * 
-	 * @throws WStepDefException, WStepWorkException, WProcessDefException, WStepSequenceDefException, WStepHeadException, WStepResponseDefException, WorkflowEditorActionException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 * @throws WProcessDefException
+	 * @throws WStepSequenceDefException
+	 * @throws WStepHeadException
+	 * @throws WStepResponseDefException
+	 * @throws WorkflowEditorActionException
+	 * @throws WProcessHeadException 
 	 * 
 	 */
 	private boolean _parseAndPersistXmlMap() 
 			throws WStepDefException, WStepWorkException, WProcessDefException, 
-			WStepSequenceDefException, WStepHeadException, WStepResponseDefException, WorkflowEditorActionException {
+			WStepSequenceDefException, WStepHeadException, WStepResponseDefException, WorkflowEditorActionException, WProcessHeadException {
 
 		boolean returnValue = true;
 		
@@ -846,8 +855,14 @@ public class WorkflowEditorAction extends CoreManagedBean {
 					if (process.getProcess() != null
 							&& process.getProcess().getName() != null
 							&& !process.getProcess().getName().equals(spName)){
+						
+						// hacemos update de
 						process.getProcess().setName(spName);
 						new WProcessDefBL().update(process, currentUserId);
+						
+						new WProcessHeadBL().updateProcessHeadSonsMapNames(
+								process.getProcess().getId(), spName, currentUserId);
+						
 					}
 				}
 				
