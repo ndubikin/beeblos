@@ -60,10 +60,13 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	
 	private final static String DEFAULT_STEP_NAME = "STEP";
 	private final static String RED = "red";
+	private final static String ORANGE = "orange";
 
 	private final static String STEP_NOT_EXIST = "ERROR(1)";
 	private final static String ROUTE_NOT_EXIST = "ERROR(2)";
 	private final static String ROUTE_HAS_NO_END_STEP = "ERROR(3)";
+	
+	private final static String ROUTE_HAS_NOT_RESPONSES_NEITHER_AFTER_ALL = "WARNING(1)";
 	
 	private Integer currentUserId = 1000;
 	private WProcessDef process = null;
@@ -782,6 +785,22 @@ public class WorkflowEditorAction extends CoreManagedBean {
 						edge = this._setXmlElementDefaultNameAndColor(edge, ROUTE_NOT_EXIST, RED);
 						returnValue = false;
 					
+					} else {
+
+						WStepSequenceDef route = 
+								routeBL.getWStepSequenceDefByPK(Integer.valueOf(spId), currentUserId);
+						
+						if (route != null
+								&& (route.getValidResponses() == null
+								|| "".equals(route.getValidResponses()))
+								&& !route.isAfterAll()){
+							
+							edge = this._setXmlElementDefaultNameAndColor(
+									edge, ROUTE_HAS_NOT_RESPONSES_NEITHER_AFTER_ALL, ORANGE);
+							
+						}
+						
+
 					}
 				}
 				
