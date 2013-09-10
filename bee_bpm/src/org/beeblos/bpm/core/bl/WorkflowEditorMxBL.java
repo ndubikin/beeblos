@@ -10,11 +10,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.mxgraph.model.mxCell;
@@ -32,7 +36,9 @@ public class WorkflowEditorMxBL {
 	public static String SYMBOL = "Symbol";
 	public static String EDGE = "Edge";
 	
-	public static String BEGIN_SYMBOL_STYLE = "images/symbols/event-green.png";
+	public static String BEGIN_SYMBOL_GREEN_STYLE = "images/symbols/event-green.png";
+	public static String END_SYMBOL_GREEN_STYLE = "images/symbols/event_end-green.png";
+	public static String END_SYMBOL_STYLE = "images/symbols/event_end.png";
 
 	private final static String DEFAULT_ERROR = "ERROR";
 	
@@ -44,9 +50,31 @@ public class WorkflowEditorMxBL {
 
 	}
 	
+	/**
+	 * @author dmuleiro 20130910
+	 * 
+	 *  paints a xml map with the part of the workflow that has been processed
+	 *  
+	 * @param String processXmlMap
+	 * @param Integer workId
+	 * @param Integer currentUserId
+	 * 
+	 * @return String
+	 * 
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 * @throws WStepWorkSequenceException
+	 * 
+	 */	
 	public String paintXmlMap(String processXmlMap, Integer workId, Integer currentUserId) 
 			throws ParserConfigurationException, SAXException, IOException, WProcessDefException, 
 			WStepDefException, WStepWorkException, WStepWorkSequenceException {
+		
+		logger.info("WorkflowEditorMxBL.paintXmlMap(processXmlMap) for workId: " + workId);
 		
 		String returnValue = null;
 		
@@ -76,6 +104,7 @@ public class WorkflowEditorMxBL {
 		String xmlId = "";
 		String spName = "";
 		String beginSymbolId = "";
+		List<mxCell> endSymbolList = new ArrayList<mxCell>();
 		
 		// lista de pares <xmlId, spId> de las Tasks para despues asociar los WStepResponses con el
 		// correspondiente spId del WStepDef
@@ -93,8 +122,15 @@ public class WorkflowEditorMxBL {
 					spName = xmlMapVertex.getAttribute(mxConstants.SHAPE_LABEL);
 					if (spName != null
 							&& spName.equals("Begin")){
+				
 						beginSymbolId = xmlMapVertex.getId();
-						xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_IMAGE, BEGIN_SYMBOL_STYLE));
+						xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_IMAGE, BEGIN_SYMBOL_GREEN_STYLE));
+					
+					} else 	if (spName != null
+							&& spName.equals("End")){
+			
+						endSymbolList.add(xmlMapVertex); // los guardamos en una lista para despues poder pintarlos de verde si el proceso por esa rama esta finalizado
+			
 					}
 					
 				} else if (xmlMapVertex.getValue().toString().indexOf(TASK) >= 0){
@@ -139,91 +175,130 @@ public class WorkflowEditorMxBL {
 				Arrays.asList(mxGraphModel.getChildCells(graph.getModel(), graph.getDefaultParent(), false, true)));
 
 		List<mxCell> paintedEdgeList = new ArrayList<mxCell>();
-		List<mxCell> turnBackEdgeList = new ArrayList<mxCell>();
 		
 		String xmlFromStepId;
 		String xmlToStepId;
 		String spFromStepId;
 		String spToStepId;
-
-		for (WStepWorkSequence wsws : wswsList) {
-
-			xmlFromStepId = "";
-			xmlToStepId = "";
-			spFromStepId = "";
-			spToStepId = "";
+		
+		mxCell xmlMapEdge = null;
+		for (Object xmlMapEdgeObject : xmlMapEdgeList){
 			
-			mxCell xmlMapEdge = null;
-			for (Object xmlMapEdgeObject : xmlMapEdgeList){
-				
-				xmlMapEdge = (mxCell) xmlMapEdgeObject;
-				
-				if (xmlMapEdge.isEdge()){
+			xmlMapEdge = (mxCell) xmlMapEdgeObject;
+			
+			if (xmlMapEdge.isEdge()){
 
-					if (xmlMapEdge.getValue().toString().indexOf(EDGE) >= 0){
+				if (xmlMapEdge.getValue().toString().indexOf(EDGE) >= 0){
+					
+					spId = "";
+					xmlFromStepId = "";
+					spFromStepId = "";
+					
+					spId = xmlMapEdge.getAttribute("spId");
+					
+					xmlFromStepId = xmlMapEdge.getSource().getId();
+					xmlToStepId = xmlMapEdge.getTarget().getId();
+					
+					// si el "edge" sale del begin symbol lo pintamos
+					if (xmlFromStepId != null
+							&& beginSymbolId != null
+							&& beginSymbolId.equals(xmlFromStepId)){
+						xmlMapEdge.setStyle(mxStyleUtils.setStyle(xmlMapEdge.getStyle(), mxConstants.STYLE_STROKECOLOR, GREEN));
+						paintedEdgeList.add(xmlMapEdge);
+						beginSymbolId = null; // como solo puede haber un "beginSymbol" evitamos volver a entrar en este if
+						continue;
+					}
+					
+					// el nombre SI puede ser vacío, pero si la ruta va a ningun sitio se le pone "ERROR"
+					if (xmlToStepId == null
+						|| xmlToStepId.isEmpty()){
+						spName = DEFAULT_ERROR;
+						xmlMapEdge.setStyle(mxStyleUtils.setStyle(xmlMapEdge.getStyle(), mxConstants.STYLE_FONTCOLOR, RED));
+					} else {
+						if (spName != null
+								&& spName.equals(DEFAULT_ERROR)){
+							spName = "";
+							xmlMapEdge.setStyle(mxStyleUtils.removeStylename(xmlMapEdge.getStyle(), mxConstants.STYLE_FONTCOLOR));
+						}
+					}
+
+					// comprobamos que viene de un step valido
+					spFromStepId = "";
+					spToStepId = "";
+					for(StringPair stepPair : stepXmlIdsList){
 						
-						spId = "";
-						xmlFromStepId = "";
-						spFromStepId = "";
+						// comparamos el xmlId del "source" del Edge con los que tenemos guardados
+						// del bucle anterior para ver si se corresponde a un Task valido o el Edge
+						// sale de un elemento que no es un Task
+						if (xmlFromStepId.equals(stepPair.getString1())){
 						
-						spId = xmlMapEdge.getAttribute("spId");
-						
-						xmlFromStepId = xmlMapEdge.getSource().getId();
-						xmlToStepId = xmlMapEdge.getTarget().getId();
-						
-						// si el "edge" sale del begin symbol lo pintamos
-						if (xmlFromStepId != null
-								&& beginSymbolId != null
-								&& beginSymbolId.equals(xmlFromStepId)){
-							xmlMapEdge.setStyle(mxStyleUtils.setStyle(xmlMapEdge.getStyle(), mxConstants.STYLE_STROKECOLOR, GREEN));
-							paintedEdgeList.add(xmlMapEdge);
-							beginSymbolId = null; // como solo puede haber un "beginSymbol" evitamos volver a entrar en este if
+							spFromStepId = stepPair.getString2();
 							break;
+							
 						}
 						
-						// el nombre SI puede ser vacío, pero si la ruta va a ningun sitio se le pone "ERROR"
-						if (xmlToStepId == null
-							|| xmlToStepId.isEmpty()){
-							spName = DEFAULT_ERROR;
-							xmlMapEdge.setStyle(mxStyleUtils.setStyle(xmlMapEdge.getStyle(), mxConstants.STYLE_FONTCOLOR, RED));
-						} else {
-							if (spName != null
-									&& spName.equals(DEFAULT_ERROR)){
-								spName = "";
-								xmlMapEdge.setStyle(mxStyleUtils.removeStylename(xmlMapEdge.getStyle(), mxConstants.STYLE_FONTCOLOR));
-							}
-						}
-	
-						// comprobamos que viene de un step valido
-						spFromStepId = "";
-						spToStepId = "";
+					}
+					
+					// si viene de un step valido vemos si va a un step valido sino tampoco lo podremos guardar
+					if (spFromStepId != null
+							&& !"".equals(spFromStepId)){
+						
+						boolean hasEndStepId = false;
 						for(StringPair stepPair : stepXmlIdsList){
 							
-							// comparamos el xmlId del "source" del Edge con los que tenemos guardados
+							// comparamos el xmlId del "target" del Edge con los que tenemos guardados
 							// del bucle anterior para ver si se corresponde a un Task valido o el Edge
-							// sale de un elemento que no es un Task
-							if (xmlFromStepId.equals(stepPair.getString1())){
+							// llega a un elemento que no es un Task
+							if (xmlToStepId.equals(stepPair.getString1())){
 							
-								spFromStepId = stepPair.getString2();
+								spToStepId = stepPair.getString2();
+								hasEndStepId = true;
 								break;
 								
 							}
 							
 						}
 						
-						// si viene de un step valido vemos si va a un step valido sino tampoco lo podremos guardar
-						if (spFromStepId != null
-								&& !"".equals(spFromStepId)){
+						// si el end no pertenece a ningun step pero si pertenece a un "symbol" "end"
+						// y el "spFromStepId" de la ruta tiene decided date a null marcamos el xmlMapEdge 
+						// en "verde" y cambiamos el "Symbol" tambien a verde
+						if (!hasEndStepId){
 							
-							for(StringPair stepPair : stepXmlIdsList){
+							for (mxCell endSymbol : endSymbolList){
 								
-								// comparamos el xmlId del "target" del Edge con los que tenemos guardados
-								// del bucle anterior para ver si se corresponde a un Task valido o el Edge
-								// llega a un elemento que no es un Task
-								if (xmlToStepId.equals(stepPair.getString1())){
-								
-									spToStepId = stepPair.getString2();
-									break;
+								if (xmlToStepId.equals(endSymbol.getId())){
+									
+									boolean hasRichedEndSymbol = false;
+									for (WStepWork stepWork : wswList) {
+										
+										if (stepWork.getCurrentStep().getId().equals(Integer.valueOf(spFromStepId))){
+											
+											if (stepWork.getDecidedDate() != null){
+											hasRichedEndSymbol = true; // es end symbol
+											endSymbol.setStyle(
+													mxStyleUtils.setStyle(
+															endSymbol.getStyle(), 
+															mxConstants.STYLE_IMAGE, END_SYMBOL_GREEN_STYLE));
+											
+											} else {
+												hasRichedEndSymbol = false; // puede que sea una ruta turnback por lo que se vuelve a pintar de negro
+												endSymbol.setStyle(
+														mxStyleUtils.setStyle(
+																endSymbol.getStyle(), 
+																mxConstants.STYLE_IMAGE, END_SYMBOL_STYLE));
+	
+											}
+										}
+									}
+									
+									// si al salir se ha llegado al endSymbol pintamos la ruta hasta el tambien de verde 
+									if (hasRichedEndSymbol){
+										
+										xmlMapEdge.setStyle(mxStyleUtils.setStyle(xmlMapEdge.getStyle(), mxConstants.STYLE_STROKECOLOR, GREEN));
+										paintedEdgeList.add(xmlMapEdge);
+										break;
+										
+									}
 									
 								}
 								
@@ -231,12 +306,16 @@ public class WorkflowEditorMxBL {
 							
 						}
 						
-						// si tiene fromStep y toStep vemos si es una ruta procesada para pintar
-						if (spFromStepId != null
-							&& !spFromStepId.isEmpty()
-							&& spToStepId != null
-							&& !"".equals(spToStepId)){
-							
+						
+					}
+					
+					// si tiene fromStep y toStep vemos si es una ruta procesada para pintar
+					if (spFromStepId != null
+						&& !spFromStepId.isEmpty()
+						&& spToStepId != null
+						&& !"".equals(spToStepId)){
+						
+						for (WStepWorkSequence wsws : wswsList) {
 							// si es distinto de null es que es un PROCESS hacia adelante
 							if (wsws.getStepSequence() != null){
 		
@@ -263,23 +342,21 @@ public class WorkflowEditorMxBL {
 								&& wsws.getEndStep().getId().equals(Integer.valueOf(spFromStepId))
 								&& wsws.isSentBack()){
 								
-//								Object newTurnBackEdge = graph.createEdge(graph.getDefaultParent(), null, xmlMapEdge.getValue(), 
-//										(Object) xmlMapEdge.getTarget(), (mxCell) xmlMapEdge.getSource(), 
-//										mxStyleUtils.setStyle(xmlMapEdge.getStyle(), mxConstants.STYLE_STROKECOLOR, BROWN));
-//								((mxCell) newTurnBackEdge).setAttribute(mxConstants.SHAPE_LABEL, this._getNewNameTurnBackCounts(xmlMapEdge.getAttribute(mxConstants.SHAPE_LABEL)));
-//								paintedEdgeList.add((mxCell) newTurnBackEdge);
 								xmlMapEdge.setStyle(mxStyleUtils.setStyle(xmlMapEdge.getStyle(), mxConstants.STYLE_STROKECOLOR, BROWN));
 								xmlMapEdge.setAttribute(mxConstants.SHAPE_LABEL, this._getNewNameTurnBackCounts(xmlMapEdge.getAttribute(mxConstants.SHAPE_LABEL)));
 								paintedEdgeList.add((mxCell) xmlMapEdge);
 								break;
 							
 							}
-		
-						}							
-					}					
-				}			
-			}
+							
+						}
+	
+					}							
+				}					
+			}			
 		}
+		
+		
 		
 		// dml 20130905 - PARA PINTAR POR ENCIMA LAS QUE TIENEN COLOR:
 		
@@ -304,6 +381,8 @@ public class WorkflowEditorMxBL {
 
 	private String _getNewNameTurnBackCounts(String edgeName){
 
+		logger.info("WorkflowEditorMxBL._getNewNameTurnBackCounts() edgeName: " + edgeName);
+		
 		if (edgeName == null){
 			edgeName = "";
 		}

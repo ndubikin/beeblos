@@ -3,6 +3,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
+import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_ANEXA_DEFAULT;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_LISTA_DEFAULT;
 import static org.beeblos.bpm.core.util.Constants.PAGINA_PROCESO_DEFAULT;
@@ -28,14 +29,12 @@ import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
-import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.wc.security.error.InyectorException;
 import org.beeblos.bpm.wc.taglib.bean.util.BeeBPMBL;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 
 import com.sp.common.jsf.util.UtilsVs;
 
@@ -127,6 +126,8 @@ public class InyectorBean  extends CoreManagedBean {
 		this.paginaLista=PAGINA_LISTA_DEFAULT;
 		this.paginaAnexa=PAGINA_ANEXA_DEFAULT;
 		
+		this.managedData = new ManagedData(EMPTY_OBJECT); // dml 20130910
+		
 	}
 
 
@@ -146,8 +147,9 @@ public class InyectorBean  extends CoreManagedBean {
 		setShowHeaderMessage(false); // nes 20100117 oculta mensajes previos en pantalla
 		
 		// check selectedProcessId has a valid value
-		if (selectedProcessId==null || selectedProcessId==0) {
-			selectedStepDefId=null;
+		if (selectedProcessId == null || selectedProcessId.equals(0)) {
+			selectedStepDefId = null;
+			this.managedData = new ManagedData(EMPTY_OBJECT);
 			return null;
 		}
 
