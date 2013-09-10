@@ -18,7 +18,7 @@
 	<h:messages id="messages" style="#{inyectorBean.messageStyle}"/>
 
 	<div style="margin-top:15px;magin-bottom:10px;">
-		<h:outputText value="Inyectar nuevo elemento en worklfow:" styleClass="title_style" />
+		<h:outputText value="#{msg.label_inyect_new_element_in_workflow}:" styleClass="title_style" />
 	</div>		
 	<div style="margin-top:15px;magin-bottom:10px;">
 		<ui:include src="inyector/tabs/panels/inyector_default.xhtml"/>
@@ -31,7 +31,6 @@
 	<div style="margin-top:15px;magin-bottom:10px;">
 		<ui:include src="inyector/tabs/panels/inyector_launch_button.xhtml"/>
 	</div>
-
 
 </h:form>	
 </ui:define>

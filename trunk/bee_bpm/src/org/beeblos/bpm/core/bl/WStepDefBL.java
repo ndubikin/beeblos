@@ -629,10 +629,10 @@ public class WStepDefBL {
 	// if the methos is called with a defined process def, it nees processHeadId to
 	// return step data fields related only with indicated processHeadId
 	// (because step must be shared between different processes)
-	public WStepDef getWStepDefByPK(Integer id, Integer processHeadId, Integer userId) 
+	public WStepDef getWStepDefByPK(Integer id, Integer processHeadId, Integer currentUserId) 
 			throws WStepDefException {
 
-		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id,processHeadId);
+		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id, processHeadId);
 		
 //		try {
 //			stepDef.getStepHead().setDataFieldDef(

@@ -9,7 +9,7 @@
 	<tbody>
 		<tr>
 			<td align="left" style="width:25%;">
-				<h:outputText value="Elija el proceso donde quiere inyectar este elemento:" 
+				<h:outputText value="#{msg.label_choose_process_to_inyect_the_element}:" 
 						style=" height: 24px; font-size:13px;"/>
 			</td>
 			<td align="left" >
@@ -18,21 +18,21 @@
 					style="width: 75%; height: 24px; font-size:13px;padding: 3px;">
 					<f:selectItems	value="#{inyectorBean.lProcesosActivos}" />
 					<a4j:support ajaxSingle="true"  actionListener="#{inyectorBean.changeProcess}"
-									event="onchange" reRender="inyector_form, id_proceso2" />
+						event="onchange" reRender="inyector_form, id_proceso2" />
 				</h:selectOneMenu>
 			</td>
 		</tr>
 		
 		<tr>
 			<td align="left" style="width:25%;">
-				<h:outputText value="Paso en el que va a inyectar el item"  style="height:22px; font-size:13px;"/>
+				<h:outputText value="#{msg.label_choose_step_to_inyect_the_element}:"  style="height:22px; font-size:13px;"/>
 			</td>
 			<td align="left" >
 				<h:selectOneMenu id="id_proceso2" value="#{inyectorBean.selectedStepDefId}"
-				 			     style="width:75%; height: 24px; font-size:13px;padding: 3px;">
+	 			     style="width:75%; height: 24px; font-size:13px;padding: 3px;">
 					<f:selectItems value="#{inyectorBean.lPasosValidos}" />
 					<a4j:support ajaxSingle="true"  actionListener="#{inyectorBean.changeStep}" 
-								event="onchange" reRender="inyector_form, id_proceso2" />			
+						event="onchange" reRender="inyector_form, id_proceso2" />			
 				</h:selectOneMenu>
 			</td>
 		</tr>

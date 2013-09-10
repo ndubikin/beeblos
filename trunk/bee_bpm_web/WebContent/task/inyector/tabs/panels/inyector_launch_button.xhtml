@@ -11,10 +11,9 @@
 			
 		<rich:spacer width="10" />
 		<a4j:commandButton id="boton_inyectar"
-				value="Launch workflow !" 
-
+				value="#{msg.label_launch_workflow} !" 
 				reRender="inyector_form" 
-				title="Inserts new work item in indicated process"
+				title="#{msg.label_inserts_new_work_item_in_indicated_process}"
                 actionListener="#{inyectorBean.launchWork}" 
                 style="align:top;width: 190px;"/>				
 		<rich:spacer width="10" />
