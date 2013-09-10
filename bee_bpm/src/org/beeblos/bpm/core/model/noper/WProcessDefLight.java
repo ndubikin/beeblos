@@ -21,6 +21,8 @@ public class WProcessDefLight implements Serializable {
 	
 	private boolean status;
 	private Integer version;
+	
+	private String processMap;
 
 	public WProcessDefLight () {
 		
@@ -28,7 +30,7 @@ public class WProcessDefLight implements Serializable {
 
 	public WProcessDefLight(Integer id, String name, String comments, Date productionDate,
 			Integer productionUser, Integer liveWorks, Integer liveSteps, boolean status,
-			Integer version) {
+			Integer version, String processMap) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -39,6 +41,7 @@ public class WProcessDefLight implements Serializable {
 		this.liveSteps = liveSteps;
 		this.status = status;
 		this.setVersion(version);
+		this.processMap = processMap;
 	}
 
 	public Integer getId() {
@@ -111,6 +114,14 @@ public class WProcessDefLight implements Serializable {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public String getProcessMap() {
+		return processMap;
+	}
+
+	public void setProcessMap(String processMap) {
+		this.processMap = processMap;
 	}
 
 	@Override

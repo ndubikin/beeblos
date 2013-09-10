@@ -15,19 +15,12 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.mxgraph.io.mxCellCodec;
-import com.mxgraph.io.mxCodec;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxEdgeHandler;
-import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxStyleUtils;
-import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 import com.sp.common.util.StringPair;
 
@@ -74,11 +67,8 @@ public class WorkflowEditorMxBL {
 		List<WStepWorkSequence> wswsList = 
 				new WStepWorkSequenceBL().getWStepWorkSequencesByWorkingProcessId(workId, currentUserId);
 
-		mxGraph graph = new mxGraph();
-		
-		Document xmlParsedDoc = mxXmlUtils.parseXml(processXmlMap);
-		mxCodec dec = new mxCodec(xmlParsedDoc.getDocumentElement().getOwnerDocument());
-		dec.decode(xmlParsedDoc.getDocumentElement(), graph.getModel());
+		// decodificamos nuestro xml map en un graph con nuestra BL
+		mxGraph graph = mxGraphMapManagerBL.decodeXmlMapIntoMxGraph(processXmlMap);
 		
 		List<Object> xmlMapVertexList = new ArrayList<Object>(
 				Arrays.asList(mxGraphModel.getChildCells(graph.getModel(), graph.getDefaultParent(), true, false)));
@@ -305,8 +295,8 @@ public class WorkflowEditorMxBL {
 		// añadimos por ultimo las pintadas para que vayan por encima
 		graph.addCells(paintedEdgeList.toArray());
 		
-		// lo codificamos para devolverlo
-		returnValue = mxXmlUtils.getXml(new mxCodec().encode(graph.getModel()));
+		// lo codificamos para devolverlo con nuestra BL
+		returnValue = mxGraphMapManagerBL.encodeMxGraphIntoXmlMap(graph);
 			
 		return returnValue;
 
@@ -331,5 +321,6 @@ public class WorkflowEditorMxBL {
 		return edgeName; 
 		
 	}
+	
 	
 }

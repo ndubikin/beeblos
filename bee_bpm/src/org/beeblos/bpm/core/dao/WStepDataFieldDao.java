@@ -149,7 +149,7 @@ public class WStepDataFieldDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		List<WStepDataField> processs = null;
+		List<WStepDataField> processList = null;
 
 		try {
 
@@ -158,7 +158,7 @@ public class WStepDataFieldDao {
 
 			tx.begin();
 
-			processs = session.createQuery("From WStepDataField order by id ").list();
+			processList = session.createQuery("From WStepDataField order by id ").list();
 
 			tx.commit();
 
@@ -172,7 +172,7 @@ public class WStepDataFieldDao {
 
 		}
 
-		return processs;
+		return processList;
 	}
 
 	//rrl 20130730
@@ -183,7 +183,7 @@ public class WStepDataFieldDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		List<WStepDataField> processs = null;
+		List<WStepDataField> processList = null;
 
 		try {
 
@@ -193,18 +193,18 @@ public class WStepDataFieldDao {
 			tx.begin();
 
 			if (stepHeadId==null) {
-				processs = session
-						.createQuery("From WStepDataField sdf WHERE processHeadId= ? order by id ")
+				processList = session
+						.createQuery("From WStepDataField sdf WHERE processHeadId= ? Order By order, dataField.id ")
 						.setInteger(0, processHeadId)
 						.list();
 			} else if (processHeadId==null) {
-				processs = session
-						.createQuery("From WStepDataField sdf WHERE stepHeadId= ? order by id ")
+				processList = session
+						.createQuery("From WStepDataField sdf WHERE stepHeadId= ? Order By order, dataField.id ")
 						.setInteger(0, stepHeadId)
 						.list();
 			} else {
-				processs = session
-						.createQuery("From WStepDataField sdf WHERE processHeadId= ? AND stepHeadId= ? order by id ")
+				processList = session
+						.createQuery("From WStepDataField sdf WHERE processHeadId= ? AND stepHeadId= ? Order By order, dataField.id ")
 						.setInteger(0, processHeadId)
 						.setInteger(1, stepHeadId)
 						.list();
@@ -222,7 +222,7 @@ public class WStepDataFieldDao {
 
 		}
 
-		return processs;
+		return processList;
 	}
 	
 	public Integer countWStepDataFieldList(Integer processHeadId) 
@@ -265,19 +265,6 @@ public class WStepDataFieldDao {
 		Set<WStepDataField> dataFieldSet = new HashSet<WStepDataField>(0);
 
 		List<WStepDataField> listDF = getWStepDataFieldList(null, stepHeadId);
-		for (WStepDataField dataField: listDF) {
-			dataFieldSet.add(dataField);
-		}
-	
-		return dataFieldSet;
-	}
-	
-	public Set<WStepDataField> getWStepDataFieldSet(Integer processHeadId, Integer stepHeadId) 
-			throws WStepDataFieldException {
-
-		Set<WStepDataField> dataFieldSet = new HashSet<WStepDataField>(0);
-
-		List<WStepDataField> listDF = getWStepDataFieldList(processHeadId,stepHeadId);
 		for (WStepDataField dataField: listDF) {
 			dataFieldSet.add(dataField);
 		}

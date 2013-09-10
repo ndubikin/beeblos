@@ -330,12 +330,12 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 			this.setReadOnly(true);
 
 		} catch (WProcessHeadException e) {
-
-			String message = "Error updating object: "
-					+ currentWProcessHead.getId() + " - "
-					+ currentWProcessHead.getName() + "\n" + e.getMessage()
-					+ "\n" + e.getCause();
-
+			String message = "Error updating object: " + currentWProcessHead.getId() + " - "
+					+ currentWProcessHead.getName() + "\n" + e.getMessage() + "\n" + e.getCause();
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WProcessDefException e) {
+			String message = "Error updating object: " + currentWProcessHead.getId() + " - "
+					+ currentWProcessHead.getName() + "\n" + e.getMessage() + "\n" + e.getCause();
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 

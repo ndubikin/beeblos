@@ -12,7 +12,7 @@
 		<h:panelGroup id="w_process_def_data_fields_table">
 
 			<ui:fragment
-				rendered="#{not empty wStepDefFormBean.stepDataFieldList}">
+				rendered="#{not empty wStepDefFormBean.currentWStepDef.stepDataFieldList}">
 		
 				<fieldset>
 					<legend class="demo_legend">#{msg.label_data_fields}</legend>
@@ -20,20 +20,31 @@
 					<table style="width:100%">
 						<thead>
 							<tr>
+								<th width="10%" align="left"><h:outputText
+										value="#{msg.label_order}" styleClass="label_form" /></th>
 								<th width="20%" align="left"><h:outputText
 										value="#{msg.label_name}" styleClass="label_form" /></th>
-								<th width="30%" align="left"><h:outputText
+								<th width="25%" align="left"><h:outputText
 										value="#{msg.label_data_type}" styleClass="label_form" /></th>
-								<th width="40%" align="left"><h:outputText
+								<th width="35%" align="left"><h:outputText
 										value="#{msg.label_step_personalization}" styleClass="label_form" /></th>
 								<th width="10%" align="left"><h:outputText
 										value="" styleClass="label_form" /></th>
 							</tr>
 						</thead>
 						<tbody>
-							<a4j:repeat value="#{wStepDefFormBean.stepDataFieldList}" var="sdf">
+							<a4j:repeat value="#{wStepDefFormBean.currentWStepDef.stepDataFieldList}" var="sdf">
 								<tr>
 								
+									<td align="left">
+										<h:outputText 
+											value="#{sdf.order}" styleClass="label_form" 
+											style="#{(sdf.dataField.active ? '' : 'font-style:italic;')}"
+											rendered="#{sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
+										<h:outputText
+											value="#{sdf.order}" styleClass="label_form_bold" 
+											rendered="#{sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
+									</td>
 									<td align="left">
 										<h:outputText 
 											value="#{sdf.dataField.name}" styleClass="label_form" 
@@ -80,7 +91,7 @@
 			</ui:fragment>
 				
 			<h:outputText value="#{msg.label_no_data_fields_related}" 
-						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.stepDataFieldListSize eq 0}"
+						rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId != 0 and wStepDefFormBean.currentWStepDef.stepDataFieldList.size() eq 0}"
 						styleClass="label_form_bold"/>
 
 		</h:panelGroup>

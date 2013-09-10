@@ -1,20 +1,16 @@
 package org.beeblos.bpm.core.bl;
 
-import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.ALL;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,20 +34,12 @@ import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
-import org.beeblos.bpm.core.model.WStepWork;
-import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import com.mxgraph.io.mxCodec;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.util.mxStyleUtils;
-import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 import com.sp.common.util.IntegerPair;
 import com.sp.common.util.StringPair;
@@ -1312,11 +1300,8 @@ public class WProcessDefBL {
 			return returnValue;
 		}
 		
-		mxGraph graph = new mxGraph();
-		
-		Document xmlParsedDoc = mxXmlUtils.parseXml(processXmlMap);
-		mxCodec dec = new mxCodec(xmlParsedDoc.getDocumentElement().getOwnerDocument());
-		dec.decode(xmlParsedDoc.getDocumentElement(), graph.getModel());
+		// decodificamos nuestro xml map en un graph con nuestra BL
+		mxGraph graph = mxGraphMapManagerBL.decodeXmlMapIntoMxGraph(processXmlMap);
 		
 		((mxCell) graph.getModel().getRoot()).setAttribute("spId", newProcessId.toString());
 		
@@ -1361,18 +1346,13 @@ public class WProcessDefBL {
 						if (!existSpId){
 							xmlMapEdge.setAttribute("spId", "");
 						}
-						
-					}
-					
-				}
-			
+					}					
+				}			
 			}
-			
-			
 		}
 				
-		// lo codificamos para devolverlo
-		returnValue = mxXmlUtils.getXml(new mxCodec().encode(graph.getModel()));
+		// lo codificamos para devolverlo con nuestra BL
+		returnValue = mxGraphMapManagerBL.encodeMxGraphIntoXmlMap(graph);
 			
 		return returnValue;
 

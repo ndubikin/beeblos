@@ -1,7 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
 import java.util.Date;
 import java.util.List;
@@ -14,9 +13,14 @@ import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
+import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
+import org.w3c.dom.Document;
 
+import com.mxgraph.io.mxCodec;
+import com.mxgraph.util.mxXmlUtils;
+import com.mxgraph.view.mxGraph;
 import com.sp.common.util.StringPair;
 
 
@@ -57,17 +61,24 @@ public class WProcessHeadBL {
 
 	}
 		
-	public void update(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException {
+	public void update(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException, WProcessDefException {
 		
 		logger.debug("update() WProcessHead < id = "+processHead.getId()+">");
 		
-		if (!processHead.equals(new WProcessHeadDao().getWProcessHeadByPK(processHead.getId())) ) {
-
+		WProcessHead storedProcessHead = new WProcessHeadDao().getWProcessHeadByPK(processHead.getId());
+		
+		if (!processHead.equals(storedProcessHead) ) {
+			
 			// timestamp & trace info
 			processHead.setModDate(new Date());
 			processHead.setModUser(currentUserId);
 			new WProcessHeadDao().update(processHead);
 			
+			// si cambia el nombre del processHead en el update cambiamos el de todos los mapas de los process
+			if (!processHead.getName().equals(storedProcessHead.getName())){
+				this.updateProcessHeadSonsMapNames(processHead.getId(), processHead.getName(), currentUserId);
+			}
+
 		} else {
 			
 			logger.debug("WProcessHeadBL.update - nothing to do ...");
@@ -177,6 +188,51 @@ public class WProcessHeadBL {
 
 //		return new WProcessDefBL().getW
 	return null;
+	}
+	
+	
+	/**
+	 * @author dmuleiro 20130910
+	 * 
+	 * updates all the process def xml maps with the processHead one
+	 *
+	 * @param Integer processHeadId 
+	 * @param String processHeadName
+	 * @param Integer currentUserId
+	 * 
+	 * @return void
+	 * @throws WProcessHeadException 
+	 * @throws WProcessDefException 
+	 */
+	public void updateProcessHeadSonsMapNames(Integer processHeadId, String processHeadName, Integer currentUserId) 
+			throws WProcessHeadException, WProcessDefException{
+		
+		if (processHeadId == null || processHeadId.equals(0)){			
+			throw new WProcessHeadException("ProcessHead id has not a valid value");
+		}
+		if (processHeadName == null || "".equals(processHeadName)){			
+			throw new WProcessHeadException("ProcessHead name has not a valid value");
+		}
+		
+		WProcessDefBL wpdBL = new WProcessDefBL();
+		
+		List<WProcessDefLight> wpdlList = 
+				wpdBL.finderWProcessDefLight(false, null, null, null, false, 
+						null, null, processHeadId, null, null);
+		
+		if (wpdlList != null){
+			
+			for (WProcessDefLight wpdl : wpdlList){
+				
+				String newProcessMap = 
+						mxGraphMapManagerBL.getXmlMapWithNewProcessName(wpdl.getProcessMap(), processHeadName);
+				
+				wpdBL.updateProcessXmlMap(wpdl.getId(), newProcessMap, currentUserId);
+				
+			}
+			
+		}
+		
 	}
 	
 	

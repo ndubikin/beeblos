@@ -897,7 +897,8 @@ public class WProcessDefDao {
 		// nes 20130830 - agregado left join porque quité el campo id_process de la tabla w_step_work
 		tmpQuery += " (SELECT COUNT(sw.id) FROM w_step_work sw LEFT OUTER JOIN w_process_work wpw ON sw.id_work = wpw.id WHERE sw.decided_date IS NULL AND wpw.id_process = wpd.id) AS liveSteps, ";
 		tmpQuery += " wpd.active, ";
-		tmpQuery += " wpd.version ";
+		tmpQuery += " wpd.version, ";
+		tmpQuery += " wpd.process_map ";
 
 		tmpQuery += " FROM w_process_def wpd ";
 		tmpQuery += " LEFT OUTER JOIN w_process_head wph ON wpd.head_id = wph.id ";
@@ -927,7 +928,8 @@ public class WProcessDefDao {
 		
 		boolean status;
 		Integer version;
-		
+
+		String processMap;
 		
 		Session session = null;
 		Transaction tx = null;
@@ -967,9 +969,10 @@ public class WProcessDefDao {
 							cols[6].toString()) : null);
 					status = (cols[7] != null ? (Boolean) cols[7] : false);
 					version= (cols[8] != null ? new Integer(cols[8].toString()) : null);
+					processMap = (cols[9] != null ? cols[9].toString() : "");
 
 					returnList.add(new WProcessDefLight(id, name, comments, productionDate, 
-							productionUser, liveWorks, liveSteps, status, version));
+							productionUser, liveWorks, liveSteps, status, version, processMap));
 				}
 
 			} else {
