@@ -181,9 +181,6 @@ public class Login_x_Bean extends CoreManagedBean {
 			
 		} 
 		
-		// dml 20120215
-		setAnyDefaultConfiguration();
-		newSessionName = currentSessionName = hibernateConfigurationParameters.getSessionName();
 		
 		return urlPaginaInicioDpto;
 	}
@@ -337,6 +334,10 @@ public class Login_x_Bean extends CoreManagedBean {
 				
 				construirContextoSeguridad(usuario);
 				
+				// dml 20120215
+				setAnyDefaultConfiguration();
+				newSessionName = currentSessionName = hibernateConfigurationParameters.getSessionName();
+
 				// mrico 20110706
 				// Si se usa seguridad, debe tener algun permiso
 				if( USE_SECURITY ){
