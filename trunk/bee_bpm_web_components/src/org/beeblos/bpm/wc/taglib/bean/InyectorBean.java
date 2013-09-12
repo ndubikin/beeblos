@@ -166,7 +166,7 @@ public class InyectorBean  extends CoreManagedBean {
 			lPasosValidos= 
 					UtilsVs
 					.castStringPairToSelectitem(
-							wsBL.getComboList(selectedProcessId, "Seleccionar paso ...", null));
+							wsBL.getComboList(selectedProcessId, "Select step ...", null));
 			
 			if (selectedProcess.getBeginStep()!=null 
 					&& selectedProcess.getBeginStep().getId()!=null 
@@ -253,22 +253,22 @@ public class InyectorBean  extends CoreManagedBean {
 
 			// setea el mensaje en pantalla al usuario
 		} catch (WStepWorkException e) {
-			String message = "InyectorBean.launchWork() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "InyectorBean.launchWork() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (AlreadyExistsRunningProcessException e) {
-			String message = "InyectorBean.launchWork() AlreadyExistsRunningProcessException: " + e.getMessage() + " - " + e.getCause();
+			String message = "InyectorBean.launchWork() AlreadyExistsRunningProcessException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (InyectorException e) {
-			String message = "InyectorBean.launchWork() InyectorException: " + e.getMessage() + " - " + e.getCause();
+			String message = "InyectorBean.launchWork() InyectorException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessWorkException e) {
-			String message = "InyectorBean.launchWork() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "InyectorBean.launchWork() WProcessWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (TableManagerException e) {
-			String message = "InyectorBean.launchWork() TableManagerException: " + e.getMessage() + " - " + e.getCause();
+			String message = "InyectorBean.launchWork() TableManagerException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepWorkSequenceException e) {
-			String message = "InyectorBean.launchWork() WStepWorkSequenceException: " + e.getMessage() + " - " + e.getCause();
+			String message = "InyectorBean.launchWork() WStepWorkSequenceException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -290,7 +290,7 @@ public class InyectorBean  extends CoreManagedBean {
 		
 		if (selectedStepDefId==null || selectedStepDefId==0) {
 			
-			String mensaje = "Debe elegir un paso de la lista para insertar el elemento en el workflow....\n";
+			String mensaje = "You should choose a step to insert the element in the workflow....\n";
 			mensaje +=" Id:"+objIdUsuario+" ref:"+objReference;
 			logger.info("inyectar:"+mensaje);
 			throw new InyectorException(mensaje);
@@ -500,7 +500,7 @@ public class InyectorBean  extends CoreManagedBean {
 						UtilsVs
 						.castStringPairToSelectitem(
 								new WStepDefBL().getComboList(
-										selectedProcessId, "Seleccionar paso ...", null));
+										selectedProcessId, "Select step ...", null));
 			} catch (WProcessDefException e) {
 				e.printStackTrace();
 				lPasosValidos.add(new SelectItem(null,"No se pudo cargar la lista de procesos ..."));
@@ -527,7 +527,7 @@ public class InyectorBean  extends CoreManagedBean {
 				lProcesosActivos=
 						UtilsVs
 						.castStringPairToSelectitem(
-								new WProcessDefBL().getComboList("Seleccionar ...", null,getCurrentUser()));
+								new WProcessDefBL().getComboActiveProcessList("Select ...", null,getCurrentUser()));
 			} catch (WProcessDefException e) {
 				e.printStackTrace();
 				lProcesosActivos.add(new SelectItem(null,"No se pudo cargar la lista de procesos ..."));
