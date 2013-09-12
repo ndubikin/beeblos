@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
@@ -24,7 +25,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
-import org.beeblos.bpm.core.dao.WStepWorkSequenceDao;
 import org.beeblos.bpm.core.dao.WUserRoleDao;
 import org.beeblos.bpm.core.email.bl.SendEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
@@ -40,7 +40,6 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
@@ -98,7 +97,13 @@ public class WStepWorkBL {
 		
 		if ( work.getId()!=null && work.getId()!=0 ) {
 			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+work.getId()+")");
-		}			
+		}
+		
+		// nes 20130912 - if process is not active throws exception
+		if (!work.getProcessDef().isActive()) {
+			logger.warn("Trying to start a new workflow referring an inactive process id:"+work.getProcessDef().getId());
+			throw new WProcessWorkException("This process is inactive. Can't start a new workflow.");
+		}
 			
 		if (work.getStatus() == null) {
 			work.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
@@ -199,7 +204,7 @@ public class WStepWorkBL {
 	 * returns qty of existing step works for a given processDefId (process version)
 	 * 
 	 * @param processId
-	 * @param mode
+	 * @param mode: A = alive, P = processed
 	 * @return
 	 * @throws WStepWorkException
 	 */
@@ -380,7 +385,8 @@ public class WStepWorkBL {
 			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUser,
 			boolean isAdminProcess, String typeOfProcess) 
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
-			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, WStepAlreadyProcessedException, WStepWorkSequenceException {
+			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
+			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
 
 		Date now = new Date();
 		Integer qtyNewRoutes=0;
@@ -399,6 +405,16 @@ public class WStepWorkBL {
 		if ( typeOfProcess.equals(PROCESS_STEP) ) {
 
 			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
+
+			// if no new routes nor alive tasks then the process work is finished ...
+			if(qtyNewRoutes.equals(0) 
+				&& getStepWorkCountByProcess(
+						currentStep.getwProcessWork().getProcessDef().getId(),ALIVE).equals(0)  ){
+
+					new WProcessWorkBL().finalize(currentStep.getwProcessWork(), currentUser);
+
+			}
+
 			
 		} else if ( typeOfProcess.equals(TURNBACK_STEP) ) {
 
@@ -406,7 +422,7 @@ public class WStepWorkBL {
 			qtyNewRoutes=1;
 			
 		}
-		
+
 		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
 		
 	}

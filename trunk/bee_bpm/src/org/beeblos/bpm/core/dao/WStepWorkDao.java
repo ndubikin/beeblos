@@ -10,20 +10,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
-import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
-
-import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.util.HibernateUtil;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.TableManager;
@@ -33,7 +29,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
+
+import com.sp.common.util.StringPair;
 
 
 public class WStepWorkDao {
@@ -1271,7 +1268,7 @@ public class WStepWorkDao {
 	 *  returns qty of existing step works for a given processDefId (process version)
 	 *  
 	 * @param processDefId
-	 * @param mode
+	 * @param mode: A = alive, P = processed
 	 * @return
 	 * @throws WStepWorkException
 	 */

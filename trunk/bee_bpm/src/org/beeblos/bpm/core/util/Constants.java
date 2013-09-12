@@ -10,6 +10,12 @@ import org.joda.time.DateTime;
 
 public class Constants {
 	
+	// nes 20130912
+	public static final String ALIVE = "A";
+	public static final String PROCESSED = "P"; 
+	public static final String ALL = "ALL";
+	public static final String FINISHED = "Finished";
+	
 	// dml 20130830
 	public static final boolean DELETED = true;
 	public static final boolean NOT_DELETED = false;
@@ -81,10 +87,6 @@ public class Constants {
 	public static final Integer TURNBACK =-1; // PAR INDICAR QUE EL PASO VUELVE ATRÁS ...
 
 	public static final String OMNIADMIN = "OMNIADMIN";
-	
-	public static final String ALIVE = "A";
-	public static final String PROCESSED = "P"; 
-	public static final String ALL = "ALL";
 	
 	public static final boolean EMPTY_OBJECT = true; // to work with emtpy objects ( this is a not null objet but empty one )
 	
