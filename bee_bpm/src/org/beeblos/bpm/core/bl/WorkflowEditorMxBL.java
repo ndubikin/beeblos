@@ -79,17 +79,16 @@ public class WorkflowEditorMxBL {
 		String returnValue = null;
 		
 		if (processXmlMap == null){
-			return returnValue;
+			return null;
+		}
+		
+		if (workId == null){
+			return processXmlMap;
 		}
 		
 		// lista para pintar los "Task"
 		List<WStepWork> wswList = 
 				new WStepWorkBL().getWorkListByIdWorkAndStatus(workId, null, currentUserId);
-		
-		if (wswList == null
-				|| wswList.isEmpty()){
-			return returnValue;
-		}
 
 		// lista para pintar los "Edge" ( no devuelve null si no hay porque puede que no haya ninguna ruta procesada aun)
 		List<WStepWorkSequence> wswsList = 

@@ -16,32 +16,32 @@
 
        		<rich:contextMenu attached="false" id="working_process_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchProcessWork}" submitMode="server">
-                	<b> Go to live works </b> {idProcess} 
+                	<b>#{msg.label_go_to_live_works}</b> {idProcess} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
                		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{idProcess}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.workTypeFilter}" value="PROCESSING"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchStepWork}" submitMode="server">
-                	<b> Go to live steps </b> {idProcess} 
+                	<b>#{msg.label_go_to_live_steps}</b> {idProcess} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{idProcess}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PENDING"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
-                	<b> Edit process definition </b> {idProcess} 
+                	<b>#{msg.label_edit_process_definition}</b> {idProcess} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
                    		<rich:menuItem ajaxSingle="true"
            			oncomplete="javascript:Richfaces.showModalPanel('mpDesactivateWProcessDef');"
            			reRender="mpDesactivateWProcessDef" style="{styleIsActive}">
-                	<b> Desactivate process </b> {idProcess} 
+                	<b>#{msg.label_deactivate_process}</b> {idProcess} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
  	           	</rich:menuItem>
              	<rich:menuItem ajaxSingle="false" submitMode="server">
-                	<b> Suspend process </b> {idProcess} 
+                	<b>#{msg.label_suspend_process}</b> {idProcess} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{idProcess}"/>
             	</rich:menuItem>
  	   		</rich:contextMenu>

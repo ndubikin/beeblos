@@ -6,6 +6,17 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<script type="text/javascript">
+	//<![CDATA[
+	function openInNewTab(url)
+	{
+
+		var win=window.open(url, '_blank');
+		win.focus();
+	}
+	//]]>
+	</script>	
+
 	<c:if test="${empty action}">
 		<c:set var="action" value="" />
 	</c:if>
@@ -16,7 +27,7 @@
 
        		<rich:contextMenu attached="false" id="working_work_search_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.searchProcessWorkAliveSteps}" submitMode="server">
-                	<b> Go to live steps </b> {workReference} 
+                	<b>#{msg.label_go_to_live_steps}</b> {workReference} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
               		<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.processIdFilter}" value="{currentProcessId}"/>
               		<a4j:actionparam name="det3" assignTo="#{workingProcessQueryBean.stepTypeFilter}" value="PENDING"/>
@@ -24,18 +35,27 @@
               		<a4j:actionparam name="det5" assignTo="#{workingProcessQueryBean.referenceFilter}" value="{workReference}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
+ 				<rich:menuItem
+					oncomplete="openInNewTab('#{workingProcessQueryBean.workflowViewXmlMapUrl}');"
+					action="#{workingProcessQueryBean.loadXmlMapAsTmp}"
+					submitMode="ajax">
+					<b> #{msg.label_view_map}</b> {currentRowId} 
+                	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}" />
+                	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.idWork}" value="{idWork}"/>
+				</rich:menuItem>
+            	<rich:menuSeparator />         
               	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessWorkForm}" submitMode="server">
-                	<b> Show history </b> {workReference} 
+                	<b>#{msg.label_show_history}</b> {workReference} 
               		<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.idWork}" value="{idWork}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" action="#{workingProcessQueryBean.loadWProcessDefForm}" submitMode="server">
-                	<b> Edit process definition </b> {workReference} 
+                	<b>#{msg.label_edit_process_definition}</b> {workReference} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
             	</rich:menuItem>
             	<rich:menuSeparator />         
              	<rich:menuItem ajaxSingle="false" submitMode="server">
-                	<b> Cancel pending tasks </b> {workReference} 
+                	<b>#{msg.label_cancel_pending_tasks}</b> {workReference} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}"/>
             	</rich:menuItem>
             </rich:contextMenu>
