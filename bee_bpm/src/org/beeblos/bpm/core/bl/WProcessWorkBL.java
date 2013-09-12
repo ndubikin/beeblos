@@ -50,6 +50,13 @@ public class WProcessWorkBL {
 		}
 	}
 	
+	/**
+	 * Finalize an instance of work: set status to finished...
+	 * 
+	 * @param process
+	 * @param currentUserId
+	 * @throws WProcessWorkException
+	 */
 	public void finalize(WProcessWork process, Integer currentUserId) throws WProcessWorkException {
 		
 		logger.debug("finalize() WProcessWork < id = "+process.getId()+">");
