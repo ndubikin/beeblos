@@ -833,7 +833,8 @@ public class WorkflowEditorAction extends CoreManagedBean {
 	 */
 	private boolean _parseAndPersistXmlMap() 
 			throws WStepDefException, WStepWorkException, WProcessDefException, 
-			WStepSequenceDefException, WStepHeadException, WStepResponseDefException, WorkflowEditorActionException, WProcessHeadException {
+			WStepSequenceDefException, WStepHeadException, WStepResponseDefException, 
+			WorkflowEditorActionException, WProcessHeadException {
 
 		boolean returnValue = true;
 		
@@ -868,7 +869,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				
 				if (process == null){
 					throw new WorkflowEditorActionException(
-							"ERROR WS: parseAndPersistXmlMap() - el proceso el mapa no existe");
+							"WS /Save Exception: The map has not a valid process associated [id:" + spId + "]");
 				} else {
 					// dml 20130820 - si cambiamos el nombre del mapa cambiamos el del proceso
 					if (process.getProcess() != null
@@ -889,7 +890,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				
 			} else {
 				
-				// GRABAR ERROR Y SALIR
+				throw new WorkflowEditorActionException("WS /Save Exception: The map has not an associated process.");
 			
 			}
 

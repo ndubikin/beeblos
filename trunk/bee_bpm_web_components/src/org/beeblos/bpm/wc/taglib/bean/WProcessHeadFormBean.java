@@ -4,7 +4,6 @@ import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
-import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,7 @@ import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WProcessHeadBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
@@ -115,8 +115,8 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 			
 		} catch (WProcessHeadException e) {
 
-			String message = "WProcessHeadFormBean.loadCurrentWProcessHead() WProcessHeadException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessHeadFormBean.loadCurrentWProcessHead() WProcessHeadException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -135,8 +135,8 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 
 			this.setRelatedProcessDefList(new ArrayList<WProcessDefLight>());
 			
-			String message = "WProcessHeadFormBean.reloadRelatedProcessDefList() WProcessHeadException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessHeadFormBean.reloadRelatedProcessDefList() WProcessHeadException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -288,16 +288,15 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 
 		} catch (WProcessHeadException e) {
 
-			message = "WProcessHeadFormBean.add() WProcessHeadException: " + 
-					e.getMessage() + " - " + e.getCause();
+			message = "WProcessHeadFormBean.add() WProcessHeadException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WProcessHeadException(message);
 
 		} catch (Exception e) {
 
-			message = "WProcessHeadFormBean.add() Exception: " + 
-					e.getMessage() + " - " + e.getCause();
+			message = "WProcessHeadFormBean.add() Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WProcessHeadException(message);
@@ -331,11 +330,15 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 
 		} catch (WProcessHeadException e) {
 			String message = "Error updating object: " + currentWProcessHead.getId() + " - "
-					+ currentWProcessHead.getName() + "\n" + e.getMessage() + "\n" + e.getCause();
+					+ currentWProcessHead.getName() + "\n";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDefException e) {
 			String message = "Error updating object: " + currentWProcessHead.getId() + " - "
-					+ currentWProcessHead.getName() + "\n" + e.getMessage() + "\n" + e.getCause();
+					+ currentWProcessHead.getName() + "\n";
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WStepSequenceDefException e) {
+			String message = "Error updating object: " + currentWProcessHead.getId() + " - "
+					+ currentWProcessHead.getName() + "\n";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 

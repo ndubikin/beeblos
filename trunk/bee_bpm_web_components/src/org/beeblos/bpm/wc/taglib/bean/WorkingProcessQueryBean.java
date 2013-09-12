@@ -596,7 +596,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			nResults = wProcessDefLightList.size();
 
 		} catch (WProcessDefException e) {
-			String message = "WorkingProcessQueryBean.searchWorkingProcesses() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.searchWorkingProcesses() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -617,7 +617,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			nResults = wProcessDefLightList.size();
 
 		} catch (WProcessDefException e) {
-			String message = "WorkingProcessQueryBean.reloadWorkingProcesses() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.reloadWorkingProcesses() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -689,7 +689,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			nWorkResults = processWorkLightList.size();
 
 		} catch (WProcessWorkException e) {
-			String message = "WorkingProcessQueryBean.searchProcessWork() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.searchProcessWork() WProcessWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -726,7 +726,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			nStepResults = stepWorkLightList.size();
 
 		} catch (WStepWorkException e) {
-			String message = "WorkingProcessQueryBean.searchStepWork() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.searchStepWork() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -752,7 +752,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			nStepResults = stepWorkLightList.size();
 
 		} catch (WStepWorkException e) {
-			String message = "WorkingProcessQueryBean.reloadStepWorkLightList() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.reloadStepWorkLightList() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -776,10 +776,10 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			}
 			
 		} catch (WProcessDefException e) {
-			String message = "WorkingProcessQueryBean.desactivateWProcessDef() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.desactivateWProcessDef() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepSequenceDefException e) {
-			String message = "WorkingProcessQueryBean.desactivateWProcessDef() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.desactivateWProcessDef() WStepSequenceDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -793,7 +793,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 					.castStringPairToSelectitem(new WUserDefBL().getComboList("All users", ""));
 			
 		} catch (WUserDefException e) {
-			String message = "WorkingProcessQueryBean.getwUsersDef() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.getwUsersDef() WUserDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -819,7 +819,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			}
 			
 		} catch (WProcessDefException e) {
-			String message = "WorkingProcessQueryBean.getwProcessesDef() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.getwProcessesDef() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -842,7 +842,7 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			return l;
 			
 		} catch (WProcessDefException e) {
-			String message = "WorkingProcessQueryBean.getValidStepList() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.getValidStepList() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -867,13 +867,13 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 			reloadStepWorkLightList();
 		
 		} catch (WStepNotLockedException e) {
-			String message = "WorkingProcessQueryBean.lockUnlockStep() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.lockUnlockStep() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepLockedByAnotherUserException e) {
-			String message = "WorkingProcessQueryBean.lockUnlockStep() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.lockUnlockStep() WStepLockedByAnotherUserException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepWorkException e) {
-			String message = "WorkingProcessQueryBean.lockUnlockStep() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WorkingProcessQueryBean.lockUnlockStep() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		

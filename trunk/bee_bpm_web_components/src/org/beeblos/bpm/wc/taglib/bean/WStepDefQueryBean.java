@@ -129,7 +129,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			return new WStepDefUtil().createNewWStepDef(this.stepHeadId, WSTEPDEF_QUERY);
 		
 		} catch (WProcessDefException e) {
-			String message = "WStepDefQueryBean.createNewWStepDef() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefQueryBean.createNewWStepDef() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -256,13 +256,13 @@ public class WStepDefQueryBean extends CoreManagedBean {
 			logger.info(message);
 
 		} catch (WStepDefException e) {
-			String message = "WStepDefQueryBean.cloneWStepDef() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefQueryBean.cloneWStepDef() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepSequenceDefException e) {
-			String message = "WStepDefQueryBean.cloneWStepDef() WStepSequenceDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefQueryBean.cloneWStepDef() WStepSequenceDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepHeadException e) {
-			String message = "WStepDefQueryBean.cloneWStepDef() WStepHeadException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefQueryBean.cloneWStepDef() WStepHeadException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -340,7 +340,7 @@ public class WStepDefQueryBean extends CoreManagedBean {
 				this.currentWStepDef = new WStepDefBL().getWStepDefByPK(this.id, null, getCurrentUserId());// nes 20130808 - por agregado del filtro para step-data-field
 				
 			} catch (WStepDefException e) {
-				String message = "WStepDefQueryBean.loadWStepDefObject() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefQueryBean.loadWStepDefObject() WStepDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} 
 			

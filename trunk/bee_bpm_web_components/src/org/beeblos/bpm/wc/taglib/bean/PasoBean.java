@@ -32,6 +32,7 @@ import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.CustomSaveException;
 import org.beeblos.bpm.core.error.CustomValidationException;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
@@ -509,6 +510,12 @@ public class PasoBean  extends CoreManagedBean {
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			logger.info(message);
 			ret=null;
+		} catch (WProcessWorkException e) {
+			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
+					+e.getMessage()+" - "+e.getCause();
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				logger.info(message);
+				ret=null;
 		}
 				
 		return ret;
@@ -668,6 +675,9 @@ public class PasoBean  extends CoreManagedBean {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (WStepWorkSequenceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WProcessWorkException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

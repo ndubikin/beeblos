@@ -173,7 +173,7 @@ public class WEmailAccountBean extends CoreManagedBean {
 					.getWEmailAccountList();				
 				 		
 		} catch (WEmailAccountException e) {
-			String message = "WEmailAccountBean.loadWEmailAccountLists() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean.loadWEmailAccountLists() WEmailAccountException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -322,7 +322,7 @@ public class WEmailAccountBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (WEmailAccountException e) {
-			String message = "WEmailAccountBean.actualizar() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean.actualizar() WEmailAccountException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -371,7 +371,7 @@ public class WEmailAccountBean extends CoreManagedBean {
 
 			
 		} catch (WEmailAccountException e) {
-			String message = "WEmailAccountBean.agregar() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean.agregar() WEmailAccountException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -422,7 +422,7 @@ public class WEmailAccountBean extends CoreManagedBean {
 			recargaListaUsuario(); 
 			
 		} catch (WEmailAccountException e) {
-			String message = "WEmailAccountBean.delete() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean.delete() WEmailAccountException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -601,7 +601,7 @@ public class WEmailAccountBean extends CoreManagedBean {
 				this.wUserDefList = UtilsVs.castStringPairToSelectitem(new WUserDefBL()
 												.getComboList(null, null));
 			} catch (WUserDefException e) {
-				String message = "WEmailAccountBean.getwUserDefList() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WEmailAccountBean.getwUserDefList() WUserDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
@@ -780,7 +780,7 @@ public class WEmailAccountBean extends CoreManagedBean {
 			this.id = 0;
 				 		
 		} catch (WEmailAccountException e) {
-			String message = "WEmailAccountBean.searchWEmailAccount() WEmailAccountException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean.searchWEmailAccount() WEmailAccountException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 

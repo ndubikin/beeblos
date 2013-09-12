@@ -162,10 +162,10 @@ public class WUserDefBean extends CoreManagedBean {
 			reset();
 			
 		} catch (WUserDefException e) {
-			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WUserDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WUserDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -195,10 +195,10 @@ public class WUserDefBean extends CoreManagedBean {
 			reset();
 
 		 } catch (WUserDefException e) {
-				String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "WUserDefBean:Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WUserDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -230,10 +230,10 @@ public class WUserDefBean extends CoreManagedBean {
 			reset();
 
 		} catch (WUserDefException e) {
-			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WUserDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WUserDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -261,7 +261,7 @@ public class WUserDefBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (WUserDefException e) {
-				String message = "WUserDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "WUserDefBean:Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		

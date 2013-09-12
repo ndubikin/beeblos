@@ -145,10 +145,10 @@ public class EnvTypeBean extends CoreManagedBean {
 			reset();
 			
 		} catch (EnvTypeException e) {
-			String message = "EnvTypeBean.update EnvTypeException: " + e.getMessage() + " - " + e.getCause();
+			String message = "EnvTypeBean.update EnvTypeException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "EnvTypeBean.update EnvTypeException: " + e.getMessage() + " - " + e.getCause();
+			String message = "EnvTypeBean.update EnvTypeException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -175,11 +175,10 @@ public class EnvTypeBean extends CoreManagedBean {
 			reset();
 
 		} catch (EnvTypeException e) {
-			String message = "EnvTypeBean.add EnvTypeException: " + e.getMessage() + " - "
-					+ e.getCause();
+			String message = "EnvTypeBean.add EnvTypeException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "EnvTypeBean.add Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "EnvTypeBean.add Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -210,12 +209,10 @@ public class EnvTypeBean extends CoreManagedBean {
 			reset();
 
 		} catch (EnvTypeException e) {
-			String message = "EnvTypeBean.delete EnvTypeException: " + e.getMessage() + " - "
-					+ e.getCause();
+			String message = "EnvTypeBean.delete EnvTypeException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "EnvTypeBean.delete Exception: " + e.getMessage() + " - "
-					+ e.getCause();
+			String message = "EnvTypeBean.delete Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -240,8 +237,7 @@ public class EnvTypeBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (EnvTypeException e) {
-				String message = "EnvTypeBean.loadRecord() EnvTypeException: " + e.getMessage() + " - "
-						+ e.getCause();
+				String message = "EnvTypeBean.loadRecord() EnvTypeException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		

@@ -452,14 +452,14 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 		} catch (WStepDefException e) {
 
-			message = "WStepDefFormBean.add() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			message = "WStepDefFormBean.add() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new WStepDefException(message);			
 			
 		} catch (Exception e) {
 			
-			message = "WStepDefFormBean.add() Exception: " + e.getMessage() + " - " + e.getCause();
+			message = "WStepDefFormBean.add() Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new WStepDefException(message);			
@@ -494,7 +494,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 
 		} catch (WStepDefException e) {
-			String message = "WStepDefFormBean.update() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.update() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -531,7 +531,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			this.reloadRelatedStepDefList(); // dml 20130508
 			
 		} catch (WStepDefException e) {
-			String message = "WStepDefFormBean.loadObject() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.loadObject() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}			
 	}
@@ -549,7 +549,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 
 			this.relatedStepDefList = new ArrayList<WStepDef>();
 
-			String message = "WStepDefFormBean.reloadRelatedStepDefList() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.reloadRelatedStepDefList() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -567,7 +567,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 								.getWStepResponseDefByPK(currentStepResponse.getId(), getCurrentUserId() );
 			
 			} catch (WStepResponseDefException e) {
-				String message = "WStepDefFormBean.loadResponse() WStepResponseDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefFormBean.loadResponse() WStepResponseDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		
@@ -738,10 +738,10 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WStepResponseDefException e) {
-			String message = "WStepDefFormBean.addStepResponse() WStepResponseDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.addStepResponse() WStepResponseDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepDefException e) {
-			String message = "WStepDefFormBean.addStepResponse() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.addStepResponse() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -778,7 +778,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}		
 			
 		} catch (WStepResponseDefException e) {
-			String message = "WStepDefFormBean.deleteStepResponse() WStepResponseDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.deleteStepResponse() WStepResponseDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -799,7 +799,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}		
 			
 		} catch (WStepResponseDefException e) {
-			String message = "WStepDefFormBean.editStepResponse() WStepResponseDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.editStepResponse() WStepResponseDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -872,7 +872,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 					new WTimeUnitBL().getComboList("Select time unit","") );
 			
 		} catch (WTimeUnitException e) {
-			String message = "WStepDefFormBean.loadWTimeUnitForCombo() WTimeUnitException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.loadWTimeUnitForCombo() WTimeUnitException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -897,7 +897,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		try {
 			return UtilsVs.castStringPairToSelectitem(wtuBL.getComboList("Select unit ...", ""));
 		} catch (WTimeUnitException e) {
-			String message = "WStepDefFormBean.getTimeUnitComboList() WTimeUnitException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.getTimeUnitComboList() WTimeUnitException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1128,7 +1128,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}
 
 			} catch (WStepDefException e) {
-				String message = "WStepDefFormBean.deleteWStepUser() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefFormBean.deleteWStepUser() WStepDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 	
@@ -1162,7 +1162,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 				persistCurrentObject();
 			
 			} catch (WStepDefException e) {
-				String message = "WStepDefFormBean.changeAdminPrivilegesWStepUser() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefFormBean.changeAdminPrivilegesWStepUser() WStepDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
@@ -1212,7 +1212,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 				}
 
 			} catch (WStepDefException e) {
-				String message = "WStepDefFormBean.deleteWStepRole() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefFormBean.deleteWStepRole() WStepDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
@@ -1246,7 +1246,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 				persistCurrentObject();
 			
 			} catch (WStepDefException e) {
-				String message = "WStepDefFormBean.changeAdminPrivilegesWStepRole() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefFormBean.changeAdminPrivilegesWStepRole() WStepDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
@@ -1270,13 +1270,13 @@ public class WStepDefFormBean extends CoreManagedBean {
 			persistCurrentObject();
 			
 		} catch (NumberFormatException e) {
-			String message = "WStepDefFormBean.updateRolesRelated() NumberFormatException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateRolesRelated() NumberFormatException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WRoleDefException e) {
-			String message = "WStepDefFormBean.updateRolesRelated() WRoleDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateRolesRelated() WRoleDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepDefException e) {
-			String message = "WStepDefFormBean.updateRolesRelated() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateRolesRelated() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1300,13 +1300,13 @@ public class WStepDefFormBean extends CoreManagedBean {
 			persistCurrentObject();
 			
 		} catch (NumberFormatException e) {
-			String message = "WStepDefFormBean.updateUsersRelated() NumberFormatException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateUsersRelated() NumberFormatException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WUserDefException e) {
-			String message = "WStepDefFormBean.updateUsersRelated() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateUsersRelated() WUserDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepDefException e) {
-			String message = "WStepDefFormBean.updateUsersRelated() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateUsersRelated() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1355,7 +1355,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			
 			this.wStepHeadComboList = new ArrayList<SelectItem>();
 			
-			String message = "WStepDefFormBean._loadWStepHeadComboList() WStepHeadException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean._loadWStepHeadComboList() WStepHeadException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1380,10 +1380,10 @@ public class WStepDefFormBean extends CoreManagedBean {
 				this.currentWStepDef.setVersion(lastVersion + 1);
 				
 			} catch (WStepHeadException e) {
-				String message = "WStepDefFormBean.setStepInWStepDef() WStepHeadException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefFormBean.setStepInWStepDef() WStepHeadException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WStepDefException e) {
-				String message = "WStepDefFormBean.setStepInWStepDef() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+				String message = "WStepDefFormBean.setStepInWStepDef() WStepDefException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
@@ -1435,13 +1435,13 @@ public class WStepDefFormBean extends CoreManagedBean {
 			loadObject();
 			
 		} catch (NumberFormatException e) {
-			String message = "WStepDefFormBean.updateDataFieldsRelated() NumberFormatException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateDataFieldsRelated() NumberFormatException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDataFieldException e) {
-			String message = "WStepDefFormBean.updateDataFieldsRelated() WProcessDataFieldException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateDataFieldsRelated() WProcessDataFieldException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepDataFieldException e) {
-			String message = "WStepDefFormBean.updateDataFieldsRelated() WStepDataFieldException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.updateDataFieldsRelated() WStepDataFieldException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1587,7 +1587,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WStepDataFieldException e) {
-			String message = "WStepDefFormBean.loadDataField() WStepDataFieldException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepDefFormBean.loadDataField() WStepDataFieldException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 	}

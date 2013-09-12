@@ -245,14 +245,14 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			
 		} catch (WProcessWorkException e) {
 
-			String message = "WProcessWorkFormBean.add() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WProcessWorkFormBean.add() WProcessWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new WProcessWorkException(message);			
 			
 		} catch (Exception e) {
 			
-			String message = "WProcessWorkFormBean.add() Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WProcessWorkFormBean.add() Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new WProcessWorkException(message);			
@@ -327,7 +327,7 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			}
 
 		} catch (WProcessWorkException e) {
-			String message = "WProcessWorkFormBean.loadWProcessWork() WProcessWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WProcessWorkFormBean.loadWProcessWork() WProcessWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}			
 	}
@@ -343,13 +343,13 @@ public class WProcessWorkFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WStepWorkException e) {
-			String message = "WProcessWorkFormBean.loadWStepWorkList() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WProcessWorkFormBean.loadWStepWorkList() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDefException e) {
-			String message = "WProcessWorkFormBean.loadWStepWorkList() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WProcessWorkFormBean.loadWStepWorkList() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepDefException e) {
-			String message = "WProcessWorkFormBean.loadWStepWorkList() WStepDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WProcessWorkFormBean.loadWStepWorkList() WStepDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		

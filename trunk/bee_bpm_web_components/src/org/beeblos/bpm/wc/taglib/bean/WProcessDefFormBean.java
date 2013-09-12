@@ -282,13 +282,11 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 		} catch (WProcessDefException e) {
 
-			String message = "WProcessDefFormBean.loadCurrentWProcessDef() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadCurrentWProcessDef() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepSequenceDefException e) {
 
-			String message = "WProcessDefFormBean.loadCurrentWProcessDef() WStepSequenceDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadCurrentWProcessDef() WStepSequenceDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 		}
@@ -337,13 +335,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 		}catch(XMLGenerationException e){
 
-			String message = "WProcessDefFormBean.generateXMLCurrentWProcessDef() XMLGenerationException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.generateXMLCurrentWProcessDef() XMLGenerationException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}catch(IOException e){
 			
-			String message = "WProcessDefFormBean.generateXMLCurrentWProcessDef() IOException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.generateXMLCurrentWProcessDef() IOException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -653,16 +650,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		} catch (WProcessDefException e) {
 
-			message = "WProcessDefFormBean.add() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			message = "WProcessDefFormBean.add() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WProcessDefException(message);
 
 		} catch (Exception e) {
 
-			message = "WProcessDefFormBean.add() Exception: " + 
-					e.getMessage() + " - " + e.getCause();
+			message = "WProcessDefFormBean.add() Exception: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WProcessDefException(message);
@@ -722,8 +718,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		} catch (WStepDefException e) {
 
-			String message = "WProcessDefFormBean.loadStepCombo() WStepDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadStepCombo() WStepDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 	}
@@ -735,8 +731,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 							new WDataTypeBL().getComboList(null, null)));
 			
 		} catch (WDataTypeException e) {
-			String message = "WProcessDefFormBean.loadDataTypes() WDataTypeException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadDataTypes() WDataTypeException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 	}
@@ -1105,8 +1101,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				}
 
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefFormBean.deleteWProcessRole() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.deleteWProcessRole() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 
@@ -1143,8 +1139,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				persistCurrentObject();
 
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefFormBean.changeAdminPrivilegesWProcessRole() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.changeAdminPrivilegesWProcessRole() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 
@@ -1184,8 +1180,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				}
 
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefFormBean.deleteWProcessUser() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.deleteWProcessUser() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 
@@ -1222,8 +1218,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				persistCurrentObject();
 
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefFormBean.changeAdminPrivilegesWProcessUser() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.changeAdminPrivilegesWProcessUser() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 
@@ -1249,16 +1245,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			persistCurrentObject();
 
 		} catch (NumberFormatException e) {
-			String message = "WProcessDefFormBean.updateRolesRelated() NumberFormatException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.updateRolesRelated() NumberFormatException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WRoleDefException e) {
-			String message = "WProcessDefFormBean.updateRolesRelated() WRoleDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.updateRolesRelated() WRoleDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDefException e) {
-			String message = "WProcessDefFormBean.updateRolesRelated() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.updateRolesRelated() WProcessDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -1283,16 +1279,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			persistCurrentObject();
 
 		} catch (NumberFormatException e) {
-			String message = "WProcessDefFormBean.updateUsersRelated() NumberFormatException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.updateUsersRelated() NumberFormatException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WUserDefException e) {
-			String message = "WProcessDefFormBean.updateUsersRelated() WUserDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.updateUsersRelated() WUserDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessDefException e) {
-			String message = "WProcessDefFormBean.updateUsersRelated() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.updateUsersRelated() WProcessDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -1334,8 +1330,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			loadStepFromSequence();
 			
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefFormBean.addAndUpdateStepSequence() WStepSequenceDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.addAndUpdateStepSequence() WStepSequenceDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1358,12 +1354,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}		
 			
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefFormBean.deleteStepFromSequence() WStepSequenceDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.deleteStepFromSequence() WStepSequenceDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepWorkSequenceException e) {
-			String message = "WProcessDefFormBean.deleteStepFromSequence() WStepWorkSequenceException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.deleteStepFromSequence() WStepWorkSequenceException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1388,8 +1384,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 							.getStepSequenceList(currentWProcessDef.getId(), null, this.getCurrentUserId() ) );
 
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefFormBean.cleanStepSequence() WStepSequenceDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.cleanStepSequence() WStepSequenceDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 				
@@ -1452,8 +1448,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefFormBean.loadStepFromSequence() WStepSequenceDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadStepFromSequence() WStepSequenceDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1497,8 +1493,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WStepDefException e) {
-			String message = "WProcessDefFormBean.loadStepResponses() WStepDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadStepResponses() WStepDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -1578,8 +1574,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			persistCurrentObject();
 			
 		} catch (WProcessDefException e) {
-			String message = "WProcessDefFormBean.detachEmail() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.detachEmail() WProcessDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}		
 
@@ -1601,12 +1597,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				persistCurrentObject();
 
 			} catch (WEmailAccountException e) {
-				String message = "WProcessDefFormBean.addEmailAccount() WEmailAccountException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.addEmailAccount() WEmailAccountException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefFormBean.addEmailAccount() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.addEmailAccount() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
@@ -1667,8 +1663,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				flagValidate = true;
 		
 			} catch (SendEmailException e) {
-				String message = "WProcessDefFormBean.checkEmailAccount() SendEmailException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.checkEmailAccount() SendEmailException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
@@ -1756,8 +1752,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			arrivingNoticeEmailTemplatesCombo = UtilsVs.castStringPairToSelectitem(new WEmailTemplatesBL().getComboList("Select a template", null));
 		
 		} catch (WEmailTemplatesException e) {
-			String message = "WProcessDefFormBean.loadArrivingNoticeEmailTemplatesCombo() WEmailTemplatesException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadArrivingNoticeEmailTemplatesCombo() WEmailTemplatesException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1815,8 +1811,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WEmailTemplatesException e) {
-			String message = "WProcessDefFormBean.loadEmailTemplateVariables() WEmailTemplatesException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadEmailTemplateVariables() WEmailTemplatesException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -1850,8 +1846,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			this.wProcessComboList = new ArrayList<SelectItem>();
 			
-			String message = "WProcessDefFormBean._loadWProcessComboList() WProcessHeadException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean._loadWProcessComboList() WProcessHeadException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1881,12 +1877,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				this.currentWProcessDef.setVersion(lastVersion+1);
 				
 			} catch (WProcessHeadException e) {
-				String message = "WProcessDefFormBean.createEmptyNewProcessDefVersion() WProcessHeadException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.createEmptyNewProcessDefVersion() WProcessHeadException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefFormBean.createEmptyNewProcessDefVersion() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.createEmptyNewProcessDefVersion() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
@@ -1944,12 +1940,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				bw.close();
 				
 			} catch (IOException e) {
-				String message = "WProcessDefFormBean.loadXmlMapAsTmp() IOException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.loadXmlMapAsTmp() IOException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefFormBean.loadXmlMapAsTmp() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.loadXmlMapAsTmp() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
@@ -2095,12 +2091,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					
 
 		} catch (WProcessDataFieldException e) {
-			String message = "WProcessDefFormBean.saveNewDataField() Error al guardar el campo: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.saveNewDataField() Error al guardar el campo: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		} catch (WDataTypeException e) {
-			String message = "WProcessDefFormBean.saveNewDataField() Error al guardar el campo: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.saveNewDataField() Error al guardar el campo: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 
@@ -2125,8 +2121,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			this.dataFieldList = new ArrayList<WProcessDataField>();
 			
-			String message = "WProcessDefFormBean.reloadDataFieldList() WProcessDataFieldException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.reloadDataFieldList() WProcessDataFieldException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 		
@@ -2148,8 +2144,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			}
 			
 		} catch (WProcessDataFieldException e) {
-			String message = "WProcessDefFormBean.loadDataField() WProcessDataFieldException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadDataField() WProcessDataFieldException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 		
@@ -2178,8 +2174,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			this.createWindowMessage(OK_MESSAGE, "Campo borrado correctamente.", null);
 
 		} catch (WProcessDataFieldException e) {
-			String message = "WProcessDefFormBean.loadDataField() WProcessDataFieldException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.loadDataField() WProcessDataFieldException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			super.createWindowMessage(ERROR_MESSAGE, 
 					"El campo indicado no se puede eliminar porque contiene datos. Se le ha colocado el atributo 'active'=false para evitar su uso en los procesos de aquí en adelante.", null);
@@ -2190,9 +2186,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				wProcessDataFieldSelected.setActive(false);
 				this.saveNewDataField();
 			} catch (TableManagerException e1) {
-				logger.warn("deleteDataField: call to saveNewDataField in CATCH block says error:" 
-						+ e1.getMessage()+" - " + e1.getCause());
-				e.printStackTrace();
+				logger.warn("deleteDataField: call to saveNewDataField in CATCH block says error:");
+				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
 		} 
@@ -2227,8 +2222,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				}				
 
 			} catch (TableManagerException e) {
-				String message = "WProcessDefFormBean.switchButtonAdvancedConfiguration() TableManagerException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefFormBean.switchButtonAdvancedConfiguration() TableManagerException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 			
@@ -2260,12 +2255,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 							tableName, 
 							dataFieldList);
 		} catch (TableAlreadyExistsException e) {
-			String message = "WProcessDefFormBean.createManagedTable() TableAlreadyExistsException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.createManagedTable() TableAlreadyExistsException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		} catch (TableManagerException e) {
-			String message = "WProcessDefFormBean.createManagedTable() TableManagerException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.createManagedTable() TableManagerException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 	}
@@ -2310,12 +2305,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 							currentWProcessDef.getProcess().getManagedTableConfiguration().getName(), 
 							dataFieldList);
 		} catch (TableHasRecordsException e) {
-			String message = "WProcessDefFormBean.recreateManagedTable() TableHasRecordsException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.recreateManagedTable() TableHasRecordsException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		} catch (TableManagerException e) {
-			String message = "WProcessDefFormBean.recreateManagedTable() TableManagerException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefFormBean.recreateManagedTable() TableManagerException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 	}

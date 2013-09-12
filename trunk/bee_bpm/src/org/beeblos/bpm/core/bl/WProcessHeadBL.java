@@ -61,7 +61,8 @@ public class WProcessHeadBL {
 
 	}
 		
-	public void update(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException, WProcessDefException {
+	public void update(WProcessHead processHead, Integer currentUserId) 
+			throws WProcessHeadException, WProcessDefException, WStepSequenceDefException {
 		
 		logger.debug("update() WProcessHead < id = "+processHead.getId()+">");
 		
@@ -203,9 +204,10 @@ public class WProcessHeadBL {
 	 * @return void
 	 * @throws WProcessHeadException 
 	 * @throws WProcessDefException 
+	 * @throws WStepSequenceDefException 
 	 */
 	public void updateProcessHeadSonsMapNames(Integer processHeadId, String processHeadName, Integer currentUserId) 
-			throws WProcessHeadException, WProcessDefException{
+			throws WProcessHeadException, WProcessDefException, WStepSequenceDefException{
 		
 		if (processHeadId == null || processHeadId.equals(0)){			
 			throw new WProcessHeadException("ProcessHead id has not a valid value");
@@ -225,7 +227,8 @@ public class WProcessHeadBL {
 			for (WProcessDefLight wpdl : wpdlList){
 				
 				String newProcessMap = 
-						mxGraphMapManagerBL.getXmlMapWithNewProcessName(wpdl.getProcessMap(), processHeadName);
+						mxGraphMapManagerBL.getXmlMapWithNewProcessName(wpdl.getProcessMap(), processHeadName,
+								wpdl.getId(), currentUserId);
 				
 				wpdBL.updateProcessXmlMap(wpdl.getId(), newProcessMap, currentUserId);
 				

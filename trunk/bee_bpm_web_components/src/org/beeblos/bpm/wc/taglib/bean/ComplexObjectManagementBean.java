@@ -215,14 +215,14 @@ public class ComplexObjectManagementBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 			
 		} catch (ObjectException e) {
-			String message = "ComplexObjectManagementBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "ComplexObjectManagementBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new ObjectException(message);			
 			
 		} catch (Exception e) {
 			
-			String message = "ComplexObjectManagementBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "ComplexObjectManagementBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			throw new ObjectException(message);			
