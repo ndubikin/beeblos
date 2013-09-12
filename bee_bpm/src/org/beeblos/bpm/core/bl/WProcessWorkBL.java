@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static org.beeblos.bpm.core.util.Constants.FINISHED;
 
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessWorkDao;
+import org.beeblos.bpm.core.error.WProcessStatusException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -47,6 +49,32 @@ public class WProcessWorkBL {
 			process.setIdObjectType(WProcessWork.class.getName());
 		}
 	}
+	
+	public void finalize(WProcessWork process, Integer currentUserId) throws WProcessWorkException {
+		
+		logger.debug("finalize() WProcessWork < id = "+process.getId()+">");
+		
+		try {
+			process.setStatus(
+					new WProcessStatusBL().getWProcessStatusByName(FINISHED, currentUserId) );
+		} catch (WProcessStatusException e) {
+			String mess="Cant't set status finished for process work id:"+process.getId();
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
+		}
+
+		// ent time 
+		process.setEndTime(new Date());
+		
+		// timestamp & trace info
+		process.setModDate(new Date());
+		process.setModUser(currentUserId);
+		new WProcessWorkDao().update(process);
+			
+
+			
+	}
+	
 	
 	public void update(WProcessWork process, Integer currentUserId) throws WProcessWorkException {
 		
