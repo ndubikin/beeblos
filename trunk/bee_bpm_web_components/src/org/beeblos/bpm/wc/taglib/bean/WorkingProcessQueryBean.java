@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -975,40 +974,47 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 	public void loadXmlMapAsTmp() {
 		
 		if (currentProcessId != null
-				&& !currentProcessId.equals(0)
-				&& idStepWork != null
-				&& !idStepWork.equals(0)){
+				&& !currentProcessId.equals(0)){
 			try {
 				
-				this.currentWStepWork = new WStepWorkBL().getWStepWorkByPK(idStepWork, getCurrentUserId());
-				
 				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.currentProcessId, getCurrentUserId());
-				
-				if (this.currentWStepWork != null
-						&& this.currentWStepWork.getwProcessWork() != null
-						&& this.currentWStepWork.getwProcessWork().getId() != null
-						&& !this.currentWStepWork.getwProcessWork().getId().equals(0)
-						&& xmlMapTmp != null){
-					
-					xmlMapTmp = new WorkflowEditorMxBL().paintXmlMap(
-							xmlMapTmp, this.currentWStepWork.getwProcessWork().getId(), currentUserId);
-					
-					String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
-					File temp = new File(path);
-					
-					// if file doesnt exists, then create it
-					if (!temp.exists()) {
-						temp.createNewFile();
-					}
-					
-					FileWriter fw = new FileWriter(temp.getAbsoluteFile());
-					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write(xmlMapTmp);
-					bw.flush();
-					bw.close();
-					
-				}
 
+				if ((this.idWork == null
+						|| this.idWork.equals(0))
+						&& idStepWork != null
+						&& !idStepWork.equals(0)) {
+				
+					this.currentWStepWork = new WStepWorkBL().getWStepWorkByPK(idStepWork, getCurrentUserId());
+				
+					if (this.currentWStepWork != null
+							&& this.currentWStepWork.getwProcessWork() != null
+							&& this.currentWStepWork.getwProcessWork().getId() != null
+							&& !this.currentWStepWork.getwProcessWork().getId().equals(0)
+							&& xmlMapTmp != null) {
+					
+						this.idWork = this.currentWStepWork.getwProcessWork().getId();
+					
+					}
+				
+				}
+					
+				String paintedXmlMap = new WorkflowEditorMxBL().paintXmlMap(
+						xmlMapTmp, this.idWork, currentUserId);
+				
+				String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
+				File temp = new File(path);
+				
+				// if file doesnt exists, then create it
+				if (!temp.exists()) {
+					temp.createNewFile();
+				}
+				
+				FileWriter fw = new FileWriter(temp.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write((paintedXmlMap != null)?paintedXmlMap:xmlMapTmp);
+				bw.flush();
+				bw.close();
+					
 			} catch (IOException e) {
 				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
 				message +="error:"+e.getMessage()+" - "+ e.getCause();
