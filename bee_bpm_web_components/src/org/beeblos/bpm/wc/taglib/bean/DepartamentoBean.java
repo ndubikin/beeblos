@@ -55,7 +55,7 @@ public class DepartamentoBean extends CoreManagedBean {
 			.actualizar(departamento);
 		
 		} catch (DepartamentoException e) {
-			String message = "DepartamentoBean. Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "DepartamentoBean. Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -91,7 +91,7 @@ public class DepartamentoBean extends CoreManagedBean {
 				aBl.agregar(this.departamento);
 			
 			} catch (DepartamentoException e) {
-				String message = "DepartamentoBean. Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "DepartamentoBean. Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} 
 

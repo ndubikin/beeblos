@@ -93,7 +93,7 @@ public class MonedaBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (MonedaException e) {
-			String message = "MonedaBean.actualizar() MonedaException: " + e.getMessage() + " - " + e.getCause();
+			String message = "MonedaBean.actualizar() MonedaException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -114,7 +114,7 @@ public class MonedaBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
 		} catch (MonedaException e) {
-			String message = "MonedaBean.agregar() MonedaException: " + e.getMessage() + " - " + e.getCause();
+			String message = "MonedaBean.agregar() MonedaException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -151,7 +151,7 @@ public class MonedaBean extends CoreManagedBean {
 //			retorno = SUCCESS_MONEDA;   //rrl 20110615 DEPENDENCIA NO NECESARIA
 			_reset();
 		} catch (MonedaException e) {
-			String message = "MonedaBean.borra() MonedaException: " + e.getMessage() + " - " + e.getCause();
+			String message = "MonedaBean.borra() MonedaException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 

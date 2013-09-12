@@ -150,7 +150,7 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 			recoverNullObjects();
 
 		} catch (WEmailTemplatesException e) {
-			String message = "WEmailAccountBean. Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean. Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -230,7 +230,7 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (WEmailTemplatesException e) {
-			String message = "WEmailAccountBean. Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean. Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -258,7 +258,7 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 
 			
 		} catch (WEmailTemplatesException e) {
-			String message = "WEmailAccountBean. Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean. Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -285,7 +285,7 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 			_reset();
 			
 		} catch (WEmailTemplatesException e) {
-			String message = "WEmailAccountBean. Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean. Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -353,7 +353,7 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 				this.wEmailTemplateGroupsList = UtilsVs.castStringPairToSelectitem(new WEmailTemplateGroupsBL()
 												.getComboList(null, null));
 			} catch (WEmailTemplateGroupsException e) {
-				String message = "WEmailAccountBean. Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "WEmailAccountBean. Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}
@@ -422,7 +422,7 @@ public class WEmailTemplatesBean extends CoreManagedBean {
 			this.id = 0;
 				 		
 		} catch (WEmailTemplatesException e) {
-			String message = "WEmailAccountBean. Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WEmailAccountBean. Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 

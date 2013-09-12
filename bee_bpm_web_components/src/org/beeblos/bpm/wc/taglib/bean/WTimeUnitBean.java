@@ -145,10 +145,10 @@ public class WTimeUnitBean extends CoreManagedBean {
 			reset();
 			
 		} catch (WTimeUnitException e) {
-			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WTimeUnitBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WTimeUnitBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -175,10 +175,10 @@ public class WTimeUnitBean extends CoreManagedBean {
 			reset();
 
 		 } catch (WTimeUnitException e) {
-				String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "WTimeUnitBean:Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WTimeUnitBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -210,10 +210,10 @@ public class WTimeUnitBean extends CoreManagedBean {
 			reset();
 
 		} catch (WTimeUnitException e) {
-			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WTimeUnitBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WTimeUnitBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -238,7 +238,7 @@ public class WTimeUnitBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (WTimeUnitException e) {
-				String message = "WTimeUnitBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "WTimeUnitBean:Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		

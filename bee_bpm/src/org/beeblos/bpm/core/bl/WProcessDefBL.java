@@ -92,7 +92,7 @@ public class WProcessDefBL {
 		// del editor sepa cuando se le da al "Save" a que proceso tiene que asociar el mapa, ya que si no tiene
 		// esta información no será capaz de asociar el xml que le entra con el proceso en el que tiene que
 		// guardar el mapa.
-		String processMap = createEmptyProcessXmlMap(newProcessId, currentUserId);
+		String processMap = mxGraphMapManagerBL.createEmptyProcessXmlMap(newProcessId, currentUserId);
 		this.updateProcessXmlMap(newProcessId, processMap, currentUserId);
 		process.setProcessMap(processMap);
 		
@@ -100,56 +100,6 @@ public class WProcessDefBL {
 
 	}
 	
-	// dml 20130508 -
-	public String createEmptyProcessXmlMap(Integer newProcessId, Integer currentUserId) 
-			throws WProcessDefException, WStepSequenceDefException{
-		
-		String returnValue = "";
-		
-		// lo recargo para tener el process.getBeginStep().getName() que me hará falta para crear el mapa
-		WProcessDef process = null;
-		if (newProcessId != null){
-			process = this.getWProcessDefByPK(newProcessId, currentUserId);
-		} else {
-			return null;
-		}
-		
-		if (process == null){
-			return null;
-		}
-		
-		returnValue += "<mxGraphModel><root>";
-		returnValue += "<Workflow label=\"" + process.getName() + "\" id=\"0\" description=\"\" spId=\"" + process.getId() + "\"><mxCell/></Workflow>";
-		returnValue += "<Layer label=\"Default Layer\" description=\"\" id=\"1\"><mxCell parent=\"0\"/></Layer>";
-		
-		returnValue += "<Symbol label=\"Begin\" description=\"\" href=\"\" id=\"3\"><mxCell style=\"symbol;image=images/symbols/event.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"320\" y=\"230\" width=\"32\" height=\"32\" as=\"geometry\"/></mxCell></Symbol>";
-		
-		if (process.getBeginStep() != null){
-			String responses = "responses=\"";
-			if (process.getBeginStep().getResponse() != null
-				&& !process.getBeginStep().getResponse().isEmpty()){
-				for (WStepResponseDef response : process.getBeginStep().getResponse()){
-					
-					responses += response.getName() + "|"; 
-					
-				}
-			} 
-			responses += "\"";
-			
-			returnValue += "<Edge label=\"\" description=\"\" id=\"4\"><mxCell style=\"straightEdge\" edge=\"1\" parent=\"1\" source=\"3\" target=\"2\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></Edge>";
-			
-			returnValue += "<Task description=\"" + process.getBeginStep().getStepComments() + 
-					"\" href=\"\" id=\"2\" label=\"" + process.getBeginStep().getName() 
-					+ "\" spId=\"" + process.getBeginStep().getId() + "\" " 
-					+ responses + "><mxCell parent=\"1\" vertex=\"1\">"
-					+ "<mxGeometry as=\"geometry\" height=\"32\" width=\"72\" x=\"430\" y=\"230\"/></mxCell></Task>";
-		}
-		
-		returnValue += "</root></mxGraphModel>";
-		
-		return returnValue;
-		
-	}
 	
 	// dml 20130430
 	private void _setFirstWProcessDefData(WProcessDef process, Integer processHeadId, Integer currentUserId) 

@@ -295,13 +295,13 @@ public class WStepWorkFormBean extends CoreManagedBean {
 			setShowHeaderMessage(true);
 
 		} catch (WStepWorkException e) {
-			String message = "WStepWorkFormBean.add() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepWorkFormBean.add() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WStepWorkException(message);
 
 		} catch (Exception e) {
-			String message = "WStepWorkFormBean.add() Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepWorkFormBean.add() Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			throw new WStepWorkException(message);
@@ -331,7 +331,7 @@ public class WStepWorkFormBean extends CoreManagedBean {
 
 		} catch (WStepWorkException e) {
 
-			String message = "WStepWorkFormBean.update() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "WStepWorkFormBean.update() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 		}
@@ -366,7 +366,7 @@ public class WStepWorkFormBean extends CoreManagedBean {
 
 		} catch (WStepWorkException e) {
 			logger.error("Error retrieving object: " + currentWStepWork.getId()
-					+ " : " + e.getMessage() + " - " + e.getCause());
+					+ " : ");
 		}
 	}
 

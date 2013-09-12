@@ -376,8 +376,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		} catch (UsuarioException ex) {
 			
-			String message = "Login_x_bean: construirContextoSeguridad: ERROR LOGIN: UsuarioException :"+this.usuarioLogin+" - ["
-					+ex.getMessage()+" - cause:"+ex.getCause()+"]";
+			String message = "Login_x_bean: construirContextoSeguridad: ERROR LOGIN: UsuarioException :"+this.usuarioLogin;
 			
 			guardarLoginFracaso(this.usuarioLogin);
 			
@@ -476,22 +475,19 @@ public class Login_x_Bean extends CoreManagedBean {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "MarshalException: Method getHibernateConfigurationList in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "MarshalException: Method getHibernateConfigurationList in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "ValidationException: Method getHibernateConfigurationList in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "ValidationException: Method getHibernateConfigurationList in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
 			setMessageStyle(errorMessageStyle());
 			setShowHeaderMessage(true);
-			String message = "EnvironmentException: Method getHibernateConfigurationList in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "EnvironmentException: Method getHibernateConfigurationList in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -541,8 +537,7 @@ public class Login_x_Bean extends CoreManagedBean {
 					}
 					newSessionName = currentSessionName;
 
-					String message = "ClassNotFoundException: Method changeHibernateConfiguration in Login_x_Bean: "
-										+ e.getMessage() + " - " + e.getCause();
+					String message = "ClassNotFoundException: Method changeHibernateConfiguration in Login_x_Bean: ";
 					super.createWindowMessage(ERROR_MESSAGE, message, e);
 				} catch (SQLException e) {
 
@@ -564,23 +559,19 @@ public class Login_x_Bean extends CoreManagedBean {
 				
 			} catch (MarshalException e) {
 
-				String message = "MarshalException: Method changeHibernateConfiguration in Login_x_Bean: "
-									+ e.getMessage() + " - " + e.getCause();
+				String message = "MarshalException: Method changeHibernateConfiguration in Login_x_Bean: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (ValidationException e) {
 
-				String message = "ValidationException: Method changeHibernateConfiguration in Login_x_Bean: "
-									+ e.getMessage() + " - " + e.getCause();
+				String message = "ValidationException: Method changeHibernateConfiguration in Login_x_Bean: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (FileNotFoundException e) {
 
-				String message = "FileNotFoundException: Method changeHibernateConfiguration in Login_x_Bean: "
-									+ e.getMessage() + " - " + e.getCause();
+				String message = "FileNotFoundException: Method changeHibernateConfiguration in Login_x_Bean: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (EnvironmentException e) {
 
-				String message = "EnvironmentException: Method changeHibernateConfiguration in Login_x_Bean: "
-									+ e.getMessage() + " - " + e.getCause();
+				String message = "EnvironmentException: Method changeHibernateConfiguration in Login_x_Bean: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 			
@@ -602,23 +593,19 @@ public class Login_x_Bean extends CoreManagedBean {
 			
 		} catch (MarshalException e) {
 
-			String message = "MarshalException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "MarshalException: Method cleanHibernateConfigurationParameters in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			String message = "ValidationException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "ValidationException: Method cleanHibernateConfigurationParameters in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (FileNotFoundException e) {
 
-			String message = "FileNotFoundException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "FileNotFoundException: Method cleanHibernateConfigurationParameters in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			String message = "EnvironmentException: Method cleanHibernateConfigurationParameters in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "EnvironmentException: Method cleanHibernateConfigurationParameters in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -634,23 +621,19 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		} catch (MarshalException e) {
 
-			String message = "MarshalException: Method reRenderInformation in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "MarshalException: Method reRenderInformation in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			String message = "ValidationException: Method reRenderInformation in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "ValidationException: Method reRenderInformation in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (FileNotFoundException e) {
 
-			String message = "FileNotFoundException: Method reRenderInformation in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "FileNotFoundException: Method reRenderInformation in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			String message = "EnvironmentException: Method reRenderInformation in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "EnvironmentException: Method reRenderInformation in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -682,23 +665,19 @@ public class Login_x_Bean extends CoreManagedBean {
 			
 		} catch (MarshalException e) {
 
-			String message = "MarshalException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "MarshalException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			String message = "ValidationException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "ValidationException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (FileNotFoundException e) {
 
-			String message = "FileNotFoundException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "FileNotFoundException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			String message = "EnvironmentException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "EnvironmentException: Method getHibernateConfigurationXMLHasDefault in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -734,28 +713,23 @@ public class Login_x_Bean extends CoreManagedBean {
 			
 		} catch (MarshalException e) {
 
-			String message = "MarshalException: Method saveDefaultConfiguration in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "MarshalException: Method saveDefaultConfiguration in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (ValidationException e) {
 
-			String message = "ValidationException: Method saveDefaultConfiguration in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "ValidationException: Method saveDefaultConfiguration in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (FileNotFoundException e) {
 
-			String message = "FileNotFoundException: Method saveDefaultConfiguration in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "FileNotFoundException: Method saveDefaultConfiguration in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (IOException e) {
 
-			String message = "IOException: Method saveDefaultConfiguration in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "IOException: Method saveDefaultConfiguration in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (EnvironmentException e) {
 
-			String message = "EnvironmentException: Method saveDefaultConfiguration in Login_x_Bean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "EnvironmentException: Method saveDefaultConfiguration in Login_x_Bean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -786,8 +760,7 @@ public class Login_x_Bean extends CoreManagedBean {
 			
 		} catch (ClassNotFoundException e) {
 
-			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (SQLException e) {
 
@@ -822,8 +795,7 @@ public class Login_x_Bean extends CoreManagedBean {
 			
 		} catch (ClassNotFoundException e) {
 
-			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: "
-								+ e.getMessage() + " - " + e.getCause();
+			String message = "ClassNotFoundException: Method checkConfiguration in HibernateConfigurationBean: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			return false;
 

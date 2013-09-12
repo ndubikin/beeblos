@@ -163,10 +163,10 @@ public class WRoleDefBean extends CoreManagedBean {
 			reset();
 			
 		} catch (WRoleDefException e) {
-			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WRoleDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WRoleDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -193,10 +193,10 @@ public class WRoleDefBean extends CoreManagedBean {
 			reset();
 
 		 } catch (WRoleDefException e) {
-				String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "WRoleDefBean:Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WRoleDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -228,10 +228,10 @@ public class WRoleDefBean extends CoreManagedBean {
 			reset();
 
 		} catch (WRoleDefException e) {
-			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WRoleDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (Exception e) {
-			String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+			String message = "WRoleDefBean:Exception: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -259,7 +259,7 @@ public class WRoleDefBean extends CoreManagedBean {
 				modifyValueBtn();
 				
 			} catch (WRoleDefException e) {
-				String message = "WRoleDefBean:Exception: " + e.getMessage() + " - " + e.getCause();
+				String message = "WRoleDefBean:Exception: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		

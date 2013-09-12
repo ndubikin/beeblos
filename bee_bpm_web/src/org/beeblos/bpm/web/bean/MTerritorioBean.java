@@ -311,7 +311,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			}
 			
 		} catch (TerritorioException e) {
-			String message = "TerritorioBean.modificarTerritorio() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			String message = "TerritorioBean.modificarTerritorio() TerritorioException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		disableBtnBorrar = false;
@@ -358,7 +358,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (TerritorioException e) {
-			String message = "TerritorioBean.actualizar() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			String message = "TerritorioBean.actualizar() TerritorioException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -383,7 +383,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
 		} catch (TerritorioException e) {
-			String message = "TerritorioBean.agregar() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			String message = "TerritorioBean.agregar() TerritorioException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 		
@@ -435,7 +435,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			recargaListaTerritorios();
 			
 		} catch (TerritorioException e) {
-			String message = "TerritorioBean.borra() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			String message = "TerritorioBean.borra() TerritorioException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -459,7 +459,7 @@ public class MTerritorioBean extends CoreManagedBean {
 		try {
 			this.currentPais = new PaisBL().obtenerPaisPorPK(this.idPais);
 		} catch (PaisException e) {
-			String message = "TerritorioBean.changePaisListener() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+			String message = "TerritorioBean.changePaisListener() TerritorioException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -591,7 +591,7 @@ public class MTerritorioBean extends CoreManagedBean {
 						.castStringPairToSelectitem(
 								new PaisBL().obtenerPaisesParaCombo("Seleccionar...", "BLANCO") );
 			} catch (PaisException e) {
-				String message = "TerritorioBean.getListaPais() PaisException: " + e.getMessage() + " - " + e.getCause();
+				String message = "TerritorioBean.getListaPais() PaisException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 				}
 			}
@@ -610,7 +610,7 @@ public class MTerritorioBean extends CoreManagedBean {
 			
 										
 			} catch (TerritorioException e) {
-				String message = "TerritorioBean.cargaListaTerritorios() TerritorioException: " + e.getMessage() + " - " + e.getCause();
+				String message = "TerritorioBean.cargaListaTerritorios() TerritorioException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}

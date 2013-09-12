@@ -189,7 +189,7 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 		
 		} catch (UsuarioCuentasEmailException e) {
-			String message = "UsuarioCuentasEmailBean.actualizar() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			String message = "UsuarioCuentasEmailBean.actualizar() UsuarioCuentasEmailException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -219,7 +219,7 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 
 			
 		} catch (UsuarioCuentasEmailException e) {
-			String message = "UsuarioCuentasEmailBean.agregar() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			String message = "UsuarioCuentasEmailBean.agregar() UsuarioCuentasEmailException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 
@@ -271,7 +271,7 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 			recargaListaUsuario(); 
 			
 		} catch (UsuarioCuentasEmailException e) {
-			String message = "UsuarioCuentasEmailBean.borra() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			String message = "UsuarioCuentasEmailBean.borra() UsuarioCuentasEmailException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -339,7 +339,7 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 
 				 		
 		} catch (UsuarioCuentasEmailException e) {
-			String message = "UsuarioCuentasEmailBean.changeUsuario() UsuarioCuentasEmailException: " + e.getMessage() + " - " + e.getCause();
+			String message = "UsuarioCuentasEmailBean.changeUsuario() UsuarioCuentasEmailException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 	}
@@ -515,7 +515,7 @@ public class UsuarioCuentasEmailBean extends CoreManagedBean {
 												.obtenerUsuariosParaCombo("Seleccionar ...", null) );
 				
 			} catch (UsuarioException e) {
-				String message = "UsuarioCuentasEmailBean.getListaUsuarios() UsuarioException: " + e.getMessage() + " - " + e.getCause();
+				String message = "UsuarioCuentasEmailBean.getListaUsuarios() UsuarioException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		}

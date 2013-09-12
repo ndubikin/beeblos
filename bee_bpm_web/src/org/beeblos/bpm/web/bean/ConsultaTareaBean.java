@@ -91,7 +91,7 @@ public class ConsultaTareaBean extends CoreManagedBean {
 								new WProcessDefBL().getComboList("Todos ...", null, usuarioLogueado));
 			
 		} catch (WProcessDefException e) {
-			String message = "ConsultaTareaBean._init() WProcessDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean._init() WProcessDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -136,25 +136,25 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			nResultadosDepto4=0;
 			
 		} catch (CantLockTheStepException e) {
-			String message = "ConsultaTareaBean.cargarPaso() CantLockTheStepException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.cargarPaso() CantLockTheStepException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			retorno=FAIL;
 			
 		} catch (WStepLockedByAnotherUserException e) {
-			String message = "ConsultaTareaBean.cargarPaso() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.cargarPaso() WStepLockedByAnotherUserException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			retorno=FAIL;
 			
 		} catch (WStepWorkException e) {
-			String message = "ConsultaTareaBean.cargarPaso() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.cargarPaso() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			retorno=FAIL;
 			
 		} catch (WUserDefException e) {
-			String message = "ConsultaTareaBean.cargarPaso() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.cargarPaso() WUserDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 			retorno=FAIL;
@@ -182,25 +182,25 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			nResultadosDepto4=0;
 			
 		} catch (CantLockTheStepException e) {
-			String message = "ConsultaTareaBean.desbloquear() CantLockTheStepException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquear() CantLockTheStepException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			retorno=FAIL;
 			
 		} catch (WStepLockedByAnotherUserException e) {
-			String message = "ConsultaTareaBean.desbloquear() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquear() WStepLockedByAnotherUserException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			retorno=FAIL;
 			
 		} catch (WStepWorkException e) {
-			String message = "ConsultaTareaBean.desbloquear() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquear() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 
 			retorno=FAIL;
 			
 		} catch (WUserDefException e) {
-			String message = "ConsultaTareaBean.desbloquear() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquear() WUserDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		
 			retorno=FAIL;
@@ -225,17 +225,17 @@ public class ConsultaTareaBean extends CoreManagedBean {
 			nResultadosDepto4=0;
 			
 		} catch (CantLockTheStepException e) {
-			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() CantLockTheStepException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() CantLockTheStepException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			
 		} catch (WStepLockedByAnotherUserException e) {
-			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WStepLockedByAnotherUserException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WStepLockedByAnotherUserException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepWorkException e) {
-			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WStepWorkException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WStepWorkException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WUserDefException e) {
-			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WUserDefException: " + e.getMessage() + " - " + e.getCause();
+			String message = "ConsultaTareaBean.desbloquearDesdeMenuItem() WUserDefException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 

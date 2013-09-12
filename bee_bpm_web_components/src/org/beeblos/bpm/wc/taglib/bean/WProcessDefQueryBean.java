@@ -190,8 +190,8 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			nResults = wProcessDefList.size();
 
 		} catch (WProcessDefException e) {
-			String message = "WProcessDefQueryBean.searchWProcessDefs() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefQueryBean.searchWProcessDefs() WProcessDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 
@@ -343,8 +343,8 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 					this.processHeadId, WPROCESSDEF_QUERY);
 			
 		} catch (WProcessDefException e) {
-			String message = "WProcessDefQueryBean.createNewProcessVersion() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefQueryBean.createNewProcessVersion() WProcessDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 		
@@ -377,16 +377,16 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 			logger.info(message);
 
 		} catch (WProcessDefException e) {
-			String message = "WProcessDefQueryBean.cloneWProcessDef() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefQueryBean.cloneWProcessDef() WProcessDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefQueryBean.cloneWProcessDef() WStepSequenceDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefQueryBean.cloneWProcessDef() WStepSequenceDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		} catch (WProcessHeadException e) {
-			String message = "WProcessDefQueryBean.cloneWProcessDef() WProcessDefException: " + 
-					e.getMessage() + " - " + e.getCause();
+			String message = "WProcessDefQueryBean.cloneWProcessDef() WProcessDefException: ";
+					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);			
 		}
 		
@@ -422,32 +422,32 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				logger.info(message);
 				
 			} catch (WProcessWorkException e) {
-				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessWorkException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessWorkException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepSequenceDefException e) {
-				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepSequenceDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepSequenceDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepWorkException e) {
-				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepWorkException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepWorkException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WProcessHeadException e) {
-				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessHeadException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WProcessHeadException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepDefException e) {
-				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepHeadException e) {
-				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepHeadException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.deleteWProcessDef() WStepHeadException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 			
@@ -476,12 +476,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				this.currentWProcessDef = new WProcessDefBL().getWProcessDefByPK(this.id, getCurrentUserId());
 				
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefQueryBean.loadWProcessDefObject() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.loadWProcessDefObject() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepSequenceDefException e) {
-				String message = "WProcessDefQueryBean.loadWProcessDefObject() WStepSequenceDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.loadWProcessDefObject() WStepSequenceDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 			
@@ -512,12 +512,12 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				bw.close();
 				
 			} catch (IOException e) {
-				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() IOException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() IOException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 		}
@@ -554,16 +554,16 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				new DevelopmentBL().purgeProcessDef(processDef, currentUserId);
 
 			} catch (WProcessDefException e) {
-				String message = "WProcessDefQueryBean.purgeWProcessDef() WProcessDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.purgeWProcessDef() WProcessDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepSequenceDefException e) {
-				String message = "WProcessDefQueryBean.purgeWProcessDef() WStepSequenceDefException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.purgeWProcessDef() WStepSequenceDefException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (DevelopmentException e) {
-				String message = "WProcessDefQueryBean.purgeWProcessDef() DevelopmentException: " + 
-						e.getMessage() + " - " + e.getCause();
+				String message = "WProcessDefQueryBean.purgeWProcessDef() DevelopmentException: ";
+						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 		

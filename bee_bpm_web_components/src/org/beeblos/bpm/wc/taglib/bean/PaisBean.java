@@ -77,7 +77,7 @@ public class PaisBean extends CoreManagedBean {
 					agregar();
 				}
 			} catch (PaisException e) {
-				String message = "PaisBean.guardar() PaisException: " + e.getMessage() + " - " + e.getCause();
+				String message = "PaisBean.guardar() PaisException: ";
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			}
 		} 
@@ -100,7 +100,7 @@ public class PaisBean extends CoreManagedBean {
 						
 			
 		} catch (PaisException e) {
-			String message = "PaisBean.actualizar() PaisException: " + e.getMessage() + " - " + e.getCause();
+			String message = "PaisBean.actualizar() PaisException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -122,7 +122,7 @@ public class PaisBean extends CoreManagedBean {
 			setShowHeaderMessage(true); // muestra mensaje de OK en pantalla
 
 		} catch (PaisException e) {
-			String message = "PaisBean.agregar() PaisException: " + e.getMessage() + " - " + e.getCause();
+			String message = "PaisBean.agregar() PaisException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
@@ -205,7 +205,7 @@ public class PaisBean extends CoreManagedBean {
 			_reset();
 			
 		} catch (PaisException e) {
-			String message = "PaisBean.borra() PaisException: " + e.getMessage() + " - " + e.getCause();
+			String message = "PaisBean.borra() PaisException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 
