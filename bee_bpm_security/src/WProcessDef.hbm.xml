@@ -699,7 +699,10 @@
         <property name="backingBean" type="java.lang.Boolean">
             <column name="backing_bean" sql-type="bit" />
         </property>
-        
+ 		<property generated="never" lazy="false" name="routeEvalOrder"
+			type="java.lang.Character">
+			<column name="route_eval_order" />
+		</property>    
         
 		<many-to-one cascade="save-update" class="org.beeblos.bpm.core.model.WStepHead"
 			column="head_id" name="stepHead" fetch="join" lazy="false"/>
@@ -815,6 +818,10 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
+		<property generated="never" lazy="false" name="order"
+			type="java.lang.Short">
+			<column name="order" />
+		</property>		
 		<property generated="never" lazy="false" name="enabled"
 			type="java.lang.Boolean">
 			<column name="enabled" sql-type="bit" />
