@@ -708,7 +708,7 @@ public class WStepWorkBL {
 						
 						// nes 20130913
 						// if route evaluation order is first true condition then breaks for loop and return
-						if ( currentStepWork.getCurrentStep().getRouteEvalOrder() != null 
+						if ( currentStepWork.getCurrentStep().getRouteEvalOrder() != null
 								&& currentStepWork.getCurrentStep().getRouteEvalOrder()
 									.equals(RouteEvaluationOrder.FIRST_TRUE_CONDITION.getId())) {
 							break;
