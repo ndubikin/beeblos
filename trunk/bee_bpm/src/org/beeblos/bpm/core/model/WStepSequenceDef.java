@@ -20,6 +20,9 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private WProcessDef process; // refers directly a version of the process
 	private String name;
 	
+	// nes 20130913
+	private Integer order; // to order sequences (principally for evaluation purpose)
+	
 	private WStepDef fromStep;
 	private WStepDef toStep;
 	
@@ -51,13 +54,29 @@ public class WStepSequenceDef implements java.io.Serializable {
 		}	
 	}
 
-	public WStepSequenceDef(Integer id, WProcessDef process,// Integer version,
+	public WStepSequenceDef(Integer id, WProcessDef process, Integer order,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
 			boolean afterAll, boolean deleted, String validResponses, String name) {
 		super();
 		this.id = id;
 		this.process = process;
-		//this.version = version;
+		this.order = order;
+		this.fromStep = fromStep;
+		this.toStep = toStep;
+		this.enabled = enabled;
+		this.afterAll = afterAll;
+		this.deleted = deleted;
+		this.validResponses = validResponses;
+		this.name = name;
+	}
+
+	public WStepSequenceDef(WProcessDef process, Integer order,
+			WStepDef fromStep, WStepDef toStep, boolean enabled,
+			boolean afterAll, boolean deleted, String validResponses, String name) {
+		super();
+	
+		this.process = process;
+		this.order = order;
 		this.fromStep = fromStep;
 		this.toStep = toStep;
 		this.enabled = enabled;
@@ -72,24 +91,6 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public WStepSequenceDef(WProcessDef process, //Integer version,
-			WStepDef fromStep, WStepDef toStep, boolean enabled,
-			boolean afterAll, boolean deleted, String validResponses, String name) {
-		super();
-	
-		this.process = process;
-		//this.version = version;
-		this.fromStep = fromStep;
-		this.toStep = toStep;
-		this.enabled = enabled;
-		this.afterAll = afterAll;
-		this.deleted = deleted;
-		this.validResponses = validResponses;
-		this.name = name;
-	}
-
-
-
 
 	public Integer getId() {
 		return this.id;
@@ -100,25 +101,6 @@ public class WStepSequenceDef implements java.io.Serializable {
 	}
 
 
-
-	/**
-	 * @return the version
-	 */
-//	public Integer getVersion() {
-//		return version;
-//	}
-
-
-
-	/**
-	 * @param version the version to set
-	 */
-//	public void setVersion(Integer version) {
-//		this.version = version;
-//	}
-
-
-
 	public String getName() {
 		return name;
 	}
@@ -126,6 +108,16 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	public Integer getOrder() {
+		return order;
+	}
+
+
+	public void setOrder(Integer order) {
+		this.order = order;
 	}
 
 
@@ -310,12 +302,19 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime * result + ((process == null) ? 0 : process.hashCode());
+		result = prime * result + ((rules == null) ? 0 : rules.hashCode());
 		result = prime * result + ((toStep == null) ? 0 : toStep.hashCode());
 		result = prime * result
 				+ ((validResponses == null) ? 0 : validResponses.hashCode());
-//		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -327,7 +326,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WStepSequenceDef))
 			return false;
 		WStepSequenceDef other = (WStepSequenceDef) obj;
 		if (afterAll != other.afterAll)
@@ -346,15 +345,45 @@ public class WStepSequenceDef implements java.io.Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (order == null) {
+			if (other.order != null)
+				return false;
+		} else if (!order.equals(other.order))
+			return false;
 		if (process == null) {
 			if (other.process != null)
 				return false;
 		} else if (!process.equals(other.process))
+			return false;
+		if (rules == null) {
+			if (other.rules != null)
+				return false;
+		} else if (!rules.equals(other.rules))
 			return false;
 		if (toStep == null) {
 			if (other.toStep != null)
@@ -366,11 +395,6 @@ public class WStepSequenceDef implements java.io.Serializable {
 				return false;
 		} else if (!validResponses.equals(other.validResponses))
 			return false;
-//		if (version == null) {
-//			if (other.version != null)
-//				return false;
-//		} else if (!version.equals(other.version))
-//			return false;
 		return true;
 	}
 
@@ -378,14 +402,27 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WStepSequenceDef [id=" + id + ", process=" + process
-//				+ ", version=" + version 
-				+ ", name=" + name + ", fromStep="
-				+ fromStep + ", toStep=" + toStep + ", enabled=" + enabled
-				+ ", afterAll=" + afterAll + ", deleted=" + deleted + ", validResponses="
-				+ validResponses + ", insertUser=" + insertUser
-				+ ", insertDate=" + insertDate + ", modUser=" + modUser
-				+ ", modDate=" + modDate + "]";
+		return "WStepSequenceDef ["
+				+ (id != null ? "id=" + id + ", " : "")
+				+ (process != null ? "process=" + process + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (order != null ? "order=" + order + ", " : "")
+				+ (fromStep != null ? "fromStep=" + fromStep + ", " : "")
+				+ (toStep != null ? "toStep=" + toStep + ", " : "")
+				+ "enabled="
+				+ enabled
+				+ ", afterAll="
+				+ afterAll
+				+ ", deleted="
+				+ deleted
+				+ ", "
+				+ (validResponses != null ? "validResponses=" + validResponses
+						+ ", " : "")
+				+ (rules != null ? "rules=" + rules + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate : "") + "]";
 	}
 
 
