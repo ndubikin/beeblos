@@ -43,7 +43,7 @@ public class WStepDef implements java.io.Serializable {
 	
 	private String idDefaultProcessor; // dml 20120619
 	
-	private String submitForm; // instruccion para submit
+	private String submitForm; // submit instructions
 	
 	private WTimeUnit timeUnit;
 	private Integer assignedTime;
@@ -67,6 +67,15 @@ public class WStepDef implements java.io.Serializable {
 	
 	private boolean emailNotification;
 	private boolean engineNotification;
+	
+	/**
+	 * indicates how the evaluation of outgoing routes of a task must be evaluated:
+	 * 
+	 * A - all true condition > will be start each route with has a true condition
+	 * F - first true condition > will start only the first evaluated route with true condition
+	 * 
+	 */
+	private Character routeEvalOrder;
 	
 	private Set<WStepResponseDef> response = new HashSet<WStepResponseDef>();
 //	private Set<WStepAssignedDef> assigned = new HashSet<WStepAssignedDef>();
@@ -421,37 +430,37 @@ public class WStepDef implements java.io.Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + (arrivingAdminNotice ? 1231 : 1237);
-		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
 		result = prime * result + (backingBean ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((customSaveMethod == null) ? 0 : customSaveMethod.hashCode());
+		result = prime
+				* result
+				+ ((customSaveRefClass == null) ? 0 : customSaveRefClass
+						.hashCode());
 		result = prime * result + (customValidation ? 1231 : 1237);
-		result = prime * result
-				+ ((dataFieldDef == null) ? 0 : dataFieldDef.hashCode());
 		result = prime
 				* result
 				+ ((customValidationMethod == null) ? 0
 						: customValidationMethod.hashCode());
 		result = prime
 				* result
-				+ ((customSaveMethod == null) ? 0
-						: customSaveMethod.hashCode());
-		result = prime
-				* result
 				+ ((customValidationRefClass == null) ? 0
 						: customValidationRefClass.hashCode());
-		result = prime
-				* result
-				+ ((customSaveRefClass == null) ? 0
-						: customSaveRefClass.hashCode());
+		result = prime * result
+				+ ((dataFieldDef == null) ? 0 : dataFieldDef.hashCode());
 		result = prime * result + (deadlineAdminNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
 		result = prime * result
 				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
 		result = prime * result + (deadlineUserNotice ? 1231 : 1237);
+		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (emailNotification ? 1231 : 1237);
 		result = prime * result + (engineNotification ? 1231 : 1237);
 		result = prime * result + (expiredAdminNotice ? 1231 : 1237);
@@ -462,7 +471,8 @@ public class WStepDef implements java.io.Serializable {
 				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
 		result = prime
 				* result
-				+ ((idDefaultProcessor == null) ? 0 : idDefaultProcessor.hashCode());
+				+ ((idDefaultProcessor == null) ? 0 : idDefaultProcessor
+						.hashCode());
 		result = prime * result + ((idDept == null) ? 0 : idDept.hashCode());
 		result = prime * result
 				+ ((idListZone == null) ? 0 : idListZone.hashCode());
@@ -470,9 +480,17 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result
 				+ ((idWorkZone == null) ? 0 : idWorkZone.hashCode());
 		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result
 				+ ((instructions == null) ? 0 : instructions.hashCode());
-		result = prime * result + ((stepHead == null) ? 0 : stepHead.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result
+				+ ((postconditions == null) ? 0 : postconditions.hashCode());
+		result = prime * result
+				+ ((preconditions == null) ? 0 : preconditions.hashCode());
 		result = prime * result + (reminderAdminNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
@@ -484,17 +502,24 @@ public class WStepDef implements java.io.Serializable {
 				+ ((response == null) ? 0 : response.hashCode());
 		result = prime * result
 				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
+		result = prime * result
+				+ ((routeEvalOrder == null) ? 0 : routeEvalOrder.hashCode());
+		result = prime * result + ((rules == null) ? 0 : rules.hashCode());
 		result = prime * result + (runtimeModifiable ? 1231 : 1237);
 		result = prime * result + (sentAdminNotice ? 1231 : 1237);
 		result = prime * result + (sentUserNotice ? 1231 : 1237);
+		result = prime * result + (shared ? 1231 : 1237);
 		result = prime * result
 				+ ((stepComments == null) ? 0 : stepComments.hashCode());
+		result = prime * result
+				+ ((stepHead == null) ? 0 : stepHead.hashCode());
 		result = prime * result
 				+ ((submitForm == null) ? 0 : submitForm.hashCode());
 		result = prime * result
 				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
 		result = prime * result
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -506,17 +531,14 @@ public class WStepDef implements java.io.Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WStepDef))
 			return false;
 		WStepDef other = (WStepDef) obj;
+		if (active != other.active)
+			return false;
 		if (arrivingAdminNotice != other.arrivingAdminNotice)
 			return false;
 		if (arrivingUserNotice != other.arrivingUserNotice)
-			return false;
-		if (dataFieldDef == null) {
-			if (other.dataFieldDef != null)
-				return false;
-		} else if (!dataFieldDef.equals(other.dataFieldDef))
 			return false;
 		if (assignedTime == null) {
 			if (other.assignedTime != null)
@@ -525,7 +547,15 @@ public class WStepDef implements java.io.Serializable {
 			return false;
 		if (backingBean != other.backingBean)
 			return false;
-		if (deleted != other.deleted)
+		if (customSaveMethod == null) {
+			if (other.customSaveMethod != null)
+				return false;
+		} else if (!customSaveMethod.equals(other.customSaveMethod))
+			return false;
+		if (customSaveRefClass == null) {
+			if (other.customSaveRefClass != null)
+				return false;
+		} else if (!customSaveRefClass.equals(other.customSaveRefClass))
 			return false;
 		if (customValidation != other.customValidation)
 			return false;
@@ -534,24 +564,16 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!customValidationMethod.equals(other.customValidationMethod))
 			return false;
-
-		if (customSaveMethod == null) {
-			if (other.customSaveMethod != null)
-				return false;
-		} else if (!customSaveMethod.equals(other.customSaveMethod))
-			return false;
-
 		if (customValidationRefClass == null) {
 			if (other.customValidationRefClass != null)
 				return false;
 		} else if (!customValidationRefClass
 				.equals(other.customValidationRefClass))
 			return false;
-		if (customSaveRefClass == null) {
-			if (other.customSaveRefClass != null)
+		if (dataFieldDef == null) {
+			if (other.dataFieldDef != null)
 				return false;
-		} else if (!customSaveRefClass
-				.equals(other.customSaveRefClass))
+		} else if (!dataFieldDef.equals(other.dataFieldDef))
 			return false;
 		if (deadlineAdminNotice != other.deadlineAdminNotice)
 			return false;
@@ -566,6 +588,8 @@ public class WStepDef implements java.io.Serializable {
 		} else if (!deadlineTime.equals(other.deadlineTime))
 			return false;
 		if (deadlineUserNotice != other.deadlineUserNotice)
+			return false;
+		if (deleted != other.deleted)
 			return false;
 		if (emailNotification != other.emailNotification)
 			return false;
@@ -610,20 +634,40 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!idWorkZone.equals(other.idWorkZone))
 			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
 		if (instructions == null) {
 			if (other.instructions != null)
 				return false;
 		} else if (!instructions.equals(other.instructions))
 			return false;
-		if (version == null) {
-			if (other.version != null)
+		if (modDate == null) {
+			if (other.modDate != null)
 				return false;
-		} else if (!version.equals(other.version))
+		} else if (!modDate.equals(other.modDate))
 			return false;
-		if (stepHead == null) {
-			if (other.stepHead != null)
+		if (modUser == null) {
+			if (other.modUser != null)
 				return false;
-		} else if (!stepHead.equals(other.stepHead))
+		} else if (!modUser.equals(other.modUser))
+			return false;
+		if (postconditions == null) {
+			if (other.postconditions != null)
+				return false;
+		} else if (!postconditions.equals(other.postconditions))
+			return false;
+		if (preconditions == null) {
+			if (other.preconditions != null)
+				return false;
+		} else if (!preconditions.equals(other.preconditions))
 			return false;
 		if (reminderAdminNotice != other.reminderAdminNotice)
 			return false;
@@ -649,16 +693,33 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!rolesRelated.equals(other.rolesRelated))
 			return false;
+		if (routeEvalOrder == null) {
+			if (other.routeEvalOrder != null)
+				return false;
+		} else if (!routeEvalOrder.equals(other.routeEvalOrder))
+			return false;
+		if (rules == null) {
+			if (other.rules != null)
+				return false;
+		} else if (!rules.equals(other.rules))
+			return false;
 		if (runtimeModifiable != other.runtimeModifiable)
 			return false;
 		if (sentAdminNotice != other.sentAdminNotice)
 			return false;
 		if (sentUserNotice != other.sentUserNotice)
 			return false;
+		if (shared != other.shared)
+			return false;
 		if (stepComments == null) {
 			if (other.stepComments != null)
 				return false;
 		} else if (!stepComments.equals(other.stepComments))
+			return false;
+		if (stepHead == null) {
+			if (other.stepHead != null)
+				return false;
+		} else if (!stepHead.equals(other.stepHead))
 			return false;
 		if (submitForm == null) {
 			if (other.submitForm != null)
@@ -675,6 +736,11 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!usersRelated.equals(other.usersRelated))
 			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
 		return true;
 	}
 
@@ -683,31 +749,101 @@ public class WStepDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WStepDef [id=" + id + ", stepHead=" + stepHead + ", version=" + version
-				+ ", active=" + active + ", shared=" + shared + ", deleted=" + deleted + ", idDept=" + idDept 
-				+ ", idPhase=" + idPhase + ", instructions=" + instructions + ", stepComments=" + stepComments
-				+ ", idListZone=" + idListZone + ", idWorkZone=" + idWorkZone
-				+ ", idAdditionalZone=" + idAdditionalZone + ", idDefaultProcessor="
-				+ idDefaultProcessor + ", submitForm=" + submitForm + ", timeUnit=" + timeUnit
-				+ ", assignedTime=" + assignedTime + ", deadlineDate=" + deadlineDate
-				+ ", deadlineTime=" + deadlineTime + ", reminderTimeUnit=" + reminderTimeUnit
-				+ ", reminderTime=" + reminderTime + ", runtimeModifiable=" + runtimeModifiable
-				+ ", sentAdminNotice=" + sentAdminNotice + ", arrivingAdminNotice="
-				+ arrivingAdminNotice + ", deadlineAdminNotice=" + deadlineAdminNotice
-				+ ", reminderAdminNotice=" + reminderAdminNotice + ", expiredAdminNotice="
-				+ expiredAdminNotice + ", sentUserNotice=" + sentUserNotice
-				+ ", arrivingUserNotice=" + arrivingUserNotice + ", deadlineUserNotice="
-				+ deadlineUserNotice + ", reminderUserNotice=" + reminderUserNotice
-				+ ", expiredUserNotice=" + expiredUserNotice + ", emailNotification="
-				+ emailNotification + ", engineNotification=" + engineNotification + ", response="
-				+ response + ", rolesRelated=" + rolesRelated + ", usersRelated=" + usersRelated
-				+ ", customValidation=" + customValidation + ", customValidationRefClass="
-				+ customValidationRefClass + ", customValidationMethod=" + customValidationMethod
-				+ ", backingBean=" + backingBean + ", customSaveMethod=" + customSaveMethod
-				+ ", customSaveRefClass=" + customSaveRefClass + ", insertDate=" + insertDate
-				+ ", insertUser=" + insertUser + ", modDate=" + modDate + ", modUser=" + modUser
-				+ (dataFieldDef != null ? "dataFieldDef=" + dataFieldDef : "")
-				+ "]";
+		return "WStepDef ["
+				+ (id != null ? "id=" + id + ", " : "")
+				+ (stepHead != null ? "stepHead=" + stepHead + ", " : "")
+				+ (version != null ? "version=" + version + ", " : "")
+				+ "active="
+				+ active
+				+ ", shared="
+				+ shared
+				+ ", deleted="
+				+ deleted
+				+ ", "
+				+ (idDept != null ? "idDept=" + idDept + ", " : "")
+				+ (idPhase != null ? "idPhase=" + idPhase + ", " : "")
+				+ (instructions != null ? "instructions=" + instructions + ", "
+						: "")
+				+ (stepComments != null ? "stepComments=" + stepComments + ", "
+						: "")
+				+ (idListZone != null ? "idListZone=" + idListZone + ", " : "")
+				+ (idWorkZone != null ? "idWorkZone=" + idWorkZone + ", " : "")
+				+ (idAdditionalZone != null ? "idAdditionalZone="
+						+ idAdditionalZone + ", " : "")
+				+ (idDefaultProcessor != null ? "idDefaultProcessor="
+						+ idDefaultProcessor + ", " : "")
+				+ (submitForm != null ? "submitForm=" + submitForm + ", " : "")
+				+ (timeUnit != null ? "timeUnit=" + timeUnit + ", " : "")
+				+ (assignedTime != null ? "assignedTime=" + assignedTime + ", "
+						: "")
+				+ (deadlineDate != null ? "deadlineDate=" + deadlineDate + ", "
+						: "")
+				+ (deadlineTime != null ? "deadlineTime=" + deadlineTime + ", "
+						: "")
+				+ (reminderTimeUnit != null ? "reminderTimeUnit="
+						+ reminderTimeUnit + ", " : "")
+				+ (reminderTime != null ? "reminderTime=" + reminderTime + ", "
+						: "")
+				+ "runtimeModifiable="
+				+ runtimeModifiable
+				+ ", sentAdminNotice="
+				+ sentAdminNotice
+				+ ", arrivingAdminNotice="
+				+ arrivingAdminNotice
+				+ ", deadlineAdminNotice="
+				+ deadlineAdminNotice
+				+ ", reminderAdminNotice="
+				+ reminderAdminNotice
+				+ ", expiredAdminNotice="
+				+ expiredAdminNotice
+				+ ", sentUserNotice="
+				+ sentUserNotice
+				+ ", arrivingUserNotice="
+				+ arrivingUserNotice
+				+ ", deadlineUserNotice="
+				+ deadlineUserNotice
+				+ ", reminderUserNotice="
+				+ reminderUserNotice
+				+ ", expiredUserNotice="
+				+ expiredUserNotice
+				+ ", emailNotification="
+				+ emailNotification
+				+ ", engineNotification="
+				+ engineNotification
+				+ ", "
+				+ (routeEvalOrder != null ? "routeOrderEval=" + routeEvalOrder
+						+ ", " : "")
+				+ (response != null ? "response=" + response + ", " : "")
+				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated + ", "
+						: "")
+				+ (usersRelated != null ? "usersRelated=" + usersRelated + ", "
+						: "")
+				+ "customValidation="
+				+ customValidation
+				+ ", "
+				+ (customValidationRefClass != null ? "customValidationRefClass="
+						+ customValidationRefClass + ", "
+						: "")
+				+ (customValidationMethod != null ? "customValidationMethod="
+						+ customValidationMethod + ", " : "")
+				+ "backingBean="
+				+ backingBean
+				+ ", "
+				+ (customSaveMethod != null ? "customSaveMethod="
+						+ customSaveMethod + ", " : "")
+				+ (customSaveRefClass != null ? "customSaveRefClass="
+						+ customSaveRefClass + ", " : "")
+				+ (rules != null ? "rules=" + rules + ", " : "")
+				+ (preconditions != null ? "preconditions=" + preconditions
+						+ ", " : "")
+				+ (postconditions != null ? "postconditions=" + postconditions
+						+ ", " : "")
+				+ (dataFieldDef != null ? "dataFieldDef=" + dataFieldDef + ", "
+						: "")
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
 
@@ -906,6 +1042,14 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setEngineNotification(boolean engineNotification) {
 		this.engineNotification = engineNotification;
+	}
+
+	public Character getRouteEvalOrder() {
+		return routeEvalOrder;
+	}
+
+	public void setRouteEvalOrder(Character routeEvalOrder) {
+		this.routeEvalOrder = routeEvalOrder;
 	}
 
 	// nes 20111209

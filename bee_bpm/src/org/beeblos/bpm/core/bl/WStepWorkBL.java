@@ -55,12 +55,10 @@ import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.core.model.thin.WProcessDefThin;
+import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.core.util.Resourceutil;
 
 import com.sp.common.util.StringPair;
-
-
-
 
 public class WStepWorkBL {
 	
@@ -69,19 +67,6 @@ public class WStepWorkBL {
 	
 	public WStepWorkBL (){
 		
-	}
-	
-	public Integer add(WStepWork stepw, Integer currentUser) throws WStepWorkException {
-		
-		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()+"-"+stepw.getwProcessWork().getReference()+"]");
-		
-		// timestamp & trace info
-		stepw.setArrivingDate(new Date());
-		stepw.setInsertUser( new WUserDef(currentUser) );
-		stepw.setModDate( DEFAULT_MOD_DATE);
-		stepw.setModUser(currentUser);
-		return new WStepWorkDao().add(stepw);
-
 	}
 	
 	// ######### TRANSACCION URGENTE METER TRANSACCION #####################
@@ -122,7 +107,6 @@ public class WStepWorkBL {
 //			stepw.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
 		}
 
-		
 		// if work persisted ok continue with step-work
 		stepw.setwProcessWork(work);
 		// timestamp & trace info
@@ -140,6 +124,68 @@ public class WStepWorkBL {
 		return idGeneratedStep;
 	}
 	
+	// procesa 1 paso - devuelve la cantidad de nuevas rutas lanzadas ... ( workitems generados ... )
+	public Integer processStep (
+			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
+			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUser,
+			boolean isAdminProcess, String typeOfProcess) 
+	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
+			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
+			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
+
+		Date now = new Date();
+		Integer qtyNewRoutes=0;
+
+		this.checkLock(idStepWork, currentUser, false); // verifies the user has the step locked before process it ...
+
+		this.checkStatus(idStepWork, currentUser, false); // verifies step is process pending at this time ...
+
+		// reload current step from database
+		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+		
+		// set current workitem to processed status
+		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
+		
+		// insert new steps 
+		if ( typeOfProcess.equals(PROCESS_STEP) ) {
+
+			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
+
+			// if no new routes nor alive tasks then the process work is finished ...
+			if(qtyNewRoutes.equals(0) 
+				&& getStepWorkCountByProcess(
+						currentStep.getwProcessWork().getProcessDef().getId(),ALIVE).equals(0)  ){
+
+					new WProcessWorkBL().finalize(currentStep.getwProcessWork(), currentUser);
+
+			}
+
+			
+		} else if ( typeOfProcess.equals(TURNBACK_STEP) ) {
+
+			_executeTurnBack(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
+			qtyNewRoutes=1;
+			
+		}
+
+		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
+		
+	}
+
+	public Integer add(WStepWork stepw, Integer currentUser) throws WStepWorkException {
+		
+		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()
+				+"-"+stepw.getwProcessWork().getReference()+"]");
+		
+		// timestamp & trace info
+		stepw.setArrivingDate(new Date());
+		stepw.setInsertUser( new WUserDef(currentUser) );
+		stepw.setModDate( DEFAULT_MOD_DATE);
+		stepw.setModUser(currentUser);
+		return new WStepWorkDao().add(stepw);
+
+	}
+
 	// ######### TRANSACCION URGENTE METER TRANSACCION #####################
 	
 	public void update(WStepWork stepw, Integer currentUser) throws WStepWorkException {
@@ -379,53 +425,6 @@ public class WStepWorkBL {
 //		
 //	}
 
-	// procesa 1 paso - devuelve la cantidad de nuevas rutas lanzadas ... ( workitems generados ... )
-	public Integer processStep (
-			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
-			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUser,
-			boolean isAdminProcess, String typeOfProcess) 
-	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
-			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
-			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
-
-		Date now = new Date();
-		Integer qtyNewRoutes=0;
-
-		this.checkLock(idStepWork, currentUser, false); // verifies the user has the step locked before process it ...
-
-		this.checkStatus(idStepWork, currentUser, false); // verifies step is process pending at this time ...
-
-		// reload current step from database
-		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
-		
-		// set current workitem to processed status
-		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
-		
-		// insert new steps 
-		if ( typeOfProcess.equals(PROCESS_STEP) ) {
-
-			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
-
-			// if no new routes nor alive tasks then the process work is finished ...
-			if(qtyNewRoutes.equals(0) 
-				&& getStepWorkCountByProcess(
-						currentStep.getwProcessWork().getProcessDef().getId(),ALIVE).equals(0)  ){
-
-					new WProcessWorkBL().finalize(currentStep.getwProcessWork(), currentUser);
-
-			}
-
-			
-		} else if ( typeOfProcess.equals(TURNBACK_STEP) ) {
-
-			_executeTurnBack(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
-			qtyNewRoutes=1;
-			
-		}
-
-		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
-		
-	}
 
 	// devuelve 1 paso sin bloquearlo ...
 	public WStepWork getStep (
@@ -706,6 +705,14 @@ public class WStepWorkBL {
 								route.getFromStep(), route.getToStep(), currentUser);
 
 						_sendEmailNotification(newStepWork);
+						
+						// nes 20130913
+						// if route evaluation order is first true condition then breaks for loop and return
+						if ( currentStepWork.getCurrentStep().getRouteEvalOrder() != null 
+								&& currentStepWork.getCurrentStep().getRouteEvalOrder()
+									.equals(RouteEvaluationOrder.FIRST_TRUE_CONDITION.getId())) {
+							break;
+						}
 					}
 				} else {
 					// this route points to end tree - no action required ...
