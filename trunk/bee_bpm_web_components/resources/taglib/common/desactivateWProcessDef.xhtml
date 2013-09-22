@@ -17,7 +17,7 @@
 			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
 				onclick="javascript:Richfaces.hideModalPanel('mpDesactivateWProcessDef')"
 				style="width:80px; height:24px;" />
-			<a4j:commandButton id="delete_button_sr" value="#{msg.label_desactivate}"
+			<a4j:commandButton id="delete_button_sr" value="#{msg.label_deactivate}"
 				actionListener="#{workingProcessQueryBean.desactivateWProcessDef}"
 				oncomplete="javascript:Richfaces.hideModalPanel('mpDesactivateWProcessDef');"
 				reRender="working_process_form${action}, insert_role"
