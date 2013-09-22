@@ -18,7 +18,7 @@ import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WStepWork;
-import org.beeblos.bpm.wc.security.error.InyectorException;
+import org.bee.bpm.wbt.error.InyectorException;
 import org.beeblos.bpm.wc.taglib.bean.InyectorBean;
 import org.beeblos.bpm.wc.taglib.bean.PasoBean;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
