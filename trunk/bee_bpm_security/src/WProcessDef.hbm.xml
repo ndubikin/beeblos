@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 30, 2010 12:25:06 AM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
 	<class name="org.beeblos.bpm.core.model.WProcessHead" table="w_process_head">
 		<id name="id" type="java.lang.Integer">
