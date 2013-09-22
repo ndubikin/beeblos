@@ -31,8 +31,8 @@ import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.exception.TableManagerException;
-import org.beeblos.bpm.wc.security.error.InyectorException;
-import org.beeblos.bpm.wc.taglib.bean.util.BeeBPMBL;
+import org.bee.bpm.wbt.error.InyectorException;
+import org.bee.bpm.wbt.bean.BeeBPMBL;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 

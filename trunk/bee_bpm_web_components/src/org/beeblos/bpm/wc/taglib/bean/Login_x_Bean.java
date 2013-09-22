@@ -29,7 +29,7 @@ import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
 import org.beeblos.bpm.core.error.EnvironmentException;
 import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.util.Configuration;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.security.UsuarioRol;
