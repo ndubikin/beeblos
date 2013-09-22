@@ -12,7 +12,7 @@ import org.beeblos.bpm.core.error.WEmailTemplatesException;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WEmailTemplates;
 import com.sp.common.util.StringPair;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
