@@ -20,7 +20,7 @@ import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;

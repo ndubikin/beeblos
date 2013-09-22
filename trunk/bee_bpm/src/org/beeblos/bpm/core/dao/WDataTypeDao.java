@@ -10,7 +10,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import com.sp.common.model.WDataType;
 import org.beeblos.bpm.core.model.WStepDef;
 import com.sp.common.util.StringPair;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 

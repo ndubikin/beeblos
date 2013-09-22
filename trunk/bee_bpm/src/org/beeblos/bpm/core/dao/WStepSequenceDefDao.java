@@ -13,7 +13,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import com.sp.common.util.StringPair;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 
 

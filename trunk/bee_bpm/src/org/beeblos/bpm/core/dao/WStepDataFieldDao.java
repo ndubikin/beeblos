@@ -8,7 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WStepDataField;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 

@@ -13,7 +13,7 @@ import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessHead;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;

@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WUserDef;
 import com.sp.common.util.StringPair;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

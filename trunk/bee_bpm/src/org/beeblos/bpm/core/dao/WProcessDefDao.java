@@ -17,7 +17,7 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

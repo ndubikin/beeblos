@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessStatusException;
 import org.beeblos.bpm.core.model.WProcessStatus;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 

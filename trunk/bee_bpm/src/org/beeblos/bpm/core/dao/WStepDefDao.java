@@ -21,7 +21,7 @@ import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import com.sp.common.util.StringPair;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.Filter;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
