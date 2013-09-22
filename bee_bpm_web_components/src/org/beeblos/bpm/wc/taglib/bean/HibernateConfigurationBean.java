@@ -26,7 +26,7 @@ import org.beeblos.bpm.core.model.noper.DialectObject;
 import org.beeblos.bpm.core.model.noper.DriverObject;
 import org.beeblos.bpm.core.util.DialectObjectUtil;
 import org.beeblos.bpm.core.util.DriverObjectUtil;
-import org.beeblos.bpm.core.util.HibernateUtil;
+import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
