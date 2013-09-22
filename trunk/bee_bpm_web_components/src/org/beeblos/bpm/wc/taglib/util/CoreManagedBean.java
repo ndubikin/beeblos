@@ -104,7 +104,6 @@ public class CoreManagedBean implements Serializable {
 			String mensaje = "ERROR al intentar setear configurationPath: "+e.getClass()+" - "+e.getMessage()+" - "+e.getCause()
 			+" \n se setea configurationPath a null";
 			
-			System.out.println(mensaje);
 			logger.error(mensaje);
 		}
 		return strConfPath;
@@ -131,7 +130,7 @@ public class CoreManagedBean implements Serializable {
 									.getRealPath("")
 										.replaceAll("\\\\", "/");
 		
-			System.out.println( "------------>>>>>>>>>>>>>>>  contextPath leido:["+contextPath+"]" );
+			logger.debug( "------------>>>>>>>>>>>>>>>  contextPath leido:["+contextPath+"]" );
 
 	    	
 	    	if ( this.getRequestContextPath() != null 
@@ -143,11 +142,11 @@ public class CoreManagedBean implements Serializable {
 			String mensaje = "ERROR al intentar setear contextPath: "+e.getClass()+" - "+e.getMessage()+" - "+e.getCause()
 								+" \n se setea contextPath a null";
 
-			System.out.println(mensaje);
+			logger.error(mensaje);
 
 		}
 		
-		System.out.println( "------------>>>>>>>>>>>>>>>  contextPath ELEGIDO:["+contextPath+"]" );
+		logger.debug( "------------>>>>>>>>>>>>>>>  contextPath ELEGIDO:["+contextPath+"]" );
 
 	}
 
@@ -174,14 +173,13 @@ public class CoreManagedBean implements Serializable {
 			requestContextPath = requestContextPath.trim().replaceAll("\\\\", "/");
 		
 
-			System.out.println( "------------>>>>>>>>>>>>>>> 2 RequestContextPath:["+requestContextPath+"]" );
+			logger.debug( "------------>>>>>>>>>>>>>>> 2 RequestContextPath:["+requestContextPath+"]" );
 	    	
 
 		} catch (Exception e) {
 			String mensaje = "ERROR al intentar setear requestContextPath: "+e.getClass()+" - "+e.getMessage()+" - "+e.getCause()
 								+" \n se setea requestContextPath a null";
 			logger.error(mensaje);
-			System.out.println(mensaje);
 
 		}
 		
