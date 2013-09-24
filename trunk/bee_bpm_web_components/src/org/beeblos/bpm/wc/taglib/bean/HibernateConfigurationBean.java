@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.EnvTypeBL;
 import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
+import org.beeblos.bpm.core.bl.HibernateSwitchBL;
 import org.beeblos.bpm.core.error.EnvTypeException;
 import org.beeblos.bpm.core.error.EnvironmentException;
 import org.beeblos.bpm.core.model.Environment;
@@ -26,13 +27,13 @@ import org.beeblos.bpm.core.model.noper.DialectObject;
 import org.beeblos.bpm.core.model.noper.DriverObject;
 import org.beeblos.bpm.core.util.DialectObjectUtil;
 import org.beeblos.bpm.core.util.DriverObjectUtil;
-import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.beeblos.bpm.wc.taglib.util.HelperUtil;
-import com.sp.common.jsf.util.UtilsVs;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
+
+import com.sp.common.jsf.util.UtilsVs;
 
 public class HibernateConfigurationBean extends CoreManagedBean {
 
@@ -522,7 +523,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 
 		try {
 			
-			if(HibernateUtil.checkJDBCConnection(currentHibernateConfigurationParameters)) {
+			if(HibernateSwitchBL.checkJDBCConnection(currentHibernateConfigurationParameters)) {
 				
 				String message = setGoodConfiguration();
 				super.createWindowMessage(OK_MESSAGE, message, null);
@@ -619,7 +620,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 			
 			try {
 	
-				if (validHibernateConfiguration = HibernateUtil.checkJDBCConnection(currentHibernateConfigurationParameters)) {
+				if (validHibernateConfiguration = HibernateSwitchBL.checkJDBCConnection(currentHibernateConfigurationParameters)) {
 					
 					changeDefaultConfiguration();
 					

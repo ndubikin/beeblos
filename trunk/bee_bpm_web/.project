@@ -6,6 +6,13 @@
 		<project>bee_bpm</project>
 		<project>bee_bpm_security</project>
 		<project>bee_bpm_web_components</project>
+		<project>sp_common</project>
+		<project>sp_common_jsf</project>
+		<project>sp_web_bridge_tools</project>
+		<project>email_core_persistence</project>
+		<project>email_core</project>
+		<project>jGraph</project>
+		<project>bee_bpm_web_bridge_tools</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

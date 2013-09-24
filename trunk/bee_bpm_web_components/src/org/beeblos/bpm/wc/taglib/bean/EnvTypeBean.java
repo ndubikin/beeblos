@@ -12,7 +12,6 @@ import org.beeblos.bpm.core.error.EnvTypeException;
 import org.beeblos.bpm.core.model.EnvType;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
 
 
 
