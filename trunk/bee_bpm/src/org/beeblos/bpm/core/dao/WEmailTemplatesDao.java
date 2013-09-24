@@ -7,14 +7,13 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
-import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WEmailTemplates;
-import com.sp.common.util.StringPair;
-import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
+
+import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.StringPair;
 
 /**
  * Dao object for domain model class WEmailTemplates.

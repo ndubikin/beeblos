@@ -9,10 +9,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WEmailTemplateGroupsException;
 import org.beeblos.bpm.core.model.WEmailTemplateGroups;
-import com.sp.common.util.StringPair;
-import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
+
+import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.StringPair;
 
 /**
  * Dao object for domain model class WEmailTemplateGroups.

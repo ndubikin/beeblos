@@ -13,12 +13,13 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
-import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+
+import com.sp.common.util.HibernateUtil;
 
 
 public class WProcessWorkDao {

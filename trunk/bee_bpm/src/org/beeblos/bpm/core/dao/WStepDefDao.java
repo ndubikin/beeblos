@@ -6,11 +6,8 @@ import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_ADDED;
 import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_MODIFIED;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,13 +17,10 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
-import com.sp.common.util.StringPair;
-import com.sp.common.core.util.HibernateUtil;
-import org.hibernate.Filter;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+
+import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.StringPair;
 
 
 

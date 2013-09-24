@@ -8,11 +8,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.dao.HibernateConfigurationDao;
 import org.beeblos.bpm.core.error.EnvironmentException;
 import org.beeblos.bpm.core.model.EnvType;
 import org.beeblos.bpm.core.model.Environment;
 import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
+import org.beeblos.bpm.core.util.HibernateConfigurationUtil;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 
@@ -31,7 +31,7 @@ public class HibernateConfigurationBL {
 		logger.info("HibernateConfigurationBL.getConfigurationList()");
 
 		List<HibernateConfigurationParameters> hcpList = 
-				new HibernateConfigurationDao().getConfigurationList();
+				new HibernateConfigurationUtil().getConfigurationList();
 		
 		if (hcpList != null){
 			
@@ -52,7 +52,7 @@ public class HibernateConfigurationBL {
 
 		logger.info("HibernateConfigurationBL.persistConfigurationList()");
 
-		new HibernateConfigurationDao().persistConfigurationList(hcpl);
+		new HibernateConfigurationUtil().persistConfigurationList(hcpl);
 		
 		EnvironmentBL eBL = new EnvironmentBL();
 		
@@ -91,7 +91,7 @@ public class HibernateConfigurationBL {
 		logger.info("HibernateConfigurationBL.getConfiguration()");
 
 		HibernateConfigurationParameters hcp = 
-				new HibernateConfigurationDao().getConfiguration(sessionName);
+				new HibernateConfigurationUtil().getConfiguration(sessionName);
 		
 		this._loadEnvironment(hcp);
 		
@@ -105,7 +105,7 @@ public class HibernateConfigurationBL {
 		logger.info("HibernateConfigurationBL.getDefaultConfiguration()");
 
 		HibernateConfigurationParameters hcp = 
-				new HibernateConfigurationDao().getDefaultConfiguration();
+				new HibernateConfigurationUtil().getDefaultConfiguration();
 		
 		this._loadEnvironment(hcp);
 
@@ -139,7 +139,7 @@ public class HibernateConfigurationBL {
 
 		logger.info("HibernateConfigurationBL.addFirstConfiguration()");
 
-		new HibernateConfigurationDao().addFirstConfiguration(hcp);
+		new HibernateConfigurationUtil().addFirstConfiguration(hcp);
 		
 		// si el envType esta vacio lo ponemos a null
 		if (hcp.getEnvironment().getEnvType() != null
