@@ -2,10 +2,11 @@ package org.beeblos.security.st.dao;
 
 import java.util.List;
 
-import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.security.st.error.UsuarioPerfilesException;
 import org.beeblos.security.st.model.UsuarioPerfiles;
 import org.hibernate.Hibernate;
+
+import com.sp.common.util.HibernateUtil;
 
 
 

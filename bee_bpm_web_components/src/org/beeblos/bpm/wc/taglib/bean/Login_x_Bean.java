@@ -26,10 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
+import org.beeblos.bpm.core.bl.HibernateSwitchBL;
 import org.beeblos.bpm.core.error.EnvironmentException;
 import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.util.Configuration;
-import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.security.UsuarioRol;
@@ -128,7 +128,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		
 		// dml 20120215
-//		HibernateConfigurationParameters hcp = HibernateUtil.loadDefaultParameters();
+//		HibernateConfigurationParameters hcp = HibernateSwitchUtil.loadDefaultParameters();
 		// if the configuration.properties parameters are valid theme are loaded as default
 //		if (hcp != null && !hcp.hasEmptyFields()) {
 //			contextoSeguridad.setHibernateConfigurationParameters(hcp);
@@ -503,7 +503,7 @@ public class Login_x_Bean extends CoreManagedBean {
 				try {
 					hibernateConfigurationParameters.setSessionName(newSessionName);
 					
-					if (HibernateUtil.getNewSession(hibernateConfigurationParameters) != null){
+					if (HibernateSwitchBL.createNewSession(hibernateConfigurationParameters)){
 					
 						currentSessionName = newSessionName;
 						
@@ -644,7 +644,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		
 		try {
 			
-			HibernateConfigurationParameters defaultConfig = HibernateUtil.loadDefaultParameters();
+			HibernateConfigurationParameters defaultConfig = HibernateSwitchBL.loadDefaultParameters();
 			
 			// dml 20120215
 			if (defaultConfig != null && !defaultConfig.hasEmptyFields() && 
@@ -745,7 +745,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		try {
 			
-			if(HibernateUtil.checkJDBCConnection(hibernateConfigurationParameters)) {
+			if(HibernateSwitchBL.checkJDBCConnection(hibernateConfigurationParameters)) {
 				
 				String message = "Configuration OK";
 				super.createWindowMessage(OK_MESSAGE, message, null);
@@ -783,7 +783,7 @@ public class Login_x_Bean extends CoreManagedBean {
 
 		try {
 			
-			if(HibernateUtil.checkJDBCConnection(defaultConfig)) {
+			if(HibernateSwitchBL.checkJDBCConnection(defaultConfig)) {
 				
 				return true;
 
@@ -817,7 +817,7 @@ public class Login_x_Bean extends CoreManagedBean {
 	// dml 20120215
 	private void setAnyDefaultConfiguration() throws MarshalException, ValidationException, FileNotFoundException{
 		
-		hibernateConfigurationParameters = HibernateUtil.loadDefaultParameters();
+		hibernateConfigurationParameters = HibernateSwitchBL.loadDefaultParameters();
 		
 		// if the configuration.properties parameters are valid theme are loaded as default
 		if (this.hibernateConfigurationParameters != null && 

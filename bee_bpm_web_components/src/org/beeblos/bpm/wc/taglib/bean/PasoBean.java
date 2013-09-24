@@ -472,32 +472,31 @@ public class PasoBean  extends CoreManagedBean {
 			String message = "Esta tarea ya se ha procesado. Si piensa que es un error, por favor anote los datos y avise al administrador del sistema ...";		
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 			logger.info(message);
-			logger.info(message);
 			ret=null;
 		} catch (CustomValidationException e) {
 			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 					+e.getMessage()+" - "+e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
-				logger.info(message);
-				ret=null;
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
+			ret=null;
 		} catch (WProcessDefException e) {
 			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 					+e.getMessage()+" - "+e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
-				logger.info(message);
-				ret=null;
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
+			ret=null;
 		} catch (WStepNotLockedException e) {
 			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 					+e.getMessage()+" - "+e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
-				logger.info(message);
-				ret=null;
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
+			ret=null;
 		} catch (WUserDefException e) {
 			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 					+e.getMessage()+" - "+e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
-				logger.info(message);
-				ret=null;
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
+			ret=null;
 		} catch (CustomSaveException e) {
 			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 				+e.getMessage()+" - "+e.getCause();
@@ -513,9 +512,9 @@ public class PasoBean  extends CoreManagedBean {
 		} catch (WProcessWorkException e) {
 			String message = "Error al intentar invocar en el paso actual el metodo customSaveMethod definido en la base de datos ... : "
 					+e.getMessage()+" - "+e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
-				logger.info(message);
-				ret=null;
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+			logger.info(message);
+			ret=null;
 		}
 				
 		return ret;

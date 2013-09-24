@@ -126,10 +126,6 @@
    <base-name>org.beeblos.bpm.wc.taglib.util.error_messages</base-name>
    <var>errormsg</var>
   </resource-bundle>
-  <resource-bundle>
-   <base-name>org.beeblos.bpm.wc.taglib.util.messages</base-name>
-   <var>msg</var>
-  </resource-bundle>
   <message-bundle>org.beeblos.bpm.wc.taglib.util.jsf_messages</message-bundle>
  </application>
 
