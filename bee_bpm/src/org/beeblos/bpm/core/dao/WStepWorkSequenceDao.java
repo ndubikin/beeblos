@@ -8,9 +8,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
-import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 
+import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
 public class WStepWorkSequenceDao {

@@ -3,17 +3,17 @@ package org.beeblos.bpm.core.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WUserDef;
-import com.sp.common.util.StringPair;
-import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
+
+import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.StringPair;
 
 
 

@@ -20,7 +20,6 @@ import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
-import com.sp.common.core.util.HibernateUtil;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
@@ -30,6 +29,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
 
@@ -1776,10 +1776,10 @@ public class WStepWorkDao {
 		tmpQuery += " sw.locked, "; //11
 		tmpQuery += " sw.locked_by, "; //12
 		tmpQuery += " sw.id AS stepWorkId, "; //13
-		tmpQuery += " opener.login, "; //14
+		tmpQuery += " opener.login AS opener_login, "; //14
 		tmpQuery += " opener.name opener_name, "; //15
-		tmpQuery += " performer.login, ";//16
-		tmpQuery += " performer.name performer_name, ";//17
+		tmpQuery += " performer.login AS performer_login, ";//16
+		tmpQuery += " performer.name AS performer_name, ";//17
 		tmpQuery += " pw.comments "; //18
 
 		tmpQuery += " FROM w_step_work sw ";

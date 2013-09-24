@@ -15,13 +15,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
-import com.sp.common.util.StringPair;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import com.sp.common.core.util.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.StringPair;
 
 
 public class WProcessDefDao {

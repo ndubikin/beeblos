@@ -10,6 +10,9 @@ import org.joda.time.DateTime;
 
 public class Constants {
 	
+	// dml 20130916
+	public static final String MESSAGES_CORE_FILENAME = "messages_core";
+	
 	// nes 20130912
 	public static final String ALIVE = "A";
 	public static final String PROCESSED = "P"; 
