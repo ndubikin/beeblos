@@ -4,6 +4,7 @@ import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
@@ -1337,6 +1338,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
+	// DAVID: ESTE NOMBRE ESTÁ UN POCO RARO DIGAMOS PORQUE NO PUEDO BORRAR 1 STEP DE LA SEQUENCE ...
+	// PORQUE LA SEQUENCE NO TIENE "STEPS" SI NO QUE ES ESO: SEQUENCE O RUTA ...
+	// ENTONCES NO SE FIJATE A VER QUE QUISISTE DECIR, PORQUE SI LO QUE PRETENDES CON ESTO ES BORRAR 1
+	// STEP DEL MAPA, OK BIEN, PERO POR AHI UN NOMBRE MAS ADECUADO SERIA unlinkStepFromMap y luego un comentario
+	// "este método quita 1 step del mapa al remover la ruta que lo relaciona con dicho mapa"
+	// algo asi para aclarar porq esto es consecuencia de lo q te dije de que cuando armé esto al final me quedó
+	// de tal forma que para saber que step def tengo en el mapa tengo que recurrir a las rutas y ver qeu conexiones
+	// hay, cosa media rara ....
+	// y si no es eso fijate a ver o pone 1 comentario o decime y lo miramos al nombre si?
 	public void deleteStepFromSequence(){
 		
 		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
@@ -1365,6 +1375,12 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
+	// DAVID: ¿QUE QUERRÍA DECIR "LIMPIAR LA STEP SEQUENCE"?
+	// PRETENDES REFRESCAR LA LISTA DE RUTAS DE currentWProcessDef?
+	// SI ES ASI DEBERIA LLAMARSE refreshRouteList por ejemplo o refreshStepSequence (o refreshCurrentProcessSequenceList)
+	// A ESTO SE SUMA UNA AMBIGUEDAD Y ES QUE NO SE PARA QUE SE USA Y SI LO QUE SE DEBE CARGAR
+	// AQUI ES LA LISTA COMPLETA DE RUTAS O SOLO LAS VIVAS O SOLO LAS DELETED ...
+	// PUSE "ALIVE" PORQUE SUPUSE QUE SERIAN LAS VIVAS PERO REVISALO BIEN Y ASEGURATE SI??
 	public void cleanStepSequence(){
 		
 		setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
@@ -1381,7 +1397,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			currentWProcessDef
 				.setStepSequenceList(
 						new WStepSequenceDefBL()
-							.getStepSequenceList(currentWProcessDef.getId(), null, this.getCurrentUserId() ) );
+							.getStepSequenceList(currentWProcessDef.getId(), ALIVE, this.getCurrentUserId() ) );
 
 		} catch (WStepSequenceDefException e) {
 			String message = "WProcessDefFormBean.cleanStepSequence() WStepSequenceDefException: ";
