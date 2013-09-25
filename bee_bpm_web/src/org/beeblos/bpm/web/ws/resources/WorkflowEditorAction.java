@@ -1,6 +1,6 @@
 package org.beeblos.bpm.web.ws.resources;
 
-import static org.beeblos.bpm.core.util.Constants.NOT_DELETED;
+import static org.beeblos.bpm.core.util.Constants.NOT_DELETED_BOOL;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -1495,8 +1495,8 @@ public class WorkflowEditorAction extends CoreManagedBean {
 			try {
 
 				// vemos si tiene tanto rutas entrantes y salientes
-				stepRoutesList = routeBL.getIncomingRoutes(removeStepId, NOT_DELETED, null, currentUserId);
-				stepRoutesList.addAll(routeBL.getOutgoingRoutes(removeStepId, NOT_DELETED, null, currentUserId));
+				stepRoutesList = routeBL.getIncomingRoutes(removeStepId, NOT_DELETED_BOOL, null, currentUserId);
+				stepRoutesList.addAll(routeBL.getOutgoingRoutes(removeStepId, NOT_DELETED_BOOL, null, currentUserId));
 				
 				if (stepRoutesList != null && !stepRoutesList.isEmpty()) {
 					// dml 20130830 - si tiene rutas se borran (el "deleteRoute" ya tiene implementado el marcar como "deleted" si se usa en otros sitios
@@ -1507,7 +1507,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 				}
 					
 				// dml 20130830 - solo se intenta borrar si no lo usa ningún otro proceso
-				if (!stepBL.stepIsShared(removeStepId, currentUserId)){
+				if (!stepBL.isSharedStep(removeStepId, currentUserId)){
 					stepBL.delete(removeStepId, process.getProcess().getId(), currentUserId);
 				}
 
