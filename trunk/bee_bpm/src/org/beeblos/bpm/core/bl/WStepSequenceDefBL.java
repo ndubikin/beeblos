@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
-import static org.beeblos.bpm.core.util.Constants.DELETED;
+import static org.beeblos.bpm.core.util.Constants.DELETED_BOOL;
 
 import java.util.Date;
 import java.util.List;
@@ -120,7 +120,7 @@ public class WStepSequenceDefBL {
 		
 		if (workingRoutes != null
 				&& workingRoutes > 0){
-			this._updateStepSequenceDeletedField(route.getId(), DELETED, currentUserId);
+			this._updateStepSequenceDeletedField(route.getId(), DELETED_BOOL, currentUserId);
 		} else {
 			new WStepSequenceDefDao().deleteRoute(route);
 		}
@@ -130,12 +130,12 @@ public class WStepSequenceDefBL {
 	
 	@Deprecated 
 	// DAVID - CAMBIAR Y SI TIENE WSTEPWORKSEQUENCES MARCARLAS COMO DELETED EN LUGAR DE BORRARLAS
-	public void deleteRoutesFromProcess(WProcessDef process, Integer currentUserId) throws WStepSequenceDefException {
+	public void deleteProcessRoutes(WProcessDef process, Integer currentUserId) throws WStepSequenceDefException {
 
 		logger.debug("delete() WStepSequenceDef - ProcId: [" +
 					process.getId() + "]");
 		
-		new WStepSequenceDefDao().deleteRoutesFromProcess(process);
+		new WStepSequenceDefDao().deleteProcessRoutes(process);
 
 	}
 
@@ -164,22 +164,31 @@ public class WStepSequenceDefBL {
 	
 	}
 	
-	// retrieves all routes from passed step  ( enabled and disabled )
-	public List<WStepSequenceDef> getStepSequenceDefs(
+
+	/**
+	 * Returns all outgoing routes from referred step  ( enabled and disabled )
+	 *  
+	 * @param processId
+	 * @param fromStepId
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepSequenceDefException
+	 */
+	public List<WStepSequenceDef> getStepSequenceList(
 			Integer processId, Integer fromStepId , Integer currentUserId  ) 
 	throws WStepSequenceDefException {
 
-		return new WStepSequenceDefDao().getStepSequenceDefs(processId, fromStepId);
+		return new WStepSequenceDefDao().getStepSequenceList(processId, fromStepId);
 	 
 	}	
 
 	/**
 	 * @author dmuleiro 20130829
 	 * 
-	 * Returns the List<WStepSequenceDef> related with a concrete WProcessDef.
+	 * Returns the List<WStepSequenceDef> related with a WProcessDef.
 	 *
 	 * @param Integer processId
-	 * @param Boolean deleted
+	 * @param String deleted: null or "ALL": returns all routes, "DELETED": returns deleted routes, "ALIVE": returns alive routes
 	 * @param Integer currentUserId
 	 * 
 	 * @return List<WStepDef>
@@ -188,7 +197,7 @@ public class WStepSequenceDefBL {
 	 * 
 	 */
 	public List<WStepSequenceDef> getStepSequenceList(
-			Integer processId , Boolean deleted, Integer currentUserId ) 
+			Integer processId , String deleted, Integer currentUserId ) 
 	throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao().getStepSequenceList(processId, deleted);

@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.ALL;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
@@ -316,14 +317,16 @@ public class WProcessDefBL {
 	}
 	
 	// dml 20130507
-	private void _deleteRelatedSequences(Integer processId, Integer currentUserId) throws WProcessWorkException{
+	private void _deleteRelatedSequences(
+			Integer processId, Integer currentUserId) 
+					throws WProcessWorkException{
 				
 		List<WStepSequenceDef> wssdList;
 		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
 		
 		try {
 			
-			wssdList = new WStepSequenceDefBL().getStepSequenceList(processId, null, currentUserId);
+			wssdList = new WStepSequenceDefBL().getStepSequenceList(processId, ALL, currentUserId);
 			
 			if (wssdList != null
 					&& !wssdList.isEmpty()){
@@ -493,7 +496,7 @@ public class WProcessDefBL {
 		
 		try {
 			
-			return new WStepDefBL().stepIsShared(stepDefId, currentUserId);
+			return new WStepDefBL().isSharedStep(stepDefId, currentUserId);
 			
 		} catch (WStepDefException e) {
 			String mess = "WStepDefException: Error checking shared steps for process id:"+processDefId;
@@ -978,7 +981,7 @@ public class WProcessDefBL {
 	}
 	
 	/**
-	 *  clone existing routes and insert in sequence table
+	 *  clone existing routes and insert it in sequence table
 	 *  
 	 * @param processDefId
 	 * @param currentUserId
@@ -1002,7 +1005,7 @@ public class WProcessDefBL {
 		
 		try {
 			routes = new WStepSequenceDefBL()
-							.getStepSequenceList(processDefId, null, currentUserId);
+							.getStepSequenceList(processDefId, ALL, currentUserId);
 
 			if (routes != null && routes.size()>0){
 				for (WStepSequenceDef route: routes) {
@@ -1233,8 +1236,18 @@ public class WProcessDefBL {
 		
 	}
 	
-	// dml 20130129
-	public boolean userIsProcessAdmin(Integer userId, Integer processId, Integer currentUserId) throws WProcessDefException{
+	/**
+	 * Returns true if requested user id is Process Administrator for indicated processId
+	 * 
+	 * @param userId
+	 * @param processId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	public boolean userIsProcessAdmin(
+			Integer userId, Integer processId, Integer currentUserId) 
+					throws WProcessDefException{
 		
 		return new WProcessDefDao().userIsProcessAdmin(userId, processId, currentUserId);
 		
@@ -1339,7 +1352,7 @@ public class WProcessDefBL {
 
 			if (processId != null && processId != 0) {
 
-				routes = new WStepSequenceDefBL().getStepSequenceList(processId, null, currentUserId);
+				routes = new WStepSequenceDefBL().getStepSequenceList(processId, ALIVE, currentUserId);
 				
 			}
 			

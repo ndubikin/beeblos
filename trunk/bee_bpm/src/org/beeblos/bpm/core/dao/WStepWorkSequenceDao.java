@@ -317,9 +317,9 @@ public class WStepWorkSequenceDao {
 	/**
 	 * @author dmuleiro - 20130830
 	 * 
-	 * Returns the number of "WStepWorkSequence" registers related to a concrete "WStepDef"
+	 * Returns the record count of "WStepWorkSequence" related with given "StepDef"
 	 *
-	 * @param  Integer stepId
+	 * @param  Integer stepDefId
 	 * @param  Integer currentUserId
 	 * 
 	 * @return Integer
@@ -327,7 +327,7 @@ public class WStepWorkSequenceDao {
 	 * @throws WStepWorkSequenceException
 	 * 
 	 */
-	public Integer countStepRelatedStepWorkSequences(Integer stepId) 
+	public Integer countSequenceWork(Integer stepDefId) 
 			throws WStepWorkSequenceException {
 
 		org.hibernate.Session session = null;
@@ -343,7 +343,7 @@ public class WStepWorkSequenceDao {
 			tx.begin();
 			
 			String sqlQuery = "SELECT COUNT(*) FROM w_step_work_sequence " +
-					"WHERE begin_step_id = " + stepId + " OR end_step_id = " + stepId;;
+					"WHERE begin_step_id = " + stepDefId + " OR end_step_id = " + stepDefId;;
 
 			count = (BigInteger) session.createSQLQuery(sqlQuery)
 					.uniqueResult();

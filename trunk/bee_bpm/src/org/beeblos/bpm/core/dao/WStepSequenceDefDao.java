@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.dao;
 
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
+import static org.beeblos.bpm.core.util.Constants.DELETED;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -146,8 +149,14 @@ public class WStepSequenceDefDao {
 	}
 	
 	// dml 20130705
-	public void deleteRoutesFromProcess(WProcessDef process/*, Integer version*/ // no tenemos version
-	) throws WStepSequenceDefException {
+	/**
+	 * Deletes all process routes (the process itself)
+	 * 
+	 * @param process
+	 * @throws WStepSequenceDefException
+	 */
+	public void deleteProcessRoutes(WProcessDef process) 
+			throws WStepSequenceDefException {
 
 		logger.debug("delete() by process & version - processName: [" + process.getName() + "]");
 
@@ -360,7 +369,7 @@ public class WStepSequenceDefDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<WStepSequenceDef> getStepSequenceDefs(
+	public List<WStepSequenceDef> getStepSequenceList(
 			Integer processId, Integer idFromStep ) 
 	throws WStepSequenceDefException {
 
@@ -412,7 +421,7 @@ public class WStepSequenceDefDao {
 	 * Returns the List<WStepSequenceDef> related with a concrete WProcessDef.
 	 *
 	 * @param Integer processId
-	 * @param Boolean deleted
+	 * @param String deleted: null or "ALL": returns all routes, "DELETED": returns deleted routes, "ALIVE": returns alive routes
 	 * @param Integer currentUserId
 	 * 
 	 * @return List<WStepSequenceDef>
@@ -422,7 +431,7 @@ public class WStepSequenceDefDao {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getStepSequenceList(
-			Integer processId, Boolean deleted) 
+			Integer processId, String deleted) 
 	throws WStepSequenceDefException {
 
 		org.hibernate.Session session = null;
@@ -437,19 +446,20 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 			
-			if (deleted == null){
-				stepSeqs = session
-						.createQuery("From WStepSequenceDef Where process.id=? Order By fromStep.id")
-						.setParameter(0, processId)
-						.list();				
-			} else if (deleted){
+			if (deleted.equals(DELETED)){
 				stepSeqs = session
 						.createQuery("From WStepSequenceDef Where process.id=? And deleted IS TRUE Order By fromStep.id")
 						.setParameter(0, processId)
 						.list();				
-			} else if (!deleted){
+			} else if (deleted.equals(ALIVE)){
 				stepSeqs = session
 						.createQuery("From WStepSequenceDef Where process.id=? And deleted IS NOT TRUE Order By fromStep.id")
+						.setParameter(0, processId)
+						.list();				
+
+			} else { // ALL
+				stepSeqs = session
+						.createQuery("From WStepSequenceDef Where process.id=? Order By fromStep.id")
 						.setParameter(0, processId)
 						.list();				
 			}

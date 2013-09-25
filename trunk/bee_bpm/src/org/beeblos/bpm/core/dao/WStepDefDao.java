@@ -393,7 +393,7 @@ public class WStepDefDao {
 	/**
 	 * @author nes 20130502 (dml 20130829 - added the deleted where clause)
 	 * 
-	 * Returns the List<WStepDef> related with a concrete WProcessDef.
+	 * Returns the List<WStepDef> related with a given WProcessDef.
 	 * NOTA: ajustado al nuevo formato de campos de la sequence
 	 *
 	 * @param  Integer processId
@@ -406,7 +406,8 @@ public class WStepDefDao {
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public List<WStepDef> getStepDefs(Integer processDefId, Boolean deleted) throws WStepDefException {
+	public List<WStepDef> getStepDefs(Integer processDefId, Boolean deleted) 
+			throws WStepDefException {
 	
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;

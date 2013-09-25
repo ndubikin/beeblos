@@ -464,7 +464,15 @@ public class WProcessWorkDao {
 		return returnList;
 	}	
 
-	// returns # existing works in WStepWork
+	/**
+	 * returns qty of existing works in WStepWork
+	 * default: ALL
+	 * 
+	 * @param processId
+	 * @param mode: ALL / ALIVE / PROCESSED
+	 * @return
+	 * @throws WProcessWorkException
+	 */
 	public Integer getWorkCount (Integer processId, String mode) 
 			throws WProcessWorkException {
 
@@ -479,7 +487,7 @@ public class WProcessWorkDao {
 			query += " AND wsw.decided_date is null";
 		} else if (mode.equals(PROCESSED)) {
 			query += " AND wsw.decidedDate is not null";
-		}
+		} 
 		
 		try {
 
