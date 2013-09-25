@@ -135,18 +135,18 @@ public class WStepWorkSequenceBL {
 	/**
 	 * @author dmuleiro - 20130829
 	 * 
-	 * Returns the number of "WStepWorkSequence" registers related to a concrete "WStepDef"
+	 * Returns the record count of "WStepWorkSequence" related with given "StepDef"
 	 *
-	 * @param  Integer stepId
+	 * @param  Integer stepDefId
 	 * @param  Integer currentUserId
 	 * 
 	 * @return Integer
 	 * 
 	 */
-	public Integer countStepRelatedStepWorkSequences(Integer stepId, Integer currentUserId) 
+	public Integer countSequenceWork(Integer stepDefId, Integer currentUserId) 
 			throws WStepWorkSequenceException {
 
-		return new WStepWorkSequenceDao().countStepRelatedStepWorkSequences(stepId);
+		return new WStepWorkSequenceDao().countSequenceWork(stepDefId);
 
 	}
 

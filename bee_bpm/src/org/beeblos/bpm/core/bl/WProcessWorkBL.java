@@ -159,6 +159,15 @@ public class WProcessWorkBL {
 		
 	}
 
+	/**
+	 * returns qty of existing works in WStepWork
+	 * default: ALL
+	 * 
+	 * @param processId
+	 * @param mode: ALL / ALIVE / PROCESSED
+	 * @return
+	 * @throws WProcessWorkException
+	 */
 	public Integer getWorkCount (Integer processId, String mode) throws WProcessWorkException {
 		return new WProcessWorkDao().getWorkCount(processId, mode);
 	}

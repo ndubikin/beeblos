@@ -14,14 +14,17 @@ public class Constants {
 	public static final String MESSAGES_CORE_FILENAME = "messages_core";
 	
 	// nes 20130912
-	public static final String ALIVE = "A";
-	public static final String PROCESSED = "P"; 
+
+	public static final String ALIVE = "ALIVE";
+	public static final String PROCESSED = "PROCESSED"; 
 	public static final String ALL = "ALL";
+	public static final String DELETED = "DELETED";
+	
 	public static final String FINISHED = "Finished";
 	
 	// dml 20130830
-	public static final boolean DELETED = true;
-	public static final boolean NOT_DELETED = false;
+	public static final boolean DELETED_BOOL = true;
+	public static final boolean NOT_DELETED_BOOL = false;
 
 	// dml 20130821
 	public static final Integer TEXT_DATA_TYPE = 2; // VARCHAR

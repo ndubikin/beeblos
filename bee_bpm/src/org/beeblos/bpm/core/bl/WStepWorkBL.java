@@ -672,7 +672,7 @@ public class WStepWorkBL {
 		System.out.println("VERIFICAR QUE CARGUE CORRECTAMENTE LAS RUTAS PARA EL RUTEO DEL STEP ...");
 		// load routes from current step
 		List<WStepSequenceDef> routes = new WStepSequenceDefBL()
-												.getStepSequenceDefs(
+												.getStepSequenceList(
 														currentStepWork.getwProcessWork().getProcessDef().getId(), 
 														currentStepWork.getCurrentStep().getId(),
 														currentUser);

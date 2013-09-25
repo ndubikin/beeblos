@@ -123,11 +123,11 @@ public class TestWTrackWorkBL extends TestCase {
 		// quedaron bien
 		// las precondiciones:
 
-		assertEquals(2, routeBL.getStepSequenceDefs(iproc,  40, 1001)
+		assertEquals(2, routeBL.getStepSequenceList(iproc,  40, 1001)
 				.size());
-		assertEquals(2, routeBL.getStepSequenceDefs(iproc,  20, 1001)
+		assertEquals(2, routeBL.getStepSequenceList(iproc,  20, 1001)
 				.size());
-		assertEquals(1, routeBL.getStepSequenceDefs(iproc,  10, 1001)
+		assertEquals(1, routeBL.getStepSequenceList(iproc,  10, 1001)
 				.size());
 
 		Date now = new Date();

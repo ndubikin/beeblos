@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.util.Constants.DELETED_BOOL;
+import static org.beeblos.bpm.core.util.Constants.ALL;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,8 +28,6 @@ import org.beeblos.bpm.core.model.WStepWorkSequence;
 public class DevelopmentBL {
 	
 	private static final Log logger = LogFactory.getLog(DevelopmentBL.class.getName());
-	
-	private final static Boolean DELETED = true;
 	
 	public DevelopmentBL (){
 		
@@ -260,9 +261,9 @@ public class DevelopmentBL {
 		WStepDefBL wpdBL = new WStepDefBL();
 		
 		// antes de borrar las rutas vemos los steps relacionados con el proceso para borrarlos despues de las secuencias		
-		List<WStepDef> stepDefList = wpdBL.getStepDefs(processDefId, DELETED, currentUserId);
+		List<WStepDef> stepDefList = wpdBL.getStepDefs(processDefId, DELETED_BOOL, currentUserId);
 		
-		List<WStepSequenceDef> stepSequenceDefList = wpsdBL.getStepSequenceList(processDefId, DELETED, currentUserId);
+		List<WStepSequenceDef> stepSequenceDefList = wpsdBL.getStepSequenceList(processDefId, ALL, currentUserId);// REVISAR NES 20130925
 		
 		if (stepSequenceDefList != null && !stepSequenceDefList.isEmpty()){
 			for (WStepSequenceDef stepSequenceDef : stepSequenceDefList){				

@@ -150,9 +150,9 @@ public class TestWStepWorkBL extends TestCase{
 			
 //			assertEquals(8, routeBL.getWStepSequenceDefs(1001).size());
 			
-			assertEquals(2, routeBL.getStepSequenceDefs(iproc, 40,1001).size());
-			assertEquals(2, routeBL.getStepSequenceDefs(iproc, 20,1001).size());
-			assertEquals(1, routeBL.getStepSequenceDefs(iproc, 10,1001).size());
+			assertEquals(2, routeBL.getStepSequenceList(iproc, 40,1001).size());
+			assertEquals(2, routeBL.getStepSequenceList(iproc, 20,1001).size());
+			assertEquals(1, routeBL.getStepSequenceList(iproc, 10,1001).size());
 			
 			
 			
@@ -293,7 +293,7 @@ public class TestWStepWorkBL extends TestCase{
 //			assertNull(stepwBL.getWStepWorkByPK(iStepW,"Juancito"));
 			
 			// all process map delete
-			routeBL.deleteRoutesFromProcess(process, 1002);
+			routeBL.deleteProcessRoutes(process, 1002);
 //			assertEquals(0, routeBL.getWStepSequenceDefs(1001).size());
 			
 			

@@ -54,6 +54,20 @@ public class WStepSequenceDef implements java.io.Serializable {
 		}	
 	}
 
+	/**
+	 * Creates a new StepSequence def (route) beginning in fromStep and ending in toStep
+	 * 
+	 * @param id
+	 * @param process
+	 * @param order
+	 * @param fromStep
+	 * @param toStep
+	 * @param enabled
+	 * @param afterAll
+	 * @param deleted
+	 * @param validResponses
+	 * @param name
+	 */
 	public WStepSequenceDef(Integer id, WProcessDef process, Integer order,
 			WStepDef fromStep, WStepDef toStep, boolean enabled,
 			boolean afterAll, boolean deleted, String validResponses, String name) {
