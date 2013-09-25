@@ -3,7 +3,7 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
-import static org.beeblos.bpm.core.util.Constants.NOT_DELETED;
+import static org.beeblos.bpm.core.util.Constants.NOT_DELETED_BOOL;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WSTEPDEF;
 import static org.beeblos.bpm.core.util.Constants.WSTEPDEF_QUERY;
 
@@ -823,7 +823,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 			 * 
 			 * Por ese motivo en este método seteo process_id a null porque no hay nada que indique que estamos parados en 1 proceso...
 			 */
-			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, NOT_DELETED, currentProcessDefId, getCurrentUserId());
+			outgoingRoutes = wssBL.getOutgoingRoutes(this.currObjId, NOT_DELETED_BOOL, currentProcessDefId, getCurrentUserId());
 
 			if (outgoingRoutes != null){
 				outgoingRoutesSize = outgoingRoutes.size();
@@ -847,7 +847,7 @@ public class WStepDefFormBean extends CoreManagedBean {
 		
 		try {
 
-			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, NOT_DELETED, currentProcessDefId, getCurrentUserId());
+			incomingRoutes = wssBL.getIncomingRoutes(this.currObjId, NOT_DELETED_BOOL, currentProcessDefId, getCurrentUserId());
 
 			if (incomingRoutes != null){
 				incomingRoutesSize = incomingRoutes.size();
