@@ -2,9 +2,9 @@ package org.beeblos.bpm.wc.taglib.bean;
 
 import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
-import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
@@ -1314,6 +1314,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 			currentStepSequence.setValidResponses(UtilsVs.castStringListToString(currentStepValidResponses, "|"));
 
+			// dml 20130926 - TANTO EL UPDATE COMO EL ADD NO FUNCIONAN PORQUE TIRAN UN ERROR DE SQL QUE NO SE 
+			// MUY BIEN A QUE SE REFIERE...HAY QUE ESTUDIARLO MÁS DETENIDAMENTE
 			if (currentStepSequence.getId() != null && 
 					currentStepSequence.getId() != 0) {
 			
@@ -1326,9 +1328,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	
 			}
 		
-			cleanStepSequence();
+			this.cleanRoutePopupForm();
 			
-			loadStepFromSequence();
+			this.loadStepFromSequence();
 			
 		} catch (WStepSequenceDefException e) {
 			String message = "WProcessDefFormBean.addAndUpdateStepSequence() WStepSequenceDefException: ";
@@ -1338,16 +1340,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 
-	// DAVID: ESTE NOMBRE ESTÁ UN POCO RARO DIGAMOS PORQUE NO PUEDO BORRAR 1 STEP DE LA SEQUENCE ...
-	// PORQUE LA SEQUENCE NO TIENE "STEPS" SI NO QUE ES ESO: SEQUENCE O RUTA ...
-	// ENTONCES NO SE FIJATE A VER QUE QUISISTE DECIR, PORQUE SI LO QUE PRETENDES CON ESTO ES BORRAR 1
-	// STEP DEL MAPA, OK BIEN, PERO POR AHI UN NOMBRE MAS ADECUADO SERIA unlinkStepFromMap y luego un comentario
-	// "este método quita 1 step del mapa al remover la ruta que lo relaciona con dicho mapa"
-	// algo asi para aclarar porq esto es consecuencia de lo q te dije de que cuando armé esto al final me quedó
-	// de tal forma que para saber que step def tengo en el mapa tengo que recurrir a las rutas y ver qeu conexiones
-	// hay, cosa media rara ....
-	// y si no es eso fijate a ver o pone 1 comentario o decime y lo miramos al nombre si?
-	public void deleteStepFromSequence(){
+	/**
+	 * @author dmuleiro 20130926
+	 * 
+	 * View's call. This method is used in the "step" tab and it allows to delete a route from an outgoing or
+	 * incoming step.
+	 * 
+	 */
+	public void deleteRoute(){
 		
 		WStepSequenceDefBL wssdBL = new WStepSequenceDefBL();
 		
@@ -1359,29 +1359,28 @@ public class WProcessDefFormBean extends CoreManagedBean {
 						
 				wssdBL.deleteRoute(currentStepSequence, getCurrentUserId() );
 
-				cleanStepSequence();
+				this.cleanRoutePopupForm();
 				
 			}		
 			
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefFormBean.deleteStepFromSequence() WStepSequenceDefException: ";
+			String message = "WProcessDefFormBean.deleteRoute() WStepSequenceDefException: ";
 					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WStepWorkSequenceException e) {
-			String message = "WProcessDefFormBean.deleteStepFromSequence() WStepWorkSequenceException: ";
+			String message = "WProcessDefFormBean.deleteRoute() WStepWorkSequenceException: ";
 					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
 	}
 
-	// DAVID: ¿QUE QUERRÍA DECIR "LIMPIAR LA STEP SEQUENCE"?
-	// PRETENDES REFRESCAR LA LISTA DE RUTAS DE currentWProcessDef?
-	// SI ES ASI DEBERIA LLAMARSE refreshRouteList por ejemplo o refreshStepSequence (o refreshCurrentProcessSequenceList)
-	// A ESTO SE SUMA UNA AMBIGUEDAD Y ES QUE NO SE PARA QUE SE USA Y SI LO QUE SE DEBE CARGAR
-	// AQUI ES LA LISTA COMPLETA DE RUTAS O SOLO LAS VIVAS O SOLO LAS DELETED ...
-	// PUSE "ALIVE" PORQUE SUPUSE QUE SERIAN LAS VIVAS PERO REVISALO BIEN Y ASEGURATE SI??
-	public void cleanStepSequence(){
+	/**
+	 * @author dmuleiro 20130926
+	 * 
+	 * View's call. It is used to clean the popup before showing it
+	 */
+	public void cleanRoutePopupForm(){
 		
 		setCurrentStepSequence(new WStepSequenceDef(EMPTY_OBJECT));
 		
@@ -1400,7 +1399,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 							.getStepSequenceList(currentWProcessDef.getId(), ALIVE, this.getCurrentUserId() ) );
 
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefFormBean.cleanStepSequence() WStepSequenceDefException: ";
+			String message = "WProcessDefFormBean.cleanRoutePopupForm() WStepSequenceDefException: ";
 					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
@@ -1413,7 +1412,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		this.stepOutgoings = true;
 		
-		this.currentStepSequence.getFromStep().setId(currentStepId);
+		this.currentStepSequence.setToStep(new WStepDef());
+		this.currentStepSequence.setFromStep(new WStepDef(currentStepId));
+		//this.currentStepSequence.getFromStep().setId(currentStepId);
 		
 	}
 	
@@ -1422,7 +1423,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		this.stepIncomings = true;
 		
-		this.currentStepSequence.getToStep().setId(currentStepId);
+		this.currentStepSequence.setFromStep(new WStepDef());
+		this.currentStepSequence.setToStep(new WStepDef(currentStepId));
+		//this.currentStepSequence.getToStep().setId(currentStepId);
 		
 	}
 	

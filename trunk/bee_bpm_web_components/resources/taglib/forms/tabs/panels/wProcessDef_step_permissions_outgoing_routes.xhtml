@@ -10,7 +10,8 @@
 
 	<h:form id="w_process_def_step_permissions_outgoing_routes_form" style="margin-left: 16px;">
 	
-		<h:panelGrid width="100%" columns="1">
+		<h:panelGrid width="100%" columns="1"
+			rendered="#{wStepDefFormBean.currObjId != null and wStepDefFormBean.currObjId !=0}">
 
       		<rich:contextMenu attached="false" id="w_process_def_outgoing_routes_menu" submitMode="ajax">
             	<rich:menuItem ajaxSingle="false" action="#{wProcessDefFormBean.loadStepFromSequenceProcessOutgoing}"
@@ -19,9 +20,9 @@
                 	<b> Edit route </b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentStepSequence.id}" value="{currentRowId}"/>
  	           	</rich:menuItem>
-           		<rich:menuItem ajaxSingle="true" action="#{wProcessDefFormBean.loadStepFromSequenceProcess}"
-           			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteStepFromSequence');"
-           			reRender="mpDeleteStepFromSequence">
+           		<rich:menuItem ajaxSingle="true" action="#{wProcessDefFormBean.loadStepFromSequenceProcessOutgoing}"
+           			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteRoute');"
+           			reRender="mpDeleteRoute">
                 	<b> Delete route </b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentStepSequence.id}" value="{currentRowId}"/>
  	           	</rich:menuItem>
@@ -69,7 +70,7 @@
 				action="#{wProcessDefFormBean.loadInfoForNewStepSequenceOutgoing}"
 				oncomplete="javascript:Richfaces.showModalPanel('mpAddAndEditStepSequence')"
 				reRender="mpAddAndEditStepSequence"
-				rendered="#{contextoSeguridad.permiteCualquiera['530'] and wStepDefFormBean.outgoingRoutesSize gt 0}">
+				rendered="#{contextoSeguridad.permiteCualquiera['530']}">
 				<h:graphicImage id="imgInsertar" value="/images/insertar.png" style="border:0;" />
 			</a4j:commandLink>
 
