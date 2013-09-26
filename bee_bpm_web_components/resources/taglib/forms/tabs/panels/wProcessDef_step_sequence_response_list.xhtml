@@ -18,8 +18,8 @@
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentStepSequence.id}" value="{stepFromSequenceId}"/>
 	           	</rich:menuItem>
            		<rich:menuItem ajaxSingle="true" action="#{wProcessDefFormBean.loadStepFromSequence}"
-           			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteStepFromSequence');"
-           			reRender="mpDeleteStepFromSequence">
+           			oncomplete="javascript:Richfaces.showModalPanel('mpDeleteRoute');"
+           			reRender="mpDeleteRoute">
                 	<b> Delete route </b> {stepFromSequenceId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefFormBean.currentStepSequence.id}" value="{stepFromSequenceId}"/>
  	           	</rich:menuItem>

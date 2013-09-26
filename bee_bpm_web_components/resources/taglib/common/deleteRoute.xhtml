@@ -9,7 +9,7 @@
 
 		<rich:spacer height="10" />
 
-		<h:outputText value="#{msg.label_please_confirm_the_step_sequence_removing_or_cancel_the_operation}" />
+		<h:outputText value="#{msg.label_please_confirm_the_route_removing_or_cancel_the_operation}" />
 
 		<h:panelGrid width="98%" columns="2"
 			columnClasses="colStyle50,colStyle100">
@@ -38,12 +38,12 @@
 
 		<h:panelGroup>
 			<a4j:commandButton id="cancel_button_sr" value="#{msg.label_cancel}"
-				onclick="javascript:Richfaces.hideModalPanel('mpDeleteStepFromSequence')"
+				onclick="javascript:Richfaces.hideModalPanel('mpDeleteRoute')"
 				style="width:80px; height:24px;" />
 			<a4j:commandButton id="delete_button_sr" value="#{msg.label_remove}"
-				actionListener="#{wProcessDefFormBean.deleteStepFromSequence}"
-				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteStepFromSequence');"
-				reRender="w_process_def_step_sequence_table, w_process_def_step_permissions_outgoing_routes_form, mpDeleteStepFromSequence"
+				actionListener="#{wProcessDefFormBean.deleteRoute}"
+				oncomplete="javascript:Richfaces.hideModalPanel('mpDeleteRoute');"
+				reRender="w_process_def_step_sequence_table, w_process_def_step_permissions_outgoing_routes_form, mpDeleteRoute"
 				style="width:120px; margin-left: 10px; height:24px;" />
 		</h:panelGroup>
 
