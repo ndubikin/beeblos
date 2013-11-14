@@ -704,7 +704,7 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="WStepWorkDao: 002 getWStepWorks() - can't obtain stepw list - " +
+			String message="WStepWorkDao: 002 getWorkListByProcess() - can't obtain stepw list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(message );
 			throw new WStepWorkException(message);
@@ -712,7 +712,7 @@ public class WStepWorkDao {
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="WStepWorkDao: 002B getWStepWorks() - can't obtain stepw list - " +
+			String message="WStepWorkDao: 002B getWorkListByProcess() - can't obtain stepw list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(message );
 			throw new WStepWorkException(message);
@@ -881,7 +881,7 @@ public class WStepWorkDao {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
-			filter +=" w.id_process= "+idProcess;
+			filter +=" wpw.id_process= "+idProcess;
 		}
 
 		if ( idCurrentStep!=null && idCurrentStep > 0) {

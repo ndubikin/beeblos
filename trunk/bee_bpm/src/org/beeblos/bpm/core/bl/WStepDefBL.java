@@ -778,6 +778,7 @@ public class WStepDefBL {
 	}
 
 	// dml 20130129 - new combo method with userId and allItems
+	@Deprecated
 	public List<StringPair> getComboList(
 			Integer processId, Integer versionId, Integer userId, boolean allItems, 
 			String firstLineText, String blank )
@@ -787,6 +788,34 @@ public class WStepDefBL {
 		boolean userIsProcessAdmin = new WProcessDefBL().userIsProcessAdmin(userId, processId, userId);
 
 		return new WStepDefDao().getComboList(processId, versionId, userId, userIsProcessAdmin, allItems, 
+				firstLineText, blank);
+		
+	}
+	
+	// 
+	/**
+	 * 
+	 * dml 20130129 - new combo method with userId and allItems
+	 * 
+	 * returs a list of pairs: id/step-def 
+	 * 
+	 * @param processId
+	 * @param userId
+	 * @param allItems
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	public List<StringPair> getComboList(
+			Integer processId, Integer userId, boolean allItems, 
+			String firstLineText, String blank )
+	throws WProcessDefException {
+		
+		// dml 20130129 - checking if the user is process admin
+		boolean userIsProcessAdmin = new WProcessDefBL().userIsProcessAdmin(userId, processId, userId);
+
+		return new WStepDefDao().getComboList(processId, userId, userIsProcessAdmin, allItems, 
 				firstLineText, blank);
 		
 	}

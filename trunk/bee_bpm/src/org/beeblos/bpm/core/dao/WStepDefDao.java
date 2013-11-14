@@ -651,13 +651,45 @@ public class WStepDefDao {
 
 	}
 
-	// returns a list with step names
-	// dml 20130129
-	@SuppressWarnings("unchecked")
+	/**
+	 * Deprecated method. versionId does not applies for step-sequence. This param will be ignored
+	 * 
+	 * @param processDefId
+	 * @param versionId
+	 * @param userId
+	 * @param userIsProcessAdmin
+	 * @param allItems
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	@Deprecated
 	public List<StringPair> getComboList(
 			Integer processDefId, Integer versionId, Integer userId, boolean userIsProcessAdmin, boolean allItems, 
 			String firstLineText, String blank )
 	throws WProcessDefException {
+		return getComboList(processDefId, userId, userIsProcessAdmin, allItems, 
+									firstLineText, blank);	
+	}
+	
+	/**
+	 * Returns a list or id/step-name for processDefId and other filters indicated
+	 * 
+	 * @param processDefId
+	 * @param userId
+	 * @param userIsProcessAdmin
+	 * @param allItems
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<StringPair> getComboList(
+			Integer processDefId, Integer userId, boolean userIsProcessAdmin, boolean allItems, 
+			String firstLineText, String blank )
+	throws WProcessDefException {		
 		 
 			List<Object> lwsd = null;
 			List<StringPair> retorno = new ArrayList<StringPair>(10);
@@ -678,8 +710,8 @@ public class WStepDefDao {
 				query += " LEFT OUTER JOIN w_step_user wsu ON s.id = wsu.id_step ";
 				query += " WHERE s.id IN ";
 				query += " (SELECT DISTINCT id_origin_step FROM w_step_sequence_def ws WHERE ws.process_id = " 
-							+ processDefId + " AND ws.version_id = " + versionId + " ) ";
-
+							+ processDefId +  " ) "; // nes 20131114 quitado filtro por version q no corresponde ya en la sequence" AND ws.version_id = " + versionId 
+													 // la sequenceses propia de la version del workflow (mapa)
 				// dml 20130129
 				if (userId != null
 						&& !userId.equals(0)
