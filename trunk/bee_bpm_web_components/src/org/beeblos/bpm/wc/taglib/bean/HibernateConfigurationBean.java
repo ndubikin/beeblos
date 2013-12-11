@@ -515,7 +515,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 	public List<HibernateConfigurationParameters> getHibernateConfigurationParametersList() {
 		return hibernateConfigurationParametersList;
 	}
-
+/*
 	public void checkConfiguration(){
 		
 		setShowHeaderMessage(false);
@@ -551,7 +551,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		}
 		
 	}
-	
+*/	
 	private String setUpdateOkMessage() {
 		return "HibernateConfigurationParameters name:[ "+this.sessionName+" ] was updated correctly";
 	}
@@ -607,7 +607,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		return this.currentHibernateConfigurationParameters.empty();
 		
 	}
-	
+/*	
 	// dml 20120206
 	public void isValidConfiguration(){
 
@@ -644,7 +644,7 @@ public class HibernateConfigurationBean extends CoreManagedBean {
 		}
 			
 	}
-
+*/
 	// dml 20120206
 	public void changeDefaultConfiguration() {
 

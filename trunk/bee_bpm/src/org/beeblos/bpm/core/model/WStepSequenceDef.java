@@ -47,9 +47,9 @@ public class WStepSequenceDef implements java.io.Serializable {
 	public WStepSequenceDef(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
-			this.process=new WProcessDef( EMPTY_OBJECT );
-			this.fromStep=new WStepDef( EMPTY_OBJECT );
-			this.toStep=new WStepDef( EMPTY_OBJECT );
+			this.process = new WProcessDef( EMPTY_OBJECT );
+			this.fromStep = new WStepDef( EMPTY_OBJECT );
+			this.toStep = new WStepDef( EMPTY_OBJECT );
 			
 		}	
 	}

@@ -114,9 +114,9 @@ public class WStepDef implements java.io.Serializable {
 	public WStepDef(boolean createEmtpyObjects ){
 		super();
 		if ( createEmtpyObjects ) {
-			this.stepHead =new WStepHead();
-			this.timeUnit =new WTimeUnit( EMPTY_OBJECT );
-			this.reminderTimeUnit =new WTimeUnit( EMPTY_OBJECT );
+			this.stepHead = new WStepHead();
+			this.timeUnit = new WTimeUnit( EMPTY_OBJECT );
+			this.reminderTimeUnit = new WTimeUnit( EMPTY_OBJECT );
 			
 		}	
 	}

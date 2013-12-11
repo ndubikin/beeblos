@@ -21,7 +21,7 @@ public class HibernateUtilImpl {
 	public HibernateUtilImpl() {
 
 	}
-
+	/*
 	public static HibernateConfigurationParameters loadDefaultParameters() {
 
 		ResourceBundle rb = org.beeblos.bpm.core.util.Configuration
@@ -54,7 +54,7 @@ public class HibernateUtilImpl {
 
 		return parameters;
 	}
-	/*
+
 	private static SessionFactory obtenerSessionFactory()
 			throws HibernateException, MarshalException, ValidationException, FileNotFoundException {
 
@@ -116,7 +116,7 @@ public class HibernateUtilImpl {
 		}
 
 	}
-	*/
+
 	private static SessionFactory createNewSessionFactory(
 			HibernateConfigurationParameters parameters) {
 
@@ -179,7 +179,7 @@ public class HibernateUtilImpl {
 		}
 
 	}
-
+	
 	public static boolean checkJDBCConnection(HibernateConfigurationParameters hSession)
 			throws ClassNotFoundException, SQLException {
 
@@ -199,18 +199,18 @@ public class HibernateUtilImpl {
 		DatabaseMetaData meta = connection.getMetaData();
 
 		ResultSet catalogs = meta.getCatalogs();
-		/*
-		 * System.out.println("metadata: Maj / min Version:  " +
-		 * meta.getDatabaseMajorVersion() + "/" +
-		 * connection.getMetaData().getDatabaseMinorVersion());
-		 * System.out.println("metadata: DatabaseProductName:" +
-		 * meta.getDatabaseProductName());
-		 * System.out.println("metadata: DatabaseProductVersion:" +
-		 * meta.getDatabaseProductVersion()); System.err .println(
-		 * "-----------------------------------------------------------------------------------------------------------"
-		 * ); System.out.println("Driver Name : " + meta.getDriverName());
-		 * System.out.println("Driver Version : " + meta.getDriverVersion());
-		 */
+		//
+		 // System.out.println("metadata: Maj / min Version:  " +
+		 // meta.getDatabaseMajorVersion() + "/" +
+		 // connection.getMetaData().getDatabaseMinorVersion());
+		 // System.out.println("metadata: DatabaseProductName:" +
+		 // meta.getDatabaseProductName());
+		 // System.out.println("metadata: DatabaseProductVersion:" +
+		 // meta.getDatabaseProductVersion()); System.err .println(
+		 // "-----------------------------------------------------------------------------------------------------------"
+		 // ); System.out.println("Driver Name : " + meta.getDriverName());
+		 // System.out.println("Driver Version : " + meta.getDriverVersion());
+		 //
 		while (catalogs.next()) {
 			String catalog = catalogs.getString(1); // "TABLE_CATALOG"
 			// System.out.println("catalog: " + catalog);
@@ -228,5 +228,5 @@ public class HibernateUtilImpl {
 		connection.close();
 		return ret;
 	}
-
+*/ 
 }

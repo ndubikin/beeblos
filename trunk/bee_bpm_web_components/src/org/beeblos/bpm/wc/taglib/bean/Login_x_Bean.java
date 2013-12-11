@@ -68,11 +68,11 @@ public class Login_x_Bean extends CoreManagedBean {
 	private boolean logged;
 	
 	// dml 20120131
-	private HibernateConfigurationParameters hibernateConfigurationParameters = new HibernateConfigurationParameters();
+//	private HibernateConfigurationParameters hibernateConfigurationParameters = new HibernateConfigurationParameters();
 	
 	// dml 20120206
-	private String currentSessionName;
-	private String newSessionName;
+//	private String currentSessionName;
+//	private String newSessionName;
 	
 	private void construirContextoSeguridad(Usuario usuario) throws MarshalException, ValidationException, FileNotFoundException {
 
@@ -335,8 +335,8 @@ public class Login_x_Bean extends CoreManagedBean {
 				construirContextoSeguridad(usuario);
 				
 				// dml 20120215
-				setAnyDefaultConfiguration();
-				newSessionName = currentSessionName = hibernateConfigurationParameters.getSessionName();
+//				setAnyDefaultConfiguration();
+//				newSessionName = currentSessionName = hibernateConfigurationParameters.getSessionName();
 
 				// mrico 20110706
 				// Si se usa seguridad, debe tener algun permiso
@@ -427,7 +427,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		this.logged = logged;
 	}
 
-
+	/*
 	public HibernateConfigurationParameters getHibernateConfigurationParameters() {
 		return hibernateConfigurationParameters;
 	}
@@ -638,7 +638,7 @@ public class Login_x_Bean extends CoreManagedBean {
 		}
 
 	}
-	
+		
 	// dml 20120207
 	public boolean getHibernateConfigurationXMLHasDefault() {
 		
@@ -838,5 +838,5 @@ public class Login_x_Bean extends CoreManagedBean {
 		}
 		
 	}
-
+*/
 }
