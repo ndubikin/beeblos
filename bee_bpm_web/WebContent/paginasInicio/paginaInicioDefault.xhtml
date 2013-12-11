@@ -11,34 +11,6 @@
 
 		<h:messages  style="#{Login_x_Bean.messageStyle}"/>
 
-		<beecomp:mpChangeHibernateConfiguration />
-
-
-		<h:outputText value="#{msg.label_connected_with}:"	
-			styleClass="labelForm" style="font-size: 12px; margin-left:15px;"/>
-		<h:outputText id="sessionName"
-			value="#{login_x_Bean.hibernateConfigurationParameters.sessionName}"
-			style="font-weight:bold;font-size: 12px; "/>
-			
-		<h:outputText value="#{msg.label_url}:"	
-			styleClass="labelForm" style="margin-left:15px;"/>
-		<h:outputText id="url"
-			value="#{login_x_Bean.hibernateConfigurationParameters.url}"
-			style="font-weight:bold;font-size: 12px; "/>
-
-		<h:outputText value="#{msg.label_catalog}:"	
-			styleClass="labelForm" style="margin-left:15px;"/>
-		<h:outputText id="defaultCatalog"
-			value="#{login_x_Bean.hibernateConfigurationParameters.defaultCatalog}"
-			style="font-weight:bold; font-size: 12px;"/>
-
-		<a4j:commandLink id="change_hibernate_configuration"
-			style="font-size: 12px; margin-left:15px;"
-			value="#{msg.label_change}"
-			title="#{msg.label_change_configuration}"
-			onclick="javascript:Richfaces.showModalPanel('mpChangeHibernateConfiguration');"
-			reRender="sessionName, url, defaultCatalog"/>
-
 
 </ui:composition>
 </html>

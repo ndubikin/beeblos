@@ -250,6 +250,7 @@ public class WStepSequenceDefBL {
 		return new WStepSequenceDefDao().getComboList(idProcess, version, firstLineText, blank);
 		
 	}
+	/* dml 20130926 NO EXISTEN VERSION EN EL WSTEPSEQUENCEDEF	
 	
 	// nes 20101217
 	public Integer getLastVersionWStepSequenceDef (
@@ -259,6 +260,6 @@ public class WStepSequenceDefBL {
 		return new WStepSequenceDefDao().getLastVersionWStepSequenceDef( idProcess );
 		
 	}
-
+	*/
 }
 	

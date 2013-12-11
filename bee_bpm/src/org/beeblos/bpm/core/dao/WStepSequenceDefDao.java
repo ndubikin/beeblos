@@ -828,7 +828,7 @@ public class WStepSequenceDefDao {
 
 
 	}
-	
+/* dml 20130926 NO EXISTEN VERSION EN EL WSTEPSEQUENCEDEF	
 	// nes 20101217
 	public Integer getLastVersionWStepSequenceDef (
 			Integer idProcess ) 
@@ -846,7 +846,7 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
-			q = session.createQuery("select max(version) from WStepSequenceDef where id_process=:idProcess");
+			q = session.createQuery("select max(version) from WStepSequenceDef where process.id=:idProcess");
 			
 			q.setParameter("idProcess", idProcess);
 			maxVersion = (Integer)q.uniqueResult();
@@ -865,7 +865,7 @@ public class WStepSequenceDefDao {
 
 		return maxVersion;
 	}
-	
+*/	
 
 }
 	

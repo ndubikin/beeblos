@@ -10,7 +10,7 @@ public class HibernateSwitchBL {
 	public HibernateSwitchBL() {
 
 	}
-
+/*
 	public static HibernateConfigurationParameters loadDefaultParameters() {
 
 		return HibernateUtilImpl.loadDefaultParameters();
@@ -30,4 +30,5 @@ public class HibernateSwitchBL {
 		return HibernateUtilImpl.checkJDBCConnection(hSession);
 				
 	}
+*/
 }
