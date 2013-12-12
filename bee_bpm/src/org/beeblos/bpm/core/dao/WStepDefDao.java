@@ -440,7 +440,7 @@ public class WStepDefDao {
 							+ ")" 
 							+ deletedWhereClause; // dml 20130829 - si es != "", solo devuelve los "deleted" o los no "deleted"
 		
-			System.out.println("[QUERY]: "+query);
+			logger.debug("[QUERY]: "+query);
 			
 			steps = session.createSQLQuery(query)
 					.addEntity("WStepDef", WStepDef.class)
@@ -490,7 +490,7 @@ public class WStepDefDao {
 							" FROM w_step_sequence_def wssd " +
 							" WHERE (wssd.id_origin_step = :stepId OR wssd.id_dest_step = :stepId) ";
 			
-			System.out.println("[QUERY]: "+query);
+			logger.debug("[QUERY]: "+query);
 			
 			processIdList = (ArrayList<Integer>) session.createSQLQuery(query)
 					.setInteger("stepId", stepDefId)

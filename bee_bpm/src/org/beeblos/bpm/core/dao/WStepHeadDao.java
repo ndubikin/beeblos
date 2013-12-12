@@ -391,7 +391,7 @@ public class WStepHeadDao {
 					" WHERE wsd.head_id = :stepHeadId " +
 					" GROUP BY wsd.head_id ";
 
-			System.out.println("[QUERY]: "+query);
+			logger.debug("[QUERY]: "+query);
 			
 			result = (BigInteger) session.createSQLQuery(query)
 					.setParameter("stepHeadId", stepHeadId)
