@@ -6,6 +6,8 @@ package org.beeblos.bpm.web.bean;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 
+import com.sp.common.util.HibernateUtil;
+
 
 /**
  * @author nestor
@@ -55,6 +57,9 @@ public class LoggedUserBean extends CoreManagedBean {
 			this.usuarioLogueado="";
 	}
 
-
+	public String getUrl() {
+		return HibernateUtil.getUrl();
+		
+	}
 	
 }

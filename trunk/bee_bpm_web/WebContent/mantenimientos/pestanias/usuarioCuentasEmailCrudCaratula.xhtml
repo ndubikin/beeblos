@@ -145,7 +145,7 @@
 				</h:selectOneMenu>
 				<rich:spacer width="10" />
 				
-				<h:outputText value="#{msg.label_nombre}" styleClass="labelForm" />
+				<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 				<h:panelGroup>
 					<h:inputHidden id="hddIdUce" value="#{usuarioCuentasEmailBean.idUsuarioCuentasEmail}">
 						<a4j:support ajaxSingle="false"  action="#{usuarioCuentasEmailBean.cargarCurrentUsuarioCuentasEmail}"
@@ -226,7 +226,7 @@
 				<legend class="demo_legend"  >#{msg.label_input_server}</legend>
 				<div>
 				<h:panelGrid columns="4" columnClasses ="colStyle1,colStyle2,colStyle4,colStyle5" width="60%">			
-					<h:outputText value="#{msg.label_nombre}" styleClass="labelForm" />
+					<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 					<h:inputText id="nombreServEnt" value="#{usuarioCuentasEmailBean.currentUCE.nombreDelServidorEntrada}"
 						required="false"  style="width:180px"/>
 						
@@ -260,7 +260,7 @@
 				<div>
 					<h:panelGrid columns="4" columnClasses ="colStyle1,colStyle2,colStyle4,colStyle5" width="60%">
 						
-					<h:outputText value="#{msg.label_nombre}" styleClass="labelForm" />
+					<h:outputText value="#{msg.label_name}" styleClass="labelForm" />
 					<h:inputText id="nombreServSal" value="#{usuarioCuentasEmailBean.currentUCE.nombreServidorDeSalida}"
 						required="false"  style="width:180px"/>
 						
@@ -332,7 +332,7 @@
 
 	           	<rich:column  style="width:200px; text-align: left;"> 
 	                <f:facet name="header">
-	                    <h:outputText value="#{msg.label_nombre}"/>
+	                    <h:outputText value="#{msg.label_name}"/>
 	                </f:facet>
 	                <h:outputText value="#{uce.uceNombre}"/>
 	            </rich:column> 
