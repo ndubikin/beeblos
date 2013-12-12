@@ -48,7 +48,10 @@ public class WStepDefBL {
 				|| step.getStepHead().getId().equals(0))){
 			
 			Integer stepHeadId = new WStepHeadBL().add(step.getStepHead(), currentUserId);
-			
+
+			// DAVID: NO ENTIENDO POR QUE EN EL ADD MANDÁS A RECARGAR INFO QUE VIENE EN EL STEP QUE TE PASAN
+			// POR EJEMPLO: SI ESTE STEP VIENE CON COMENTARIOS Y INSTRUCCIONES, TE LAS CARGÁS EN EL MÉTODO SIGUIENTE ...
+			// ¿A QUE SE DEBE ESTO ...?
 			this._setFirstWStepDefData(step, stepHeadId, null, null, null, currentUserId);
 			
 			
@@ -63,8 +66,22 @@ public class WStepDefBL {
 
 	}
 	
-	// dml 20130430
-	private void _setFirstWStepDefData(WStepDef step, Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) throws WStepHeadException {
+	/**
+	 * 
+	 * load a step object with their head, rules, comments, instructions, etc ...
+	 * 
+	 * @param step
+	 * @param stepHeadId
+	 * @param rules
+	 * @param stepComments
+	 * @param instructions
+	 * @param currentUserId
+	 * @throws WStepHeadException
+	 */
+	// DAVID EXPLICA BREVEMENTE EN LA DOC PARA QUE SE USA ESTE INICIALIZADOR Y EN QUE CASOS OK?
+	private void _setFirstWStepDefData(
+			WStepDef step, Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) 
+					throws WStepHeadException {
 		
 		if (step != null){
 			
@@ -85,7 +102,12 @@ public class WStepDefBL {
 	}
 	
 	// dml 20130430
-	public Integer createFirstWStepDef(Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) throws WStepDefException, WStepHeadException{
+	// nota: public Integer createFirstWStepDef( creado por david que renombro a new porque no entiendo el concepto de
+	// first y además esto se llama desde un loop del sincronizador de xml cada vez q se va a agregar 1 paso ...
+	// DAVID BORRA ESTE COMENTARIO LUEGO Y DEJA UNA BREVE JAVADOR QUE EXPLIQUE EL USO QUE TIENE ESTE MÉTODO OK?
+	public Integer createNewWStepDef(
+			Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) 
+					throws WStepDefException, WStepHeadException{
 
 		WStepDef wsd = new WStepDef();
 

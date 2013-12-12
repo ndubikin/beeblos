@@ -16,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -944,7 +943,7 @@ public class WProcessDefDao {
 			tx = session.getTransaction();
 			tx.begin();
 
-			Hibernate.initialize(result);
+			//Hibernate.initialize(result);
 
 			result = session.createSQLQuery(query).list();
 

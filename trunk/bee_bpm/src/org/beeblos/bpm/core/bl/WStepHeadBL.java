@@ -35,6 +35,7 @@ public class WStepHeadBL {
 	}
 
 	// dml 20130508
+	// DAVID INTENTÁ EXPLICAR PARA QUE CREASTE ESTE METODO, CUAL ES SU COMETIDO SI?
 	public Integer addStepAndFirstWStepDef(WStepHead stepHead, Integer currentUserId) throws WStepHeadException, WStepDefException {
 		
 		logger.debug("addStepAndFirstWStepDef() WStepHead - Name: ["+stepHead.getName()+"]");
@@ -42,7 +43,7 @@ public class WStepHeadBL {
 		Integer stepHeadId = this.add(stepHead, currentUserId);
 		stepHead.setId(stepHeadId);
 		
-		new WStepDefBL().createFirstWStepDef(stepHeadId, null, null, null, currentUserId);
+		new WStepDefBL().createNewWStepDef(stepHeadId, null, null, null, currentUserId);
 		
 		return stepHeadId;
 
