@@ -49,10 +49,8 @@ public class WStepDefBL {
 			
 			Integer stepHeadId = new WStepHeadBL().add(step.getStepHead(), currentUserId);
 
-			// DAVID: NO ENTIENDO POR QUE EN EL ADD MANDÁS A RECARGAR INFO QUE VIENE EN EL STEP QUE TE PASAN
-			// POR EJEMPLO: SI ESTE STEP VIENE CON COMENTARIOS Y INSTRUCCIONES, TE LAS CARGÁS EN EL MÉTODO SIGUIENTE ...
-			// ¿A QUE SE DEBE ESTO ...?
-			this._setFirstWStepDefData(step, stepHeadId, null, null, null, currentUserId);
+			this._setFirstWStepDefData(step, stepHeadId, step.getRules(), 
+					step.getStepComments(), step.getInstructions(), currentUserId);
 			
 			
 		}
@@ -68,7 +66,13 @@ public class WStepDefBL {
 	
 	/**
 	 * 
-	 * load a step object with their head, rules, comments, instructions, etc ...
+	 * Este método es el encargado de asignar el "WStepHead" creado al "WStepDef" antes de persistirlo. 
+	 * También se asignan el resto de datos.
+	 * 
+	 * NOTA PARA NESTOR: Este método se penso en un principio solamente para asignar el un stepHeadId, pero cuando se creo
+	 * la funcionalidad de poder insertar WStepDefs desde un mapa con los datos "rules, stepComments e instructions"
+	 * se le añadieron. Lo que no me di cuenta es que en la llamada desde "WStepDefBL.add() estaba borrando estos valores
+	 * pero así como lo puse ahora deberia funcionar bien.
 	 * 
 	 * @param step
 	 * @param stepHeadId
@@ -78,7 +82,6 @@ public class WStepDefBL {
 	 * @param currentUserId
 	 * @throws WStepHeadException
 	 */
-	// DAVID EXPLICA BREVEMENTE EN LA DOC PARA QUE SE USA ESTE INICIALIZADOR Y EN QUE CASOS OK?
 	private void _setFirstWStepDefData(
 			WStepDef step, Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) 
 					throws WStepHeadException {
@@ -101,10 +104,20 @@ public class WStepDefBL {
 		
 	}
 	
-	// dml 20130430
-	// nota: public Integer createFirstWStepDef( creado por david que renombro a new porque no entiendo el concepto de
-	// first y además esto se llama desde un loop del sincronizador de xml cada vez q se va a agregar 1 paso ...
-	// DAVID BORRA ESTE COMENTARIO LUEGO Y DEJA UNA BREVE JAVADOR QUE EXPLIQUE EL USO QUE TIENE ESTE MÉTODO OK?
+	/**
+	 * Se crea el nuevo WStepDef a partir de la informacion que se le pasa única y exclusivamente en la firma del método.
+	 * 
+	 * @author dmuleiro 20130430
+	 * 
+	 * @param stepHeadId
+	 * @param rules
+	 * @param stepComments
+	 * @param instructions
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepDefException
+	 * @throws WStepHeadException
+	 */
 	public Integer createNewWStepDef(
 			Integer stepHeadId, String rules, String stepComments, String instructions, Integer currentUserId) 
 					throws WStepDefException, WStepHeadException{
