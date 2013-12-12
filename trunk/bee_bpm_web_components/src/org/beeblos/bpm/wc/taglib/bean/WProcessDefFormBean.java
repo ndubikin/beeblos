@@ -902,9 +902,6 @@ public class WProcessDefFormBean extends CoreManagedBean {
 					+ pu.getUser().getId();
 		}
 
-		System.out
-				.println("--------------->>>>>>>>> strUserList ------------>>>>>>>>"
-						+ strUserList);
 		return strUserList;
 	}
 
