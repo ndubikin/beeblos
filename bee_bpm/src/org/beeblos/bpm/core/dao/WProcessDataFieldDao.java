@@ -356,6 +356,7 @@ public class WProcessDataFieldDao {
 	}
 
 	//rrl 20130730
+	@SuppressWarnings("unchecked")
 	public List<WProcessDataField> getWProcessDataFieldList(Integer processHeadId) throws WProcessDataFieldException {
 
 		org.hibernate.Session session = null;
@@ -380,11 +381,18 @@ public class WProcessDataFieldDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessDataFieldException("WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess="WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn( mess );
+			throw new WProcessDataFieldException(mess);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
+					ex.getMessage()+"\n"+ex.getCause()+" - "+ex.getClass();
+			logger.warn(mess);
+			throw new WProcessDataFieldException(mess);
 		}
 
 		return processs;

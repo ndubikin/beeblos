@@ -413,7 +413,7 @@ public class WProcessWorkDao {
 			tx = session.getTransaction();
 			tx.begin();
 
-			Hibernate.initialize(result);
+			//Hibernate.initialize(result);
 
 			result = session.createSQLQuery(query).list();
 
