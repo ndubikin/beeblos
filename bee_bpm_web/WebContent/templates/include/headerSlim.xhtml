@@ -35,9 +35,9 @@
     </a4j:commandLink>
  </h:form>   
 
-<h:outputText 	value="Bienvenido #{loggedUserBean.usuarioLogueado} !" 
+<h:outputText 	value="#{loggedUserBean.usuarioLogueado} working with:[#{loggedUserBean.url}]" 
 				rendered="#{(loggedUserBean.usuarioLogueado != '')}"
-				style="font-weight: bold; margin-left: 300px; padding-top: 5px;" 
+				style="font-weight: bold; margin-left: 150px; padding-top: 5px;" 
 				class="main_title"  />
 
 

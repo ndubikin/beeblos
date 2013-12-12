@@ -39,7 +39,7 @@
 	<h:panelGrid columns="4" style=" width : auto; height : auto; padding-left: 15px;" 
 			columnClasses="colStyle1,colStyle2, colStyle3, colStyle4">
 
-		<h:outputText value="#{msg.label_nombre}" />
+		<h:outputText value="#{msg.label_name}" />
 		<h:inputText id="usuarioNombre"
 			value="#{consultaUsuarioLoginBean.filtroUsuarioLogin}"
 			disabled="false"
@@ -51,7 +51,7 @@
 
 		<rich:spacer height="10" />	
 		
-		<h:outputText value="#{msg.label_apellidos}" />
+		<h:outputText value="#{msg.label_last_name}" />
 		<h:inputText id="usuarioApellidos"
 			value="#{consultaUsuarioLoginBean.filtroApellidos}"
 			disabled="false"
@@ -59,7 +59,7 @@
 		<rich:spacer height="10" />	
 		<rich:spacer height="10" />	
 		
-		<h:outputText value="#{msg.label_de}" />
+		<h:outputText value="#{msg.label_from}" />
 		<rich:calendar id="t_InitialDate"  value="#{consultaUsuarioLoginBean.filtroFechaInicial}" 
 						datePattern="yyyy-MM-dd"  
 						enableManualInput="true" showInput="true" resetTimeOnDateSelect="true">
@@ -67,7 +67,7 @@
 		<rich:spacer height="10" />
 		<rich:spacer height="10" />					
 		
-		<h:outputText value="#{msg.label_hasta}" />			
+		<h:outputText value="#{msg.label_to}" />			
 		<rich:calendar id="t_FinalDate"  value="#{consultaUsuarioLoginBean.filtroFechaFinal}" 
 						datePattern="yyyy-MM-dd"
 						enableManualInput="true" showInput="true" resetTimeOnDateSelect="true">
