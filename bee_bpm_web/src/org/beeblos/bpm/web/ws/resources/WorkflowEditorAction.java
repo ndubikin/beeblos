@@ -855,7 +855,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 		// este for iterara una única vez ya que solo hay un elemento "Workflow"
 		// recorre el mapa y los pasos existentes (spId!=null) los carga en
-		seteaAlgoDelProcesoPareceQueElNombre(workflowList);  // nes 20131212
+		asociarMapaWorkflowAProcesoExistente(workflowList);  // nes 20131212
 
 		
 		// 2. Primero de todo parseo los "Task" que serán los WStepDef de nuestro proceso
@@ -873,7 +873,7 @@ public class WorkflowEditorAction extends CoreManagedBean {
 
 
 		/**
-		 * DAVID PONER PA Q SIRVE ESTE...
+		 * Obtiene del mapa parseado todos los elementos "Task" que serán los "WStepDef"
 		 */
 		NodeList taskList = xmlParsed.getElementsByTagName("Task");
 
@@ -1265,9 +1265,22 @@ public class WorkflowEditorAction extends CoreManagedBean {
 		}
 	}
 
-	// DAVID REVISAR BIEN QUE HACE ESTE MÉTODO Y COMENTARLO AQUÍ ...
-	// y ponerle un nombre acorde a lo que hace q no me enteré muy bien ...
-	private void seteaAlgoDelProcesoPareceQueElNombre(NodeList workflowList)
+	/**
+	 * Carga el proceso que se le indica en el campo <Workflow> del mapa y que será el que identifique a que WProcessDef
+	 * pertenece el mapa que recibe el Servicio Web. Si en este campo no tenemos el spId correcto no funcionará el 
+	 * algoritmo ya que faltaría la base, que será el WProcessDef.
+	 * 
+	 * Este valor se inicializa en el método "" del WProcessDefBL cuando creamos el proceso la primera vez Y NO PUEDE
+	 * SER BORRADO
+	 * 
+	 * 
+	 * @param workflowList
+	 * @throws WProcessDefException
+	 * @throws WStepSequenceDefException
+	 * @throws WorkflowEditorActionException
+	 * @throws WProcessHeadException
+	 */
+	private void asociarMapaWorkflowAProcesoExistente(NodeList workflowList)
 			throws WProcessDefException, WStepSequenceDefException,
 			WorkflowEditorActionException, WProcessHeadException {
 		String spId;
