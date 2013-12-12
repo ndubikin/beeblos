@@ -93,7 +93,7 @@ public class DesignerElement implements java.io.Serializable {
 		spResponses = edge.getAttribute("responses");
 		spRules = edge.getAttribute("rules");
 		
-		NodeList mxCellList = edge.getElementsByTagName("mxCell");
+		this.mxCellList = edge.getElementsByTagName("mxCell");
 		
 	}
 	
