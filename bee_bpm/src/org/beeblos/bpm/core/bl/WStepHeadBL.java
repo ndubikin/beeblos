@@ -34,8 +34,21 @@ public class WStepHeadBL {
 
 	}
 
-	// dml 20130508
-	// DAVID INTENTÁ EXPLICAR PARA QUE CREASTE ESTE METODO, CUAL ES SU COMETIDO SI?
+	/**
+	 * 
+	 * Se encarga de crear un WStepDef cuando creamos un WStepHead. Esto es debido a que no tiene sentido crear
+	 * un WStepHead sin crear a la vez un WStepDef. Este último no tendrá valores en los campos 
+	 * "rules, stepComments e instructions" (ya que estamos creando un WStepDef vacio)
+	 * por los que se pasan como "null"
+	 * 
+	 * @author dmuleiro 20130508
+	 * 
+	 * @param stepHead
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepHeadException
+	 * @throws WStepDefException
+	 */
 	public Integer addStepAndFirstWStepDef(WStepHead stepHead, Integer currentUserId) throws WStepHeadException, WStepDefException {
 		
 		logger.debug("addStepAndFirstWStepDef() WStepHead - Name: ["+stepHead.getName()+"]");
