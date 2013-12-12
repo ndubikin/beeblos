@@ -1065,20 +1065,22 @@ public class WorkflowEditorAction extends CoreManagedBean {
 							String[] responses = elemDibujado.getSpResponses().split("\\|");
 							String responseIdList = "";
 							elemDibujado.setSpResponses("");
+							String strResp="";
 							
 							for(int j =0; j < responses.length ; j++){
 								 
 								for (WStepResponseDef response : step.getResponse()){
-									String strResp="";
+
 									if (response.getName().equals(responses[j])){
 										responseIdList += response.getId() + "|";
 										strResp += responses[j] + "|";
 										break;
 									}
-									elemDibujado.setSpResponses(strResp);
 								}
 
 							}
+							elemDibujado.setSpResponses(strResp);
+
 							// ponemos las respuestas en la ruta y en el mapa
 							route.setValidResponses(responseIdList);
 							edge.setAttribute("responses", elemDibujado.getSpResponses());
