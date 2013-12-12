@@ -819,7 +819,7 @@
 		</id>
 		<property generated="never" lazy="false" name="order"
 			type="java.lang.Short">
-			<column name="order" />
+			<column name="order_" />
 		</property>		
 		<property generated="never" lazy="false" name="enabled"
 			type="java.lang.Boolean">
