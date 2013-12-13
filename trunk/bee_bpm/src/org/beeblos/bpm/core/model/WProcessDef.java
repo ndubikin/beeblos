@@ -26,6 +26,11 @@ public class WProcessDef implements java.io.Serializable {
 	private Integer version;
 	
 	private boolean active;
+	/**
+	 * Indicate this process allow multiples alive instances running for 1 idObject
+	 */
+	private boolean allowedMultipleInstances; // indicates this process 
+	
 	
 	private Date productionDate;
 	private Integer productionUser;
@@ -272,26 +277,29 @@ public class WProcessDef implements java.io.Serializable {
 		return adminEmail;
 	}
 
-
 	public void setAdminEmail(String adminEmail) {
 		this.adminEmail = adminEmail;
 	}
-
 
 	public boolean isActive() {
 		return active;
 	}
 
-
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 
+	public boolean isAllowedMultipleInstances() {
+		return allowedMultipleInstances;
+	}
+
+	public void setAllowedMultipleInstances(boolean allowsMultipleInstances) {
+		this.allowedMultipleInstances = allowsMultipleInstances;
+	}
 
 	public Date getProductionDate() {
 		return productionDate;
 	}
-
 
 	public void setProductionDate(Date productionDate) {
 		this.productionDate = productionDate;
