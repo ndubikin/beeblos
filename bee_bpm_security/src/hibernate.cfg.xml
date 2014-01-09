@@ -8,14 +8,14 @@
 
    	<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="hibernate.connection.password">root</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost/gespro_generic</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost/bee_bpm_dev</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.default_catalog">gespro_generic</property>
+        <property name="hibernate.default_catalog">bee_bpm_dev</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.pool_size">10</property>
 
-        <property name="show_sql">false</property>
-        <property name="format_sql">false</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
 		<property name="hbm2ddl.auto">validate</property>
         <property name="current_session_context_class">thread</property>
          
