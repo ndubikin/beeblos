@@ -34,7 +34,7 @@ public class mxGraphMapManagerBL {
 		
 		logger.info("mxGraphMapManagerBL.decodeXmlMapIntoMxGraph");
 
-		mxGraph graph = graph = new mxGraph();
+		mxGraph graph = new mxGraph();
 		
 		if (processXmlMap != null && !"".equals(processXmlMap)){
 			
