@@ -10,15 +10,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.error.WStepDefException;
-import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
-import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.mxgraph.model.mxCell;
@@ -261,7 +257,9 @@ public class WorkflowEditorMxBL {
 						// si el end no pertenece a ningun step pero si pertenece a un "symbol" "end"
 						// y el "spFromStepId" de la ruta tiene decided date a null marcamos el xmlMapEdge 
 						// en "verde" y cambiamos el "Symbol" tambien a verde
-						if (!hasEndStepId){
+						// NOTA dml 20140122: además de tener el decidedDate == null, tiene que estar en algun "w_step_work_sequence" con
+						// la response correcta, si no quiere decir que ha ido por otra ruta
+ 						if (!hasEndStepId){
 							
 							for (mxCell endSymbol : endSymbolList){
 								
@@ -270,15 +268,39 @@ public class WorkflowEditorMxBL {
 									boolean hasRichedEndSymbol = false;
 									for (WStepWork stepWork : wswList) {
 										
-										if (stepWork.getCurrentStep().getId().equals(Integer.valueOf(spFromStepId))){
+										// si viene del mismo step del que viene el dibujo...
+										if (stepWork.getPreviousStep() != null 
+												&& stepWork.getPreviousStep().getId().equals(Integer.valueOf(spFromStepId))){
 											
+											// si tiene decidedDate != null quiere decir que se ha movido de ahi pero no sabemos si por esta ruta...
 											if (stepWork.getDecidedDate() != null){
-											hasRichedEndSymbol = true; // es end symbol
-											endSymbol.setStyle(
-													mxStyleUtils.setStyle(
-															endSymbol.getStyle(), 
-															mxConstants.STYLE_IMAGE, END_SYMBOL_GREEN_STYLE));
-											
+												
+												String xmlEdgeResponses = xmlMapEdge.getAttribute("responses");
+												
+												boolean correctResponse = false;
+												// vemos si la response coincide con la del "edge" del mapa
+												for (WStepWorkSequence wsws : wswsList){
+													
+													// si coincide alguna
+													if (wsws.getStepSequence() != null 
+															&& xmlEdgeResponses != null 
+															&& xmlEdgeResponses.contains(wsws.getStepSequence().getName())){
+														correctResponse = true;
+														break;
+													}
+													
+												}
+												
+												if (correctResponse){
+													
+													hasRichedEndSymbol = true; // es end symbol
+													endSymbol.setStyle(
+															mxStyleUtils.setStyle(
+																	endSymbol.getStyle(), 
+																	mxConstants.STYLE_IMAGE, END_SYMBOL_GREEN_STYLE));
+												
+												}
+
 											} else {
 												hasRichedEndSymbol = false; // puede que sea una ruta turnback por lo que se vuelve a pintar de negro
 												endSymbol.setStyle(
@@ -359,7 +381,7 @@ public class WorkflowEditorMxBL {
 		
 		// dml 20130905 - PARA PINTAR POR ENCIMA LAS QUE TIENEN COLOR:
 		
-		// eliminamos todos los edge del grago para meter los que esten pintados por encima de todo
+		// eliminamos todos los edge del grafo para meter los que esten pintados por encima de todo
 		graph.removeCells(xmlMapEdgeList.toArray());
 
 		// eliminamos del total las que estan pintadas
