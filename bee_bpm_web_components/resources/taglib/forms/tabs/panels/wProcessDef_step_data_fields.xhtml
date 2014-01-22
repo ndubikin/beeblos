@@ -65,12 +65,20 @@
 									</td>
 									<td align="left">
 										<h:outputText
-											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form" 
-											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}"
-											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id != wStepDefFormBean.wStepDataFieldSelected.id}" />
+											value="#{(sdf.active)?'A':'&#160;'}" 
+											styleClass="label_form_bold left_column_20" 
+											title="#{msg.label_active}" 
+											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}" />
 										<h:outputText
-											value="#{sdf.name} / #{sdf.dataField.dataType.name} (#{sdf.length})" styleClass="label_form_bold" 
-											rendered="#{sdf.name!=null and sdf.length!=null and (sdf.dataField.name!=sdf.name or sdf.dataField.length!=sdf.length) and sdf.id eq wStepDefFormBean.wStepDataFieldSelected.id}" />
+											value="#{(sdf.readOnly)?'RO':'&#160;'}" 
+											styleClass="label_form_bold left_column_20" 
+											title="#{msg.label_read_only}" 
+											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}" />
+										<h:outputText
+											value="#{(sdf.required)?'M':'&#160;'}" 
+											styleClass="label_form_bold left_column_20"
+											title="#{msg.label_mandatory}" 
+											style="#{sdf.dataField.active ? '' : 'font-style:italic;'}" />
 									</td>
 				
 									<td align="left">
