@@ -13,7 +13,7 @@ ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field`
 	ADD COLUMN `synchronize` BIT NOT NULL DEFAULT 0 COMMENT 'allows synchronize with a db or a java class/method'  AFTER `mod_user` , 
 	ADD COLUMN `synchrowith` CHAR NULL COMMENT 'J: JDBD / A: APP'  AFTER `synchronize` , 
 	ADD COLUMN `schema_` VARCHAR(150) NULL COMMENT 'for JDBC synchro: schema name'  AFTER `synchrowith` , 
-	ADD COLUMN `tablename` VARCHAR(150) NULL COMMENT 'for JDBC synchro: table name'  AFTER `schema` , 
+	ADD COLUMN `tablename` VARCHAR(150) NULL COMMENT 'for JDBC synchro: table name'  AFTER `schema_` , 
 	ADD COLUMN `fieldname` VARCHAR(150) NULL COMMENT 'for JDBC synchro: field name'  AFTER `tablename` , 
 	ADD COLUMN `classname` VARCHAR(255) NULL COMMENT 'for APP synchro: class name to execute'  AFTER `fieldname` , 
 	ADD COLUMN `get_method` VARCHAR(150) NULL COMMENT 'for APP synchro: method name to execute to get info from external source'  AFTER `classname` , 
