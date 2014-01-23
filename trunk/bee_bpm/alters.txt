@@ -9,6 +9,20 @@ UPDATE `bee_bpm_dev`.`w_data_type` SET `insert_date`='2014-01-21 21:44:36', `ins
 
 ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` CHANGE COLUMN `order` `order` INT(3) NULL DEFAULT '0'  AFTER `active` ;
 
-ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` ADD COLUMN `syncrhonize` BIT NOT NULL DEFAULT 0 COMMENT 'allows syncrhonize with a db or a java class/method'  AFTER `mod_user` , ADD COLUMN `synchowith` CHAR NULL COMMENT 'J: JDBD / A: APP'  AFTER `syncrhonize` , ADD COLUMN `schema` VARCHAR(150) NULL COMMENT 'for JDBC synchro: schema name'  AFTER `synchowith` , ADD COLUMN `tablename` VARCHAR(150) NULL COMMENT 'for JDBC synchro: table name'  AFTER `schema` , ADD COLUMN `fieldname` VARCHAR(150) NULL COMMENT 'for JDBC synchro: field name'  AFTER `tablename` , ADD COLUMN `classname` VARCHAR(255) NULL COMMENT 'for APP synchro: class name to execute'  AFTER `fieldname` , ADD COLUMN `get_method` VARCHAR(150) NULL COMMENT 'for APP synchro: method name to execute to get info from external source'  AFTER `classname` , ADD COLUMN `put_method` VARCHAR(150) NULL COMMENT 'for APP synchro: method name to execute to put info into external source'  AFTER `get_method` , ADD COLUMN `paramlist` VARCHAR(150) NULL COMMENT 'for APP synchro: parameter list to send'  AFTER `put_method` , ADD COLUMN `at_process_startup` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: at process startup must synchronize getting data from source'  AFTER `paramlist` , ADD COLUMN `at_process_end` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: at process ends must synchronize putting data to source'  AFTER `at_process_startup` , ADD COLUMN `at_step_work_invoked` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: with each new step uploaded must synchronize getting data from source'  AFTER `at_process_end` , ADD COLUMN `at_step_work_processed` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: with each new step processed must synchronize putting data to source'  AFTER `at_step_work_invoked` , CHANGE COLUMN `required` `required` BIT(1) NOT NULL DEFAULT b'0'  ;
+ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` 
+	ADD COLUMN `syncrhonize` BIT NOT NULL DEFAULT 0 COMMENT 'allows syncrhonize with a db or a java class/method'  AFTER `mod_user` , 
+	ADD COLUMN `synchowith` CHAR NULL COMMENT 'J: JDBD / A: APP'  AFTER `syncrhonize` , 
+	ADD COLUMN `schema` VARCHAR(150) NULL COMMENT 'for JDBC synchro: schema name'  AFTER `synchowith` , 
+	ADD COLUMN `tablename` VARCHAR(150) NULL COMMENT 'for JDBC synchro: table name'  AFTER `schema` , 
+	ADD COLUMN `fieldname` VARCHAR(150) NULL COMMENT 'for JDBC synchro: field name'  AFTER `tablename` , 
+	ADD COLUMN `classname` VARCHAR(255) NULL COMMENT 'for APP synchro: class name to execute'  AFTER `fieldname` , 
+	ADD COLUMN `get_method` VARCHAR(150) NULL COMMENT 'for APP synchro: method name to execute to get info from external source'  AFTER `classname` , 
+	ADD COLUMN `put_method` VARCHAR(150) NULL COMMENT 'for APP synchro: method name to execute to put info into external source'  AFTER `get_method` , 
+	ADD COLUMN `paramlist` VARCHAR(150) NULL COMMENT 'for APP synchro: parameter list to send'  AFTER `put_method` , 
+	ADD COLUMN `at_process_startup` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: at process startup must synchronize getting data from source'  AFTER `paramlist` , 
+	ADD COLUMN `at_process_end` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: at process ends must synchronize putting data to source'  AFTER `at_process_startup` , 
+	ADD COLUMN `when_step_work_is_invoked` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: with each new step uploaded must synchronize getting data from source'  AFTER `at_process_end` , 
+	ADD COLUMN `when_step_work_is_processed` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: with each new step processed must synchronize putting data to source'  AFTER `at_step_work_invoked` , 
+	CHANGE COLUMN `required` `required` BIT(1) NOT NULL DEFAULT b'0'  ;
 
 
