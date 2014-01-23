@@ -20,5 +20,7 @@
 			value="#{dataField.comments}" styleClass="label_form" style="#{dataField.active ? '' : 'font-style:italic;'}"/></td>
 	<td align="left"><h:outputText
 			value="#{dataField.active ? '' : msg.label_inactive}" styleClass="label_form" style="#{dataField.active ? '' : 'font-style:italic;'}"/></td>
+	<td align="left"><h:outputText
+			value="#{dataField.synchronize ? msg.label_synchronize : ''}" styleClass="label_form" style="#{dataField.active ? '' : 'font-style:italic;'}"/></td>
 
 </ui:composition>
