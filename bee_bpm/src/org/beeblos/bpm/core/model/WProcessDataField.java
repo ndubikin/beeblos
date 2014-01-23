@@ -29,7 +29,22 @@ public class WProcessDataField implements java.io.Serializable {
 	private boolean quoted=false;
 	private String defaultValue;
 	
+	private boolean synchronize;
+	private String synchroWith;
+
+	private String schema;
+	private String tableName;
+	private String fieldName;
+	private String className;
+	private String getMethod;
+	private String putMethod;
+	private String paramList;
 	
+	private boolean atProcessStartup;
+	private boolean atProcessEnd;
+	private boolean whenStepWorkIsInvoked;
+	private boolean whenStepWorkIsProcessed;
+
 	// trail
 	private Date insertDate;
 	private Integer insertUser;
@@ -171,6 +186,162 @@ public class WProcessDataField implements java.io.Serializable {
 		this.defaultValue = defaultValue;
 	}
 
+	
+	public boolean isSynchronize() {
+	
+		return synchronize;
+	}
+
+	
+	public void setSynchronize(boolean synchronize) {
+	
+		this.synchronize = synchronize;
+	}
+
+	
+	public String getSynchroWith() {
+	
+		return synchroWith;
+	}
+
+	
+	public void setSynchroWith(String synchroWith) {
+	
+		this.synchroWith = synchroWith;
+	}
+
+	
+	public String getSchema() {
+	
+		return schema;
+	}
+
+	
+	public void setSchema(String schema) {
+	
+		this.schema = schema;
+	}
+
+	
+	public String getTableName() {
+	
+		return tableName;
+	}
+
+	
+	public void setTableName(String tableName) {
+	
+		this.tableName = tableName;
+	}
+
+	
+	public String getFieldName() {
+	
+		return fieldName;
+	}
+
+	
+	public void setFieldName(String fieldName) {
+	
+		this.fieldName = fieldName;
+	}
+
+	
+	public String getClassName() {
+	
+		return className;
+	}
+
+	
+	public void setClassName(String className) {
+	
+		this.className = className;
+	}
+
+	
+	public String getGetMethod() {
+	
+		return getMethod;
+	}
+
+	
+	public void setGetMethod(String getMethod) {
+	
+		this.getMethod = getMethod;
+	}
+
+	
+	public String getPutMethod() {
+	
+		return putMethod;
+	}
+
+	
+	public void setPutMethod(String putMethod) {
+	
+		this.putMethod = putMethod;
+	}
+
+	
+	public String getParamList() {
+	
+		return paramList;
+	}
+
+	
+	public void setParamList(String paramList) {
+	
+		this.paramList = paramList;
+	}
+
+	
+	public boolean isAtProcessStartup() {
+	
+		return atProcessStartup;
+	}
+
+	
+	public void setAtProcessStartup(boolean atProcessStartup) {
+	
+		this.atProcessStartup = atProcessStartup;
+	}
+
+	
+	public boolean isAtProcessEnd() {
+	
+		return atProcessEnd;
+	}
+
+	
+	public void setAtProcessEnd(boolean atProcessEnd) {
+	
+		this.atProcessEnd = atProcessEnd;
+	}
+
+	
+	public boolean isWhenStepWorkIsInvoked() {
+	
+		return whenStepWorkIsInvoked;
+	}
+
+	
+	public void setWhenStepWorkIsInvoked(boolean whenStepWorkIsInvoked) {
+	
+		this.whenStepWorkIsInvoked = whenStepWorkIsInvoked;
+	}
+
+	
+	public boolean isWhenStepWorkIsProcessed() {
+	
+		return whenStepWorkIsProcessed;
+	}
+
+	
+	public void setWhenStepWorkIsProcessed(boolean whenStepWorkIsProcessed) {
+	
+		this.whenStepWorkIsProcessed = whenStepWorkIsProcessed;
+	}
+
 	public Date getInsertDate() {
 		return this.insertDate;
 	}
@@ -213,79 +384,77 @@ public class WProcessDataField implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return "WProcessDataField ["
-				+ (id != null ? "id=" + id + ", " : "")
-				+ (processHeadId != null ? "processHeadId=" + processHeadId
-						+ ", " : "")
-				+ (dataType != null ? "dataType=" + dataType + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
-				+ (columnName != null ? "columnName=" + columnName + ", " : "")
-				+ (order != null ? "order=" + order + ", " : "")
-				+ "required="
-				+ required
-				+ ", "
-				+ (comments != null ? "comments=" + comments + ", " : "")
-				+ "active="
-				+ active
-				+ ", "
-				+ (length != null ? "length=" + length + ", " : "")
-				+ "nullable="
-				+ nullable
-				+ ", unique="
-				+ unique
-				+ ", quoted="
-				+ quoted
-				+ ", "
-				+ (defaultValue != null ? "defaultValue=" + defaultValue + ", "
-						: "")
-				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
-				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser : "") + "]";
+
+		return "WProcessDataField [id=" + id + ", processHeadId=" + processHeadId + ", dataType="
+				+ dataType + ", name=" + name + ", columnName=" + columnName + ", order=" + order
+				+ ", required=" + required + ", comments=" + comments + ", active=" + active
+				+ ", length=" + length + ", nullable=" + nullable + ", unique=" + unique
+				+ ", quoted=" + quoted + ", defaultValue=" + defaultValue + ", synchronize="
+				+ synchronize + ", synchroWith=" + synchroWith + ", schema=" + schema
+				+ ", tableName=" + tableName + ", fieldName=" + fieldName + ", className="
+				+ className + ", getMethod=" + getMethod + ", putMethod=" + putMethod
+				+ ", paramList=" + paramList + ", atProcessStartup=" + atProcessStartup
+				+ ", atProcessEnd=" + atProcessEnd + ", whenStepWorkIsInvoked="
+				+ whenStepWorkIsInvoked + ", whenStepWorkIsProcessed=" + whenStepWorkIsProcessed
+				+ ", insertDate=" + insertDate + ", insertUser=" + insertUser + ", modDate="
+				+ modDate + ", modUser=" + modUser + "]";
 	}
 
 	@Override
 	public int hashCode() {
+
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
-		result = prime * result
-				+ ((columnName == null) ? 0 : columnName.hashCode());
-		result = prime * result
-				+ ((comments == null) ? 0 : comments.hashCode());
-		result = prime * result
-				+ ((dataType == null) ? 0 : dataType.hashCode());
-		result = prime * result
-				+ ((defaultValue == null) ? 0 : defaultValue.hashCode());
+		result = prime * result + (atProcessEnd ? 1231 : 1237);
+		result = prime * result + (atProcessStartup ? 1231 : 1237);
+		result = prime * result + ((className == null) ? 0 : className.hashCode());
+		result = prime * result + ((columnName == null) ? 0 : columnName.hashCode());
+		result = prime * result + ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
+		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+		result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
+		result = prime * result + ((getMethod == null) ? 0 : getMethod.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
 		result = prime * result + ((length == null) ? 0 : length.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + (nullable ? 1231 : 1237);
 		result = prime * result + ((order == null) ? 0 : order.hashCode());
-		result = prime * result
-				+ ((processHeadId == null) ? 0 : processHeadId.hashCode());
+		result = prime * result + ((paramList == null) ? 0 : paramList.hashCode());
+		result = prime * result + ((processHeadId == null) ? 0 : processHeadId.hashCode());
+		result = prime * result + ((putMethod == null) ? 0 : putMethod.hashCode());
 		result = prime * result + (quoted ? 1231 : 1237);
 		result = prime * result + (required ? 1231 : 1237);
+		result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+		result = prime * result + ((synchroWith == null) ? 0 : synchroWith.hashCode());
+		result = prime * result + (synchronize ? 1231 : 1237);
+		result = prime * result + ((tableName == null) ? 0 : tableName.hashCode());
 		result = prime * result + (unique ? 1231 : 1237);
+		result = prime * result + (whenStepWorkIsInvoked ? 1231 : 1237);
+		result = prime * result + (whenStepWorkIsProcessed ? 1231 : 1237);
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WProcessDataField))
+		if (getClass() != obj.getClass())
 			return false;
 		WProcessDataField other = (WProcessDataField) obj;
 		if (active != other.active)
+			return false;
+		if (atProcessEnd != other.atProcessEnd)
+			return false;
+		if (atProcessStartup != other.atProcessStartup)
+			return false;
+		if (className == null) {
+			if (other.className != null)
+				return false;
+		} else if (!className.equals(other.className))
 			return false;
 		if (columnName == null) {
 			if (other.columnName != null)
@@ -307,35 +476,25 @@ public class WProcessDataField implements java.io.Serializable {
 				return false;
 		} else if (!defaultValue.equals(other.defaultValue))
 			return false;
+		if (fieldName == null) {
+			if (other.fieldName != null)
+				return false;
+		} else if (!fieldName.equals(other.fieldName))
+			return false;
+		if (getMethod == null) {
+			if (other.getMethod != null)
+				return false;
+		} else if (!getMethod.equals(other.getMethod))
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser == null) {
-			if (other.insertUser != null)
-				return false;
-		} else if (!insertUser.equals(other.insertUser))
-			return false;
 		if (length == null) {
 			if (other.length != null)
 				return false;
 		} else if (!length.equals(other.length))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -349,16 +508,47 @@ public class WProcessDataField implements java.io.Serializable {
 				return false;
 		} else if (!order.equals(other.order))
 			return false;
+		if (paramList == null) {
+			if (other.paramList != null)
+				return false;
+		} else if (!paramList.equals(other.paramList))
+			return false;
 		if (processHeadId == null) {
 			if (other.processHeadId != null)
 				return false;
 		} else if (!processHeadId.equals(other.processHeadId))
 			return false;
+		if (putMethod == null) {
+			if (other.putMethod != null)
+				return false;
+		} else if (!putMethod.equals(other.putMethod))
+			return false;
 		if (quoted != other.quoted)
 			return false;
 		if (required != other.required)
 			return false;
+		if (schema == null) {
+			if (other.schema != null)
+				return false;
+		} else if (!schema.equals(other.schema))
+			return false;
+		if (synchroWith == null) {
+			if (other.synchroWith != null)
+				return false;
+		} else if (!synchroWith.equals(other.synchroWith))
+			return false;
+		if (synchronize != other.synchronize)
+			return false;
+		if (tableName == null) {
+			if (other.tableName != null)
+				return false;
+		} else if (!tableName.equals(other.tableName))
+			return false;
 		if (unique != other.unique)
+			return false;
+		if (whenStepWorkIsInvoked != other.whenStepWorkIsInvoked)
+			return false;
+		if (whenStepWorkIsProcessed != other.whenStepWorkIsProcessed)
 			return false;
 		return true;
 	}

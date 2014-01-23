@@ -65,7 +65,7 @@
             <column name="ignore_case" sql-type="bit"/>
         </property>
         <property name="schema" type="string">
-            <column name="sxema" length="100" not-null="true" />
+            <column name="schema_" length="100" not-null="true" />
         </property>
         <property name="catalog" type="string">
             <column name="catalog" length="100" not-null="true" />
@@ -1498,6 +1498,9 @@
          <property name="columnName" type="string">
             <column name="col_name" length="120" />
         </property>        
+		<property name="order" type="java.lang.Integer">
+			<column name="order_"/>
+		</property>
         <property name="required" type="java.lang.Boolean">
             <column name="required" sql-type="bit"/>
         </property>
@@ -1510,6 +1513,49 @@
 		<property name="length" type="java.lang.Integer">
 			<column name="length"/>
 		</property>
+		
+        <property name="synchronize" type="java.lang.Boolean">
+            <column name="synchronize" sql-type="bit"/>
+        </property>
+        <property name="synchroWith" type="java.lang.String">
+            <column name="synchrowith" sql-type="char"/>
+        </property>
+
+         <property name="schema" type="java.lang.String">
+            <column name="schema_" />
+        </property>        
+         <property name="tableName" type="java.lang.String">
+            <column name="tablename" />
+        </property>        
+         <property name="fieldName" type="java.lang.String">
+            <column name="fieldname" />
+        </property>        
+         <property name="className" type="java.lang.String">
+            <column name="classname" />
+        </property>        
+         <property name="getMethod" type="java.lang.String">
+            <column name="get_method" />
+        </property>        
+         <property name="putMethod" type="java.lang.String">
+            <column name="put_method" />
+        </property>        
+         <property name="paramList" type="java.lang.String">
+            <column name="paramlist" />
+        </property>        
+		
+        <property name="atProcessStartup" type="java.lang.Boolean">
+            <column name="at_process_startup" sql-type="bit"/>
+        </property>
+        <property name="atProcessEnd" type="java.lang.Boolean">
+            <column name="at_process_end" sql-type="bit"/>
+        </property>
+        <property name="whenStepWorkIsInvoked" type="java.lang.Boolean">
+            <column name="when_step_work_is_invoked" sql-type="bit"/>
+        </property>
+        <property name="whenStepWorkIsProcessed" type="java.lang.Boolean">
+            <column name="when_step_work_is_processed" sql-type="bit"/>
+        </property>		
+		
         <property name="insertDate" type="timestamp">
             <column name="insert_date" length="0" not-null="true" />
         </property>
