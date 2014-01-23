@@ -332,6 +332,22 @@ public class WStepWorkBL {
 		
 	}
 
+	/**
+	 * Returns step work list for a process and a user
+	 * If isAdmin comes with true then must assume this is an "administrator" query
+	 * 
+	 * @param idProcess
+	 * @param idCurrentStep
+	 * @param status
+	 * @param userId
+	 * @param isAdmin
+	 * @param arrivingDate
+	 * @param openedDate
+	 * @param deadlineDate
+	 * @param filtroComentariosYReferencia
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
