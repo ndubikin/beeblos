@@ -2078,6 +2078,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		try {
 			
+			this._setModelSynchronizeOptions(); // dml 20140123
+			
 			if (wProcessDataFieldSelected.getId() == null || 
 					wProcessDataFieldSelected.getId().equals(0)) {
 				
@@ -2513,6 +2515,62 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		return sol;
 
+	}
+	
+	/**
+	 * Puts null in the fields that we are not going to save (because we have chosen another option)
+	 * 
+	 * @author dmuleiro 20140123
+	 */
+	private void _setModelSynchronizeOptions(){
+		
+		if (this.wProcessDataFieldSelected != null){
+			
+			if (!this.wProcessDataFieldSelected.isSynchronize()){
+					
+				this.wProcessDataFieldSelected.setSynchroWith(null);
+				this.wProcessDataFieldSelected.setSchema(null);
+				this.wProcessDataFieldSelected.setTableName(null);
+				this.wProcessDataFieldSelected.setFieldName(null);
+				this.wProcessDataFieldSelected.setClassName(null);
+				this.wProcessDataFieldSelected.setGetMethod(null);
+				this.wProcessDataFieldSelected.setPutMethod(null);
+				this.wProcessDataFieldSelected.setParamList(null);
+
+			} else {
+					
+				if (this.wProcessDataFieldSelected.getSynchroWith() == null
+						|| "".equals(this.wProcessDataFieldSelected.getSynchroWith())){
+					
+					this.wProcessDataFieldSelected.setSynchroWith(null);
+					this.wProcessDataFieldSelected.setSchema(null);
+					this.wProcessDataFieldSelected.setTableName(null);
+					this.wProcessDataFieldSelected.setFieldName(null);
+					this.wProcessDataFieldSelected.setClassName(null);
+					this.wProcessDataFieldSelected.setGetMethod(null);
+					this.wProcessDataFieldSelected.setPutMethod(null);
+					this.wProcessDataFieldSelected.setParamList(null);
+
+				} else 	if (this.wProcessDataFieldSelected.getSynchroWith().equals("A")){
+					
+					this.wProcessDataFieldSelected.setSchema(null);
+					this.wProcessDataFieldSelected.setTableName(null);
+					this.wProcessDataFieldSelected.setFieldName(null);
+
+				} else if (this.wProcessDataFieldSelected.getSynchroWith().equals("J")){
+					
+					this.wProcessDataFieldSelected.setClassName(null);
+					this.wProcessDataFieldSelected.setGetMethod(null);
+					this.wProcessDataFieldSelected.setPutMethod(null);
+					this.wProcessDataFieldSelected.setParamList(null);
+
+				}
+					
+			}
+				
+		}
+		
+		
 	}
 	
 }

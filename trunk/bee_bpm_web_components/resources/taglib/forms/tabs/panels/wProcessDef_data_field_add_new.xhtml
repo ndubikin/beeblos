@@ -34,12 +34,78 @@
 				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.name}" style="font-size: 12px;padding: 4px;width: 200px;"/>
 				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.required}" />
 				<h:selectOneMenu validatorMessage="required"
-        					value="#{wProcessDefFormBean.wProcessDataFieldSelected.dataType.id}" style="font-size: 12px;padding: 4px;width: 150px;">
+      					value="#{wProcessDefFormBean.wProcessDataFieldSelected.dataType.id}" style="font-size: 12px;padding: 4px;width: 150px;">
 					<f:selectItems value="#{wProcessDefFormBean.dataTypes}" />
 		      	</h:selectOneMenu>
 				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.length}" style="font-size: 12px;padding: 4px;width: 50px;"/>
 				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.comments}" style="font-size: 12px;padding: 4px;width: 300px;"/>
 				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.active}" />
+			</h:panelGrid>
+			
+			<h:panelGrid id="data_field_options" columns="2" style="margin-left: 16px; margin-top:10px;"
+				columnClasses="column20percent, column80percent">
+			
+				<h:outputText value="#{msg.label_synchronize}:" styleClass="label_form"/>
+				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize}">
+					<a4j:support event="onchange" reRender="data_field_options" />
+				</h:selectBooleanCheckbox>
+				
+				<h:outputText value="#{msg.label_synchronize_with}:" styleClass="label_form"/>
+				<h:selectOneMenu disabled="#{!wProcessDefFormBean.wProcessDataFieldSelected.synchronize}"
+        			value="#{wProcessDefFormBean.wProcessDataFieldSelected.synchroWith}" style="font-size: 12px;padding: 4px;width: 100px;">
+					<f:selectItem itemLabel="--Select--" itemValue=""/>
+					<f:selectItem itemLabel="JDBC" itemValue="J"/>
+					<f:selectItem itemLabel="App" itemValue="A"/>
+					<a4j:support event="onchange" reRender="data_field_options" />
+		      	</h:selectOneMenu>
+		      	
+				<h:outputText value="#{msg.label_schema}:" styleClass="label_form"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'J'}"/>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.schema}"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'J'}"
+					style="font-size: 12px;padding: 4px;width: 200px;"/>					
+				<h:outputText value="#{msg.label_table_name}:" styleClass="label_form"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'J'}"/>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.tableName}"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'J'}"
+					style="font-size: 12px;padding: 4px;width: 200px;"/>					
+				<h:outputText value="#{msg.label_field_name}:" styleClass="label_form"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'J'}"/>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.fieldName}"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'J'}"
+					style="font-size: 12px;padding: 4px;width: 200px;"/>					
+				
+				<h:outputText value="#{msg.label_class_name}:" styleClass="label_form"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"/>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.className}"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"
+					style="font-size: 12px;padding: 4px;width: 200px;"/>					
+				<h:outputText value="#{msg.label_get_method}:" styleClass="label_form"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"/>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.getMethod}"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"
+					style="font-size: 12px;padding: 4px;width: 200px;"/>					
+				<h:outputText value="#{msg.label_put_method}:" styleClass="label_form"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"/>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.putMethod}"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"
+					style="font-size: 12px;padding: 4px;width: 200px;"/>					
+				<h:outputText value="#{msg.label_parameters}:" styleClass="label_form"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"/>
+				<h:inputText value="#{wProcessDefFormBean.wProcessDataFieldSelected.paramList}"
+					rendered="#{wProcessDefFormBean.wProcessDataFieldSelected.synchronize and wProcessDefFormBean.wProcessDataFieldSelected.synchroWith eq 'A'}"
+					style="font-size: 12px;padding: 4px;width: 200px;"/>					
+				
+				<h:outputText value="#{msg.label_at_process_startup}:" styleClass="label_form"/>
+				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.atProcessStartup}"/>
+				<h:outputText value="#{msg.label_at_process_end}:" styleClass="label_form"/>
+				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.atProcessEnd}"/>
+				<h:outputText value="#{msg.label_when_step_work_is_invoked}:" styleClass="label_form"/>
+				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.whenStepWorkIsInvoked}"/>
+				<h:outputText value="#{msg.label_when_step_work_is_processed}:" styleClass="label_form"/>
+				<h:selectBooleanCheckbox value="#{wProcessDefFormBean.wProcessDataFieldSelected.whenStepWorkIsProcessed}"/>
+				
+			
 			</h:panelGrid>
 			
 			<div style=" margin-top:10px;margin-bottom:10px;">
