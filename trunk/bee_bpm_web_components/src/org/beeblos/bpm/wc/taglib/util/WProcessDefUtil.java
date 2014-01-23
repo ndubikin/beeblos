@@ -10,6 +10,7 @@ import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 import javax.el.ValueExpression;
 
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.wc.taglib.bean.ManageMapBean;
 import org.beeblos.bpm.wc.taglib.bean.WProcessDefFormBean;
 import org.beeblos.bpm.wc.taglib.bean.WProcessHeadFormBean;
 
@@ -170,4 +171,24 @@ public class WProcessDefUtil extends CoreManagedBean {
 		
 	}
 
+	public void loadInfoOnManageMapBean(Integer processId, String xmlMap) {
+
+		if (xmlMap != null && !xmlMap.equals(0)){
+			
+			ValueExpression valueBinding = super
+					.getValueExpression("#{manageMapBean}");
+
+			if (valueBinding != null) {
+
+				ManageMapBean mmb = 
+						(ManageMapBean) valueBinding
+							.getValue(super.getELContext());
+				mmb.setCurrentProcessId(processId);
+				mmb.setXmlMap(xmlMap);
+			
+			}
+		}
+
+	}
+	
 }

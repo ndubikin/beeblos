@@ -18,8 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.faces.context.FacesContext;
-
 import org.apache.log4j.Logger;
 import org.beeblos.bpm.core.bl.DevelopmentBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
@@ -489,6 +487,7 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 		
 	}
 	
+	/* dml 20140123 BORRAR	
 	public void loadXmlMapAsTmp() {
 		
 		if (this.id != null
@@ -515,6 +514,26 @@ public class WProcessDefQueryBean extends CoreManagedBean {
 				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() IOException: ";
 						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);			
+			} catch (WProcessDefException e) {
+				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() WProcessDefException: ";
+						
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
+			}
+		}
+		
+	}
+	*/
+
+	public void loadXmlMapAndInitializeManageMapBean() {
+		
+		if (this.id != null
+				&& !this.id.equals(0)){
+			try {
+				
+				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.id, getCurrentUserId());
+				
+				new WProcessDefUtil().loadInfoOnManageMapBean(this.id, xmlMapTmp);
+				
 			} catch (WProcessDefException e) {
 				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() WProcessDefException: ";
 						

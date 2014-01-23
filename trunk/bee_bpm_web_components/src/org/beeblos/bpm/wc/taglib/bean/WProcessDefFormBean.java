@@ -1929,11 +1929,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		return new WProcessDefUtil().loadWProcessDefFormBean(this.currentId);
 
 	}
-	
+
+/* dml 20140123 BORRAR	
 	public void loadXmlMapAsTmp() {
-		
-		//rrl 20130729 When click "Refresh" button reloads the form by loadWProcessForm()
-//		refreshForm=true;
 		
 		if (currentId != null
 				&& !currentId.equals(0)){
@@ -1963,6 +1961,25 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				String message = "WProcessDefFormBean.loadXmlMapAsTmp() WProcessDefException: ";
 						
 				super.createWindowMessage(ERROR_MESSAGE, message, e);
+			}
+		}
+		
+	}
+*/
+	public void loadXmlMapAndInitializeManageMapBean() {
+		
+		if (this.currentId != null
+				&& !this.currentId.equals(0)){
+			try {
+				
+				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.currentId, getCurrentUserId());
+				
+				new WProcessDefUtil().loadInfoOnManageMapBean(this.currentId, xmlMapTmp);
+				
+			} catch (WProcessDefException e) {
+				String message = "WProcessDefQueryBean.loadXmlMapAsTmp() WProcessDefException: ";
+						
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 		}
 		

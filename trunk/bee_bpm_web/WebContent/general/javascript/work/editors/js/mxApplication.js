@@ -11,7 +11,7 @@
 	 * Constructs a new application (note that this returns an mxEditor
 	 * instance).
 	 */
-	function mxApplication(config)
+	function mxApplication(config, requestContextPath, currentProcessId, xmlMap)
 	{
 		
 		try
@@ -23,19 +23,24 @@
 			else
 			{
 				
+				// dml 20140123
+				var initWS = requestContextPath + '/rest/wf/InicialiceSession/' + currentProcessId;
+				var pollWS = requestContextPath + '/rest/wf/Poll';
+				var notifyWS = requestContextPath + '/rest/wf/Notify';
+				var notifyWithResponseWS = requestContextPath + '/rest/wf/NotifyWithResponse';
+				var getSPObjectListWS = requestContextPath + '/rest/wf/getSpObjectList';
+				
 				var node = mxUtils.load(config).getDocumentElement();
 				var editor = new mxEditor(node);
 				
-				// dml - creamos una session para el editor NO FUNCIONA BIEN
-				var session = editor.connect('/bee_bpm_web/rest/wf/InicialiceSession/69',
-						'/bee_bpm_web/rest/wf/Poll','/bee_bpm_web/rest/wf/Notify',
-						'/bee_bpm_web/rest/wf/NotifyWithResponse',
-						'/bee_bpm_web/rest/wf/getSpObjectList');
+				// dml - creamos una session para el editor
+				// dml 20140123 - NOTA: el initWS TODAVIA NO FUNCIONA BIEN
+				var session = editor.connect(initWS, pollWS, notifyWS, notifyWithResponseWS, getSPObjectListWS);
 
 				// dml 20130709 - como ya puse la llamada en el oncomplete ya no hace falta el timeout, 
 				// ya abrirá el editor una vez creado el fichero para leer
-				//openProcessXmlMapTmp(editor);
-				setTimeout(function(){openEditorXmlMapTmp(editor)},1700);
+				loadXMLMapEditor(editor, xmlMap);
+				//setTimeout(function(){loadXMLMapEditor(editor, xmlMap)},1700);
 				
 				// Updates the window title after opening new files
 				var title = document.title;
@@ -55,7 +60,7 @@
 				editor.setStatus('mxGraph '+mxClient.VERSION);
 				
 				// Shows the application				
-				mxUtils.hideSplash(2300);
+				mxUtils.hideSplash(0);
 			}
 		}
 		catch (e)
@@ -72,9 +77,11 @@
 	}
 	
 	// Opens the previously saved xml map
-	function openEditorXmlMapTmp(editor)
+	function loadXMLMapEditor(editor, xmlMap)
 	{
-		editor.open("/bee_bpm_web/processXmlMapTmp.xml");
+		var doc = mxUtils.parseXml(xmlMap);
+		var node = doc.documentElement;
+		editor.readGraphModel(node);
 		
 		// With this we open the properties of the WProcessDef
 		editor.execute('showFixProperties', editor.graph.getSelectionCell());
@@ -85,7 +92,7 @@
 	 * Constructs a new show application (note that this returns an mxEditor
 	 * instance).
 	 */
-	function mxViewXmlMapApplication(config)
+	function mxViewXmlMapApplication(config, xmlMap)
 	{
 		
 		try
@@ -96,17 +103,17 @@
 			}
 			else
 			{
-				
 				var node = mxUtils.load(config).getDocumentElement();
 				var editor = new mxEditor(node);
 				
 				// dml 20130709 - como ya puse la llamada en el oncomplete ya no hace falta el timeout, 
 				// ya abrirá el editor una vez creado el fichero para leer
-				//openProcessXmlMapTmp(editor);
-				setTimeout(function(){openAndViewProcessXmlMap(editor)},1700);
+				loadAndShowXMLMapEditor(editor, xmlMap);
+				//setTimeout(function(){loadAndShowXMLMapEditor(editor, xmlMap)},1700);
 								
+
 				// Shows the application				
-				mxUtils.hideSplash(2300);
+				mxUtils.hideSplash(0);
 			}
 		}
 		catch (e)
@@ -123,10 +130,11 @@
 	}
 	
 	// Opens the previously saved xml map
-	function openAndViewProcessXmlMap(editor)
+	function loadAndShowXMLMapEditor(editor, xmlMap)
 	{
-		var xml = mxUtils.load("/bee_bpm_web/processXmlMapTmp.xml").getXml();
-		editor.readGraphModel(xml.documentElement);
+		var doc = mxUtils.parseXml(xmlMap);
+		var node = doc.documentElement;
+		editor.readGraphModel(node);
 		showMap(editor.graph, "Workflow show");
 	};
 
