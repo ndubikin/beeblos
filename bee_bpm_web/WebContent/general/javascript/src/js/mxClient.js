@@ -13287,9 +13287,30 @@ mxSession.prototype.start = function()
 	{
 		this.get(this.urlInit, mxUtils.bind(this, function(req)
 		{
+
+			if (this.isValidResponse(req))
+			{
+	    			if (req.getText().length > 0)
+	    			{
+					var node = req.getDocumentElement();
+					
+					if (node == null)
+					{
+						onErrorWrapper('Invalid response: '+req.getText());
+					}
+					else
+					{
+						// dml 20140123 - AQUÍ DEBERÍA RECARGAR EL REQ.TEXT (QUE LLEGA BIEN) Y METERLO EN EL EDITOR PERO NO LO HACE...ASÍ QUE
+						// SIGO CARGÁNDOLO POR FUERA (PERO NO HARDCODEADO, SI NO CON EL MANAGEMAPBEAN)
+						var xml = mxUtils.load(req.getText()).getXml();
+						this.readGraphModel(xml.documentElement);
+					}
+				}
+			}
 			this.connected = true;
 			this.fireEvent(new mxEventObject(mxEvent.CONNECT));
 			this.poll();
+
 		}));
 	}
 };
@@ -13584,14 +13605,9 @@ mxSession.prototype.get = function(url, onLoad, onError)
     			if (req.isReady() && req.getStatus() != 404)
     			{
    				this.received += req.getText().length;
-				// dml - el sistema de notificacion cuando esta como "this.connected = true" se vuelve loco y se mueve todo en cada cambio
-				// dml - ESTA LLAMADA CASCA, que es lo que hace que no se ponga el sistema como connected y por eso tira...porque si no se vuelve loco
-				//mxUtils.alert("FIREEVENT DE GET JODELOTODO url: '" + this.url);
-				//this.fireEvent(new mxEventObject(mxEvent.GET, 'url', url, 'request', req));
-				//mxUtils.alert("NO LLEGA");
 
-					if (this.isValidResponse(req))
-					{
+				if (this.isValidResponse(req))
+				{
 		    			if (req.getText().length > 0)
 		    			{
 							var node = req.getDocumentElement();

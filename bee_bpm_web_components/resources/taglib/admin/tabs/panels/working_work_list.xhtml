@@ -37,9 +37,9 @@
             	<rich:menuSeparator />         
  				<rich:menuItem
 					oncomplete="openInNewTab('#{workingProcessQueryBean.workflowViewXmlMapUrl}');"
-					action="#{workingProcessQueryBean.loadXmlMapAsTmp}"
+					action="#{workingProcessQueryBean.loadXmlMapAndInitializeManageMapBean}"
 					submitMode="ajax">
-					<b> #{msg.label_view_map}</b> {currentRowId} 
+					<b> #{msg.label_view_map}</b> {workReference} 
                 	<a4j:actionparam name="det" assignTo="#{workingProcessQueryBean.currentProcessId}" value="{currentProcessId}" />
                 	<a4j:actionparam name="det2" assignTo="#{workingProcessQueryBean.idWork}" value="{idWork}"/>
 				</rich:menuItem>

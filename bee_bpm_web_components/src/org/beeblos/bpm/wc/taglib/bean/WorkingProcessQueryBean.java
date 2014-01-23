@@ -971,14 +971,14 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 
 	}
 	
-	public void loadXmlMapAsTmp() {
+	public void loadXmlMapAndInitializeManageMapBean() {
 		
-		if (currentProcessId != null
-				&& !currentProcessId.equals(0)){
+		if (this.currentProcessId != null
+				&& !this.currentProcessId.equals(0)){
 			try {
 				
 				String xmlMapTmp = new WProcessDefBL().getProcessDefXmlMap(this.currentProcessId, getCurrentUserId());
-
+				
 				if ((this.idWork == null
 						|| this.idWork.equals(0))
 						&& idStepWork != null
@@ -1000,49 +1000,30 @@ public class WorkingProcessQueryBean extends CoreManagedBean {
 					
 				String paintedXmlMap = new WorkflowEditorMxBL().paintXmlMap(
 						xmlMapTmp, this.idWork, currentUserId);
+
+				new WProcessDefUtil().loadInfoOnManageMapBean(this.currentProcessId, paintedXmlMap);
 				
-				String path = super.getContextPath() + super.getRequestContextPath() + PROCESS_XML_MAP_LOCATION;
-				File temp = new File(path);
-				
-				// if file doesnt exists, then create it
-				if (!temp.exists()) {
-					temp.createNewFile();
-				}
-				
-				FileWriter fw = new FileWriter(temp.getAbsoluteFile());
-				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write((paintedXmlMap != null)?paintedXmlMap:xmlMapTmp);
-				bw.flush();
-				bw.close();
-					
-			} catch (IOException e) {
-				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				message +="error:"+e.getMessage()+" - "+ e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
 			} catch (WProcessDefException e) {
-				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				message +="error:"+e.getMessage()+" - "+ e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
-			} catch (ParserConfigurationException e) {
-				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				message +="error:"+e.getMessage()+" - "+ e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
-			} catch (SAXException e) {
-				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				message +="error:"+e.getMessage()+" - "+ e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				String message = "WorkingProcessQueryBean.loadXmlMapAndInitializeManageMapBean() WProcessDefException: ";
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepWorkException e) {
-				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				message +="error:"+e.getMessage()+" - "+ e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				String message = "WorkingProcessQueryBean.loadXmlMapAndInitializeManageMapBean() WStepWorkException: ";
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
+			} catch (ParserConfigurationException e) {
+				String message = "WorkingProcessQueryBean.loadXmlMapAndInitializeManageMapBean() ParserConfigurationException: ";
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
+			} catch (SAXException e) {
+				String message = "WorkingProcessQueryBean.loadXmlMapAndInitializeManageMapBean() SAXException: ";
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
+			} catch (IOException e) {
+				String message = "WorkingProcessQueryBean.loadXmlMapAndInitializeManageMapBean() IOException: ";
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepDefException e) {
-				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				message +="error:"+e.getMessage()+" - "+ e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				String message = "WorkingProcessQueryBean.loadXmlMapAndInitializeManageMapBean() WStepDefException: ";
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			} catch (WStepWorkSequenceException e) {
-				String message = "Error trying to create the xml map temp file for process: id=" + this.currentProcessId;
-				message +="error:"+e.getMessage()+" - "+ e.getCause();
-				super.createWindowMessage(ERROR_MESSAGE, message, e);
+				String message = "WorkingProcessQueryBean.loadXmlMapAndInitializeManageMapBean() WStepWorkSequenceException: ";
+				super.createWindowMessage(ERROR_MESSAGE, message, e);			
 			}
 		}
 		

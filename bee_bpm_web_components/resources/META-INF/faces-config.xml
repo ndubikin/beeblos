@@ -25,6 +25,11 @@
 	</managed-bean>	
 	
  <managed-bean>
+  <managed-bean-name>manageMapBean</managed-bean-name>
+  <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.ManageMapBean</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean> 
+ <managed-bean>
   <managed-bean-name>login_x_Bean</managed-bean-name>
   <managed-bean-class>org.beeblos.bpm.wc.taglib.bean.Login_x_Bean</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>

@@ -29,7 +29,7 @@
        		<rich:contextMenu attached="false" id="w_process_def_search_menu" submitMode="ajax">
 				<rich:menuItem
 					oncomplete="openInNewTab('#{wProcessDefQueryBean.workflowEditorUrl}');"
-					action="#{wProcessDefQueryBean.loadXmlMapAsTmp}"
+					action="#{wProcessDefQueryBean.loadXmlMapAndInitializeManageMapBean}"
 					submitMode="ajax">
 					<b> #{msg.label_load_process_xml_map}</b> {currentRowId} 
                 	<a4j:actionparam name="det" assignTo="#{wProcessDefQueryBean.id}" value="{currentRowId}" />
