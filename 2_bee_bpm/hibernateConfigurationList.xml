@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<array-list>
+    <hibernate-configuration-parameters
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:java="http://java.sun.com" default-configuration="true" xsi:type="java:org.beeblos.bpm.core.model.HibernateConfigurationParameters">
+        <session-name>default</session-name>
+        <url>jdbc:mysql://localhost:3306</url>
+        <password>root</password>
+        <driver-name>com.mysql.jdbc.Driver</driver-name>
+        <default-catalog>fbbva_gespro</default-catalog>
+        <username>root</username>
+    </hibernate-configuration-parameters>
+    <hibernate-configuration-parameters
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:java="http://java.sun.com" default-configuration="false" xsi:type="java:org.beeblos.bpm.core.model.HibernateConfigurationParameters">
+        <session-name>otraSession</session-name>
+        <url>url.de.oracle.com</url>
+        <password>demomola</password>
+        <driver-name>oracle.jdbc.driver.OracleDriver</driver-name>
+        <default-catalog>calalogo_de_demo</default-catalog>
+        <username>demo</username>
+    </hibernate-configuration-parameters>
+    <hibernate-configuration-parameters
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:java="http://java.sun.com" default-configuration="false" xsi:type="java:org.beeblos.bpm.core.model.HibernateConfigurationParameters">
+        <session-name>hola</session-name>
+        <url>jdbc:mysql://localhost:3306</url>
+        <password>root</password>
+        <driver-name>com.mysql.jdbc.Driver</driver-name>
+        <default-catalog>fbbva_gespro_alternative</default-catalog>
+        <username>root</username>
+    </hibernate-configuration-parameters>
+</array-list>

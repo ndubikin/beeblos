@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                         "http://castor.org/mapping.dtd">
+<mapping>
+    <description>Castor generated mapping file</description>
+    
+    <include href="WStepResponseDef_castor.xml" />
+    <include href="WTimeUnit_castor.xml" />
+    <include href="WProcessUser_castor.xml" />
+    <include href="WProcessRole_castor.xml" />
+    
+    <class name="org.beeblos.bpm.core.model.WStepDef">
+        <description>Default mapping for class org.beeblos.bpm.core.model.WStepDef</description>
+        <map-to/>
+        <field name="runtimeModifiable" type="boolean">
+            <bind-xml name="runtime-modifiable" node="attribute"/>
+        </field>
+        <field name="modUser" type="java.lang.Integer">
+            <bind-xml name="mod-user" node="element"/>
+        </field>
+        <field name="response" type="org.beeblos.bpm.core.model.WStepResponseDef" collection="set">
+            <bind-xml name="response" node="element"/>
+        </field>
+        <field name="instructions" type="java.lang.String">
+            <bind-xml name="instructions" node="element"/>
+        </field>
+        <field name="reminderTimeUnit" type="org.beeblos.bpm.core.model.WTimeUnit">
+            <bind-xml name="reminder-time-unit" node="element"/>
+        </field>
+        <field name="assignedTime" type="java.lang.Integer">
+            <bind-xml name="assigned-time" node="element"/>
+        </field>
+        <field name="usersRelated" type="org.beeblos.bpm.core.model.WProcessUser" collection="set">
+            <bind-xml name="users-related" node="element"/>
+        </field>
+        <field name="idDept" type="java.lang.Integer">
+            <bind-xml name="id-dept" node="element"/>
+        </field>
+        <field name="reminderTime" type="java.lang.Integer">
+            <bind-xml name="reminder-time" node="element"/>
+        </field>
+        <field name="stepComments" type="java.lang.String">
+            <bind-xml name="step-comments" node="element"/>
+        </field>
+        <field name="idWorkZone" type="java.lang.String">
+            <bind-xml name="id-work-zone" node="element"/>
+        </field>
+        <field name="submitForm" type="java.lang.String">
+            <bind-xml name="submit-form" node="element"/>
+        </field>
+        <field name="insertDate" type="java.util.Date">
+            <bind-xml name="insert-date" node="element"/>
+        </field>
+        <field name="idPhase" type="java.lang.Integer">
+            <bind-xml name="id-phase" node="element"/>
+        </field>
+        <field name="deadlineDate" type="java.util.Date">
+            <bind-xml name="deadline-date" node="element"/>
+        </field>
+        <field name="idListZone" type="java.lang.String">
+            <bind-xml name="id-list-zone" node="element"/>
+        </field>
+        <field name="insertUser" type="java.lang.Integer">
+            <bind-xml name="insert-user" node="element"/>
+        </field>
+        <field name="idAdditionalZone" type="java.lang.String">
+            <bind-xml name="id-additional-zone" node="element"/>
+        </field>
+        <field name="timeUnit" type="org.beeblos.bpm.core.model.WTimeUnit">
+            <bind-xml name="time-unit" node="element"/>
+        </field>
+        <field name="rolesRelated" type="org.beeblos.bpm.core.model.WProcessRole" collection="set">
+            <bind-xml name="roles-related" node="element"/>
+        </field>
+        <field name="id" type="java.lang.Integer">
+            <bind-xml name="id" node="element"/>
+        </field>
+        <field name="modDate" type="java.util.Date">
+            <bind-xml name="mod-date" node="element"/>
+        </field>
+        <field name="deadlineTime" type="java.util.Date">
+            <bind-xml name="deadline-time" node="element"/>
+        </field>
+        <field name="name" type="java.lang.String">
+            <bind-xml name="name" node="element"/>
+        </field>
+    </class>
+</mapping>

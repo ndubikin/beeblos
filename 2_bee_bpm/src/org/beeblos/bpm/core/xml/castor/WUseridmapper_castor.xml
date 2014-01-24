@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                         "http://castor.org/mapping.dtd">
+<mapping>
+    <description>Castor generated mapping file</description>
+    
+    <class name="org.beeblos.bpm.core.model.WUseridmapper">
+        <description>Default mapping for class org.beeblos.bpm.core.model.WUseridmapper</description>
+        <map-to/>
+        <field name="idUser" type="java.lang.Integer">
+            <bind-xml name="id-user" node="element"/>
+        </field>
+        <field name="externalUserId" type="java.lang.String">
+            <bind-xml name="external-user-id" node="element"/>
+        </field>
+        <field name="type" type="java.lang.String">
+            <bind-xml name="type" node="element"/>
+        </field>
+        <field name="description" type="java.lang.String">
+            <bind-xml name="description" node="element"/>
+        </field>
+    </class>
+</mapping>
