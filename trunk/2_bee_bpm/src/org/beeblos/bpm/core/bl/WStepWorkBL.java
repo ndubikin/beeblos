@@ -41,6 +41,7 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WEmailAccount;
+import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -57,8 +58,6 @@ import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.core.model.thin.WProcessDefThin;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.core.util.Resourceutil;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import com.sp.common.util.StringPair;
 
@@ -75,6 +74,18 @@ public class WStepWorkBL {
 	
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
+	/**
+	 * Start an instance of a process. This method requieres the ProcessWork object and the StepWork, then
+	 * there is possible to insert or start a new process in any step of the process map..
+	 * 
+	 * @param work
+	 * @param stepw
+	 * @param currentUser
+	 * @return
+	 * @throws WStepWorkException
+	 * @throws WProcessWorkException
+	 * @throws WStepWorkSequenceException
+	 */
 	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUser) 
 			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
 		
@@ -96,10 +107,13 @@ public class WStepWorkBL {
 			work.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
 		}
 		
+		// adds the new ProcessWork
 		WProcessWorkBL wpbl = new WProcessWorkBL(); 
 		workId = wpbl.add(work, currentUser);
 		work = wpbl.getWProcessWorkByPK(workId, currentUser); // checks all properties was correctly stored in the object
 
+		_synchronizeProcessWorkManagedData(work);
+		
 		// if exists managed data set with just created work id
 		if (stepw.getManagedData()!=null) {
 			stepw.getManagedData().setCurrentWorkId(work.getId()); // process-work id
@@ -174,6 +188,72 @@ public class WStepWorkBL {
 		
 	}
 
+	private void _synchronizeProcessWorkManagedData(WProcessWork work) 
+		throws WProcessWorkException {
+		
+		if (work==null || work.getId()==null || work.getId()==0) {
+			logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no id...");
+			throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work is empy!!! ");
+		}
+		
+		if (work.getProcessDef()==null || work.getProcessDef().getId()==null || work.getProcessDef().getId()==0) {
+			logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no process def ...");
+			throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work has not ProcessDef info!!! ");
+		}
+		
+		if (work.getProcessDef().getProcessHead()==null || work.getProcessDef().getProcessHead().getId()==null || work.getProcessDef().getProcessHead().getId()==0) {
+			logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no processDef.processHead ...");
+			throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work has not ProcessHead info!!! ");
+		}
+
+		logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData: synchro managed data for ProcessDefId:"
+				+work.getProcessDef().getId()+" for created processWork id:"+work.getId()+" >> "+work.getIdObjectType());
+		
+		// no managed table defined -> don't have managed data....
+		if (work.getProcessDef().getProcessHead().getManagedTableConfiguration()==null || work.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()==null || "".equals(work.getProcessDef().getProcessHead().getManagedTableConfiguration().getName())) {
+			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has empty tablename >> no managed data defined ...");
+			return;
+		}
+
+		// no managed data fields defined (or loaded...)
+		if (work.getProcessDef().getProcessHead().getProcessDataFieldDef().size()<1) {
+			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has no managed data fields defined (or loaded...)");
+			return;			
+		}
+		
+		// obtain managed data fields to syncrhonize
+		List<WProcessDataField> dftosJdbc = new ArrayList<WProcessDataField>();
+		List<WProcessDataField> dftosApp = new ArrayList<WProcessDataField>();
+		boolean hasSyncrhoRequirements=false;
+		for (WProcessDataField pdf: work.getProcessDef().getProcessHead().getProcessDataFieldDef()) {
+			if ( pdf.isSynchronize() && pdf.isAtProcessStartup() ) {
+				if (pdf.getSynchroWith().equals("J")) {
+					dftosJdbc.add(pdf);
+				} else {
+					dftosApp.add(pdf);
+				}
+				hasSyncrhoRequirements=true;
+			}
+		}
+		
+		// no managed data fields to synchronize at startup
+		if (!hasSyncrhoRequirements) {
+			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has no managed data fields to synchronize at startup ...");
+			return;			
+		}
+		
+		if (dftosJdbc.size()>0) {
+			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has "+dftosJdbc.size()+" for JDBC synchro ...");
+		}
+		if (dftosApp.size()>0) {
+			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has "+dftosApp.size()+" for APP synchro ...");
+		}
+		
+		
+
+		
+	}
+	
 	public Integer add(WStepWork stepw, Integer currentUser) throws WStepWorkException {
 		
 		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()
@@ -334,6 +414,22 @@ public class WStepWorkBL {
 		
 	}
 
+	/**
+	 * Returns step work list for a process and a user
+	 * If isAdmin comes with true then must assume this is an "administrator" query
+	 * 
+	 * @param idProcess
+	 * @param idCurrentStep
+	 * @param status
+	 * @param userId
+	 * @param isAdmin
+	 * @param arrivingDate
+	 * @param openedDate
+	 * @param deadlineDate
+	 * @param filtroComentariosYReferencia
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
@@ -1332,10 +1428,10 @@ public class WStepWorkBL {
 	
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
-			DateTime initialArrivingDateFilter, DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
-			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
 			String action, boolean onlyActiveWorkingProcessesFilter)
 	throws WStepWorkException {
 

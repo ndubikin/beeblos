@@ -14,6 +14,7 @@ import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WProcessDataField;
+import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
 import org.beeblos.bpm.tm.TableManagerUtil;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 
@@ -266,6 +267,15 @@ public class WProcessDataFieldBL {
 		return new WProcessDataFieldDao().getWProcessDataFieldByName(name);
 	}
 
+	/**
+	 * Returns processDataField list by name and processHeadId
+	 * 
+	 * @param name
+	 * @param processHeadId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDataFieldException
+	 */
 	public WProcessDataField getWProcessDataFieldByNameAndProcessHeadId(
 			String name, Integer processHeadId, Integer currentUserId ) 
 					throws WProcessDataFieldException {
@@ -273,12 +283,26 @@ public class WProcessDataFieldBL {
 		return new WProcessDataFieldDao().getWProcessDataFieldByNameAndProcessHeadId(name,processHeadId);
 	}
 	
+	/**
+	 * Returns process data field list for a process (without security ...)
+	 * 
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDataFieldException
+	 */
 	public List<WProcessDataField> getWProcessDataFieldList(Integer currentUserId) throws WProcessDataFieldException {
 
 		return new WProcessDataFieldDao().getWProcessDataFieldList();
 	
 	}
 
+	/**
+	 * Returns process data field list for a process
+	 * @param processHeadId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDataFieldException
+	 */
 	public List<WProcessDataField> getWProcessDataFieldList(Integer processHeadId, Integer currentUserId) throws WProcessDataFieldException {
 
 		return new WProcessDataFieldDao().getWProcessDataFieldList(processHeadId);
@@ -291,6 +315,34 @@ public class WProcessDataFieldBL {
 		return new WProcessDataFieldDao().getComboList(firstLineText, separationLine, processHeadId);
 	}
 	
+	/**
+	 * returns qty of process data fields defined for a process (processHead)
+	 * 
+	 * @param processHeadId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDataFieldException
+	 */
+	public Integer hasProcessDataFields(Integer processHeadId, Integer currentUserId) throws WProcessDataFieldException {
+
+		return new WProcessDataFieldDao().hasProcessDataFields(processHeadId);
 	
+	}
+	
+	/**
+	 * returns qty of process data fields defined for a process (processHead) and a staus (all, active, required, etc)
+	 * 
+	 * @param processHeadId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDataFieldException
+	 */
+	public Integer hasProcessDataFields(
+			Integer processHeadId, ProcessDataFieldStatus status, Integer currentUserId) 
+		throws WProcessDataFieldException {
+
+		return new WProcessDataFieldDao().hasProcessDataFields(processHeadId,status);
+	
+	}	
 }
 	

@@ -16,6 +16,8 @@ import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.md.TableManagerBL;
+import org.beeblos.bpm.core.md.impl.TableManagerBLImpl;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -212,7 +214,7 @@ public class DevelopmentBL {
 		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting process works related to process : " + processDefId); 
 
 		WProcessWorkBL wpwBL = new WProcessWorkBL();
-		TableManagerBL tmBL = new TableManagerBL();
+		TableManagerBL tmBL = new TableManagerBLImpl();
 		
 		List<WProcessWork> processWorkList = wpwBL.getWProcessWorkListByProcessId(processDefId, currentUserId);
 		

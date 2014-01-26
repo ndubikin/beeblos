@@ -26,6 +26,7 @@ import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.md.impl.TableManagerBLImpl;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
@@ -1377,7 +1378,7 @@ public class WProcessDefBL {
 	public void createManagedTable(String schemaName, String tableName, List<WProcessDataField> dataFieldList) 
 			throws WProcessDefException {
 		try {
-			new TableManagerBL()
+			new TableManagerBLImpl()
 					.createManagedTable(
 							schemaName, 
 							tableName, 
