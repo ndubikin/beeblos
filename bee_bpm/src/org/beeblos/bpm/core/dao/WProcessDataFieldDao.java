@@ -2,6 +2,8 @@ package org.beeblos.bpm.core.dao;
 
 import static org.beeblos.bpm.core.util.Constants.ALL_DATA_FIELDS;
 
+import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,9 @@ import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.sp.common.util.HibernateUtil;
@@ -372,8 +376,8 @@ public class WProcessDataFieldDao {
 			tx.begin();
 
 			processs = session
-					.createQuery("From WProcessDataField pdfi WHERE pdfi.processHeadId= ? order by id ")
-					.setInteger(0, processHeadId)
+					.createQuery("From WProcessDataField pdfi WHERE pdfi.processHeadId= :processHeadId order by id ")
+					.setInteger("processHeadId", processHeadId)
 					.list();
 			
 			tx.commit();
@@ -397,6 +401,88 @@ public class WProcessDataFieldDao {
 
 		return processs;
 	}
+	
+	/**
+	 * Returns count of process data fields defined for a Process Head.
+	 * 
+	 * @param processHeadId
+	 * @return
+	 * @throws WProcessDataFieldException
+	 */
+	public Integer hasProcessDataFields(Integer processHeadId) throws WProcessDataFieldException {
+		return hasProcessDataFields(processHeadId,null);
+	}
+	
+	/**
+	 * Returns count of process data fields defined for a Process Head.
+	 * If filters applied then filters by this filters:
+	 * 	ACTIVE: qty of active process data fields
+	 *  REQUIRED: qty of required data fields
+	 *  ALL/null: all 
+	 *  
+	 * @param processHeadId
+	 * @param status
+	 * @return
+	 * @throws WProcessDataFieldException
+	 */
+	public Integer hasProcessDataFields(
+			Integer processHeadId, ProcessDataFieldStatus status) 
+		throws WProcessDataFieldException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		Long qtyRows;
+
+		List<WProcessDataField> processs = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			Criteria crit = session.createCriteria(WProcessDataField.class);
+			crit.setProjection(Projections.rowCount());
+			crit.add( Restrictions.eq("processHeadId", processHeadId));
+			
+			if (status!=null && !status.equals(ProcessDataFieldStatus.ALL) )  {
+//				crit.add( Restrictions.isNotNull("birthDate"));
+				
+				if (status.equals(ProcessDataFieldStatus.ACTIVE)) {
+					crit.add( Restrictions.eq("active", true));
+				} else if (status.equals(ProcessDataFieldStatus.INACTIVE)) {
+					crit.add( Restrictions.eq("active", false));
+				} else if (status.equals(ProcessDataFieldStatus.REQUIRED)) {
+					crit.add( Restrictions.eq("required", true));
+				}  
+				
+			}
+			
+			qtyRows = (Long) crit.uniqueResult(); 
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn( mess );
+			throw new WProcessDataFieldException(mess);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: WProcessDataFieldDao: getWProcessDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
+					ex.getMessage()+"\n"+ex.getCause()+" - "+ex.getClass();
+			logger.warn(mess);
+			throw new WProcessDataFieldException(mess);
+		}
+
+		return (qtyRows!=null?(qtyRows.intValue()):0);
+	}
+	
 	
 	//rrl 20130801
 	@SuppressWarnings("unchecked")

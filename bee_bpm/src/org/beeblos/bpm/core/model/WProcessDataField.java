@@ -40,9 +40,24 @@ public class WProcessDataField implements java.io.Serializable {
 	private String putMethod;
 	private String paramList;
 	
+	/**
+	 * At process startup the fields are filled with external source data ...
+	 */
 	private boolean atProcessStartup;
+
+	/**
+	 * At "process end" the field data is sent to external source
+	 */
 	private boolean atProcessEnd;
+
+	/**
+	 * At process startup the fields are filled with external source data ...
+	 */
 	private boolean whenStepWorkIsInvoked;
+	
+	/**
+	 * after step is processed the field data is sent to external source
+	 */	
 	private boolean whenStepWorkIsProcessed;
 
 	// trail
