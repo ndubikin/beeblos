@@ -1,11 +1,16 @@
 package org.beeblos.bpm.core.dao;
 
+import static com.sp.common.util.ConstantsCommon.DATE_FORMAT;
+import static com.sp.common.util.ConstantsCommon.DATE_HOUR_COMPLETE_FORMAT;
+import static com.sp.common.util.ConstantsCommon.LAST_ADDED;
+import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +33,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.jadira.usertype.dateandtime.joda.columnmapper.DateColumnLocalDateMapper;
+import org.jadira.usertype.dateandtime.joda.columnmapper.TimeColumnLocalTimeMapper;
+import org.jadira.usertype.dateandtime.joda.columnmapper.TimestampColumnDateTimeMapper;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
@@ -1555,10 +1568,10 @@ public class WStepWorkDao {
 
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
-			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
-			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			DateTime initialArrivingDateFilter, DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
 			String action, boolean onlyActiveWorkingProcessesFilter) 
 					throws WStepWorkException {
 		
@@ -1588,12 +1601,12 @@ public class WStepWorkDao {
 
 	private String buildWorkingStepFilter(Integer processIdFilter,
 			Integer stepIdFilter, String stepTypeFilter,
-			String referenceFilter, Integer idWorkFilter, Date initialArrivingDateFilter,
-			Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,
-			Date initialOpenedDateFilter, Date finalOpenedDateFilter,
-			boolean estrictOpenedDateFilter, Date initialDeadlineDateFilter,
-			Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
-			Date initialDecidedDateFilter, Date finalDecidedDateFilter,
+			String referenceFilter, Integer idWorkFilter, DateTime initialArrivingDateFilter,
+			DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,
+			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter,
+			boolean estrictOpenedDateFilter, LocalDate initialDeadlineDateFilter,
+			LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
+			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter,
 			boolean estrictDecidedDateFilter, boolean onlyActiveWorkingProcessesFilter, 
 			String filter) {
 		
@@ -1650,106 +1663,108 @@ public class WStepWorkDao {
 			filter += " sw.id_work = " + idWorkFilter;
 		}
 		
-		if (initialArrivingDateFilter!=null){
-			
-			java.sql.Date initialArrivingDateFilterSQL=new java.sql.Date(initialArrivingDateFilter.getTime());
-			
+		DateTimeFormatter fmtShortDate = DateTimeFormat.forPattern(DATE_FORMAT);
+		DateTimeFormatter fmtLongDate = DateTimeFormat.forPattern(DATE_HOUR_COMPLETE_FORMAT);
+
+		DateTime from = null;
+		DateTime to = null;
+
+		if (initialArrivingDateFilter != null) {
 			if (estrictArrivingDateFilter) {
 				if (!"".equals(filter)) {
-					filter+=" AND ";
+					filter += " AND ";
 				}
-				filter+=" sw.arriving_date >= '"+initialArrivingDateFilterSQL+" 00:00:00' ";
-				filter+=" AND sw.arriving_date <= '"+initialArrivingDateFilterSQL+" 23:59:59' ";
+				from = fmtLongDate.parseDateTime(fmtShortDate.print(initialArrivingDateFilter)
+						+ " 00:00:00");
+				to = fmtLongDate.parseDateTime(fmtShortDate.print(initialArrivingDateFilter)
+						+ " 23:59:59");
+				filter += " sw.arriving_date >= '" + from + "' AND sw.arriving_date <= '" + to + "' ";
 			} else {
-				if (finalArrivingDateFilter!=null){
-					java.sql.Date finalArrivingDateFilterSQL=new java.sql.Date(finalArrivingDateFilter.getTime());
+				if (finalArrivingDateFilter != null) {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" (sw.arriving_date >= '"+initialArrivingDateFilterSQL+"' AND sw.arriving_date <= '"+finalArrivingDateFilterSQL+"') ";
+					filter += " (sw.arriving_date >= '" + initialArrivingDateFilter
+							+ "' AND sw.arriving_date <= '" + finalArrivingDateFilter + "') ";
 				} else {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" sw.arriving_date >= '"+initialArrivingDateFilterSQL+"' ";
+					filter += " sw.arriving_date >= '" + initialArrivingDateFilter + "' ";
 				}
 			}
 		}
 
-		if (initialOpenedDateFilter!=null){
-			
-			java.sql.Date initialOpenedDateFilterSQL=new java.sql.Date(initialOpenedDateFilter.getTime());
-			
+		if (initialOpenedDateFilter != null) {
 			if (estrictOpenedDateFilter) {
 				if (!"".equals(filter)) {
-					filter+=" AND ";
+					filter += " AND ";
 				}
-				filter+=" sw.opened_date >= '"+initialOpenedDateFilterSQL+" 00:00:00' ";
-				filter+=" AND sw.opened_date <= '"+initialOpenedDateFilterSQL+" 23:59:59' ";
+				from = fmtLongDate.parseDateTime(fmtShortDate.print(initialOpenedDateFilter)
+						+ " 00:00:00");
+				to = fmtLongDate.parseDateTime(fmtShortDate.print(initialOpenedDateFilter)
+						+ " 23:59:59");
+				filter += " sw.opened_date >= '" + from + "' AND sw.opened_date <= '" + to + "' ";
 			} else {
-				if (finalOpenedDateFilter!=null){
-					java.sql.Date finalOpenedDateFilterSQL=new java.sql.Date(finalOpenedDateFilter.getTime());
+				if (finalOpenedDateFilter != null) {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" (sw.opened_date >= '"+initialOpenedDateFilterSQL+"' AND sw.opened_date <= '"+finalOpenedDateFilterSQL+"') ";
+					filter += " (sw.opened_date >= '" + initialOpenedDateFilter
+							+ "' AND sw.opened_date <= '" + finalOpenedDateFilter + "') ";
 				} else {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" sw.opened_date >= '"+initialOpenedDateFilterSQL+"' ";
+					filter += " sw.opened_date >= '" + initialOpenedDateFilter + "' ";
 				}
 			}
 		}
 
-		if (initialDeadlineDateFilter!=null){
-			
-			java.sql.Date initialDeadlineDateFilterSQL=new java.sql.Date(initialDeadlineDateFilter.getTime());
-			
+		if (initialDeadlineDateFilter != null) {
 			if (estrictDeadlineDateFilter) {
 				if (!"".equals(filter)) {
-					filter+=" AND ";
+					filter += " AND ";
 				}
-				filter+=" sw.deadline_date >= '"+initialDeadlineDateFilterSQL+" 00:00:00' ";
-				filter+=" AND sw.deadline_date <= '"+initialDeadlineDateFilterSQL+" 23:59:59' ";
+				filter += " sw.deadline_date = '" + initialDeadlineDateFilter;
 			} else {
-				if (finalDeadlineDateFilter!=null){
-					java.sql.Date finalDeadlineDateFilterSQL=new java.sql.Date(finalDeadlineDateFilter.getTime());
+				if (finalDeadlineDateFilter != null) {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" (sw.deadline_date >= '"+initialDeadlineDateFilterSQL+"' AND sw.deadline_date <= '"+finalDeadlineDateFilterSQL+"') ";
+					filter += " (sw.deadline_date >= '" + initialDeadlineDateFilter
+							+ "' AND sw.deadline_date <= '" + finalDeadlineDateFilter + "') ";
 				} else {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" sw.deadline_date >= '"+initialDeadlineDateFilterSQL+"' ";
+					filter += " sw.deadline_date >= '" + initialDeadlineDateFilter + "' ";
 				}
 			}
 		}
 
-		if (initialDecidedDateFilter!=null){
-			
-			java.sql.Date initialDecidedDateFilterSQL=new java.sql.Date(initialDecidedDateFilter.getTime());
-			
+		if (initialDecidedDateFilter != null) {
 			if (estrictDecidedDateFilter) {
 				if (!"".equals(filter)) {
-					filter+=" AND ";
+					filter += " AND ";
 				}
-				filter+=" sw.decided_date >= '"+initialDecidedDateFilterSQL+" 00:00:00' ";
-				filter+=" AND sw.decided_date <= '"+initialDecidedDateFilterSQL+" 23:59:59' ";
+				from = fmtLongDate.parseDateTime(fmtShortDate.print(initialDecidedDateFilter)
+						+ " 00:00:00");
+				to = fmtLongDate.parseDateTime(fmtShortDate.print(initialDecidedDateFilter)
+						+ " 23:59:59");
+				filter += " sw.decided_date >= '" + from + "' AND sw.decided_date <= '" + to + "' ";
 			} else {
-				if (finalDecidedDateFilter!=null){
-					java.sql.Date finalDecidedDateFilterSQL=new java.sql.Date(finalDecidedDateFilter.getTime());
+				if (finalDecidedDateFilter != null) {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" (sw.decided_date >= '"+initialDecidedDateFilterSQL+"' AND sw.decided_date <= '"+finalDecidedDateFilterSQL+"') ";
+					filter += " (sw.decided_date >= '" + initialDecidedDateFilter
+							+ "' AND sw.decided_date <= '" + finalDecidedDateFilter + "') ";
 				} else {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" sw.decided_date >= '"+initialDecidedDateFilterSQL+"' ";
+					filter += " sw.decided_date >= '" + initialDecidedDateFilter + "' ";
 				}
 			}
 		}
@@ -1809,13 +1824,13 @@ public class WStepWorkDao {
 		Integer idProcess;
 		Integer idStep;
 		String stepName;
-		Date arrivingDate;
-		Date openedDate;
+		DateTime arrivingDate;
+		DateTime openedDate;
 		Integer openerUser;
-		Date decidedDate;
+		DateTime decidedDate;
 		Integer performer;
-		Date deadlineDate;
-		Date deadlineTime;
+		LocalDate deadlineDate;
+		LocalTime deadlineTime;
 		String reference;
 		String comments;
 		
@@ -1861,15 +1876,28 @@ public class WStepWorkDao {
 					idStep = (cols[1] != null ? new Integer(
 							cols[1].toString()) : null);
 					stepName = (cols[2] != null ? cols[2].toString() : "");
-					arrivingDate = (cols[3] != null ? (Date) cols[3] : null);
-					openedDate = (cols[4] != null ? (Date) cols[4] : null);
+
+					//arrivingDate = (cols[3] != null ? (Date) cols[3] : null);
+					arrivingDate = (cols[3] != null ? new TimestampColumnDateTimeMapper().fromNonNullValue((Timestamp) cols[3]) : null);
+
+					//openedDate = (cols[4] != null ? (Date) cols[4] : null);
+					openedDate = (cols[4] != null ? new TimestampColumnDateTimeMapper().fromNonNullValue((Timestamp) cols[4]) : null);
+
 					openerUser = (cols[5] != null ? new Integer(
 							cols[5].toString()) : null);
-					decidedDate = (cols[6] != null ? (Date) cols[6] : null);
+					
+					//decidedDate = (cols[6] != null ? (Date) cols[6] : null);
+					decidedDate = (cols[6] != null ? new TimestampColumnDateTimeMapper().fromNonNullValue((Timestamp) cols[6]) : null);
+					
 					performer = (cols[7] != null ? new Integer(
 							cols[7].toString()) : null);
-					deadlineDate = (cols[8] != null ? (Date) cols[8] : null);
-					deadlineTime = (cols[9] != null ? (Date) cols[9] : null);
+					
+					//deadlineDate = (cols[8] != null ? (Date) cols[8] : null);
+					deadlineDate = (cols[8] != null ? new DateColumnLocalDateMapper().fromNonNullValue((java.sql.Date) cols[8]) : null);
+
+					//deadlineTime = (cols[9] != null ? (Date) cols[9] : null);
+					deadlineTime = (cols[9] != null ? new TimeColumnLocalTimeMapper().fromNonNullValue((java.sql.Time) cols[9]) : null);
+					
 					reference = (cols[10] != null ? cols[10].toString() : "");
 					locked = (cols[11] != null ? (Boolean) cols[11] : false);
 					lockedBy = (cols[12] != null ? new Integer(
@@ -1905,6 +1933,7 @@ public class WStepWorkDao {
 
 		return returnList;
 	}
+
 
 	
 	
