@@ -1,6 +1,8 @@
 package org.beeblos.bpm.core.model.noper;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 public class StepWorkLight {
 
@@ -9,13 +11,18 @@ public class StepWorkLight {
 	private String stepName;
 	private String reference;
 	private String comments;
-	private Date arrivingDate;
-	private Date openedDate;
+	
+	private DateTime arrivingDate;
+	private DateTime openedDate;
+	
 	private Integer openerUser;
-	private Date decidedDate;
+	
+	private DateTime decidedDate;
+	
 	private Integer performer;
-	private Date deadlineTime;
-	private Date deadlineDate;
+	
+	private LocalTime deadlineTime;
+	private LocalDate deadlineDate;
 	
 	// dml 20120123
 	private boolean locked;
@@ -33,9 +40,9 @@ public class StepWorkLight {
 	}
 
 	public StepWorkLight(Integer idProcess, Integer idStep,
-			String stepName, String reference, String comments, Date arrivingDate, Date openedDate,
-			Integer openerUser, Date decidedDate, Integer performer,
-			Date deadlineDate, Date deadlineTime, boolean locked, Integer lockedBy,
+			String stepName, String reference, String comments, DateTime arrivingDate, DateTime openedDate,
+			Integer openerUser, DateTime decidedDate, Integer performer,
+			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedBy,
 			Integer idStepWork, String openerUserLogin, String openerUserName,
 			String performerLogin, String performerName) {
 		super();
@@ -92,19 +99,19 @@ public class StepWorkLight {
 		this.reference = workReference;
 	}
 
-	public Date getArrivingDate() {
+	public DateTime getArrivingDate() {
 		return arrivingDate;
 	}
 
-	public void setArrivingDate(Date arrivingDate) {
+	public void setArrivingDate(DateTime arrivingDate) {
 		this.arrivingDate = arrivingDate;
 	}
 
-	public Date getOpenedDate() {
+	public DateTime getOpenedDate() {
 		return openedDate;
 	}
 
-	public void setOpenedDate(Date openedDate) {
+	public void setOpenedDate(DateTime openedDate) {
 		this.openedDate = openedDate;
 	}
 
@@ -116,11 +123,11 @@ public class StepWorkLight {
 		this.openerUser = openerUser;
 	}
 
-	public Date getDecidedDate() {
+	public DateTime getDecidedDate() {
 		return decidedDate;
 	}
 
-	public void setDecidedDate(Date decidedDate) {
+	public void setDecidedDate(DateTime decidedDate) {
 		this.decidedDate = decidedDate;
 	}
 
@@ -132,19 +139,19 @@ public class StepWorkLight {
 		this.performer = performer;
 	}
 
-	public Date getDeadlineTime() {
+	public LocalTime getDeadlineTime() {
 		return deadlineTime;
 	}
 
-	public void setDeadlineTime(Date deadlineTime) {
+	public void setDeadlineTime(LocalTime deadlineTime) {
 		this.deadlineTime = deadlineTime;
 	}
 
-	public Date getDeadlineDate() {
+	public LocalDate getDeadlineDate() {
 		return deadlineDate;
 	}
 
-	public void setDeadlineDate(Date deadlineDate) {
+	public void setDeadlineDate(LocalDate deadlineDate) {
 		this.deadlineDate = deadlineDate;
 	}
 

@@ -37,7 +37,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		logger.debug("ManagedDataSynchronizerJavaAppImpl:syncrhonizeField starting... ");
 		
 		// if there is not APP syncrhonized then throws exception
-		if (!mdf.getSynchroWith().equals(A)) {
+		if (!mdf.getSynchroWith().equals("A")) {
 			throw new ManagedDataSynchronizerException("ManagedDataSynchronizerJavaAppImpl:syncrhonizeField was called with Syncrhonize Mode nos APP...");
 		}
 		
@@ -114,7 +114,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		try {
 
 			Class<?> cls = Class.forName(classToInvoke);
-				
+
 			Method m = null;
 			Object res = null;
 			m = cls.getMethod(methodToInvoke);

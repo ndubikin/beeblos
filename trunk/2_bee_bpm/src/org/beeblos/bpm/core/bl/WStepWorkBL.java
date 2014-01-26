@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
+import static org.beeblos.bpm.core.model.enumerations.ProcessStage.STARTUP;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
@@ -29,6 +30,7 @@ import org.beeblos.bpm.core.dao.WUserRoleDao;
 import org.beeblos.bpm.core.email.bl.SendEmailBL;
 import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
+import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
 import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -40,6 +42,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.md.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -58,7 +61,10 @@ import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.core.model.thin.WProcessDefThin;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.core.util.Resourceutil;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
+import com.sp.common.model.ManagedDataField;
 import com.sp.common.util.StringPair;
 
 public class WStepWorkBL {
@@ -247,6 +253,17 @@ public class WStepWorkBL {
 		}
 		if (dftosApp.size()>0) {
 			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has "+dftosApp.size()+" for APP synchro ...");
+			ManagedDataSynchronizerJavaAppImpl fieldSyncrhonizer = new ManagedDataSynchronizerJavaAppImpl();
+			
+			for (WProcessDataField pdf: dftosApp) {
+				try {
+					fieldSyncrhonizer.syncrhonizeField(work, pdf, STARTUP);
+				} catch (ManagedDataSynchronizerException e) {
+					logger.error("Can't sinchronize field:"+pdf.getName());
+				}	
+			}
+			
+			
 		}
 		
 		
@@ -1428,10 +1445,10 @@ public class WStepWorkBL {
 	
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
-			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
-			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			DateTime initialArrivingDateFilter, DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
 			String action, boolean onlyActiveWorkingProcessesFilter)
 	throws WStepWorkException {
 
