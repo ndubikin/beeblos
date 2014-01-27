@@ -113,30 +113,44 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 
 		try {
 
-			Class<?> cls = Class.forName(classToInvoke);
+			Class<?> cls;
+			Object instance = new Object();
+			
+			cls = Class.forName(classToInvoke);
+			instance = cls.newInstance();
+
+//			instance = getObject(cls);
 
 			Method m = null;
 			Object res = null;
-			m = cls.getMethod(methodToInvoke);
+			
+			m = instance.getClass().getMethod(methodToInvoke,new Class[]{Integer.class});
+			
 			res = m.invoke(res, id);
 									
 		} catch (ClassNotFoundException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id);
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod SecurityException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id);
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod SecurityException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod NoSuchMethodException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id);
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod NoSuchMethodException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalArgumentException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id);
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalArgumentException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalAccessException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id);
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalAccessException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod InvocationTargetException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id);
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod InvocationTargetException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod InstantiationException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod Exception class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause()+" - "+e.getClass());
 			e.printStackTrace();
 		}
 		
