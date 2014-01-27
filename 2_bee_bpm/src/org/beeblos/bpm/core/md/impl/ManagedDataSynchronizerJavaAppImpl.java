@@ -126,7 +126,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 			
 			m = instance.getClass().getMethod(methodToInvoke,new Class[]{Integer.class});
 			
-			res = m.invoke(res, id);
+			res = m.invoke(instance, new Object[] { id });
 									
 		} catch (ClassNotFoundException e) {
 			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
