@@ -1,4 +1,4 @@
-package org.beeblos.bpm.core.md.impl;
+package org.beeblos.bpm.tm.impl;
 
 import static org.beeblos.bpm.core.model.enumerations.ProcessStage.END;
 import static org.beeblos.bpm.core.model.enumerations.ProcessStage.STARTUP;
@@ -13,10 +13,10 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
-import org.beeblos.bpm.core.md.ManagedDataSynchronizer;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.enumerations.ProcessStage;
+import org.beeblos.bpm.tm.ManagedDataSynchronizer;
 /**
  * Main class to synchronize managed data with external fields.
  * Possibles sources are: JDBC, App (in the scop of this application at runtime)

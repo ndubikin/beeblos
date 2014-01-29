@@ -26,6 +26,14 @@ public class WProcessWorkBL {
 		
 	}
 	
+	/**
+	 * Adds a new ProcessWork - new process is launched ...
+	 * 
+	 * @param process
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessWorkException
+	 */
 	public Integer add(WProcessWork process, Integer currentUserId) throws WProcessWorkException {
 		
 		logger.debug("add() WProcessWork - Name: ["+process.getId()+"]");
@@ -44,7 +52,11 @@ public class WProcessWorkBL {
 	}
 	
 	
-	// nes 20130728 - por el tema de aceptar procesos genericos no relacionados con 1 objeto obligatoriamente
+	/**
+	 * nes 20130728 - por el tema de aceptar procesos genericos no relacionados con 1 objeto obligatoriamente
+	 * 
+	 * @param process
+	 */
 	private void _setObjectType(WProcessWork process){
 		if (process.getIdObjectType()==null) {
 			process.setIdObjectType(WProcessWork.class.getName());

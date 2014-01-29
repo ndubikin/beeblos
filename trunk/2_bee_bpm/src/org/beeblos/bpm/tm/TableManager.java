@@ -124,7 +124,13 @@ public class TableManager {
 
 	}
 	
-	// persists (update or insert) a record in managed table
+	/**
+	 * persists (update or insert) a record in managed table
+	 * 
+	 * @param managedData
+	 * @return
+	 * @throws TableManagerException
+	 */
 	public Integer persist(ManagedData managedData) throws TableManagerException {
 		
 		if (managedData==null) throw new TableManagerException("can't process null managedData!");
@@ -163,7 +169,17 @@ public class TableManager {
 //		return null;
 	}
 	
-	// only can arrives here if all required data was previously checked!
+	// 
+	/**
+	 * Insert new record with managed data related with a processWork
+	 * required check: only can arrives here if all required data was previously checked!
+	 * 
+	 * @param managedData
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws TableManagerException
+	 */
 	private Integer insert(ManagedData managedData) 
 			throws ClassNotFoundException, SQLException, TableManagerException {
 		logger.debug("TableManager:insert managedData");

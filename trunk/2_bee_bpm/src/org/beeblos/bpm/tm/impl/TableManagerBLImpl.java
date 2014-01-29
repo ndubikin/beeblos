@@ -1,11 +1,11 @@
-package org.beeblos.bpm.core.md.impl;
+package org.beeblos.bpm.tm.impl;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import org.beeblos.bpm.core.md.TableManagerBL;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.tm.TableManager;
+import org.beeblos.bpm.tm.TableManagerBL;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableHasRecordsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;

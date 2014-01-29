@@ -10,8 +10,8 @@ import com.sp.common.model.ManagedDataField;
  * This object represents a table residing in a schema/database which manages
  * user data fields related with a process.
  * The information is loaded from processHead.getManagedTableConfiguration() wich has
- * the managed table confirutarion info like tableName, schema, catalog, etc, and
- * the data field list (List<ManagedDataField> dataField) wich is loaded from 
+ * the managed table configuration info like tableName, schema, catalog, etc, and
+ * the data field list (List<ManagedDataField> dataField) which is loaded from 
  * processHead.getProcessDataFieldDef() and must be match with database engine field
  * list for this table.
  * 

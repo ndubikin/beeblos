@@ -20,10 +20,17 @@ public class ListConverters {
 	public ListConverters() {
     }
 
-	/*
+
+	/**
 	 * converts a WProcessDataField hashset to a list for manage data input and persist it
 	 * 
-	 * mode: 1 - only active process data field / null || 0 - all process data field
+	 *   mode: 1 - only active process data field / null || 0 - all process data field
+	 *   
+	 * @param convSet
+	 * @param currentWorkId
+	 * @param currentStepWorkId
+	 * @param mode
+	 * @return
 	 */
 	public static List<ManagedDataField> convertWProcessDataFieldToList(
 			Set<WProcessDataField> convSet, Integer currentWorkId, Integer currentStepWorkId, int mode) {

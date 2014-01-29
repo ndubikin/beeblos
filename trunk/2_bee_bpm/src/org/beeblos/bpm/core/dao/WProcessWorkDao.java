@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.hibernate.Hibernate;
@@ -38,6 +39,13 @@ public class WProcessWorkDao {
 		
 	}
 	
+	/**
+	 * Insert a new process work -> new process is launched!
+	 * 
+	 * @param processWork
+	 * @return
+	 * @throws WProcessWorkException
+	 */
 	public Integer add(WProcessWork processWork) throws WProcessWorkException {
 		
 		logger.debug("add() WProcessWork - Name: ["+processWork.getReference()+"]");
@@ -56,6 +64,16 @@ public class WProcessWorkDao {
 				HibernateUtil.update(processWork);
 			}
 
+			// if exists managed data then will be explore if there are managed data fields to synchronize at startup process level...
+			if (processWork.getProcessDef().getProcessHead().getManagedTableConfiguration()!=null
+					&& processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()!=null
+					&& !"".equals(processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()) ) {
+				
+				ManagedData md = 
+						org.beeblos.bpm.tm.TableManagerBeeBpmUtil
+										.createManagedDataObject(processWork);
+			}
+			
 		} catch (HibernateException ex) {
 			logger.error("WProcessWorkDao: add - Can't store process definition record "+ 
 					processWork.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause() );

@@ -1,4 +1,4 @@
-package org.beeblos.bpm.core.md;
+package org.beeblos.bpm.tm;
 
 import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
 import org.beeblos.bpm.core.model.WProcessDataField;

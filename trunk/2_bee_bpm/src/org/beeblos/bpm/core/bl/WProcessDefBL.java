@@ -26,7 +26,6 @@ import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
-import org.beeblos.bpm.core.md.impl.TableManagerBLImpl;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
@@ -38,6 +37,7 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;
+import org.beeblos.bpm.tm.impl.TableManagerBLImpl;
 import org.joda.time.DateTime;
 
 import com.mxgraph.model.mxCell;

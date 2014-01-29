@@ -42,7 +42,6 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.md.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -61,6 +60,7 @@ import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.core.model.thin.WProcessDefThin;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.core.util.Resourceutil;
+import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -118,6 +118,7 @@ public class WStepWorkBL {
 		workId = wpbl.add(work, currentUser);
 		work = wpbl.getWProcessWorkByPK(workId, currentUser); // checks all properties was correctly stored in the object
 
+		// retrieves data from external sources and update fields in managed table
 		_synchronizeProcessWorkManagedData(work);
 		
 		// if exists managed data set with just created work id
@@ -129,7 +130,7 @@ public class WStepWorkBL {
 //			stepw.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
 		}
 
-		// if work persisted ok continue with step-work
+		// if work was persisted ok thencontinue with step-work
 		stepw.setwProcessWork(work);
 		// timestamp & trace info
 		stepw.setArrivingDate(new Date());
@@ -262,11 +263,11 @@ public class WStepWorkBL {
 					logger.error("Can't sinchronize field:"+pdf.getName());
 				}	
 			}
-			
-			
 		}
 		
-		
+//		for (WProcessDataField pdf: dftosApp ) {
+//			System.out.println("name:"+pdf.getFieldName()+" value:"+pdf.get);
+//		}
 
 		
 	}

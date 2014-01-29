@@ -22,6 +22,7 @@ import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
+import org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
@@ -422,15 +423,8 @@ public class WStepWorkDao {
 					&& stepWork.getwProcessWork().getManagedTableConfiguration().getName()!=null
 					&& !"".equals(stepWork.getwProcessWork().getManagedTableConfiguration().getName()) ) {
 				
-				ManagedData md = new ManagedData();
-				md.setDataField( 
-						ListConverters.convertWStepDataFieldToList
-						 (stepWork.getCurrentStep().getStepDataFieldList(),null,null,ACTIVE_DATA_FIELDS) );
-				md.setChanged(false);				
-				md.setCurrentStepWorkId(stepWork.getId()); // step work id (work)
-				md.setCurrentWorkId(stepWork.getwProcessWork().getId()); // head step work id (work)
-				md.setProcessId(stepWork.getwProcessWork().getProcessHeadId()); // process head id (def)
-				md.setManagedTableConfiguration(stepWork.getwProcessWork().getManagedTableConfiguration());
+				// when load a wStepWork we must load managed data related ...
+				ManagedData md = org.beeblos.bpm.tm.TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
 
 				// IMPLEMENTAR
 				TableManager tm = new TableManager();
@@ -450,6 +444,8 @@ public class WStepWorkDao {
 			}
 		} 
 	}
+
+
 	
 	// load managed data for stepWork
 	private void _persistStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
