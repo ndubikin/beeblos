@@ -80,10 +80,11 @@ public class WProcessDataFieldDao {
 		return id;
 	}
 	
-	/*
-	 * arriving here implies bl check and detects change in existing object processDataField
-	 * 
-	 * this process data field is related with managed table and must check implicancies
+	/**
+	 * arriving here implies BL check and detects the changes in existing object processDataField
+	 * this process data field is related with managed table and must check implicancies of modify 
+	 * an existing data field already defined and will be changed (the definition of the data field...) 
+	 * (this operations likes as a RMDB ALTER TABLE operation...)
 	 * 
 	 */
 	public void update(
