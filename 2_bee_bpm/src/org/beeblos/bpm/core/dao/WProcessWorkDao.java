@@ -7,7 +7,6 @@ import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +16,19 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessWork;
+import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.jadira.usertype.dateandtime.joda.columnmapper.TimestampColumnDateTimeMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -186,6 +192,178 @@ public class WProcessWorkDao {
 		}
 
 		return process;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<WProcessWork> getWProcessWorkList(
+			Integer processId, Integer idObject, String idObjectType, String mode, 
+			Integer currentUserId, boolean isAdminMode)
+			throws WProcessWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WProcessWork> lProcessWork = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			/**
+			 * Se crea la criteria sobre el objeto principal con los alias de los posibles subobjetos
+			 * donde podrán existir filtros
+			 */
+			Criteria criteria = session.createCriteria(WProcessWork.class, "wpw")
+					.createAlias("processDef", "processDef", JoinType.LEFT_OUTER_JOIN);
+
+			criteria = this._agregarFiltrosACriteria(criteria,
+					processId, idObject, idObjectType);
+
+			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(mode);
+
+			if (criteriaWStepWork != null){
+				criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
+			}
+
+			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+			lProcessWork = (ArrayList<WProcessWork>) criteria.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			logger.warn(mensaje);
+			throw new WProcessWorkException(mensaje);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			logger.warn(mensaje);
+			throw new WProcessWorkException(mensaje);
+		}
+
+		return lProcessWork;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public Integer getWorkCount(
+			Integer processId, Integer idObject, String idObjectType, String mode)
+			throws WProcessWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		
+		Long qty = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			/**
+			 * Se crea la criteria sobre el objeto principal con los alias de los posibles subobjetos
+			 * donde podrán existir filtros
+			 */
+			Criteria criteria = session.createCriteria(WProcessWork.class, "wpw")
+					.createAlias("processDef", "processDef", JoinType.LEFT_OUTER_JOIN);
+
+			criteria = this._agregarFiltrosACriteria(criteria,
+					processId, idObject, idObjectType);
+
+			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(mode);
+
+			if (criteriaWStepWork != null){
+				criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
+			}
+			
+			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+			criteria.setProjection(Projections.rowCount());
+
+			qty = (Long) criteria.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			logger.warn(mensaje);
+			throw new WProcessWorkException(mensaje);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			logger.warn(mensaje);
+			throw new WProcessWorkException(mensaje);
+		}
+
+		if (qty == null){
+			return null;
+		} else {
+			return qty.intValue();
+		}
+
+	}
+
+	private Criteria _agregarFiltrosACriteria(Criteria criteria, 
+			Integer processId, Integer idObject, String idObjectType){
+		
+		// criteria para el processId
+		if (processId != null && !processId.equals(0)){
+			criteria = criteria
+					.add( Restrictions.eq("processDef.id", idObject) );
+			
+		}
+
+		// criteria para el idObject
+		if (idObject != null && !idObject.equals(0)){
+			criteria = criteria
+					.add( Restrictions.eq("wpw.idObject", idObject) );
+			
+		}
+
+		// criteria para el idObjectType
+		if (idObjectType != null && !"".equals(idObjectType)){
+			criteria = criteria
+					.add( Restrictions.eq("wpw.idObjectType", idObjectType) );
+			
+		}
+		
+		return criteria;
+		
+	}
+
+	private DetachedCriteria _filtroCriteriaWStepWork(String mode){
+		
+		// DetachedCriteria para los datos que se buscarán sobre el evaluador
+		DetachedCriteria criteriaWStepWork = DetachedCriteria.forClass(WStepWork.class, "wsw")
+				.createAlias("wProcessWork", "wProcessWork", JoinType.LEFT_OUTER_JOIN)
+				.setProjection(Property.forName("wProcessWork.id"));
+		
+		if (mode != null){
+			if (mode.equals(ALIVE)) {
+				criteriaWStepWork = criteriaWStepWork
+						.add( Restrictions.isNull("wsw.decidedDate") );
+			} else if (mode.equals(PROCESSED)) {
+				criteriaWStepWork = criteriaWStepWork
+						.add( Restrictions.isNotNull("wsw.decidedDate") );
+			} 
+		}
+
+		return criteriaWStepWork;
+
 	}
 
 	/**
@@ -505,61 +683,6 @@ public class WProcessWorkDao {
 
 		return returnList;
 	}	
-
-	/**
-	 * returns qty of existing works in WStepWork
-	 * default: ALL
-	 * 
-	 * @param processId
-	 * @param mode: ALL / ALIVE / PROCESSED
-	 * @return
-	 * @throws WProcessWorkException
-	 */
-	public Integer getWorkCount (Integer processId, String mode) 
-			throws WProcessWorkException {
-
-		org.hibernate.Session session = null;
-		org.hibernate.Transaction tx = null;
-
-		BigInteger qtySteps;
-
-		String query = "SELECT COUNT(*) FROM w_process_work wpw WHERE wpw.id_process = " + processId;
-		
-		if (mode.equals(ALIVE)) {
-			query += " AND wsw.decided_date is null";
-		} else if (mode.equals(PROCESSED)) {
-			query += " AND wsw.decidedDate is not null";
-		} 
-		
-		try {
-
-			session = HibernateUtil.obtenerSession();
-			tx = session.getTransaction();
-
-			tx.begin();
-
-			qtySteps = (BigInteger) session
-								.createSQLQuery(query)
-								.uniqueResult();
-
-			tx.commit();
-
-		} catch (HibernateException ex) {
-			if (tx != null)
-				tx.rollback();
-			String mess="WProcessWorkDao: getWorkCount() - error trying count processWork - " +
-					ex.getMessage()+"\n"+ex.getCause();
-			logger.warn(mess);
-			throw new WProcessWorkException(mess);
-
-		}
-		
-		if (qtySteps != null){
-			return qtySteps.intValue();
-		}
-		
-		return 0;		
-	}
 
 }
 	

@@ -160,18 +160,20 @@ public class WProcessWorkBL {
 	 * @param processId
 	 * @param idObject
 	 * @param idObjectType
+	 * @param mode: ALL / ALIVE / PROCESSED
 	 * @param currentUserId
 	 * boolean isAdminMode -> indica que se está trabajando en modo admin y que no hay que filtrar por el usuario ...
 	 * @return
 	 * @throws WProcessWorkException
 	 */
 	public List<WProcessWork> getWProcessWorkList(
-			Integer processId, Integer idObject, String idObjectType, Integer currentUserId, boolean isAdminMode) 
+			Integer processId, Integer idObject, String idObjectType, String mode, 
+			Integer currentUserId, boolean isAdminMode) 
 		throws WProcessWorkException {
-		// este y el de abajo deberian llamar al mismo método del dao y solo pasar idProcess que llega o null
-		// OJO: EL USUARIO TIENE Q PASAR ABAJO PORQUE ESTO ES DEPENDIENTE DEL USUARIO, SOLO USUARIOS QUE TENGAN
-		// PERMISOS PUEDEN VER ESTOS PASOS...
-		return 
+
+		return new WProcessWorkDao().getWProcessWorkList(
+				processId, idObject, idObjectType, mode, currentUserId, isAdminMode);
+
 	}
 	
 	/**
@@ -180,19 +182,20 @@ public class WProcessWorkBL {
 	 * @param processId
 	 * @param idObject
 	 * @param idObjectType
+	 * @param mode: ALL / ALIVE / PROCESSED
 	 * @param currentUserId
 	 * boolean isAdminMode -> indica que se está trabajando en modo admin y que no hay que filtrar por el usuario ...
 	 * @return
 	 * @throws WProcessWorkException
 	 */
 	public List<WProcessWork> getWProcessWorkList(
-			Integer idObject, String idObjectType, Integer currentUserId, boolean isAdminMode) 
+			Integer idObject, String idObjectType, String mode, 
+			Integer currentUserId, boolean isAdminMode) 
 		throws WProcessWorkException {
-// este y el de arriba deberian llamar al mismo método del dao y solo pasar idProcess que llega o null
-		// OJO: EL USUARIO TIENE Q PASAR ABAJO PORQUE ESTO ES DEPENDIENTE DEL USUARIO, SOLO USUARIOS QUE TENGAN
-		// PERMISOS PUEDEN VER ESTOS PASOS...
 
-		return 
+		return new WProcessWorkDao().getWProcessWorkList(
+				null, idObject, idObjectType, mode, currentUserId, isAdminMode);
+
 	}	
 	
 	/**
@@ -233,9 +236,7 @@ public class WProcessWorkBL {
 	 * @throws WProcessWorkException
 	 */
 	public Integer getWorkCount (Integer processId, String mode) throws WProcessWorkException {
-		
-		// david este método del dao deberias reunificarlo con el del proceso de abajo y que ambos llamen al mismo ok?
-		return new WProcessWorkDao().getWorkCount(processId, mode);
+		return new WProcessWorkDao().getWorkCount(processId, null, null, mode);
 	}
 	
 	/**
@@ -251,8 +252,7 @@ public class WProcessWorkBL {
 	 */
 	public Integer getWorkCount (Integer processId, Integer idObject, String idObjectType, String mode) 
 			throws WProcessWorkException {
-		// david este método, si te pasan idObject en null y idObjectType en null, debe comportarse igual que el de arriba...
-		return 
+		return new WProcessWorkDao().getWorkCount(processId, idObject, idObjectType, mode);
 	}
 	
 	/**
@@ -267,9 +267,7 @@ public class WProcessWorkBL {
 	 */
 	public Integer getWorkCount (Integer idObject, String idObjectType, String mode) 
 			throws WProcessWorkException {
-		// david aqui si que no aceptariamos idObject en null ni idObjectType en null, pero llamar
-		// debe llamar al mismo método que los otros dos, ok?
-		return 
+		return new WProcessWorkDao().getWorkCount(null, idObject, idObjectType, mode);
 	}
 	
 	

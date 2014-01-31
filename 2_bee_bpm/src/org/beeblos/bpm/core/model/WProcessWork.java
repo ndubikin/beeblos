@@ -30,13 +30,17 @@ public class WProcessWork implements java.io.Serializable {
 	
 	private Date startingTime;
 	private Integer startingType;
+	
 	private Date endTime;
+	
 	private String reference;
 	private String comments;
+	
 	private Integer insertUser;
 	private Date insertDate;
 	private Integer modUser;
 	private Date modDate;
+	
 	private Integer idObject;
 	private String idObjectType;
 
