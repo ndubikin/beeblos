@@ -136,7 +136,9 @@ public class WProcessWorkBL {
 	/**
 	 * @author dmuleiro - 20130829
 	 * 
-	 * Returns the List<WProcessWork> related with a concrete WProcessDef.
+	 * Returns the List<WProcessWork> related with a given WProcessDef.
+	 * NOTA: ESTO SOLO LO USAMOS DESDE DEVELOPMENT PARA BORRAR STEPS
+	 * TODO: ESTO HAY QUE REVISARLO Y DEJARLO BLOQUEADO PARA USO EN PRODUCCION. NESTOR 20140131
 	 *
 	 * @param  Integer processId
 	 * @param  Integer currentUserId
@@ -146,11 +148,60 @@ public class WProcessWorkBL {
 	 * @throws WProcessWorkException 
 	 * 
 	 */
-	public List<WProcessWork> getWProcessWorkListByProcessId(Integer processId, Integer currentUserId) throws WProcessWorkException {
+	public List<WProcessWork> getWProcessWorkListByProcessId(
+			Integer processId, Integer currentUserId) throws WProcessWorkException {
 
 		return new WProcessWorkDao().getWProcessWorkListByProcessId(processId);
 	}
 	
+	/**
+	 * Returns a list of processWork by the given filters
+	 * 
+	 * @param processId
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUserId
+	 * boolean isAdminMode -> indica que se está trabajando en modo admin y que no hay que filtrar por el usuario ...
+	 * @return
+	 * @throws WProcessWorkException
+	 */
+	public List<WProcessWork> getWProcessWorkList(
+			Integer processId, Integer idObject, String idObjectType, Integer currentUserId, boolean isAdminMode) 
+		throws WProcessWorkException {
+		// este y el de abajo deberian llamar al mismo método del dao y solo pasar idProcess que llega o null
+		// OJO: EL USUARIO TIENE Q PASAR ABAJO PORQUE ESTO ES DEPENDIENTE DEL USUARIO, SOLO USUARIOS QUE TENGAN
+		// PERMISOS PUEDEN VER ESTOS PASOS...
+		return 
+	}
+	
+	/**
+	 * Returns a list of processWork by the given filters
+	 * 
+	 * @param processId
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUserId
+	 * boolean isAdminMode -> indica que se está trabajando en modo admin y que no hay que filtrar por el usuario ...
+	 * @return
+	 * @throws WProcessWorkException
+	 */
+	public List<WProcessWork> getWProcessWorkList(
+			Integer idObject, String idObjectType, Integer currentUserId, boolean isAdminMode) 
+		throws WProcessWorkException {
+// este y el de arriba deberian llamar al mismo método del dao y solo pasar idProcess que llega o null
+		// OJO: EL USUARIO TIENE Q PASAR ABAJO PORQUE ESTO ES DEPENDIENTE DEL USUARIO, SOLO USUARIOS QUE TENGAN
+		// PERMISOS PUEDEN VER ESTOS PASOS...
+
+		return 
+	}	
+	
+	/**
+	 * Returns all processWork for a single user ...
+	 * 
+	 * @param currentUser
+	 * @return
+	 * @throws WProcessWorkException
+	 */
 	public List<WProcessWork> getWProcessWorks(Integer currentUser) throws WProcessWorkException {
 
 		return new WProcessWorkDao().getWProcessWorks();
@@ -173,7 +224,7 @@ public class WProcessWorkBL {
 	}
 
 	/**
-	 * returns qty of existing works in WStepWork
+	 * returns qty of existing process work for a given processId
 	 * default: ALL
 	 * 
 	 * @param processId
@@ -182,8 +233,46 @@ public class WProcessWorkBL {
 	 * @throws WProcessWorkException
 	 */
 	public Integer getWorkCount (Integer processId, String mode) throws WProcessWorkException {
+		
+		// david este método del dao deberias reunificarlo con el del proceso de abajo y que ambos llamen al mismo ok?
 		return new WProcessWorkDao().getWorkCount(processId, mode);
 	}
+	
+	/**
+	 * returns qty of existing process work for a given processId, idObject && objectType
+	 * default: ALL
+	 *
+	 * @param processId
+	 * @param idObject
+	 * @param idObjectType
+	 * @param mode: ALL / ALIVE / PROCESSED
+	 * @return
+	 * @throws WProcessWorkException
+	 */
+	public Integer getWorkCount (Integer processId, Integer idObject, String idObjectType, String mode) 
+			throws WProcessWorkException {
+		// david este método, si te pasan idObject en null y idObjectType en null, debe comportarse igual que el de arriba...
+		return 
+	}
+	
+	/**
+	 * returns qty of existing process work for a given idObject && objectType for all processes
+	 * default: ALL
+	 *
+	 * @param idObject
+	 * @param idObjectType
+	 * @param mode: ALL / ALIVE / PROCESSED
+	 * @return
+	 * @throws WProcessWorkException
+	 */
+	public Integer getWorkCount (Integer idObject, String idObjectType, String mode) 
+			throws WProcessWorkException {
+		// david aqui si que no aceptariamos idObject en null ni idObjectType en null, pero llamar
+		// debe llamar al mismo método que los otros dos, ok?
+		return 
+	}
+	
+	
 
 }
 	
