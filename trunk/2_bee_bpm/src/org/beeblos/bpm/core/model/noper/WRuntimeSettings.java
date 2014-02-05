@@ -4,6 +4,7 @@ package org.beeblos.bpm.core.model.noper;
 
 import java.util.Date;
 
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WTimeUnit;
 
 
@@ -22,6 +23,12 @@ public class WRuntimeSettings implements java.io.Serializable {
 	private String instructions;
 	private String stepComments;
 
+	/**
+	 * To update or synchronize managed data from step...
+	 */
+	private ManagedData managedData;
+	
+	
 //	private String idListZone;
 //	private String idWorkZone;
 //	private String idAdditionalZone;
@@ -40,11 +47,13 @@ public class WRuntimeSettings implements java.io.Serializable {
 
 
 	public WRuntimeSettings(String instructions, String stepComments,
+			ManagedData md,
 			WTimeUnit timeUnit, Integer assignedTime, Date deadlineDate,
 			Date deadlineTime, WTimeUnit reminderTimeUnit, Integer reminderTime) {
 		super();
 		this.instructions = instructions;
 		this.stepComments = stepComments;
+		this.managedData = md;
 		this.timeUnit = timeUnit;
 		this.assignedTime = assignedTime;
 		this.deadlineDate = deadlineDate;
@@ -78,6 +87,16 @@ public class WRuntimeSettings implements java.io.Serializable {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
+
+	public ManagedData getManagedData() {
+		return managedData;
+	}
+
+
+	public void setManagedData(ManagedData managedData) {
+		this.managedData = managedData;
+	}
+
 
 	/**
 	 * @return the assignedTime

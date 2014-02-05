@@ -447,7 +447,12 @@ public class WStepWorkDao {
 
 
 	
-	// load managed data for stepWork
+	// persists managed data for stepWork
+	// TODO: ojo porque estoy persistiendo el managed data de un step work cuando le hago update.
+	// pero el problema es que si esto es un -process- resulta que puedo generar "n" rutas y esas 
+	// rutas son al final wStepWork, por lo que podría estar persistiendo "n" veces el mismo managed
+	// data, porque el managed data se persiste desde el step pero a nivel del "work".
+	// HAY QUE DARLE UNA VUELTA A ESTO ...
 	private void _persistStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
 		if (stepWork.getManagedData()!=null
 				&& stepWork.getManagedData().getDataField()!=null 

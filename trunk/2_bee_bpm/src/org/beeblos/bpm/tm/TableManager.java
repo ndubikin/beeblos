@@ -311,8 +311,10 @@ public class TableManager {
 				rs.last();
 				int qtyRows = rs.getRow();
 				logger.debug("--------->> # rows recovered (ok=1):"+qtyRows);
-				rs.first();
-				loadRecord(rs, managedData);
+				if (qtyRows>0) {
+					rs.first();
+					loadRecord(rs, managedData);
+				}
 			}
 
 		} catch (MySQLSyntaxErrorException e1) {
