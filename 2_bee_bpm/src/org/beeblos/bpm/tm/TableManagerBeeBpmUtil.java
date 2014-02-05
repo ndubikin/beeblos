@@ -30,8 +30,8 @@ public class TableManagerBeeBpmUtil {
 	public static ManagedData createManagedDataObject(WStepWork stepWork) {
 		
 		return createManagedDataObject(
+						stepWork.getwProcessWork().getId(),		
 						stepWork.getId(),
-						stepWork.getwProcessWork().getId(),
 						stepWork.getwProcessWork().getProcessHeadId(),
 						stepWork.getwProcessWork().getManagedTableConfiguration(),
 						
