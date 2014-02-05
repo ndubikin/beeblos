@@ -701,9 +701,9 @@ public class WStepWorkDao {
 			
 			// nes 20130221 - si es admin van todos, no se filtra por usuario ...
 			// set userId
-			if (!isAdmin) {
+//			if (!isAdmin) { // nes 20140204 - al agregarle reqFilter si es admin, siempre hay que setear userId ...
 				q.setInteger("userId",userId);
-			}
+///			}
 			
 			// retrieve list
 			stepws = q.list();
@@ -738,9 +738,27 @@ public class WStepWorkDao {
 		if (!isAdmin) {
 			reqFilter = " ( ( wsr.id_role in ";
 			reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
+			reqFilter +=" ( wsu.id_user=:userId ) OR "; // nes 20140204 - faltaba que traiga los del usuario específicamente indicado en el step (solo traiamos los usuarios que pertenecian a roles)
 			reqFilter +=" ( wswa.id_role in ";
 			reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
 			reqFilter +=" ( wswa.id_user =:userId ) ) ";
+		} else {
+			
+			// si viene con el filtro de "isAdmin" prendido, entonces devuelvo la lista de procesos sobre los que
+			// el usuario es admin (esto debe estar seteado a nivel de process_role or process_user
+			// Si el usuario es admin a nivel de un paso, esta query no se entera ...
+			
+			// TODO: hay que agregar el filtro para que traiga los steps sobre los que el usuario sea administrador
+			// a nivel de step ... 
+			
+			reqFilter =  "( wpw.id_process in  ( SELECT distinct wpd.id FROM w_process_def wpd ";
+
+			reqFilter += "    left join w_process_role wpr ON wpd.id=wpr.id_process AND wpr.admin=1 ";
+			reqFilter += "    left join w_user_role wur ON wpr.id_role=wur.id_role ";
+			reqFilter += "    left join w_process_user wpu ON wpd.id=wpu.id_process ";
+
+			reqFilter += "    WHERE wur.id_user=:userId ";
+			reqFilter += "            OR (wpu.admin=1 AND wpu.id_user=:userId) ) ) ";
 		}
 		return reqFilter;
 		
