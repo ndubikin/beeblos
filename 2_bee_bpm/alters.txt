@@ -29,3 +29,39 @@ ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` CHANGE COLUMN `order` `ord
 
 ALTER TABLE `bee_bpm_dev`.`w_process_head_managed_data` CHANGE COLUMN `sxema` `schema_` VARCHAR(100) NOT NULL  ;
 
+## nes 20140207 - tabla para definir metodos para interacciones con sistemas externos...
+CREATE TABLE `w_process_head_method` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `head_id` int(11) NOT NULL DEFAULT '0',
+  `classname` varchar(255) DEFAULT NULL COMMENT 'for APP synchro: class name to execute',
+  `methodname` varchar(150) DEFAULT NULL COMMENT 'for APP synchro: method name to execute to get info from external source',
+  `type` varchar(1) DEFAULT 'P' COMMENT 'P = put method executes and receives 1 parameter response - G = get method executes and receive 1 loaded object as response',
+  `paramlist` varchar(512) DEFAULT NULL COMMENT 'for APP synchro: parameter list to send',
+  `at_process_startup` bit(1) DEFAULT b'0' COMMENT 'synchronize time: at process startup must synchronize getting data from source',
+  `at_process_end` bit(1) DEFAULT b'0' COMMENT 'synchronize time: at process ends must synchronize putting data to source',
+  `when_step_work_is_invoked` bit(1) DEFAULT b'0' COMMENT 'synchronize time: with each new step uploaded must synchronize getting data from source',
+  `when_step_work_is_processed` bit(1) DEFAULT b'0' COMMENT 'synchronize time: with each new step processed must synchronize putting data to source',
+  `logicalConditionExecution` varchar(512) DEFAULT NULL COMMENT 'logical condition valid form bee-bpm execution environment. If true then executes de method',
+  `insert_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `insert_user` int(11) NOT NULL DEFAULT '1000',
+  `mod_date` datetime DEFAULT '1970-01-01 01:01:00',
+  `mod_user` int(11) NOT NULL DEFAULT '1000',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `fk_w_process_head_managed_data_10` (`head_id`),
+  CONSTRAINT `fk_w_process_head_managed_data_10` FOREIGN KEY (`head_id`) REFERENCES `w_process_head` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='external methods for interactions with external systems...';
+
+CREATE TABLE `w_stepsequence_method` (
+  `id_step_sequence` int(11) NOT NULL,
+  `id_method` int(11) NOT NULL,
+  `enabled` bit(1) DEFAULT b'1',
+  `insert_user` int(11) NOT NULL,
+  `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_step_sequence`,`id_method`) USING BTREE,
+  KEY `ix_role` (`id_step_sequence`),
+  KEY `ix_user` (`id_method`),
+  KEY `fk_w_stepsequence_method_1` (`id_step_sequence`),
+  KEY `fk_w_stepsequence_method_2` (`id_method`),
+  CONSTRAINT `fk_w_stepsequence_method_1` FOREIGN KEY (`id_step_sequence`) REFERENCES `w_step_sequence_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_w_stepsequence_method_2` FOREIGN KEY (`id_method`) REFERENCES `w_process_head_methods` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation w-step-sequence-def with w-process-head-methods';

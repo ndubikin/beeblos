@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
@@ -43,6 +44,7 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WEmailAccount;
+import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
@@ -57,10 +59,14 @@ import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
+import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.core.model.thin.WProcessDefThin;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.core.util.Resourceutil;
 import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
+import org.beeblos.bpm.tm.impl.MethodSynchronizerImpl;
+import org.hibernate.metamodel.source.annotations.entity.IdType;
+import org.hibernate.validator.constraints.Length;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -85,7 +91,7 @@ public class WStepWorkBL {
 	 * there is possible to insert or start a new process in any step of the process map..
 	 * 
 	 * @param work
-	 * @param stepw
+	 * @param swco
 	 * @param currentUser
 	 * @return
 	 * @throws WStepWorkException
@@ -127,7 +133,7 @@ public class WStepWorkBL {
 			System.out.println("TESTEAR ESTO QUE ESTE CARGANDO BIEN EL PROCESS-HEAD-ID");
 			stepw.getManagedData().setProcessId(work.getProcessHeadId()); // process head id
 			stepw.getManagedData().setOperation(INSERT);
-//			stepw.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
+//			swco.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
 		}
 
 		// if work was persisted ok thencontinue with step-work
@@ -155,20 +161,29 @@ public class WStepWorkBL {
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
 			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
 			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
-
+		logger.debug(">>> processStep >> id:"+( idStepWork!=null?idStepWork:"null") );
+		
 		Date now = new Date();
 		Integer qtyNewRoutes=0;
 
-		this.checkLock(idStepWork, currentUser, false); // verifies the user has the step locked before process it ...
+		// verifies the user has the step locked before process it ...
+		// if not there may be possible an error in the process chain ...
+		if (!checkLock(idStepWork, currentUser, false)) {
+			throw new WStepNotLockedException("Current step is not locked. Please try process again ...");
+		}
 
-		this.checkStatus(idStepWork, currentUser, false); // verifies step is process pending at this time ...
+		// checks the step was not processed ... 
+		this.checkStatus(idStepWork, currentUser, false); 
 
-		// reload current step from database
+		// load current step from database
 		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+
+		// sets managed data 
+		currentStep.setManagedData(runtimeSettings.getManagedData());
 		
 		// set current workitem to processed status
 		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
-		
+
 		// insert new steps 
 		if ( typeOfProcess.equals(PROCESS_STEP) ) {
 
@@ -613,14 +628,19 @@ public class WStepWorkBL {
 
 	}
 
-	public void checkLock( Integer idStepWork, Integer currentUser, boolean isAdminUser ) throws WStepLockedByAnotherUserException {
+	public boolean checkLock( 
+			Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
+					throws WStepLockedByAnotherUserException {
+		logger.debug(">>> checkLock ... id:"+idStepWork);
+		
+		boolean locked=false;
 		
 		try {
 			
-			WStepWork stepToCheck = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
-			if ( stepToCheck.getLockedBy()!=null && !currentUser.equals(stepToCheck.getLockedBy().getId()) ) {  // nes 20111218
-				String message="The step is locked by another user ...";
-				throw new WStepLockedByAnotherUserException(message);		
+			locked = new WStepWorkDao().isLockedByUser(idStepWork, currentUser);
+			
+			if ( !locked  ) {  // nes 20140208
+				logger.info("the step id:"+idStepWork+" is not locked ...");
 			}
 			
 		} catch (WStepWorkException e) {
@@ -628,25 +648,28 @@ public class WStepWorkBL {
 			logger.error(message);
 			e.printStackTrace();	
 		}
-		
-		
+		return locked;
 	}
 	
 
-	public void checkStatus( Integer idStepWork, Integer currentUser, boolean isAdminUser ) throws WStepAlreadyProcessedException  {
+	public void checkStatus( Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
+			throws WStepAlreadyProcessedException, WStepWorkException  {
 		
 		try {
 			
-			WStepWork stepToCheck = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
-			if ( stepToCheck.getDecidedDate()!=null || stepToCheck.getPerformer()!=null ) {
-				String message="The step already was processed ...";
-				throw new WStepAlreadyProcessedException(message);		
+			WStepWorkCheckObject swco = 
+					new WStepWorkDao().getWStepWorkCheckObjectByPK(idStepWork);
+			
+			if ( swco.getDecidedDate()!=null || swco.getIdPerformer()!=null ) {
+				String message="This step already was processed ... id:"+idStepWork;
+				throw new WStepAlreadyProcessedException(message);	
 			}
 			
 		} catch (WStepWorkException e) {
-			String message="Can't get the step ...";
+			String message="Can't get the step to check preconditions before process it!! Please try again ...";
 			logger.error(message);
-			e.printStackTrace();	
+			e.printStackTrace();
+			throw new WStepWorkException(message);
 		}
 		
 		
@@ -774,10 +797,35 @@ public class WStepWorkBL {
 		} 
 	}
 	
+	/**
+	 * Generates a new stepWork for each new valid route outgoing from current step.
+	 * A route generates a new stepWork or nothing if the route goes to end ...
+	 * Managed data is set to null in stepWork and is persisted only 1 time because
+	 * the managedData is managed at "work" level, and for the instance of a process (work)
+	 * we have only 1 set of managedData ...
+	 * 
+	 * @param runtimeSettings
+	 * @param currentUser
+	 * @param currentStepWork
+	 * @param idResponse
+	 * @param isAdminProcess
+	 * @param now
+	 * @return
+	 * @throws WStepWorkException
+	 * @throws WStepSequenceDefException
+	 * @throws WUserDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkSequenceException
+	 */
 	private Integer _executeProcessStep(
 			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
 			Integer idResponse, boolean isAdminProcess, Date now ) 
 	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
+		if (logger.isDebugEnabled()){
+			logger.debug(">>> _executeProcessStep >> idStepWork"+currentStepWork.getId()
+					+" isAdminProcess:"+isAdminProcess
+					+" idResponse:"+idResponse);
+		}
 		
 		Integer qty=0;
 
@@ -793,6 +841,8 @@ public class WStepWorkBL {
 														currentStepWork.getCurrentStep().getId(),
 														currentUser);
 		
+
+		logger.debug(">>> _executeProcessStep >> qty routes:"+routes.size());
 		// TODO: urgentemente definir transaccion aquí ...
 		
 		if ( routes.size()==0 ) { // no next steps - this tree ends here ...
@@ -803,13 +853,16 @@ public class WStepWorkBL {
 		
 			// process each route ( generates a new step for each new valid route )
 			for (WStepSequenceDef route: routes ) {
+				logger.debug(">>> _executeProcessStep >> "+route.getId()+"/"+route.getName());
 				
-				if ( route.getToStep()!=null ) {
-					
-					if (route.isAfterAll() 
-							|| (route.getValidResponses()!=null 
-								&& route.getValidResponses().contains(idResponse.toString().trim()+"|") ) ) {
-	
+				// if corresponds to take this route....
+				if (route.isAfterAll() 
+						|| (route.getValidResponses()!=null 
+							&& route.getValidResponses().contains(idResponse.toString().trim()+"|") ) ) {
+					logger.debug(">>> _executeProcessStep >> processing route to: "+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
+
+					if ( route.getToStep()!=null ) {
+						
 						qty++;
 						
 						_setNewWorkingStepAndInsertRec(runtimeSettings,
@@ -820,6 +873,18 @@ public class WStepWorkBL {
 						this.createStepWorkSequenceLog(route, newStepWork, false, 
 								route.getFromStep(), route.getToStep(), currentUser);
 
+						// if route has external method execution then execute it!
+						try {
+							_executeExternalMethod(route, currentStepWork, currentUser);
+						} catch (InstantiationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						// checks for notifications subscribers for the new step and send the emails
 						_sendEmailNotification(newStepWork);
 						
 						// nes 20130913
@@ -830,15 +895,25 @@ public class WStepWorkBL {
 							break;
 						}
 					}
-					
-				} else {
-					// this route points to end tree - no action required ...
+					else {
 
-					// if ret arrives here with false, all ok; 
-					// if ret arrives here with true it indicates there are another valid routes for this step
-					// but no action is required
+						// if route has external method execution then execute it!
+						try {
+							_executeExternalMethod(route, currentStepWork, currentUser);
+						} catch (InstantiationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						// this route points to end tree - no other action required ...
+						// if ret arrives here with false, all ok; 
+						// if ret arrives here with true it indicates there are another valid routes for this step
+						// but no action is required
+					}
 				}
-								
 			}
 		}
 		
@@ -886,6 +961,110 @@ public class WStepWorkBL {
 				logger.info("Exception: there is not possible sending email notification to users involved");
 			}
 		}
+	}
+	
+	/**
+	 * Execute external method associated with this route ...
+	 * Route related methods will be executed when navigate the route ...
+	 * 
+	 * @param route
+	 * @param currentStepWork
+	 * @param currentUser
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	private void _executeExternalMethod(
+			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) throws InstantiationException, IllegalAccessException {
+		logger.debug(">>>_executeExternalMethod check...");
+		if (route.getExternalMethod()!=null && route.getExternalMethod().size()>0){
+			for (WExternalMethod method: route.getExternalMethod()) {
+				logger.debug(">>>_executeExternalMethod:"+method.getClassname()+"."+method.getMethodname());
+				if (method.getParamlistName().length>0){
+					_setParamValues(method,currentStepWork, route, currentUserId);
+				}
+				new MethodSynchronizerImpl().invokeExternalMethod(method, currentUserId);
+			}
+		}
+	}
+	
+	/**
+	 * Load current value for each required parameter in method.paramlistName ...
+	 * The scope to search properties is for route, currentStepWork and currentUserId ...
+	 * 
+	 * @param method
+	 * @param route
+	 * @param currentStepWork
+	 * @param currentUserId
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	private void _setParamValues(WExternalMethod method, WStepWork currentStepWork, WStepSequenceDef route, Integer currentUserId) throws InstantiationException, IllegalAccessException {
+		int tope=method.getParamlistName().length;
+		Object[] paramValueObj = new Object[tope];
+		for (int i=0;i<tope;i++) {
+			String paramName=method.getParamlistName()[i];
+			Class paramType = method.getParamlistType()[i];
+			Object obj = new Object(); //paramType.newInstance();
+			if (paramName.equals("idCurrentUser")) {
+				paramValueObj[i]=currentUserId;
+			} else {
+				obj = _setPropertyValue(currentStepWork, route, paramName);
+				paramValueObj[i]=obj;
+			}
+		}
+		method.setParamlist(paramValueObj);
+
+		
+	}
+
+	/**
+	 * @param currentStepWork
+	 * @param route
+	 * @param paramName
+	 */
+	private Object _setPropertyValue(WStepWork currentStepWork,
+			WStepSequenceDef route, String paramName) {
+		Object obj=null;
+		// get field from their bean ...
+		try {
+			if (PropertyUtils.isReadable(currentStepWork, paramName)) {
+					obj = PropertyUtils.getIndexedProperty(currentStepWork, paramName);
+			} else if (PropertyUtils.isReadable(currentStepWork.getwProcessWork(), paramName)) {
+				obj = PropertyUtils.getProperty(currentStepWork.getwProcessWork(), paramName);
+			} else if (PropertyUtils.isReadable(route, paramName)) {
+				obj = PropertyUtils.getIndexedProperty(route, paramName);
+			}
+		} catch (IllegalAccessException e) {
+			String mess = "WStepWorkBL:_setParamValues IllegalAccessException - error PropertyUtils getting property name:"
+					+paramName + " "
+					+e.getMessage()+" - "+e.getCause();
+			obj=null;
+			logger.error(mess);
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			String mess = "WStepWorkBL:_setParamValues InvocationTargetException - error PropertyUtils getting property name:"
+					+paramName + " "
+					+e.getMessage()+" - "+e.getCause();
+			obj=null;
+			logger.error(mess);
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			String mess = "WStepWorkBL:_setParamValues NoSuchMethodException - error PropertyUtils getting property name:"
+					+paramName + " "
+					+e.getMessage()+" - "+e.getCause();
+			obj=null;
+			logger.error(mess);
+			e.printStackTrace();
+		} catch (Exception e) {
+			String mess = "WStepWorkBL:_setParamValues Exception - error PropertyUtils getting property name:"
+					+paramName + " "
+					+e.getMessage()+" - "+e.getCause();
+			obj=null;
+			logger.error(mess);
+			e.printStackTrace();
+
+		}
+		return obj;
 	}
 	
 	private void _executeTurnBack (
