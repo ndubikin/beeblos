@@ -244,10 +244,17 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefByPK - we can't obtain the required id = "+
+			logger.warn("WStepSequenceDefDao: getWStepSequenceDefByPK - can't obtain the required id = "+
 					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefByPK - we can't obtain the required id : " + 
 					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+//		} catch (Exception ex) {
+//			if (tx != null)
+//				tx.rollback();
+//			logger.warn("WStepSequenceDefDao: getWStepSequenceDefByPK - can't obtain the required id = "+
+//					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+//			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefByPK - we can't obtain the required id : " + 
+//					id + " - " + ex.getMessage()+"\n"+ex.getCause());
 
 		}
 

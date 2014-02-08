@@ -128,7 +128,7 @@ public class TestWStepWorkTablasExistentesBL extends TestCase{
 //			System.out.println("--------------- RECUPERO LISTA DE WORKITEMS DE UN OBJETO ---------------------------");
 //			
 //			lsw = new ArrayList<WStepWork>();
-//			lsw = stepwBL.getStepListByProcess(stepw.getProcess().getId(), stepw.getIdObject(), stepw.getIdObjectType(), 1000);
+//			lsw = stepwBL.getStepListByProcess(swco.getProcess().getId(), swco.getIdObject(), swco.getIdObjectType(), 1000);
 //			for (WStepWork wsw: lsw) {
 //				System.out.println(wsw);
 //			}

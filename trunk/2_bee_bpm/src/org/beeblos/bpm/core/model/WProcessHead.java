@@ -1,8 +1,10 @@
 package org.beeblos.bpm.core.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class WProcessHead implements java.io.Serializable {
@@ -24,10 +26,22 @@ public class WProcessHead implements java.io.Serializable {
 	private WProcessHeadManagedDataConfiguration managedTableConfiguration; // data fields table
 	
 	/**
-	 * Each managed tabla can have a set of WProcessDataField to manage their information ...
+	 * Each managed table can have a set of WProcessDataField to manage their information ...
 	 * This set defines the list of managed fields for this process definition ...
 	 */
 	Set<WProcessDataField> processDataFieldDef = new HashSet<WProcessDataField>(0);
+
+	/**
+	 *  
+	 * External methods allowed to be executed or invoked by this process
+	 * Designer/Programmer responsibility to allow context class and method reachable
+	 * at execution time 
+	 * Invoking external method must be linked with sequence (routes), step (before
+	 * load step, after executing step), process (at start time or at end process time), etc. 
+	 *
+	 * nes 20140207 
+	 */
+	Set<WProcessDataField> externalMethod = new HashSet<WProcessDataField>(0);
 	
 	private Date insertDate;
 	private Integer insertUser;
@@ -155,12 +169,24 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 
+	public Set<WProcessDataField> getExternalMethod() {
+		return externalMethod;
+	}
+
+
+	public void setExternalMethod(Set<WProcessDataField> externalMethod) {
+		this.externalMethod = externalMethod;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result
+				+ ((externalMethod == null) ? 0 : externalMethod.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
@@ -194,6 +220,11 @@ public class WProcessHead implements java.io.Serializable {
 			if (other.comments != null)
 				return false;
 		} else if (!comments.equals(other.comments))
+			return false;
+		if (externalMethod == null) {
+			if (other.externalMethod != null)
+				return false;
+		} else if (!externalMethod.equals(other.externalMethod))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -242,6 +273,7 @@ public class WProcessHead implements java.io.Serializable {
 
 	@Override
 	public String toString() {
+		final int maxLen = 2;
 		return "WProcessHead ["
 				+ (id != null ? "id=" + id + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
@@ -250,11 +282,28 @@ public class WProcessHead implements java.io.Serializable {
 						+ managedTableConfiguration + ", "
 						: "")
 				+ (processDataFieldDef != null ? "processDataFieldDef="
-						+ processDataFieldDef + ", " : "")
+						+ toString(processDataFieldDef, maxLen) + ", " : "")
+				+ (externalMethod != null ? "externalMethod="
+						+ toString(externalMethod, maxLen) + ", " : "")
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser : "") + "]";
+	}
+
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 

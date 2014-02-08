@@ -19,7 +19,7 @@ import org.beeblos.bpm.core.model.enumerations.ProcessStage;
 import org.beeblos.bpm.tm.ManagedDataSynchronizer;
 /**
  * Main class to synchronize managed data with external fields.
- * Possibles sources are: JDBC, App (in the scop of this application at runtime)
+ * Possibles sources are: JDBC, App (in the scope of this application at runtime)
  * 
  * @author nestor
  *
@@ -77,9 +77,11 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 			throw new ManagedDataSynchronizerException("ManagedDataSynchronizerJavaAppImpl:fromExternalDataSynchro no get-method provided for synchronize with external APP...");
 		}
 		
-		Object returnedValue = invokeExternalMethod(mdf.getClassName(), mdf.getGetMethod(), work.getIdObject() ); 
+		Object returnedValue = new MethodSynchronizerImpl()
+									.invokeExternalMethod(
+											mdf.getClassName(), mdf.getGetMethod(), work.getIdObject() ); 
 		
-		return null;
+		return returnedValue;
 	}
 	
 	/**
@@ -98,63 +100,5 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		
 		return null;
 	}
-	
-	/**
-	 * reflection invoked method to obtain looked value ...
-	 * 
-	 * @param classToInvoke
-	 * @param methodToInvoke
-	 * @param id
-	 * @return
-	 */
-	private Object invokeExternalMethod(String classToInvoke, String methodToInvoke, Integer id ) {
-		
-		Object obj=null;
 
-		try {
-
-			Class<?> cls;
-			Object instance = new Object();
-			
-			cls = Class.forName(classToInvoke);
-			instance = cls.newInstance();
-
-//			instance = getObject(cls);
-
-			Method m = null;
-			Object res = null;
-			
-			m = instance.getClass().getMethod(methodToInvoke,new Class[]{Integer.class});
-			
-			res = m.invoke(instance, new Object[] { id });
-									
-		} catch (ClassNotFoundException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod SecurityException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod NoSuchMethodException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalArgumentException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalAccessException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod InvocationTargetException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod InstantiationException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
-			e.printStackTrace();
-		} catch (Exception e) {
-			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod Exception class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause()+" - "+e.getClass());
-			e.printStackTrace();
-		}
-		
-		return obj;
-		
-	}
 }
