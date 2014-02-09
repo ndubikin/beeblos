@@ -22,7 +22,7 @@ public class TableManagerBeeBpmUtil {
 
 	
 	/**
-	 * Creates managedData object
+	 * Creates managedData object from current step def datafield list
 	 * 
 	 * @param stepWork
 	 * @return
@@ -42,7 +42,12 @@ public class TableManagerBeeBpmUtil {
 								ACTIVE_DATA_FIELDS) ) ;
 	
 	}
-	
+	/**
+	 * Create ManagedData object from process def data field list (all process defined data fields)
+	 * 
+	 * @param processWork
+	 * @return
+	 */
 	public static ManagedData createManagedDataObject(WProcessWork processWork) {
 		return createManagedDataObject(
 				processWork.getId()

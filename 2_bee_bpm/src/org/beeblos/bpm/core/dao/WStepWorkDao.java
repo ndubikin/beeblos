@@ -166,7 +166,7 @@ public class WStepWorkDao {
 	public void lockStepWork( 
 			Integer id, Date modDate, Integer modUser, boolean isAdmin ) 
 					throws WStepWorkException {
-		logger.debug("unlock() WStepWork  id:["+(id!=null?id:"null")+"]");
+		logger.debug("lockStepWork() WStepWork  id:["+(id!=null?id:"null")+"]");
 		
 		if (id==null || id==0) throw new WStepWorkException("Error trying update wstepwork with id=null or 0!!");
 		
@@ -208,9 +208,9 @@ public class WStepWorkDao {
 			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
-			logger.error("WStepWorkDao: lock - can't update database table w_step_work - id = "
-					+ (id!=null?id:"null")
-					+ "\n - " + ex.getMessage() + " - " + ex.getCause());
+			String mess = "WStepWorkDao: lock - can't update database table w_step_work - id = "
+					+ (id!=null?id:"null")	+ " - " + ex.getMessage() + " - " + ex.getCause();
+			logger.error( mess );
 			throw new WStepWorkException(ex);
 
 		}
@@ -220,7 +220,7 @@ public class WStepWorkDao {
 	public void unlockStepWork( 
 			Integer id, Date modDate, Integer modUser, boolean isAdmin ) 
 					throws WStepWorkException {
-		logger.debug("unlock() WStepWork  id:["+(id!=null?id:"null")+"]");
+		logger.debug("unlockStepWork() WStepWork  id:["+(id!=null?id:"null")+"]");
 		
 		if (id==null || id==0) throw new WStepWorkException("Error trying update wstepwork with id=null or 0!!");
 		
@@ -262,9 +262,9 @@ public class WStepWorkDao {
 			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
-			logger.error("WStepWorkDao: unlock - can't update database table w_step_work - id = "
-					+ (id!=null?id:"null")
-					+ "\n - " + ex.getMessage() + " - " + ex.getCause());
+			String mess ="WStepWorkDao: unlock - can't update database table w_step_work - id = "
+					+ (id!=null?id:"null") + " - " + ex.getMessage() + " - " + ex.getCause();
+			logger.error(mess);
 			throw new WStepWorkException(ex);
 
 		}
@@ -274,7 +274,7 @@ public class WStepWorkDao {
 	public void delete(WStepWork stepw) throws WStepWorkException {
 
 		logger.debug("delete() WStepWork - CurrentStep-Work: ["
-						+(stepw.getCurrentStep()!=null?stepw.getCurrentStep().getName():"null")
+						+(stepw.getCurrentStep()!=null?stepw.getCurrentStep().getStepHead().getName():"null")
 						+" processWork reference:"
 						+(stepw.getwProcessWork()!=null?stepw.getwProcessWork().getReference():"null")+"]");
 		
@@ -285,16 +285,18 @@ public class WStepWorkDao {
 			HibernateUtil.delete(stepw);
 
 		} catch (HibernateException ex) {
-			logger.error("WStepWorkDao: delete - Can't delete proccess definition record "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
-					" <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepWorkException("WStepWorkDao:  delete - Can't delete proccess definition record  "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
-					" <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			String mess = "WStepWorkDao: HibernateException - delete - Can't delete proccess definition record "
+							+ stepw.getCurrentStep().getStepHead().getName()+" "+stepw.getwProcessWork().getReference() 
+							+ " <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause();
+			logger.error(mess);
+			throw new WStepWorkException(mess);
 
 		} catch (WStepWorkException e) {
-			logger.error("WStepWorkDao: delete - Exception in deleting swco rec "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
-					" <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
-			throw new WStepWorkException("WStepWorkDao: delete - Exception in deleting swco rec "+ stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference() +
-					" <id = "+stepw.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
+			String mess = "WStepWorkDao: WStepWorkException - delete - Exception in deleting swco rec "
+						+ stepw.getCurrentStep().getStepHead().getName()+" "+stepw.getwProcessWork().getReference() 
+						+ " <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() ;
+			logger.error(mess);
+			throw new WStepWorkException(mess);
 
 		} 
 
@@ -308,7 +310,8 @@ public class WStepWorkDao {
 	 * @throws WStepWorkException
 	 */
 	public WStepWork getWStepWorkByPK(Integer id) throws WStepWorkException {
-
+		logger.debug(">> getWStepWorkByPK() WStepWork  id:["+(id!=null?id:"null")+"]");
+		
 		WStepWork stepw = null;
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -326,14 +329,15 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepWorkDao: getWStepWorkByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepWorkException("WStepWorkDao: getWStepWorkByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess="WStepWorkDao: getWStepWorkByPK - we can't obtain the required id = "+
+							id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
 
 		}
 		
 		if ( stepw != null && stepw.getCurrentStep() != null ) {
+			logger.debug("loading step data fields...  id:["+(id!=null?id:"null")+"]");
 
 			try {
 	

@@ -42,13 +42,24 @@ public class WProcessDataField implements java.io.Serializable {
 	private boolean synchronize;
 	private String synchroWith;
 
+	/**
+	 * jdbc syncrhonization parameters
+	 */
 	private String schema;
 	private String tableName;
 	private String fieldName;
+
+	/**
+	 * application syncrhonization
+	 */
 	private String className;
 	private String getMethod;
 	private String putMethod;
 	private String paramList;
+	/**
+	 * java class of type must get or put
+	 */
+	private String paramType;
 	
 	/**
 	 * At process startup the fields are filled with external source data ...
@@ -308,6 +319,14 @@ public class WProcessDataField implements java.io.Serializable {
 	}
 
 	
+	public String getParamType() {
+		return paramType;
+	}
+
+	public void setParamType(String paramType) {
+		this.paramType = paramType;
+	}
+
 	public String getParamList() {
 	
 		return paramList;
@@ -409,51 +428,102 @@ public class WProcessDataField implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-
-		return "WProcessDataField [id=" + id + ", processHeadId=" + processHeadId + ", dataType="
-				+ dataType + ", name=" + name + ", columnName=" + columnName + ", order=" + order
-				+ ", required=" + required + ", comments=" + comments + ", active=" + active
-				+ ", length=" + length + ", nullable=" + nullable + ", unique=" + unique
-				+ ", quoted=" + quoted + ", defaultValue=" + defaultValue + ", synchronize="
-				+ synchronize + ", synchroWith=" + synchroWith + ", schema=" + schema
-				+ ", tableName=" + tableName + ", fieldName=" + fieldName + ", className="
-				+ className + ", getMethod=" + getMethod + ", putMethod=" + putMethod
-				+ ", paramList=" + paramList + ", atProcessStartup=" + atProcessStartup
-				+ ", atProcessEnd=" + atProcessEnd + ", whenStepWorkIsInvoked="
-				+ whenStepWorkIsInvoked + ", whenStepWorkIsProcessed=" + whenStepWorkIsProcessed
-				+ ", insertDate=" + insertDate + ", insertUser=" + insertUser + ", modDate="
-				+ modDate + ", modUser=" + modUser + "]";
+		return "WProcessDataField ["
+				+ (id != null ? "id=" + id + ", " : "")
+				+ (processHeadId != null ? "processHeadId=" + processHeadId
+						+ ", " : "")
+				+ (dataType != null ? "dataType=" + dataType + ", " : "")
+				+ (name != null ? "name=" + name + ", " : "")
+				+ (columnName != null ? "columnName=" + columnName + ", " : "")
+				+ (order != null ? "order=" + order + ", " : "")
+				+ "required="
+				+ required
+				+ ", "
+				+ (comments != null ? "comments=" + comments + ", " : "")
+				+ "active="
+				+ active
+				+ ", "
+				+ (length != null ? "length=" + length + ", " : "")
+				+ "nullable="
+				+ nullable
+				+ ", unique="
+				+ unique
+				+ ", quoted="
+				+ quoted
+				+ ", "
+				+ (defaultValue != null ? "defaultValue=" + defaultValue + ", "
+						: "")
+				+ "synchronize="
+				+ synchronize
+				+ ", "
+				+ (synchroWith != null ? "synchroWith=" + synchroWith + ", "
+						: "")
+				+ (schema != null ? "schema=" + schema + ", " : "")
+				+ (tableName != null ? "tableName=" + tableName + ", " : "")
+				+ (fieldName != null ? "fieldName=" + fieldName + ", " : "")
+				+ (className != null ? "className=" + className + ", " : "")
+				+ (getMethod != null ? "getMethod=" + getMethod + ", " : "")
+				+ (putMethod != null ? "putMethod=" + putMethod + ", " : "")
+				+ (paramList != null ? "paramList=" + paramList + ", " : "")
+				+ (paramType != null ? "paramType=" + paramType + ", " : "")
+				+ "atProcessStartup=" + atProcessStartup + ", atProcessEnd="
+				+ atProcessEnd + ", whenStepWorkIsInvoked="
+				+ whenStepWorkIsInvoked + ", whenStepWorkIsProcessed="
+				+ whenStepWorkIsProcessed + ", "
+				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
+				+ (modDate != null ? "modDate=" + modDate + ", " : "")
+				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
 	@Override
 	public int hashCode() {
-
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + (atProcessEnd ? 1231 : 1237);
 		result = prime * result + (atProcessStartup ? 1231 : 1237);
-		result = prime * result + ((className == null) ? 0 : className.hashCode());
-		result = prime * result + ((columnName == null) ? 0 : columnName.hashCode());
-		result = prime * result + ((comments == null) ? 0 : comments.hashCode());
-		result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
-		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-		result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
-		result = prime * result + ((getMethod == null) ? 0 : getMethod.hashCode());
+		result = prime * result
+				+ ((className == null) ? 0 : className.hashCode());
+		result = prime * result
+				+ ((columnName == null) ? 0 : columnName.hashCode());
+		result = prime * result
+				+ ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result
+				+ ((dataType == null) ? 0 : dataType.hashCode());
+		result = prime * result
+				+ ((defaultValue == null) ? 0 : defaultValue.hashCode());
+		result = prime * result
+				+ ((fieldName == null) ? 0 : fieldName.hashCode());
+		result = prime * result
+				+ ((getMethod == null) ? 0 : getMethod.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
 		result = prime * result + ((length == null) ? 0 : length.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + (nullable ? 1231 : 1237);
 		result = prime * result + ((order == null) ? 0 : order.hashCode());
-		result = prime * result + ((paramList == null) ? 0 : paramList.hashCode());
-		result = prime * result + ((processHeadId == null) ? 0 : processHeadId.hashCode());
-		result = prime * result + ((putMethod == null) ? 0 : putMethod.hashCode());
+		result = prime * result
+				+ ((paramList == null) ? 0 : paramList.hashCode());
+		result = prime * result
+				+ ((paramType == null) ? 0 : paramType.hashCode());
+		result = prime * result
+				+ ((processHeadId == null) ? 0 : processHeadId.hashCode());
+		result = prime * result
+				+ ((putMethod == null) ? 0 : putMethod.hashCode());
 		result = prime * result + (quoted ? 1231 : 1237);
 		result = prime * result + (required ? 1231 : 1237);
 		result = prime * result + ((schema == null) ? 0 : schema.hashCode());
-		result = prime * result + ((synchroWith == null) ? 0 : synchroWith.hashCode());
+		result = prime * result
+				+ ((synchroWith == null) ? 0 : synchroWith.hashCode());
 		result = prime * result + (synchronize ? 1231 : 1237);
-		result = prime * result + ((tableName == null) ? 0 : tableName.hashCode());
+		result = prime * result
+				+ ((tableName == null) ? 0 : tableName.hashCode());
 		result = prime * result + (unique ? 1231 : 1237);
 		result = prime * result + (whenStepWorkIsInvoked ? 1231 : 1237);
 		result = prime * result + (whenStepWorkIsProcessed ? 1231 : 1237);
@@ -462,12 +532,11 @@ public class WProcessDataField implements java.io.Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WProcessDataField))
 			return false;
 		WProcessDataField other = (WProcessDataField) obj;
 		if (active != other.active)
@@ -516,10 +585,30 @@ public class WProcessDataField implements java.io.Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
 		if (length == null) {
 			if (other.length != null)
 				return false;
 		} else if (!length.equals(other.length))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -537,6 +626,11 @@ public class WProcessDataField implements java.io.Serializable {
 			if (other.paramList != null)
 				return false;
 		} else if (!paramList.equals(other.paramList))
+			return false;
+		if (paramType == null) {
+			if (other.paramType != null)
+				return false;
+		} else if (!paramType.equals(other.paramType))
 			return false;
 		if (processHeadId == null) {
 			if (other.processHeadId != null)

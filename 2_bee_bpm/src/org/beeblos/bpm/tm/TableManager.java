@@ -24,6 +24,15 @@ import org.beeblos.bpm.tm.model.Column;
 import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
 import com.sp.common.model.ManagedDataField;
 
+/**
+ * Main class to work with user managed data fields.
+ * This class persist records of managed tables and get records an columns
+ * from managed table.
+ * 
+ * 
+ * @author nestor
+ *
+ */
 public class TableManager {
 	
 	private static final String ADD_COLUMN = "ADD_COLUMN";
@@ -75,6 +84,14 @@ public class TableManager {
 		
 	}
 	
+	/**
+	 * Insert a record in the managed table with fields in managedData object.
+	 * (PIENSO Q NO ESTAMOS USANDO ESTE MÉTODO Y UTILIZAMOS SOLO EL persist()  )
+	 * 
+	 * @param managedData
+	 * @return
+	 * @throws TableManagerException
+	 */
 	public Integer process(ManagedData managedData) throws TableManagerException {
 		
 		if (managedData==null) throw new TableManagerException("can't process null managedData!");
@@ -100,6 +117,17 @@ public class TableManager {
 		return null;
 	}
 	
+	/**
+	 * Executes a query to get a record from required managed data
+	 * Fill the manageData object with the data retrieved from managed table...
+	 * 
+	 * managedData object mandatory process_work_id must arrive filled with a value id
+	 * 
+	 * @param managedData
+	 * 
+	 * @return
+	 * @throws TableManagerException
+	 */
 	public Integer loadRecord(ManagedData managedData) throws TableManagerException {
 		
 		if (managedData==null) throw new TableManagerException("can't process null managedData!");
@@ -416,14 +444,13 @@ public class TableManager {
 		}
 	}
 
-	/*
-	 *  select from query format:
+	/**
+	 *  select from sql query format:
 	 *  "SELECT  {mandatoryFieldName} {userFieldNameList} FROM {shema}.{tableName} WHERE process_work_id={processWorkId}"
 	 *	
 	 *	consider each field name (less last) must have your comma (,) separator   
 	 *  
 	 */
-	
 	private String buildLoadDataQuery(ManagedData managedData){
 		String sql="SELECT ";
 		sql+= "id, process_work_id, process_id "; // mandatory fields		
