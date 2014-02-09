@@ -8,7 +8,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WStepDataField;
+import org.beeblos.bpm.core.model.WStepWork;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.sp.common.util.HibernateUtil;
@@ -180,7 +183,10 @@ public class WStepDataFieldDao {
 	@SuppressWarnings("unchecked")
 	public List<WStepDataField> getWStepDataFieldList(Integer processHeadId, Integer stepHeadId) 
 			throws WStepDataFieldException {
-
+		logger.debug("getWStepDataFieldList: loading step data fields...  processHeadId:["
+						+(processHeadId!=null?processHeadId:"null")+"]"
+						+"stepHeadId:["+(stepHeadId!=null?stepHeadId:"null")+"]");
+		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
@@ -193,23 +199,31 @@ public class WStepDataFieldDao {
 
 			tx.begin();
 
-			if (stepHeadId==null) {
-				processList = session
-						.createQuery("From WStepDataField sdf WHERE processHeadId= ? Order By order, dataField.id ")
-						.setInteger(0, processHeadId)
-						.list();
-			} else if (processHeadId==null) {
-				processList = session
-						.createQuery("From WStepDataField sdf WHERE stepHeadId= ? Order By order, dataField.id ")
-						.setInteger(0, stepHeadId)
-						.list();
-			} else {
-				processList = session
-						.createQuery("From WStepDataField sdf WHERE processHeadId= ? AND stepHeadId= ? Order By order, dataField.id ")
-						.setInteger(0, processHeadId)
-						.setInteger(1, stepHeadId)
-						.list();
-			}
+			// nes 20140208 - cambiado a criteria ...
+			
+	        Criteria criteria = session.createCriteria(WStepDataField.class.getName());
+	        criteria.add(Restrictions.eq("processHeadId", processHeadId));
+	        criteria.add(Restrictions.eq("stepHeadId", stepHeadId));
+
+	        processList = criteria.list();	
+			
+//			if (stepHeadId==null) {
+//				processList = session
+//						.createQuery("From  sdf WHERE processHeadId= :phid ? Order By order, dataField.id ")
+//						.setInteger("phid", processHeadId)
+//						.list();
+//			} else if (processHeadId==null) {
+//				processList = session
+//						.createQuery("From WStepDataField sdf WHERE stepHeadId= :shid Order By order, dataField.id ")
+//						.setInteger("shid", stepHeadId)
+//						.list();
+//			} else {
+//				processList = session
+//						.createQuery("From WStepDataField sdf WHERE processHeadId= :phid AND stepHeadId= :shid Order By order, dataField.id ")
+//						.setInteger("phid", processHeadId)
+//						.setInteger("shid", stepHeadId)
+//						.list();
+//			}
 			
 			tx.commit();
 
@@ -228,7 +242,9 @@ public class WStepDataFieldDao {
 	
 	public Integer countWStepDataFieldList(Integer processHeadId) 
 			throws WStepDataFieldException {
-
+		logger.debug("countWStepDataFieldList:   processHeadId:["
+				+(processHeadId!=null?processHeadId:"null")+"]");
+		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
@@ -251,10 +267,10 @@ public class WStepDataFieldDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepDataFieldDao: getWStepDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepDataFieldException("WStepDataFieldDao: getWStepDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess="WStepDataFieldDao: getWStepDataFieldList(processHeadId) - can't obtain process list for the value (processHeadId:" + processHeadId + "): " +
+								ex.getMessage()+"\n"+ex.getCause() ;
+			logger.warn(mess);
+			throw new WStepDataFieldException(mess);
 
 		}
 

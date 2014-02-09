@@ -6,14 +6,30 @@ import java.util.Random;
 
 import org.beeblos.bpm.tm.exception.TableManagerException;
 
+/**
+ * Utilities for TableManager
+ * 
+ * 
+ * @author nestor
+ * @version 1.001
+ */
 public class TableManagerUtil {
 
-	
 	
 	private static final int MINIMUM_ACCEPTED_MAXLEN = 8;
 	private static final String UNDERSCORE = "_";
 
-	public static String generateColumnName(String name, String className, int maxlen) throws TableManagerException {
+	/**
+	 * Generates a valid column name for a new user data field defined
+	 * 
+	 * @param name
+	 * @param className
+	 * @param maxlen
+	 * @return
+	 * @throws TableManagerException
+	 */
+	public static String generateColumnName(String name, String className, int maxlen) 
+			throws TableManagerException {
 	
 		if (maxlen<MINIMUM_ACCEPTED_MAXLEN) {
 			throw new TableManagerException("generateColumnName:Maximum lenght for column must be greater than 8. Current maxlen:"+maxlen+" is not accepted!");

@@ -13,10 +13,13 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.enumerations.ProcessStage;
 import org.beeblos.bpm.tm.ManagedDataSynchronizer;
+
+import com.sp.common.model.ManagedDataField;
 /**
  * Main class to synchronize managed data with external fields.
  * Possibles sources are: JDBC, App (in the scope of this application at runtime)
@@ -33,7 +36,8 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	 */
 	@Override
 	public Object syncrhonizeField(
-			WProcessWork work, WProcessDataField mdf, ProcessStage stage) throws ManagedDataSynchronizerException {
+			WProcessWork work, WProcessDataField mdf, ProcessStage stage, ManagedData md) 
+					throws ManagedDataSynchronizerException {
 		logger.debug("ManagedDataSynchronizerJavaAppImpl:syncrhonizeField starting... ");
 		
 		// if there is not APP syncrhonized then throws exception
@@ -43,7 +47,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		
 		if (stage.equals(STARTUP) || stage.equals(STEP_WORK_IS_INVOKED)) {
 			if (mdf.isAtProcessStartup()) {
-				fromExternalDataSynchro(work,mdf,stage);
+				_setMDF(md, mdf.getName(), fromExternalDataSynchro(work.getIdObject(),mdf,stage));
 			}
 		} else if (stage.equals(END) || stage.equals(STEP_WORK_WAS_PROCESSED)) {
 			toExternalDataSynchro(work,mdf,stage);
@@ -52,6 +56,23 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		
 		return null;
 		
+	}
+	
+	// load obtained data in managed data element
+	private void _setMDF(ManagedData md, String managedDataFieldName, Object value) {
+		for (ManagedDataField m: md.getDataField()) {
+			if (m.getName().equals(managedDataFieldName)) {
+	
+				// TODO: HAY QUE CONTROLAR CADA TIPO DE DATO Y PONERLE EL CORRESPONDIENTE
+				// NULL SI CORRESPONDE ( EN STRING VA "", EN boolean VA false, etc)
+//				if (value.getClass().equals("[Ljava.lang.String")) {
+//					
+//				}
+				
+				
+				m.setValue((value!=null?value.toString():""));
+			}
+		}
 	}
 	
 	/**
@@ -64,7 +85,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	 * @throws ManagedDataSynchronizerException
 	 */
 	private Object fromExternalDataSynchro(
-			WProcessWork work, WProcessDataField mdf, ProcessStage stage) throws ManagedDataSynchronizerException {
+			Integer idObject, WProcessDataField mdf, ProcessStage stage) throws ManagedDataSynchronizerException {
 		logger.debug("ManagedDataSynchronizerJavaAppImpl:syncrhonizeFromExternalData starting... ");
 
 		// si va a recuperar datos de 1 fuente externa via app, tendrá que tener nombre de clase y método a invocar
@@ -79,7 +100,10 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		
 		Object returnedValue = new MethodSynchronizerImpl()
 									.invokeExternalMethod(
-											mdf.getClassName(), mdf.getGetMethod(), work.getIdObject() ); 
+											mdf.getClassName(), 
+											mdf.getGetMethod(), 
+											mdf.getParamType(), 
+											idObject ); 
 		
 		return returnedValue;
 	}

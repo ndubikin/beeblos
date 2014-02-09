@@ -112,14 +112,17 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * 
 	 * @param classToInvoke
 	 * @param methodToInvoke
+	 * @param paramType - java type of parameter syncrhonized...
 	 * @param id
 	 * @return
 	 */
 	@Override
-	public Object invokeExternalMethod(String classToInvoke, String methodToInvoke, Integer id ) {
+	public Object invokeExternalMethod(
+			String classToInvoke, String methodToInvoke, String paramType, Integer id ) {
 		
 		Object obj=null;
-
+		Object res = null;
+		
 		try {
 
 			Class<?> cls;
@@ -131,9 +134,10 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 //			instance = getObject(cls);
 
 			Method m = null;
-			Object res = null;
-			
-			m = instance.getClass().getMethod(methodToInvoke,new Class[]{Integer.class});
+
+			Class[] paramTypes = new Class[]{ Class.forName(paramType)};
+					
+			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
 			
 			res = m.invoke(instance, new Object[] { id });
 									
@@ -163,7 +167,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 			e.printStackTrace();
 		}
 		
-		return obj;
+		return res;
 		
 	}
 }

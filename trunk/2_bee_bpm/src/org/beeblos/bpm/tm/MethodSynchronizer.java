@@ -6,6 +6,6 @@ public interface MethodSynchronizer {
 	public void invokeExternalMethod(
 			String classToInvoke, String methodToInvoke, Class[] paramTypes, Object[] paramData) ;
 	
-	public Object invokeExternalMethod(String classToInvoke, String methodToInvoke, Integer id );
+	public Object invokeExternalMethod(String classToInvoke, String methodToInvoke, String paramType, Integer id );
 
 }

@@ -87,8 +87,10 @@ public class WStepWorkBL {
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
 	/**
-	 * Start an instance of a process. This method requieres the ProcessWork object and the StepWork, then
-	 * there is possible to insert or start a new process in any step of the process map..
+	 * Create a new instance of a process. This method requires ProcessWork and StepWork objects
+	 * correctly filled.
+	 * 
+	 * There is possible to insert or start a new process in any step of the process map..
 	 * 
 	 * @param work
 	 * @param swco
@@ -123,9 +125,6 @@ public class WStepWorkBL {
 		WProcessWorkBL wpbl = new WProcessWorkBL(); 
 		workId = wpbl.add(work, currentUser);
 		work = wpbl.getWProcessWorkByPK(workId, currentUser); // checks all properties was correctly stored in the object
-
-		// retrieves data from external sources and update fields in managed table
-		_synchronizeProcessWorkManagedData(work);
 		
 		// if exists managed data set with just created work id
 		if (stepw.getManagedData()!=null) {
@@ -210,82 +209,7 @@ public class WStepWorkBL {
 		
 	}
 
-	private void _synchronizeProcessWorkManagedData(WProcessWork work) 
-		throws WProcessWorkException {
-		
-		if (work==null || work.getId()==null || work.getId()==0) {
-			logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no id...");
-			throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work is empy!!! ");
-		}
-		
-		if (work.getProcessDef()==null || work.getProcessDef().getId()==null || work.getProcessDef().getId()==0) {
-			logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no process def ...");
-			throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work has not ProcessDef info!!! ");
-		}
-		
-		if (work.getProcessDef().getProcessHead()==null || work.getProcessDef().getProcessHead().getId()==null || work.getProcessDef().getProcessHead().getId()==0) {
-			logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no processDef.processHead ...");
-			throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work has not ProcessHead info!!! ");
-		}
 
-		logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData: synchro managed data for ProcessDefId:"
-				+work.getProcessDef().getId()+" for created processWork id:"+work.getId()+" >> "+work.getIdObjectType());
-		
-		// no managed table defined -> don't have managed data....
-		if (work.getProcessDef().getProcessHead().getManagedTableConfiguration()==null || work.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()==null || "".equals(work.getProcessDef().getProcessHead().getManagedTableConfiguration().getName())) {
-			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has empty tablename >> no managed data defined ...");
-			return;
-		}
-
-		// no managed data fields defined (or loaded...)
-		if (work.getProcessDef().getProcessHead().getProcessDataFieldDef().size()<1) {
-			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has no managed data fields defined (or loaded...)");
-			return;			
-		}
-		
-		// obtain managed data fields to syncrhonize
-		List<WProcessDataField> dftosJdbc = new ArrayList<WProcessDataField>();
-		List<WProcessDataField> dftosApp = new ArrayList<WProcessDataField>();
-		boolean hasSyncrhoRequirements=false;
-		for (WProcessDataField pdf: work.getProcessDef().getProcessHead().getProcessDataFieldDef()) {
-			if ( pdf.isSynchronize() && pdf.isAtProcessStartup() ) {
-				if (pdf.getSynchroWith().equals("J")) {
-					dftosJdbc.add(pdf);
-				} else {
-					dftosApp.add(pdf);
-				}
-				hasSyncrhoRequirements=true;
-			}
-		}
-		
-		// no managed data fields to synchronize at startup
-		if (!hasSyncrhoRequirements) {
-			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has no managed data fields to synchronize at startup ...");
-			return;			
-		}
-		
-		if (dftosJdbc.size()>0) {
-			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has "+dftosJdbc.size()+" for JDBC synchro ...");
-		}
-		if (dftosApp.size()>0) {
-			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has "+dftosApp.size()+" for APP synchro ...");
-			ManagedDataSynchronizerJavaAppImpl fieldSyncrhonizer = new ManagedDataSynchronizerJavaAppImpl();
-			
-			for (WProcessDataField pdf: dftosApp) {
-				try {
-					fieldSyncrhonizer.syncrhonizeField(work, pdf, STARTUP);
-				} catch (ManagedDataSynchronizerException e) {
-					logger.error("Can't sinchronize field:"+pdf.getName());
-				}	
-			}
-		}
-		
-//		for (WProcessDataField pdf: dftosApp ) {
-//			System.out.println("name:"+pdf.getFieldName()+" value:"+pdf.get);
-//		}
-
-		
-	}
 	
 	public Integer add(WStepWork stepw, Integer currentUser) throws WStepWorkException {
 		
@@ -557,11 +481,21 @@ public class WStepWorkBL {
 //	}
 
 
-	// devuelve 1 paso sin bloquearlo ...
+	/**
+	 * Returns a unlocked stepWork 
+	 * 
+	 * @param idStepWork
+	 * @param currentUser
+	 * @return
+	 * @throws WStepNotLockedException
+	 * @throws WStepLockedByAnotherUserException
+	 * @throws WStepWorkException
+	 */
 	public WStepWork getStep (
 			Integer idStepWork, Integer currentUser ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
-	
+		logger.debug(">> getStep - returns an unlocked step - idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		
 		return new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 		
 	}
@@ -569,9 +503,20 @@ public class WStepWorkBL {
 	
 	// IMPLEMENTAR CORRECTAMENTE isAdmin
 	// devuelve 1 paso y lo deja lockeado
+	/**
+	 * Returns a locked stepWork
+	 * 
+	 * @param idStepWork
+	 * @param currentUser
+	 * @return
+	 * @throws WStepLockedByAnotherUserException
+	 * @throws CantLockTheStepException
+	 * @throws WStepWorkException
+	 */
 	public WStepWork getStepWithLock (
 			Integer idStepWork, Integer currentUser ) 
 	throws WStepLockedByAnotherUserException,  CantLockTheStepException, WStepWorkException {
+		logger.debug(">> getStepWithLock idStepWork:"+(idStepWork!=null?idStepWork:"null"));
 	
 		WStepWork storedStep;
 		
@@ -597,6 +542,7 @@ public class WStepWorkBL {
 			
 			_checkPreLockStepWork(idStepWork, currentUser, idObject, idObjectType, storedStep); // step is active an is not processed nor locked by another user
 
+			// set open date for the stepWork
 			_setOpenInfo(currentUser, storedStep);
 			
 			// TODO IMPLEMENTAR CORRECTAMENTE ESTO ...
@@ -604,7 +550,6 @@ public class WStepWorkBL {
 			_lockStep(storedStep.getId(), currentUser, isAdmin);
 			
 		} catch ( WStepWorkException swe ) {  // if can't lock it returns exception ...
-				
 				String message = "The indicated step ("
 					+ idStepWork
 					+ ") can't be locked ..." 
@@ -623,7 +568,7 @@ public class WStepWorkBL {
 				storedStep=null;
 				throw new CantLockTheStepException(message);
 		} 
-		
+		logger.debug(">> step was locked!! idStepWork:"+(idStepWork!=null?idStepWork:"null"));
 		return storedStep;
 
 	}
@@ -631,7 +576,7 @@ public class WStepWorkBL {
 	public boolean checkLock( 
 			Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
 					throws WStepLockedByAnotherUserException {
-		logger.debug(">>> checkLock ... id:"+idStepWork);
+		logger.debug(">>> checkLock ... id:"+(idStepWork!=null?idStepWork:"null"));
 		
 		boolean locked=false;
 		
@@ -654,6 +599,7 @@ public class WStepWorkBL {
 
 	public void checkStatus( Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
 			throws WStepAlreadyProcessedException, WStepWorkException  {
+		logger.debug(">> checkStatus idStepWork:"+(idStepWork!=null?idStepWork:"null"));
 		
 		try {
 			
@@ -679,7 +625,8 @@ public class WStepWorkBL {
 	public Boolean unlockStep (
 			Integer idStepWork, Integer currentUser, boolean isAdmin ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
-	
+		logger.debug(">> unlockStep idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		
 		// get the step
 		WStepWork stepToUnlock = 
 				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
@@ -717,7 +664,8 @@ public class WStepWorkBL {
 	public Boolean lockStep (
 			Integer idStepWork, Integer lockUserId, Integer currentUser, boolean isAdminUser ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
-	
+		logger.debug(">> unlockStep idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		
 		// get the step
 //		WStepWork stepToLock = 
 //				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
@@ -743,25 +691,33 @@ public class WStepWorkBL {
 		return true;
 	}
 	
-	// locks a step. If the step is locked by same user nothing to do but doesn't return exception ...
-//	private void _lockStep( WStepWork stepToLock, Integer currentUser, boolean isAdmin ) 
-	private void _lockStep( Integer id, Integer currentUser, boolean isAdmin )
+	/**
+	 * locks a step. If the step is locked by same user nothing to do but doesn't return exception ...
+	 * 
+	 * @param idStepWork
+	 * @param currentUser
+	 * @param isAdmin
+	 * @throws WStepWorkException
+	 * @throws WStepLockedByAnotherUserException
+	 */
+	private void _lockStep( Integer idStepWork, Integer currentUser, boolean isAdmin )
 			throws WStepWorkException, WStepLockedByAnotherUserException {
-
+		logger.debug(">> _lockStep 2 idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		
 		// IMPLEMENTAR BIEN ESTO Y CHEQUEAR EL USUARIO QUE LOCKEA EL PASO
 		
 		// if step is not locked then locks it !
-		if ( _checkCurrentLockStatus(id) ) {
+		if ( _checkCurrentLockStatus(idStepWork) ) {
 
 			Date now = new Date();
 
 			new WStepWorkDao()
-						.lockStepWork( id, now, currentUser, isAdmin );
+						.lockStepWork( idStepWork, now, currentUser, isAdmin );
 			
 			
 		} else {
 			//if ( !stepToLock.getLockedBy().getId().equals(currentUser)) { 
-				String message = "The indicated step ("+ id +") is already locked by another user ..." ;
+				String message = "The indicated step ("+ idStepWork +") is already locked by another user ..." ;
 				logger.info(message);
 				throw new WStepLockedByAnotherUserException(message);
 			//}
