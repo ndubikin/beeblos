@@ -15,6 +15,14 @@ ALTER TABLE  `bee_bpm_dev`.`w_process_head_data_field`  AUTO_INCREMENT=1;
 DELETE FROM `bee_bpm_dev`.`w_process_head_managed_data`;
 ALTER TABLE  `bee_bpm_dev`.`w_process_head_managed_data`  AUTO_INCREMENT=1;
 
+
+DELETE FROM `bee_bpm_dev`.`w_stepsequence_method`;
+ALTER TABLE  `bee_bpm_dev`.`w_stepsequence_method`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_head_method`;
+ALTER TABLE  `bee_bpm_dev`.`w_process_head_method`  AUTO_INCREMENT=1;
+
+
 DELETE FROM `bee_bpm_dev`.`w_step_data_field` ;
 ALTER TABLE  `bee_bpm_dev`.`w_step_data_field`  AUTO_INCREMENT=1;
 
