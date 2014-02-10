@@ -16,10 +16,14 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bee.bpm.wbt.bean.BeeBPMBL;
+import org.bee.bpm.wbt.error.InjectorException;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.AlreadyExistsRunningProcessException;
+import org.beeblos.bpm.core.error.InyectorException;
+import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
@@ -31,8 +35,6 @@ import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.exception.TableManagerException;
-import org.bee.bpm.wbt.error.InyectorException;
-import org.bee.bpm.wbt.bean.BeeBPMBL;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 
@@ -239,7 +241,7 @@ public class InyectorBean  extends CoreManagedBean {
 			
 			//idStepWork = new WStepWorkBL().add(_setStepWork(), usuarioLogueado) ;
 			idStepWork = new BeeBPMBL()
-								.inyectar(
+								.injector(
 										selectedProcessId, selectedStepDefId, 
 										idObject, idObjectType, objReference, objComments, 
 										managedData,
@@ -270,6 +272,12 @@ public class InyectorBean  extends CoreManagedBean {
 		} catch (WStepWorkSequenceException e) {
 			String message = "InyectorBean.launchWork() WStepWorkSequenceException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (InjectorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WProcessDataFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return ret;

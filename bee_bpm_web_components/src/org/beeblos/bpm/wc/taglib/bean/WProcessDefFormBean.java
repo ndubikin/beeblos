@@ -6,16 +6,12 @@ import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FAIL;
 import static org.beeblos.bpm.core.util.Constants.LOAD_WPROCESSDEF;
-import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.TableManagerBL;
 import org.beeblos.bpm.core.bl.WDataTypeBL;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
@@ -57,6 +52,8 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
+import org.beeblos.bpm.core.md.TableManagerBL;
+import org.beeblos.bpm.core.md.impl.TableManagerBLImpl;
 import org.beeblos.bpm.core.model.SystemObject;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
@@ -2242,7 +2239,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 			try {
 				
-				TableManagerBL tmBL = new TableManagerBL();
+				TableManagerBL tmBL = new TableManagerBLImpl();
 				reccountTM = tmBL.countTableRecords(
 								currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(),
 								currentWProcessDef.getProcess().getManagedTableConfiguration().getName() );
@@ -2284,7 +2281,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		reloadDataFieldList(); // refresh dataFieldList
 
 		try {
-			new TableManagerBL()
+			new TableManagerBLImpl()
 					.createManagedTable(
 							currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(), 
 							tableName, 
@@ -2334,7 +2331,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 
 		try {
-			new TableManagerBL()
+			new TableManagerBLImpl()
 					.recreateManagedTable(
 							currentWProcessDef.getProcess().getManagedTableConfiguration().getSchema(), 
 							currentWProcessDef.getProcess().getManagedTableConfiguration().getName(), 
