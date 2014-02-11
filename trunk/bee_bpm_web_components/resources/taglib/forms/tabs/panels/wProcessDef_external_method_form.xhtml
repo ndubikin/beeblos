@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<h:form id="w_process_def_external_method_form">
+
+		<ui:fragment rendered="#{wProcessDefFormBean.visibleFormExternalMethod}">
+			<div class="fieldset_block_info" >
+		
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_class_name}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:inputText
+						value="#{wProcessDefFormBean.externalMethodSelected.classname}"
+						styleClass="input_text_300_style" />
+				</div>
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_method_name}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:inputText
+						value="#{wProcessDefFormBean.externalMethodSelected.methodname}"
+						styleClass="input_text_300_style" />
+				</div>
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_type}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:inputText
+						value="#{wProcessDefFormBean.externalMethodSelected.type}"
+						styleClass="input_text_300_style" />
+				</div>
+					<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_at_process_startup}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:selectBooleanCheckbox value="#{wProcessDefFormBean.externalMethodSelected.atProcessStartup}" />
+				</div>
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_at_process_end}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:selectBooleanCheckbox value="#{wProcessDefFormBean.externalMethodSelected.atProcessEnd}" />
+				</div>
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_when_step_work_is_invoked}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:selectBooleanCheckbox value="#{wProcessDefFormBean.externalMethodSelected.whenStepWorkIsInvoked}" />
+				</div>
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_when_step_work_is_processed}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:selectBooleanCheckbox value="#{wProcessDefFormBean.externalMethodSelected.whenStepWorkIsProcessed}" />
+				</div>
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_logical_condition_execution}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:inputText
+						value="#{wProcessDefFormBean.externalMethodSelected.logicalConditionExecution}"
+						styleClass="input_text_300_style" />
+				</div>
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_tested}:"
+						styleClass="label_for_input_text left_column_20" />
+					<h:inputText
+						value="#{wProcessDefFormBean.externalMethodSelected.tested}"
+						styleClass="input_text_300_style" />
+				</div>
+				
+			</div>
+			<div class="fieldset_block_info_noBorder_noPadding" >
+				<div class="div_line_wo_border_nomenu">
+					<h:outputText value="#{msg.label_parameter_list}:"
+						styleClass="label_for_input_text" />
+					<h:panelGroup>
+						<a4j:repeat value="#{wProcessDefFormBean.externalMethodSelected.paramlistName}" rowKeyVar="index">            
+							<div class="div_line_wo_border_nomenu">
+								<h:outputText value="&#160;"
+									styleClass="left_column_20" />
+								<h:inputText value="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index]}"
+				                	styleClass="input_text_150_style"/>
+								<h:outputText value="#{wProcessDefFormBean.externalMethodSelected.paramlistType[index].simpleName}"
+				                	styleClass="label_form_bold label_for_input_text margin_left_10px" 
+					            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne null and wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne ''}"/>
+					            <h:selectOneMenu value="#{wProcessDefFormBean.externalMethodSelected.paramlistType[index]}"
+					            	styleClass="select_one_100_style margin_left_10px"
+					            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] eq null or wProcessDefFormBean.externalMethodSelected.paramlistName[index] eq ''}" >
+					            	<f:selectItems value="#{wProcessDefFormBean.classTypeList}"/>
+					            </h:selectOneMenu>
+					            <a4j:commandLink value="[X]" 
+					            	styleClass="label_for_input_text command_link_form margin_left_5px"
+					            	action="#{wProcessDefFormBean.deleteParamListFromExternalMethod(index)}"
+					            	reRender="w_process_def_external_method_form"
+					            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne null and wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne ''}"/>
+				            </div>
+			            </a4j:repeat>
+						<h:outputText value="&#160;" styleClass="left_column_20" />
+			            <a4j:commandLink value="#{msg.label_add}" styleClass="label_for_input_text command_link_form"
+			            	actionListener="#{wProcessDefFormBean.addNewParamListToExternalMethod}"
+			            	reRender="w_process_def_external_method_form"/>
+					</h:panelGroup>
+				</div>
+				
+			</div>
+		
+			<div class="fieldset_block_info_noBorder_noPadding" >
+				<a4j:commandButton value="#{msg.label_cancel}"
+					actionListener="#{wProcessDefFormBean.cancelManageExternalMethod}"
+					reRender="w_process_def_external_method_form"
+					styleClass="cancel_button_style" />
+				<h:commandButton value="#{msg.label_save}"
+					actionListener="#{wProcessDefFormBean.manageExternalMethod}"
+					reRender="w_process_def_external_method_form, w_process_def_external_method_list_form"
+					styleClass="submit_button_w_margin_style"/>
+			</div>
+			
+		</ui:fragment>
+
+	</h:form>
+
+</ui:composition>

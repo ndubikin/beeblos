@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WDataTypeBL;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
 import org.beeblos.bpm.core.bl.WEmailTemplatesBL;
+import org.beeblos.bpm.core.bl.WExternalMethodBL;
 import org.beeblos.bpm.core.bl.WProcessDataFieldBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WProcessHeadBL;
@@ -43,6 +44,7 @@ import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.error.WEmailTemplatesException;
+import org.beeblos.bpm.core.error.WExternalMethodException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
@@ -57,6 +59,7 @@ import org.beeblos.bpm.core.md.impl.TableManagerBLImpl;
 import org.beeblos.bpm.core.model.SystemObject;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
+import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
@@ -168,6 +171,14 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private WProcessDataField wProcessDataFieldSelected;
 	private List<SelectItem> dataTypes;
 	private List<WProcessDataField> dataFieldList;
+	
+	/**
+	 * manage de external methods of de process
+	 */
+	private WExternalMethod externalMethodSelected;
+	private boolean visibleFormExternalMethod;
+	
+	private List<SelectItem> classTypeList;
 
 	
 	public WProcessDefFormBean() {
@@ -2567,6 +2578,167 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				
 		}
 		
+		
+	}
+	
+	public WExternalMethod getExternalMethodSelected() {
+
+		return externalMethodSelected;
+	}
+
+	public void setExternalMethodSelected(WExternalMethod externalMethodSelected) {
+
+		this.externalMethodSelected = externalMethodSelected;
+	}
+
+	public boolean isVisibleFormExternalMethod() {
+
+		return visibleFormExternalMethod;
+	}
+
+	public void setVisibleFormExternalMethod(boolean visibleFormExternalMethod) {
+
+		this.visibleFormExternalMethod = visibleFormExternalMethod;
+	}
+
+	public List<SelectItem> getClassTypeList() {
+
+		return classTypeList;
+	}
+
+	public void setClassTypeList(List<SelectItem> classTypeList) {
+
+		this.classTypeList = classTypeList;
+	}
+
+	/**
+	 * @author dmuleiro 20140211
+	 */
+	public void initializeExternalMethod(Integer externalMethodId){
+		
+		if (externalMethodId != null && !externalMethodId.equals(0)){
+			try {
+				this.externalMethodSelected = new WExternalMethodBL().getExternalMethodByPK(externalMethodId);
+			} catch (WExternalMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			this.externalMethodSelected = new WExternalMethod(EMPTY_OBJECT);
+			this.externalMethodSelected.setProcessHead(this.currentWProcessDef.getProcess());
+		}
+		
+		this._loadClassTypeList();
+		this.visibleFormExternalMethod = true;
+		
+	}
+	
+	public void addNewParamListToExternalMethod(){
+		
+		this.addNewParamListNameToExternalMethod();
+		this.addNewParamListTypeToExternalMethod();
+		
+	}
+	
+	public void addNewParamListNameToExternalMethod(){
+		
+		if (this.externalMethodSelected.getParamlistName() == null){
+			this.externalMethodSelected.setParamlistName(new String[1]);
+		} else {
+			String[] newArray = new String[this.externalMethodSelected.getParamlistName().length+1];
+			int i = 0;
+			while (i < this.externalMethodSelected.getParamlistName().length){
+				newArray[i] = this.externalMethodSelected.getParamlistName()[i];
+				i++;
+			}
+			newArray[i] = "";
+			this.externalMethodSelected.setParamlistName(newArray);
+		}
+		
+	}
+	
+	public void addNewParamListTypeToExternalMethod(){
+		
+		if (this.externalMethodSelected.getParamlistType() == null){
+			this.externalMethodSelected.setParamlistType(new Class[1]);
+		} else {
+			Class[] newArray = new Class[this.externalMethodSelected.getParamlistType().length+1];
+			int i = 0;
+			while (i < this.externalMethodSelected.getParamlistType().length){
+				newArray[i] = this.externalMethodSelected.getParamlistType()[i];
+				i++;
+			}
+			newArray[i] = null;
+			this.externalMethodSelected.setParamlistType(newArray);
+		}
+		
+	}
+
+	public void deleteParamListFromExternalMethod(Integer index){
+		
+		if (index != null){
+			String[] newNameArray = new String[this.externalMethodSelected.getParamlistName().length-1];
+			Class[] newTypeArray = new Class[this.externalMethodSelected.getParamlistType().length-1];
+			Integer i = 0, j = 0;
+			while (i < this.externalMethodSelected.getParamlistType().length){
+				
+				if (!i.equals(index)){
+					newNameArray[j] = this.externalMethodSelected.getParamlistName()[i];
+					newTypeArray[j] = this.externalMethodSelected.getParamlistType()[i];
+					j++;
+				}
+				i++;
+			}
+			this.externalMethodSelected.setParamlistType(newTypeArray);
+			this.externalMethodSelected.setParamlistName(newNameArray);
+		}
+		
+	}
+	
+	public void cancelManageExternalMethod(){
+		
+		this.visibleFormExternalMethod = false;
+		
+	}
+	
+	public void manageExternalMethod(){
+		
+		if (this.externalMethodSelected != null){
+			
+			WExternalMethodBL emBL = new WExternalMethodBL();
+			
+			try {
+				
+				if (this.externalMethodSelected.getId() != null && !this.externalMethodSelected.getId().equals(0)){
+					emBL.update(this.externalMethodSelected, this.getCurrentUserId());
+				} else {
+					emBL.add(this.externalMethodSelected, this.getCurrentUserId());
+				}
+				
+			} catch (WExternalMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			this.loadCurrentWProcessDef();
+			
+			this.visibleFormExternalMethod = false;
+			
+		}
+		
+	}
+	
+	private void _loadClassTypeList(){
+		
+		this.classTypeList = new ArrayList<SelectItem>();
+		try {
+			this.classTypeList.add(new SelectItem(Class.forName(Integer.class.getName()), Integer.class.getSimpleName()));
+			this.classTypeList.add(new SelectItem(Class.forName(String.class.getName()), String.class.getSimpleName()));
+			this.classTypeList.add(new SelectItem(Class.forName(Boolean.class.getName()), Boolean.class.getSimpleName()));
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
