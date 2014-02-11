@@ -10,10 +10,10 @@ import javax.el.ValueExpression;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bee.bpm.wbt.error.InjectorException;
 import org.beeblos.bpm.core.bl.WStepWorkBL;
 import org.beeblos.bpm.core.error.AlreadyExistsRunningProcessException;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
-import org.beeblos.bpm.core.error.InyectorException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WUserDefException;
@@ -243,21 +243,21 @@ public class TareaWorkflowUtil extends CoreManagedBean{
 			Integer idObject, String idObjectType,
 			String objReference, String objComments
 			) 
-	throws InyectorException {
+	throws InjectorException {
 
 		Integer idStepWork = null;
 		
 		if ( processId==null || processId==0  
 				|| idStep==null || idStep==0 ) {
-			throw new InyectorException("No se puede lanzar el workflow porque viene en cero o null el idProcess o IdStep ...");
+			throw new InjectorException("No se puede lanzar el workflow porque viene en cero o null el idProcess o IdStep ...");
 		}
 		
 		if ( idObject==null || idObject==0 ) {
-			throw new InyectorException("No se puede lanzar el workflow porque no está definido ningún id object ...");
+			throw new InjectorException("No se puede lanzar el workflow porque no está definido ningún id object ...");
 		}
 		
 		if ( idObjectType==null || "".equals(idObjectType) ) {
-			throw new InyectorException("No se puede lanzar el workflow porque no está definido ningún id object type ...");
+			throw new InjectorException("No se puede lanzar el workflow porque no está definido ningún id object type ...");
 		}
 		
 		ValueExpression valueBinding = super.getValueExpression("#{inyectorBean}");

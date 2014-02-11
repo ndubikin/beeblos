@@ -177,8 +177,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	 */
 	private WExternalMethod externalMethodSelected;
 	private boolean visibleFormExternalMethod;
-	
 	private List<SelectItem> classTypeList;
+	private Integer idClassType;
 
 	
 	public WProcessDefFormBean() {
@@ -191,6 +191,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		setShowHeaderMessage(false);
 		loadStepCombo();
 		this._loadWProcessComboList(); // dml 20130430
+		classTypeList = UtilsVs.castClassTypeToSelectitem(); // nes 20140211
 		_reset();
 
 	}
@@ -745,7 +746,15 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} 
 	}
-	
+
+	public Integer getIdClassType() {
+		return idClassType;
+	}
+
+	public void setIdClassType(Integer idClassType) {
+		this.idClassType = idClassType;
+	}
+
 	public WProcessDef getCurrentWProcessDef() {
 		return currentWProcessDef;
 	}
@@ -2509,22 +2518,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				.getName();
 	}
 
-	public List<SystemObject> getSystemObjectList() {
 
-		List<SystemObject> sol = new ArrayList<SystemObject>();
-
-		if (currentWProcessDef != null
-				&& currentWProcessDef.getSystemObject() != null
-				&& currentWProcessDef.getSystemObject().size() != 0) {
-
-			sol = new ArrayList<SystemObject>(
-					currentWProcessDef.getSystemObject());
-		}
-
-		return sol;
-
-	}
-	
 	/**
 	 * Puts null in the fields that we are not going to save (because we have chosen another option)
 	 * 
@@ -2627,8 +2621,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			this.externalMethodSelected = new WExternalMethod(EMPTY_OBJECT);
 			this.externalMethodSelected.setProcessHead(this.currentWProcessDef.getProcess());
 		}
-		
-		this._loadClassTypeList();
+
 		this.visibleFormExternalMethod = true;
 		
 	}
@@ -2727,19 +2720,5 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 		
 	}
-	
-	private void _loadClassTypeList(){
-		
-		this.classTypeList = new ArrayList<SelectItem>();
-		try {
-			this.classTypeList.add(new SelectItem(Class.forName(Integer.class.getName()), Integer.class.getSimpleName()));
-			this.classTypeList.add(new SelectItem(Class.forName(String.class.getName()), String.class.getSimpleName()));
-			this.classTypeList.add(new SelectItem(Class.forName(Boolean.class.getName()), Boolean.class.getSimpleName()));
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
+
 }
