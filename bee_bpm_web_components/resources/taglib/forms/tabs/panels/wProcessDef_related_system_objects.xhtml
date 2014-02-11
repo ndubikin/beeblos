@@ -14,7 +14,7 @@
 	<h:form id="w_process_def_related_system_objects_form${action}">
 
 		<ui:fragment
-			rendered="#{not empty wProcessDefFormBean.systemObjectList}">
+			rendered="#{not empty wProcessDefFormBean.currentWProcessDef.systemObjectList}">
 		
 				<fieldset>
 
@@ -35,7 +35,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<a4j:repeat value="#{wProcessDefFormBean.systemObjectList}" var="sysobj">
+							<a4j:repeat value="#{wProcessDefFormBean.currentWProcessDef.systemObjectList}" var="sysobj">
 								<tr>
 									<td>
 										<h:outputText value="#{sysobj.name}" />
@@ -72,7 +72,7 @@
 			<h:outputText
 				value="#{msg.label_there_are_not_assigned_data_field_at_process_if_you_like_you_can} "
 				styleClass="label_form"
-				rendered="#{empty wProcessDefFormBean.systemObjectList}" />
+				rendered="#{empty wProcessDefFormBean.currentWProcessDef.systemObjectList}" />
 	
 			<a4j:commandLink value="#{msg.label_add}" title="#{msg.label_add_system_object}"
 				tabindex="-1"

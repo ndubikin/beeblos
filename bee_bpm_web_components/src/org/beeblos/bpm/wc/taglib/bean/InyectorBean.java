@@ -22,7 +22,6 @@ import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.AlreadyExistsRunningProcessException;
-import org.beeblos.bpm.core.error.InyectorException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -141,7 +140,7 @@ public class InyectorBean  extends CoreManagedBean {
 	}
 
 	// set selectedProcessId and load data for this process
-	public String changeProcess() throws InyectorException {
+	public String changeProcess() throws InjectorException {
 		
 		logger.debug(" id"+objIdUsuario+" ref:"+objReference);
 		logger.debug(" idObject"+idObject+" clase:"+idObjectType);
@@ -260,7 +259,7 @@ public class InyectorBean  extends CoreManagedBean {
 		} catch (AlreadyExistsRunningProcessException e) {
 			String message = "InyectorBean.launchWork() AlreadyExistsRunningProcessException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-		} catch (InyectorException e) {
+		} catch (InjectorException e) {
 			String message = "InyectorBean.launchWork() InyectorException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		} catch (WProcessWorkException e) {
@@ -272,9 +271,6 @@ public class InyectorBean  extends CoreManagedBean {
 		} catch (WStepWorkSequenceException e) {
 			String message = "InyectorBean.launchWork() WStepWorkSequenceException: ";
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
-		} catch (InjectorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (WProcessDataFieldException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -285,14 +281,14 @@ public class InyectorBean  extends CoreManagedBean {
 	}
 	
 
-	private void _controlConsistenciaStepALanzar() throws InyectorException {
+	private void _controlConsistenciaStepALanzar() throws InjectorException {
 		
 		if (selectedProcessId==null || selectedProcessId==0) {
 			
 			String mensaje = "Debe elegir un proceso de la lista ....\n";
 			mensaje +=" Id:"+objIdUsuario+" ref:"+objReference; // NOTA REVISAR ESTOS objIdUsuario PORQUE LOS ESTABA USANDO MAL ... NES 20111216
 			logger.info("inyectar:"+mensaje);
-			throw new InyectorException(mensaje);
+			throw new InjectorException(mensaje);
 			
 		}
 		
@@ -301,7 +297,7 @@ public class InyectorBean  extends CoreManagedBean {
 			String mensaje = "You should choose a step to insert the element in the workflow....\n";
 			mensaje +=" Id:"+objIdUsuario+" ref:"+objReference;
 			logger.info("inyectar:"+mensaje);
-			throw new InyectorException(mensaje);
+			throw new InjectorException(mensaje);
 		}
 		
 		// NESTOR ARREGLAR ESTO LUEGO EXIGIENDO ESTE DATO SI HAY OBJ DEFINIDOS EN EL PROCESO.
