@@ -28,6 +28,8 @@
 	
 	<ui:include src="../common/mpSearchDataField.xhtml"/>
 
+	<ui:include src="../common/mpManageExternalMethod.xhtml"/>
+
 	<rich:tabPanel switchType="server" height="540px"
 		selectedTab="#{componentNavigator.currentComponent.activeTab}"
 		valueChangeListener="#{componentNavigator.tabPanelSwitched}">
@@ -84,6 +86,14 @@
 			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
 			<ui:include src="tabs/wProcessDefDataFields.xhtml">
 				<ui:param name="action" value="WPROCESSDEF_DATAFIELDS" />
+			</ui:include>
+		</rich:tab>
+
+		<rich:tab id="w_process_def_external_method" name="w_process_def_external_method"
+			label="#{msg.label_external_method}"
+			rendered="#{wProcessDefFormBean.currentId!=null and wProcessDefFormBean.currentId!=0}">
+			<ui:include src="tabs/wProcessDefExternalMethod.xhtml">
+				<ui:param name="action" value="WPROCESSDEF_EXTERNALMETHOD" />
 			</ui:include>
 		</rich:tab>
 

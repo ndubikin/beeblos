@@ -40,6 +40,15 @@
             </key>
             <one-to-many class="org.beeblos.bpm.core.model.WProcessDataField" />
         </set>		
+
+ 		<set name="externalMethod" table="w_process_head_method"
+ 			lazy="false" fetch="join" cascade="all">
+ 			<key> 
+ 				<column name="process_head_id" /> 
+ 			</key> 
+ 			<one-to-many class="org.beeblos.bpm.core.model.WExternalMethod" /> 
+ 		</set> 
+
 	</class>
 	
 	<class name="org.beeblos.bpm.core.model.noper.WProcessHeadLight" table="w_process_head">
@@ -87,6 +96,84 @@
         </property>
     </class>	
     
+    <class name="org.beeblos.bpm.core.model.WExternalMethod" table="w_process_head_method">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="processHead" class="org.beeblos.bpm.core.model.WProcessHead" lazy="false">
+            <column name="process_head_id"   />
+        </many-to-one>
+        <property name="classname" type="string">
+            <column name="classname">
+                <comment>for APP synchro: class name to execute</comment>
+            </column>
+        </property>
+        <property name="methodname" type="string">
+            <column name="methodname">
+                <comment>for APP synchro: method name to execute to get info from external source</comment>
+            </column>
+        </property>
+        <property name="type" type="string">
+            <column name="type" >
+                <comment>P = put method executes and receives 1 parameter response - G = get method executes and receive 1 loaded object as response</comment>
+            </column>
+        </property>
+        <property name="paramlistName" type="com.sp.common.model.usertype.StringArrayUserType">
+            <column name="paramlist_name" >
+                <comment>for APP synchro: parameter list to send</comment>
+            </column>
+        </property>
+        <property name="paramlistType" type="com.sp.common.model.usertype.ClassArrayUserType">
+            <column name="paramlist_type" >
+                <comment>for APP synchro: parameter list types (java types)</comment>
+            </column>
+        </property>        
+        <property name="atProcessStartup" type="java.lang.Boolean">
+            <column name="at_process_startup" sql-type="bit">
+                <comment>synchronize time: at process startup must synchronize getting data from source</comment>
+            </column>
+        </property>
+        <property name="atProcessEnd" type="java.lang.Boolean">
+            <column name="at_process_end" sql-type="bit">
+                <comment>synchronize time: at process ends must synchronize putting data to source</comment>
+            </column>
+        </property>
+        <property name="whenStepWorkIsInvoked" type="java.lang.Boolean">
+            <column name="when_step_work_is_invoked" sql-type="bit">
+                <comment>synchronize time: with each new step uploaded must synchronize getting data from source</comment>
+            </column>
+        </property>
+        <property name="whenStepWorkIsProcessed" type="java.lang.Boolean">
+            <column name="when_step_work_is_processed" sql-type="bit">
+                <comment>synchronize time: with each new step processed must synchronize putting data to source</comment>
+            </column>
+        </property>
+        <property name="logicalConditionExecution" type="string">
+            <column name="logicalConditionExecution" >
+                <comment>logical condition valid form bee-bpm execution environment. If true then executes de method</comment>
+            </column>
+        </property>
+        <property name="tested" type="string">
+            <column name="tested" >
+                <comment>for check environment existence of class/method purposes</comment>
+            </column>
+        </property>
+        <property name="insertDate" type="timestamp">
+            <column name="insert_date"   />
+        </property>
+        <property name="insertUser" type="java.lang.Integer">
+            <column name="insert_user"   />
+        </property>
+        <property name="modDate" type="timestamp">
+            <column name="mod_date"   />
+        </property>
+        <property name="modUser" type="java.lang.Integer">
+            <column name="mod_user"   />
+        </property>
+
+    </class>
+
 	<class name="org.beeblos.bpm.core.model.WProcessDef" table="w_process_def">
 
 		<id name="id" type="java.lang.Integer">

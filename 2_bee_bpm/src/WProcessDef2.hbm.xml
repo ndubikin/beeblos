@@ -43,15 +43,13 @@
 			<one-to-many class="org.beeblos.bpm.core.model.WProcessDataField" />
 		</set>
 
-		
-<!-- 		<set name="externalMethod" table="w_process_head_method" inverse="true" -->
-<!-- 			lazy="false" fetch="join" cascade="all"> -->
-<!-- 			<key> -->
-<!-- 				<column name="process_head_id" /> -->
-<!-- 			</key> -->
-<!-- 			<one-to-many class="org.beeblos.bpm.core.model.WExternalMethod" /> -->
-<!-- 		</set> -->
-		
+ 		<set name="externalMethod" table="w_process_head_method"
+ 			lazy="false" fetch="join" cascade="all"> 
+ 			<key> 
+ 				<column name="process_head_id" /> 
+ 			</key> 
+ 			<one-to-many class="org.beeblos.bpm.core.model.WExternalMethod" /> 
+ 		</set> 
 		
 	</class>
 
@@ -169,13 +167,13 @@
                 <comment>for check environment existence of class/method purposes</comment>
             </column>
         </property>
-        <property name="insertDate" type="timestamp">
+        <property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
             <column name="insert_date"   />
         </property>
         <property name="insertUser" type="java.lang.Integer">
             <column name="insert_user"   />
         </property>
-        <property name="modDate" type="timestamp">
+        <property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
             <column name="mod_date"   />
         </property>
         <property name="modUser" type="java.lang.Integer">

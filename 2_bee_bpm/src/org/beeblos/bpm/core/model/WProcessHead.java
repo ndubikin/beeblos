@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class WProcessHead implements java.io.Serializable {
@@ -29,7 +30,7 @@ public class WProcessHead implements java.io.Serializable {
 	 * Each managed table can have a set of WProcessDataField to manage their information ...
 	 * This set defines the list of managed fields for this process definition ...
 	 */
-	Set<WProcessDataField> processDataFieldDef = new HashSet<WProcessDataField>(0);
+	private Set<WProcessDataField> processDataFieldDef = new HashSet<WProcessDataField>(0);
 
 	/**
 	 *  
@@ -41,7 +42,7 @@ public class WProcessHead implements java.io.Serializable {
 	 *
 	 * nes 20140207 
 	 */
-	Set<WProcessDataField> externalMethod = new HashSet<WProcessDataField>(0);
+	private Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
 	
 	private Date insertDate;
 	private Integer insertUser;
@@ -52,6 +53,12 @@ public class WProcessHead implements java.io.Serializable {
 		super();
 	}
 
+	public WProcessHead(boolean createEmtpyObjects ){
+		super();
+		if ( createEmtpyObjects ) {
+			managedTableConfiguration = new WProcessHeadManagedDataConfiguration();
+		}	
+	}
 	
 	public WProcessHead(Integer id) {
 		this.id = id;
@@ -158,8 +165,11 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 	// dml 20130822
-	public ArrayList<WProcessDataField> getProcessDataFieldDefAsList() {
-		return new ArrayList<WProcessDataField>(processDataFieldDef);
+	public List<WProcessDataField> getProcessDataFieldDefAsList() {
+		if (processDataFieldDef != null){
+			return new ArrayList<WProcessDataField>(processDataFieldDef);
+		}
+		return null;
 	}
 
 
@@ -169,12 +179,19 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 
-	public Set<WProcessDataField> getExternalMethod() {
+	public Set<WExternalMethod> getExternalMethod() {
 		return externalMethod;
 	}
 
+	public List<WExternalMethod> getExternalMethodAsList() {
+		if (externalMethod != null){
+			return new ArrayList<WExternalMethod>(externalMethod);
+		}
+		return null;
+	}
 
-	public void setExternalMethod(Set<WProcessDataField> externalMethod) {
+
+	public void setExternalMethod(Set<WExternalMethod> externalMethod) {
 		this.externalMethod = externalMethod;
 	}
 
@@ -185,8 +202,6 @@ public class WProcessHead implements java.io.Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
-		result = prime * result
-				+ ((externalMethod == null) ? 0 : externalMethod.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
@@ -220,11 +235,6 @@ public class WProcessHead implements java.io.Serializable {
 			if (other.comments != null)
 				return false;
 		} else if (!comments.equals(other.comments))
-			return false;
-		if (externalMethod == null) {
-			if (other.externalMethod != null)
-				return false;
-		} else if (!externalMethod.equals(other.externalMethod))
 			return false;
 		if (id == null) {
 			if (other.id != null)

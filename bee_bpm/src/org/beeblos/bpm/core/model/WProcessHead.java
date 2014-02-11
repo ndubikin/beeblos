@@ -1,8 +1,11 @@
 package org.beeblos.bpm.core.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class WProcessHead implements java.io.Serializable {
@@ -17,9 +20,29 @@ public class WProcessHead implements java.io.Serializable {
 	private String name;	
 	private String comments;
 	
+	/**
+	 * If a Process manage data fields for process interactions or for external data syncrhonization,
+	 * a managed table is defined and created. This object has the definition of this table
+	 */
 	private WProcessHeadManagedDataConfiguration managedTableConfiguration; // data fields table
 	
-	Set<WProcessDataField> processDataFieldDef = new HashSet<WProcessDataField>(0);
+	/**
+	 * Each managed table can have a set of WProcessDataField to manage their information ...
+	 * This set defines the list of managed fields for this process definition ...
+	 */
+	private Set<WProcessDataField> processDataFieldDef = new HashSet<WProcessDataField>(0);
+
+	/**
+	 *  
+	 * External methods allowed to be executed or invoked by this process
+	 * Designer/Programmer responsibility to allow context class and method reachable
+	 * at execution time 
+	 * Invoking external method must be linked with sequence (routes), step (before
+	 * load step, after executing step), process (at start time or at end process time), etc. 
+	 *
+	 * nes 20140207 
+	 */
+	private Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
 	
 	private Date insertDate;
 	private Integer insertUser;
@@ -30,6 +53,12 @@ public class WProcessHead implements java.io.Serializable {
 		super();
 	}
 
+	public WProcessHead(boolean createEmtpyObjects ){
+		super();
+		if ( createEmtpyObjects ) {
+			managedTableConfiguration = new WProcessHeadManagedDataConfiguration();
+		}	
+	}
 	
 	public WProcessHead(Integer id) {
 		this.id = id;
@@ -136,14 +165,34 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 	// dml 20130822
-	public ArrayList<WProcessDataField> getProcessDataFieldDefAsList() {
-		return new ArrayList<WProcessDataField>(processDataFieldDef);
+	public List<WProcessDataField> getProcessDataFieldDefAsList() {
+		if (processDataFieldDef != null){
+			return new ArrayList<WProcessDataField>(processDataFieldDef);
+		}
+		return null;
 	}
 
 
 	public void setProcessDataFieldDef(
 			Set<WProcessDataField> processDataFieldDef) {
 		this.processDataFieldDef = processDataFieldDef;
+	}
+
+
+	public Set<WExternalMethod> getExternalMethod() {
+		return externalMethod;
+	}
+
+	public List<WExternalMethod> getExternalMethodAsList() {
+		if (externalMethod != null){
+			return new ArrayList<WExternalMethod>(externalMethod);
+		}
+		return null;
+	}
+
+
+	public void setExternalMethod(Set<WExternalMethod> externalMethod) {
+		this.externalMethod = externalMethod;
 	}
 
 
@@ -234,6 +283,7 @@ public class WProcessHead implements java.io.Serializable {
 
 	@Override
 	public String toString() {
+		final int maxLen = 2;
 		return "WProcessHead ["
 				+ (id != null ? "id=" + id + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
@@ -242,11 +292,28 @@ public class WProcessHead implements java.io.Serializable {
 						+ managedTableConfiguration + ", "
 						: "")
 				+ (processDataFieldDef != null ? "processDataFieldDef="
-						+ processDataFieldDef + ", " : "")
+						+ toString(processDataFieldDef, maxLen) + ", " : "")
+				+ (externalMethod != null ? "externalMethod="
+						+ toString(externalMethod, maxLen) + ", " : "")
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser : "") + "]";
+	}
+
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 
