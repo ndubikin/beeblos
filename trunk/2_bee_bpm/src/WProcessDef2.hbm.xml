@@ -103,13 +103,12 @@
 	</class>
 
 
-
     <class name="org.beeblos.bpm.core.model.WExternalMethod" table="w_process_head_method">
         <id name="id" type="java.lang.Integer">
             <column name="id" />
             <generator class="identity" />
         </id>
-        <many-to-one name="WProcessHead" class="org.beeblos.bpm.core.model.WProcessHead" fetch="select">
+        <many-to-one name="processHead" class="org.beeblos.bpm.core.model.WProcessHead" lazy="false">
             <column name="process_head_id"   />
         </many-to-one>
         <property name="classname" type="string">
@@ -167,13 +166,13 @@
                 <comment>for check environment existence of class/method purposes</comment>
             </column>
         </property>
-        <property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+        <property name="insertDate" type="timestamp">
             <column name="insert_date"   />
         </property>
         <property name="insertUser" type="java.lang.Integer">
             <column name="insert_user"   />
         </property>
-        <property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+        <property name="modDate" type="timestamp">
             <column name="mod_date"   />
         </property>
         <property name="modUser" type="java.lang.Integer">
@@ -181,14 +180,6 @@
         </property>
 
     </class>
-
-
-
-
-
-
-
-
 
 	<class name="org.beeblos.bpm.core.model.WProcessDef" table="w_process_def">
 
