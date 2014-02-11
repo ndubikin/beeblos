@@ -45,13 +45,19 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 			throw new ManagedDataSynchronizerException("ManagedDataSynchronizerJavaAppImpl:syncrhonizeField was called with Syncrhonize Mode nos APP...");
 		}
 		
-		if (stage.equals(STARTUP) || stage.equals(STEP_WORK_IS_INVOKED)) {
-			if (mdf.isAtProcessStartup()) {
+//		if (stage.equals(STARTUP) || stage.equals(STEP_WORK_IS_INVOKED)) {
+			if (mdf.isAtProcessStartup() && stage.equals(STARTUP)) {
 				_setMDF(md, mdf.getName(), fromExternalDataSynchro(work.getIdObject(),mdf,stage));
+			} else if(mdf.isWhenStepWorkIsInvoked() && stage.equals(STEP_WORK_IS_INVOKED)) {
+				_setMDF(md, mdf.getName(), fromExternalDataSynchro(work.getIdObject(),mdf,stage));
+			} else if (mdf.isAtProcessEnd() && stage.equals(END)) {
+				toExternalDataSynchro(work,mdf,stage,md);
+			} else if (mdf.isWhenStepWorkIsProcessed() && stage.equals(STEP_WORK_WAS_PROCESSED)) {
+				toExternalDataSynchro(work,mdf,stage,md);
 			}
-		} else if (stage.equals(END) || stage.equals(STEP_WORK_WAS_PROCESSED)) {
-			toExternalDataSynchro(work,mdf,stage);
-		}
+//		} else if (stage.equals(END) || stage.equals(STEP_WORK_WAS_PROCESSED)) {
+//			toExternalDataSynchro(work,mdf,stage,md);
+//		}
 		
 		
 		return null;
@@ -86,7 +92,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	 */
 	private Object fromExternalDataSynchro(
 			Integer idObject, WProcessDataField mdf, ProcessStage stage) throws ManagedDataSynchronizerException {
-		logger.debug("ManagedDataSynchronizerJavaAppImpl:syncrhonizeFromExternalData starting... ");
+		logger.debug("ManagedDataSynchronizerJavaAppImpl:fromExternalDataSynchro obtaining external data... ");
 
 		// si va a recuperar datos de 1 fuente externa via app, tendrá que tener nombre de clase y método a invocar
 		// y el método deberá devolver el valor requerido ...
@@ -99,7 +105,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		}
 		
 		Object returnedValue = new MethodSynchronizerImpl()
-									.invokeExternalMethod(
+									.invokeExternalMethodGet(
 											mdf.getClassName(), 
 											mdf.getGetMethod(), 
 											mdf.getParamType(), 
@@ -109,7 +115,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	}
 	
 	/**
-	 * put external data in external data source ...
+	 * put external data in external data source ... OJO MAL NO FUNCIONA AÚN!!!
 	 * 
 	 * @param WProcessWork work
 	 * @param WProcessDataField mdf
@@ -118,8 +124,24 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	 * @throws ManagedDataSynchronizerException
 	 */	
 	private Object toExternalDataSynchro(
-			WProcessWork work, WProcessDataField mdf, ProcessStage stage) throws ManagedDataSynchronizerException {
-		logger.debug("ManagedDataSynchronizerJavaAppImpl:syncrhonizeFromExternalData starting... ");
+			WProcessWork work, WProcessDataField mdf, ProcessStage stage, ManagedData md) 
+					throws ManagedDataSynchronizerException {
+		logger.debug("ManagedDataSynchronizerJavaAppImpl:toExternalDataSynchro sending external data... ");
+
+		if (mdf.getClassName()==null || "".equals(mdf.getClassName())) {
+			throw new ManagedDataSynchronizerException("ManagedDataSynchronizerJavaAppImpl:toExternalDataSynchro no classname provided for synchronize with external APP...");
+		}
+		if (mdf.getGetMethod()==null || "".equals(mdf.getGetMethod())) {
+			throw new ManagedDataSynchronizerException("ManagedDataSynchronizerJavaAppImpl:toExternalDataSynchro no get-method provided for synchronize with external APP...");
+		}
+		
+//		Object returnedValue = new MethodSynchronizerImpl()
+//									.invokeExternalMethodGet(
+//											mdf.getClassName(), 
+//											mdf.getGetMethod(), 
+//											mdf.getParamType(), 
+//											idObject ); 
+		
 
 		
 		return null;

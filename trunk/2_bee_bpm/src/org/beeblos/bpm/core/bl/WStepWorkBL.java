@@ -178,7 +178,7 @@ public class WStepWorkBL {
 		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 
 		// sets managed data 
-		currentStep.setManagedData(runtimeSettings.getManagedData());
+		currentStep.setManagedData(runtimeSettings.getManagedData());//NOTA NESTOR: VER BIEN QUE HACEMOS AQUÍ ...
 		
 		// set current workitem to processed status
 		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
@@ -851,7 +851,11 @@ public class WStepWorkBL {
 							break;
 						}
 					}
-					else {
+					else {  // ending routes
+						
+						// write step-work-sequence log file 
+						this.createStepWorkSequenceLog(route, currentStepWork, false, 
+								route.getFromStep(), null, currentUser);
 
 						// if route has external method execution then execute it!
 						try {
@@ -878,6 +882,18 @@ public class WStepWorkBL {
 	}
 	
 	// dml 20130827 - creamos el log en WStepWorkSequence de la nueva ruta creada
+	/**
+	 * Creates a log record related with the route taken by this instance of process
+	 * Principal function of this trace is to draw the map with taken routes
+	 * 
+	 * @param route
+	 * @param stepWork
+	 * @param sentBack
+	 * @param beginStep
+	 * @param endStep
+	 * @param currentUserId
+	 * @throws WStepWorkSequenceException
+	 */
 	private void createStepWorkSequenceLog(WStepSequenceDef route, WStepWork stepWork, boolean sentBack, 
 			WStepDef beginStep, WStepDef endStep, Integer currentUserId) throws WStepWorkSequenceException{
 		
