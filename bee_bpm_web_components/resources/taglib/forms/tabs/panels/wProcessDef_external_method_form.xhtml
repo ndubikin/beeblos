@@ -8,7 +8,10 @@
 	<h:form id="w_process_def_external_method_form">
 
 		<ui:fragment rendered="#{wProcessDefFormBean.visibleFormExternalMethod}">
-			<div class="fieldset_block_info" >
+		
+			<h:messages style="#{wProcessDefFormBean.messageStyle}" />
+		
+			<div class="fieldset_block_info_noBorder_noPadding" >
 		
 				<div class="div_line_wo_border_nomenu">
 					<h:outputText value="#{msg.label_class_name}:"
@@ -67,39 +70,42 @@
 				</div>
 				
 			</div>
+			
 			<div class="fieldset_block_info_noBorder_noPadding" >
 				<div class="div_line_wo_border_nomenu">
 					<h:outputText value="#{msg.label_parameter_list}:"
-						styleClass="label_for_input_text" />
-					<h:panelGroup>
-						<a4j:repeat value="#{wProcessDefFormBean.externalMethodSelected.paramlistName}" rowKeyVar="index">            
-							<div class="div_line_wo_border_nomenu">
-								<h:outputText value="&#160;"
-									styleClass="left_column_20" />
-								<h:inputText value="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index]}"
-				                	styleClass="input_text_150_style"/>
-								<h:outputText value="#{wProcessDefFormBean.externalMethodSelected.paramlistType[index].simpleName}"
-				                	styleClass="label_form_bold label_for_input_text margin_left_10px" 
-					            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne null and wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne ''}"/>
-					            <h:selectOneMenu value="#{wProcessDefFormBean.externalMethodSelected.paramlistType[index]}"
-					            	styleClass="select_one_100_style margin_left_10px"
-					            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] eq null or wProcessDefFormBean.externalMethodSelected.paramlistName[index] eq ''}" >
-					            	<f:selectItems value="#{wProcessDefFormBean.classTypeList}"/>
-					            </h:selectOneMenu>
-					            <a4j:commandLink value="[X]" 
-					            	styleClass="label_for_input_text command_link_form margin_left_5px"
-					            	action="#{wProcessDefFormBean.deleteParamListFromExternalMethod(index)}"
-					            	reRender="w_process_def_external_method_form"
-					            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne null and wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne ''}"/>
-				            </div>
-			            </a4j:repeat>
-						<h:outputText value="&#160;" styleClass="left_column_20" />
-			            <a4j:commandLink value="#{msg.label_add}" styleClass="label_for_input_text command_link_form"
-			            	actionListener="#{wProcessDefFormBean.addNewParamListToExternalMethod}"
-			            	reRender="w_process_def_external_method_form"/>
-					</h:panelGroup>
+						styleClass="label_for_input_text left_column_20" />
+		            <a4j:commandLink value="#{msg.label_add}" styleClass="label_for_input_text command_link_form"
+		            	actionListener="#{wProcessDefFormBean.addNewParamListToExternalMethod}"
+		            	reRender="w_process_def_external_method_form"/>
 				</div>
-				
+				<a4j:repeat value="#{wProcessDefFormBean.externalMethodSelected.paramlistName}" rowKeyVar="index">            
+					<div class="div_line_wo_border_nomenu">
+					
+						<h:outputText value="&#160;"
+							styleClass="left_column_20" />
+							
+						<h:inputText value="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index]}"
+		                	styleClass="input_text_150_style"/>
+						
+						<h:outputText value="#{wProcessDefFormBean.externalMethodSelected.paramlistType[index].simpleName}"
+		                	styleClass="label_form_bold label_for_input_text margin_left_10px" 
+			            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne null and wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne ''}"/>
+			            <h:selectOneMenu value="#{wProcessDefFormBean.idClassType}"
+			            	styleClass="select_one_200_style margin_left_10px"
+			            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] eq null or wProcessDefFormBean.externalMethodSelected.paramlistName[index] eq ''}" >
+			            	<f:selectItems value="#{wProcessDefFormBean.classTypeList}"/>
+							<a4j:support ajaxSingle="true" event="onchange"
+								action="#{wProcessDefFormBean.setCorrectClassType(index)}" />
+			            </h:selectOneMenu>
+			            
+			            <a4j:commandLink value="[X]" 
+			            	styleClass="label_for_input_text command_link_form margin_left_5px"
+			            	action="#{wProcessDefFormBean.deleteParamListFromExternalMethod(index)}"
+			            	reRender="w_process_def_external_method_form"
+			            	rendered="#{wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne null and wProcessDefFormBean.externalMethodSelected.paramlistName[index] ne ''}"/>
+		            </div>
+	            </a4j:repeat>
 			</div>
 		
 			<div class="fieldset_block_info_noBorder_noPadding" >
@@ -107,7 +113,7 @@
 					actionListener="#{wProcessDefFormBean.cancelManageExternalMethod}"
 					reRender="w_process_def_external_method_form"
 					styleClass="cancel_button_style" />
-				<h:commandButton value="#{msg.label_save}"
+				<a4j:commandButton value="#{msg.label_save}"
 					actionListener="#{wProcessDefFormBean.manageExternalMethod}"
 					reRender="w_process_def_external_method_form, w_process_def_external_method_list_form"
 					styleClass="submit_button_w_margin_style"/>
