@@ -227,6 +227,52 @@ public class WProcessWorkBL {
 	}
 
 	/**
+	 * NOTA: ESTE ES EL MÉTODO VIEJO, EL NUEVO CON DATETIME DE JODA ES EL DE ARRIBA, ESTE SOLO LO DEJAMOS PARA
+	 * EL MANTENIMIENTO DE BEE_BPM MIENTRAS NO LO MIGRAMOS A JSF2
+	 * 
+	 * @author dmuleiro 20140212
+	 * 
+	 * @param idProcess
+	 * @param workTypeFilter
+	 * @param onlyActiveWorkingProcessesFilter
+	 * @param initialStartedDateFilter
+	 * @param finalStartedDateFilter
+	 * @param estrictStartedDateFilter
+	 * @param initialFinishedDateFilter
+	 * @param finalFinishedDateFilter
+	 * @param estrictFinishedDateFilter
+	 * @param action
+	 * @return
+	 * @throws WProcessWorkException
+	 */
+	@Deprecated
+	public List<ProcessWorkLight> finderWorkingWorkVIEJO(Integer idProcess, 
+			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
+			Date initialStartedDateFilter, Date finalStartedDateFilter, 
+			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
+			boolean estrictFinishedDateFilter, String action)
+	throws WProcessWorkException {
+		
+		DateTime initialStartedDateFilterDATETIME = 
+				(initialStartedDateFilter != null)?new DateTime(initialStartedDateFilter.getTime()):null;
+		DateTime finalStartedDateFilterDATETIME = 
+				(finalStartedDateFilter != null)?new DateTime(finalStartedDateFilter.getTime()):null;
+
+		DateTime initialFinishedDateFilterDATETIME = 
+				(initialFinishedDateFilter != null)?new DateTime(initialFinishedDateFilter.getTime()):null;
+		DateTime finalFinishedDateFilterDATETIME = 
+				(finalFinishedDateFilter != null)?new DateTime(finalFinishedDateFilter.getTime()):null;
+
+		
+		return this.finderWorkingWork(idProcess, workTypeFilter,
+				onlyActiveWorkingProcessesFilter, initialStartedDateFilterDATETIME, finalStartedDateFilterDATETIME, 
+				estrictStartedDateFilter, initialFinishedDateFilterDATETIME, finalFinishedDateFilterDATETIME, 
+				estrictFinishedDateFilter, action);
+		
+	}
+
+
+	/**
 	 * returns qty of existing process work for a given processId
 	 * default: ALL
 	 * 

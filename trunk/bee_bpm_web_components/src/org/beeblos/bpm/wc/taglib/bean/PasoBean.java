@@ -414,7 +414,7 @@ public class PasoBean  extends CoreManagedBean {
 			// procesar el WStepWork
 			WRuntimeSettings runtimeSettings = 
 					new WRuntimeSettings((pasoActual.isSendUserNotesToNextStep())?pasoActual.getUserNotes():null, 
-					null, this.sTimeUnit, this.sAssignedTime, this.sDeadlineDate, this.sDeadlineTime, 
+					null, this.pasoActual.getManagedData(), this.sTimeUnit, this.sAssignedTime, this.sDeadlineDate, this.sDeadlineTime, 
 					this.sReminderTimeUnit, this.sReminderTime);
 			
 			// dml 20120308 - Procesa el WStepWork y devuelve el numero de nuevas rutas lanzadas
@@ -611,7 +611,7 @@ public class PasoBean  extends CoreManagedBean {
 			// procesar el WStepWork
 			WRuntimeSettings runtimeSettings = 
 					new WRuntimeSettings((pasoActual.isSendUserNotesToNextStep())?pasoActual.getUserNotes():null, 
-					null, this.sTimeUnit, this.sAssignedTime, this.sDeadlineDate, this.sDeadlineTime, 
+					null, this.pasoActual.getManagedData(), this.sTimeUnit, this.sAssignedTime, this.sDeadlineDate, this.sDeadlineTime, 
 					this.sReminderTimeUnit, this.sReminderTime);
 			
 			// dml 20120308 - Procesa el WStepWork y devuelve el numero de nuevas rutas lanzadas
@@ -742,6 +742,9 @@ public class PasoBean  extends CoreManagedBean {
 			new WStepWorkBL().checkStatus(pasoActual.getId(), usuarioLogueado, false);
 		} catch (WStepAlreadyProcessedException e) {
 			procesado=true;
+		} catch (WStepWorkException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} 
 
 		return procesado;

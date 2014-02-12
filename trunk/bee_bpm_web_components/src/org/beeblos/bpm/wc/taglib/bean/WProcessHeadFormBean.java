@@ -128,7 +128,7 @@ public class WProcessHeadFormBean extends CoreManagedBean {
 		try {
 			
  			this.setRelatedProcessDefList(new WProcessDefBL()
-				.finderWProcessDefLight(false, null, null, null, false, null, "", 
+				.finderWProcessDefLightVIEJO(false, null, null, null, false, null, "", 
 						this.currentWProcessHead.getId(), this.activeFilter, getCurrentUserId()));
 			
 		} catch (WProcessDefException e) {

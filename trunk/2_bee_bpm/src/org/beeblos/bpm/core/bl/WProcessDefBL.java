@@ -772,6 +772,44 @@ public class WProcessDefBL {
 		
 	}
 
+	/**
+	 * NOTA: ESTE ES EL MÉTODO VIEJO, EL NUEVO CON DATETIME DE JODA ES EL DE ARRIBA, ESTE SOLO LO DEJAMOS PARA
+	 * EL MANTENIMIENTO DE BEE_BPM MIENTRAS NO LO MIGRAMOS A JSF2
+	 * 
+	 * @author dmuleiro 20140212
+	 * 
+	 * @param onlyWorkingProcessesFilter
+	 * @param processNameFilter
+	 * @param initialProductionDateFilter
+	 * @param finalProductionDateFilter
+	 * @param strictProductionDateFilter
+	 * @param productionUserFilter
+	 * @param action
+	 * @param processHeadId
+	 * @param activeFilter
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	@Deprecated
+	public List<WProcessDefLight> finderWProcessDefLightVIEJO(boolean onlyWorkingProcessesFilter, 
+			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
+			boolean strictProductionDateFilter, Integer productionUserFilter, String action, 
+			Integer processHeadId, String activeFilter, Integer currentUserId)
+	throws WProcessDefException {
+		
+		DateTime initialProductionDateFilterDATETIME = 
+				(initialProductionDateFilter != null)?new DateTime(initialProductionDateFilter.getTime()):null;
+		DateTime finalProductionDateFilterDATETIME = 
+				(finalProductionDateFilter != null)?new DateTime(finalProductionDateFilter.getTime()):null;
+		
+		return this.finderWProcessDefLight(onlyWorkingProcessesFilter, 
+				processNameFilter, initialProductionDateFilterDATETIME, finalProductionDateFilterDATETIME,
+				strictProductionDateFilter, productionUserFilter, action, processHeadId, 
+				activeFilter, currentUserId);
+		
+	}
+
 	public String getProcessNameByVersionId(Integer id, Integer currentUserId) 
 			throws WProcessDefException, WStepSequenceDefException {
 

@@ -1615,6 +1615,60 @@ public class WStepWorkBL {
 	}
 	
 	/**
+	 * NOTA: ESTE ES EL MÉTODO VIEJO, EL NUEVO CON DATETIME DE JODA ES EL DE ARRIBA, ESTE SOLO LO DEJAMOS PARA
+	 * EL MANTENIMIENTO DE BEE_BPM MIENTRAS NO LO MIGRAMOS A JSF2
+	 * 
+	 * @author dmuleiro 20140212
+	 * 
+	 * @param initialDecidedDateFilter
+	 * @param finalDecidedDateFilter
+	 * @param estrictDecidedDateFilter
+	 * @param action
+	 * @param onlyActiveWorkingProcessesFilter
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	@Deprecated
+	public List<StepWorkLight> finderStepWorkVIEJO(Integer processIdFilter, 
+			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
+			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			String action, boolean onlyActiveWorkingProcessesFilter)
+	throws WStepWorkException {
+
+		DateTime initialArrivingDateFilterDATETIME = 
+				(initialArrivingDateFilter != null)?new DateTime(initialArrivingDateFilter.getTime()):null;
+		DateTime finalArrivingDateFilterDATETIME = 
+				(finalArrivingDateFilter != null)?new DateTime(finalArrivingDateFilter.getTime()):null;
+
+		DateTime initialOpenedDateFilterDATETIME = 
+				(initialOpenedDateFilter != null)?new DateTime(initialOpenedDateFilter.getTime()):null;
+		DateTime finalOpenedDateFilterDATETIME = 
+				(finalOpenedDateFilter != null)?new DateTime(finalOpenedDateFilter.getTime()):null;
+
+		LocalDate initialDeadlineDateFilterDATETIME = 
+				(initialDeadlineDateFilter != null)?new LocalDate(initialDeadlineDateFilter.getTime()):null;
+		LocalDate finalDeadlineDateFilterDATETIME = 
+				(finalDeadlineDateFilter != null)?new LocalDate(finalDeadlineDateFilter.getTime()):null;
+
+		DateTime initialDecidedDateFilterDATETIME = 
+				(initialDecidedDateFilter != null)?new DateTime(initialDecidedDateFilter.getTime()):null;
+		DateTime finalDecidedDateFilterDATETIME = 
+				(finalDecidedDateFilter != null)?new DateTime(finalDecidedDateFilter.getTime()):null;
+
+		return this.finderStepWork(processIdFilter, stepIdFilter, 
+				stepTypeFilter, referenceFilter, idWorkFilter, 
+				initialArrivingDateFilterDATETIME, finalArrivingDateFilterDATETIME, estrictArrivingDateFilter, 
+				initialOpenedDateFilterDATETIME, finalOpenedDateFilterDATETIME, estrictOpenedDateFilter,
+				initialDeadlineDateFilterDATETIME, finalDeadlineDateFilterDATETIME, estrictDeadlineDateFilter, 
+				initialDecidedDateFilterDATETIME, finalDecidedDateFilterDATETIME, estrictDecidedDateFilter, 
+				action, onlyActiveWorkingProcessesFilter);
+		
+	}
+
+	/**
 	 * returns a list with all process def id which references (or use) the given stepDefId
 	 *
 	 * @author dml 20130507
