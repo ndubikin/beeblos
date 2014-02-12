@@ -628,9 +628,21 @@ float:left;
 }
 
 .fieldset_block_info {
-	border-width: 1px;
+	width:98%; /*parque porque el 100% da algún problema... leer arriba*/
+	border: 1px solid #BED6F8;
+	padding:10px;
 	margin-bottom:15px;
+	float:left;
 }
+
+.fieldset_block_info_noBorder {
+	width:100%;
+	border: none;
+	margin-bottom:15px;
+	display: block;
+	line-height: 1.4em;
+}
+
 .fieldset_block_info_35px {
 	border-width: 1px;
 	margin-bottom:15px;
@@ -639,10 +651,14 @@ float:left;
 
 .fieldset_block_info_noBorder_noPadding {
 	border:none;
-	width:100%;
+	width:100%;/*esta clase la utilizamos por ejemplo para las grillas que van en una pestaña. Si dejamos el width:100%
+					 resulta que la grilla queda pegada al borde derecho del contenedor y no deja un padding de 10px como deberia
+					 Por ese motivo lo comenté, pero hay que revisar a ver quien mas lo usa y eventualmente cambiar la clase si
+					 no encaja con este width ...*/
+	padding-top: 10px;
 	padding-bottom:10px; /* 0 para contrarrestar el padding que tiene el skin de richfaces */
 					  /* 10 de margen inferior para dejar separaciones verticales entre elementos ... */
-					 
+	float:left;			 
 }
 
 /* para cambiar luego por el de arriba*/

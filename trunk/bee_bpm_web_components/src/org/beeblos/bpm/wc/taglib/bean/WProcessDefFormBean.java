@@ -56,7 +56,6 @@ import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.XMLGenerationException;
 import org.beeblos.bpm.core.md.TableManagerBL;
 import org.beeblos.bpm.core.md.impl.TableManagerBLImpl;
-import org.beeblos.bpm.core.model.SystemObject;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WExternalMethod;
@@ -86,6 +85,7 @@ import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 
 import com.sp.common.jsf.util.UtilsVs;
 import com.sp.common.model.WDataType;
+import com.sp.common.model.en.ClassType;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
@@ -2606,6 +2606,9 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	}
 
 	/**
+	 * This method initializes the form which allow the user to add a new WExternalMethod or update an existing
+	 * one to the WProcessDef 
+	 * 
 	 * @author dmuleiro 20140211
 	 */
 	public void initializeExternalMethod(Integer externalMethodId){
@@ -2614,8 +2617,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			try {
 				this.externalMethodSelected = new WExternalMethodBL().getExternalMethodByPK(externalMethodId);
 			} catch (WExternalMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				super.createWindowMessage(ERROR_MESSAGE, "Error trying to load the external method: ", e);
 			}
 		} else {
 			this.externalMethodSelected = new WExternalMethod(EMPTY_OBJECT);
@@ -2626,14 +2628,20 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 	
+	/**
+	 * It creates two new arrays for the ParamListName and ParamListType related with the selected ExternalMethod
+	 * in order to add a new field in both arrays at the same time
+	 * 
+	 * @author dmuleiro 20140212
+	 */
 	public void addNewParamListToExternalMethod(){
 		
-		this.addNewParamListNameToExternalMethod();
-		this.addNewParamListTypeToExternalMethod();
+		this._addNewParamListNameToExternalMethod();
+		this._addNewParamListTypeToExternalMethod();
 		
 	}
 	
-	public void addNewParamListNameToExternalMethod(){
+	private void _addNewParamListNameToExternalMethod(){
 		
 		if (this.externalMethodSelected.getParamlistName() == null){
 			this.externalMethodSelected.setParamlistName(new String[1]);
@@ -2650,7 +2658,7 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 	
-	public void addNewParamListTypeToExternalMethod(){
+	private void _addNewParamListTypeToExternalMethod(){
 		
 		if (this.externalMethodSelected.getParamlistType() == null){
 			this.externalMethodSelected.setParamlistType(new Class[1]);
@@ -2661,12 +2669,22 @@ public class WProcessDefFormBean extends CoreManagedBean {
 				newArray[i] = this.externalMethodSelected.getParamlistType()[i];
 				i++;
 			}
-			newArray[i] = null;
+			
+			/**
+			 * por defecto pondremos el primer valor de la lista de ClassType
+			 */
+			this.idClassType = ClassType.getDefaultValue().getCode(); 
+			newArray[i] = ClassType.findByKey(this.idClassType).getClassObj();
 			this.externalMethodSelected.setParamlistType(newArray);
 		}
 		
 	}
 
+	/**
+	 * It deletes the name and type of the param list that corresponds the attribute "index"
+	 * 
+	 * @author dmuleiro 20140212
+	 */
 	public void deleteParamListFromExternalMethod(Integer index){
 		
 		if (index != null){
@@ -2688,34 +2706,85 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 	}
 	
+	/**
+	 * Closes the WExternalMethod form (tab External method)
+	 * 
+	 * @author dmuleiro 20140212
+	 */
 	public void cancelManageExternalMethod(){
 		
 		this.visibleFormExternalMethod = false;
 		
 	}
 	
+	/**
+	 * Adds or updated the WExternalMethod and loads again the WProcessDef in order to have the new correct values
+	 * 
+	 * @author dmuleiro 20140212
+	 */
 	public void manageExternalMethod(){
 		
 		if (this.externalMethodSelected != null){
 			
 			WExternalMethodBL emBL = new WExternalMethodBL();
 			
-			try {
-				
-				if (this.externalMethodSelected.getId() != null && !this.externalMethodSelected.getId().equals(0)){
-					emBL.update(this.externalMethodSelected, this.getCurrentUserId());
-				} else {
-					emBL.add(this.externalMethodSelected, this.getCurrentUserId());
+			if (this._externalMethodListsAreCorrect()){
+				try {
+					
+					if (this.externalMethodSelected.getId() != null && !this.externalMethodSelected.getId().equals(0)){
+						emBL.update(this.externalMethodSelected, this.getCurrentUserId());
+					} else {
+						emBL.add(this.externalMethodSelected, this.getCurrentUserId());
+					}
+					
+				} catch (WExternalMethodException e) {
+					super.createWindowMessage(ERROR_MESSAGE, "Error trying to save/update the external method: ", e);
 				}
 				
-			} catch (WExternalMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				this.loadCurrentWProcessDef();
+				
+				this.visibleFormExternalMethod = false;
+				
 			}
 			
-			this.loadCurrentWProcessDef();
+		}
+		
+	}
+	
+	private boolean _externalMethodListsAreCorrect(){
+		
+		int i = 0;
+		while (i < this.externalMethodSelected.getParamlistType().length){
+			if (this.externalMethodSelected.getParamlistType()[i] == null){
+				super.createWindowMessage(ERROR_MESSAGE, "Param <" + i + "> type must have a correct value", null);
+				return false;
+			} else if( this.externalMethodSelected.getParamlistName()[i] == null
+					|| "".equals(this.externalMethodSelected.getParamlistName()[i])){
+				super.createWindowMessage(ERROR_MESSAGE, "Param <" + i + "> name must have a correct value", null);
+				return false;
+			}
+			i++;
+		}
+		
+		return true;
+
+	}
+	
+	/**
+	 * View call, this method was created because the "h:selectOneMenu" which had to choose between ClassType
+	 * for the "External method" didn't work with value "Class", so we use the "code" of the ClassType and when
+	 * the user choose a new value it converts the "code" value into "Class" and fills the correct array field
+	 * 
+	 *  @author dmuleiro 20140212
+	 * 
+	 * @param index
+	 */
+	public void setCorrectClassType(Integer index){
+		
+		if (index != null && this.idClassType != null && !this.idClassType.equals(0)){
 			
-			this.visibleFormExternalMethod = false;
+			Class c= ClassType.findByKey(this.idClassType).getClassObj();
+			this.externalMethodSelected.getParamlistType()[index] = c;
 			
 		}
 		
