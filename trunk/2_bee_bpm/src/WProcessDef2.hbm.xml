@@ -998,11 +998,12 @@
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
 			column="process_id" lazy="false" name="process" />
 			
-		<set name="externalMethod" table="w_stepsequence_method" inverse="true"
+		<set name="externalMethod" table="w_stepsequence_method"
 			lazy="false" fetch="join" cascade="save-update">
 			<key column="id_step_sequence" />
-			<many-to-many class="org.beeblos.bpm.core.model.WExternalMethod" column="id_method"/>
+			<many-to-many class="org.beeblos.bpm.core.model.WExternalMethod" column="id_method" />
 		</set>			
+
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WStepWorkSequence" table="w_step_work_sequence">

@@ -16,8 +16,8 @@
 
 	<h:form id="add_and_edit_step_sequence">
 
-			<h:panelGrid width="98%" columns="2"
-				columnClasses="colStyle400,colStyle250">
+		<h:panelGrid width="98%" columns="3"
+				columnClasses="colStyle400,colStyle250,colStyle250">
 
 			<h:panelGroup>
 				<h:panelGrid width="98%" columns="2"
@@ -79,20 +79,46 @@
 	            	</f:facet>
 					
 					<h:outputText value="#{msg.label_none}" 
-						rendered="#{wProcessDefFormBean.currentStepResponseList == null or
-							wProcessDefFormBean.currentStepResponseListSize == 0}"/>
+						rendered="#{wProcessDefFormBean.currentStepResponseList eq null or
+							wProcessDefFormBean.currentStepResponseListSize eq 0}"/>
 					
 					<h:selectManyCheckbox id="id_select_many_responses"
 						value="#{wProcessDefFormBean.currentStepValidResponses}"
 						layout="pageDirection"
-						rendered="#{wProcessDefFormBean.currentStepResponseList != null and
-							wProcessDefFormBean.currentStepResponseListSize != 0}">
+						rendered="#{wProcessDefFormBean.currentStepResponseList ne null and
+							wProcessDefFormBean.currentStepResponseListSize ne 0}">
 						<f:selectItems
 							value="#{wProcessDefFormBean.currentStepResponseList}" var="csr"
 							itemLabel="#{csr.label}" itemValue="#{csr.value}" />
 						<a4j:support
 							action="#{wProcessDefFormBean.selectValidStepResponse}"
 							ajaxSingle="true" event="onclick" />
+					</h:selectManyCheckbox>
+				</rich:panel>
+	
+			</h:panelGroup>
+
+			<h:panelGroup>
+
+				<rich:spacer height="10" />
+				<rich:panel id="step_sequence_external_method" bodyClass="panelScroll"
+					style="width:250px; height: 150px;">
+					<f:facet name="header">
+	                	<h:outputText value="#{msg.label_select_external_methods}" />
+	            	</f:facet>
+					
+					<h:outputText value="#{msg.label_none}" 
+						rendered="#{wProcessDefFormBean.currentWProcessDef.process.externalMethod eq null or
+							wProcessDefFormBean.currentWProcessDef.process.externalMethod.size() eq 0}"/>
+					
+					<h:selectManyCheckbox id="id_select_many_external_methods"
+						value="#{wProcessDefFormBean.currentStepSelectedExternalMethods}"
+						layout="pageDirection"
+						rendered="#{wProcessDefFormBean.currentWProcessDef.process.externalMethod ne null and
+							wProcessDefFormBean.currentWProcessDef.process.externalMethod.size() ne 0}">
+						<f:selectItems
+							value="#{wProcessDefFormBean.currentWProcessDef.process.externalMethodAsList}" 
+							var="extMeth" itemLabel="#{extMeth.classname}" itemValue="#{extMeth.id}" />
 					</h:selectManyCheckbox>
 				</rich:panel>
 	
@@ -111,13 +137,13 @@
 				oncomplete="javascript:Richfaces.hideModalPanel('mpAddAndEditStepSequence');"
 				reRender="w_process_def_step_sequence_table, mpAddAndEditStepSequence"
 				style="width:120px; margin-left: 10px; height:24px;"
-				rendered="#{wProcessDefFormBean.currentStepSequence.id == null}"/>
+				rendered="#{wProcessDefFormBean.currentStepSequence.id eq null}"/>
 			<a4j:commandButton id="update_button_sr" value="#{msg.label_update}"
 				actionListener="#{wProcessDefFormBean.addAndUpdateStepSequence}"
 				oncomplete="javascript:Richfaces.hideModalPanel('mpAddAndEditStepSequence');"
-				reRender="w_process_def_step_sequence_table, w_process_def_step_permissions_outgoing_routes_form, mpAddAndEditStepSequence"
+				reRender="w_process_def_step_sequence_table, w_process_def_step_permissions_outgoing_routes_form, w_process_def_step_permissions_incoming_routes_form, mpAddAndEditStepSequence"
 				style="width:120px; margin-left: 10px; height:24px;"
-				rendered="#{wProcessDefFormBean.currentStepSequence.id != null}"/>
+				rendered="#{wProcessDefFormBean.currentStepSequence.id ne null}"/>
 		</h:panelGroup>
 
 	</h:form>
