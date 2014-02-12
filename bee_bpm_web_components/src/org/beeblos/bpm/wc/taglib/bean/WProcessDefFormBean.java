@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletOutputStream;
@@ -86,6 +87,7 @@ import org.beeblos.bpm.wc.taglib.util.WProcessDefUtil;
 import com.sp.common.jsf.util.UtilsVs;
 import com.sp.common.model.WDataType;
 import com.sp.common.model.en.ClassType;
+import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
 
 public class WProcessDefFormBean extends CoreManagedBean {
 
@@ -180,6 +182,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	private List<SelectItem> classTypeList;
 	private Integer idClassType;
 
+	/**
+	 * selected external methods in the popup add/edit step sequence (tab Steps)
+	 */
+	private List<String> currentStepSelectedExternalMethods;
 	
 	public WProcessDefFormBean() {
 		super();
@@ -249,6 +255,8 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		visibleButtonNewDataField = true;
 		visibleButtonAdvancedConfiguration = true;
 		wProcessDataFieldSelected = new WProcessDataField(EMPTY_OBJECT); 
+		
+		this.currentStepSelectedExternalMethods = new ArrayList<String>();
 		
 	}
 
@@ -404,13 +412,21 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			
 		}
 		
-		if (currentStepSequence != null) {
+		if (this.currentStepSequence != null) {
 
-			if ((currentStepSequence.getToStep() != null &&
-				currentStepSequence.getToStep().empty()) ||
-				currentStepSequence.getToStep().getId().equals(0)) {
+			if ((this.currentStepSequence.getToStep() != null &&
+					this.currentStepSequence.getToStep().empty()) ||
+					this.currentStepSequence.getToStep().getId().equals(0)) {
 			
-				currentStepSequence.setToStep(null);
+				this.currentStepSequence.setToStep(null);
+			
+			}
+			
+			if ((this.currentStepSequence.getFromStep() != null &&
+					this.currentStepSequence.getFromStep().empty()) ||
+					this.currentStepSequence.getFromStep().getId().equals(0)) {
+			
+				this.currentStepSequence.setFromStep(null);
 			
 			}
 			
@@ -1327,6 +1343,37 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			setModel();
 			
 			currentStepSequence.setValidResponses(UtilsVs.castStringListToString(currentStepValidResponses, "|"));
+			
+			if (this.currentStepSelectedExternalMethods != null
+					&& this.currentStepSelectedExternalMethods.size() > 0){
+				Set<WExternalMethod> newWEMSet = new HashSet<WExternalMethod>();
+				
+				// añadimos los que no se han eliminado
+				for (WExternalMethod wem : this.currentStepSequence.getExternalMethod()){
+					if (this.currentStepSelectedExternalMethods.contains(wem.getId().toString())){
+						newWEMSet.add(wem);
+					}
+				}
+				
+				// añadimos los nuevos
+				for (String id : this.currentStepSelectedExternalMethods){
+					boolean isNew = true;
+					for (WExternalMethod wem : this.currentStepSequence.getExternalMethod()){
+						if (wem.getId().toString().equals(id)){
+							isNew = false;
+							break;
+						}
+					}
+					if (isNew){
+						newWEMSet.add(new WExternalMethodBL().getExternalMethodByPK(Integer.valueOf(id)));
+					}
+				}
+				
+				this.currentStepSequence.setExternalMethod(newWEMSet);
+				
+			} else {
+				this.currentStepSequence.setExternalMethod(new HashSet<WExternalMethod>());
+			}
 
 			// dml 20130926 - TANTO EL UPDATE COMO EL ADD NO FUNCIONAN PORQUE TIRAN UN ERROR DE SQL QUE NO SE 
 			// MUY BIEN A QUE SE REFIERE...HAY QUE ESTUDIARLO MÁS DETENIDAMENTE
@@ -1338,17 +1385,41 @@ public class WProcessDefFormBean extends CoreManagedBean {
 			} else {
 	
 				currentStepSequence.setProcess(currentWProcessDef);
-				wssdBL.add(currentStepSequence, getCurrentUserId());
-	
+				Integer newId = wssdBL.add(currentStepSequence, getCurrentUserId());
+				if (newId != null && !newId.equals(0)){
+					this.currentStepSequence.setId(newId);
+				}
+				
 			}
 		
+			/**
+			 * dml 20140212
+			 * esto se ha añadido para que se actualice la informacion del step seleccionado en la pestaña steps
+			 * del WProcessDefFormBean porque lo hacemos contra ese bean en lugar de contra este...
+			 * TODO: HAY QUE CAMBIAR ESTO PARA QUE LO HAGA CONTRA ESTE BEAN
+			 */
+			ValueExpression valueBinding = super
+					.getValueExpression("#{wStepDefFormBean}");
+			if (valueBinding != null) {
+		
+				WStepDefFormBean wsdfb = (WStepDefFormBean) valueBinding
+									.getValue(super.getELContext());
+				wsdfb.loadObject(this.currentStepSequence.getId());
+			
+			}
+			
 			this.cleanRoutePopupForm();
 			
 			this.loadStepFromSequence();
 			
 		} catch (WStepSequenceDefException e) {
-			String message = "WProcessDefFormBean.addAndUpdateStepSequence() WStepSequenceDefException: ";
-					
+			String message = "WProcessDefFormBean.addAndUpdateStepSequence() WStepSequenceDefException: ";					
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (NumberFormatException e) {
+			String message = "WProcessDefFormBean.addAndUpdateStepSequence() NumberFormatException: ";					
+			super.createWindowMessage(ERROR_MESSAGE, message, e);
+		} catch (WExternalMethodException e) {
+			String message = "WProcessDefFormBean.addAndUpdateStepSequence() WExternalMethodException: ";					
 			super.createWindowMessage(ERROR_MESSAGE, message, e);
 		}
 		
@@ -1403,6 +1474,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		}
 		if (currentStepResponseList != null && currentStepResponseList.size() != 0) {
 			currentStepResponseList.clear();
+		}
+		
+		if (this.currentStepSelectedExternalMethods != null && this.currentStepSelectedExternalMethods.size() > 0){
+			this.currentStepSelectedExternalMethods = new ArrayList<String>();
 		}
 		
 		try {
@@ -1467,16 +1542,24 @@ public class WProcessDefFormBean extends CoreManagedBean {
 		
 		try {
 
-			if (currentStepSequence != null && currentStepSequence.getId() != null && 
-					currentStepSequence.getId() != 0) {
+			if (this.currentStepSequence != null && this.currentStepSequence.getId() != null && 
+					this.currentStepSequence.getId() != 0) {
 			
-				currentStepSequence = wssdBL.getWStepSequenceDefByPK(currentStepSequence.getId(), getCurrentUserId());
+				this.currentStepSequence = wssdBL.getWStepSequenceDefByPK(this.currentStepSequence.getId(), getCurrentUserId());
 
-				recoverNullObjects();
+				this.recoverNullObjects();
 				
-				loadStepResponses();
+				this.loadStepResponses();
 								
-				setCurrentStepValidResponses(UtilsVs.castStringToStringList(currentStepSequence.getValidResponses(), "|"));
+				this.currentStepValidResponses 
+					= UtilsVs.castStringToStringList(this.currentStepSequence.getValidResponses(), "|");
+				
+				this.currentStepSelectedExternalMethods = new ArrayList<String>();
+				if (this.currentStepSequence != null && this.currentStepSequence.getExternalMethod() != null){
+					for (WExternalMethod wem: this.currentStepSequence.getExternalMethod()){
+						this.currentStepSelectedExternalMethods.add(wem.getId().toString());
+					}
+				}
 				
 			}
 			
@@ -1498,6 +1581,10 @@ public class WProcessDefFormBean extends CoreManagedBean {
 
 		if (currentStepValidResponses != null && currentStepValidResponses.size() != 0) {
 			currentStepValidResponses.clear();
+		}
+		
+		if (this.currentStepSelectedExternalMethods != null && this.currentStepSelectedExternalMethods.size() != 0) {
+			this.currentStepSelectedExternalMethods = new ArrayList<String>();
 		}
 		
 		loadStepResponses();	
@@ -2583,6 +2670,16 @@ public class WProcessDefFormBean extends CoreManagedBean {
 	public void setExternalMethodSelected(WExternalMethod externalMethodSelected) {
 
 		this.externalMethodSelected = externalMethodSelected;
+	}
+
+	public List<String> getCurrentStepSelectedExternalMethods() {
+
+		return currentStepSelectedExternalMethods;
+	}
+
+	public void setCurrentStepSelectedExternalMethods(List<String> currentStepSelectedExternalMethods) {
+
+		this.currentStepSelectedExternalMethods = currentStepSelectedExternalMethods;
 	}
 
 	public boolean isVisibleFormExternalMethod() {

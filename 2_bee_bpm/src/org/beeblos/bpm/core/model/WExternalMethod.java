@@ -122,6 +122,10 @@ public class WExternalMethod implements java.io.Serializable {
 	public WExternalMethod() {
 	}
 
+	public WExternalMethod(Integer id) {
+		this.id = id;
+	}
+
 	public WExternalMethod(boolean createEmptyObject) {
 		
 		if (createEmptyObject){
@@ -254,11 +258,11 @@ public class WExternalMethod implements java.io.Serializable {
 		this.insertDate = insertDate;
 	}
 
-	public int getInsertUser() {
+	public Integer getInsertUser() {
 		return this.insertUser;
 	}
 
-	public void setInsertUser(int insertUser) {
+	public void setInsertUser(Integer insertUser) {
 		this.insertUser = insertUser;
 	}
 
@@ -270,11 +274,11 @@ public class WExternalMethod implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
-	public int getModUser() {
+	public Integer getModUser() {
 		return this.modUser;
 	}
 
-	public void setModUser(int modUser) {
+	public void setModUser(Integer modUser) {
 		this.modUser = modUser;
 	}
 
@@ -289,18 +293,12 @@ public class WExternalMethod implements java.io.Serializable {
 		result = prime * result
 				+ ((classname == null) ? 0 : classname.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
 		result = prime
 				* result
 				+ ((logicalConditionExecution == null) ? 0
 						: logicalConditionExecution.hashCode());
 		result = prime * result
 				+ ((methodname == null) ? 0 : methodname.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + Arrays.hashCode(paramlist);
 		result = prime * result + Arrays.hashCode(paramlistName);
 		result = prime * result + ((tested == null) ? 0 : tested.hashCode());
@@ -338,16 +336,6 @@ public class WExternalMethod implements java.io.Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser == null) {
-			if (other.insertUser != null)
-				return false;
-		} else if (!insertUser.equals(other.insertUser))
-			return false;
 		if (logicalConditionExecution == null) {
 			if (other.logicalConditionExecution != null)
 				return false;
@@ -358,16 +346,6 @@ public class WExternalMethod implements java.io.Serializable {
 			if (other.methodname != null)
 				return false;
 		} else if (!methodname.equals(other.methodname))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (!Arrays.equals(paramlist, other.paramlist))
 			return false;

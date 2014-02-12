@@ -339,16 +339,8 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result
-				+ ((externalMethod == null) ? 0 : externalMethod.hashCode());
-		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime * result + ((process == null) ? 0 : process.hashCode());
@@ -376,11 +368,6 @@ public class WStepSequenceDef implements java.io.Serializable {
 			return false;
 		if (enabled != other.enabled)
 			return false;
-		if (externalMethod == null) {
-			if (other.externalMethod != null)
-				return false;
-		} else if (!externalMethod.equals(other.externalMethod))
-			return false;
 		if (fromStep == null) {
 			if (other.fromStep != null)
 				return false;
@@ -390,26 +377,6 @@ public class WStepSequenceDef implements java.io.Serializable {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser == null) {
-			if (other.insertUser != null)
-				return false;
-		} else if (!insertUser.equals(other.insertUser))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (name == null) {
 			if (other.name != null)
