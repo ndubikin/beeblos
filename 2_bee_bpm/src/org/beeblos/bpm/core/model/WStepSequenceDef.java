@@ -48,7 +48,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 	 * load step, after executing step), process (at start time or at end process time), etc. 
 	 * 
 	 */
-	Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
+	private Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
 	
 	private Integer insertUser;
 	private Date insertDate;

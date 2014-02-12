@@ -15,18 +15,18 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.bl.WEmailAccountBL;
-import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WEmailAccountException;
-import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WEmailAccount;
-import org.beeblos.bpm.core.util.DesEncrypter;
+import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.Constantes;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
-import org.beeblos.bpm.wc.taglib.util.FGPException;
+
 import com.sp.common.jsf.util.UtilsVs;
+import com.sp.common.util.DesEncrypter;
 
 public class WEmailAccountBean extends CoreManagedBean {
 
