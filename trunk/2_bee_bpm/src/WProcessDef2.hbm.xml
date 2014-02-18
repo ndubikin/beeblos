@@ -276,7 +276,7 @@
 		<set name="systemObject" cascade="save-update" lazy="false"
 			table="w_process_system_object">
 			<key column="process_id" />
-			<many-to-many class="org.beeblos.bpm.core.model.SystemObject"
+			<many-to-many class="com.sp.common.core.model.SystemObject"
 				column="system_object_id" />
 		</set>
 
@@ -1895,7 +1895,7 @@
 		</property>
 
 	</class>
-	<class name="org.beeblos.bpm.core.model.SystemObject" table="w_system_object">
+	<class name="com.sp.common.core.model.SystemObject" table="w_system_object">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
