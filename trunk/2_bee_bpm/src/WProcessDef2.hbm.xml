@@ -998,12 +998,11 @@
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
 			column="process_id" lazy="false" name="process" />
 			
-		<set name="externalMethod" table="w_stepsequence_method"
-			lazy="false" fetch="join" cascade="save-update">
+		<set name="externalMethod" table="w_stepsequence_method" inverse="true"
+			lazy="false" fetch="join" cascade="none">
 			<key column="id_step_sequence" />
-			<many-to-many class="org.beeblos.bpm.core.model.WExternalMethod" column="id_method" />
+			<many-to-many class="org.beeblos.bpm.core.model.WExternalMethod" column="id_method"/>
 		</set>			
-
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WStepWorkSequence" table="w_step_work_sequence">
@@ -1697,8 +1696,8 @@
 			</column>
 		</many-to-one>
 	</class>
-
-	<class name="org.beeblos.bpm.core.model.EnvType" table="env_type">
+<!-- 
+	<class name="com.sp.hb4util.core.model.EnvType" table="env_type">
 		<id name="id" type="java.lang.Short">
 			<column name="id" />
 			<generator class="identity" />
@@ -1728,7 +1727,7 @@
 
 	</class>
 
-	<class name="org.beeblos.bpm.core.model.Environment" table="environment">
+	<class name="com.sp.hb4util.core.model.Environment" table="environment">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -1757,11 +1756,11 @@
 			<column name="mod_user" />
 		</property>
 
-		<many-to-one class="org.beeblos.bpm.core.model.EnvType"
+		<many-to-one class="com.sp.hb4util.core.model.EnvType"
 			column="env_type_id" lazy="false" name="envType" cascade="none" />
 
 	</class>
-
+ -->
 	<class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_head_data_field">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
