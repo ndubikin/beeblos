@@ -5,10 +5,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.SystemObjectBL;
-import org.beeblos.bpm.core.error.SystemObjectException;
-import org.beeblos.bpm.core.model.SystemObject;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
+
+import com.sp.common.core.bl.SystemObjectBL;
+import com.sp.common.core.error.SystemObjectException;
+import com.sp.common.core.model.SystemObject;
 
 
 /*

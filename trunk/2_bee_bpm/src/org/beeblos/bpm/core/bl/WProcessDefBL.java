@@ -747,7 +747,7 @@ public class WProcessDefBL {
 	
 	}	
 	
-	public List<WProcessDef> finderWProcessDefLight (Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	public List<WProcessDef> finderWProcessDefLight(Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
 			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
