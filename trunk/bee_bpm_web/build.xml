@@ -35,10 +35,14 @@
 	<target name="compile">
 
 		<ant dir="../sp_common/build/" target="jar" inheritAll="false" />
+		<ant dir="../sp_common_core/" target="jar" inheritAll="false" />
 		<ant dir="../sp_common_jsf/build/" target="jar" inheritAll="false" />
+		<ant dir="../sp_hb4util/" target="jar" inheritAll="false" />
+		<ant dir="../sp_web_bridge_tools/" target="jar" inheritAll="false" />
 		
-		<ant dir="../bee_bpm/" target="jar" inheritAll="false" />
+		<ant dir="../2_bee_bpm/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_security/" target="jar" inheritAll="false" />
+		<ant dir="../bee_bpm_web_bridge_tools/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_web_components/" target="jar" inheritAll="false" />
 
 		<javac srcdir="${srcFolder}" destdir="${binFolder}" classpathref="libraries" />
@@ -55,10 +59,14 @@
 	<target name="deploy" depends="jar">
 
 		<ant dir="../sp_common/build/" target="jar" inheritAll="false" />
+		<ant dir="../sp_common_core/" target="jar" inheritAll="false" />
 		<ant dir="../sp_common_jsf/build/" target="jar" inheritAll="false" />
+		<ant dir="../sp_hb4util/" target="jar" inheritAll="false" />
+		<ant dir="../sp_web_bridge_tools/" target="jar" inheritAll="false" />
 
-		<ant dir="../bee_bpm/" target="jar" inheritAll="false" />
+		<ant dir="../2_bee_bpm/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_security/" target="jar" inheritAll="false" />
+		<ant dir="../bee_bpm_web_bridge_tools/" target="jar" inheritAll="false" />
 		<ant dir="../bee_bpm_web_components/" target="jar" inheritAll="false" />
 
 		<delete dir="${webAppFolder}"/>
@@ -71,11 +79,15 @@
 		<delete dir="${webAppFolder}/WEB-INF/classes"/>
 
 		<copy file="${spCommon_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${spCommonCore_jar}" todir="${webAppFolder}/WEB-INF/lib" />
 		<copy file="${spCommonJsf_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${spHB4Util_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${spWebBridgeTools_jar}" todir="${webAppFolder}/WEB-INF/lib" />
 		
 		<copy file="${distFolder}/${jarName}" todir="${webAppFolder}/WEB-INF/lib" />
-		<copy file="${bpmCore_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${2bpmCore_jar}" todir="${webAppFolder}/WEB-INF/lib" />
 		<copy file="${bpmSecurity_jar}" todir="${webAppFolder}/WEB-INF/lib" />
+		<copy file="${bpmWebBridgeTools_jar}" todir="${webAppFolder}/WEB-INF/lib" />
 		<copy file="${bpmWebComponents_jar}" todir="${webAppFolder}/WEB-INF/lib" />
 		<copy file="${hibernateConfigName}" todir="${webAppFolder}/WEB-INF/classes" />
 		<copy file="${log4jName}" todir="${webAppFolder}/WEB-INF/classes" />

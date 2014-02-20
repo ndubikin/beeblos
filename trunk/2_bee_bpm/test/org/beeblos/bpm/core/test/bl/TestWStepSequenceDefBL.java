@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
@@ -53,7 +54,22 @@ public class TestWStepSequenceDefBL extends TestCase{
 		}
 		
 		@Test
+		public void testRecuperarWStepSequenceConWExternalMethods() {
+			
+			iroute = 7;
+			
+			try {
+				route = new WStepSequenceDefBL().getWStepSequenceDefByPK(iroute, 1000);
+			} catch (WStepSequenceDefException e) {
+				e.printStackTrace();
+			}
+			
+			System.out.println("EXTERNAL METHODS: " 
+					+ ((route.getExternalMethod() != null)?route.getExternalMethod().size():"null"));
+			
+		}
 		
+		@Test
 		public void testAgregarWStepSequenceDef() throws Exception {
 			
 			// doy de alta un proceso para que la ruta se pueda referir a él ...

@@ -8,34 +8,25 @@
 		@author: nes
     </description>
 
-	<!--<classpath id="libraries" name="libraries">
-      <fileset dir="../lib">
-        <include name="**/*.jar"/>
-      </fileset>	    
-    </classpath>-->
-
 	<path id="libraries">
 	    <pathelement path="${binFolder}"/>
-		<fileset dir="../lib" includes="*.jar" />
 	</path>
 
 	
-	<!--	<target name="compile">
+	<target name="compile">
 	    <javac srcdir="${srcFolder}" destdir="${binFolder}" classpathref="libraries"/>
-		<copy todir="taglib" flatten="false" overwrite="yes"> 
+		<copy todir="bin" flatten="false" overwrite="yes"> 
 				<fileset  dir="${resourcesFolder}"  includes="**" />
-		</copy>		
+		</copy>
 
-  	</target> -->		  
-	
-	<target name="jar"  description="">
-		<copy todir="taglib" flatten="false" overwrite="yes"> 
-				<fileset  dir="${resourcesFolder}"  includes="**" />
-		</copy>	
+  	</target>		  
+
+	<target name="jar" depends="compile" description="">
 		 <jar destfile="${distFolder}/${jarName}"
 	         basedir="${binFolder}"
-	         includes="**"
+	         includes="**/*.class, **/*.xml, **/*.properties, **/*.xhtml"
+		 	 excludes="**/hibernate.cfg.xml, **/rebel.xml"
 	         />
 	</target>
-
+	
 </project>
