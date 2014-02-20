@@ -1696,7 +1696,7 @@
 			</column>
 		</many-to-one>
 	</class>
-<!-- 
+
 	<class name="com.sp.hb4util.core.model.EnvType" table="env_type">
 		<id name="id" type="java.lang.Short">
 			<column name="id" />
@@ -1760,7 +1760,7 @@
 			column="env_type_id" lazy="false" name="envType" cascade="none" />
 
 	</class>
- -->
+
 	<class name="org.beeblos.bpm.core.model.WProcessDataField" table="w_process_head_data_field">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
