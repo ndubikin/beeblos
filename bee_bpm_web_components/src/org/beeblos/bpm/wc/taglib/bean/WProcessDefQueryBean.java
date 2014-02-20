@@ -4,15 +4,10 @@ package org.beeblos.bpm.wc.taglib.bean;
 import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
-import static org.beeblos.bpm.core.util.Constants.PROCESS_XML_MAP_LOCATION;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_VIEW_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

@@ -1,34 +1,22 @@
 package org.beeblos.bpm.wc.taglib.bean;
 
 import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
-import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
-import static org.beeblos.bpm.wc.taglib.util.Constantes.GO_TO_LOGIN;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.NOM_APLICACION;
-import static org.beeblos.bpm.wc.taglib.util.Constantes.SAVE_CONF_FAIL;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.TITULO_PRINCIPAL_DEFAULT;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.USE_SECURITY;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.USUARIO_PAGINA_INICIO_DEFAULT;
 import static org.beeblos.bpm.wc.taglib.util.Constantes.WELCOME_PAGE;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.MissingResourceException;
 
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
-import org.beeblos.bpm.core.bl.HibernateSwitchBL;
-import org.beeblos.bpm.core.error.EnvironmentException;
-import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.util.Configuration;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;

@@ -7,11 +7,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.EnvTypeBL;
-import org.beeblos.bpm.core.error.EnvTypeException;
-import org.beeblos.bpm.core.model.EnvType;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
+
+import com.sp.hb4util.core.EnvTypeBL;
+import com.sp.hb4util.core.EnvTypeException;
+import com.sp.hb4util.core.model.EnvType;
 
 
 

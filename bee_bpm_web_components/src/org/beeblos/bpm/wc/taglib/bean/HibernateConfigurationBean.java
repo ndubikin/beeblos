@@ -5,7 +5,6 @@ import static com.sp.common.util.ConstantsCommon.OK_MESSAGE;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -15,13 +14,6 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.EnvTypeBL;
-import org.beeblos.bpm.core.bl.HibernateConfigurationBL;
-import org.beeblos.bpm.core.bl.HibernateSwitchBL;
-import org.beeblos.bpm.core.error.EnvTypeException;
-import org.beeblos.bpm.core.error.EnvironmentException;
-import org.beeblos.bpm.core.model.Environment;
-import org.beeblos.bpm.core.model.HibernateConfigurationParameters;
 import org.beeblos.bpm.core.model.noper.BeeblosAttachment;
 import org.beeblos.bpm.core.model.noper.DialectObject;
 import org.beeblos.bpm.core.model.noper.DriverObject;
@@ -34,6 +26,12 @@ import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 
 import com.sp.common.jsf.util.UtilsVs;
+import com.sp.hb4util.core.EnvTypeBL;
+import com.sp.hb4util.core.EnvTypeException;
+import com.sp.hb4util.core.EnvironmentException;
+import com.sp.hb4util.core.HibernateConfigurationBL;
+import com.sp.hb4util.core.model.Environment;
+import com.sp.hb4util.core.model.HibernateConfigurationParameters;
 
 public class HibernateConfigurationBean extends CoreManagedBean {
 
