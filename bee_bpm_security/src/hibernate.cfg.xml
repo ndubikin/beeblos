@@ -8,9 +8,9 @@
 
    	<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="hibernate.connection.password">root</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost/gespro_anii</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost/bee_bpm_dev</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.default_catalog">gespro_anii</property>
+        <property name="hibernate.default_catalog">bee_bpm_dev</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.pool_size">10</property>
 
