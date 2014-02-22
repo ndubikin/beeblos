@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.beeblos.bpm.core.util.File;
+import com.sp.common.model.FileSP;
 
 public class Email implements Serializable{
 	
@@ -21,7 +21,7 @@ public class Email implements Serializable{
 	private ArrayList<String> listaCC = new ArrayList<String>();
 	private String subject;
 	private String bodyText;
-	private ArrayList<File> files = new ArrayList<File>();
+	private ArrayList<FileSP> files = new ArrayList<FileSP>();
 	
 	private String idEnvio;		//HZC:20110207
 	private Date fechaEnvio;	//HZC:20110208
@@ -112,10 +112,10 @@ public class Email implements Serializable{
 	public void setBodyText(String bodyText) {
 		this.bodyText = bodyText;
 	}
-	public ArrayList<File> getFiles() {
+	public ArrayList<FileSP> getFiles() {
 		return files;
 	}
-	public void setFiles(ArrayList<File> files) {
+	public void setFiles(ArrayList<FileSP> files) {
 		this.files = files;
 	}
 	public String getIdEnvio() {

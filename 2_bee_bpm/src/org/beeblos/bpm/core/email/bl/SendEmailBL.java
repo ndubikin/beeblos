@@ -36,7 +36,7 @@ import org.beeblos.bpm.core.email.util.LocalImageManager;
 import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.model.WEmailAccount;
-import org.beeblos.bpm.core.util.File;
+import com.sp.common.model.FileSP;
 
 import com.sp.common.util.DesEncrypter;
 
@@ -503,7 +503,7 @@ public class SendEmailBL{
 	private void agregaFicherosAdjuntos(Email email, MimeMultipart multipart)
 			throws MessagingException {
 		// Seteamos los ficheros adjuntos
-		for(File file : email.getFiles()){
+		for(FileSP file : email.getFiles()){
 			MimeBodyPart attachmentPart = setAttachment(file);
 			multipart.addBodyPart(attachmentPart);
 		}
@@ -512,7 +512,7 @@ public class SendEmailBL{
 	
 	// nes 20110428 - adjunta un fichero 
 	// nes 20111103 - catch por si no puede recuperar el fichero
-	private MimeBodyPart setAttachment(File file) throws MessagingException {
+	private MimeBodyPart setAttachment(FileSP file) throws MessagingException {
 
 		MimeBodyPart attachmentPart = new MimeBodyPart();
 		

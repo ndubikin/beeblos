@@ -47,7 +47,18 @@ public class TableManager {
 
 	private static final String _SLASH = "/";
 
-	static ResourceBundle rb = org.beeblos.bpm.core.util.Configuration.getConfigurationRepositoryResourceBundle();
+	static ResourceBundle rb = _loadResourceBundle();
+
+	/**
+	 * @return
+	 */
+	private static ResourceBundle _loadResourceBundle() {
+		logger.debug(">>> loading resource bundle ...");
+		ResourceBundle rb = com.sp.common.util.Configuration.getConfigurationRepositoryResourceBundle();
+		logger.debug(">>> resource bundle was loaded ...."+rb.toString());
+		
+		return rb;
+	}
 
 	static public final String driver = rb.getString("bee_bpm_core.hibernate.connection.driver_class"); //"com.mysql.jdbc.Driver";
 	static public final String connection = rb.getString("bee_bpm_core.hibernate.connection.url"); //"jdbc:mysql://localhost:3306/";
@@ -93,6 +104,7 @@ public class TableManager {
 	 * @throws TableManagerException
 	 */
 	public Integer process(ManagedData managedData) throws TableManagerException {
+		logger.debug(">>> process managed data ....");
 		
 		if (managedData==null) throw new TableManagerException("can't process null managedData!");
 		if (managedData.getCurrentWorkId()==null 
@@ -160,22 +172,35 @@ public class TableManager {
 	 * @throws TableManagerException
 	 */
 	public Integer persist(ManagedData managedData) throws TableManagerException {
+		logger.debug(">>> persist md :"+(md!=null?md.toString():"null") );
 		
-		if (managedData==null) throw new TableManagerException("can't process null managedData!");
+		if (managedData==null) {
+			String mess="can't process null managedData!";
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 
 		if (managedData.getCurrentWorkId()==null 
-				|| managedData.getCurrentWorkId()==0) 
-				throw new TableManagerException("can't process managedData: current work is not defined (currentWorkId:"
-													+(managedData.getCurrentWorkId()==null?"null":"0"));
+				|| managedData.getCurrentWorkId()==0) {
+			String mess="can't process managedData: current work is not defined (currentWorkId:"
+								+(managedData.getCurrentWorkId()==null?"null":"0");
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 		// dml 20130909
 		if (managedData.getManagedTableConfiguration() == null){
-			throw new TableManagerException("Can't process managedData: managed table does not exist");
+			String mess="Can't process managedData: managed table does not exist";
+			logger.error(mess);
+			throw new TableManagerException(mess);
 		}
 		
 		if (managedData.getManagedTableConfiguration().getName()==null 
-				|| "".equals(managedData.getManagedTableConfiguration().getName()))  
-			throw new TableManagerException("can't process managedData: managed table is not defined (managedTableName:"
-					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-"));
+				|| "".equals(managedData.getManagedTableConfiguration().getName()))  {
+			String mess="can't process managedData: managed table is not defined (managedTableName:"
+							+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-");
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 
 
 		try {
@@ -272,7 +297,7 @@ public class TableManager {
 	
 	// only can arrives here if all required data was previously checked!
 	private Integer update(ManagedData managedData) throws ClassNotFoundException, SQLException {
-		logger.debug("TableManager:update managedData pk:"+managedData.getPk());
+		logger.debug("TableManager:update managedData pk:"+( managedData!=null?managedData.getPk():"null") );
 
 		Integer qty=null;
 

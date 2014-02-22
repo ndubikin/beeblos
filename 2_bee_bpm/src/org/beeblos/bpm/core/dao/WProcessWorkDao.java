@@ -61,7 +61,7 @@ public class WProcessWorkDao {
 	 */
 	public Integer add(WProcessWork processWork) throws WProcessWorkException {
 		
-		logger.debug("add() WProcessWork - Name: ["+processWork.getReference()+"]");
+		logger.debug(">>>>> add() WProcessWork - Name: ["+processWork.getReference()+"] <<<<<");
 		Integer id=null;
 
 		try {
@@ -91,52 +91,59 @@ public class WProcessWorkDao {
 
 				// retrieves data from external sources and update fields in managed table
 				_synchronizeProcessWorkManagedData(processWork, md);
+				logger.debug(">> managed data has been syncrhonized ...");
 				
 			}
 			
 		} catch (HibernateException ex) {
-			logger.error("WProcessWorkDao: add - Can't store process definition record "+ 
-					processWork.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessWorkException("WProcessWorkDao: add - Can't store process definition record "+ 
-					processWork.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause());
+			String mess="HibernateException: WProcessWorkDao: add - Can't store process definition record "+ 
+								processWork.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause();
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
+		} catch (Exception e) {
+			String mess="Exception: WProcessWorkDao: add - Can't store process definition record "+ 
+								processWork.getReference()+" - "+e.getMessage()+"\n"+e.getCause();
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
 
 		}
-
+		logger.debug(">>>>> ending add process work with id:"+id+" <<<<<");
 		return id;
 	}
 	
 	private void _synchronizeProcessWorkManagedData(WProcessWork processWork, ManagedData md) 
 			throws WProcessWorkException {
+			logger.debug(">>> _synchronizeProcessWorkManagedData ....");
 			
 			if (processWork==null || processWork.getId()==null || processWork.getId()==0) {
-				logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no id...");
+				logger.error(">>Error._synchronizeProcessWorkManagedData: arrived work has no id...");
 				throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work is empy!!! ");
 			}
 			
 			if (processWork.getProcessDef()==null || processWork.getProcessDef().getId()==null || processWork.getProcessDef().getId()==0) {
-				logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no process def ...");
+				logger.error("Error._synchronizeProcessWorkManagedData: arrived work has no process def ...");
 				throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work has not ProcessDef info!!! ");
 			}
 			
 			if (processWork.getProcessDef().getProcessHead()==null || processWork.getProcessDef().getProcessHead().getId()==null || processWork.getProcessDef().getProcessHead().getId()==0) {
-				logger.error("WStepWorkBL._synchronizeProcessWorkManagedData: arrived work has no processDef.processHead ...");
+				logger.error(">>Error._synchronizeProcessWorkManagedData: arrived work has no processDef.processHead ...");
 				throw new WProcessWorkException("Error trying to synchronize new processWork: invalid arrived work has not ProcessHead info!!! ");
 			}
 
-			logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData: synchro managed data for ProcessDefId:"
-					+processWork.getProcessDef().getId()+" for created processWork id:"+processWork.getId()+" >> "+processWork.getIdObjectType());
-			
 			// no managed table defined -> don't have managed data....
 			if (processWork.getProcessDef().getProcessHead().getManagedTableConfiguration()==null || processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()==null || "".equals(processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName())) {
-				logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has empty tablename >> no managed data defined ...");
+				logger.debug("Warning._synchronizeProcessWorkManagedData has empty tablename >> no managed data defined ...");
 				return;
 			}
 
 			// no managed data fields defined (or loaded...)
 			if (processWork.getProcessDef().getProcessHead().getProcessDataFieldDef().size()<1) {
-				logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has no managed data fields defined (or loaded...)");
+				logger.debug("Warning._synchronizeProcessWorkManagedData has no managed data fields defined (or loaded...)");
 				return;			
 			}
+
+			logger.debug(">> _synchronizeProcessWorkManagedData: synchro managed data for ProcessDefId:"
+					+processWork.getProcessDef().getId()+" for created processWork id:"+processWork.getId()+" >> "+processWork.getIdObjectType());
 			
 			// obtain a list of managed data fields to syncrhonize
 			List<WProcessDataField> dftosJdbc = new ArrayList<WProcessDataField>();
@@ -167,7 +174,7 @@ public class WProcessWorkDao {
 			
 			// synchronize app fields ...
 			if (dftosApp.size()>0) {
-				logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has "+dftosApp.size()+" for APP synchro ...");
+				logger.debug(">> _synchronizeProcessWorkManagedData has "+dftosApp.size()+" for APP synchro ...");
 				
 				ManagedDataSynchronizerJavaAppImpl fieldSyncrhonizer = new ManagedDataSynchronizerJavaAppImpl();
 				
@@ -175,15 +182,19 @@ public class WProcessWorkDao {
 					try {
 						fieldSyncrhonizer.syncrhonizeField(processWork, pdf, STARTUP, md);
 					} catch (ManagedDataSynchronizerException e) {
-						logger.error("Can't sinchronize field:"+pdf.getName());
+						logger.error("ManagedDataSynchronizerException: Can't sinchronize field:"+(pdf!=null?pdf.getName():"null"));
+					} catch (Exception e) {
+						logger.error("Exception: Can't sinchronize field:"+pdf.getName());
 					}	
 				}
 			}
 			
+			logger.debug(">>> and now persist tablemanager ...");
+			
 			// persist data in managed table
 			TableManager tm = new TableManager();
 			try {
-				
+				logger.debug(">>> TableManager was created, now tm.persist ...");	
 				tm.persist(md);
 			
 			} catch (TableManagerException e) {
@@ -199,6 +210,21 @@ public class WProcessWorkDao {
 				logger.warn(message);
 
 				throw new WProcessWorkException(message);
+
+			} catch (Exception e) {
+				String message = "Exception: can't persist custom data at managed table:"
+						+ (md.getManagedTableConfiguration()!=null
+								?(md.getManagedTableConfiguration().getName()!=null
+									?md.getManagedTableConfiguration().getName()
+									:"null")
+								: "managed table data is null")
+						+ e.getMessage() + " - "
+						+ e.getCause() +" - " 
+						+ e.getClass();
+	
+				logger.warn(message);
+
+				throw new WProcessWorkException(message);				
 			}
 			
 //			for (WProcessDataField pdf: dftosApp ) {

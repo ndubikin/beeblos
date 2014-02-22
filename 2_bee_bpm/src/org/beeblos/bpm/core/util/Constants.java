@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.util;
 
-import static org.beeblos.bpm.core.util.Resourceutil.getIntegerProperty;
-import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
+import static com.sp.common.util.Resourceutil.getIntegerProperty;
+import static com.sp.common.util.Resourceutil.getStringProperty;
 
 import java.util.Date;
 
@@ -40,7 +40,7 @@ public class Constants {
 	public static String WORKFLOW_VIEW_URI = getStringProperty("workflow.view.xml.map.uri","/general/javascript/work/editors/workflowviewxmlmap.html");
 
 	// dml 20130510
-	public static String HIBERNATE_CONFIGURATION_LIST_XML = getStringProperty("hibernate.configuration.list.xml","hibernateConfigurationList.xml");
+	public static String HIBERNATE_CONFIGURATION_LIST_XML = ppxx();
 
 	// dml 20130510
 	public static String APP_NAME = getStringProperty("beeblos.nombre.aplicacion","XXXX"); // LO CORTO A 4 PORQ DEJARON EL CAMPO DE USUARIOLOGIN DE ESE LARGO, LUEGO VER BIEN DE EMPROLIJAR ESTO ...
@@ -191,4 +191,8 @@ public class Constants {
 	public static final Integer TERRITORIO_ID_ESTADO=0;
 	public static final Integer TERRITORIO_ID_LOCALIDAD=1;
 	
+	public static String ppxx(){
+		System.out.println(">>>>>>>>>< en Constants.2-bee-bpm");
+		return getStringProperty("hibernate.configuration.list.xml","hibernateConfigurationList.xml");
+	}
 }
