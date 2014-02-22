@@ -510,7 +510,8 @@ public class WStepWorkDao {
 		if (stepWork.getManagedData()!=null
 				&& stepWork.getManagedData().getDataField()!=null 
 				&& stepWork.getManagedData().getDataField().size()>0){
-
+			logger.debug(">>> _persistStepWorkManagedData ....");
+			
 			TableManager tm = new TableManager();
 			try {
 				

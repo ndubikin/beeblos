@@ -62,7 +62,7 @@ import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.core.model.thin.WProcessDefThin;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
-import org.beeblos.bpm.core.util.Resourceutil;
+import com.sp.common.util.Resourceutil;
 import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.beeblos.bpm.tm.impl.MethodSynchronizerImpl;
 import org.hibernate.metamodel.source.annotations.entity.IdType;
@@ -103,7 +103,7 @@ public class WStepWorkBL {
 	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUser) 
 			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
 		
-		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"]");
+		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"] ...");
 		
 		Integer workId;
 		
