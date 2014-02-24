@@ -62,7 +62,13 @@ public class WProcessDef implements java.io.Serializable {
 	private WTimeUnit totalTimeUnit;
 	private String globalDeadlineDate;
 	
-	// dml 20120223
+	/**
+	 * email account for administrative tasks related with this process like send notification
+	 * emails, etc.
+	 *  
+	 * dml 20120223
+	 * 
+	 */
 	private WEmailAccount systemEmailAccount;
 	
 	// dml 20120306
