@@ -142,8 +142,6 @@
 						<h:outputText value="#{msg.label_started}" />
 					</f:facet>
 					<h:outputText value="#{wpw.started}">
-						<f:convertDateTime pattern="#{msg.label_date_format}"
-							timeZone="#{workingProcessQueryBean.timeZone}" />
 					</h:outputText>
 				</rich:column>
 
@@ -161,8 +159,6 @@
 						<h:outputText value="#{msg.label_finished}" />
 					</f:facet>
 					<h:outputText value="#{wpw.finished}">
-						<f:convertDateTime pattern="#{msg.label_date_format}"
-							timeZone="#{workingProcessQueryBean.timeZone}" />
 					</h:outputText>
 				</rich:column>
 

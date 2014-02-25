@@ -11,11 +11,12 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.util.File;
 import org.beeblos.bpm.wc.taglib.util.CoreManagedBean;
 import org.richfaces.component.html.HtmlFileUpload;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+
+import com.sp.common.model.FileSP;
 
 /**
  * @author Ilya Shaikovsky
@@ -23,7 +24,7 @@ import org.richfaces.model.UploadItem;
  */
 public class FileUploadBean extends CoreManagedBean {
 	private static final long serialVersionUID = -7411311691524646787L;
-	private ArrayList<File> files = new ArrayList<File>();
+	private ArrayList<FileSP> files = new ArrayList<FileSP>();
     private int MAX_UPLOADS_AVAILABLE = 1000;
     private int uploadsAvailable = MAX_UPLOADS_AVAILABLE;
     private boolean autoUpload = true;
@@ -76,18 +77,18 @@ public class FileUploadBean extends CoreManagedBean {
 
     	
     	 UploadItem item = event.getUploadItem();
-    	 File file = new File();
+    	 FileSP file = new FileSP();
     	 
     	 try{
     	 
     	 file.setName(item.getFileName());
     	 //file.setMime(item.getContentType());
     	 
-    	 /*Get File Data*/
+    	 /*Get FileSP Data*/
     	 if ( item.isTempFile() ) {
     	 
 	    	 //byte[] fileInBytes = new byte[(int)item.getFile().length()];
-	    	 //java.io.File tempFile = item.getFile();
+	    	 //java.io.FileSP tempFile = item.getFile();
 	    	 //FileInputStream fileInputStream = new FileInputStream(tempFile);
 	    	 //fileInputStream.read(fileInBytes);
 	    	 //fileInputStream.close();
@@ -125,7 +126,7 @@ public class FileUploadBean extends CoreManagedBean {
     //rrl 20110802 - nes 20111103
     public void addByteArrayAsFileAttachment(byte[] buffer, String nameFile) {
     	
-		File file = new File();
+		FileSP file = new FileSP();
 
 		file.setLoadedInMemory(true);
 		file.setAbsolutePath(null);
@@ -148,11 +149,11 @@ public class FileUploadBean extends CoreManagedBean {
         return System.currentTimeMillis();
     }
     
-    public ArrayList<File> getFiles() {
+    public ArrayList<FileSP> getFiles() {
         return files;
     }
 
-    public void setFiles(ArrayList<File> files) { 
+    public void setFiles(ArrayList<FileSP> files) { 
         this.files = files;
     }
 

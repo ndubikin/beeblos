@@ -1,7 +1,7 @@
 package org.beeblos.bpm.wc.taglib.util;
 
-import static org.beeblos.bpm.core.util.Resourceutil.getIntegerProperty;
-import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
+import static org.beeblos.security.st.util.Resourceutil.getIntegerProperty;
+import static org.beeblos.security.st.util.Resourceutil.getStringProperty;
 
 
 public class Constantes {
