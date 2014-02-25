@@ -10,7 +10,7 @@ import static org.beeblos.bpm.core.util.Constants.SUCCESS_FORM_WPROCESSDEF;
 import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
 import static org.beeblos.bpm.core.util.Constants.WORKFLOW_EDITOR_URI;
 import static org.beeblos.bpm.core.util.Constants.WPROCESSDEF_QUERY;
-import static org.beeblos.bpm.core.util.Resourceutil.getStringProperty;
+import static org.beeblos.security.st.util.Resourceutil.getStringProperty;
 
 import java.io.IOException;
 import java.util.ArrayList;

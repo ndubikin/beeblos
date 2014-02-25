@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.util.Configuration;
 import org.beeblos.bpm.wc.taglib.security.ContextoSeguridad;
 import org.beeblos.bpm.wc.taglib.security.MD5Hash;
 import org.beeblos.bpm.wc.taglib.security.UsuarioRol;
@@ -39,6 +38,8 @@ import org.beeblos.security.st.model.UsuarioLogin;
 import org.beeblos.security.st.model.UsuarioPerfiles;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
+
+import com.sp.common.util.Configuration;
 
 
 public class Login_x_Bean extends CoreManagedBean {
