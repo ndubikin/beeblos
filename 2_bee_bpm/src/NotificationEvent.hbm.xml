@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 21, 2012 10:49:10 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.sp.common.core.model.NotificationEvent" table="notification_event">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="objectMethod" type="string">
+			<column name="object_method" />
+		</property>
+		<property name="category" type="string">
+			<column name="category" />
+		</property>
+		<property name="labelUserReadable" type="string">
+			<column name="label_user_readable" />
+		</property>
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<many-to-one name="emailTemplate" class="com.sp.common.core.model.EmailTemplate"
+			lazy="false" fetch="join">
+			<column name="email_template_id" />
+		</many-to-one>
+
+		<many-to-one name="systemObject" class="com.sp.common.core.model.SystemObject"
+			lazy="false" fetch="join">
+			<column name="system_object_id" />
+		</many-to-one>
+
+		<set name="channels" cascade="all" sort="unsorted"
+			table="rel_channel_notification_event" lazy="false" fetch="join">
+			<key column="notification_event_id" />
+			<composite-element
+				class="com.sp.common.core.model.ChannelNotificationEvent">
+				<many-to-one name="channel" class="com.sp.common.core.model.Channel"
+					column="channel_id" cascade="none" lazy="false" fetch="join" />
+				<property name="addDate"
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+					<column name="add_date" length="0" />
+				</property>
+				<property name="addUser" type="java.lang.Integer">
+					<column name="add_user" />
+				</property>
+				<property name="modDate"
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+					<column name="mod_date" length="0" />
+				</property>
+				<property name="modUser" type="java.lang.Integer">
+					<column name="mod_user" />
+				</property>
+			</composite-element>
+		</set>
+
+		<set name="subscribers" table="rel_user_notification_event" lazy="false"
+			fetch="join" cascade="delete-orphan">
+			<key column="notification_event_id" />
+			<one-to-many class="com.sp.common.core.model.UserNotificationEvent" />
+		</set>
+
+	</class>
+
+	<class name="com.sp.common.core.model.Channel" table="channel">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="comments" type="string">
+			<column name="comments" />
+		</property>
+		<property name="icon" type="string">
+			<column name="icon" />
+		</property>
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+	</class>
+
+	<class name="com.sp.common.core.model.UserNotificationEvent"
+		table="rel_user_notification_event">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="enabled" type="java.lang.Boolean">
+			<column name="enabled" sql-type="bit" />
+		</property>
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" length="0" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" length="0" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<many-to-one name="user" class="com.sp.common.core.model.User"
+			column="user_id" cascade="none" lazy="false" fetch="join" />
+
+		<many-to-one name="notificationEvent"
+			class="com.sp.common.core.model.NotificationEvent" column="notification_event_id"
+			cascade="none" lazy="false" fetch="join" />
+
+		<set name="channels" table="rel_channel_r_u_n_e" cascade="none"
+			fetch="join" lazy="false">
+			<key column="user_notification_event_id" />
+			<many-to-many class="com.sp.common.core.model.Channel"
+				column="channel_id" unique="false" lazy="false" fetch="join" />
+
+		</set>
+
+	</class>
+
+</hibernate-mapping>
