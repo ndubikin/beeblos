@@ -270,7 +270,7 @@ public class WEmailTemplatesDao {
 	}
 
 
-	public List<WEmailTemplates> wEmailTemplatesFinder(String nameFilter, String typeFilter)
+	public List<WEmailTemplates> wEmailTemplatesFinder(String nameFilter, String typeFilter, Integer emailTemplateGroupId)
 			throws WEmailTemplatesException {
 
 		List<WEmailTemplates> result = null;
@@ -290,6 +290,17 @@ public class WEmailTemplatesDao {
 			filter += "wuet.type = '"+typeFilter+"' " ;
 		}
 
+		if (emailTemplateGroupId != null
+				&& !emailTemplateGroupId.equals(0)){
+			if (!"".equals(filter)){
+				filter += " And ";
+			}
+			filter += " emailTemplateTheme.id= :emailTemplateThemeId ";
+		}
+		if (!"".equals(filter)){
+			filter = " Where " + filter;
+		}
+		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 		org.hibernate.Query q = null;

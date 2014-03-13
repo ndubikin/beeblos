@@ -1,6 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
 
+import static com.email.core.util.ConstantsEmailCore.COPY_OF;
+
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -36,6 +38,23 @@ public class WEmailAccountBL {
 
 	}
 
+	// dml 20130109
+	public WEmailAccount createNewUEACopyingData(WEmailAccount uea, Integer userId) throws WEmailAccountException {
+
+		if (uea != null){
+			
+			uea.setId(null);
+			uea.setName(COPY_OF + " " + uea.getName());
+			
+			Integer newUEAId = this.add(uea, userId);
+			
+			uea.setId(newUEAId);
+			
+		}
+		
+		return uea;
+		
+	}
 	public void update(WEmailAccount instance, Integer idCurrentUser)
 			throws WEmailAccountException {
 
@@ -73,6 +92,19 @@ public class WEmailAccountBL {
 		
 
 		
+	}
+
+	// dml 20130111
+	public void updateUEAPassword(Integer ueaId, String newPassword, Integer userId) throws WEmailAccountException {
+
+		logger.debug("UserEmailAccountBL:updateUEAPassword()");
+
+		WEmailAccount uea = this.getWEmailAccountByPK(ueaId);
+
+		uea.setOutputPassword(newPassword);
+
+		new WEmailAccountDao().update(uea);
+
 	}
 
 	public void delete(WEmailAccount instance, Integer idCurrentUser)
@@ -120,6 +152,13 @@ public class WEmailAccountBL {
 		WEmailAccountDao wEmailAccountDao = new WEmailAccountDao();
 		return wEmailAccountDao
 				.getWEmailAccountListByUser(idSpecifiUser);
+	}
+
+	public List<WEmailAccount> finderWEmailAccount(String nameFilter, Integer userId, String action, String searchOrder)
+			throws WEmailAccountException {
+
+		return new WEmailAccountDao().finderWEmailAccount(nameFilter, userId, action, searchOrder);
+
 	}
 
 	public List<WEmailAccount> wEmailAccountFinder(String nameFilter, String emailFilter)

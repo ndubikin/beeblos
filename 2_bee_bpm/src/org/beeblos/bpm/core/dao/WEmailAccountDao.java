@@ -2,6 +2,9 @@ package org.beeblos.bpm.core.dao;
 
 // Generado 25-nov-2010 12:52:05 con Hibernate Tools 3.3.0.GA
 
+import static com.sp.common.util.ConstantsCommon.LAST_ADDED;
+import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +12,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WEmailAccountException;
 import org.beeblos.bpm.core.model.WEmailAccount;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 
+import com.email.core.error.UserEmailAccountException;
+import com.email.core.model.UserEmailAccount;
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
@@ -316,6 +325,86 @@ public class WEmailAccountDao {
 
 		return result;
 
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<WEmailAccount> finderWEmailAccount(
+			String name, Integer userId, String action, String searchOrder)
+		throws WEmailAccountException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		org.hibernate.Query q = null;
+
+		List<WEmailAccount> ueaList = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			Criteria criteria = session.createCriteria(WEmailAccount.class, "uea")
+					.createAlias("wUserDef", "wUserDef", JoinType.LEFT_OUTER_JOIN);
+
+			criteria = this._agregarFiltrosACriteria(criteria,
+					name, userId );
+
+			if (searchOrder != null && !"".equals(searchOrder.trim())){
+				if (searchOrder.equals(LAST_ADDED)) {
+					criteria.addOrder(Order.desc("fechaAlta"));
+				} else if (searchOrder.equals(LAST_MODIFIED)) {
+					criteria.addOrder(Order.desc("fechaModificacion"));
+				} 
+			}
+			
+			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			
+			ueaList = (ArrayList<WEmailAccount>) criteria.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String message = "WEmailAccountDao: finderWEmailAccount() - can't obtain uea list - "
+					+ ex.getMessage() + "\n" + ex.getCause();
+			logger.warn(message);
+			throw new WEmailAccountException(message);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message = "WEmailAccountDao: finderWEmailAccount() - can't obtain uea list - "
+					+ ex.getMessage() + "\n" + ex.getCause();
+			logger.warn(message);
+			throw new WEmailAccountException(message);
+		}
+
+		return ueaList;
+	}
+
+	private Criteria _agregarFiltrosACriteria(Criteria criteria, 
+			String name, Integer userId ){
+		
+
+		// criteria para el nombre
+		if (name != null && !"".equals(name)){
+			criteria = criteria
+					.add( Restrictions.like("uea.name", "%" + name + "%") );
+			
+		}
+
+		// criteria para el año
+		if (userId != null && !userId.equals(0)){
+			criteria = criteria
+					.add( Restrictions.eq("wUserDef.id", userId) );
+			
+		}
+
+		return criteria;
+		
 	}
 
 	public List<WEmailAccount> wEmailAccountFinder(String nameFilter, String emailFilter)

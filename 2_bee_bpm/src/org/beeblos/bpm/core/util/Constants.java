@@ -10,6 +10,13 @@ import org.joda.time.DateTime;
 
 public class Constants {
 	
+	public static final String W_EMAIL_TEMPLATE_FORM_VIEW="/app/wfCrud/wEmailTemplateCrudWithTemplate.xhtml"; // dml 20130412
+	public static final String W_EMAIL_ACCOUNT_FORM_VIEW="/app/wfCrud/wUserEmailAccountCrudWithTemplate.xhtml"; // dml 20130412
+
+	// dml 20140312 CONSTANTES MIGRACION JSF2 DESDE 2_FBBVA_DAP (MIRAR DE PONER EN COMMON)
+	public static final String TAB_CARATULA = "caratula";// nes 20130226
+	public static final String MY_USER_ACCOUNT_URI="/app/myaccount/myUserAccountCallWithTemplate.jsf";
+
 	// dml 20130916
 	public static final String MESSAGES_CORE_FILENAME = "messages_core";
 	
