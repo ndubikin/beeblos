@@ -1,6 +1,5 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.model.enumerations.ProcessStage.STARTUP;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
@@ -28,11 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.dao.WUserRoleDao;
-import org.beeblos.bpm.core.email.bl.SendEmailBL;
-import org.beeblos.bpm.core.email.model.Email;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
-import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
-import org.beeblos.bpm.core.error.SendEmailException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
@@ -45,7 +40,6 @@ import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WExternalMethod;
-import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -58,19 +52,19 @@ import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
+import org.beeblos.bpm.core.model.noper.WProcessDefThin;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
-import org.beeblos.bpm.core.model.thin.WProcessDefThin;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
-import com.sp.common.util.Resourceutil;
-import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.beeblos.bpm.tm.impl.MethodSynchronizerImpl;
-import org.hibernate.metamodel.source.annotations.entity.IdType;
-import org.hibernate.validator.constraints.Length;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.sp.common.model.ManagedDataField;
+import com.email.core.bl.SendEmailBL;
+import com.email.core.error.SendEmailException;
+import com.email.core.model.Email;
+import com.sp.common.core.error.BeeblosBLException;
+import com.sp.common.util.Resourceutil;
 import com.sp.common.util.StringPair;
 
 public class WStepWorkBL {
@@ -147,7 +141,7 @@ public class WStepWorkBL {
 		this.createStepWorkSequenceLog(null, stepw, false, 
 				null, stepw.getCurrentStep(), currentUser);
 
-		_sendEmailNotification(stepw);
+		_sendEmailNotification(stepw, currentUser);
 
 		return idGeneratedStep;
 	}
@@ -841,7 +835,7 @@ public class WStepWorkBL {
 						}
 						
 						// checks for notifications subscribers for the new step and send the emails
-						_sendEmailNotification(newStepWork);
+						_sendEmailNotification(newStepWork, currentUser);
 						
 						// nes 20130913
 						// if route evaluation order is first true condition then breaks for loop and return
@@ -923,10 +917,10 @@ public class WStepWorkBL {
 		this.add(newStepWork, currentUser);
 	}
 
-	private void _sendEmailNotification(WStepWork newStep) {
+	private void _sendEmailNotification(WStepWork newStep, Integer currentUserId) {
 		if ( newStep.getCurrentStep().isEmailNotification()  ) {		
 			try {
-				_emailNotificationArrivingStep(newStep, "");
+				_emailNotificationArrivingStep(newStep, "", currentUserId);
 			} catch (SendEmailException e) {
 				logger.info("SendEmailException: there is not possible sending email notification to users involved");
 			} catch (Exception e) {
@@ -1056,7 +1050,7 @@ public class WStepWorkBL {
 		this.createStepWorkSequenceLog(null, currentStepWork, true, currentStepWork.getCurrentStep(),
 				currentStepWork.getPreviousStep(), currentUser);
 		
-		_sendEmailNotification(newStep);
+		_sendEmailNotification(newStep, currentUser);
 		
 	}
 	
@@ -1148,7 +1142,7 @@ public class WStepWorkBL {
 	}
 	
 
-	private void _emailNotificationArrivingStep( WStepWork stepWork, String subject ) throws SendEmailException {
+	private void _emailNotificationArrivingStep( WStepWork stepWork, String subject, Integer currentUserId ) throws SendEmailException {
 		
 		if ( ! stepWork.getCurrentStep().isArrivingAdminNotice() && 
 				! stepWork.getCurrentStep().isArrivingUserNotice()) return; 
@@ -1183,7 +1177,7 @@ public class WStepWorkBL {
 				//EL SEGUNDO ATRIBUTO INDICA SI LAS CUENTAS SERÁN DE ADMINISTRADORES (true) O DE USUARIOS NORMALES (false)
 				emailMessage.setListaTo(this.getEmailAccountList(stepWork, true));
 				
-				this._sendEmail(emailMessage);
+				this._sendEmail(emailMessage, currentUserId);
 				
 			} else {
 				logger.error("there is no template associated to process or step to send email to tracker ...");
@@ -1210,7 +1204,7 @@ public class WStepWorkBL {
 				//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
 				emailMessage.setListaTo(this.getEmailAccountList(stepWork, false));
 				
-				this._sendEmail(emailMessage);
+				this._sendEmail(emailMessage, currentUserId);
 
 			} else {
 				logger.error("there is no template associated to process or step to send email to Worker ...");
@@ -1222,7 +1216,7 @@ public class WStepWorkBL {
 	}
 	
 
-	private void _sendEmail(Email email) throws SendEmailException {
+	private void _sendEmail(Email email, Integer currentUserId) throws SendEmailException {
 
 		try {
 			
@@ -1230,7 +1224,7 @@ public class WStepWorkBL {
 				
 				if ( ! WRITE_EMAIL_TO_FILESYSTEM ) {
 				
-					new SendEmailBL().enviar(email);
+					new SendEmailBL().sendEmail(email, null, null, currentUserId);
 				
 				} else {
 					
@@ -1251,6 +1245,12 @@ public class WStepWorkBL {
 							+e.getMessage()+" - "+e.getCause()+" - "+e.getClass();
 			logger.error(message);
 			throw new SendEmailException( message  );
+		} catch (BeeblosBLException e) {
+			String message=
+					"(_sendEmail) Error saving the email in beeblos:"
+							+e.getMessage()+" - "+e.getCause()+" - "+e.getClass();
+			logger.error(message);
+			throw new SendEmailException( message  );
 		}
 		
 	}
@@ -1261,7 +1261,7 @@ public class WStepWorkBL {
 		Email emailMessage = new Email();
 		
 		emailMessage.setFrom(senderEmailAccount.getEmail());
-		emailMessage.setIdFrom(senderEmailAccount.getId());
+		// dml 20140313 BORRAR emailMessage.setIdFrom(senderEmailAccount.getId());
 		emailMessage.setPwd(senderEmailAccount.getOutputPassword());
 		
 		emailMessage.setSubject(emailSubject);

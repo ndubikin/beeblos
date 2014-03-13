@@ -372,7 +372,7 @@
 		</set>
 	</class>
 
-	<class name="org.beeblos.bpm.core.model.thin.WProcessDefThin"
+	<class name="org.beeblos.bpm.core.model.noper.WProcessDefThin"
 		table="w_process_def">
 
 		<id name="id" type="java.lang.Integer">
@@ -1156,7 +1156,7 @@
 			</column>
 		</property>
 
-		<many-to-one class="org.beeblos.bpm.core.model.thin.WProcessDefThin"
+		<many-to-one class="org.beeblos.bpm.core.model.noper.WProcessDefThin"
 			column="id_process" lazy="false" name="processDef" fetch="join" />
 
 		<many-to-one name="status"

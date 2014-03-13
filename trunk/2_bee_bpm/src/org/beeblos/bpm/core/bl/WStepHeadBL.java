@@ -115,10 +115,10 @@ public class WStepHeadBL {
 	}
 
 	public List<WStepHead> getStepListByFinder(String nameFilter, String commentFilter,
-			Integer userId, boolean isAdmin, String action) throws WStepHeadException {
+			Integer userId, boolean isAdmin, String searchOrder) throws WStepHeadException {
 
 		return new WStepHeadDao().getStepListByFinder(nameFilter, commentFilter, userId, isAdmin,
-				action);
+				searchOrder);
 
 	}
 

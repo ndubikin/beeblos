@@ -856,12 +856,12 @@ public class WStepDefBL {
 	}
 
 	public List<WStepDef> finderWStepDef (String nameFilter, String commentFilter, 
-			String instructionsFilter, Integer userId, boolean isAdmin, String action, 
+			String instructionsFilter, Integer userId, boolean isAdmin, String searchOrder, 
 			Integer stepHeadId, String activeFilter) 
 	throws WStepDefException {
 		
 		return new WStepDefDao().finderWStepDef(nameFilter, commentFilter, instructionsFilter, 
-				userId, isAdmin, action, stepHeadId, activeFilter);
+				userId, isAdmin, searchOrder, stepHeadId, activeFilter);
 
 	}
 

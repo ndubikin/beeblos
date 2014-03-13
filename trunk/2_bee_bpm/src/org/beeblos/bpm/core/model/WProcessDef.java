@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.beeblos.bpm.core.model.thin.WProcessDefThin;
+import org.beeblos.bpm.core.model.noper.WProcessDefThin;
 
 import com.sp.common.core.model.SystemObject;
 
