@@ -1,4 +1,4 @@
-package org.beeblos.bpm.core.model.thin;
+package org.beeblos.bpm.core.model.noper;
 
 import java.util.Date;
 

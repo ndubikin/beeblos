@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.dao;
 
-import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_ADDED;
-import static org.beeblos.bpm.core.util.Constants.LAST_W_STEP_DEF_MODIFIED;
+import static com.sp.common.util.ConstantsCommon.LAST_ADDED;
+import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -247,7 +247,7 @@ public class WStepHeadDao {
 	}
 
 	public List<WStepHead> getStepListByFinder(String nameFilter, String commentFilter,
-			Integer userId, boolean isAdmin, String action) throws WStepHeadException {
+			Integer userId, boolean isAdmin, String searchOrder) throws WStepHeadException {
 
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -275,7 +275,7 @@ public class WStepHeadDao {
 		logger.debug(" ---->>>>>>>>>> base query:[" + query + "]");
 
 		// builds full query phrase
-		query += filter + getSQLOrder(action);
+		query += filter + getSQLOrder(searchOrder);
 
 		logger.debug(" ---->>>>>>>>>> FULL query:[" + query + "]");
 		logger.debug(" ---->>>>>>>>>> userId: " + userId);
@@ -348,22 +348,16 @@ public class WStepHeadDao {
 		return filter;
 	}
 
-	private String getSQLOrder(String action) {
+	private String getSQLOrder(String searchOrder) {
 
 		String ret = "";
 
-		if (action == null || action.equals("")) {
-
-			ret = "";
-
-		} else if (action.equals(LAST_W_STEP_DEF_ADDED)) {
-
-			ret = " ORDER by wsh.insert_date DESC ";
-
-		} else if (action.equals(LAST_W_STEP_DEF_MODIFIED)) {
-
-			ret = " ORDER by wsh.mod_date DESC ";
-
+		if (searchOrder != null && !"".equals(searchOrder.trim())){
+			if (searchOrder.equals(LAST_ADDED)) {
+				ret = " ORDER by wsh.insert_date DESC ";
+			} else if (searchOrder.equals(LAST_MODIFIED)) {
+				ret = " ORDER by wsh.mod_date DESC ";
+			} 
 		}
 
 		return ret;

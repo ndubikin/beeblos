@@ -94,14 +94,18 @@ public class WUserRole implements java.io.Serializable {
 
 	@Override
 	public int hashCode() {
+
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
+		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -110,6 +114,16 @@ public class WUserRole implements java.io.Serializable {
 			return false;
 		WUserRole other = (WUserRole) obj;
 		if (active != other.active)
+			return false;
+		if (role == null) {
+			if (other.role != null)
+				return false;
+		} else if (!role.equals(other.role))
+			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
 			return false;
 		return true;
 	}

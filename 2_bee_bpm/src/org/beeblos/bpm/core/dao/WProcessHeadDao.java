@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.dao;
 
-import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_ADDED;
-import static org.beeblos.bpm.core.util.Constants.LAST_W_PROCESS_DEF_MODIFIED;
+import static com.sp.common.util.ConstantsCommon.LAST_ADDED;
+import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -339,7 +339,7 @@ public class WProcessHeadDao {
 	@SuppressWarnings("unchecked")
 	public List<WProcessHead> finderProcessHead (Date initialInsertDateFilter, Date finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
-			Integer userId, boolean isAdmin, String action, Integer currentUserId ) 
+			Integer userId, boolean isAdmin, String searchOrder, Integer currentUserId ) 
 					throws WProcessHeadException {
 
 			org.hibernate.Session session = null;
@@ -378,7 +378,7 @@ public class WProcessHeadDao {
 			logger.debug(" ---->>>>>>>>>> base query:["+query+"]");
 
 			// builds full query phrase
-			query += filter+getSQLOrder(action);
+			query += filter+getSQLOrder(searchOrder);
 
 			logger.debug(" ---->>>>>>>>>> FULL query:["+query+"] ---->>>>>>>>>> userId: "+userId);
 			
@@ -544,22 +544,16 @@ public class WProcessHeadDao {
 	}
 
 	// dml 20120416
-	private String getSQLOrder(String action) {
+	private String getSQLOrder(String searchOrder) {
 		
 		String ret = "";
 		
-		if (action==null || action.equals("")) {
-			
-			ret = "";
-			
-		} else if (action.equals(LAST_W_PROCESS_DEF_ADDED)) {
-			
-			ret = " ORDER by wph.insert_date DESC ";
-			
-		} else if (action.equals(LAST_W_PROCESS_DEF_MODIFIED)) {
-			
-			ret = " ORDER by wph.mod_date DESC ";
-			
+		if (searchOrder!=null && searchOrder.equals(LAST_ADDED)) {
+			ret += " ORDER by wph.insert_date DESC;";
+		} else if (searchOrder!=null && searchOrder.equals(LAST_MODIFIED)) {
+			ret += " ORDER by wph.mod_date DESC;"; 
+		} else {
+			ret += " ORDER by wph.id ASC;";
 		}
 		
 		return ret;

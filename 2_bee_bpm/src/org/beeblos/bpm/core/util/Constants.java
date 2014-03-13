@@ -148,14 +148,6 @@ public class Constants {
 	public static final String CREATE_NEW_WSTEPHEAD = "CREATE_NEW_WSTEPHEAD"; // dml 20130508
 	public static final String WSTEPDEF_QUERY = "WSTEPDEF_QUERY";
 
-	// dml 20120113
-	public static final String LAST_W_STEP_DEF_ADDED = "LAST_W_STEP_DEF_ADDED";	
-	public static final String LAST_W_STEP_DEF_MODIFIED = "LAST_W_STEP_DEF_MODIFIED";
-
-	// dml 20120416
-	public static final String LAST_W_PROCESS_DEF_ADDED = "LAST_W_PROCESS_DEF_ADDED";	
-	public static final String LAST_W_PROCESS_DEF_MODIFIED = "LAST_W_PROCESS_DEF_MODIFIED";
-
 	public static final String PROCESS_STEP = "PROCESS_STEP";
 	public static final String TURNBACK_STEP = "TURNBACK_STEP";
 	
