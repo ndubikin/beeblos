@@ -128,7 +128,7 @@
 			<column name="id_user" />
 		</many-to-one>
 	</class>
-	<!-- dml 20120306 -->
+	
 	<class name="org.beeblos.bpm.core.model.WEmailTemplates" table="w_email_templates">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -151,6 +151,7 @@
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplateGroups"
 			column="id_email_grouping" lazy="false" name="wEmailTemplateGroup" />
 	</class>
+
 	<class name="org.beeblos.bpm.core.model.WEmailTemplateGroups"
 		table="w_email_template_groups">
 		<id name="id" type="java.lang.Integer">
@@ -161,72 +162,4 @@
 			<column length="50" name="name" />
 		</property>
 	</class>
-	<class name="com.sp.common.core.model.EmailTemplate" table="email_template">
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-		<property name="name" type="java.lang.String">
-			<column name="name" />
-		</property>
-		<property name="subject" type="java.lang.String">
-			<column name="subject" />
-		</property>
-		<property name="txtTemplate" type="text">
-			<column name="txt_template" />
-		</property>
-		<property name="htmlTemplate" type="text">
-			<column name="html_template" />
-		</property>
-		<property name="mobileTemplate" type="text">
-			<column name="mobile_template" />
-		</property>
-		<property name="templateFileName" type="java.lang.String">
-			<column name="template_file_name" />
-		</property>
-
-		<property name="addDate"
-			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
-			<column name="add_date" />
-		</property>
-		<property name="addUser" type="java.lang.Integer">
-			<column name="add_user" />
-		</property>
-		<property name="modDate"
-			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
-			<column name="mod_date" />
-		</property>
-		<property name="modUser" type="java.lang.Integer">
-			<column name="mod_user" />
-		</property>
-
-		<many-to-one class="com.sp.common.core.model.EmailTemplateTheme"
-			column="email_theme_id" lazy="false" name="emailTemplateTheme" />
-
-	</class>
-	<class name="com.sp.common.core.model.EmailTemplateTheme" table="email_template_theme">
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-		<property name="name" type="string">
-			<column name="name" />
-		</property>
-
-		<property name="addDate"
-			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
-			<column name="add_date" />
-		</property>
-		<property name="addUser" type="java.lang.Integer">
-			<column name="add_user" />
-		</property>
-		<property name="modDate"
-			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
-			<column name="mod_date" />
-		</property>
-		<property name="modUser" type="java.lang.Integer">
-			<column name="mod_user" />
-		</property>
-
-	</class>		
 </hibernate-mapping>

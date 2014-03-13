@@ -87,10 +87,10 @@ public class WEmailTemplatesBL {
 	}
 
 
-	public List<WEmailTemplates> wEmailTemplatesFinder(String nameFilter, String typeFilter)
+	public List<WEmailTemplates> wEmailTemplatesFinder(String nameFilter, String typeFilter, Integer emailTemplateGroupId)
 			throws WEmailTemplatesException {
 		WEmailTemplatesDao wEmailTemplatesDao = new WEmailTemplatesDao();
-		return wEmailTemplatesDao.wEmailTemplatesFinder(nameFilter, typeFilter);
+		return wEmailTemplatesDao.wEmailTemplatesFinder(nameFilter, typeFilter, emailTemplateGroupId);
 	}
 
     private void _consistencyDataControl(WEmailTemplates instance)
