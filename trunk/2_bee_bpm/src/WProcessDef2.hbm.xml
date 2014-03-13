@@ -9,7 +9,7 @@
 			<generator class="identity" />
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="comments"
 			type="string">
@@ -18,14 +18,14 @@
 
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -43,14 +43,14 @@
 			<one-to-many class="org.beeblos.bpm.core.model.WProcessDataField" />
 		</set>
 
- 		<set name="externalMethod" table="w_process_head_method"
- 			lazy="false" fetch="join" cascade="all"> 
- 			<key> 
- 				<column name="process_head_id" /> 
- 			</key> 
- 			<one-to-many class="org.beeblos.bpm.core.model.WExternalMethod" /> 
- 		</set> 
-		
+		<set name="externalMethod" table="w_process_head_method" lazy="false"
+			fetch="join" cascade="all">
+			<key>
+				<column name="process_head_id" />
+			</key>
+			<one-to-many class="org.beeblos.bpm.core.model.WExternalMethod" />
+		</set>
+
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.noper.WProcessHeadLight"
@@ -60,7 +60,7 @@
 			<generator class="identity" />
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 	</class>
 
@@ -73,16 +73,16 @@
 		</id>
 
 		<property name="name" type="string">
-			<column name="name"  not-null="true" />
+			<column name="name" not-null="true" />
 		</property>
 		<property name="ignoreCase" type="java.lang.Boolean">
 			<column name="ignore_case" sql-type="bit" />
 		</property>
 		<property name="schema" type="string">
-			<column name="schema_"  not-null="true" />
+			<column name="schema_" not-null="true" />
 		</property>
 		<property name="catalog" type="string">
-			<column name="catalog"  not-null="true" />
+			<column name="catalog" not-null="true" />
 		</property>
 		<property name="comment" type="string">
 			<column name="comment" />
@@ -103,83 +103,93 @@
 	</class>
 
 
-    <class name="org.beeblos.bpm.core.model.WExternalMethod" table="w_process_head_method">
-        <id name="id" type="java.lang.Integer">
-            <column name="id" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="processHead" class="org.beeblos.bpm.core.model.WProcessHead" lazy="false">
-            <column name="process_head_id"   />
-        </many-to-one>
-        <property name="classname" type="string">
-            <column name="classname">
-                <comment>for APP synchro: class name to execute</comment>
-            </column>
-        </property>
-        <property name="methodname" type="string">
-            <column name="methodname">
-                <comment>for APP synchro: method name to execute to get info from external source</comment>
-            </column>
-        </property>
-        <property name="type" type="string">
-            <column name="type" >
-                <comment>P = put method executes and receives 1 parameter response - G = get method executes and receive 1 loaded object as response</comment>
-            </column>
-        </property>
-        <property name="paramlistName" type="com.sp.common.model.usertype.StringArrayUserType">
-            <column name="paramlist_name" >
-                <comment>for APP synchro: parameter list to send</comment>
-            </column>
-        </property>
-        <property name="paramlistType" type="com.sp.common.model.usertype.ClassArrayUserType">
-            <column name="paramlist_type" >
-                <comment>for APP synchro: parameter list types (java types)</comment>
-            </column>
-        </property>        
-        <property name="atProcessStartup" type="java.lang.Boolean">
-            <column name="at_process_startup" sql-type="bit">
-                <comment>synchronize time: at process startup must synchronize getting data from source</comment>
-            </column>
-        </property>
-        <property name="atProcessEnd" type="java.lang.Boolean">
-            <column name="at_process_end" sql-type="bit">
-                <comment>synchronize time: at process ends must synchronize putting data to source</comment>
-            </column>
-        </property>
-        <property name="whenStepWorkIsInvoked" type="java.lang.Boolean">
-            <column name="when_step_work_is_invoked" sql-type="bit">
-                <comment>synchronize time: with each new step uploaded must synchronize getting data from source</comment>
-            </column>
-        </property>
-        <property name="whenStepWorkIsProcessed" type="java.lang.Boolean">
-            <column name="when_step_work_is_processed" sql-type="bit">
-                <comment>synchronize time: with each new step processed must synchronize putting data to source</comment>
-            </column>
-        </property>
-        <property name="logicalConditionExecution" type="string">
-            <column name="logicalConditionExecution" >
-                <comment>logical condition valid form bee-bpm execution environment. If true then executes de method</comment>
-            </column>
-        </property>
-        <property name="tested" type="string">
-            <column name="tested" >
-                <comment>for check environment existence of class/method purposes</comment>
-            </column>
-        </property>
-        <property name="insertDate" type="timestamp">
-            <column name="insert_date"   />
-        </property>
-        <property name="insertUser" type="java.lang.Integer">
-            <column name="insert_user"   />
-        </property>
-        <property name="modDate" type="timestamp">
-            <column name="mod_date"   />
-        </property>
-        <property name="modUser" type="java.lang.Integer">
-            <column name="mod_user"   />
-        </property>
+	<class name="org.beeblos.bpm.core.model.WExternalMethod" table="w_process_head_method">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one name="processHead"
+			class="org.beeblos.bpm.core.model.WProcessHead" lazy="false">
+			<column name="process_head_id" />
+		</many-to-one>
+		<property name="classname" type="string">
+			<column name="classname">
+				<comment>for APP synchro: class name to execute</comment>
+			</column>
+		</property>
+		<property name="methodname" type="string">
+			<column name="methodname">
+				<comment>for APP synchro: method name to execute to get info from
+					external source</comment>
+			</column>
+		</property>
+		<property name="type" type="string">
+			<column name="type">
+				<comment>P = put method executes and receives 1 parameter response -
+					G = get method executes and receive 1 loaded object as response</comment>
+			</column>
+		</property>
+		<property name="paramlistName"
+			type="com.sp.common.model.usertype.StringArrayUserType">
+			<column name="paramlist_name">
+				<comment>for APP synchro: parameter list to send</comment>
+			</column>
+		</property>
+		<property name="paramlistType"
+			type="com.sp.common.model.usertype.ClassArrayUserType">
+			<column name="paramlist_type">
+				<comment>for APP synchro: parameter list types (java types)</comment>
+			</column>
+		</property>
+		<property name="atProcessStartup" type="java.lang.Boolean">
+			<column name="at_process_startup" sql-type="bit">
+				<comment>synchronize time: at process startup must synchronize
+					getting data from source</comment>
+			</column>
+		</property>
+		<property name="atProcessEnd" type="java.lang.Boolean">
+			<column name="at_process_end" sql-type="bit">
+				<comment>synchronize time: at process ends must synchronize putting
+					data to source</comment>
+			</column>
+		</property>
+		<property name="whenStepWorkIsInvoked" type="java.lang.Boolean">
+			<column name="when_step_work_is_invoked" sql-type="bit">
+				<comment>synchronize time: with each new step uploaded must
+					synchronize getting data from source</comment>
+			</column>
+		</property>
+		<property name="whenStepWorkIsProcessed" type="java.lang.Boolean">
+			<column name="when_step_work_is_processed" sql-type="bit">
+				<comment>synchronize time: with each new step processed must
+					synchronize putting data to source</comment>
+			</column>
+		</property>
+		<property name="logicalConditionExecution" type="string">
+			<column name="logicalConditionExecution">
+				<comment>logical condition valid form bee-bpm execution environment.
+					If true then executes de method</comment>
+			</column>
+		</property>
+		<property name="tested" type="string">
+			<column name="tested">
+				<comment>for check environment existence of class/method purposes</comment>
+			</column>
+		</property>
+		<property name="insertDate" type="timestamp">
+			<column name="insert_date" />
+		</property>
+		<property name="insertUser" type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property name="modDate" type="timestamp">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
 
-    </class>
+	</class>
 
 	<class name="org.beeblos.bpm.core.model.WProcessDef" table="w_process_def">
 
@@ -198,7 +208,7 @@
 		</property>
 
 		<property name="productionDate" type="timestamp">
-			<column name="production_date"  />
+			<column name="production_date" />
 		</property>
 
 		<property name="productionUser" type="java.lang.Integer">
@@ -330,7 +340,7 @@
 					<column name="insert_user" />
 				</property>
 				<property name="insertDate" type="timestamp">
-					<column name="insert_date"  not-null="true" />
+					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
 		</set>
@@ -356,7 +366,7 @@
 					<column name="insert_user" />
 				</property>
 				<property name="insertDate" type="timestamp">
-					<column name="insert_date"  not-null="true" />
+					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
 		</set>
@@ -380,7 +390,7 @@
 		</property>
 
 		<property name="productionDate" type="timestamp">
-			<column name="production_date"  />
+			<column name="production_date" />
 		</property>
 
 		<property name="productionUser" type="java.lang.Integer">
@@ -465,7 +475,7 @@
 			<generator class="identity" />
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="description"
 			type="string">
@@ -479,18 +489,18 @@
 		</property>
 		<property generated="never" lazy="false" name="idObjectType"
 			type="string">
-			<column  name="id_object_type" />
+			<column name="id_object_type" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -510,7 +520,7 @@
 					<column name="insert_user" />
 				</property>
 				<property name="insertDate" type="timestamp">
-					<column name="insert_date"  not-null="true" />
+					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
 		</set>
@@ -531,7 +541,7 @@
 		</property>
 
 		<property name="name" type="string">
-			<column name="name"  />
+			<column name="name" />
 		</property>
 		<property name="required" type="java.lang.Boolean">
 			<column name="required" sql-type="bit" />
@@ -547,7 +557,7 @@
 		</property>
 
 		<property name="defaultValue" type="string">
-			<column name="default_value"  unique="true" />
+			<column name="default_value" unique="true" />
 		</property>
 
 		<property name="comments" type="string">
@@ -582,7 +592,7 @@
 			<generator class="identity" />
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="comments"
 			type="string">
@@ -591,14 +601,14 @@
 
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -679,14 +689,14 @@
 		</property>
 		<property generated="never" lazy="false" name="idListZone"
 			type="string">
-			<column  name="id_list_zone">
+			<column name="id_list_zone">
 				<comment>La lista del step processor que se asocia a este paso.
 					Default esta en la tabla w_proceso</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="idWorkZone"
 			type="string">
-			<column  name="id_work_zone">
+			<column name="id_work_zone">
 				<comment>La pagina que contiene el trabajo a realizar del step
 					processor.. Default esta en la tabla
 					w_proceso</comment>
@@ -694,7 +704,7 @@
 		</property>
 		<property generated="never" lazy="false" name="idAdditionalZone"
 			type="string">
-			<column  name="id_additional_zone">
+			<column name="id_additional_zone">
 				<comment>La pagina que contiene la informacion adicional para el
 					step processor... Default esta en la tabla w_proceso</comment>
 			</column>
@@ -702,12 +712,12 @@
 
 		<property generated="never" lazy="false" name="idDefaultProcessor"
 			type="string">
-			<column  name="id_default_processor" />
+			<column name="id_default_processor" />
 		</property>
 
 		<property generated="never" lazy="false" name="submitForm"
 			type="string">
-			<column  name="submit_form">
+			<column name="submit_form">
 				<comment>form a ejecutar ( opcional )</comment>
 			</column>
 		</property>
@@ -721,13 +731,13 @@
 		</property>
 		<property generated="never" lazy="false" name="deadlineDate"
 			type="date">
-			<column  name="deadline_date">
+			<column name="deadline_date">
 				<comment>Si tiene una fecha limite</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="deadlineTime"
 			type="time">
-			<column  name="deadline_time">
+			<column name="deadline_time">
 				<comment>Si tiene una hora de resolucion limite (en la fecha
 					indicada arriba)</comment>
 			</column>
@@ -748,14 +758,14 @@
 
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" />
+			<column name="insert_date" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -870,7 +880,7 @@
 					<column name="insert_user" />
 				</property>
 				<property name="insertDate" type="timestamp">
-					<column name="insert_date"  not-null="true" />
+					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
 		</set>
@@ -896,7 +906,7 @@
 					<column name="insert_user" />
 				</property>
 				<property name="insertDate" type="timestamp">
-					<column name="insert_date"  not-null="true" />
+					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
 		</set>
@@ -918,18 +928,18 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -960,7 +970,7 @@
 		</property>
 		<property generated="never" lazy="false" name="validResponses"
 			type="string">
-			<column  name="valid_responses">
+			<column name="valid_responses">
 				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
 			</column>
 		</property>
@@ -974,18 +984,18 @@
 		<!-- <column name="version" /> -->
 		<!-- </property> -->
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -997,12 +1007,22 @@
 			column="id_dest_step" lazy="false" name="toStep" />
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
 			column="process_id" lazy="false" name="process" />
-			
+
 		<set name="externalMethod" table="w_stepsequence_method" inverse="true"
-			lazy="false" fetch="join" cascade="none">
+			lazy="false" fetch="join" cascade="save-update">
 			<key column="id_step_sequence" />
-			<many-to-many class="org.beeblos.bpm.core.model.WExternalMethod" column="id_method"/>
-		</set>			
+			<many-to-many class="org.beeblos.bpm.core.model.WExternalMethod"
+				column="id_method" />
+		</set>
+		<!-- <set cascade="all" name="externalMethod" sort="unsorted" table="w_stepsequence_method" 
+			lazy="false" fetch="join"> <key column="id_step_sequence" /> <composite-element 
+			class="org.beeblos.bpm.core.model.WStepSequenceMethod"> <many-to-one name="externalMethod" 
+			class="org.beeblos.bpm.core.model.WExternalMethod" column="id_method" cascade="none" 
+			lazy="false" /> <property name="enabled" type="java.lang.Boolean"> <column 
+			name="enabled" sql-type="bit"/> </property> <property name="insertUser" type="java.lang.Integer"> 
+			<column name="insert_user" /> </property> <property name="insertDate" type="timestamp"> 
+			<column name="insert_date" length="0" not-null="true" /> </property> </composite-element> 
+			</set> -->
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WStepWorkSequence" table="w_step_work_sequence">
@@ -1056,7 +1076,7 @@
 			<generator class="identity" />
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="conversion"
 			type="java.lang.Integer">
@@ -1072,7 +1092,7 @@
 			<generator class="identity" />
 		</id>
 		<property name="name" type="string">
-			<column name="name"  />
+			<column name="name" />
 		</property>
 	</class>
 
@@ -1087,7 +1107,7 @@
 		<!-- </column> -->
 		<!-- </version> -->
 		<property name="startingTime" type="timestamp">
-			<column name="starting_time" >
+			<column name="starting_time">
 				<comment>the work was started at this date and time (UTC TIME)</comment>
 			</column>
 		</property>
@@ -1097,17 +1117,17 @@
 			</column>
 		</property>
 		<property name="endTime" type="timestamp">
-			<column name="end_time" >
+			<column name="end_time">
 				<comment>loads when work finish o forced end</comment>
 			</column>
 		</property>
 		<property name="reference" type="java.lang.String">
-			<column name="reference" >
+			<column name="reference">
 				<comment>user friendly reference to identificate this work</comment>
 			</column>
 		</property>
 		<property name="comments" type="string">
-			<column name="comments" >
+			<column name="comments">
 				<comment>user friendly comments to identificate this work</comment>
 			</column>
 		</property>
@@ -1115,13 +1135,13 @@
 			<column name="insert_user" />
 		</property>
 		<property name="insertDate" type="timestamp">
-			<column name="insert_date"  not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
 		<property name="modDate" type="timestamp">
-			<column name="mod_date"  />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="idObject"
 			type="java.lang.Integer">
@@ -1172,19 +1192,19 @@
 		</property>
 		<property generated="never" lazy="false" name="decidedDate"
 			type="timestamp">
-			<column  name="decided_date" not-null="false">
+			<column name="decided_date" not-null="false">
 				<comment>fecha/hora a la que se resolvio</comment>
 			</column>
 		</property>
 
 		<property generated="never" lazy="false" name="response"
 			type="string">
-			<column  name="response" />
+			<column name="response" />
 		</property>
 
 		<property generated="never" lazy="false" name="nextStepInstructions"
 			type="string">
-			<column  name="instructions" />
+			<column name="instructions" />
 		</property>
 
 		<property generated="never" lazy="false" name="assignedTime"
@@ -1228,18 +1248,18 @@
 
 		<property generated="never" lazy="false" name="lockedSince"
 			type="java.util.Date">
-			<column  name="locked_since" />
+			<column name="locked_since" />
 		</property>
 
 		<!-- ESTA TABLA NO TIENE EL INSERT DATE PORQUE ESE DATO ESTÁ EN EL CAMPO 
 			arriving_date <property generated="never" lazy="false" name="insertDate" 
-			type="date" > <column  name="insert_date" /> </property> -->
+			type="date" > <column name="insert_date" /> </property> -->
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="sentBack"
 			type="java.lang.Boolean">
@@ -1266,14 +1286,14 @@
 
 		<property generated="never" lazy="false" name="userInstructions"
 			type="string">
-			<column  name="user_instructions" sql-type="longtext">
+			<column name="user_instructions" sql-type="longtext">
 				<comment>Instrucciones que envio el usuario del paso anterior para
 					el paso corriente (runtime)</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="userNotes"
 			type="string">
-			<column  name="user_notes"  sql-type="longtext">
+			<column name="user_notes" sql-type="longtext">
 				<comment>Notas del usuario que ejecuta el paso corriente o
 					instrucciones para el paso próximo</comment>
 			</column>
@@ -1335,7 +1355,8 @@
 
 
 	<!-- thin object for control purposes ... -->
-	<class name="org.beeblos.bpm.core.model.noper.WStepWorkCheckObject" table="w_step_work">
+	<class name="org.beeblos.bpm.core.model.noper.WStepWorkCheckObject"
+		table="w_step_work">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -1355,43 +1376,26 @@
 		</property>
 		<property generated="never" lazy="false" name="decidedDate"
 			type="timestamp">
-			<column  name="decided_date" not-null="false">
+			<column name="decided_date" not-null="false">
 				<comment>fecha/hora a la que se resolvio</comment>
 			</column>
 		</property>
 
 		<property generated="never" lazy="false" name="response"
 			type="string">
-			<column  name="response" />
+			<column name="response" />
 		</property>
 
-<!-- 
-		<property generated="never" lazy="false" name="assignedTime"
-			type="java.lang.Integer">
-			<column name="assigned_time">
-				<comment>CANTIDAD DE TIEMPO ASIGNADA PARA SU RESOLUCION</comment>
-			</column>
-		</property>
-		<property generated="never" lazy="false" name="deadlineDate"
-			type="date">
-			<column name="deadline_date">
-				<comment>Si tiene una fecha limite</comment>
-			</column>
-		</property>
-		<property generated="never" lazy="false" name="deadlineTime"
-			type="time">
-			<column name="deadline_time">
-				<comment>Si tiene una hora de resolucion limite (en la fecha
-					indicada arriba)</comment>
-			</column>
-		</property>
-		<property generated="never" lazy="false" name="reminderTime"
-			type="java.lang.Integer">
-			<column name="reminder_time">
-				<comment>CANTIDAD DE TIEMPO ASIGNADA PARA SU RESOLUCION</comment>
-			</column>
-		</property>
- -->
+		<!-- <property generated="never" lazy="false" name="assignedTime" type="java.lang.Integer"> 
+			<column name="assigned_time"> <comment>CANTIDAD DE TIEMPO ASIGNADA PARA SU 
+			RESOLUCION</comment> </column> </property> <property generated="never" lazy="false" 
+			name="deadlineDate" type="date"> <column name="deadline_date"> <comment>Si 
+			tiene una fecha limite</comment> </column> </property> <property generated="never" 
+			lazy="false" name="deadlineTime" type="time"> <column name="deadline_time"> 
+			<comment>Si tiene una hora de resolucion limite (en la fecha indicada arriba)</comment> 
+			</column> </property> <property generated="never" lazy="false" name="reminderTime" 
+			type="java.lang.Integer"> <column name="reminder_time"> <comment>CANTIDAD 
+			DE TIEMPO ASIGNADA PARA SU RESOLUCION</comment> </column> </property> -->
 
 		<property generated="never" lazy="false" name="adminProcess"
 			type="java.lang.Boolean">
@@ -1409,18 +1413,18 @@
 
 		<property generated="never" lazy="false" name="lockedSince"
 			type="java.util.Date">
-			<column  name="locked_since" />
+			<column name="locked_since" />
 		</property>
 
 		<!-- ESTA TABLA NO TIENE EL INSERT DATE PORQUE ESE DATO ESTÁ EN EL CAMPO 
 			arriving_date <property generated="never" lazy="false" name="insertDate" 
-			type="date" > <column  name="insert_date" /> </property> -->
+			type="date" > <column name="insert_date" /> </property> -->
 		<property generated="never" lazy="false" name="idModUser"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="sentBack"
 			type="java.lang.Boolean">
@@ -1429,33 +1433,35 @@
 					devuelto</comment>
 			</column>
 		</property>
-		
-		<property name="idInsertUser" type="java.lang.Integer" lazy="false" >
-			<column name="insert_user"/>
+
+		<property name="idInsertUser" type="java.lang.Integer" lazy="false">
+			<column name="insert_user" />
 		</property>
 
-		<property name="lockedByUserId" type="java.lang.Integer" lazy="false" >
-			<column name="locked_by"/>
+		<property name="lockedByUserId" type="java.lang.Integer"
+			lazy="false">
+			<column name="locked_by" />
 		</property>
 
-		<property name="idOpenerUser" type="java.lang.Integer" lazy="false" >
-			<column name="opener_user"/>
+		<property name="idOpenerUser" type="java.lang.Integer" lazy="false">
+			<column name="opener_user" />
 		</property>
 
-		<property name="idPerformer" type="java.lang.Integer" lazy="false" >
-			<column name="performer_user_id"/>
+		<property name="idPerformer" type="java.lang.Integer" lazy="false">
+			<column name="performer_user_id" />
 		</property>
 
-		<property name="idProcessWork" type="java.lang.Integer" lazy="false" >
-			<column name="id_work"/>
+		<property name="idProcessWork" type="java.lang.Integer" lazy="false">
+			<column name="id_work" />
 		</property>
 
-		<property name="idPreviousStep" type="java.lang.Integer" lazy="false" >
-			<column name="id_previous_step"/>
+		<property name="idPreviousStep" type="java.lang.Integer"
+			lazy="false">
+			<column name="id_previous_step" />
 		</property>
 
-		<property name="idCurrentStep" type="java.lang.Integer" lazy="false" >
-			<column name="id_current_step"/>
+		<property name="idCurrentStep" type="java.lang.Integer" lazy="false">
+			<column name="id_current_step" />
 		</property>
 
 	</class>
@@ -1463,7 +1469,7 @@
 
 
 
-	
+
 	<class name="org.beeblos.bpm.core.model.WStepWorkAssignment"
 		table="w_step_work_assignment">
 		<id name="id" type="java.lang.Integer">
@@ -1504,7 +1510,7 @@
 		</property>
 		<property generated="never" lazy="false" name="reassignedDate"
 			type="timestamp">
-			<column  name="reassigned_date">
+			<column name="reassigned_date">
 				<comment>TIMESTAMP CON LA REASIGNACION</comment>
 			</column>
 		</property>
@@ -1522,7 +1528,7 @@
 		</property>
 		<property generated="never" lazy="false" name="fromReassignmentDate"
 			type="timestamp">
-			<column  name="from_reassignment_date">
+			<column name="from_reassignment_date">
 				<comment>TIMESTAMP CON LA REASIGNACION</comment>
 			</column>
 		</property>
@@ -1532,14 +1538,14 @@
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" />
+			<column name="insert_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 	</class>
 
@@ -1549,13 +1555,13 @@
 			<generator class="identity" />
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="login" type="string">
-			<column  name="login" />
+			<column name="login" />
 		</property>
 		<property generated="never" lazy="false" name="email" type="string">
-			<column  name="email" />
+			<column name="email" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
@@ -1563,10 +1569,10 @@
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -1586,7 +1592,7 @@
 					<column name="insert_user" />
 				</property>
 				<property name="insertDate" type="timestamp">
-					<column name="insert_date"  not-null="true" />
+					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
 		</set>
@@ -1602,15 +1608,15 @@
 		</id>
 
 		<property generated="never" lazy="false" name="type" type="string">
-			<column  name="type_" />
+			<column name="type_" />
 		</property>
 		<property generated="never" lazy="false" name="description"
 			type="string">
-			<column  name="description" />
+			<column name="description" />
 		</property>
 		<property generated="never" lazy="false" name="externalUserId"
 			type="string">
-			<column  name="external_user_id" />
+			<column name="external_user_id" />
 		</property>
 
 	</class>
@@ -1628,7 +1634,7 @@
 		</property>
 		<property generated="never" lazy="false" name="idObjectType"
 			type="string">
-			<column  name="id_object_type">
+			<column name="id_object_type">
 				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
 			</column>
 		</property>
@@ -1638,7 +1644,7 @@
 		</property>
 		<property generated="never" lazy="false" name="comments"
 			type="string">
-			<column  name="comments">
+			<column name="comments">
 				<comment>String reference about the step</comment>
 			</column>
 		</property>
@@ -1650,11 +1656,11 @@
 		</property>
 		<property generated="never" lazy="false" name="response"
 			type="string">
-			<column  name="response" />
+			<column name="response" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
 			type="timestamp">
-			<column  name="insert_date" not-null="false">
+			<column name="insert_date" not-null="false">
 				<comment>fecha hora a la que se inserto</comment>
 			</column>
 		</property>
@@ -1665,7 +1671,7 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="modDate" type="timestamp">
-			<column  name="mod_date" />
+			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
@@ -1673,7 +1679,7 @@
 		</property>
 		<property generated="never" lazy="false" name="userNotes"
 			type="string">
-			<column  name="user_notes"  sql-type="longtext">
+			<column name="user_notes" sql-type="longtext">
 				<comment>Notas del usuario que ejecuta el paso corriente o
 					instrucciones para el paso próximo</comment>
 			</column>
@@ -1704,10 +1710,10 @@
 		</id>
 
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="color" type="string">
-			<column  name="color" />
+			<column name="color" />
 		</property>
 
 		<property generated="never" lazy="false" name="addDate" type="timestamp">
@@ -1734,11 +1740,11 @@
 		</id>
 
 		<property generated="never" lazy="false" name="name" type="string">
-			<column  name="name" />
+			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="comments"
 			type="string">
-			<column  name="comments" />
+			<column name="comments" />
 		</property>
 
 		<property generated="never" lazy="false" name="addDate" type="timestamp">
@@ -1777,13 +1783,13 @@
 		</many-to-one>
 
 		<property name="name" type="string">
-			<column name="name"  />
+			<column name="name" />
 		</property>
 		<property name="columnName" type="string">
-			<column name="col_name"  />
+			<column name="col_name" />
 		</property>
 		<property name="order" type="java.lang.Integer">
-			<column name="order_"/>
+			<column name="order_" />
 		</property>
 		<property name="required" type="java.lang.Boolean">
 			<column name="required" sql-type="bit" />
@@ -1795,62 +1801,62 @@
 			<column name="active" sql-type="bit" />
 		</property>
 
-       <property name="synchronize" type="java.lang.Boolean">
-            <column name="synchronize" sql-type="bit"/>
-        </property>
-        <property name="synchroWith" type="java.lang.String">
-            <column name="synchrowith" sql-type="char"/>
-        </property>
+		<property name="synchronize" type="java.lang.Boolean">
+			<column name="synchronize" sql-type="bit" />
+		</property>
+		<property name="synchroWith" type="java.lang.String">
+			<column name="synchrowith" sql-type="char" />
+		</property>
 
-         <property name="schema" type="java.lang.String">
-            <column name="schema_" />
-        </property>        
-         <property name="tableName" type="java.lang.String">
-            <column name="tablename" />
-        </property>        
-         <property name="fieldName" type="java.lang.String">
-            <column name="fieldname" />
-        </property>        
-         <property name="className" type="java.lang.String">
-            <column name="classname" />
-        </property>        
-         <property name="getMethod" type="java.lang.String">
-            <column name="get_method" />
-        </property>        
-         <property name="putMethod" type="java.lang.String">
-            <column name="put_method" />
-        </property>
-        <property name="paramType" type="java.lang.String">
-            <column name="param_type" />
-        </property>
-         <property name="paramList" type="java.lang.String">
-            <column name="paramlist" />
-        </property>        
-		
-        <property name="atProcessStartup" type="java.lang.Boolean">
-            <column name="at_process_startup" sql-type="bit"/>
-        </property>
-        <property name="atProcessEnd" type="java.lang.Boolean">
-            <column name="at_process_end" sql-type="bit"/>
-        </property>
-        <property name="whenStepWorkIsInvoked" type="java.lang.Boolean">
-            <column name="when_step_work_is_invoked" sql-type="bit"/>
-        </property>
-        <property name="whenStepWorkIsProcessed" type="java.lang.Boolean">
-            <column name="when_step_work_is_processed" sql-type="bit"/>
-        </property>		
-		
+		<property name="schema" type="java.lang.String">
+			<column name="schema_" />
+		</property>
+		<property name="tableName" type="java.lang.String">
+			<column name="tablename" />
+		</property>
+		<property name="fieldName" type="java.lang.String">
+			<column name="fieldname" />
+		</property>
+		<property name="className" type="java.lang.String">
+			<column name="classname" />
+		</property>
+		<property name="getMethod" type="java.lang.String">
+			<column name="get_method" />
+		</property>
+		<property name="putMethod" type="java.lang.String">
+			<column name="put_method" />
+		</property>
+		<property name="paramType" type="java.lang.String">
+			<column name="param_type" />
+		</property>
+		<property name="paramList" type="java.lang.String">
+			<column name="paramlist" />
+		</property>
+
+		<property name="atProcessStartup" type="java.lang.Boolean">
+			<column name="at_process_startup" sql-type="bit" />
+		</property>
+		<property name="atProcessEnd" type="java.lang.Boolean">
+			<column name="at_process_end" sql-type="bit" />
+		</property>
+		<property name="whenStepWorkIsInvoked" type="java.lang.Boolean">
+			<column name="when_step_work_is_invoked" sql-type="bit" />
+		</property>
+		<property name="whenStepWorkIsProcessed" type="java.lang.Boolean">
+			<column name="when_step_work_is_processed" sql-type="bit" />
+		</property>
+
 		<property name="length" type="java.lang.Integer">
 			<column name="length" />
 		</property>
 		<property name="insertDate" type="timestamp">
-			<column name="insert_date"  not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" not-null="true" />
 		</property>
 		<property name="modDate" type="timestamp">
-			<column name="mod_date"  not-null="true" />
+			<column name="mod_date" not-null="true" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
 			<column name="mod_user" not-null="true" />
@@ -1878,16 +1884,16 @@
 			<column name="sql_type" not-null="true" />
 		</property>
 		<property name="sqlTypeName" type="string">
-			<column name="sql_type_name"  not-null="true" />
+			<column name="sql_type_name" not-null="true" />
 		</property>
 		<property name="insertDate" type="timestamp">
-			<column name="insert_date"  not-null="true" />
+			<column name="insert_date" not-null="true" />
 		</property>
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" not-null="true" />
 		</property>
 		<property name="modDate" type="timestamp">
-			<column name="mod_date"  not-null="true" />
+			<column name="mod_date" not-null="true" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
 			<column name="mod_user" not-null="true" />
@@ -1900,7 +1906,7 @@
 			<generator class="identity" />
 		</id>
 		<property name="name" type="string">
-			<column name="name"  />
+			<column name="name" />
 		</property>
 		<property name="objectClass" type="string">
 			<column name="object_class" not-null="true" />

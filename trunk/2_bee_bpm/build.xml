@@ -23,7 +23,7 @@
 		 <jar destfile="${distFolder}/${jarName}"
 	         basedir="${binFolder}"
 	         includes="**/*.class, **/*.xml, **/*.properties"
-		 	 excludes="**/hibernate.cfg.xml, **/*.hbm.xml, email_field_mapping.properties"
+		 	 excludes="**/hibernate.cfg.xml, **/*.hbm.xml, **/*.properties"
 	         />
 	</target>
 
