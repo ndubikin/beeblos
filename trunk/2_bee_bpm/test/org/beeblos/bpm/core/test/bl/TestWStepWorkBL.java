@@ -6,7 +6,6 @@ import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -25,6 +24,7 @@ import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkAssignment;
 import org.beeblos.bpm.core.model.WTimeUnit;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 
@@ -105,7 +105,7 @@ public class TestWStepWorkBL extends TestCase{
 			
 //			processWork.setProcess(process);
 //			processWork.setVersion(1);
-			processWork.setStartingTime(new Date());
+			processWork.setStartingTime(new DateTime());
 			processWork.setReference("process work reference");
 			processWork.setIdObject(750);
 			processWork.setIdObjectType("object type");
@@ -156,7 +156,7 @@ public class TestWStepWorkBL extends TestCase{
 			
 			
 			
-			Date now = new Date();
+			DateTime now = new DateTime();
 			SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			SimpleDateFormat fmtDate 	 = new SimpleDateFormat("yyyy-MM-dd");
 //			SimpleDateFormat fmtTime 	 = new SimpleDateFormat("hh:mm:ss");
@@ -168,11 +168,11 @@ public class TestWStepWorkBL extends TestCase{
 //			public WStepWork( id,  process,  version,
 //					WStepDef previousStep, WStepDef currentStep,  idObject,
 //					String idObjectType,  arrivingDate,  openedDate,
-//					String openerUser, Date decidedDate, String performer,
-//					WTimeUnit timeUnit,  assignedTime, Date deadlineDate,
-//					Date deadlineTime, WTimeUnit reminderTimeUnit,
+//					String openerUser, DateTime decidedDate, String performer,
+//					WTimeUnit timeUnit,  assignedTime, DateTime deadlineDate,
+//					DateTime deadlineTime, WTimeUnit reminderTimeUnit,
 //					 reminderTime, boolean adminProcess, boolean locked,
-//					String lockedBy, Date lockedSince)
+//					String lockedBy, DateTime lockedSince)
 			
 			// agrego registro step w
 			
@@ -220,7 +220,7 @@ public class TestWStepWorkBL extends TestCase{
 			assertEquals(0, stepw.getAssignedTo().size()); // no hay asignaciones en este momento ...
 			
 			
-			Date aDate = new Date();
+			DateTime aDate = new DateTime();
 
 			WStepWorkAssignment swa1 = new WStepWorkAssignment(1,1001,true,false,null,aDate,false,1000,aDate);
 			

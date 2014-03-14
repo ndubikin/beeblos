@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.model.noper;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 /**
  * thin object to check current step work conditions ...
@@ -26,12 +27,12 @@ public class WStepWorkCheckObject implements java.io.Serializable {
 	private Integer idPreviousStep;
 	private Integer idCurrentStep;
 
-	private Date arrivingDate;
-	private Date openedDate;
+	private DateTime arrivingDate;
+	private DateTime openedDate;
 
 	private Integer idOpenerUser;
 
-	private Date decidedDate;
+	private LocalDate decidedDate;
 	private Integer idPerformer;
 
 	private String response;
@@ -40,13 +41,13 @@ public class WStepWorkCheckObject implements java.io.Serializable {
 
 	private boolean locked;
 	private Integer lockedByUserId; // id del usuario que lo bloqueó
-	private Date lockedSince;
+	private DateTime lockedSince;
 
 	private boolean sentBack;
 
 	private Integer idInsertUser; // user has processed previous step ( and
 									// inserted current step )
-	private Date modDate;
+	private DateTime modDate;
 	private Integer idModUser;
 
 	public WStepWorkCheckObject() {
@@ -85,19 +86,19 @@ public class WStepWorkCheckObject implements java.io.Serializable {
 		this.idCurrentStep = idCurrentStep;
 	}
 
-	public Date getArrivingDate() {
+	public DateTime getArrivingDate() {
 		return arrivingDate;
 	}
 
-	public void setArrivingDate(Date arrivingDate) {
+	public void setArrivingDate(DateTime arrivingDate) {
 		this.arrivingDate = arrivingDate;
 	}
 
-	public Date getOpenedDate() {
+	public DateTime getOpenedDate() {
 		return openedDate;
 	}
 
-	public void setOpenedDate(Date openedDate) {
+	public void setOpenedDate(DateTime openedDate) {
 		this.openedDate = openedDate;
 	}
 
@@ -109,11 +110,11 @@ public class WStepWorkCheckObject implements java.io.Serializable {
 		this.idOpenerUser = idOpenerUser;
 	}
 
-	public Date getDecidedDate() {
+	public LocalDate getDecidedDate() {
 		return decidedDate;
 	}
 
-	public void setDecidedDate(Date decidedDate) {
+	public void setDecidedDate(LocalDate decidedDate) {
 		this.decidedDate = decidedDate;
 	}
 
@@ -157,11 +158,11 @@ public class WStepWorkCheckObject implements java.io.Serializable {
 		this.lockedByUserId = lockedByUserId;
 	}
 
-	public Date getLockedSince() {
+	public DateTime getLockedSince() {
 		return lockedSince;
 	}
 
-	public void setLockedSince(Date lockedSince) {
+	public void setLockedSince(DateTime lockedSince) {
 		this.lockedSince = lockedSince;
 	}
 
@@ -181,11 +182,11 @@ public class WStepWorkCheckObject implements java.io.Serializable {
 		this.idInsertUser = idInsertUser;
 	}
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 

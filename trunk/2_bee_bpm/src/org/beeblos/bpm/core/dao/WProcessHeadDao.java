@@ -1,10 +1,11 @@
 package org.beeblos.bpm.core.dao;
 
+import static com.sp.common.util.ConstantsCommon.DATE_FORMAT;
+import static com.sp.common.util.ConstantsCommon.DATE_HOUR_COMPLETE_FORMAT;
 import static com.sp.common.util.ConstantsCommon.LAST_ADDED;
 import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,10 @@ import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
@@ -337,7 +342,7 @@ public class WProcessHeadDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WProcessHead> finderProcessHead (Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	public List<WProcessHead> finderProcessHead (LocalDate initialInsertDateFilter, LocalDate finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			Integer userId, boolean isAdmin, String searchOrder, Integer currentUserId ) 
 					throws WProcessHeadException {
@@ -346,12 +351,6 @@ public class WProcessHeadDao {
 			org.hibernate.Transaction tx = null;
 			org.hibernate.Query q = null;
 						
-			SimpleDateFormat fmtShortDate = new SimpleDateFormat("dd/MM/yyyy");
-			SimpleDateFormat fmtLongDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			
-			Date from = null;
-			Date to = null;
-			
 			List<WProcessHead> lprocess = null;
 			
 			// build filter from user params. String and Integer values will be added to
@@ -397,8 +396,14 @@ public class WProcessHeadDao {
 				try {
 					
 					if (strictInsertDateFilter) {
-		                from = fmtLongDate.parse(fmtShortDate.format(initialInsertDateFilter)+" 00:00:00");                
-		                to = fmtLongDate.parse(fmtShortDate.format(initialInsertDateFilter)+" 23:59:59");                
+						DateTimeFormatter fmtShortDate = DateTimeFormat.forPattern(DATE_FORMAT);
+						DateTimeFormatter fmtLongDate = DateTimeFormat.forPattern(DATE_HOUR_COMPLETE_FORMAT);
+						
+						DateTime from = null;
+						DateTime to = null;
+						
+		                from = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)+" 00:00:00");                
+		                to = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)+" 23:59:59");                
 						q.setParameter("insertdateFrom", from);
 						q.setParameter("insertdateTo", to);
 					}
@@ -491,7 +496,7 @@ public class WProcessHeadDao {
 	
 	}
 
-	private String getSQLFilter(Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	private String getSQLFilter(LocalDate initialInsertDateFilter, LocalDate finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter ) {
 
 		String filter="";
@@ -515,27 +520,34 @@ public class WProcessHeadDao {
 			}
 		}
 			
-		if (initialInsertDateFilter!=null){
-	
-			java.sql.Date initialInsertDateFilterSQL=new java.sql.Date(initialInsertDateFilter.getTime());
-			
+		DateTimeFormatter fmtShortDate = DateTimeFormat.forPattern(DATE_FORMAT);
+		DateTimeFormatter fmtLongDate = DateTimeFormat.forPattern(DATE_HOUR_COMPLETE_FORMAT);
+
+		DateTime from = null;
+		DateTime to = null;
+
+		if (initialInsertDateFilter != null) {
 			if (strictInsertDateFilter) {
 				if (!"".equals(filter)) {
-					filter+=" AND ";
+					filter += " AND ";
 				}
-				filter+=" wph.insert_date >= :insertdateFrom AND wph.insert_date <= :insertdateTo ";
+				from = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)
+						+ " 00:00:00");
+				to = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)
+						+ " 23:59:59");
+				filter += " wph.insert_date >= '" + from + "' AND wph.insert_date <= '" + to + "' ";
 			} else {
-				if (finalInsertDateFilter!=null){
-					java.sql.Date finalInsertDateFilterSQL=new java.sql.Date(finalInsertDateFilter.getTime());
+				if (finalInsertDateFilter != null) {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" (wph.insert_date >= '"+initialInsertDateFilterSQL+"' AND wph.insert_date <= '"+finalInsertDateFilterSQL+"') ";
+					filter += " (wph.insert_date >= '" + initialInsertDateFilter
+							+ "' AND wph.insert_date <= '" + finalInsertDateFilter + "') ";
 				} else {
 					if (!"".equals(filter)) {
-						filter+=" AND ";
+						filter += " AND ";
 					}
-					filter+=" wph.insert_date >= '"+initialInsertDateFilterSQL+"' ";
+					filter += " wph.insert_date >= '" + initialInsertDateFilter + "' ";
 				}
 			}
 		}

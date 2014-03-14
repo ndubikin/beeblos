@@ -2,7 +2,11 @@ package org.beeblos.bpm.core.model;
 
 import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
@@ -35,6 +39,17 @@ public class WStepSequenceDef implements java.io.Serializable {
 	// dml 20130727
 	private String rules;
 
+	/**
+	 * nes 20140207
+	 * External methods allowed to be executed or invoked by this process
+	 * Designer/Programmer responsibility to allow context class and method reachable
+	 * at execution time 
+	 * Invoking external method must be linked with sequence (routes), step (before
+	 * load step, after executing step), process (at start time or at end process time), etc. 
+	 * 
+	 */
+	private Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
+	
 	private Integer insertUser;
 	private Date insertDate;
 	private Integer modUser;
@@ -256,6 +271,16 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 
 
+	public Set<WExternalMethod> getExternalMethod() {
+		return externalMethod;
+	}
+
+
+	public void setExternalMethod(Set<WExternalMethod> externalMethod) {
+		this.externalMethod = externalMethod;
+	}
+
+
 	public String getRules() {
 		return rules;
 	}
@@ -314,6 +339,8 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result
+				+ ((externalMethod == null) ? 0 : externalMethod.hashCode());
+		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
@@ -348,6 +375,11 @@ public class WStepSequenceDef implements java.io.Serializable {
 		if (deleted != other.deleted)
 			return false;
 		if (enabled != other.enabled)
+			return false;
+		if (externalMethod == null) {
+			if (other.externalMethod != null)
+				return false;
+		} else if (!externalMethod.equals(other.externalMethod))
 			return false;
 		if (fromStep == null) {
 			if (other.fromStep != null)
@@ -416,6 +448,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 	@Override
 	public String toString() {
+		final int maxLen = 2;
 		return "WStepSequenceDef ["
 				+ (id != null ? "id=" + id + ", " : "")
 				+ (process != null ? "process=" + process + ", " : "")
@@ -433,10 +466,27 @@ public class WStepSequenceDef implements java.io.Serializable {
 				+ (validResponses != null ? "validResponses=" + validResponses
 						+ ", " : "")
 				+ (rules != null ? "rules=" + rules + ", " : "")
+				+ (externalMethod != null ? "externalMethod="
+						+ toString(externalMethod, maxLen) + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate : "") + "]";
+	}
+
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 

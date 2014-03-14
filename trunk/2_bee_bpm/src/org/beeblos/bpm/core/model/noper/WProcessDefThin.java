@@ -1,11 +1,10 @@
 package org.beeblos.bpm.core.model.noper;
 
-import java.util.Date;
-
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WTimeUnit;
+import org.joda.time.DateTime;
 
 
 /**
@@ -26,7 +25,7 @@ public class WProcessDefThin implements java.io.Serializable {
 	
 	private boolean active;
 	
-	private Date productionDate;
+	private DateTime productionDate;
 	private Integer productionUser;
 	
 	private String comments;
@@ -46,9 +45,9 @@ public class WProcessDefThin implements java.io.Serializable {
 	private WTimeUnit totalTimeUnit;
 	private String globalDeadlineDate;
 		
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer insertUser;
-	private Date modDate;
+	private DateTime modDate;
 	private Integer modUser;
 	
 //	private ManagedData managedDataDef;
@@ -96,12 +95,12 @@ public class WProcessDefThin implements java.io.Serializable {
 	}
 	
 	public WProcessDefThin(Integer id, WProcessHead processHead,
-			boolean active, Date productionDate,
+			boolean active, DateTime productionDate,
 			Integer productionUser, String comments, Integer beginStepId,
 			String listZoneId, String workZoneId, String additionalZoneId,
 			String processorStepId, String adminEmail, Integer totalTime,
 			WTimeUnit totalTimeUnit, String globalDeadlineDate,
-			Date insertDate, Integer insertUser, Date modDate, Integer modUser,
+			DateTime insertDate, Integer insertUser, DateTime modDate, Integer modUser,
 			WEmailAccount systemEmailAccount,
 			WEmailTemplates arrivingAdminNoticeTemplate,
 			WEmailTemplates arrivingUserNoticeTemplate) {
@@ -180,11 +179,11 @@ public class WProcessDefThin implements java.io.Serializable {
 		this.active = active;
 	}
 
-	public Date getProductionDate() {
+	public DateTime getProductionDate() {
 		return productionDate;
 	}
 
-	public void setProductionDate(Date productionDate) {
+	public void setProductionDate(DateTime productionDate) {
 		this.productionDate = productionDate;
 	}
 
@@ -297,12 +296,12 @@ public class WProcessDefThin implements java.io.Serializable {
 	}
 
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -317,12 +316,12 @@ public class WProcessDefThin implements java.io.Serializable {
 	}
 
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 

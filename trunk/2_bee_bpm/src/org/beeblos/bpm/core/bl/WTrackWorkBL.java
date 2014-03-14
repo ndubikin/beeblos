@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WTrackWorkDao;
 import org.beeblos.bpm.core.error.WTrackWorkException;
 import org.beeblos.bpm.core.model.WTrackWork;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -29,9 +29,9 @@ public class WTrackWorkBL {
 				+ "-" + trackw.getIdObjectType() + "]");
 
 		// timestamp & trace info
-		trackw.setInsertDate(new Date());
+		trackw.setInsertDate(new DateTime());
 		trackw.setInsertUser(currentUser);
-		trackw.setModDate( DEFAULT_MOD_DATE );
+		trackw.setModDate(DEFAULT_MOD_DATE_TIME);
 		trackw.setModUser(currentUser);
 		return new WTrackWorkDao().add(trackw);
 
@@ -42,7 +42,7 @@ public class WTrackWorkBL {
 
 		logger.debug("update() WTrackWork < id = " + trackw.getId() + ">");
 
-		trackw.setModDate( new Date() );
+		trackw.setModDate( new DateTime() );
 		trackw.setModUser(currentUser);
 
 		if (!trackw

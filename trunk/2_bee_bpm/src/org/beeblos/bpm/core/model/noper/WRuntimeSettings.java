@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WTimeUnit;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 
 /**
@@ -35,8 +37,8 @@ public class WRuntimeSettings implements java.io.Serializable {
 	
 	private WTimeUnit timeUnit;
 	private Integer assignedTime;
-	private Date deadlineDate;
-	private Date deadlineTime;
+	private LocalDate deadlineDate;
+	private LocalTime deadlineTime;
 	private WTimeUnit reminderTimeUnit;
 	private Integer reminderTime; // en unidades de tiempo indicadas en reminderTimeUnit
 	
@@ -48,8 +50,8 @@ public class WRuntimeSettings implements java.io.Serializable {
 
 	public WRuntimeSettings(String instructions, String stepComments,
 			ManagedData md,
-			WTimeUnit timeUnit, Integer assignedTime, Date deadlineDate,
-			Date deadlineTime, WTimeUnit reminderTimeUnit, Integer reminderTime) {
+			WTimeUnit timeUnit, Integer assignedTime, LocalDate deadlineDate,
+			LocalTime deadlineTime, WTimeUnit reminderTimeUnit, Integer reminderTime) {
 		super();
 		this.instructions = instructions;
 		this.stepComments = stepComments;
@@ -117,28 +119,28 @@ public class WRuntimeSettings implements java.io.Serializable {
 	/**
 	 * @return the deadlineDate
 	 */
-	public Date getDeadlineDate() {
+	public LocalDate getDeadlineDate() {
 		return deadlineDate;
 	}
 
 	/**
 	 * @param deadlineDate the deadlineDate to set
 	 */
-	public void setDeadlineDate(Date deadlineDate) {
+	public void setDeadlineDate(LocalDate deadlineDate) {
 		this.deadlineDate = deadlineDate;
 	}
 
 	/**
 	 * @return the deadlineTime
 	 */
-	public Date getDeadlineTime() {
+	public LocalTime getDeadlineTime() {
 		return deadlineTime;
 	}
 
 	/**
 	 * @param deadlineTime the deadlineTime to set
 	 */
-	public void setDeadlineTime(Date deadlineTime) {
+	public void setDeadlineTime(LocalTime deadlineTime) {
 		this.deadlineTime = deadlineTime;
 	}
 

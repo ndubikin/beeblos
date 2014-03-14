@@ -1,12 +1,13 @@
 package org.beeblos.bpm.core.model;
 
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import org.joda.time.DateTime;
 
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
@@ -51,9 +52,9 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
 	
 	private Integer insertUser;
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer modUser;
-	private Date modDate;
+	private DateTime modDate;
 
 	public WStepSequenceDef() {
 	}
@@ -301,12 +302,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 	}
 
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -321,12 +322,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 	}
 
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 

@@ -1,10 +1,9 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_VARCHAR_LENGHT;
 import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -17,6 +16,7 @@ import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
 import org.beeblos.bpm.tm.TableManagerUtil;
 import org.beeblos.bpm.tm.exception.TableManagerException;
+import org.joda.time.DateTime;
 
 import com.sp.common.model.WDataType;
 import com.sp.common.util.StringPair;
@@ -61,8 +61,8 @@ public class WProcessDataFieldBL {
 		_generateColumnName(processDataField);
 		
 		// timestamp & trace info
-		processDataField.setInsertDate(new Date());
-		processDataField.setModDate( DEFAULT_MOD_DATE );
+		processDataField.setInsertDate(new DateTime());
+		processDataField.setModDate( DEFAULT_MOD_DATE_TIME );
 		processDataField.setInsertUser(currentUserId);
 		processDataField.setModUser(currentUserId);
 		
@@ -164,7 +164,7 @@ public class WProcessDataFieldBL {
 			_processDataFieldDefaultUPDATEChecks(processDataField, currentUserId);
 
 			// timestamp & trace info
-			processDataField.setModDate(new Date());
+			processDataField.setModDate(new DateTime());
 			processDataField.setModUser(currentUserId);
 			
 			new WProcessDataFieldDao().update(processDataField);

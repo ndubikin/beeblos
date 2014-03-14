@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +10,7 @@ import org.beeblos.bpm.core.dao.WStepWorkSequenceDao;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -29,8 +29,8 @@ public class WStepWorkSequenceBL {
 		_emptyFieldsControl(stepWorkSequence);
 
 		// timestamp & trace info
-		stepWorkSequence.setInsertDate(new Date());
-		stepWorkSequence.setModDate(DEFAULT_MOD_DATE);
+		stepWorkSequence.setInsertDate(new DateTime());
+		stepWorkSequence.setModDate(DEFAULT_MOD_DATE_TIME);
 		stepWorkSequence.setInsertUser(currentUserId);
 		stepWorkSequence.setModUser(currentUserId);
 		return new WStepWorkSequenceDao().add(stepWorkSequence);
@@ -45,7 +45,7 @@ public class WStepWorkSequenceBL {
 
 			_emptyFieldsControl(stepWorkSequence);
 
-			stepWorkSequence.setModDate(new Date());
+			stepWorkSequence.setModDate(new DateTime());
 			stepWorkSequence.setModUser(currentUserId);
 			new WStepWorkSequenceDao().update(stepWorkSequence);
 

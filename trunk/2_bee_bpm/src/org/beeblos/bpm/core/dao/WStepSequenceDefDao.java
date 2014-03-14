@@ -4,7 +4,6 @@ import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DELETED;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -14,6 +13,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.hibernate.HibernateException;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
@@ -83,7 +83,7 @@ public class WStepSequenceDefDao {
 	 * 
 	 */
 	public void updateStepSequenceDeletedField(Integer stepSequenceId, boolean deleted, Integer modUserId,
-			Date modDate) throws WStepSequenceDefException {
+			DateTime modDate) throws WStepSequenceDefException {
 
 		logger.debug("updateStepSequenceDeletedField() WStepSequenceDef < id = " + stepSequenceId + ">");
 

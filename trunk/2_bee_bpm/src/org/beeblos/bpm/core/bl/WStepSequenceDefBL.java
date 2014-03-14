@@ -1,9 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.DELETED_BOOL;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,6 +14,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -35,8 +35,8 @@ public class WStepSequenceDefBL {
 				+((route!=null && route.getFromStep()!=null)?route.getFromStep().getId():"xxxx")+"]");
 		
 		// timestamp & trace info
-		route.setInsertDate(new Date());
-		route.setModDate(DEFAULT_MOD_DATE);
+		route.setInsertDate(new DateTime());
+		route.setModDate(DEFAULT_MOD_DATE_TIME);
 		route.setInsertUser(currentUserId);
 		route.setModUser(currentUserId);
 		return new WStepSequenceDefDao().add(route);
@@ -51,7 +51,7 @@ public class WStepSequenceDefBL {
 		if (!route.equals(new WStepSequenceDefDao().getWStepSequenceDefByPK(route.getId())) ) {
 
 			// timestamp & trace info
-			route.setModDate(new Date());
+			route.setModDate(new DateTime());
 			route.setModUser(currentUserId);
 			new WStepSequenceDefDao().update(route);
 			
@@ -86,7 +86,7 @@ public class WStepSequenceDefBL {
 		if (stepSequenceId != null 
 				&& !stepSequenceId.equals(0)) {
 
-			new WStepSequenceDefDao().updateStepSequenceDeletedField(stepSequenceId, deleted, currentUserId, new Date());
+			new WStepSequenceDefDao().updateStepSequenceDeletedField(stepSequenceId, deleted, currentUserId, new DateTime());
 
 		}
 

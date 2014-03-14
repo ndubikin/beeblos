@@ -1,6 +1,6 @@
 package org.beeblos.bpm.core.model;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class WStepHead implements java.io.Serializable {
 
@@ -14,9 +14,9 @@ public class WStepHead implements java.io.Serializable {
 	private String name;	
 	private String comments;
 
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer insertUser;
-	private Date modDate;
+	private DateTime modDate;
 	private Integer modUser;
 
 	public WStepHead() {
@@ -33,7 +33,7 @@ public class WStepHead implements java.io.Serializable {
 	}
 
 	public WStepHead(String name, String comments, 
-			Date fechaAlta, Date fechaModificacion) {
+			DateTime fechaAlta, DateTime fechaModificacion) {
 		this.name = name;
 		this.comments = comments;
 		this.insertDate = fechaAlta;
@@ -41,7 +41,7 @@ public class WStepHead implements java.io.Serializable {
 	}
 
 	public WStepHead(String name, String comments,
-			Date insertDate, Integer insertUser, Date modDate,
+			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser) {
 		this.name = name;
 		this.comments = comments;
@@ -75,12 +75,12 @@ public class WStepHead implements java.io.Serializable {
 		this.comments = comments;
 	}	
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -95,12 +95,12 @@ public class WStepHead implements java.io.Serializable {
 	}
 
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 

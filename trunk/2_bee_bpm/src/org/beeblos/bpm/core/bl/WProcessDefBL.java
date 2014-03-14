@@ -2,13 +2,12 @@ package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.ALL;
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +38,7 @@ import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.impl.TableManagerBLImpl;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
@@ -83,8 +83,8 @@ public class WProcessDefBL {
 		}
 		
 		// timestamp & trace info
-		process.setInsertDate(new Date());
-		process.setModDate( DEFAULT_MOD_DATE );
+		process.setInsertDate(new DateTime());
+		process.setModDate( DEFAULT_MOD_DATE_TIME );
 		process.setInsertUser(currentUserId);
 		process.setModUser(currentUserId);
 		Integer newProcessId = new WProcessDefDao().add(process, currentUserId);
@@ -141,7 +141,7 @@ public class WProcessDefBL {
 		WProcessDef storedProcess = new WProcessDefDao().getWProcessDefByPK(process.getId(), currentUserId); 
 		if (!process.equals(storedProcess) ) {
 
-			Date now = new Date();
+			DateTime now = new DateTime();
 			
 			// timestamp & trace info
 			process.setModDate(now);
@@ -217,7 +217,7 @@ public class WProcessDefBL {
 				&& processMap != null
 				&& !processMap.isEmpty()) {
 
-			new WProcessDefDao().updateProcessXmlMap(processId, processMap, currentUserId, new Date());
+			new WProcessDefDao().updateProcessXmlMap(processId, processMap, currentUserId, new DateTime());
 
 		} else {
 
@@ -747,7 +747,7 @@ public class WProcessDefBL {
 	
 	}	
 	
-	public List<WProcessDef> finderWProcessDefLight(Date initialInsertDateFilter, Date finalInsertDateFilter, 
+	public List<WProcessDef> finderWProcessDefLight(LocalDate initialInsertDateFilter, LocalDate finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
 			Integer userId, boolean isAdmin, String searchOrder, Integer currentUserId ) 
@@ -760,7 +760,7 @@ public class WProcessDefBL {
 	}
 
 	public List<WProcessDefLight> finderWProcessDefLight(boolean onlyWorkingProcessesFilter, 
-			String processNameFilter, DateTime initialProductionDateFilter, DateTime finalProductionDateFilter, 
+			String processNameFilter, LocalDate initialProductionDateFilter, LocalDate finalProductionDateFilter, 
 			boolean strictProductionDateFilter, Integer productionUserFilter, String action, 
 			Integer processHeadId, String activeFilter, Integer currentUserId)
 	throws WProcessDefException {
@@ -791,9 +791,10 @@ public class WProcessDefBL {
 	 * @return
 	 * @throws WProcessDefException
 	 */
+	/*
 	@Deprecated
 	public List<WProcessDefLight> finderWProcessDefLightVIEJO(boolean onlyWorkingProcessesFilter, 
-			String processNameFilter, Date initialProductionDateFilter, Date finalProductionDateFilter, 
+			String processNameFilter, DateTime initialProductionDateFilter, DateTime finalProductionDateFilter, 
 			boolean strictProductionDateFilter, Integer productionUserFilter, String action, 
 			Integer processHeadId, String activeFilter, Integer currentUserId)
 	throws WProcessDefException {
@@ -809,7 +810,7 @@ public class WProcessDefBL {
 				activeFilter, currentUserId);
 		
 	}
-
+	*/
 	public String getProcessNameByVersionId(Integer id, Integer currentUserId) 
 			throws WProcessDefException, WStepSequenceDefException {
 

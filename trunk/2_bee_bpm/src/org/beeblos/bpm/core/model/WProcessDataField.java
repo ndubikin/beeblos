@@ -2,8 +2,7 @@ package org.beeblos.bpm.core.model;
 
 // Generated Jul 29, 2013 1:15:55 PM by Hibernate Tools 3.4.0.CR1
 
-import java.util.Date;
-import java.util.Set;
+import org.joda.time.DateTime;
 
 import com.sp.common.model.WDataType;
 /**
@@ -82,9 +81,9 @@ public class WProcessDataField implements java.io.Serializable {
 	private boolean whenStepWorkIsProcessed;
 
 	// trail
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer insertUser;
-	private Date modDate;
+	private DateTime modDate;
 	private Integer modUser;
 
 	public WProcessDataField() {
@@ -386,11 +385,11 @@ public class WProcessDataField implements java.io.Serializable {
 		this.whenStepWorkIsProcessed = whenStepWorkIsProcessed;
 	}
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return this.insertDate;
 	}
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -410,11 +409,11 @@ public class WProcessDataField implements java.io.Serializable {
 		this.insertUser = insertUser;
 	}
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return this.modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 

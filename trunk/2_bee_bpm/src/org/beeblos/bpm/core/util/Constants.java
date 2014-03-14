@@ -101,22 +101,11 @@ public class Constants {
 
 	public static final String OMNIADMIN = "OMNIADMIN";
 	
-	public static final boolean EMPTY_OBJECT = true; // to work with emtpy objects ( this is a not null objet but empty one )
-	
-	public static final String PASS_PHRASE = "My Pass Phrase!"; // HZC 20110111
-	
-	// fecha fija para inicializar mod_date en las diferentes tablas ...
-	public static final Date DEFAULT_MOD_DATE = new Date(0200000002L);
-	public static final DateTime DEFAULT_MOD_DATE_TIME = new DateTime(0200000002L);
-	
 	public static final Integer ID_ROLE_DEF_DIRECTORES_DEPTO = getIntegerProperty("directoresdepto.role_def.id");
 	public static final Integer ID_ROLE_DEF_SUBDIRECTORES = getIntegerProperty("subdirectores.role_def.id");
 	
 	public static final String FICHERO_BDC_MENSAJES_ERROR = "org.beeblos.bpm.wc.taglib.util.error_messages";
 	public static final String FICHERO_BDC_MENSAJES	      = "org.beeblos.bpm.wc.taglib.util.messages";
-	
-	// general use constants
-	public static final String FAIL = "FAIL";
 	
 	/**
 	 * Nombre de par�metros en el "web.xml" que indican la ruta de las imagenes

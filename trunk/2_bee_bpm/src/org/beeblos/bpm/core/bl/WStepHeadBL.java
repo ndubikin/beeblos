@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +10,7 @@ import org.beeblos.bpm.core.dao.WStepHeadDao;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.model.WStepHead;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -27,8 +27,8 @@ public class WStepHeadBL {
 		logger.debug("add() WStepHead - Name: [" + stepHead.getName() + "]");
 
 		// timestamp & trace info
-		stepHead.setInsertDate(new Date());
-		stepHead.setModDate(DEFAULT_MOD_DATE);
+		stepHead.setInsertDate(new DateTime());
+		stepHead.setModDate(DEFAULT_MOD_DATE_TIME);
 		stepHead.setInsertUser(currentUserId);
 		stepHead.setModUser(currentUserId);
 		return new WStepHeadDao().add(stepHead);
@@ -70,7 +70,7 @@ public class WStepHeadBL {
 		if (!stepHead.equals(new WStepHeadDao().getStepDefByPK(stepHead.getId()))) {
 
 			// timestamp & trace info
-			stepHead.setModDate(new Date());
+			stepHead.setModDate(new DateTime());
 			stepHead.setModUser(currentUserId);
 			new WStepHeadDao().update(stepHead);
 

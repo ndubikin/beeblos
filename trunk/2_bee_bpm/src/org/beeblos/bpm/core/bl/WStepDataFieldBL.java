@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepDataFieldDao;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WStepDataField;
+import org.joda.time.DateTime;
 
 
 
@@ -26,8 +26,8 @@ public class WStepDataFieldBL {
 		logger.debug("add() WStepDataField - Name: ["+processDataField.getName()+"]");
 		
 		// timestamp & trace info
-		processDataField.setInsertDate(new Date());
-		processDataField.setModDate( DEFAULT_MOD_DATE );
+		processDataField.setInsertDate(new DateTime());
+		processDataField.setModDate( DEFAULT_MOD_DATE_TIME );
 		processDataField.setInsertUser(currentUserId);
 		processDataField.setModUser(currentUserId);
 		
@@ -43,7 +43,7 @@ public class WStepDataFieldBL {
 		if (!processDataField.equals(new WStepDataFieldDao().getWStepDataFieldByPK(processDataField.getId())) ) {
 
 			// timestamp & trace info
-			processDataField.setModDate(new Date());
+			processDataField.setModDate(new DateTime());
 			processDataField.setModUser(currentUserId);
 			
 			new WStepDataFieldDao().update(processDataField);

@@ -1,8 +1,8 @@
 package org.beeblos.bpm.core.model;
 
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Endols 3.3.0.GA
 
@@ -25,12 +25,12 @@ public class WStepWorkSequence implements java.io.Serializable {
 	private WStepDef beginStep;
 	private WStepDef endStep;
 
-	private Date executionDate;
+	private DateTime executionDate;
 
 	private Integer insertUser;
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer modUser;
-	private Date modDate;
+	private DateTime modDate;
 
 	public WStepWorkSequence() {
 	}
@@ -50,8 +50,8 @@ public class WStepWorkSequence implements java.io.Serializable {
 
 
 	public WStepWorkSequence(Integer id, WStepSequenceDef stepSequence, WStepWork stepWork,
-			boolean sentBack, WStepDef beginStep, WStepDef endStep, Date executionDate,
-			Integer insertUser, Date insertDate, Integer modUser, Date modDate) {
+			boolean sentBack, WStepDef beginStep, WStepDef endStep, DateTime executionDate,
+			Integer insertUser, DateTime insertDate, Integer modUser, DateTime modDate) {
 		super();
 		this.id = id;
 		this.stepSequence = stepSequence;
@@ -126,12 +126,12 @@ public class WStepWorkSequence implements java.io.Serializable {
 	}
 
 
-	public Date getExecutionDate() {
+	public DateTime getExecutionDate() {
 		return executionDate;
 	}
 
 
-	public void setExecutionDate(Date executionDate) {
+	public void setExecutionDate(DateTime executionDate) {
 		this.executionDate = executionDate;
 	}
 
@@ -146,12 +146,12 @@ public class WStepWorkSequence implements java.io.Serializable {
 	}
 
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -166,12 +166,12 @@ public class WStepWorkSequence implements java.io.Serializable {
 	}
 
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 
