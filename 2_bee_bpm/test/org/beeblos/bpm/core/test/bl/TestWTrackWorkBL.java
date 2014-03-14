@@ -1,7 +1,6 @@
 package org.beeblos.bpm.core.test.bl;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import junit.framework.TestCase;
 
@@ -13,6 +12,7 @@ import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WTrackWork;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 
@@ -130,7 +130,7 @@ public class TestWTrackWorkBL extends TestCase {
 		assertEquals(1, routeBL.getStepSequenceList(iproc,  10, 1001)
 				.size());
 
-		Date now = new Date();
+		DateTime now = new DateTime();
 		SimpleDateFormat fmtDateTime = new SimpleDateFormat(
 				"yyyy-MM-dd hh:mm:ss");
 

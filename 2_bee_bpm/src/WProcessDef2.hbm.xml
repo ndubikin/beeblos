@@ -17,14 +17,15 @@
 		</property>
 
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -88,20 +89,20 @@
 			<column name="comment" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" />
 		</property>
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" not-null="true" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 	
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
 			<column name="mod_user" not-null="true" />
 		</property>
 	</class>
-
 
 	<class name="org.beeblos.bpm.core.model.WExternalMethod" table="w_process_head_method">
 		<id name="id" type="java.lang.Integer">
@@ -176,13 +177,13 @@
 				<comment>for check environment existence of class/method purposes</comment>
 			</column>
 		</property>
-		<property name="insertDate" type="timestamp">
+		<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" />
 		</property>
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property name="modDate" type="timestamp">
+		<property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
@@ -207,7 +208,7 @@
 			<column name="active" sql-type="bit" />
 		</property>
 
-		<property name="productionDate" type="timestamp">
+		<property name="productionDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="production_date" />
 		</property>
 
@@ -261,7 +262,7 @@
 		</property>
 
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 
@@ -270,7 +271,8 @@
 			<column name="insert_user" />
 		</property>
 
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 
@@ -339,7 +341,7 @@
 				<property name="insertUser" type="java.lang.Integer">
 					<column name="insert_user" />
 				</property>
-				<property name="insertDate" type="timestamp">
+				<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
@@ -365,7 +367,7 @@
 				<property name="insertUser" type="java.lang.Integer">
 					<column name="insert_user" />
 				</property>
-				<property name="insertDate" type="timestamp">
+				<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
@@ -389,7 +391,7 @@
 			<column name="version" />
 		</property>
 
-		<property name="productionDate" type="timestamp">
+		<property name="productionDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="production_date" />
 		</property>
 
@@ -492,14 +494,15 @@
 			<column name="id_object_type" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -519,7 +522,8 @@
 				<property name="insertUser" type="java.lang.Integer">
 					<column name="insert_user" />
 				</property>
-				<property name="insertDate" type="timestamp">
+				<property name="insertDate" 
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
@@ -564,13 +568,14 @@
 			<column name="comments" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" />
 		</property>
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" not-null="true" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
@@ -600,14 +605,15 @@
 		</property>
 
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -730,13 +736,13 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="deadlineDate"
-			type="date">
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate">
 			<column name="deadline_date">
 				<comment>Si tiene una fecha limite</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="deadlineTime"
-			type="time">
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalTime">
 			<column name="deadline_time">
 				<comment>Si tiene una hora de resolucion limite (en la fecha
 					indicada arriba)</comment>
@@ -757,14 +763,15 @@
 		</property>
 
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -879,7 +886,8 @@
 				<property name="insertUser" type="java.lang.Integer">
 					<column name="insert_user" />
 				</property>
-				<property name="insertDate" type="timestamp">
+				<property name="insertDate" 
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
@@ -905,7 +913,8 @@
 				<property name="insertUser" type="java.lang.Integer">
 					<column name="insert_user" />
 				</property>
-				<property name="insertDate" type="timestamp">
+				<property name="insertDate" 
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
@@ -931,14 +940,15 @@
 			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -987,14 +997,15 @@
 			<column name="name" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -1020,7 +1031,8 @@
 			class="org.beeblos.bpm.core.model.WExternalMethod" column="id_method" cascade="none" 
 			lazy="false" /> <property name="enabled" type="java.lang.Boolean"> <column 
 			name="enabled" sql-type="bit"/> </property> <property name="insertUser" type="java.lang.Integer"> 
-			<column name="insert_user" /> </property> <property name="insertDate" type="timestamp"> 
+			<column name="insert_user" /> </property> <property name="insertDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"> 
 			<column name="insert_date" length="0" not-null="true" /> </property> </composite-element> 
 			</set> -->
 	</class>
@@ -1036,19 +1048,20 @@
 		</property>
 
 		<property generated="never" lazy="false" name="executionDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="execution_date" not-null="true" />
 		</property>
 
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="insertUser"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -1106,7 +1119,7 @@
 		<!-- <comment>version</comment> -->
 		<!-- </column> -->
 		<!-- </version> -->
-		<property name="startingTime" type="timestamp">
+		<property name="startingTime" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="starting_time">
 				<comment>the work was started at this date and time (UTC TIME)</comment>
 			</column>
@@ -1116,7 +1129,7 @@
 				<comment>indicates ir start is manual (human) or automated</comment>
 			</column>
 		</property>
-		<property name="endTime" type="timestamp">
+		<property name="endTime" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="end_time">
 				<comment>loads when work finish o forced end</comment>
 			</column>
@@ -1134,13 +1147,13 @@
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property name="insertDate" type="timestamp">
+		<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<property name="modDate" type="timestamp">
+		<property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="idObject"
@@ -1179,19 +1192,19 @@
 		<!-- </property> -->
 
 		<property generated="never" lazy="false" name="arrivingDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="arriving_date">
 				<comment>fecha/hora a la que llego</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="openedDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="opened_date" not-null="false">
 				<comment>fecha hora a la que se abrio</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="decidedDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="decided_date" not-null="false">
 				<comment>fecha/hora a la que se resolvio</comment>
 			</column>
@@ -1214,13 +1227,13 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="deadlineDate"
-			type="date">
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate">
 			<column name="deadline_date">
 				<comment>Si tiene una fecha limite</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="deadlineTime"
-			type="time">
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalTime">
 			<column name="deadline_time">
 				<comment>Si tiene una hora de resolucion limite (en la fecha
 					indicada arriba)</comment>
@@ -1247,18 +1260,20 @@
 		</property>
 
 		<property generated="never" lazy="false" name="lockedSince"
-			type="java.util.Date">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="locked_since" />
 		</property>
 
 		<!-- ESTA TABLA NO TIENE EL INSERT DATE PORQUE ESE DATO ESTÁ EN EL CAMPO 
 			arriving_date <property generated="never" lazy="false" name="insertDate" 
-			type="date" > <column name="insert_date" /> </property> -->
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate" > 
+			<column name="insert_date" /> </property> -->
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="sentBack"
@@ -1363,19 +1378,19 @@
 		</id>
 
 		<property generated="never" lazy="false" name="arrivingDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="arriving_date">
 				<comment>fecha/hora a la que llego</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="openedDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="opened_date" not-null="false">
 				<comment>fecha hora a la que se abrio</comment>
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="decidedDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="decided_date" not-null="false">
 				<comment>fecha/hora a la que se resolvio</comment>
 			</column>
@@ -1389,7 +1404,8 @@
 		<!-- <property generated="never" lazy="false" name="assignedTime" type="java.lang.Integer"> 
 			<column name="assigned_time"> <comment>CANTIDAD DE TIEMPO ASIGNADA PARA SU 
 			RESOLUCION</comment> </column> </property> <property generated="never" lazy="false" 
-			name="deadlineDate" type="date"> <column name="deadline_date"> <comment>Si 
+			name="deadlineDate" type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate"> 
+			<column name="deadline_date"> <comment>Si 
 			tiene una fecha limite</comment> </column> </property> <property generated="never" 
 			lazy="false" name="deadlineTime" type="time"> <column name="deadline_time"> 
 			<comment>Si tiene una hora de resolucion limite (en la fecha indicada arriba)</comment> 
@@ -1412,18 +1428,20 @@
 		</property>
 
 		<property generated="never" lazy="false" name="lockedSince"
-			type="java.util.Date">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="locked_since" />
 		</property>
 
 		<!-- ESTA TABLA NO TIENE EL INSERT DATE PORQUE ESE DATO ESTÁ EN EL CAMPO 
 			arriving_date <property generated="never" lazy="false" name="insertDate" 
-			type="date" > <column name="insert_date" /> </property> -->
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate" > 
+			<column name="insert_date" /> </property> -->
 		<property generated="never" lazy="false" name="idModUser"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="sentBack"
@@ -1509,7 +1527,7 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="reassignedDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="reassigned_date">
 				<comment>TIMESTAMP CON LA REASIGNACION</comment>
 			</column>
@@ -1527,7 +1545,7 @@
 			</column>
 		</property>
 		<property generated="never" lazy="false" name="fromReassignmentDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="from_reassignment_date">
 				<comment>TIMESTAMP CON LA REASIGNACION</comment>
 			</column>
@@ -1537,14 +1555,15 @@
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 	</class>
@@ -1568,10 +1587,11 @@
 			<column name="insert_user" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -1591,7 +1611,7 @@
 				<property name="insertUser" type="java.lang.Integer">
 					<column name="insert_user" />
 				</property>
-				<property name="insertDate" type="timestamp">
+				<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 					<column name="insert_date" not-null="true" />
 				</property>
 			</composite-element>
@@ -1659,7 +1679,7 @@
 			<column name="response" />
 		</property>
 		<property generated="never" lazy="false" name="insertDate"
-			type="timestamp">
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="false">
 				<comment>fecha hora a la que se inserto</comment>
 			</column>
@@ -1670,7 +1690,8 @@
 				<comment>usuario que lo inserto</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -1716,14 +1737,16 @@
 			<column name="color" />
 		</property>
 
-		<property generated="never" lazy="false" name="addDate" type="timestamp">
+		<property generated="never" lazy="false" name="addDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="add_date" />
 		</property>
 		<property generated="never" lazy="false" name="addUser"
 			type="java.lang.Integer">
 			<column name="add_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -1747,14 +1770,16 @@
 			<column name="comments" />
 		</property>
 
-		<property generated="never" lazy="false" name="addDate" type="timestamp">
+		<property generated="never" lazy="false" name="addDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="add_date" />
 		</property>
 		<property generated="never" lazy="false" name="addUser"
 			type="java.lang.Integer">
 			<column name="add_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" type="timestamp">
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
 		<property generated="never" lazy="false" name="modUser"
@@ -1849,13 +1874,15 @@
 		<property name="length" type="java.lang.Integer">
 			<column name="length" />
 		</property>
-		<property name="insertDate" type="timestamp">
+		<property name="insertDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" not-null="true" />
 		</property>
-		<property name="modDate" type="timestamp">
+		<property name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" not-null="true" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">
@@ -1886,13 +1913,15 @@
 		<property name="sqlTypeName" type="string">
 			<column name="sql_type_name" not-null="true" />
 		</property>
-		<property name="insertDate" type="timestamp">
+		<property name="insertDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
 		<property name="insertUser" type="java.lang.Integer">
 			<column name="insert_user" not-null="true" />
 		</property>
-		<property name="modDate" type="timestamp">
+		<property name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" not-null="true" />
 		</property>
 		<property name="modUser" type="java.lang.Integer">

@@ -1,6 +1,6 @@
 package org.beeblos.bpm.core.model;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class WTrackWork implements java.io.Serializable {
 
@@ -21,9 +21,9 @@ public class WTrackWork implements java.io.Serializable {
 
 	private boolean adminProcess;
 
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer insertUser;
-	private Date modDate;
+	private DateTime modDate;
 	private Integer modUser;
 
 	private String comments;
@@ -36,7 +36,7 @@ public class WTrackWork implements java.io.Serializable {
 	public WTrackWork(Integer id, Integer idObject, String idObjectType,
 			WProcessDef process, Integer version, WStepDef previousStep,
 			WStepDef currentStep, String response, boolean adminProcess,
-			Date insertDate, Integer insertUser, String comments,
+			DateTime insertDate, Integer insertUser, String comments,
 			String userNotes) {
 		this.id = id;
 		this.idObject = idObject;
@@ -125,11 +125,11 @@ public class WTrackWork implements java.io.Serializable {
 		this.adminProcess = adminProcess;
 	}
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -141,11 +141,11 @@ public class WTrackWork implements java.io.Serializable {
 		this.insertUser = insertUser;
 	}
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 

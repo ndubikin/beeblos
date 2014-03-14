@@ -1,7 +1,6 @@
 package org.beeblos.bpm.core.test.bl;
 
 
-import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -15,6 +14,7 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.sp.common.util.StringPair;
@@ -54,8 +54,8 @@ public class TestWStepDefBL extends TestCase{
 			Integer idRol2 = roleBl.add(new WRoleDef("rol s2", "desc rol 2", 1, "pepe"), 1000	);
 		
 			WUserDefBL userBl = new WUserDefBL();
-			Integer idUser1 = userBl.add(new WUserDef( "juan ss", "jn", true, 1000, new Date()), 1000);
-			Integer idUser2 = userBl.add(new WUserDef( "maria ss", "mr", true, 1000, new Date()), 1000);
+			Integer idUser1 = userBl.add(new WUserDef( "juan ss", "jn", true, 1000, new DateTime()), 1000);
+			Integer idUser2 = userBl.add(new WUserDef( "maria ss", "mr", true, 1000, new DateTime()), 1000);
 			
 			step = new WStepDef(null,2,3,"ejecute este paso plis","sincomentarios ...",null,null,null);
 			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));

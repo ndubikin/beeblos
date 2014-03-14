@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.ObjectDao;
 import org.beeblos.bpm.core.error.ObjectException;
 import org.beeblos.bpm.core.model.ObjectM;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -27,8 +27,8 @@ public class ObjectBL {
 		logger.debug("add() Object - Name: ["+object.getName()+"]");
 		
 		// timestamp & trace info
-		object.setInsertDate(new Date());
-		object.setModDate(DEFAULT_MOD_DATE);
+		object.setInsertDate(new DateTime());
+		object.setModDate(DEFAULT_MOD_DATE_TIME);
 		object.setInsertUser(currentUser);
 		object.setModUser(currentUser);
 		return new ObjectDao().add(object);
@@ -43,7 +43,7 @@ public class ObjectBL {
 		if (!object.equals(new ObjectDao().getObjectMByPK(object.getId())) ) {
 
 			// timestamp & trace info
-			object.setModDate(new Date());
+			object.setModDate(new DateTime());
 			object.setModUser(currentUser);
 			new ObjectDao().update(object);
 			

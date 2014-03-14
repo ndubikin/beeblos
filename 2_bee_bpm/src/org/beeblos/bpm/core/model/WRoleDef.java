@@ -1,10 +1,11 @@
 package org.beeblos.bpm.core.model;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-//import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import org.joda.time.DateTime;
+
+//import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 
 // Generated Nov 9, 2011 1:15:47 PM by Hibernate Tools 3.4.0.CR1
 
@@ -35,9 +36,9 @@ public class WRoleDef implements java.io.Serializable {
 	Set<WUserRole> usersRelated=new HashSet<WUserRole>();
 
 	private Integer insertUser;
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer modUser;
-	private Date modDate;
+	private DateTime modDate;
 
 	public WRoleDef() {
 		super();
@@ -123,11 +124,11 @@ public class WRoleDef implements java.io.Serializable {
 		this.insertUser = insertUser;
 	}
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -139,11 +140,11 @@ public class WRoleDef implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 
@@ -228,7 +229,7 @@ public class WRoleDef implements java.io.Serializable {
 
 	// dml 20120508
 	public void addUser( WUserDef user, boolean active, Integer insertUser ) {
-		WUserRole wur = new WUserRole(active, insertUser, new Date());
+		WUserRole wur = new WUserRole(active, insertUser, new DateTime());
 		wur.setRole(this);
 		wur.setUser(user);
 		usersRelated.add(wur);

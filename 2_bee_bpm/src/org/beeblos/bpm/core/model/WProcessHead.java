@@ -2,11 +2,12 @@ package org.beeblos.bpm.core.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.joda.time.DateTime;
 
 public class WProcessHead implements java.io.Serializable {
 
@@ -44,9 +45,9 @@ public class WProcessHead implements java.io.Serializable {
 	 */
 	private Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
 	
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer insertUser;
-	private Date modDate;
+	private DateTime modDate;
 	private Integer modUser;
 	
 	public WProcessHead() {
@@ -70,7 +71,7 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 	public WProcessHead(String name, String comments, 
-			Date fechaAlta, Date fechaModificacion) {
+			DateTime fechaAlta, DateTime fechaModificacion) {
 		this.name = name;
 		this.comments = comments;
 		this.insertDate = fechaAlta;
@@ -78,7 +79,7 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 	public WProcessHead(String name, String comments,
-			Date insertDate, Integer insertUser, Date modDate,
+			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser) {
 		this.name = name;
 		this.comments = comments;
@@ -112,12 +113,12 @@ public class WProcessHead implements java.io.Serializable {
 		this.comments = comments;
 	}	
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -132,12 +133,12 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 

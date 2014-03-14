@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WUserDefDao;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -28,8 +28,8 @@ public class WUserDefBL {
 		logger.debug("add() WUserDef - Name: ["+user.getName()+"]");
 		
 		// timestamp & trace info
-		user.setInsertDate(new Date());
-		user.setModDate(DEFAULT_MOD_DATE );
+		user.setInsertDate(new DateTime());
+		user.setModDate(DEFAULT_MOD_DATE_TIME);
 		user.setInsertUser(currentUser);
 		user.setModUser(currentUser);
 		return new WUserDefDao().add(user);
@@ -44,7 +44,7 @@ public class WUserDefBL {
 		if (!user.equals(new WUserDefDao().getWUserDefByPK(user.getId())) ) {
 
 			// timestamp & trace info
-			user.setModDate(new Date());
+			user.setModDate(new DateTime());
 			user.setModUser(currentUser);
 			new WUserDefDao().update(user);
 			

@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +10,7 @@ import org.beeblos.bpm.core.dao.WProcessHeadManagedDataDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -34,8 +34,8 @@ public class WProcessHeadManagedDataBL {
 		}
 
 		// timestamp & trace info
-		managedTableDef.setInsertDate(new Date());
-		managedTableDef.setModDate( DEFAULT_MOD_DATE );
+		managedTableDef.setInsertDate(new DateTime());
+		managedTableDef.setModDate( DEFAULT_MOD_DATE_TIME );
 		managedTableDef.setInsertUser(currentUserId);
 		managedTableDef.setModUser(currentUserId);
 
@@ -52,7 +52,7 @@ public class WProcessHeadManagedDataBL {
 							.getWProcessHeadManagedTableByPK(managedTableDef.getHeadId(), currentUserId)) ) {
 
 			// timestamp & trace info
-			managedTableDef.setModDate(new Date());
+			managedTableDef.setModDate(new DateTime());
 			managedTableDef.setModUser(currentUserId);
 			new WProcessHeadManagedDataDao().update(managedTableDef, currentUserId);
 			

@@ -1,14 +1,14 @@
 package org.beeblos.bpm.core.model;
 
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.beeblos.bpm.core.model.noper.WProcessDefThin;
+import org.joda.time.DateTime;
 
 import com.sp.common.core.model.SystemObject;
 
@@ -42,7 +42,7 @@ public class WProcessDef implements java.io.Serializable {
 	private boolean allowedStartAtAnyPoint; 
 	
 	
-	private Date productionDate;
+	private DateTime productionDate;
 	private Integer productionUser;
 	
 	private String comments;
@@ -75,9 +75,9 @@ public class WProcessDef implements java.io.Serializable {
 	private WEmailTemplates arrivingAdminNoticeTemplate;
 	private WEmailTemplates arrivingUserNoticeTemplate;
 		
-	private Date insertDate;
+	private DateTime insertDate;
 	private Integer insertUser;
-	private Date modDate;
+	private DateTime modDate;
 	private Integer modUser;
 	
 	// MANY2MANY
@@ -112,7 +112,7 @@ public class WProcessDef implements java.io.Serializable {
 	}
 	
 	public WProcessDef(String comments, WStepDef beginStep,
-			Date fechaAlta, Date fechaModificacion) {
+			DateTime fechaAlta, DateTime fechaModificacion) {
 
 		this.comments = comments;
 		this.beginStep = beginStep;
@@ -122,9 +122,8 @@ public class WProcessDef implements java.io.Serializable {
 
 	public WProcessDef(String comments, WStepDef beginStep,
 			String idListZone, String idWorkZone, String idAdditionalZone,
-			Date insertDate, Integer insertUser, Date modDate,
+			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser, String adminEmail ) {
-
 		this.comments = comments;
 		this.beginStep = beginStep;
 		this.idListZone = idListZone;
@@ -257,11 +256,11 @@ public class WProcessDef implements java.io.Serializable {
 
 
 
-	public Date getInsertDate() {
+	public DateTime getInsertDate() {
 		return insertDate;
 	}
 
-	public void setInsertDate(Date insertDate) {
+	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
 
@@ -273,11 +272,11 @@ public class WProcessDef implements java.io.Serializable {
 		this.insertUser = insertUser;
 	}
 
-	public Date getModDate() {
+	public DateTime getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(DateTime modDate) {
 		this.modDate = modDate;
 	}
 
@@ -321,11 +320,11 @@ public class WProcessDef implements java.io.Serializable {
 		this.allowedStartAtAnyPoint = allowedStartAtAnyPoint;
 	}
 
-	public Date getProductionDate() {
+	public DateTime getProductionDate() {
 		return productionDate;
 	}
 
-	public void setProductionDate(Date productionDate) {
+	public void setProductionDate(DateTime productionDate) {
 		this.productionDate = productionDate;
 	}
 
@@ -670,14 +669,14 @@ public class WProcessDef implements java.io.Serializable {
 	
 
 	public void addRole( WRoleDef role, boolean admin, Integer idObject, String idObjectType, Integer insertUser ) {
-		WProcessRole wpr = new WProcessRole(admin, idObject, idObjectType, insertUser, new Date() );
+		WProcessRole wpr = new WProcessRole(admin, idObject, idObjectType, insertUser, new DateTime() );
 		wpr.setProcess(this);
 		wpr.setRole(role);
 		rolesRelated.add(wpr);
 	}
 	
 	public void addUser( WUserDef user, boolean admin, Integer idObject, String idObjectType, Integer insertUser ) {
-		WProcessUser wpu = new WProcessUser(admin, idObject, idObjectType, insertUser, new Date() );
+		WProcessUser wpu = new WProcessUser(admin, idObject, idObjectType, insertUser, new DateTime() );
 		wpu.setProcess(this);
 		wpu.setUser(user);
 		usersRelated.add(wpu);

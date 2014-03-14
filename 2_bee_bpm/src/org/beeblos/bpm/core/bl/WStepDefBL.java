@@ -1,13 +1,12 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.ALL;
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.DELETED_BOOL;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 import static org.beeblos.bpm.core.util.Constants.NOT_DELETED_BOOL;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -25,6 +24,7 @@ import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -56,8 +56,8 @@ public class WStepDefBL {
 		}
 		
 		// timestamp & trace info
-		step.setInsertDate(new Date());
-		step.setModDate( DEFAULT_MOD_DATE );
+		step.setInsertDate(new DateTime());
+		step.setModDate( DEFAULT_MOD_DATE_TIME );
 		step.setInsertUser(currentUserId);
 		step.setModUser(currentUserId);
 		return new WStepDefDao().add(step);
@@ -138,7 +138,7 @@ public class WStepDefBL {
 		if (!step.equals(new WStepDefDao().getStepDefByPK(step.getId(), processHeadId)) ) {
 
 			// timestamp & trace info
-			step.setModDate(new Date());
+			step.setModDate(new DateTime());
 			step.setModUser(currentUserId);
 			new WStepDefDao().update(step);
 			
@@ -173,7 +173,7 @@ public class WStepDefBL {
 		if (stepId != null 
 				&& !stepId.equals(0)) {
 
-			new WStepDefDao().updateStepDeletedField(stepId, deleted, currentUserId, new Date());
+			new WStepDefDao().updateStepDeletedField(stepId, deleted, currentUserId, new DateTime());
 
 		}
 

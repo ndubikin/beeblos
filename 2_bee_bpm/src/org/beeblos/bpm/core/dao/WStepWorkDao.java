@@ -8,9 +8,7 @@ import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -164,7 +162,7 @@ public class WStepWorkDao {
 	}
 
 	public void lockStepWork( 
-			Integer id, Date modDate, Integer modUser, boolean isAdmin ) 
+			Integer id, DateTime modDate, Integer modUser, boolean isAdmin ) 
 					throws WStepWorkException {
 		logger.debug("lockStepWork() WStepWork  id:["+(id!=null?id:"null")+"]");
 		
@@ -192,8 +190,8 @@ public class WStepWorkDao {
 			query.setInteger("id", id);
 			query.setInteger("modUser", modUser);
 			query.setInteger("lockedBy", modUser);
-			query.setTimestamp("modDate", modDate);
-			query.setTimestamp("lockedSince", modDate);
+			query.setParameter("modDate", modDate);
+			query.setParameter("lockedSince", modDate);
 			query.setBoolean("adminProcess", isAdmin);
 			query.setBoolean("locked", true);
 
@@ -218,7 +216,7 @@ public class WStepWorkDao {
 	}
 	
 	public void unlockStepWork( 
-			Integer id, Date modDate, Integer modUser, boolean isAdmin ) 
+			Integer id, DateTime modDate, Integer modUser, boolean isAdmin ) 
 					throws WStepWorkException {
 		logger.debug("unlockStepWork() WStepWork  id:["+(id!=null?id:"null")+"]");
 		
@@ -232,7 +230,7 @@ public class WStepWorkDao {
 			tx.begin();
 
 			//			Integer id, boolean locked, Integer lockedBy, 
-			// Date lockedSince, 	Date modDate, Integer modUser
+			// DateTime lockedSince, 	DateTime modDate, Integer modUser
 			String hql = "UPDATE WStepWork Set "
 								+ " locked=0, "
 								+ " lockedBy= :null1, "
@@ -247,7 +245,7 @@ public class WStepWorkDao {
 			query.setInteger("modUser", modUser);
 			query.setString("null1", null);
 			query.setString("null2", null);
-			query.setTimestamp("modDate", modDate);
+			query.setParameter("modDate", modDate);
 			query.setBoolean("adminProcess", isAdmin);
 			
 
@@ -663,7 +661,7 @@ public class WStepWorkDao {
 	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
-			Date arrivingDate, Date openedDate,	Date deadlineDate, 
+			LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate, 
 			String commentsAndReferenceFilter  ) 
 	throws WStepWorkException {
 
@@ -671,12 +669,6 @@ public class WStepWorkDao {
 		org.hibernate.Transaction tx = null;
 		org.hibernate.Query q = null;
 		
-		
-		SimpleDateFormat fmtShortDate = new SimpleDateFormat("dd/MM/yyyy");
-		SimpleDateFormat fmtLongDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		
-		Date from = null;
-		Date to = null;
 		
 		List<WStepWork> stepws = null;
 		
@@ -729,35 +721,41 @@ public class WStepWorkDao {
 					.addEntity("WStepWork", WStepWork.class);
 
 			// setting date parameters
-				try {
-				
+			try {
+			
+				DateTimeFormatter fmtShortDate = DateTimeFormat.forPattern(DATE_FORMAT);
+				DateTimeFormatter fmtLongDate = DateTimeFormat.forPattern(DATE_HOUR_COMPLETE_FORMAT);
+
+				DateTime from = null;
+				DateTime to = null;
+
 				if (arrivingDate!=null) {
-	                from = fmtLongDate.parse(fmtShortDate.format(arrivingDate)+" 00:00:00");                
-	                to = fmtLongDate.parse(fmtShortDate.format(arrivingDate)+" 23:59:59");                
+	                from = fmtLongDate.parseDateTime(fmtShortDate.print(arrivingDate)+" 00:00:00");                
+	                to = fmtLongDate.parseDateTime(fmtShortDate.print(arrivingDate)+" 23:59:59");                
 					q.setParameter("arrivingdateFrom", from);
 					q.setParameter("arrivingdateTo", to);
 				}
 				
 				if (openedDate!=null) {
-	                from = fmtLongDate.parse(fmtShortDate.format(openedDate)+" 00:00:00");                
-	                to = fmtLongDate.parse(fmtShortDate.format(openedDate)+" 23:59:59");                
+	                from = fmtLongDate.parseDateTime(fmtShortDate.print(openedDate)+" 00:00:00");                
+	                to = fmtLongDate.parseDateTime(fmtShortDate.print(openedDate)+" 23:59:59");                
 					q.setParameter("openeddateFrom", from);
 					q.setParameter("openeddateTo", to);
 				}
 				
 				if (deadlineDate!=null) {
-	                from = fmtLongDate.parse(fmtShortDate.format(deadlineDate)+" 00:00:00");                
-	                to = fmtLongDate.parse(fmtShortDate.format(deadlineDate)+" 23:59:59");                
+	                from = fmtLongDate.parseDateTime(fmtShortDate.print(deadlineDate)+" 00:00:00");                
+	                to = fmtLongDate.parseDateTime(fmtShortDate.print(deadlineDate)+" 23:59:59");                
 					q.setParameter("deadlinedateFrom", from);
 					q.setParameter("deadlinedateTo", to);
 				}
-				
+			
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("Error setting date fields to hibernate SQL Query: "
 						+ e.getMessage()+"\n"+e.getCause());	
 			}
-			
+				
 			// nes 20130221 - si es admin van todos, no se filtra por usuario ...
 			// set userId
 //			if (!isAdmin) { // nes 20140204 - al agregarle reqFilter si es admin, siempre hay que setear userId ...
@@ -887,7 +885,7 @@ public class WStepWorkDao {
 
 
 	private String getFilter(Integer idProcess, Integer idCurrentStep,
-			String status,	Date arrivingDate, Date openedDate,	Date deadlineDate ) {
+			String status, LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate ) {
 
 		String filter="";
 		
@@ -958,7 +956,7 @@ public class WStepWorkDao {
 
 	
 	private String getSQLFilter(Integer idProcess, Integer idCurrentStep,
-			String status,	Date arrivingDate, Date openedDate,	Date deadlineDate,
+			String status,	LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate,
 			String commentsAndReferenceFilter) {
 
 		String filter="";
@@ -1007,7 +1005,7 @@ public class WStepWorkDao {
 		}
 		
 		// revisado el:
-		if (openedDate!=null) {
+		if (openedDate != null) {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
@@ -1016,7 +1014,7 @@ public class WStepWorkDao {
 		}
 		
 		// fecha limite
-		if (deadlineDate!=null) {
+		if (deadlineDate != null) {
 			if ( filter ==null || !"".equals(filter)) {
 				filter +=" AND ";
 			}
@@ -1525,8 +1523,9 @@ public class WStepWorkDao {
 	
 	//rrl 20101216
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getStepListByProcessName (
-			Integer idProcess,	Date arrivingDate, Date openedDate,	Date deadlineDate, String status, Integer currentUser) 
+	public List<WStepWork> getStepListByProcessName ( Integer idProcess,	
+			LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate, 
+			String status, Integer currentUser) 
 	throws WStepWorkException {
 
 		org.hibernate.Session session = null;
@@ -1534,12 +1533,6 @@ public class WStepWorkDao {
 		
 		org.hibernate.Query q = null;
 
-		SimpleDateFormat fmtShortDate = new SimpleDateFormat("dd/MM/yyyy");
-		SimpleDateFormat fmtLongDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		
-		Date from = null;
-		Date to = null;
-		
 		List<WStepWork> stepws = null;
 	
 		try {
@@ -1561,23 +1554,29 @@ public class WStepWorkDao {
 			// setting date parameters
 			try {
 				
+				DateTimeFormatter fmtShortDate = DateTimeFormat.forPattern(DATE_FORMAT);
+				DateTimeFormatter fmtLongDate = DateTimeFormat.forPattern(DATE_HOUR_COMPLETE_FORMAT);
+
+				DateTime from = null;
+				DateTime to = null;
+
 				if (arrivingDate!=null) {
-	                from = fmtLongDate.parse(fmtShortDate.format(arrivingDate)+" 00:00:00");                
-	                to = fmtLongDate.parse(fmtShortDate.format(arrivingDate)+" 23:59:59");                
+	                from = fmtLongDate.parseDateTime(fmtShortDate.print(arrivingDate)+" 00:00:00");                
+	                to = fmtLongDate.parseDateTime(fmtShortDate.print(arrivingDate)+" 23:59:59");                
 					q.setParameter("arrivingdateFrom", from);
 					q.setParameter("arrivingdateTo", to);
 				}
 				
 				if (openedDate!=null) {
-	                from = fmtLongDate.parse(fmtShortDate.format(openedDate)+" 00:00:00");                
-	                to = fmtLongDate.parse(fmtShortDate.format(openedDate)+" 23:59:59");                
+	                from = fmtLongDate.parseDateTime(fmtShortDate.print(openedDate)+" 00:00:00");                
+	                to = fmtLongDate.parseDateTime(fmtShortDate.print(openedDate)+" 23:59:59");                
 					q.setParameter("openeddateFrom", from);
 					q.setParameter("openeddateTo", to);
 				}
 				
 				if (deadlineDate!=null) {
-	                from = fmtLongDate.parse(fmtShortDate.format(deadlineDate)+" 00:00:00");                
-	                to = fmtLongDate.parse(fmtShortDate.format(deadlineDate)+" 23:59:59");                
+	                from = fmtLongDate.parseDateTime(fmtShortDate.print(deadlineDate)+" 00:00:00");                
+	                to = fmtLongDate.parseDateTime(fmtShortDate.print(deadlineDate)+" 23:59:59");                
 					q.setParameter("deadlinedateFrom", from);
 					q.setParameter("deadlinedateTo", to);
 				}
@@ -1668,10 +1667,10 @@ public class WStepWorkDao {
 
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
-			DateTime initialArrivingDateFilter, DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
 			String action, boolean onlyActiveWorkingProcessesFilter) 
 					throws WStepWorkException {
 		
@@ -1701,12 +1700,12 @@ public class WStepWorkDao {
 
 	private String buildWorkingStepFilter(Integer processIdFilter,
 			Integer stepIdFilter, String stepTypeFilter,
-			String referenceFilter, Integer idWorkFilter, DateTime initialArrivingDateFilter,
-			DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,
-			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter,
+			String referenceFilter, Integer idWorkFilter, LocalDate initialArrivingDateFilter,
+			LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,
+			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter,
 			boolean estrictOpenedDateFilter, LocalDate initialDeadlineDateFilter,
 			LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
-			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter,
+			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter,
 			boolean estrictDecidedDateFilter, boolean onlyActiveWorkingProcessesFilter, 
 			String filter) {
 		

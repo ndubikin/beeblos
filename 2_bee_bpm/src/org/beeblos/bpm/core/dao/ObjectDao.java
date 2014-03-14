@@ -318,7 +318,7 @@ public class ObjectDao {
 //		
 //		Integer idObjectM, objectAnio;
 //		String objectNombre, objectComentarios;
-//		Date objectFechaApertura, objectFechaCierre = new Date();
+//		DateTime objectFechaApertura, objectFechaCierre = new DateTime();
 //		
 //		
 //		try {
@@ -352,8 +352,8 @@ public class ObjectDao {
 //					objectAnio		= (cols[1]!=null ? new Integer(cols[1].toString()):null);
 //					objectNombre		= (cols[2]!=null ? cols[2].toString():"");
 //
-//					objectFechaApertura= (cols[3]!=null ? (Date)cols[3]:null);
-//					objectFechaCierre = (cols[4]!=null ? (Date)cols[4]:null);
+//					objectFechaApertura= (cols[3]!=null ? (DateTime)cols[3]:null);
+//					objectFechaCierre = (cols[4]!=null ? (DateTime)cols[4]:null);
 //					
 //					objectComentarios	= (cols[5]!=null ? cols[5].toString():"");
 //					

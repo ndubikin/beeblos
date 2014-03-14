@@ -1,9 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.FINISHED;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,6 +14,7 @@ import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 
 
@@ -40,8 +40,8 @@ public class WProcessWorkBL {
 		
 		_setObjectType(process);
 		// timestamp & trace info
-		process.setInsertDate(new Date());
-		process.setModDate( DEFAULT_MOD_DATE );
+		process.setInsertDate(new DateTime());
+		process.setModDate( DEFAULT_MOD_DATE_TIME );
 		process.setInsertUser(currentUserId);
 		process.setModUser(currentUserId);
 		if ( process.getStatus()==null ) {
@@ -84,10 +84,10 @@ public class WProcessWorkBL {
 		}
 
 		// ent time 
-		process.setEndTime(new Date());
+		process.setEndTime(new DateTime());
 		
 		// timestamp & trace info
-		process.setModDate(new Date());
+		process.setModDate(new DateTime());
 		process.setModUser(currentUserId);
 		new WProcessWorkDao().update(process);
 			
@@ -102,7 +102,7 @@ public class WProcessWorkBL {
 		if (!process.equals(new WProcessWorkDao().getWProcessWorkByPK(process.getId())) ) {
 
 			// timestamp & trace info
-			process.setModDate(new Date());
+			process.setModDate(new DateTime());
 			process.setModUser(currentUserId);
 			new WProcessWorkDao().update(process);
 			
@@ -214,8 +214,8 @@ public class WProcessWorkBL {
 	
 	public List<ProcessWorkLight> finderWorkingWork(Integer idProcess, 
 			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
-			DateTime initialStartedDateFilter, DateTime finalStartedDateFilter, 
-			boolean estrictStartedDateFilter, DateTime initialFinishedDateFilter, DateTime finalFinishedDateFilter, 
+			LocalDate initialStartedDateFilter, LocalDate finalStartedDateFilter, 
+			boolean estrictStartedDateFilter, LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action)
 	throws WProcessWorkException {
 		
@@ -245,11 +245,11 @@ public class WProcessWorkBL {
 	 * @return
 	 * @throws WProcessWorkException
 	 */
-	@Deprecated
+/*	@Deprecated
 	public List<ProcessWorkLight> finderWorkingWorkVIEJO(Integer idProcess, 
 			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
-			Date initialStartedDateFilter, Date finalStartedDateFilter, 
-			boolean estrictStartedDateFilter, Date initialFinishedDateFilter, Date finalFinishedDateFilter, 
+			DateTime initialStartedDateFilter, DateTime finalStartedDateFilter, 
+			boolean estrictStartedDateFilter, DateTime initialFinishedDateFilter, DateTime finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action)
 	throws WProcessWorkException {
 		
@@ -270,7 +270,7 @@ public class WProcessWorkBL {
 				estrictFinishedDateFilter, action);
 		
 	}
-
+*/
 
 	/**
 	 * returns qty of existing process work for a given processId

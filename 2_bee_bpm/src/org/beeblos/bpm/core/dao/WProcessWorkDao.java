@@ -16,7 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
-import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -38,6 +37,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.jadira.usertype.dateandtime.joda.columnmapper.TimestampColumnDateTimeMapper;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -589,8 +589,8 @@ public class WProcessWorkDao {
 	
 	public List<ProcessWorkLight> finderWorkingWork(Integer idProcess, 
 			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
-			DateTime initialStartedDateFilter, DateTime finalStartedDateFilter, 
-			boolean estrictStartedDateFilter, DateTime initialFinishedDateFilter, DateTime finalFinishedDateFilter, 
+			LocalDate initialStartedDateFilter, LocalDate finalStartedDateFilter, 
+			boolean estrictStartedDateFilter, LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action) throws WProcessWorkException {
 
 		String filter = "";
@@ -615,9 +615,9 @@ public class WProcessWorkDao {
 
 	private String buildWorkingWorkFilter(Integer idProcess,
 			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
-			DateTime initialStartedDateFilter,
-			DateTime finalStartedDateFilter, boolean estrictStartedDateFilter,
-			DateTime initialFinishedDateFilter, DateTime finalFinishedDateFilter,
+			LocalDate initialStartedDateFilter,
+			LocalDate finalStartedDateFilter, boolean estrictStartedDateFilter,
+			LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter,
 			boolean estrictFinishedDateFilter, String filter) {
 		
 		if (idProcess != null && idProcess != 0) {

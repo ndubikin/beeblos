@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepResponseDefDao;
 import org.beeblos.bpm.core.error.WStepResponseDefException;
 import org.beeblos.bpm.core.model.WStepResponseDef;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -28,8 +28,8 @@ public class WStepResponseDefBL {
 		logger.debug("add() WStepResponseDef - Name: ["+response.getName()+"]");
 		
 		// timestamp & trace info
-		response.setInsertDate(new Date());
-		response.setModDate(DEFAULT_MOD_DATE);
+		response.setInsertDate(new DateTime());
+		response.setModDate(DEFAULT_MOD_DATE_TIME);
 		response.setInsertUser(user);
 		response.setModUser(user);
 		return new WStepResponseDefDao().add(response);
@@ -44,7 +44,7 @@ public class WStepResponseDefBL {
 		if (!response.equals(new WStepResponseDefDao().getWStepResponseDefByPK(response.getId())) ) {
 
 			// timestamp & trace info
-			response.setModDate(new Date());
+			response.setModDate(new DateTime());
 			response.setModUser(user);
 			new WStepResponseDefDao().update(response);
 			

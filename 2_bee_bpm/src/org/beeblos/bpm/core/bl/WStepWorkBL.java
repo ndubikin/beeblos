@@ -1,10 +1,10 @@
 package org.beeblos.bpm.core.bl;
 
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
-import static org.beeblos.bpm.core.util.Constants.EMPTY_OBJECT;
+import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -132,9 +131,9 @@ public class WStepWorkBL {
 		// if work was persisted ok thencontinue with step-work
 		stepw.setwProcessWork(work);
 		// timestamp & trace info
-		stepw.setArrivingDate(new Date());
+		stepw.setArrivingDate(new DateTime());
 		stepw.setInsertUser( new WUserDef(currentUser) );
-		stepw.setModDate( DEFAULT_MOD_DATE);
+		stepw.setModDate( DEFAULT_MOD_DATE_TIME);
 		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
 		
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
@@ -156,7 +155,7 @@ public class WStepWorkBL {
 			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
 		logger.debug(">>> processStep >> id:"+( idStepWork!=null?idStepWork:"null") );
 		
-		Date now = new Date();
+		DateTime now = new DateTime();
 		Integer qtyNewRoutes=0;
 
 		// verifies the user has the step locked before process it ...
@@ -211,9 +210,9 @@ public class WStepWorkBL {
 				+"-"+stepw.getwProcessWork().getReference()+"]");
 		
 		// timestamp & trace info
-		stepw.setArrivingDate(new Date());
+		stepw.setArrivingDate(new DateTime());
 		stepw.setInsertUser( new WUserDef(currentUser) );
-		stepw.setModDate( DEFAULT_MOD_DATE);
+		stepw.setModDate( DEFAULT_MOD_DATE_TIME);
 		stepw.setModUser(currentUser);
 		return new WStepWorkDao().add(stepw);
 
@@ -228,7 +227,7 @@ public class WStepWorkBL {
 		if ( !stepw.equals(new WStepWorkDao().getWStepWorkByPK(stepw.getId())) ) {
 
 			// timestamp & trace info
-			stepw.setModDate(new Date());
+			stepw.setModDate(new DateTime());
 			stepw.setModUser(currentUser);
 
 			new WStepWorkDao().update(stepw);
@@ -384,7 +383,7 @@ public class WStepWorkBL {
 	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
-			Date arrivingDate, Date openedDate,	Date deadlineDate, 
+			LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate, 
 			String filtroComentariosYReferencia) 
 	throws WStepWorkException {
 		
@@ -455,7 +454,7 @@ public class WStepWorkBL {
 //			
 //			WStepWork stepWork = new WStepWork();
 //	
-//			Date now = new Date();
+//			DateTime now = new DateTime();
 //	
 //			// seteo paso 
 //			_setStepWork(idObject, idObjectType, currentUser, process, stepDef, stepWork,
@@ -676,7 +675,7 @@ public class WStepWorkBL {
 	private void _setOpenInfo(Integer currentUser, WStepWork storedStep) throws WUserDefException {
 		// set step opened date and user
 		if ( storedStep.getOpenedDate()==null ) {
-			storedStep.setOpenedDate(new Date());
+			storedStep.setOpenedDate(new DateTime());
 			storedStep.setOpenerUser(new WUserDefBL().getWUserDefByPK(currentUser));
 		}
 	}
@@ -703,7 +702,7 @@ public class WStepWorkBL {
 		// if step is not locked then locks it !
 		if ( _checkCurrentLockStatus(idStepWork) ) {
 
-			Date now = new Date();
+			DateTime now = new DateTime();
 
 			new WStepWorkDao()
 						.lockStepWork( idStepWork, now, currentUser, isAdmin );
@@ -734,7 +733,7 @@ public class WStepWorkBL {
 //			this.update(stepToUnlock, currentUser);
 			
 			// timestamp & trace info
-			stepToUnlock.setModDate(new Date());
+			stepToUnlock.setModDate(new DateTime());
 			stepToUnlock.setModUser(currentUser);
 			
 			new WStepWorkDao().unlockStepWork(
@@ -769,7 +768,7 @@ public class WStepWorkBL {
 	 */
 	private Integer _executeProcessStep(
 			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
-			Integer idResponse, boolean isAdminProcess, Date now ) 
+			Integer idResponse, boolean isAdminProcess, DateTime now ) 
 	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
 		if (logger.isDebugEnabled()){
 			logger.debug(">>> _executeProcessStep >> idStepWork"+currentStepWork.getId()
@@ -900,7 +899,7 @@ public class WStepWorkBL {
 		sws.setBeginStep((beginStep != null)?new WStepDef(beginStep.getId()):null);
 		sws.setEndStep((endStep != null)?new WStepDef(endStep.getId()):null);
 		
-		sws.setExecutionDate(new Date());
+		sws.setExecutionDate(new DateTime());
 
 		new WStepWorkSequenceBL().add(sws, currentUserId);
 		
@@ -908,7 +907,7 @@ public class WStepWorkBL {
 
 	private void _setNewWorkingStepAndInsertRec(
 			WRuntimeSettings runtimeSettings, Integer currentUser,
-			WStepWork currentStepWork, boolean isAdminProcess, Date now,
+			WStepWork currentStepWork, boolean isAdminProcess, DateTime now,
 			WStepWork newStepWork, WStepSequenceDef route)
 			throws WStepDefException, WStepWorkException {
 		
@@ -1035,7 +1034,7 @@ public class WStepWorkBL {
 	
 	private void _executeTurnBack (
 			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
-			Integer idResponse, boolean isAdminProcess, Date now ) 
+			Integer idResponse, boolean isAdminProcess, DateTime now ) 
 	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
 
 		WStepWork newStep = new WStepWork();
@@ -1057,12 +1056,12 @@ public class WStepWorkBL {
 
 	private void _setStepWork(Integer idObject, String idObjectType,
 			Integer currentUser, WProcessDef process, WStepDef stepDef,
-			WStepWork stepWork, Date now) {
+			WStepWork stepWork, DateTime now) {
 		
 		stepWork.setPreviousStep(null); // como no viene de ningún lado el previous es null
 		stepWork.setCurrentStep(process.getBeginStep());
 		
-		stepWork.setArrivingDate(new Date());
+		stepWork.setArrivingDate(new DateTime());
 		
 		stepWork.setTimeUnit(stepDef.getTimeUnit());
 		stepWork.setAssignedTime(stepDef.getAssignedTime()); // cantidad de tiempo asignado para resolver el trabajo
@@ -1085,7 +1084,7 @@ public class WStepWorkBL {
 	
 	private void _setNewStep (
 			WStepWork newStepWork, WStepWork currentStepWork, WStepDef toStepDef,  
-			WRuntimeSettings runtimeSettings, Integer currentUser, Date now, 
+			WRuntimeSettings runtimeSettings, Integer currentUser, DateTime now, 
 			boolean isAdminProcess ) 
 	throws WStepDefException {
 
@@ -1380,7 +1379,7 @@ public class WStepWorkBL {
 		
 		String path = Resourceutil.getStringProperty("email.path.server", "");
 		
-		path += "notificationEmail"+sdf.format(new Date())+".txt"; 
+		path += "notificationEmail"+sdf.format(new DateTime())+".txt"; 
 		
 		File f = new File(path);
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
@@ -1562,7 +1561,7 @@ public class WStepWorkBL {
 	
 
 	private void _setCurrentWorkitemToProcessed( WStepWork currentStep, Integer idResponse, 
-			Date now, Integer currentUser) throws WStepWorkException {
+			DateTime now, Integer currentUser) throws WStepWorkException {
 		
 		currentStep.setDecidedDate( now );
 		currentStep.setPerformer(new WUserDef(currentUser));// nes 20120126
@@ -1589,7 +1588,7 @@ public class WStepWorkBL {
 	// el status puede ser: null=todos, A=vivos P=Procesados
 	// el usuario que lo solicita
 	public List<WStepWork> getStepListByProcessName (
-			Integer idProcess,	Date arrivingDate, Date openedDate,	Date deadlineDate, String status, Integer currentUser) 
+			Integer idProcess,	LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate, String status, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
 		return new WStepWorkDao().getStepListByProcessName(idProcess, arrivingDate, openedDate, deadlineDate, status, currentUser);
@@ -1597,10 +1596,10 @@ public class WStepWorkBL {
 	
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
-			DateTime initialArrivingDateFilter, DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
 			String action, boolean onlyActiveWorkingProcessesFilter)
 	throws WStepWorkException {
 
@@ -1628,13 +1627,13 @@ public class WStepWorkBL {
 	 * @return
 	 * @throws WStepWorkException
 	 */
-	@Deprecated
+/*	@Deprecated
 	public List<StepWorkLight> finderStepWorkVIEJO(Integer processIdFilter, 
 			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
-			Date initialArrivingDateFilter, Date finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			Date initialOpenedDateFilter, Date finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
-			Date initialDeadlineDateFilter, Date finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			Date initialDecidedDateFilter, Date finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			DateTime initialArrivingDateFilter, DateTime finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
+			DateTime initialOpenedDateFilter, DateTime finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
+			DateTime initialDeadlineDateFilter, DateTime finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
+			DateTime initialDecidedDateFilter, DateTime finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
 			String action, boolean onlyActiveWorkingProcessesFilter)
 	throws WStepWorkException {
 
@@ -1667,7 +1666,7 @@ public class WStepWorkBL {
 				action, onlyActiveWorkingProcessesFilter);
 		
 	}
-
+*/
 	/**
 	 * returns a list with all process def id which references (or use) the given stepDefId
 	 *

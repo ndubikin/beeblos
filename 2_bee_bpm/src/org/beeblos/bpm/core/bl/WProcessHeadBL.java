@@ -1,8 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.DEFAULT_MOD_DATE;
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -16,6 +15,7 @@ import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
+import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
 
@@ -34,8 +34,8 @@ public class WProcessHeadBL {
 		logger.debug("add() WProcessHead - Name: ["+processHead.getName()+"]");
 		
 		// timestamp & trace info
-		processHead.setInsertDate(new Date());
-		processHead.setModDate( DEFAULT_MOD_DATE );
+		processHead.setInsertDate(new DateTime());
+		processHead.setModDate( DEFAULT_MOD_DATE_TIME );
 		processHead.setInsertUser(currentUserId);
 		processHead.setModUser(currentUserId);
 
@@ -67,7 +67,7 @@ public class WProcessHeadBL {
 		if (!processHead.equals(storedProcessHead) ) {
 			
 			// timestamp & trace info
-			processHead.setModDate(new Date());
+			processHead.setModDate(new DateTime());
 			processHead.setModUser(currentUserId);
 			new WProcessHeadDao().update(processHead);
 			
