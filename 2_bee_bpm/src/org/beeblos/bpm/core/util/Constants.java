@@ -10,8 +10,10 @@ import org.joda.time.DateTime;
 
 public class Constants {
 	
-	public static final String W_EMAIL_TEMPLATE_FORM_VIEW="/app/wfCrud/wEmailTemplateCrud/wEmailTemplateCrudWithTemplate.xhtml"; // dml 20130412
-	public static final String W_EMAIL_ACCOUNT_FORM_VIEW="/app/wfCrud/wUserEmailAccountCrud/wUserEmailAccountCrudWithTemplate.xhtml"; // dml 20130412
+	public static final String W_PROCESS_DEF_FORM_VIEW="/app/forms/wProcessDefFormCall.jsf";
+
+	public static final String W_EMAIL_TEMPLATE_FORM_VIEW="/app/wfCrud/wEmailTemplateCrud/wEmailTemplateCrudWithTemplate.xhtml";
+	public static final String W_EMAIL_ACCOUNT_FORM_VIEW="/app/wfCrud/wUserEmailAccountCrud/wUserEmailAccountCrudWithTemplate.xhtml";
 
 	// dml 20140312 CONSTANTES MIGRACION JSF2 DESDE 2_FBBVA_DAP (MIRAR DE PONER EN COMMON)
 	public static final String TAB_CARATULA = "caratula";// nes 20130226

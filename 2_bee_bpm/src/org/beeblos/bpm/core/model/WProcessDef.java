@@ -81,15 +81,15 @@ public class WProcessDef implements java.io.Serializable {
 	private Integer modUser;
 	
 	// MANY2MANY
-	Set<WProcessRole> rolesRelated=new HashSet<WProcessRole>();
-	Set<WProcessUser> usersRelated=new HashSet<WProcessUser>();
+	private Set<WProcessRole> rolesRelated = new HashSet<WProcessRole>();
+	private Set<WProcessUser> usersRelated = new HashSet<WProcessUser>();
 	
 	// nes 20130502 - traje desde backing bean ...
 	// se carga "a mano" en la BL pues no está mapeado por hibernate
 	private List<WStepDef> lSteps = new ArrayList<WStepDef>(); 
 	private List<WStepSequenceDef> stepSequenceList; 
 	
-	Set<SystemObject> systemObject = new HashSet<SystemObject>(0);
+	private Set<SystemObject> systemObject = new HashSet<SystemObject>(0);
 
 //	private ManagedData managedDataDef;
 	
@@ -237,6 +237,12 @@ public class WProcessDef implements java.io.Serializable {
 		this.idProcessorStep = idProcessorStep;
 	}
 
+	public List<WProcessRole> getRolesRelatedAsList() {
+		if (this.rolesRelated != null){
+			return new ArrayList<WProcessRole>(this.rolesRelated);
+		}
+		return null;
+	}
 
 	public Set<WProcessRole> getRolesRelated() {
 		return rolesRelated;
@@ -244,6 +250,13 @@ public class WProcessDef implements java.io.Serializable {
 
 	public void setRolesRelated(Set<WProcessRole> rolesRelated) {
 		this.rolesRelated = rolesRelated;
+	}
+
+	public List<WProcessUser> getUsersRelatedAsList() {
+		if (this.usersRelated != null){
+			return new ArrayList<WProcessUser>(this.usersRelated);
+		}
+		return null;
 	}
 
 	public Set<WProcessUser> getUsersRelated() {
