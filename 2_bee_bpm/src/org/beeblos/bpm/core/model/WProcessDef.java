@@ -421,7 +421,6 @@ public class WProcessDef implements java.io.Serializable {
 		this.lSteps = lSteps;
 	}
 
-
 	public List<WStepSequenceDef> getStepSequenceList() {
 		return stepSequenceList;
 	}

@@ -279,6 +279,13 @@ public class WStepDef implements java.io.Serializable {
 		this.submitForm = submitForm;
 	}
 
+	public List<WStepResponseDef> getResponseAsList() {
+		if (this.response != null){
+			return new ArrayList<WStepResponseDef>(this.response);
+		}
+		return null;
+	}
+
 	public Set<WStepResponseDef> getResponse() {
 		return response;
 	}
@@ -901,12 +908,26 @@ public class WStepDef implements java.io.Serializable {
 		return true;
 	}
 
+	public List<WStepRole> getRolesRelatedAsList() {
+		if (this.rolesRelated != null){
+			return new ArrayList<WStepRole>(this.rolesRelated);
+		}
+		return null;
+	}
+
 	public Set<WStepRole> getRolesRelated() {
 		return rolesRelated;
 	}
 
 	public void setRolesRelated(Set<WStepRole> rolesRelated) {
 		this.rolesRelated = rolesRelated;
+	}
+
+	public List<WStepUser> getUsersRelatedAsList() {
+		if (this.usersRelated != null){
+			return new ArrayList<WStepUser>(this.usersRelated);
+		}
+		return null;
 	}
 
 	public Set<WStepUser> getUsersRelated() {

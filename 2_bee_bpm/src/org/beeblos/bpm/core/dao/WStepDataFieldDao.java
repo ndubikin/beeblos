@@ -1,5 +1,6 @@
 package org.beeblos.bpm.core.dao;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,13 +9,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.model.WStepDataField;
-import org.beeblos.bpm.core.model.WStepWork;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.StringPair;
 
 
 public class WStepDataFieldDao {
@@ -190,7 +190,7 @@ public class WStepDataFieldDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		List<WStepDataField> processList = null;
+		List<WStepDataField> stepDataFieldList = null;
 
 		try {
 
@@ -202,10 +202,15 @@ public class WStepDataFieldDao {
 			// nes 20140208 - cambiado a criteria ...
 			
 	        Criteria criteria = session.createCriteria(WStepDataField.class.getName());
-	        criteria.add(Restrictions.eq("processHeadId", processHeadId));
-	        criteria.add(Restrictions.eq("stepHeadId", stepHeadId));
+	        
+	        if (processHeadId != null && !processHeadId.equals(0)){
+	        	criteria.add(Restrictions.eq("processHeadId", processHeadId));
+	        }
+	        if (stepHeadId != null && !stepHeadId.equals(0)){
+	        	criteria.add(Restrictions.eq("stepHeadId", stepHeadId));
+	        }
 
-	        processList = criteria.list();	
+	        stepDataFieldList = criteria.list();	
 			
 //			if (stepHeadId==null) {
 //				processList = session
@@ -237,7 +242,7 @@ public class WStepDataFieldDao {
 
 		}
 
-		return processList;
+		return stepDataFieldList;
 	}
 	
 	public Integer countWStepDataFieldList(Integer processHeadId) 
@@ -289,5 +294,69 @@ public class WStepDataFieldDao {
 		return dataFieldSet;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<StringPair> getComboList(
+			String firstLineText, String separationLine, Integer stepHeadId )
+	throws WStepDataFieldException {
+		 
+		List<WStepDataField> lpdf = null;
+		List<StringPair> retorno = new ArrayList<StringPair>(10);
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			lpdf = session
+					.createQuery("From WStepDataField sdfi WHERE sdfi.stepHeadId= :stepHeadId Order By sdfi.name ")
+					.setInteger("stepHeadId", stepHeadId)
+					.list();
+	
+			tx.commit();
+
+			if (lpdf!=null) {
+				
+				// inserta los extras
+				if ( firstLineText!=null && !"".equals(firstLineText) ) {
+					if ( !firstLineText.equals("WHITESPACE") ) {
+						retorno.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
+					} else {
+						retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+					}
+				}
+				
+				if ( separationLine!=null && !"".equals(separationLine) ) {
+					if ( !separationLine.equals("WHITESPACE") ) {
+						retorno.add(new StringPair(null,separationLine));  // deja la separación línea con lo q venga
+					} else {
+						retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+					}
+				}
+				
+				for (WStepDataField sdfi: lpdf) {
+					retorno.add(new StringPair(sdfi.getId(),sdfi.getName()));
+				}
+			} else {
+				// nes  - si el select devuelve null entonces devuelvo null
+				retorno=null;
+			}
+			
+			
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			throw new WStepDataFieldException(
+					"Can't obtain WStepDataField combo list "
+					+ex.getMessage()+"\n"+ex.getCause());
+		} catch (Exception e) {}
+
+		return retorno;
+
+	}
+
 }
 	

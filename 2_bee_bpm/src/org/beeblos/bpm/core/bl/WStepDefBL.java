@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.ALL;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+import static org.beeblos.bpm.core.util.Constants.ALL;
 import static org.beeblos.bpm.core.util.Constants.DELETED_BOOL;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 import static org.beeblos.bpm.core.util.Constants.NOT_DELETED_BOOL;
@@ -14,11 +14,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
@@ -705,14 +707,17 @@ public class WStepDefBL {
 
 		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id, processHeadId);
 		
-//		try {
-//			stepDef.getStepHead().setDataFieldDef(
-//						new WStepDataFieldBL().getWStepDataFieldSet(
-//								stepDef.getStepHead().getId(),userId ) );
-//		} catch (WStepDataFieldException e) {
-//			logger.error("Can't load manually the dataField set !!!");
-//			e.printStackTrace();
-//		}
+		try {
+			
+			List<WStepDataField> stepDataFieldList = new WStepDataFieldBL().getWStepDataFieldList(
+					null, stepDef.getStepHead().getId(), currentUserId);
+			
+			stepDef.setDataFieldDef(stepDataFieldList);
+			
+		} catch (WStepDataFieldException e) {
+			logger.error("Can't load manually the dataField set !!!");
+			e.printStackTrace();
+		}
 		
 		return stepDef;
 	}
