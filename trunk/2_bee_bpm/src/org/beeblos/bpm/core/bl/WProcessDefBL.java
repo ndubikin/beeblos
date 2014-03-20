@@ -459,7 +459,7 @@ public class WProcessDefBL {
 		try {
 			
 			// load step def list
-			List<WStepDef> stepDefList = loadStepList(processDefId, currentUserId);
+			List<WStepDef> stepDefList = this._loadStepList(processDefId, currentUserId);
 			
 			
 			for (WStepDef stepDef: stepDefList) {
@@ -608,7 +608,7 @@ public class WProcessDefBL {
 			
 			try {
 				
-				wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
+				wpd.setlSteps(this._loadStepList(wpd.getId(),currentUserId));
 //				wpd.setManagedDataDef(loadManagedDataDef(wpd));
 				
 				
@@ -618,7 +618,7 @@ public class WProcessDefBL {
 			}
 			
 			try {
-				wpd.setStepSequenceList(loadStepSequenceList(wpd.getId(),currentUserId));
+				wpd.setStepSequenceList(this._loadStepSequenceList(wpd.getId(),currentUserId));
 			} catch (WStepSequenceDefException e) {
 				String mess="Error: getWProcessDefByPK "+e.getMessage();
 				throw new WStepSequenceDefException(mess);
@@ -686,8 +686,8 @@ public class WProcessDefBL {
 				
 				try {
 					
-					wpd.setlSteps(loadStepList(wpd.getId(),currentUserId));
-					wpd.setStepSequenceList(loadStepSequenceList(wpd.getId(), currentUserId));
+					wpd.setlSteps(this._loadStepList(wpd.getId(),currentUserId));
+					wpd.setStepSequenceList(this._loadStepSequenceList(wpd.getId(), currentUserId));
 				
 				} catch (WStepSequenceDefException e) {
 				
@@ -1362,7 +1362,7 @@ public class WProcessDefBL {
 	}
 	
 	// nes 20130502 - traido desde el backing bean ...
-	private List<WStepDef> loadStepList(Integer processId, Integer currentUserId) 
+	private List<WStepDef> _loadStepList(Integer processId, Integer currentUserId) 
 			throws WStepDefException {
 
 		List<WStepDef> lsteps=new ArrayList<WStepDef>();
@@ -1384,7 +1384,7 @@ public class WProcessDefBL {
 		return lsteps;
 	}
 	
-	private List<WStepSequenceDef> loadStepSequenceList(Integer processId, Integer currentUserId) 
+	private List<WStepSequenceDef> _loadStepSequenceList(Integer processId, Integer currentUserId) 
 			throws WStepSequenceDefException{
 		
 		List<WStepSequenceDef> routes = new ArrayList<WStepSequenceDef>();

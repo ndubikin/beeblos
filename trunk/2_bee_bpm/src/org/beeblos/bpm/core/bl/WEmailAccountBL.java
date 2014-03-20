@@ -55,6 +55,7 @@ public class WEmailAccountBL {
 		return uea;
 		
 	}
+	
 	public void update(WEmailAccount instance, Integer idCurrentUser)
 			throws WEmailAccountException {
 
