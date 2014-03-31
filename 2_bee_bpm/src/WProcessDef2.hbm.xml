@@ -1929,26 +1929,6 @@
 		</property>
 
 	</class>
-	<class name="com.sp.common.core.model.SystemObject" table="w_system_object">
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-		<property name="name" type="string">
-			<column name="name" />
-		</property>
-		<property name="objectClass" type="string">
-			<column name="object_class" not-null="true" />
-		</property>
-		<property name="hierarchy" type="java.lang.Integer">
-			<column name="hierarchy" not-null="true">
-				<comment>Menor numero implica mas importante</comment>
-			</column>
-		</property>
-		<property name="comments" type="string">
-			<column name="comments" />
-		</property>
-	</class>
 
 	<filter-def name="byProcessHeadId">
 		<filter-param name="filterProcessHeadId" type="java.lang.Integer" />

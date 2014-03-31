@@ -657,8 +657,6 @@
 			<column name="mod_user" />
 		</property>
 
-        <many-to-one name="systemObject" class="com.sp.common.core.model.SystemObject"
-        	lazy="false" fetch="join" column="system_object_id" />
 	</class>
 
 </hibernate-mapping>
