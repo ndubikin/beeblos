@@ -248,8 +248,8 @@
 		<property name="loginId" type="string">
 			<column name="login_id" />
 		</property>
-		<property name="gender" type="java.lang.Integer">
-			<column name="gender" />
+		<property name="gender" type="java.lang.Boolean">
+			<column name="gender" sql-type="bit" />
 		</property>
 		<property name="admon" type="string">
 			<column name="admon" length="1" />
@@ -521,8 +521,8 @@
 		<property name="email" type="string">
 			<column name="email" />
 		</property>
-		<property name="gender" type="java.lang.Integer">
-			<column name="gender" />
+		<property name="gender" type="java.lang.Boolean">
+			<column name="gender" sql-type="bit" />
 		</property>
 		<property name="suLectura" type="string">
 			<column name="su_lectura" length="1" />
