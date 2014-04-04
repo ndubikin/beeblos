@@ -4,6 +4,37 @@
 <!-- Generated May 21, 2012 10:49:10 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
 
+    <class name="com.sp.common.core.model.SystemObject" table="system_object">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+        <property name="name" type="string">
+            <column name="name"/>
+        </property>
+        <property name="objectClass" type="string">
+            <column name="object_class"/>
+        </property>
+        <property name="hierarchy" type="java.lang.Integer">
+            <column name="hierarchy"  />
+        </property>
+        <property name="comments" type="string">
+            <column name="comments"/>
+        </property>
+        <property name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="add_date" />
+        </property>
+        <property name="addUser" type="java.lang.Integer">
+            <column name="add_user" />
+        </property>
+        <property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="mod_date"/>
+        </property>
+        <property name="modUser" type="java.lang.Integer">
+            <column name="mod_user" />
+        </property>
+    </class>
+
 	<class name="com.sp.calendar.model.BusinessCalendar" table="business_calendar">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
