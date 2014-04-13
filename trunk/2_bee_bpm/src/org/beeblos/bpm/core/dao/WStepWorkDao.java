@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.jadira.usertype.dateandtime.joda.columnmapper.DateColumnLocalDateMapper;
 import org.jadira.usertype.dateandtime.joda.columnmapper.TimeColumnLocalTimeMapper;
 import org.jadira.usertype.dateandtime.joda.columnmapper.TimestampColumnDateTimeMapper;
@@ -1302,14 +1303,103 @@ public class WStepWorkDao {
 
 	}
 
+	/**
+	 * return true if exists processes for given ids
+	 * 
+	 * @param idProcess
+	 * @param idObject
+	 * @param idObjectType
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public Boolean existsActiveProcess(
 			Integer idProcess, Integer idObject, String idObjectType) 
 	throws WStepWorkException {
+		logger.debug("existsActiveProcess >> idProcess:"
+				+(idProcess!=null?idProcess:"null")
+				+" idObject:"+(idObject!=null?idObject:"")
+				+" idObjectType"+(idObjectType!=null?idObjectType:"null"));
 		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
 		Boolean retorno=false;
+		Long qtyActiveSteps=null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+// nes 20140411 - pasado a criteria ...
+//					session
+//						.createQuery("From  Where wProcessWork.processDef.id=? AND =? AND =? ")
+//						.setParameter(0, idProcess)
+//						.setParameter(1, idObject)
+//						.setParameter(2, idObjectType.trim())
+//						.list()
+//						.size();
+
+			tx.begin();
+
+			Criteria crit = session.createCriteria(WStepWork.class, "wsw")
+			.createAlias("wProcessWork", "wProcessWork", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("wProcessWork.processDef", "wProcessDef", JoinType.LEFT_OUTER_JOIN);
+			
+			crit.setProjection(Projections.rowCount());
+			if (idProcess!=null) crit.add( Restrictions.eq("wProcessWork.processDef.id",idProcess));
+			if (idObject!=null) crit.add( Restrictions.eq("wProcessWork.idObject",idObject));
+			if (idObjectType!=null) crit.add( Restrictions.eq("wProcessWork.idObjectType",idObjectType.trim()));
+			
+			// como indica "activos", estarán activos o no resueltos los q no tengan fecha de resolución ...
+			crit.add(Restrictions.eq("decidedDate", null));
+
+			qtyActiveSteps = (Long) crit.uniqueResult();
+
+			tx.commit();
+			
+			if( qtyActiveSteps>0 ) {
+				retorno=true;
+			} else {
+				retorno=false;
+			}
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "WStepWorkDao: existsActiveProcess() HibernateException - can't obtain stepwork query list - " +
+					ex.getMessage()+"\n"+ex.getCause(); 
+			logger.error( mess );
+			throw new WStepWorkException( mess );
+
+		}
+		
+		return retorno;
+	}
+	
+	/**
+	 * checks if exists processes related with given ids...
+	 * User is responsible to provide a coherent set of ids ...
+	 * 
+	 * @param idProcess
+	 * @param idObject
+	 * @param idObjectType
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	public Boolean existsProcess(
+			Integer idProcess, Integer idObject, String idObjectType) 
+	throws WStepWorkException {
+		logger.debug("existsProcess >> idProcess:"
+				+(idProcess!=null?idProcess:"null")
+				+" idObject:"+(idObject!=null?idObject:"")
+				+" idObjectType"+(idObjectType!=null?idObjectType:"null"));
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		Boolean retorno=false;
+		Long qtyActiveSteps=null;
 
 		try {
 
@@ -1318,15 +1408,16 @@ public class WStepWorkDao {
 
 			tx.begin();
 
-			int qtyActiveSteps = 
-					session
-						.createQuery("From WStepWork Where wProcessWork.processDef.id=? AND wProcessWork.idObject=? AND wProcessWork.idObjectType=? ")
-						.setParameter(0, idProcess)
-						.setParameter(1, idObject)
-						.setParameter(2, idObjectType.trim())
-						.list()
-						.size();
+			Criteria crit = session.createCriteria(WStepWork.class);
+			crit.setProjection(Projections.rowCount());
+			if (idProcess!=null) crit.add( Restrictions.eq("wProcessWork.processDef.id",idProcess));
+			if (idObject!=null) crit.add( Restrictions.eq("wProcessWork.idObject",idObject));
+			if (idObjectType!=null) crit.add( Restrictions.eq("wProcessWork.idObjectType",idObjectType.trim()));
 
+			qtyActiveSteps = (Long) crit.uniqueResult(); 
+
+			tx.commit();
+			
 			tx.commit();
 			
 			if( qtyActiveSteps>0 ) {
@@ -1346,10 +1437,12 @@ public class WStepWorkDao {
 		}
 		
 		return retorno;
-	}
+	}	
 	
 	/**
 	 *  returns qty of existing step works for a given processDefId (process version)
+	 *  
+	 *  nes 20140411 - pasado a criteria ...
 	 *  
 	 * @param processDefId
 	 * @param mode: A = alive, P = processed
@@ -1362,16 +1455,16 @@ public class WStepWorkDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		BigInteger qtySteps;
+		Long qtySteps;
 
-		String query = "SELECT COUNT(*) FROM w_step_work wsw LEFT OUTER JOIN w_process_work wpw ON wpw.id=wsw.id_work "
-							+"WHERE wpw.id_process = " + processDefId;
-		
-		if (mode.equals(ALIVE)) {
-			query += " AND wsw.decided_date is null";
-		} else if (mode.equals(PROCESSED)) {
-			query += " AND wsw.decidedDate is not null";
-		}
+//		String query = "SELECT COUNT(*) FROM  wsw LEFT OUTER JOIN w_process_work wpw ON wpw.id=wsw.id_work "
+//							+"WHERE wpw.id_process = " + processDefId;
+//		
+//		if (mode.equals(ALIVE)) {
+//			query += " AND wsw.decided_date is null";
+//		} else if (mode.equals(PROCESSED)) {
+//			query += " AND wsw.decidedDate is not null";
+//		}
 		
 		try {
 
@@ -1379,10 +1472,24 @@ public class WStepWorkDao {
 			tx = session.getTransaction();
 
 			tx.begin();
+			
+			Criteria crit = session.createCriteria(WStepWork.class);
+			
+			crit.setProjection(Projections.rowCount());
+			
+			if (processDefId!=null) crit.add( Restrictions.eq("wProcessWork.processDef.id",processDefId));
+			
+			if (mode.equals(ALIVE)) {
+				crit.add( Restrictions.eq("decidedDate",null));
+			} else if (mode.equals(PROCESSED)) {
+				crit.add( Restrictions.ne("decidedDate",null));
+			}
 
-			qtySteps = (BigInteger) session
-								.createSQLQuery(query)
-								.uniqueResult();
+			qtySteps = (Long) crit.uniqueResult();
+			
+//			qtySteps = (BigInteger) session
+//								.createSQLQuery(query)
+//								.uniqueResult();
 
 			tx.commit();
 
@@ -1422,18 +1529,18 @@ public class WStepWorkDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 
-		BigInteger qtySteps;
+		Long qtySteps;
 
-		String query = "SELECT COUNT(*) FROM w_step_work wsw WHERE wsw.id_current_step = " 
-				+ stepId + " OR wsw.id_previous_step = " + stepId;
-		
-		if (mode != null){
-			if (mode.equals(ALIVE)) {
-				query += " AND wsw.decided_date is null";
-			} else if (mode.equals(PROCESSED)) {
-				query += " AND wsw.decidedDate is not null";
-			}
-		}
+//		String query = "SELECT COUNT(*) FROM w_step_work wsw WHERE wsw.id_current_step = " 
+//				+ stepId + " OR wsw.id_previous_step = " + stepId;
+//		
+//		if (mode != null){
+//			if (mode.equals(ALIVE)) {
+//				query += " AND wsw.decided_date is null";
+//			} else if (mode.equals(PROCESSED)) {
+//				query += " AND wsw.decidedDate is not null";
+//			}
+//		}
 		
 		try {
 
@@ -1442,9 +1549,28 @@ public class WStepWorkDao {
 
 			tx.begin();
 
-			qtySteps = (BigInteger) session
-								.createSQLQuery(query)
-								.uniqueResult();
+			Criteria crit = session.createCriteria(WStepWork.class);
+			
+			crit.setProjection(Projections.rowCount());
+			
+			if (stepId!=null) {
+				crit.add( 
+						Restrictions.or(
+								Restrictions.eq("idCurrentStep",stepId),
+								Restrictions.eq("idPreviousStep",stepId) ) );
+			}
+			
+			if (mode.equals(ALIVE)) {
+				crit.add( Restrictions.eq("decidedDate",null));
+			} else if (mode.equals(PROCESSED)) {
+				crit.add( Restrictions.ne("decidedDate",null));
+			}
+
+			qtySteps = (Long) crit.uniqueResult();
+			
+//			qtySteps = (BigInteger) session
+//								.createSQLQuery(query)
+//								.uniqueResult();
 
 			tx.commit();
 

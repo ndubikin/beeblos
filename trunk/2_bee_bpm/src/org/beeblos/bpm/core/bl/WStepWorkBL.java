@@ -270,12 +270,27 @@ public class WStepWorkBL {
 
 	}
 
-	
+	/**
+	 * returns true if exists active process for process id, id object, idObjectType ...
+	 * @param processId
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public Boolean existsActiveProcess(
 			Integer processId, Integer idObject, String idObjectType, Integer currentUser ) 
 	throws WStepWorkException {
 		
 		return new WStepWorkDao().existsActiveProcess(processId, idObject, idObjectType);
+	}
+	
+	public Boolean existsProcess(
+			Integer processId, Integer idObject, String idObjectType, Integer currentUser ) 
+	throws WStepWorkException {
+		
+		return new WStepWorkDao().existsProcess(processId, idObject, idObjectType);
 	}
 
 	/**

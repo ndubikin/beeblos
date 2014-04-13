@@ -54,7 +54,10 @@ public class WStepWork implements java.io.Serializable {
 	private DateTime arrivingDate;
 	private DateTime openedDate;
 	private WUserDef openerUser;
-	
+	/**
+	 * datetime at which the step was performed
+	 * decidedDate != null >> the step was performed
+	 */
 	private DateTime decidedDate;
 	private WUserDef performer;
 	
