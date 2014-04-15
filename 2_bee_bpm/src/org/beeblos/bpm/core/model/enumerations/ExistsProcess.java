@@ -23,12 +23,11 @@ public enum ExistsProcess {
 	   code = c;
 	   situation = s;
 	   comments = n;
-	   
 	 }
 	 
 	 public String getSituation(){  
 		 return this.situation;  
-	 }  	 
+	 }
 	 
 	 public int getCode() {
 	   return code;
