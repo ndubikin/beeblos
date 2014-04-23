@@ -1490,11 +1490,13 @@ public class WStepWorkDao {
 
 			tx.begin();
 			
-			Criteria crit = session.createCriteria(WStepWork.class);
+			Criteria crit = session.createCriteria(WStepWork.class)
+					.createAlias("wProcessWork", "wpw", JoinType.LEFT_OUTER_JOIN)
+					.createAlias("wpw.processDef", "process", JoinType.LEFT_OUTER_JOIN);
 			
 			crit.setProjection(Projections.rowCount());
 			
-			if (processDefId!=null) crit.add( Restrictions.eq("wProcessWork.processDef.id",processDefId));
+			if (processDefId!=null) crit.add( Restrictions.eq("process.id",processDefId));
 			
 			if (mode.equals(ALIVE)) {
 				crit.add( Restrictions.eq("decidedDate",null));
