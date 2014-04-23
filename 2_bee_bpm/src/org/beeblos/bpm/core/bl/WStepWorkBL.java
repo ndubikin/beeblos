@@ -389,7 +389,7 @@ public class WStepWorkBL {
 	 * @param userId
 	 * @param isAdmin
 	 * @param arrivingDate
-	 * @param openedDate
+	 * @param openDate
 	 * @param deadlineDate
 	 * @param filtroComentariosYReferencia
 	 * @return
@@ -398,15 +398,38 @@ public class WStepWorkBL {
 	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
-			LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate, 
-			String filtroComentariosYReferencia) 
+			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
+			String filtroComentariosYReferencia, Integer currentUserId) 
 	throws WStepWorkException {
+		
+		/**
+		 * checks if currentUserId is admin ...
+		 *  if not then forces it to off  
+		 */
+		
+		boolean userHasAdminRights = false;
+		try {
+			userHasAdminRights = 
+					new WProcessDefBL().userIsProcessAdmin(userId, idProcess, currentUserId);
+		} catch (WProcessDefException e) {
+			String mess="Error trying check if user is admin process for userid:"
+					+(userId!=null?userId:"null")
+					+ " and processid:"
+					+(idProcess!=null?idProcess:"null")+" "
+					+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+		}
+		
+		if (!userHasAdminRights) {
+			isAdmin=false;
+		}
 		
 		return new WStepWorkDao()
 						.getWorkListByProcess(
 								idProcess, idCurrentStep, status,
-								userId, isAdmin, arrivingDate, openedDate, 
-								deadlineDate, filtroComentariosYReferencia);
+								userId, isAdmin, arrivingDate, openDate, 
+								deadlineDate, filtroComentariosYReferencia,
+								currentUserId);
 		
 	}
 	
