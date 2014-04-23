@@ -657,13 +657,30 @@ public class WStepWorkDao {
 	}
 
 	// NEW METHOD WITH ALL FILTERS ...
-	
+	/**
+	 * returns list of step work for a given processId, userId (optional if currentUserId is
+	 * a process Admin)
+	 * 
+	 * @param idProcess
+	 * @param idCurrentStep
+	 * @param status
+	 * @param userId
+	 * @param isAdmin
+	 * @param arrivingDate
+	 * @param openDate
+	 * @param deadlineDate
+	 * @param commentsAndReferenceFilter
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
 			Integer userId, boolean isAdmin, 
-			LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate, 
-			String commentsAndReferenceFilter  ) 
+			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
+			String commentsAndReferenceFilter,
+			Integer currentUserId) 
 	throws WStepWorkException {
 
 		org.hibernate.Session session = null;
@@ -677,7 +694,7 @@ public class WStepWorkDao {
 		// the String directly in the string filter.
 		// Date parameters must be added to hibernate query in the try / catch clause below
 		String userFilter = " (" + 
-							getSQLFilter(idProcess, idCurrentStep, status, arrivingDate, openedDate, deadlineDate, commentsAndReferenceFilter ) +
+							getSQLFilter(idProcess, idCurrentStep, status, arrivingDate, openDate, deadlineDate, commentsAndReferenceFilter ) +
 							" ) ";
 		
 		String requiredFilter = getRequiredFilter(userId, isAdmin);
@@ -737,9 +754,9 @@ public class WStepWorkDao {
 					q.setParameter("arrivingdateTo", to);
 				}
 				
-				if (openedDate!=null) {
-	                from = fmtLongDate.parseDateTime(fmtShortDate.print(openedDate)+" 00:00:00");                
-	                to = fmtLongDate.parseDateTime(fmtShortDate.print(openedDate)+" 23:59:59");                
+				if (openDate!=null) {
+	                from = fmtLongDate.parseDateTime(fmtShortDate.print(openDate)+" 00:00:00");                
+	                to = fmtLongDate.parseDateTime(fmtShortDate.print(openDate)+" 23:59:59");                
 					q.setParameter("openeddateFrom", from);
 					q.setParameter("openeddateTo", to);
 				}
