@@ -1359,13 +1359,13 @@ public class WStepWorkDao {
 			tx.begin();
 
 			Criteria crit = session.createCriteria(WStepWork.class, "wsw")
-			.createAlias("wProcessWork", "wProcessWork", JoinType.LEFT_OUTER_JOIN)
-			.createAlias("wProcessWork.processDef", "wProcessDef", JoinType.LEFT_OUTER_JOIN);
+			.createAlias("wProcessWork", "wpw", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("wProcessWork.processDef", "processDef", JoinType.LEFT_OUTER_JOIN);
 			
 			crit.setProjection(Projections.rowCount());
-			if (idProcess!=null) crit.add( Restrictions.eq("wProcessWork.processDef.id",idProcess));
-			if (idObject!=null) crit.add( Restrictions.eq("wProcessWork.idObject",idObject));
-			if (idObjectType!=null) crit.add( Restrictions.eq("wProcessWork.idObjectType",idObjectType.trim()));
+			if (idProcess!=null) crit.add( Restrictions.eq("processDef.id",idProcess));
+			if (idObject!=null) crit.add( Restrictions.eq("wpw.idObject",idObject));
+			if (idObjectType!=null) crit.add( Restrictions.eq("wpw.idObjectType",idObjectType.trim()));
 			
 			// como indica "activos", estarán activos o no resueltos los q no tengan fecha de resolución ...
 			crit.add(Restrictions.eq("decidedDate", null));
@@ -1424,16 +1424,18 @@ public class WStepWorkDao {
 
 			tx.begin();
 
-			Criteria crit = session.createCriteria(WStepWork.class);
+			Criteria crit = session.createCriteria(WStepWork.class)
+					.createAlias("wProcessWork", "wpw", JoinType.LEFT_OUTER_JOIN)
+					.createAlias("wpw.processDef", "processDef", JoinType.LEFT_OUTER_JOIN);					
+			
 			crit.setProjection(Projections.rowCount());
-			if (idProcess!=null) crit.add( Restrictions.eq("wProcessWork.processDef.id",idProcess));
-			if (idObject!=null) crit.add( Restrictions.eq("wProcessWork.idObject",idObject));
-			if (idObjectType!=null) crit.add( Restrictions.eq("wProcessWork.idObjectType",idObjectType.trim()));
+			
+			if (idProcess!=null) crit.add( Restrictions.eq("processDef.id",idProcess));
+			if (idObject!=null) crit.add( Restrictions.eq("wpw.idObject",idObject));
+			if (idObjectType!=null) crit.add( Restrictions.eq("wpw.idObjectType",idObjectType.trim()));
 
 			qtyActiveSteps = (Long) crit.uniqueResult(); 
 
-			tx.commit();
-			
 			tx.commit();
 			
 			if( qtyActiveSteps>0 ) {
@@ -1491,11 +1493,11 @@ public class WStepWorkDao {
 			
 			Criteria crit = session.createCriteria(WStepWork.class)
 					.createAlias("wProcessWork", "wpw", JoinType.LEFT_OUTER_JOIN)
-					.createAlias("wpw.processDef", "process", JoinType.LEFT_OUTER_JOIN);
+					.createAlias("wpw.processDef", "processDef", JoinType.LEFT_OUTER_JOIN);
 			
 			crit.setProjection(Projections.rowCount());
 			
-			if (processDefId!=null) crit.add( Restrictions.eq("process.id",processDefId));
+			if (processDefId!=null) crit.add( Restrictions.eq("processDef.id",processDefId));
 			
 			if (mode.equals(ALIVE)) {
 				crit.add( Restrictions.eq("decidedDate",null));
