@@ -102,12 +102,11 @@ public interface TableManagerBL {
 	 *
 	 * @return void
 	 * 
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @throws TableManagerException 
 	 * 
 	 */
 	public abstract void deleteRecord(String schemaName, String tableName,
-			Integer processWorkId) throws ClassNotFoundException, SQLException;
+			Integer processWorkId) throws TableManagerException;
 
 	/**
 	 * @author nes

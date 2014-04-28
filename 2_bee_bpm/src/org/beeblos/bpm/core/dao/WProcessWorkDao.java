@@ -8,6 +8,7 @@ import static org.beeblos.bpm.core.model.enumerations.ProcessStage.STARTUP;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
+import org.beeblos.bpm.tm.impl.TableManagerBLImpl;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -262,16 +264,59 @@ public class WProcessWorkDao {
 		
 		try {
 
+			// 1st must be delete related managed data if exists ...
+			_deleteManagedDataRow(processWork);
+
 			HibernateUtil.delete(processWork);
 
 		} catch (HibernateException ex) {
-			logger.error("WProcessWorkDao: delete - Can't delete proccess definition record "+ processWork.getReference() +
-					" <id = "+processWork.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessWorkException("WProcessWorkDao:  delete - Can't delete proccess definition record  "+ processWork.getReference() +
-					" <id = "+processWork.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			String mess = "WProcessWorkDao: delete - Can't delete proccess definition record "+ processWork.getReference() +
+					" <id = "+processWork.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause();
+			logger.error(mess);
+			throw new WProcessWorkException(mess);
 
 		} 
 
+	}
+
+	/**
+	 * @param processWork
+	 * @throws WProcessWorkException 
+	 */
+	private void _deleteManagedDataRow(WProcessWork processWork) throws WProcessWorkException {
+		
+		if (processWork.getProcessDef().getProcessHead().getManagedTableConfiguration()!=null
+				&& processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()!=null
+				&& !"".equals(processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()) ) {
+			
+			// load current managed data record ...
+			ManagedData md = 
+					org.beeblos.bpm.tm.TableManagerBeeBpmUtil
+									.createManagedDataObject(processWork);
+			
+			if (md!=null && md.getManagedTableConfiguration()!=null) {
+
+				String schemaName = (md.getManagedTableConfiguration().getSchema()!=null?md.getManagedTableConfiguration().getSchema():null);
+				String tableName = (md.getManagedTableConfiguration().getName()!=null?md.getManagedTableConfiguration().getName():null);
+				if (tableName==null || "".equals(tableName)) {
+					throw new WProcessWorkException("Configuration of table manager comes with errors: tablename is null !!");
+				}
+				
+				try {
+					new TableManagerBLImpl()
+							.deleteRecord(
+									schemaName, 
+									tableName, 
+									processWork.getId());
+				} catch (TableManagerException e) {
+					logger.error(e.getMessage());
+				}
+				
+			}
+
+			logger.debug(">> managed data has been deleted ...");
+			
+		}
 	}
 
 	public WProcessWork getWProcessWorkByPK(Integer id) throws WProcessWorkException {
@@ -293,10 +338,10 @@ public class WProcessWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WProcessWorkDao: getWProcessWorkByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessWorkException("WProcessWorkDao: getWProcessWorkByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess = "WProcessWorkDao: getWProcessWorkByPK - we can't obtain the required id = "+
+					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WProcessWorkException(mess);
 
 		}
 
@@ -326,10 +371,10 @@ public class WProcessWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WProcessWorkDao: getWProcessWorkByName - can't obtain process name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessWorkException("getWProcessWorkByName;  can't obtain process name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess = "WProcessWorkDao: getWProcessWorkByName - can't obtain process name = " +
+					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WProcessWorkException(mess);
 
 		}
 
@@ -379,14 +424,16 @@ public class WProcessWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "
+					+ ex.getMessage()+"\n"+ex.getCause(); 
 			logger.warn(mensaje);
 			throw new WProcessWorkException(mensaje);
 
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "
+				+ ex.getMessage()+"\n"+ex.getCause()+" - "+ex.getClass(); 
 			logger.warn(mensaje);
 			throw new WProcessWorkException(mensaje);
 		}

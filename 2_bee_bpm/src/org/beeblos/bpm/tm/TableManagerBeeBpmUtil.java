@@ -68,8 +68,9 @@ public class TableManagerBeeBpmUtil {
 	 * Creates managedData object. From definitions, create a object representing a row
 	 * of managed data in configured managedTable
 	 * 
-	 * Note: call this method from stepWork generate only a "sub-row" with data fields exposed
-	 * to the methos. If this method is called from "Process" the object will represent entire
+	 * Note: call this method from stepWork generate only a "subset of the table row" with the 
+	 * exposed data fields to the method. 
+	 * If this method is called from "Process" the object will represent entire
 	 * row of managed data.
 	 * 
 	 * @param processWorkId // 

@@ -474,8 +474,9 @@ public class WStepWorkDao {
 					&& stepWork.getwProcessWork().getManagedTableConfiguration().getName()!=null
 					&& !"".equals(stepWork.getwProcessWork().getManagedTableConfiguration().getName()) ) {
 				
-				// when load a wStepWork we must load managed data related ...
-				ManagedData md = org.beeblos.bpm.tm.TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
+				// when load a wStepWork we must load related managed data ...
+				ManagedData md = 
+						org.beeblos.bpm.tm.TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
 
 				// IMPLEMENTAR
 				TableManager tm = new TableManager();
