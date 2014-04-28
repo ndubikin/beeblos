@@ -23,6 +23,7 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.tm.TableManagerBL;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.impl.TableManagerBLImpl;
 
 
@@ -102,23 +103,25 @@ public class DevelopmentBL {
 			this._deleteWStepSequenceDefsAndStepDefs(processDef.getId(), processDef.getProcess().getId(), currentUserId);
 
 		} catch (WStepWorkSequenceException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (WProcessDefException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (WStepDefException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (WStepWorkException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (WProcessWorkException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (WStepSequenceDefException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (WStepHeadException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (ClassNotFoundException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		} catch (SQLException e) {
-			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage());
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
+		} catch (TableManagerException e) {
+			throw new DevelopmentException("Error trying to purge processDef [id: " + processDef.getId() + "] -" + e.getMessage() + " - "+e.getCause()+" - "+e.getClass());
 		}
 		
 		return returnValue;
@@ -207,9 +210,11 @@ public class DevelopmentBL {
 	 * @throws WProcessWorkException 
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException 
+	 * @throws TableManagerException 
 	 * 
 	 */
-	private void _deleteWProcessWorkAndWMTList(Integer processDefId, Integer currentUserId) throws WProcessWorkException, ClassNotFoundException, SQLException {
+	private void _deleteWProcessWorkAndWMTList(Integer processDefId, Integer currentUserId) 
+			throws WProcessWorkException, ClassNotFoundException, SQLException, TableManagerException {
 		
 		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting process works related to process : " + processDefId); 
 

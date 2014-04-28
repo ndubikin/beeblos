@@ -119,12 +119,16 @@ public class TableManagerBLImpl implements TableManagerBL {
 	
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Delete a record (row) from managed data table ...
+	 * 
 	 * @see org.beeblos.bpm.core.md.TableManagerBL#deleteRecord(java.lang.String, java.lang.String, java.lang.Integer)
-	 */	
+	 * 
+	 * 
+	 */
 	@Override
 	public void deleteRecord( String schemaName, String tableName, Integer processWorkId) 
-			throws ClassNotFoundException, SQLException {
+			throws TableManagerException {
 
 		tm.delete(schemaName, tableName, processWorkId);
 	

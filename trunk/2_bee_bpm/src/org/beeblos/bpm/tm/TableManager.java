@@ -82,14 +82,16 @@ public class TableManager {
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
-			System.out.println("class "+driver+" not found ...");
+			String mess = "class "+driver+" not found ... "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
 			throw e;
 		}
 
 		try {
 			conn = DriverManager.getConnection(connection+_SLASH+schema, user, password);
 		} catch (SQLException e) {
-			System.out.println("can't connect with "+connection+" with schema:"+schema);
+			String mess="can't connect with "+connection+" with schema:"+schema+" - "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
 			throw e;
 		}
 		
@@ -397,7 +399,7 @@ public class TableManager {
 	}	
 
 	// only can arrives here if all required data was previously checked!
-	public void delete(String schema, String tableName, Integer processWorkId) throws ClassNotFoundException, SQLException {
+	public void delete(String schema, String tableName, Integer processWorkId) throws TableManagerException {
 		logger.debug("TableManager:DELETE FROM  schema.tableName WHERE process_work_id = processWorkId");
 
 		Integer qty=null, id=null;
@@ -407,7 +409,14 @@ public class TableManager {
 		logger.debug("-----> delete data query:"+sql);
 
 		// begin database select
-		connect();
+		try {
+			connect();
+		} catch (Exception e2) {
+			String mess = "Error tying connection with database for managed table:"
+					+e2.getMessage()+" - "+e2.getCause()+" - "+e2.getClass();
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 		
 		try {
 			
