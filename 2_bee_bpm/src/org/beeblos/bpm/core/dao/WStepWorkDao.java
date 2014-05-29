@@ -1118,7 +1118,8 @@ public class WStepWorkDao {
 
 		return stepws;
 	}
-	
+	// NES 20140529
+	// ESTE PARECE EL MISMO QUE EL DE LA LINEA 1229 SALVO QUE EL OTRO RETORNA SOLO LOS "ALIVE" Y ESTE PARECE QUE "TODOS"
 	//rrl 20110118 
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWorkListByIdObject(
@@ -1214,7 +1215,16 @@ public class WStepWorkDao {
 	
 	
 	
-	
+	/**
+	 * Returns active stepWork list for given idObject/idObjectType
+	 * This query don't check permissions for given user ... 
+	 * 
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getActiveSteps (
 			Integer idObject, String idObjectType, Integer currentUser ) 
