@@ -1,10 +1,10 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
-import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
@@ -48,6 +48,7 @@ import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.core.model.WStepWorkAssignment;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
@@ -62,7 +63,11 @@ import org.joda.time.LocalDate;
 import com.email.core.bl.SendEmailBL;
 import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
+import com.sp.common.core.bl.UserBL;
 import com.sp.common.core.error.BeeblosBLException;
+import com.sp.common.core.error.UserException;
+import com.sp.common.core.model.User;
+import com.sp.common.core.model.UserRole;
 import com.sp.common.util.Resourceutil;
 import com.sp.common.util.StringPair;
 
@@ -329,41 +334,159 @@ public class WStepWorkBL {
 
 	
 	/**
-	 * Returns active workitems for a given idObject / idObjectType
+	 * Returns alive stepWork items for a given idObject / idObjectType WITH PERMISSIONS!
 	 * 
+	 * @author dmuleiro 20140529
 	 * 
 	 * @param idObject
 	 * @param idObjectType
-	 * @param currentUser
+	 * @param hasAdminRights
+	 * @param currentUserId
 	 * @return
 	 * @throws WProcessDefException
 	 * @throws WStepDefException
 	 * @throws WStepWorkException
 	 */
-	public List<WStepWork> getActiveSteps (
-			Integer idObject, String idObjectType, Integer currentUser) 
-	throws WProcessDefException, WStepDefException, WStepWorkException {
+	public List<WStepWork> getAliveSteps(Integer idObject, String idObjectType, 
+			boolean isAdmin, Integer currentUserId) throws WStepWorkException  {
 		
 		// TODO: filtrar para el usuario que lo solicita		
-		return new WStepWorkDao().getActiveSteps(idObject, idObjectType, currentUser);
+		List<WStepWork> stepList = new WStepWorkDao().getAliveSteps(idObject, idObjectType, currentUserId);
 		
-		// DAVID: a esto habría que agregarle el boolean isAdmin y funcionaría de la siguiente manera
-		// (1) si isAdmin está en false: nada, simplemente a cada elemento devuelto por el dao hay que 
-		// averiguar si el currentUserId tiene permisos para procesarlo, si los tiene lo devolvemos,
-		// si no, lo quitamos de la lista
-		// (2) si isAdmin viene en true entonces la cosa cambia levemente:
-		// si currentUserId es admin de este proceso wStepWork.processHead entonces devolvemos el elemento
-		// y si no lo es, entonces aplicamos el criterio anterior ( el (1)) ...
+		/**
+		 * Obtenemos de la lista de steps vivos los que tienen permiso para el "currentUserId"
+		 */
+		stepList = this._getOnlyUserPermittedStepWorks(currentUserId, stepList, isAdmin, currentUserId);
 		
 		// nota: refactoricé un hasAdminRights que usabamos en otro método para que puedas usarlo aquí ...
 		// 
 		
-		
+		return stepList;
 	}
 	
-	
+	/** 
+	 * Recibe una lista de StepWork y devuelve la lista de los cuales el "currentUserId" tiene permisos
+	 * 
+	 * Para cada WStepWork de la lista recibida:
+	 * 
+	 * 1. si hasAdminRights está en true: 
+	 * si currentUserId es admin de este proceso wStepWork.wProcessWork.processDef entonces devolvemos el
+	 * elemento y si no lo es pasamos al siguiente punto ...
+	 * 
+	 * 2. si hasAdminRights está en false: 
+	 * simplemente a cada elemento devuelto por el dao hay que averiguar si el currentUserId tiene 
+	 * permisos para procesarlo, si los tiene lo devolvemos, si no, lo quitamos de la lista.
+	 * 
+	 * @author dmuleiro 20140529
+	 * 
+	 * @param userId
+	 * @param stepList
+	 * @param isAdmin
+	 * @param currentUserId
+	 * @return
+	 */
+	private List<WStepWork> _getOnlyUserPermittedStepWorks(Integer userId, 
+			List<WStepWork> stepList, boolean isAdmin, Integer currentUserId){
 		
+		User user = null;
+		try {
+			user = new UserBL().getUserByPK(userId);
+		} catch (UserException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		if (stepList != null && user != null){
+			
+			List<WStepWork> stepWorkWithPermissionsList = new ArrayList<WStepWork>();
+			
+			for (WStepWork step : stepList){
+				
+				try {
+					/**
+					 * Comprobamos si es "admin" y si es así 
+					 */
+					if (isAdmin){
+						
+						if (new WProcessDefBL().userIsProcessAdmin(
+								currentUserId, step.getwProcessWork().getProcessDef().getId(), currentUserId)){
+							stepWorkWithPermissionsList.add(step);
+							continue;
+						}
+					}
+					
+					if (this.userHasStepWorkPermissions(user, step, isAdmin, currentUserId)){
+						stepWorkWithPermissionsList.add(step);
+					}
+						
+				} catch (WProcessDefException e) {
+					logger.error("Error trying to check the processDef with id <" 
+							+ step.getwProcessWork().getProcessDef().getId() + "> permissions: " + e.getMessage());
+					e.printStackTrace();
+				}
+			
+			}
+			
+			return stepWorkWithPermissionsList;
 
+		}
+	
+		return null;
+	}
+		
+	/**
+	 * Comprueba si un "user" tiene permisos dentro de un "WStepWork" (para ello comprueba dentro del 
+	 * "currentStep" asociado al mismo y dentro del set de "WStepWorkAssignments"
+	 * 
+	 * @author dmuleiro 20140529
+	 * 
+	 * @param user
+	 * @param step
+	 * @param hasAdminRights
+	 * @param currentUserId
+	 * @return
+	 */
+	public boolean userHasStepWorkPermissions(
+			User user, WStepWork step, boolean hasAdminRights, Integer currentUserId){
+		
+		if (step != null){
+			
+			/**
+			 * Si el WStepDef estatico asociado al WStepWork tiene permisos devuelve "true"
+			 */
+			if (new WStepDefBL().userHasStepDefPermission(user, step.getCurrentStep())){
+				return true;
+			}
+			
+			/**
+			 * Comprobamos el idAssignedUser/idAssignedRole de los WStepWorkAssignments
+			 */
+			if (step.getAssignedTo() != null){
+				for (WStepWorkAssignment stepWorkAssignment : step.getAssignedTo()){
+					
+					if (stepWorkAssignment.getIdAssignedUser() != null
+							&& stepWorkAssignment.getIdAssignedUser().equals(user.getId())){
+						return true;
+					}
+					
+					if (stepWorkAssignment.getIdAssignedRole() != null){
+						
+						if (user.getRolesRelated() != null){
+							
+							for (UserRole userRole : user.getRolesRelated()){
+							
+								if (stepWorkAssignment.getIdAssignedRole().equals(userRole.getRole().getId())){
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
 	// retrieve workitems for an userId and for a 
 	// status: null=all, A=alive P=Processed
 	public List<WStepWork> getStepListByUser(

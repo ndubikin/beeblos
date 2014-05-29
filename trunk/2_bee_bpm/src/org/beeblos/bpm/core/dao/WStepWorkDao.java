@@ -1226,7 +1226,7 @@ public class WStepWorkDao {
 	 * @throws WStepWorkException
 	 */
 	@SuppressWarnings("unchecked")
-	public List<WStepWork> getActiveSteps (
+	public List<WStepWork> getAliveSteps (
 			Integer idObject, String idObjectType, Integer currentUser ) 
 	throws WStepWorkException {
 
@@ -1243,9 +1243,9 @@ public class WStepWorkDao {
 			tx.begin();
 
 			stepws = session
-				.createQuery("From WStepWork where wProcessWork.idObject=? AND wProcessWork.idObjectType=? AND decidedDate is NULL ")
-				.setParameter(0, idObject)
-				.setParameter(1, idObjectType)
+				.createQuery("From WStepWork where wProcessWork.idObject= :idObject AND wProcessWork.idObjectType= :idObjectType AND decidedDate is NULL ")
+				.setParameter("idObject", idObject)
+				.setParameter("idObjectType", idObjectType)
 				.list();
 
 			tx.commit();
