@@ -28,6 +28,8 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.joda.time.DateTime;
 
+import com.sp.common.core.model.User;
+import com.sp.common.core.model.UserRole;
 import com.sp.common.util.StringPair;
 
 
@@ -868,6 +870,58 @@ public class WStepDefBL {
 		return new WStepDefDao().finderWStepDef(nameFilter, commentFilter, instructionsFilter, 
 				userId, isAdmin, searchOrder, stepHeadId, activeFilter);
 
+	}
+	
+	/**
+	 * Checks if an user has valid permissions in a "stepDef"
+	 * 
+	 * @author dmuleiro 20140529
+	 *  
+	 * @param userId
+	 * @param step
+	 * @return
+	 */
+	public boolean userHasStepDefPermission(User user, WStepDef step){
+		
+		if (user == null || user.getId() == null || user.getId().equals(0)){
+			logger.error("The user is not valid!");
+			return false;
+		}
+		
+		if (step != null){
+			
+			/**
+			 * Comprobamos los users relacionados con el step def
+			 */
+			if (step.getUsersRelated() != null){
+				
+				for (WStepUser stepUser : step.getUsersRelated()){
+					
+					if (stepUser.getUser() != null && stepUser.getUser().getId() != null 
+							&& stepUser.getUser().getId().equals(user.getId())){
+						return true;
+					}
+				}
+			}
+			/**
+			 * Comprobamos si tenemos algun "role" compartido entre los "roles" del step y los del "user"
+			 */
+			if (step.getRolesRelated() != null && user.getRolesRelated() != null){
+				
+				for (WStepRole stepRole : step.getRolesRelated()){
+					for (UserRole userRole : user.getRolesRelated()){
+					
+						if (stepRole.getRole() != null && stepRole.getRole().getId() != null
+								&& userRole.getRole() != null && userRole.getRole().getId() != null
+								&& stepRole.getRole().getId().equals(userRole.getRole().getId())){
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 
 
