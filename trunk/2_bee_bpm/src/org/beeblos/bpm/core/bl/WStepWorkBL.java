@@ -272,6 +272,7 @@ public class WStepWorkBL {
 
 	/**
 	 * returns true if exists active process for process id, id object, idObjectType ...
+	 * 
 	 * @param processId
 	 * @param idObject
 	 * @param idObjectType
@@ -327,13 +328,35 @@ public class WStepWorkBL {
 	 */
 
 	
-	// recupera los workitems activos de 1 proceso (mapa) para un paso corriente 
+	/**
+	 * Returns active workitems for a given idObject / idObjectType
+	 * 
+	 * 
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getActiveSteps (
 			Integer idObject, String idObjectType, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
 		// TODO: filtrar para el usuario que lo solicita		
 		return new WStepWorkDao().getActiveSteps(idObject, idObjectType, currentUser);
+		
+		// DAVID: a esto habría que agregarle el boolean isAdmin y funcionaría de la siguiente manera
+		// (1) si isAdmin está en false: nada, simplemente a cada elemento devuelto por el dao hay que 
+		// averiguar si el currentUserId tiene permisos para procesarlo, si los tiene lo devolvemos,
+		// si no, lo quitamos de la lista
+		// (2) si isAdmin viene en true entonces la cosa cambia levemente:
+		// si currentUserId es admin de este proceso wStepWork.processHead entonces devolvemos el elemento
+		// y si no lo es, entonces aplicamos el criterio anterior ( el (1)) ...
+		
+		// nota: refactoricé un hasAdminRights que usabamos en otro método para que puedas usarlo aquí ...
+		// 
 		
 		
 	}
@@ -408,17 +431,7 @@ public class WStepWorkBL {
 		 */
 		
 		boolean userHasAdminRights = false;
-		try {
-			userHasAdminRights = 
-					new WProcessDefBL().userIsProcessAdmin(userId, idProcess, currentUserId);
-		} catch (WProcessDefException e) {
-			String mess="Error trying check if user is admin process for userid:"
-					+(userId!=null?userId:"null")
-					+ " and processid:"
-					+(idProcess!=null?idProcess:"null")+" "
-					+e.getMessage()+" - "+e.getCause();
-			logger.error(mess);
-		}
+		userHasAdminRights = hasAdminRights(idProcess, userId, currentUserId);
 		
 		if (!userHasAdminRights) {
 			isAdmin=false;
@@ -431,6 +444,33 @@ public class WStepWorkBL {
 								deadlineDate, filtroComentariosYReferencia,
 								currentUserId);
 		
+	}
+
+	/**
+	 * Check if a given user has admin rights over given idProcess...
+	 * 
+	 * refactorizado nes 20140529
+	 * 
+	 * @param idProcess
+	 * @param userId
+	 * @param currentUserId
+	 * @return
+	 */
+	private boolean hasAdminRights(Integer idProcess, Integer userId,
+			Integer currentUserId ) {
+		boolean userHasAdminRights=false;
+		try {
+			userHasAdminRights = 
+					new WProcessDefBL().userIsProcessAdmin(userId, idProcess, currentUserId);
+		} catch (WProcessDefException e) {
+			String mess="Error trying check if user is admin process for userid:"
+					+(userId!=null?userId:"null")
+					+ " and processid:"
+					+(idProcess!=null?idProcess:"null")+" "
+					+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+		}
+		return userHasAdminRights;
 	}
 	
 	
@@ -448,7 +488,23 @@ public class WStepWorkBL {
 	}
 
 
-	//rrl 20110118: recupera los workitems de 1 objeto dado
+	/**
+	 * Devuelve todos los workitems de un elemento dado, tanto los pendientes
+	 * como los ya realizados
+	 * 
+	 * Nota: es muy parecido al método getActiveSteps de esta misma clase que devuelve 
+	 * todos los de un idObject/idObjectType pero que estén activos ...
+	 * 
+	 * creó: rrl 20110118
+	 *  
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getWorkListByIdObject(
 			Integer idObject, String idObjectType, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
@@ -458,6 +514,21 @@ public class WStepWorkBL {
 	}
 	
 	//rrl 20110118: recupera los workitems de 1 objeto dado
+	/**
+	 * Devuelve TODOS los workitems para un idObject/idObjectType
+	 * para recuperar solo los "ALIVE" ver método getActiveSteps en esta misma clase
+	 * 
+	 *  ATENCION: no filtra los del currentUserId, devuelve todos.
+	 *  Es un método para admin...
+	 *  
+	 * @param idWork
+	 * @param status
+	 * @param currentUser
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getWorkListByIdWorkAndStatus(
 			Integer idWork, String status, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
