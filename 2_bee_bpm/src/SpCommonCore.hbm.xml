@@ -214,7 +214,7 @@
 		</property>
 	</class>
 
-	<class lazy="false" name="com.sp.common.core.model.PersonaCore"
+	<class lazy="false" name="com.sp.common.core.model.PersonCore"
 		table="persona">
 		<id name="id" type="java.lang.Integer">
 			<column name="id_persona" />
@@ -335,7 +335,7 @@
 			<column name="mod_user" />
 		</property>
 
-		<many-to-one name="personaCore" class="com.sp.common.core.model.PersonaCore"
+		<many-to-one name="personCore" class="com.sp.common.core.model.PersonCore"
 			column="id_persona" lazy="false" />
 
 		<many-to-one name="businessCalendar" class="com.sp.calendar.model.BusinessCalendar"
