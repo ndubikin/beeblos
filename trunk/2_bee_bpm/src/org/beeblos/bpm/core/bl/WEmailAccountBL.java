@@ -1,7 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 
-import static com.email.core.util.ConstantsEmailCore.COPY_OF;
+import static com.sp.common.util.ConstantsCommon.COPY_OF;
 
 import java.util.List;
 
