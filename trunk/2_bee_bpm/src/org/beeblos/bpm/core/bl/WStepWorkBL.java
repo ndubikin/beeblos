@@ -51,6 +51,7 @@ import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WStepWorkAssignment;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.WUserRole;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WProcessDefThin;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
@@ -63,11 +64,7 @@ import org.joda.time.LocalDate;
 import com.email.core.bl.SendEmailBL;
 import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
-import com.sp.common.core.bl.UserBL;
 import com.sp.common.core.error.BeeblosBLException;
-import com.sp.common.core.error.UserException;
-import com.sp.common.core.model.User;
-import com.sp.common.core.model.UserRole;
 import com.sp.common.util.Resourceutil;
 import com.sp.common.util.StringPair;
 
@@ -379,6 +376,9 @@ public class WStepWorkBL {
 	 * 
 	 * @author dmuleiro 20140529
 	 * 
+ 	 * nes 20140628 - its 391 - el "user" debe ser el del bpm (WUserDef) que es el que
+	 * tiene los roles
+	 * 
 	 * @param userId
 	 * @param stepList
 	 * @param isAdmin
@@ -388,12 +388,12 @@ public class WStepWorkBL {
 	private List<WStepWork> _getOnlyUserPermittedStepWorks(Integer userId, 
 			List<WStepWork> stepList, boolean isAdmin, Integer currentUserId){
 		
-		User user = null;
+		WUserDef user = null;
 		try {
-			user = new UserBL().getUserByPK(userId);
-		} catch (UserException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			user = new WUserDefBL().getWUserDefByPK(userId);
+		} catch (WUserDefException e) {
+			logger.error("Error getting WUserDef to check user permissions wuid:"+userId);
+			e.printStackTrace();
 		}
 		
 		if (stepList != null && user != null){
@@ -447,7 +447,7 @@ public class WStepWorkBL {
 	 * @return
 	 */
 	public boolean userHasStepWorkPermissions(
-			User user, WStepWork step, boolean hasAdminRights, Integer currentUserId){
+			WUserDef user, WStepWork step, boolean hasAdminRights, Integer currentUserId){
 		
 		if (step != null){
 			
@@ -473,7 +473,7 @@ public class WStepWorkBL {
 						
 						if (user.getRolesRelated() != null){
 							
-							for (UserRole userRole : user.getRolesRelated()){
+							for (WUserRole userRole : user.getRolesRelated()){ //nes 20140628 - its 391
 							
 								if (stepWorkAssignment.getIdAssignedRole().equals(userRole.getRole().getId())){
 									return true;

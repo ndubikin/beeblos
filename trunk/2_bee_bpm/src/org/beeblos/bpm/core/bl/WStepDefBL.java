@@ -26,10 +26,10 @@ import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
+import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.WUserRole;
 import org.joda.time.DateTime;
 
-import com.sp.common.core.model.User;
-import com.sp.common.core.model.UserRole;
 import com.sp.common.util.StringPair;
 
 
@@ -875,13 +875,16 @@ public class WStepDefBL {
 	/**
 	 * Checks if an user has valid permissions in a "stepDef"
 	 * 
+	 * nes 20140628 - its 391 - el "user" debe ser el del bpm (WUserDef) que es el que
+	 * tiene los roles
+	 * 
 	 * @author dmuleiro 20140529
 	 *  
 	 * @param userId
 	 * @param step
 	 * @return
 	 */
-	public boolean userHasStepDefPermission(User user, WStepDef step){
+	public boolean userHasStepDefPermission(WUserDef user, WStepDef step){
 		
 		if (user == null || user.getId() == null || user.getId().equals(0)){
 			logger.error("The user is not valid!");
@@ -909,7 +912,7 @@ public class WStepDefBL {
 			if (step.getRolesRelated() != null && user.getRolesRelated() != null){
 				
 				for (WStepRole stepRole : step.getRolesRelated()){
-					for (UserRole userRole : user.getRolesRelated()){
+					for (WUserRole userRole : user.getRolesRelated()){ // nes 20140628 - its 391
 					
 						if (stepRole.getRole() != null && stepRole.getRole().getId() != null
 								&& userRole.getRole() != null && userRole.getRole().getId() != null
