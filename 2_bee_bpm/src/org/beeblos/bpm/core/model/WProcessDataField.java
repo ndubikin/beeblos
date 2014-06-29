@@ -22,18 +22,47 @@ public class WProcessDataField implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	/**
+	 * autonumeric id
+	 */
 	private Integer id;
+	/**
+	 * process head belonging to
+	 */
 	private Integer processHeadId;
+	/**
+	 * data type belongs this field
+	 */
 	private WDataType dataType;
+	/**
+	 * processData field name
+	 */
 	private String name;
+	/**
+	 * Column name if there is a jdbc sinchronization available
+	 */
 	private String columnName;
 	private Integer order;
 	private boolean required;
 	private String comments;
+	/**
+	 * Indicates this pdf is active. There is not possible to delete old
+	 * or obsolete pdf then this field indicates there is an operative
+	 * pdf or obsolete one
+	 */
 	private boolean active;
+	/**
+	 * Max length of data to control aspects
+	 */
 	private Integer length;
+	/**
+	 * indicates this pdf accepts null values
+	 */
 	private boolean nullable=true;
+	/**
+	 * no tengo claro unico que seria esto ... no tengo claro que controlariamos o 
+	 * que implicancias podria tener ... :(
+	 */
 	private boolean unique=false;
 	private boolean quoted=false;
 	private String defaultValue;
@@ -172,7 +201,11 @@ public class WProcessDataField implements java.io.Serializable {
 		this.comments = comments;
 	}
 
-
+	/**
+	 * Indicates this pdf is active. There is not possible to delete old
+	 * or obsolete pdf then this field indicates there is an operative
+	 * pdf or obsolete one
+	 */
 	public boolean isActive() {
 		return active;
 	}

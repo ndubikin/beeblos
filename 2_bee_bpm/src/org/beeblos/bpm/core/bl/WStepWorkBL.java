@@ -1026,21 +1026,18 @@ public class WStepWorkBL {
 		logger.debug(">>> _executeProcessStep >> qty routes:"+routes.size());
 		// TODO: urgentemente definir transaccion aquí ...
 		
-		if ( routes.size()==0 ) { // no next steps - this tree ends here ...
-			
-			qty = 0; // tree finished ...
-		
-		} else {
+		if ( routes.size() > 0 ) { // generates next steps / routes
 		
 			// process each route ( generates a new step for each new valid route )
 			for (WStepSequenceDef route: routes ) {
 				logger.debug(">>> _executeProcessStep >> "+route.getId()+"/"+route.getName());
 				
-				// if corresponds to take this route....
+				// if corresponds to choose that route....
 				if (route.isAfterAll() 
 						|| (route.getValidResponses()!=null 
 							&& route.getValidResponses().contains(idResponse.toString().trim()+"|") ) ) {
-					logger.debug(">>> _executeProcessStep >> processing route to: "+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
+					logger.debug(">>> _executeProcessStep >> processing route to: "
+							+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
 
 					if ( route.getToStep()!=null ) {
 						
@@ -1100,6 +1097,10 @@ public class WStepWorkBL {
 					}
 				}
 			}
+		} else { // no next steps - this tree finishes here ...
+			
+			qty = 0; // no new routes ...
+		
 		}
 		
 		return qty;

@@ -205,11 +205,11 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 
 			Method m = null;
 
-			Class[] paramTypes = new Class[]{ Class.forName(paramType)};
+			Class[] paramTypes = new Class[]{ Integer.class, Class.forName(paramType), Integer.class };
 					
 			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
 			
-			res = m.invoke(instance, new Object[] { id });
+			res = m.invoke(instance, new Object[] { id, value,1000 });
 									
 		} catch (ClassNotFoundException e) {
 			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
