@@ -12,16 +12,19 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.core.model.enumerations.ProcessStage;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
+import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -40,6 +43,7 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.sp.common.model.ManagedDataField;
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
@@ -129,6 +133,8 @@ public class WStepWorkDao {
 			session.update(stepw);
 //			HibernateUtil.update(swco);
 
+			tx.commit();
+
 			/*
 			 *  set process custom data
 			 *  idWork & idStepWork is assigned in add method
@@ -142,12 +148,11 @@ public class WStepWorkDao {
 					stepw.getManagedData().setPk(null);
 				}
 				_persistStepWorkManagedData(stepw);
+				_synchronizeManagedData(stepw); // nes 20140629
 			}
 			
-			tx.commit();
-
 		} catch (HibernateException ex) {
-			String mess= "WStepWorkDao: update - Can't update swco definition record "+ 
+			String mess= "HibernateException: update - Can't update swco definition record "+ 
 							stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
 							" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause();
 			logger.error( mess );
@@ -156,7 +161,17 @@ public class WStepWorkDao {
 				tx.rollback();
 			
 			throw new WStepWorkException( mess );
+			
+		} catch (Exception ex) {
+			String mess= "Exception: update - Can't update swco definition record "+ 
+							stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
+							" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause();
+			logger.error( mess );
 
+			if (tx != null)
+				tx.rollback();
+			
+			throw new WStepWorkException( mess );
 		}
 					
 	}
@@ -206,7 +221,16 @@ public class WStepWorkDao {
 			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
-			String mess = "WStepWorkDao: lock - can't update database table w_step_work - id = "
+			String mess = "HibernateException: lock - can't update database table w_step_work - id = "
+					+ (id!=null?id:"null")	+ " - " + ex.getMessage() + " - " + ex.getCause();
+			logger.error( mess );
+			throw new WStepWorkException(ex);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: lock - can't update database table w_step_work - id = "
 					+ (id!=null?id:"null")	+ " - " + ex.getMessage() + " - " + ex.getCause();
 			logger.error( mess );
 			throw new WStepWorkException(ex);
@@ -260,11 +284,19 @@ public class WStepWorkDao {
 			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
-			String mess ="WStepWorkDao: unlock - can't update database table w_step_work - id = "
+			String mess ="HibernateException: unlock - can't update database table w_step_work - id = "
 					+ (id!=null?id:"null") + " - " + ex.getMessage() + " - " + ex.getCause();
 			logger.error(mess);
 			throw new WStepWorkException(ex);
 
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			if (tx != null)
+				tx.rollback();
+			String mess ="Exception: unlock - can't update database table w_step_work - id = "
+					+ (id!=null?id:"null") + " - " + ex.getMessage() + " - " + ex.getCause();
+			logger.error(mess);
+			throw new WStepWorkException(ex);
 		}
 					
 	}
@@ -290,12 +322,18 @@ public class WStepWorkDao {
 			throw new WStepWorkException(mess);
 
 		} catch (WStepWorkException e) {
-			String mess = "WStepWorkDao: WStepWorkException - delete - Exception in deleting swco rec "
+			String mess = "WStepWorkException: WStepWorkException - delete - Exception in deleting swco rec "
 						+ stepw.getCurrentStep().getStepHead().getName()+" "+stepw.getwProcessWork().getReference() 
 						+ " <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() ;
 			logger.error(mess);
 			throw new WStepWorkException(mess);
-
+			
+		} catch (Exception e) {
+			String mess = "Exception: WStepWorkException - delete - Exception in deleting swco rec "
+						+ stepw.getCurrentStep().getStepHead().getName()+" "+stepw.getwProcessWork().getReference() 
+						+ " <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() ;
+			logger.error(mess);
+			throw new WStepWorkException(mess);
 		} 
 
 	}
@@ -327,11 +365,18 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess="WStepWorkDao: getWStepWorkByPK - we can't obtain the required id = "+
+			String mess="HibernateException: getWStepWorkByPK - we can't obtain the required id = "+
 							id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(mess);
 			throw new WStepWorkException(mess);
-
+		
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: getWStepWorkByPK - we can't obtain the required id = "+
+							id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
 		}
 		
 		if ( stepw != null && stepw.getCurrentStep() != null ) {
@@ -439,11 +484,18 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepWorkDao: getWStepWorks() - can't obtain swco list - " +
+			logger.warn("HibernateException: getWStepWorks() - can't obtain swco list - " +
 					ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepWorkException("WStepWorkDao: getWStepWorks() - can't obtain swco list: "
 					+ ex.getMessage()+"\n"+ex.getCause());
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("Exception: getWStepWorks() - can't obtain swco list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepWorkException("WStepWorkDao: getWStepWorks() - can't obtain swco list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
 		}
 
 		// set process custom data
@@ -492,6 +544,14 @@ public class WStepWorkDao {
 						logger.warn(message);
 
 						throw new WStepWorkException(message);
+				} catch (Exception e) {
+					String message = "Exception: can't retrieve stored custom data from managed table:"
+							+ (md.getManagedTableConfiguration()!=null?(md.getManagedTableConfiguration().getName()!=null?md.getManagedTableConfiguration().getName():"null"):"managed table data is null")
+							+ e.getMessage() + " - "
+							+ e.getCause();
+						logger.warn(message);
+
+						throw new WStepWorkException(message);						
 				}
 			}
 		} 
@@ -499,22 +559,25 @@ public class WStepWorkDao {
 
 
 	
-	// persists managed data for stepWork
+	// persists managed data for a stepWork
 	// TODO: ojo porque estoy persistiendo el managed data de un step work cuando le hago update.
 	// pero el problema es que si esto es un -process- resulta que puedo generar "n" rutas y esas 
 	// rutas son al final wStepWork, por lo que podría estar persistiendo "n" veces el mismo managed
 	// data, porque el managed data se persiste desde el step pero a nivel del "work".
 	// HAY QUE DARLE UNA VUELTA A ESTO ...
 	private void _persistStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
+		logger.debug(">>> _persistStepWorkManagedData ....");
+		
 		if (stepWork.getManagedData()!=null
 				&& stepWork.getManagedData().getDataField()!=null 
 				&& stepWork.getManagedData().getDataField().size()>0){
-			logger.debug(">>> _persistStepWorkManagedData ....");
+			logger.debug(">>> has managed data to persist ....");
 			
+			ManagedData md = stepWork.getManagedData(); // nes 20140629
 			TableManager tm = new TableManager();
 			try {
 				
-				tm.persist(stepWork.getManagedData());
+				tm.persist(md);
 			
 			} catch (TableManagerException e) {
 				String message = "TableManagerException: can't persist custom data at managed table:"
@@ -530,7 +593,44 @@ public class WStepWorkDao {
 
 				throw new WStepWorkException(message);
 			}
+		} 
+	}
+	
+	private void _synchronizeManagedData(WStepWork stepWork) throws WStepWorkException{
+		logger.debug(">>> _persistStepWorkManagedData ....");
+		
+		if (stepWork.getManagedData()!=null
+				&& stepWork.getManagedData().getDataField()!=null 
+				&& stepWork.getManagedData().getDataField().size()>0){
+			logger.debug(">>> has managed data to inspect synchro ....");
+			
+			ManagedData md = stepWork.getManagedData(); // nes 20140629
 
+			if (md.getDataField().size()>0) {
+				
+				ManagedDataSynchronizerJavaAppImpl pwSynchronizer = 
+						new ManagedDataSynchronizerJavaAppImpl();
+				
+				// retrieves data from external sources and update fields in managed table
+				try {
+					
+					pwSynchronizer.synchronizeProcessWorkManagedData(
+							stepWork.getwProcessWork(), md, ProcessStage.STEP_WORK_WAS_PROCESSED);
+				
+				} catch (ManagedDataSynchronizerException e) {
+					String message = "ManagedDataSynchronizerException: can't synchronize custom data with java app"
+							+ (stepWork.getManagedData().getManagedTableConfiguration()!=null
+									?(stepWork.getManagedData().getManagedTableConfiguration().getName()!=null
+										?stepWork.getManagedData().getManagedTableConfiguration().getName()
+										:"null")
+									: "??? null")
+							+ e.getMessage() + " - "
+							+ e.getCause();
+					logger.error(message);
+				}
+				
+				logger.debug(">> managed data has been syncrhonized ...");				
+			}
 		} 
 	}
 	
@@ -590,11 +690,17 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="WStepWorkDao: 001 getWStepWorks() - can't obtain swco list - " +
+			String message="HibernateException: 001 getWStepWorks() - can't obtain swco list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(message );
 			throw new WStepWorkException(message);
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception: 001 getWStepWorks() - can't obtain swco list - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(message );
+			throw new WStepWorkException(message);
 		}
 
 		return stepws;
@@ -646,11 +752,17 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="WStepWorkDao: 001 getWStepWorks() - can't obtain swco list - " +
+			String message="HibernateException: 001 getWStepWorks() - can't obtain swco list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(message );
 			throw new WStepWorkException(message);
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception: 001 getWStepWorks() - can't obtain swco list - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(message );
+			throw new WStepWorkException(message);
 		}
 
 		return stepws;

@@ -9,7 +9,7 @@ import com.sp.common.model.ManagedDataField;
  *
  * This object represents a table residing in a schema/database which manages
  * user data fields related with a process.
- * The information is loaded from processHead.getManagedTableConfiguration() wich has
+ * The information is loaded from processHead.getManagedTableConfiguration() which has
  * the managed table configuration info like tableName, schema, catalog, etc, and
  * the data field list (List<ManagedDataField> dataField) which is loaded from 
  * processHead.getProcessDataFieldDef() and must be match with database engine field
@@ -51,6 +51,12 @@ public class ManagedData {
 		}	
 	}
 
+	/**
+	 * El id de la pk externa para sincronizar. Debería coincidir con el id-objet (en general pienso...)
+	 * Pero habría que revisar a ver como generalizar esto para que se sincronice con lo que quiera ...
+	 * 
+	 * @return
+	 */
 	public Integer getPk() {
 		return pk;
 	}
