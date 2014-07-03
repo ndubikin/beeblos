@@ -562,7 +562,12 @@ public class TableManager {
 			if (i>0)  {sql+=", ";} // comma (field separator)
 			ManagedDataField dataField = it.next();
 			sql+=" "+dataField.getColumnName();
-			sql+="= '"+dataField.getValue()+"' ";
+			// nes 20140630 - its 389 - en campos tipo varchar deja null en vez de blanco
+			sql+="= '"
+						+(dataField.getValue()!=null ? dataField.getValue() 
+												: dataField.getDataType().getSqlType()==12
+														?"":null)
+				+"' ";
 			i++;
 		}
 		sql+=" WHERE id = "+managedData.getPk();
