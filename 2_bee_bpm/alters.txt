@@ -30,7 +30,7 @@ ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` CHANGE COLUMN `order` `ord
 ALTER TABLE `bee_bpm_dev`.`w_process_head_managed_data` CHANGE COLUMN `sxema` `schema_` VARCHAR(100) NOT NULL  ;
 
 ## nes 20140207 - tabla para definir metodos para interacciones con sistemas externos...
-CREATE TABLE `w_process_head_method` (
+CREATE TABLE `bee_bpm_dev`.`w_process_head_method` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `head_id` int(11) NOT NULL DEFAULT '0',
   `classname` varchar(255) DEFAULT NULL COMMENT 'for APP synchro: class name to execute',
@@ -51,7 +51,7 @@ CREATE TABLE `w_process_head_method` (
   CONSTRAINT `fk_w_process_head_managed_data_10` FOREIGN KEY (`head_id`) REFERENCES `w_process_head` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='external methods for interactions with external systems...';
 
-CREATE TABLE `w_stepsequence_method` (
+CREATE TABLE `bee_bpm_dev`.`w_stepsequence_method` (
   `id_step_sequence` int(11) NOT NULL,
   `id_method` int(11) NOT NULL,
   `enabled` bit(1) DEFAULT b'1',
@@ -65,3 +65,18 @@ CREATE TABLE `w_stepsequence_method` (
   CONSTRAINT `fk_w_stepsequence_method_1` FOREIGN KEY (`id_step_sequence`) REFERENCES `w_step_sequence_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_w_stepsequence_method_2` FOREIGN KEY (`id_method`) REFERENCES `w_process_head_methods` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation w-step-sequence-def with w-process-head-methods';
+
+ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` 
+COMMENT = 'Para definir los datafields pertenecientes a los procesos. Se definen aqui a nivel de WProcessHead y luego se puede dar visibilidad en cada step' ;
+
+## nes 20140705 - quito algunos not null que inicializabamos a cero y que en realidad no serían requeridos ...
+ALTER TABLE `bee_bpm_dev`.`w_step_work_assignment` 
+CHANGE COLUMN `reassigned_date` `reassigned_date` TIMESTAMP NULL DEFAULT NULL COMMENT 'TIMESTAMP CON LA REASIGNACIÓN'; 
+ALTER TABLE `bee_bpm_dev`.`w_step_work_assignment` 
+CHANGE COLUMN `from_reassignment_date` `from_reassignment_date` TIMESTAMP NULL DEFAULT NULL COMMENT 'TIMESTAMP CON LA REASIGNACIÓN' ;
+ALTER TABLE `bee_bpm_dev`.`w_step_work_assignment` 
+CHANGE COLUMN `insert_date` `insert_date` TIMESTAMP NULL DEFAULT NULL ,
+CHANGE COLUMN `insert_user` `insert_user` INT(11) NULL DEFAULT NULL ;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `id_user_assignment_method` INT DEFAULT NULL AFTER `expired_user_notice`;
