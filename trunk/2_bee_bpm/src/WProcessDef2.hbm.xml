@@ -3,6 +3,7 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated May 21, 2012 10:49:10 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
+
 	<class name="org.beeblos.bpm.core.model.WProcessHead" table="w_process_head">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -110,7 +111,7 @@
 			<generator class="identity" />
 		</id>
 		<many-to-one name="processHead"
-			class="org.beeblos.bpm.core.model.WProcessHead" lazy="false">
+			class="org.beeblos.bpm.core.model.noper.WProcessHeadLight" lazy="false">
 			<column name="process_head_id" />
 		</many-to-one>
 		<property name="classname" type="string">
@@ -814,6 +815,13 @@
 		</property>
 		<property name="expiredUserNotice" type="java.lang.Boolean">
 			<column name="expired_user_notice" sql-type="bit" />
+		</property>
+
+		<property generated="never" lazy="false" name="idUserAssignmentMethod"
+			type="java.lang.Integer">
+			<column name="id_user_assignment_method">
+				<comment>metodo externo a ejecutar (id_external_method) para asignar en runtime los usuarios que pueden realizar este step</comment>
+			</column>
 		</property>
 
 		<property name="customValidation" type="java.lang.Boolean">

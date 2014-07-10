@@ -14,11 +14,11 @@ public class WStepWorkAssignment implements java.io.Serializable {
 	 * reassign of a step.
 	 * In this scenario, the user can assign a step to a role or to a user ( 1 user or
 	 * 1 role )
-	 * In a loop case when the step goes to another step and return to this step 
+	 * In a loop case (when the step goes to another step and return to this step) 
 	 * there must be not a problem because the reference is between step-work ( workitem ) 
 	 * and this entity, so 1 and only 1 manual assignment is supported for a concrete
 	 * workitem.
-	 * The field "active" may be drive the possibility of have more than 1 assignment and
+	 * The field "active" may be drive the possibility to have more than 1 assignment and
 	 * user must set the active reassignment...
 	 * 
 	 */

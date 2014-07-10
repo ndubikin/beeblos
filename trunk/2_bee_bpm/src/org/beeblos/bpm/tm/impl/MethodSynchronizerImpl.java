@@ -40,7 +40,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 			String classToInvoke, String methodToInvoke, Class[] paramTypes, Object[] paramData) {
 		logger.debug(">>>invokeExternalMethod 2");
 		
-		Object obj=null;
+//		Object obj=null;
 
 		try {
 
@@ -53,11 +53,12 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 //			instance = getObject(cls);
 
 			Method m = null;
-			Object res = null;
+//			Object res = null;
 			
 			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
 			
-			res = m.invoke(instance, paramData);
+			// invokes external method
+			m.invoke(instance, paramData);
 			
 			logger.debug(">>>invokeExternalMethod: method was executed ...");
 			
@@ -107,6 +108,91 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 		
 	}
 	
+	public Object invokeExternalMethod(WExternalMethod method, Integer currentId, Integer currentUserId) {
+		logger.debug(">>>invokeExternalMethod 1a");
+		
+		return invokeExternalMethod(
+				method.getClassname(), 
+				method.getMethodname(),
+				method.getParamlistType(), 
+				method.getParamlist(),
+				currentUserId
+			);
+	}
+	
+	/**
+	 * Invokes a method(methodToInvoke) from a class (classToInvoke) with passed params
+	 */
+	public Object invokeExternalMethod(
+			String classToInvoke, String methodToInvoke, Class[] paramTypes, Object[] paramData, Integer currentUserId) {
+		logger.debug(">>>invokeExternalMethod with object return");
+		
+		Object obj=null;
+
+		try {
+
+			Class<?> cls;
+			Object instance = new Object();
+			
+			cls = Class.forName(classToInvoke);
+			instance = cls.newInstance();
+
+//			instance = getObject(cls);
+
+			Method m = null;
+			//instance.getClass().getMethods()
+			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
+			
+			obj = m.invoke(instance, paramData);
+			
+			logger.debug(">>>invokeExternalMethod: method was executed ...");
+			
+		} catch (ClassNotFoundException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod SecurityException class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod NoSuchMethodException class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalArgumentException class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod IllegalAccessException class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod InvocationTargetException class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod InstantiationException class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause());
+			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod Exception class:"
+							+classToInvoke+"  method:"+methodToInvoke
+							+" paramType:"+paramTypes+" error:"+e.getMessage()+" - "+e.getCause()+" - "+e.getClass());
+			e.printStackTrace();
+		}
+		
+		return obj;
+		
+	}
+	
 	/**
 	 * reflection invoked method to obtain desired value ...
 	 * To put a value in external app please see invokeExternalMethodPut
@@ -115,11 +201,12 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * @param methodToInvoke
 	 * @param paramType - java type of parameter syncrhonized...
 	 * @param id
+	 * @param externalUserId - user id for external app
 	 * @return
 	 */
 	@Override
 	public Object invokeExternalMethodGet(
-			String classToInvoke, String methodToInvoke, String paramType, Integer id ) {
+			String classToInvoke, String methodToInvoke, String paramType, Integer id, Integer externalUserId ) {
 		logger.debug(">> invokeExternalMethodGet:"+(classToInvoke!=null?classToInvoke:"null class ,,,")
 						+":"+(methodToInvoke!=null?methodToInvoke:"null method..."));
 		
@@ -138,7 +225,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 
 			Method m = null;
 
-			Class[] paramTypes = new Class[]{ Class.forName(paramType)};
+			Class[] paramTypes = new Class[]{ Integer.class, Class.forName(paramType), Integer.class };
 					
 			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
 			
@@ -184,11 +271,12 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * @param id
 	 * @param paramType - java type of parameter syncrhonized...
 	 * @param value
+	 * @param externalUserId - user id for external app 
 	 * @return
 	 */
 	@Override
 	public Object invokeExternalMethodPut(
-			String classToInvoke, String methodToInvoke, Integer id, String paramType, String value ) {
+			String classToInvoke, String methodToInvoke, Integer id, String paramType, String value, Integer externalUserId ) {
 		
 		Object obj=null;
 		Object res = null;

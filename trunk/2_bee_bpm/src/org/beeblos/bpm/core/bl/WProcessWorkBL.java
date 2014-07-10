@@ -38,6 +38,8 @@ public class WProcessWorkBL {
 		
 		logger.debug("add() WProcessWork - Name: ["+process.getId()+"]");
 		
+		Integer externalUserId=currentUserId; // TODO IMPLEMENTAR: new WUseridmapperBL().getExternalUser(currentUserId);
+		
 		_setObjectType(process);
 		// timestamp & trace info
 		process.setInsertDate(new DateTime());
@@ -47,7 +49,7 @@ public class WProcessWorkBL {
 		if ( process.getStatus()==null ) {
 			process.setStatus(new WProcessStatus(1));
 		}
-		return new WProcessWorkDao().add(process);
+		return new WProcessWorkDao().add(process,externalUserId);
 
 	}
 	
