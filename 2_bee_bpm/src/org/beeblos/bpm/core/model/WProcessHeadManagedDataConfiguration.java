@@ -205,18 +205,22 @@ public class WProcessHeadManagedDataConfiguration implements java.io.Serializabl
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "WProcessHeadManagedDataConfiguration [headId=" + headId + ", "
+		return "WProcessHeadManagedDataConfiguration ["
+				+ (headId != null ? "headId=" + headId + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
 				+ (ignoreCase != null ? "ignoreCase=" + ignoreCase + ", " : "")
 				+ (schema != null ? "schema=" + schema + ", " : "")
 				+ (catalog != null ? "catalog=" + catalog + ", " : "")
 				+ (comment != null ? "comment=" + comment + ", " : "")
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ "insertUser=" + insertUser + ", "
+				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ "modUser=" + modUser + "]";
+				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
 	

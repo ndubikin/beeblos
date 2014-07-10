@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.dao.WUserRoleDao;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
+import org.beeblos.bpm.core.error.WExternalMethodException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
@@ -89,37 +90,37 @@ public class WStepWorkBL {
 	 * 
 	 * @param work
 	 * @param swco
-	 * @param currentUser
+	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
 	 * @throws WProcessWorkException
 	 * @throws WStepWorkSequenceException
 	 */
-	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUser) 
+	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUserId) 
 			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
 		
 		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"] ...");
 		
 		Integer workId;
-		
+
 		if ( work.getId()!=null && work.getId()!=0 ) {
 			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+work.getId()+")");
 		}
-		
+
 		// nes 20130912 - if process is not active throws exception
 		if (!work.getProcessDef().isActive()) {
 			logger.warn("Trying to start a new workflow referring an inactive process id:"+work.getProcessDef().getId());
 			throw new WProcessWorkException("This process is inactive. Can't start a new workflow.");
 		}
-			
+
 		if (work.getStatus() == null) {
 			work.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
 		}
-		
+
 		// adds the new ProcessWork
 		WProcessWorkBL wpbl = new WProcessWorkBL(); 
-		workId = wpbl.add(work, currentUser);
-		work = wpbl.getWProcessWorkByPK(workId, currentUser); // checks all properties was correctly stored in the object
+		workId = wpbl.add(work, currentUserId);
+		work = wpbl.getWProcessWorkByPK(workId, currentUserId); // checks all properties was correctly stored in the object
 		
 		// if exists managed data set with just created work id
 		if (stepw.getManagedData()!=null) {
@@ -134,15 +135,23 @@ public class WStepWorkBL {
 		stepw.setwProcessWork(work);
 		// timestamp & trace info
 		stepw.setArrivingDate(new DateTime());
-		stepw.setInsertUser( new WUserDef(currentUser) );
+		stepw.setInsertUser( new WUserDef(currentUserId) );
 		stepw.setModDate( DEFAULT_MOD_DATE_TIME);
 		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
 		
+		// nes 20140707 - assign users at runtime if there is defined ...
+		if ( stepw.getCurrentStep().isRuntimeAssignedUsers()) {
+			_assignRuntimeUsers(
+					stepw,
+					stepw.getCurrentStep().getIdUserAssignmentMethod(),
+					currentUserId);
+		}
+		
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
 		this.createStepWorkSequenceLog(null, stepw, false, 
-				null, stepw.getCurrentStep(), currentUser);
+				null, stepw.getCurrentStep(), currentUserId);
 
-		_sendEmailNotification(stepw, currentUser);
+		_sendEmailNotification(stepw, currentUserId);
 
 		return idGeneratedStep;
 	}
@@ -221,8 +230,16 @@ public class WStepWorkBL {
 	}
 
 	// ######### TRANSACCION URGENTE METER TRANSACCION #####################
-	
-	public void update(WStepWork stepw, Integer currentUser) throws WStepWorkException {
+	/**
+	 * updates a step work
+	 * 
+	 * nes 20140707 - added currentUserId as param
+	 * 
+	 * @param stepw
+	 * @param currentUserId
+	 * @throws WStepWorkException
+	 */
+	public void update(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
 		
 		logger.debug("update() WStepWork < id = "+stepw.getId()+">");
 		
@@ -230,9 +247,9 @@ public class WStepWorkBL {
 
 			// timestamp & trace info
 			stepw.setModDate(new DateTime());
-			stepw.setModUser(currentUser);
+			stepw.setModUser(currentUserId);
 
-			new WStepWorkDao().update(stepw);
+			new WStepWorkDao().update(stepw,currentUserId);
 			
 		} else {
 			
@@ -262,20 +279,29 @@ public class WStepWorkBL {
 	
 	}
 	
-	
-	public List<StringPair> getComboList(
-			String textoPrimeraLinea, String separacion )
-	throws WStepWorkException {
-		 
-		return new WStepWorkDao().getComboList(textoPrimeraLinea, separacion);
-
-
-	}
+	// dejo comentada nes 20140705
+//	/**
+//	 * Este método no tiene sentido porque a priori no tendria sentido devolver una lista de wStepWork para
+//	 * comobo y además sin filtrar,o sea toda la bd???
+//	 * @param textoPrimeraLinea
+//	 * @param separacion
+//	 * @return
+//	 * @throws WStepWorkException
+//	 */
+//	@Deprecated
+//	public List<StringPair> getComboList(
+//			String textoPrimeraLinea, String separacion )
+//	throws WStepWorkException {
+//		 
+//		return new WStepWorkDao().getComboList(textoPrimeraLinea, separacion);
+//
+//
+//	}
 
 	/**
 	 * returns true if exists active process for process id, id object, idObjectType ...
 	 * 
-	 * @param processId
+	 * @param processId - >> refers to wProcessDefId
 	 * @param idObject
 	 * @param idObjectType
 	 * @param currentUser
@@ -289,6 +315,18 @@ public class WStepWorkBL {
 		return new WStepWorkDao().existsActiveProcess(processId, idObject, idObjectType);
 	}
 	
+	/**
+	 * checks if exists processes related with given ids...
+	 * User is responsible to provide a coherent set of ids ... 
+	 * To check for alive process please use existsActiveProcess 
+	 * 
+	 * @param processId
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public Boolean existsProcess(
 			Integer processId, Integer idObject, String idObjectType, Integer currentUser ) 
 	throws WStepWorkException {
@@ -299,7 +337,7 @@ public class WStepWorkBL {
 	/**
 	 * returns qty of existing step works for a given processDefId (process version)
 	 * 
-	 * @param processId
+	 * @param processId  >> refers to wProcessDef id
 	 * @param mode: A = alive, P = processed
 	 * @return
 	 * @throws WStepWorkException
@@ -313,7 +351,7 @@ public class WStepWorkBL {
 	 * 
 	 * Returns the number of "WStepWork" registers related to a concrete "WStepDef"
 	 *
-	 * @param  Integer stepId
+	 * @param  Integer stepId >> refers to wStepDef id
 	 * @param  String mode
 	 * 
 	 * @return Integer
@@ -353,7 +391,7 @@ public class WStepWorkBL {
 		/**
 		 * Obtenemos de la lista de steps vivos los que tienen permiso para el "currentUserId"
 		 */
-		stepList = this._getOnlyUserPermittedStepWorks(currentUserId, stepList, isAdmin, currentUserId);
+		stepList = this._checkUserPermisionnsForStepList(currentUserId, stepList, isAdmin, currentUserId);
 		
 		// nota: refactoricé un hasAdminRights que usabamos en otro método para que puedas usarlo aquí ...
 		// 
@@ -385,7 +423,7 @@ public class WStepWorkBL {
 	 * @param currentUserId
 	 * @return
 	 */
-	private List<WStepWork> _getOnlyUserPermittedStepWorks(Integer userId, 
+	private List<WStepWork> _checkUserPermisionnsForStepList(Integer userId, // cambiado el nombre nes 20140705
 			List<WStepWork> stepList, boolean isAdmin, Integer currentUserId){
 		
 		WUserDef user = null;
@@ -404,7 +442,7 @@ public class WStepWorkBL {
 				
 				try {
 					/**
-					 * Comprobamos si es "admin" y si es así 
+					 * If request comes at "admin" mode, then check if the user is an admin ... 
 					 */
 					if (isAdmin){
 						
@@ -452,7 +490,7 @@ public class WStepWorkBL {
 		if (step != null){
 			
 			/**
-			 * Si el WStepDef estatico asociado al WStepWork tiene permisos devuelve "true"
+			 * Si el WStepDef definido asociado a este WStepWork tiene permisos devuelve "true"
 			 */
 			if (new WStepDefBL().userHasStepDefPermission(user, step.getCurrentStep())){
 				return true;
@@ -1015,7 +1053,9 @@ public class WStepWorkBL {
 		
 		
 		System.out.println("VERIFICAR QUE CARGUE CORRECTAMENTE LAS RUTAS PARA EL RUTEO DEL STEP ...");
-		// load routes from current step
+		/**
+		 * load outgoing routes from current step
+		 */
 		List<WStepSequenceDef> routes = new WStepSequenceDefBL()
 												.getStepSequenceList(
 														currentStepWork.getwProcessWork().getProcessDef().getId(), 
@@ -1026,19 +1066,29 @@ public class WStepWorkBL {
 		logger.debug(">>> _executeProcessStep >> qty routes:"+routes.size());
 		// TODO: urgentemente definir transaccion aquí ...
 		
+		/**
+		 * if there is outgoing routes defined then generates new wStepWork that correspond as
+		 * bussiness logic defined...
+		 */
 		if ( routes.size() > 0 ) { // generates next steps / routes
 		
-			// process each route ( generates a new step for each new valid route )
+			/**
+			 *  process each route ( generates a new step for each new valid route )
+			 */
 			for (WStepSequenceDef route: routes ) {
 				logger.debug(">>> _executeProcessStep >> "+route.getId()+"/"+route.getName());
 				
-				// if corresponds to choose that route....
+				/**
+				 *  if corresponds to get this route....
+				 */
 				if (route.isAfterAll() 
-						|| (route.getValidResponses()!=null 
-							&& route.getValidResponses().contains(idResponse.toString().trim()+"|") ) ) {
+						|| _routeBelongsValidResponseSelected(idResponse, route) ) {
 					logger.debug(">>> _executeProcessStep >> processing route to: "
 							+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
 
+					/**
+					 * obtains destiny step of this route ...
+					 */
 					if ( route.getToStep()!=null ) {
 						
 						qty++;
@@ -1051,9 +1101,11 @@ public class WStepWorkBL {
 						this.createStepWorkSequenceLog(route, newStepWork, false, 
 								route.getFromStep(), route.getToStep(), currentUser);
 
-						// if route has external method execution then execute it!
+						/**
+						 *  if route has external method execution related then execute it!
+						 */
 						try {
-							_executeExternalMethod(route, currentStepWork, currentUser);
+							_executeRouteExternalMethod(route, currentStepWork, currentUser);
 						} catch (InstantiationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -1062,18 +1114,18 @@ public class WStepWorkBL {
 							e.printStackTrace();
 						}
 						
-						// checks for notifications subscribers for the new step and send the emails
+						/**
+						 *  checks for notifications subscribers for the new step and send the emails
+						 */
 						_sendEmailNotification(newStepWork, currentUser);
 						
 						// nes 20130913
 						// if route evaluation order is first true condition then breaks for loop and return
-						if ( currentStepWork.getCurrentStep().getRouteEvalOrder() != null
-								&& currentStepWork.getCurrentStep().getRouteEvalOrder()
-									.equals(RouteEvaluationOrder.FIRST_TRUE_CONDITION.getId())) {
+						if ( routeEvaluationOrderHasFirstTrueCondition(currentStepWork) ) {
 							break;
 						}
 					}
-					else {  // ending routes
+					else {  // ending routes ( not destiny step ...)
 						
 						// write step-work-sequence log file 
 						this.createStepWorkSequenceLog(route, currentStepWork, false, 
@@ -1081,7 +1133,7 @@ public class WStepWorkBL {
 
 						// if route has external method execution then execute it!
 						try {
-							_executeExternalMethod(route, currentStepWork, currentUser);
+							_executeRouteExternalMethod(route, currentStepWork, currentUser);
 						} catch (InstantiationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -1095,8 +1147,9 @@ public class WStepWorkBL {
 						// if ret arrives here with true it indicates there are another valid routes for this step
 						// but no action is required
 					}
-				}
+				} // go to next route ... (endfor)
 			}
+			
 		} else { // no next steps - this tree finishes here ...
 			
 			qty = 0; // no new routes ...
@@ -1105,6 +1158,36 @@ public class WStepWorkBL {
 		
 		return qty;
 		
+	}
+
+	/**
+	 * Checks if a step has first true condition for route evaluation order 
+	 * for outgoing routes ...
+	 * 
+	 * @param currentStepWork
+	 * @return
+	 */
+	private boolean routeEvaluationOrderHasFirstTrueCondition(
+			WStepWork currentStepWork) {
+		return currentStepWork.getCurrentStep().getRouteEvalOrder() != null
+				&& currentStepWork.getCurrentStep().getRouteEvalOrder()
+					.equals(RouteEvaluationOrder.FIRST_TRUE_CONDITION.getId());
+	}
+
+	/**
+	 * Checks if route belongs with the response seleted for currentStep
+	 * @param idResponse
+	 * @param route
+	 * @return
+	 */
+	private boolean _routeBelongsValidResponseSelected(Integer idResponse,
+			WStepSequenceDef route) {
+		return route.getValidResponses()!=null 
+				/**
+				 * each route stores id list with valid responses accepted to 
+				 * to get this route...
+				 */
+			&& route.getValidResponses().contains(idResponse.toString().trim()+"|");
 	}
 	
 	// dml 20130827 - creamos el log en WStepWorkSequence de la nueva ruta creada
@@ -1138,15 +1221,61 @@ public class WStepWorkBL {
 		
 	}
 
+	/**
+	 * Sets a new step work and add it to db
+	 * If new step has user assignment at runtime, executes referred method to assign it...
+	 * 
+	 * @param runtimeSettings
+	 * @param currentUser
+	 * @param currentStepWork
+	 * @param isAdminProcess
+	 * @param now
+	 * @param newStepWork
+	 * @param route
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	private void _setNewWorkingStepAndInsertRec(
-			WRuntimeSettings runtimeSettings, Integer currentUser,
+			WRuntimeSettings runtimeSettings, Integer currentUserId,
 			WStepWork currentStepWork, boolean isAdminProcess, DateTime now,
 			WStepWork newStepWork, WStepSequenceDef route)
 			throws WStepDefException, WStepWorkException {
 		
-		_setNewStep(newStepWork, currentStepWork, route.getToStep(), runtimeSettings, currentUser, now, isAdminProcess );
+		_setNewStep(newStepWork, currentStepWork, route.getToStep(), runtimeSettings, currentUserId, now, isAdminProcess );
 		
-		this.add(newStepWork, currentUser);
+		this.add(newStepWork, currentUserId);
+		
+		if ( newStepWork.getCurrentStep().isRuntimeAssignedUsers()) {
+			_assignRuntimeUsers(
+						newStepWork,
+						newStepWork.getCurrentStep().getIdUserAssignmentMethod(),
+						currentUserId);
+		}
+	}
+
+
+	/**
+	 * Assign runtime users and sent notification if the method fails or can't obtain almost
+	 * 1 assigned user ...
+	 * 
+	 * If can't obtain almost 1 user to assign the step, then assigns it to administrator user (role ...)
+	 * 
+	 * @param newStepWork
+	 * @param methodId >> external method id
+	 * @param currentUser
+	 */
+	private void _assignRuntimeUsers(WStepWork stepWork, Integer methodId, Integer currentUserId) {
+		
+		int[] idAssignedUsers;
+		try {
+			
+			Object obj = _executeExternalMethod(stepWork, methodId, currentUserId);
+			
+		} catch (Exception e) {
+			
+		}
+		
+		
 	}
 
 	private void _sendEmailNotification(WStepWork newStep, Integer currentUserId) {
@@ -1162,8 +1291,42 @@ public class WStepWorkBL {
 	}
 	
 	/**
-	 * Execute external method associated with this route ...
-	 * Route related methods will be executed when navigate the route ...
+	 * Execute external method 
+	 * 
+	 * 
+	 * 
+	 * @param currentStepWork
+	 * @param currentUser
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	private Object _executeExternalMethod(
+			WStepWork currentStepWork, Integer methodId, Integer currentUserId) 
+					throws InstantiationException, IllegalAccessException {
+		logger.debug(">>>_executeExternalMethod id:"+(methodId!=null?methodId:"null"));
+		Object result=null;
+		WExternalMethod method;
+		try {
+			method = new WExternalMethodBL().getExternalMethodByPK(methodId);
+			if (method!=null){
+				if (method.getParamlistName().length>0){
+					_setParamValues(method,currentStepWork, null, currentUserId);
+				}
+				result = new MethodSynchronizerImpl().invokeExternalMethod(method, null,currentUserId);
+			}			
+		} catch (WExternalMethodException e) {
+			String mess = "Error trying to get external method definition for methodId:"
+							+(methodId!=null?methodId:"null")
+							+ e.getMessage()+" - "+e.getClass();
+			logger.error(mess);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Execute external method associated with a route ...
+	 * Route related methods will be executed when navigates the route ...
 	 * 
 	 * @param route
 	 * @param currentStepWork
@@ -1171,12 +1334,12 @@ public class WStepWorkBL {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	private void _executeExternalMethod(
+	private void _executeRouteExternalMethod(
 			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) throws InstantiationException, IllegalAccessException {
-		logger.debug(">>>_executeExternalMethod check...");
+		logger.debug(">>>_executeRouteExternalMethod check...");
 		if (route.getExternalMethod()!=null && route.getExternalMethod().size()>0){
 			for (WExternalMethod method: route.getExternalMethod()) {
-				logger.debug(">>>_executeExternalMethod:"+method.getClassname()+"."+method.getMethodname());
+				logger.debug(">>>_executeRouteExternalMethod:"+method.getClassname()+"."+method.getMethodname());
 				if (method.getParamlistName().length>0){
 					_setParamValues(method,currentStepWork, route, currentUserId);
 				}
@@ -1196,7 +1359,9 @@ public class WStepWorkBL {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	private void _setParamValues(WExternalMethod method, WStepWork currentStepWork, WStepSequenceDef route, Integer currentUserId) throws InstantiationException, IllegalAccessException {
+	private void _setParamValues(
+			WExternalMethod method, WStepWork currentStepWork, WStepSequenceDef route, 
+			Integer currentUserId) throws InstantiationException, IllegalAccessException {
 		int tope=method.getParamlistName().length;
 		Object[] paramValueObj = new Object[tope];
 		for (int i=0;i<tope;i++) {
@@ -1210,8 +1375,8 @@ public class WStepWorkBL {
 				paramValueObj[i]=obj;
 			}
 		}
+		
 		method.setParamlist(paramValueObj);
-
 		
 	}
 

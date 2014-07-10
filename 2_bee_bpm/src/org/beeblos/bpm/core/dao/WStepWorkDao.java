@@ -19,6 +19,7 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.core.model.WUseridmapper;
 import org.beeblos.bpm.core.model.enumerations.ProcessStage;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
@@ -76,8 +77,8 @@ public class WStepWorkDao {
 			res = session.save(stepw);
 			
 			/*
-			 *  set process custom data
-			 *  idWork & idStepWork is assigned in previous add method
+			 *  set  custom data
+			 *  idWork & idStepWork is assigned in previous add 
 			 */
 			if (stepw.getManagedData()!=null) {
 				stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
@@ -118,7 +119,7 @@ public class WStepWorkDao {
 	}
 	
 	
-	public void update(WStepWork stepw) throws WStepWorkException {
+	public void update(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
 		logger.debug("update() WStepWork  id:["+(stepw!=null?stepw.getId():"null")+"]");
 		
 		// note: add basic transactional control to grant insert in 2 tables (w_step_work & managed table if exists)
@@ -136,8 +137,8 @@ public class WStepWorkDao {
 			tx.commit();
 
 			/*
-			 *  set process custom data
-			 *  idWork & idStepWork is assigned in add method
+			 *  set  custom data
+			 *  idWork & idStepWork is assigned in add 
 			 */
 			if (stepw.getManagedData()!=null) {
 				stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
@@ -148,7 +149,7 @@ public class WStepWorkDao {
 					stepw.getManagedData().setPk(null);
 				}
 				_persistStepWorkManagedData(stepw);
-				_synchronizeManagedData(stepw); // nes 20140629
+				_synchronizeManagedData(stepw,currentUserId); // nes 20140629
 			}
 			
 		} catch (HibernateException ex) {
@@ -399,7 +400,7 @@ public class WStepWorkDao {
 				throw new WStepWorkException( mess );
 			}		
 			
-			// set process custom data
+			// set  custom data
 			if (stepw.getCurrentStep().getDataFieldDef()!=null
 				&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
 				
@@ -498,7 +499,7 @@ public class WStepWorkDao {
 					+ ex.getMessage()+"\n"+ex.getCause());
 		}
 
-		// set process custom data
+		// set  custom data
 		for (WStepWork stepw: stepws) {
 			if (stepw.getCurrentStep() != null
 					&& stepw.getCurrentStep().getDataFieldDef() != null
@@ -561,7 +562,7 @@ public class WStepWorkDao {
 	
 	// persists managed data for a stepWork
 	// TODO: ojo porque estoy persistiendo el managed data de un step work cuando le hago update.
-	// pero el problema es que si esto es un -process- resulta que puedo generar "n" rutas y esas 
+	// pero el problema es que si esto es un -- resulta que puedo generar "n" rutas y esas 
 	// rutas son al final wStepWork, por lo que podría estar persistiendo "n" veces el mismo managed
 	// data, porque el managed data se persiste desde el step pero a nivel del "work".
 	// HAY QUE DARLE UNA VUELTA A ESTO ...
@@ -596,13 +597,15 @@ public class WStepWorkDao {
 		} 
 	}
 	
-	private void _synchronizeManagedData(WStepWork stepWork) throws WStepWorkException{
+	private void _synchronizeManagedData(WStepWork stepWork, Integer currentUserId ) throws WStepWorkException{
 		logger.debug(">>> _persistStepWorkManagedData ....");
 		
 		if (stepWork.getManagedData()!=null
 				&& stepWork.getManagedData().getDataField()!=null 
 				&& stepWork.getManagedData().getDataField().size()>0){
 			logger.debug(">>> has managed data to inspect synchro ....");
+			
+			Integer externalUserId=currentUserId; // TODO IMPLEMENTAR: new WUseridmapperBL().getExternalUser(currentUserId);
 			
 			ManagedData md = stepWork.getManagedData(); // nes 20140629
 
@@ -615,7 +618,7 @@ public class WStepWorkDao {
 				try {
 					
 					pwSynchronizer.synchronizeProcessWorkManagedData(
-							stepWork.getwProcessWork(), md, ProcessStage.STEP_WORK_WAS_PROCESSED);
+							stepWork.getwProcessWork(), md, ProcessStage.STEP_WORK_WAS_PROCESSED, externalUserId);
 				
 				} catch (ManagedDataSynchronizerException e) {
 					String message = "ManagedDataSynchronizerException: can't synchronize custom data with java app"
@@ -659,7 +662,9 @@ public class WStepWorkDao {
 		query +="left join w_step_def wsd on w.id_current_step=wsd.id ";
 		query +="left join w_step_role wsr on wsd.id=wsr.id_step ";
 		query +="left join w_step_user wsu on wsd.id=wsu.id_step ";
-		query +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";		
+		query +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";	
+		
+		// permissions check from database ...
 		query +="where ( wsr.id_role in ";
 		query +="(select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId ) OR  ";
 		query +=" ( wsu.id_user =:userId ) OR  ";
@@ -768,10 +773,10 @@ public class WStepWorkDao {
 		return stepws;
 	}
 
-	// NEW METHOD WITH ALL FILTERS ...
+	// NEW  WITH ALL FILTERS ...
 	/**
 	 * returns list of step work for a given processId, userId (optional if currentUserId is
-	 * a process Admin)
+	 * a  Admin)
 	 * 
 	 * @param idProcess
 	 * @param idCurrentStep
@@ -1329,7 +1334,7 @@ public class WStepWorkDao {
 	
 	/**
 	 * Returns active stepWork list for given idObject/idObjectType
-	 * This query don't check permissions for given user ... 
+	 * IMPORTANT: This query don't check permissions for given user ... 
 	 * 
 	 * @param idObject
 	 * @param idObjectType
@@ -1375,77 +1380,86 @@ public class WStepWorkDao {
 		return stepws;
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	public List<StringPair> getComboList(
-			String textoPrimeraLinea, String separacion )
-	throws WStepWorkException {
-		 
-			List<WStepWork> lsw = null;
-			List<StringPair> retorno = new ArrayList<StringPair>(10);
-			
-			org.hibernate.Session session = null;
-			org.hibernate.Transaction tx = null;
-
-			try {
-
-				session = HibernateUtil.obtenerSession();
-				tx = session.getTransaction();
-				tx.begin();
-
-				lsw = session
-						.createQuery("From WStepWork order by name ")
-						.list();
-		
-				tx.commit();
-				
-				if (lsw!=null) {
-					
-					// inserta los extras
-					if ( textoPrimeraLinea!=null && !"".equals(textoPrimeraLinea) ) {
-						if ( !textoPrimeraLinea.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,textoPrimeraLinea));  // deja la primera línea con lo q venga
-						} else {
-							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
-						}
-					}
-					
-					if ( separacion!=null && !"".equals(separacion) ) {
-						if ( !separacion.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,separacion));  // deja la separación línea con lo q venga
-						} else {
-							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
-						}
-					}
-					
-				
-					
-					for (WStepWork sw: lsw) {
-						retorno.add(new StringPair(sw.getId(),sw.getCurrentStep().getName()+"-"+sw.getwProcessWork().getReference()));
-					}
-				} else {
-					// nes  - si el select devuelve null entonces devuelvo null
-					retorno=null;
-				}
-				
-				
-			} catch (HibernateException ex) {
-				if (tx != null)
-					tx.rollback();
-				throw new WStepWorkException(
-						"Can't obtain WStepWorks combo list "
-						+ex.getMessage()+"\n"+ex.getCause());
-			} catch (Exception e) {}
-
-			return retorno;
-
-
-	}
+// dejo comentada nes 20140705	
+//	/**
+//	 * método con poco sentido: ¿para que querría devolver una lista de wStepWork para combo ...???
+//	 * y máxime sin filtrar ...!!
+//	 * 
+//	 * @param textoPrimeraLinea
+//	 * @param separacion
+//	 * @return
+//	 * @throws WStepWorkException
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public List<StringPair> getComboList(
+//			String textoPrimeraLinea, String separacion )
+//	throws WStepWorkException {
+//		 
+//			List<WStepWork> lsw = null;
+//			List<StringPair> retorno = new ArrayList<StringPair>(10);
+//			
+//			org.hibernate.Session session = null;
+//			org.hibernate.Transaction tx = null;
+//
+//			try {
+//
+//				session = HibernateUtil.obtenerSession();
+//				tx = session.getTransaction();
+//				tx.begin();
+//
+//				lsw = session
+//						.createQuery("From WStepWork order by name ")
+//						.list();
+//		
+//				tx.commit();
+//				
+//				if (lsw!=null) {
+//					
+//					// inserta los extras
+//					if ( textoPrimeraLinea!=null && !"".equals(textoPrimeraLinea) ) {
+//						if ( !textoPrimeraLinea.equals("WHITESPACE") ) {
+//							retorno.add(new StringPair(null,textoPrimeraLinea));  // deja la primera línea con lo q venga
+//						} else {
+//							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+//						}
+//					}
+//					
+//					if ( separacion!=null && !"".equals(separacion) ) {
+//						if ( !separacion.equals("WHITESPACE") ) {
+//							retorno.add(new StringPair(null,separacion));  // deja la separación línea con lo q venga
+//						} else {
+//							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+//						}
+//					}
+//					
+//				
+//					
+//					for (WStepWork sw: lsw) {
+//						retorno.add(new StringPair(sw.getId(),sw.getCurrentStep().getName()+"-"+sw.getwProcessWork().getReference()));
+//					}
+//				} else {
+//					// nes  - si el select devuelve null entonces devuelvo null
+//					retorno=null;
+//				}
+//				
+//				
+//			} catch (HibernateException ex) {
+//				if (tx != null)
+//					tx.rollback();
+//				throw new WStepWorkException(
+//						"Can't obtain WStepWorks combo list "
+//						+ex.getMessage()+"\n"+ex.getCause());
+//			} catch (Exception e) {}
+//
+//			return retorno;
+//
+//
+//	}
 
 	/**
-	 * return true if exists processes for given ids
+	 * return true if exists alive processes for given  def id, objectId and objectType id
 	 * 
-	 * @param idProcess
+	 * @param idProcess  >> refers to wProcessDefId
 	 * @param idObject
 	 * @param idObjectType
 	 * @return
@@ -1519,8 +1533,9 @@ public class WStepWorkDao {
 	/**
 	 * checks if exists processes related with given ids...
 	 * User is responsible to provide a coherent set of ids ...
+	 * To check for alive  please use existsActiveProcess
 	 * 
-	 * @param idProcess
+	 * @param idProcess >> refers to wProcessDef id (definition)
 	 * @param idObject
 	 * @param idObjectType
 	 * @return
@@ -1581,7 +1596,7 @@ public class WStepWorkDao {
 	}	
 	
 	/**
-	 *  returns qty of existing step works for a given processDefId (process version)
+	 *  returns qty of existing step works for a given processDefId ( version)
 	 *  
 	 *  nes 20140411 - pasado a criteria ...
 	 *  
@@ -1654,11 +1669,12 @@ public class WStepWorkDao {
 	}
 	
 	/**
-	 * @author dmuleiro - 20130830
 	 * 
-	 * Returns the number of "WStepWork" registers related to a concrete "WStepDef"
+	 * Returns the number of "WStepWork" items related to a given "WStepDef"
+	 * 
+	 * @author dmuleiro - 20130830 // mod nes 20140705
 	 *
-	 * @param  Integer stepId
+	 * @param  Integer stepId  >> refers to wStepDef id
 	 * @param  String mode
 	 * 
 	 * @return Integer
@@ -1692,15 +1708,17 @@ public class WStepWorkDao {
 
 			tx.begin();
 
-			Criteria crit = session.createCriteria(WStepWork.class);
+			Criteria crit = session.createCriteria(WStepWork.class)
+					.createAlias("currentStep", "currentStep", JoinType.LEFT_OUTER_JOIN); // refers to WStepDef nes 20140705
 			
 			crit.setProjection(Projections.rowCount());
 			
 			if (stepId!=null) {
 				crit.add( 
 						Restrictions.or(
-								Restrictions.eq("idCurrentStep",stepId),
-								Restrictions.eq("idPreviousStep",stepId) ) );
+								Restrictions.eq("currentStep.id",stepId)
+//								, Restrictions.eq("idPreviousStep",stepId) // nes 20140705 - este no iria no aplica al previos aqui según la explicación del método...  
+								) );
 			}
 			
 			if (mode.equals(ALIVE)) {
@@ -1876,7 +1894,7 @@ public class WStepWorkDao {
 	
 
 	/**
-	 * Returns a list of all process def id which has WORKS referring given stepDefId
+	 * Returns a list of all  def id which has WORKS referring given stepDefId
 	 * and distinct of processDefId
 	 * 
 	 * @author 	dml 20130507
@@ -1923,7 +1941,7 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "WStepWorkDao: getProcessIdList() - can't obtain id process list - " +
+			String mess = "WStepWorkDao: getProcessIdList() - can't obtain id  list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(mess);
 			throw new WStepWorkException(mess);

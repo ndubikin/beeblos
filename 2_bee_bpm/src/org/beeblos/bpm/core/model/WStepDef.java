@@ -29,34 +29,93 @@ public class WStepDef implements java.io.Serializable {
 	
 	private Integer id;
 	
+	/**
+	 * stepHead is intended to version control of a step definition
+	 * 
+	 */
 	private WStepHead stepHead;
 	private Integer version;
 	
+	/**
+	 * indicates this stepDef is active the environment where it is used
+	 * Active only intends to create o relate it with new process, but does not
+	 * change existing situations of existing processes (wProcessDef) nor 
+	 * current works (wProcessWork/wStepWork)
+	 */
 	private boolean active;
+	/**
+	 * Indicates this stepDef is used by many process definitions (wProcessDef)
+	 */
 	private boolean shared;
+	/**
+	 * Indicates this wStepDef is deleted but there is necessary 
+	 */
 	private boolean deleted; // dml 20130830
 	
+	/**
+	 * obsolete field
+	 */
+	@Deprecated
 	private Integer idDept;
+
+	/**
+	 * obsolete field
+	 */
+	@Deprecated
 	private Integer idPhase;
 	private String instructions;
+	
 	private String stepComments;
+	/**
+	 * JSF link field
+	 */
 	private String idListZone;
+	/**
+	 * JSF link field
+	 */
 	private String idWorkZone;
+	/**
+	 * JSF link field
+	 */
 	private String idAdditionalZone;
 	
 	private String idDefaultProcessor; // dml 20120619
 	
 	private String submitForm; // submit instructions
 	
+	/**
+	 * Time unit used to set the assignedTime
+	 */
 	private WTimeUnit timeUnit;
-	private Integer assignedTime;
-	private LocalDate deadlineDate;
-	private LocalTime deadlineTime;
-	private WTimeUnit reminderTimeUnit;
-	private Integer reminderTime; // en unidades de tiempo indicadas en reminderTimeUnit
 	
+	/**
+	 * Assigned time in timeUnit units
+	 */
+	private Integer assignedTime;
+	
+	private LocalDate deadlineDate;
+
+	private LocalTime deadlineTime;
+
+	/**
+	 * Time unit used to set the reminderTime
+	 */	
+	private WTimeUnit reminderTimeUnit;
+
+	/**
+	 * Assigned time in timeUnit units
+	 */
+	private Integer reminderTime; // en unidades de tiempo indicadas en reminderTimeUnit
+
+	/**
+	 * if true then the deadlines would be modified at runtime
+	 */
 	boolean runtimeModifiable; // si se pueden modificar los deadline y eso en runtime ...
 	
+	/**
+	 * indicates mandatory notifications ( not user configurable )
+	 * All 'false' flags indicates optional ( or user configurable ) notifications
+	 */
 	private boolean sentAdminNotice;
 	private boolean arrivingAdminNotice;
 	private boolean deadlineAdminNotice;
@@ -68,11 +127,17 @@ public class WStepDef implements java.io.Serializable {
 	private boolean reminderUserNotice;
 	private boolean expiredUserNotice;
 	
+	/**
+	 * 
+	 */
 	private boolean emailNotification;
+	/**
+	 * Indicates engine must notificate state changes 
+	 */
 	private boolean engineNotification;
 	
 	/**
-	 * indicates how the evaluation of outgoing routes of a task must be evaluated:
+	 * indicates how the analysis of outgoing routes of a task must be evaluated:
 	 * 
 	 * A - all true condition > will be start each route with has a true condition
 	 * F - first true condition > will start only the first evaluated route with true condition
@@ -80,13 +145,42 @@ public class WStepDef implements java.io.Serializable {
 	 */
 	private Character routeEvalOrder;
 	
+	/**
+	 * Valid responses list
+	 */
 	private Set<WStepResponseDef> response = new HashSet<WStepResponseDef>();
 //	private Set<WStepAssignedDef> assigned = new HashSet<WStepAssignedDef>();
 	
 	// at design time the designer may be associate some roles or users to the step
 	// MANY2MANY
+	/**
+	 * roles related with this step ( roles that have permissions to work / admin with 
+	 * the step)
+	 */
 	Set<WStepRole> rolesRelated=new HashSet<WStepRole>();
+	/**
+	 * users related with this step ( users that have permissions to work / admin with 
+	 * the step)
+	 */
 	Set<WStepUser> usersRelated=new HashSet<WStepUser>();
+	
+	/**
+	 * indicates the instance (wStepWork) belongs this wStepDef must obtain allowed users
+	 * from an external source executing WExternalMethod indicated by this id at runtime
+	 * 
+	 * To do this, current way is to execute an external method.
+	 * The exernal method must be defined or declared as WExternalMethod 
+	 * at WProcessDef/WProcessHead level.
+	 * About the meaning of this scenario, at runtime the external method must be 
+	 * performed next to the creation of the new wStepWork related with 
+	 * this wStepDef ...
+	 * 
+	 * required: external method must return an int[] with valid user ids 
+	 * 
+	 * nes 20140705
+	 * 
+	 */
+	private Integer idUserAssignmentMethod;
 	
 	// dml 20120217
 	private boolean customValidation;
@@ -102,7 +196,13 @@ public class WStepDef implements java.io.Serializable {
 	private String preconditions;
 	private String postconditions;
 
-	// dml 20130821
+	/**
+	 * data fields exposed for this step (must be showed, updated, loaded...)
+	 * 
+	 * The data fields exposed at step level must be defined at process level...
+	 * 
+	 * dml 20130821
+	 */
 	List<WStepDataField> dataFieldDef = new ArrayList<WStepDataField>();
 
 	// dml 20120113
@@ -1097,10 +1197,46 @@ public class WStepDef implements java.io.Serializable {
 		response.add(wStepResponseDef);
 	}
 
+	/**
+	 * indicates the instance (wStepWork) belongs this wStepDef must obtain allowed users
+	 * to method the step at runtime
+	 * 
+	 *  
+	 * link to method to assign users. The method must be defined or declared as 
+	 * externalMethod list at WProcessDef/WProcessHead level.
+	 * About the meaning of this scenario, at runtime the external method must be 
+	 * performed at the moment of the creation of the new wStepWork related with 
+	 * this wStepDef ...
+	 * 
+	 * required: external method must return an int[] with valid user ids
+	 * 
+	 * 	 * nes 20140705
+	 * 
+	 * @return the idUserAssignmentMethod
+	 */
+	public Integer getIdUserAssignmentMethod() {
+		return idUserAssignmentMethod;
+	}
+
+	/**
+	 * @param idUserAssignmentMethod the idUserAssignmentMethod to set
+	 */
+	public void setIdUserAssignmentMethod(Integer idUserAssignmentMethod) {
+		this.idUserAssignmentMethod = idUserAssignmentMethod;
+	}
+	/**
+	 * returns true users to work with this step must be assigned at runtime...
+	 * nes 20140705
+	 * @return
+	 */
+	public boolean isRuntimeAssignedUsers() {
+		return idUserAssignmentMethod!=null && idUserAssignmentMethod!=0;
+	}
+
 	public boolean isCustomValidation() {
 		return customValidation;
 	}
-
+	
 	public void setCustomValidation(boolean customValidation) {
 		this.customValidation = customValidation;
 	}

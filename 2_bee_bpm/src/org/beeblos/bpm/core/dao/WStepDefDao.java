@@ -91,10 +91,10 @@ public class WStepDefDao {
 
 		logger.debug("updateStepDeletedField() WStepDef < id = " + stepId + ">");
 
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		
 		try {
-
-			org.hibernate.Session session = null;
-			org.hibernate.Transaction tx = null;
 
 			session = HibernateUtil.obtenerSession();
 			tx = session.getTransaction();
@@ -112,12 +112,21 @@ public class WStepDefDao {
 			tx.commit();
 
 		} catch (HibernateException ex) {
-			String message = "SlaDao: update - Can't update deleted field for step " + stepId
+			if (tx != null)
+				tx.rollback();
+			String message = "HibernateException: update - Can't update deleted field for step " + stepId
 					+ " - and deleted = " + deleted + "\n - " + ex.getMessage() + "\n"
 					+ ex.getCause();
 			logger.error(message);
 			throw new WStepDefException(message);
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message = "Exception: update - Can't update deleted field for step " + stepId
+					+ " - and deleted = " + deleted + "\n - " + ex.getMessage() + "\n"
+					+ ex.getCause();
+			logger.error(message);
+			throw new WStepDefException(message);
 		}
 
 	}
@@ -181,11 +190,17 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepDefDao: getWStepDefByPK - we can't obtain the required id = "+
+			logger.warn("HibernateException: getWStepDefByPK - we can't obtain the required id = "+
 					step.getId() + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefByPK - we can't obtain the required id : " + step.getId() + " - "
 					+ ex.getMessage()+"\n"+ex.getCause());
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("Exception: getWStepDefByPK - we can't obtain the required id = "+
+					step.getId() + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("WStepDefDao: getWStepDefByPK - we can't obtain the required id : " + step.getId() + " - "
+					+ ex.getMessage()+"\n"+ex.getCause());
 		}
 
 	}
@@ -221,11 +236,17 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.error("WStepDefDao: getWStepDefByPK - we can't obtain the required id = "+
+			logger.error("HibernateException: getWStepDefByPK - we can't obtain the required id = "+
 					id + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefByPK - HibernateException we can't obtain the required id : " + id + " - "
 					+ ex.getMessage()+"\n"+ex.getCause());
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.error("Exception: getWStepDefByPK - we can't obtain the required id = "+
+					id + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("WStepDefDao: getWStepDefByPK - HibernateException we can't obtain the required id : " + id + " - "
+					+ ex.getMessage()+"\n"+ex.getCause());
 		}
 
 		try {
@@ -305,11 +326,17 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepDefDao: getWStepDefs() - can't obtain step list - " +
+			logger.warn("HibernateException: getWStepDefs() - can't obtain step list - " +
 					ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
 					+ ex.getMessage()+"\n"+ex.getCause());
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("Exception: getWStepDefs() - can't obtain step list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
 		}
 
 		// TODO HAY QUE CARGAR EL MANAGED DATA PARA CADA STEP-DEF
@@ -339,11 +366,17 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepDefDao: getLastVersionNumber - can't obtain step last version = " +
+			logger.warn("HibernateException: getLastVersionNumber - can't obtain step last version = " +
 					stepHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepDefException("getLastVersionNumber;  can't obtain step last version: " + 
 					stepHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("Exception: getLastVersionNumber - can't obtain step last version = " +
+					stepHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("getLastVersionNumber;  can't obtain step last version: " + 
+					stepHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
 		}
 
 		if (version == null){
@@ -375,11 +408,17 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepDefDao: existsStep - can't obtain step id = " +
+			logger.warn("HibernateException: existsStep - can't obtain step id = " +
 					stepId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepDefException("existsStep;  can't obtain step id: " + 
 					stepId + " - " + ex.getMessage()+"\n"+ex.getCause());
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("Exception: existsStep - can't obtain step id = " +
+					stepId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("existsStep;  can't obtain step id: " + 
+					stepId + " - " + ex.getMessage()+"\n"+ex.getCause());
 		}
 
 		if (storedId == null){
@@ -452,11 +491,17 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepDefDao: getWStepDefs() - can't obtain step list - " +
+			logger.warn("HibernateException: getWStepDefs() - can't obtain step list - " +
 					ex.getMessage()+"\n"+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
 					+ ex.getMessage()+"\n"+ex.getCause());
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			logger.warn("Exception: getWStepDefs() - can't obtain step list - " +
+					ex.getMessage()+"\n"+ex.getCause() );
+			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
+					+ ex.getMessage()+"\n"+ex.getCause());
 		}
 
 		return steps;
@@ -501,11 +546,17 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "WStepDefDao: getProcessIdList() - can't obtain process id list - " +
+			String mess = "HibernateException: getProcessIdList() - can't obtain process id list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(mess);
 			throw new WStepDefException(mess);
-
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getProcessIdList() - can't obtain process id list - " +
+					ex.getMessage()+"\n"+ex.getCause();
+			logger.warn(mess);
+			throw new WStepDefException(mess);
 		}
 
 		return processIdList;
@@ -571,7 +622,13 @@ public class WStepDefDao {
 				throw new WStepDefException(
 						"Can't obtain WStepDefs combo list "
 						+ex.getMessage()+"\n"+ex.getCause());
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
+				throw new WStepDefException(
+						"Can't obtain WStepDefs combo list "
+						+e.getMessage()+"\n"+e.getCause());				
+			}
 
 			return retorno;
 
@@ -644,7 +701,13 @@ public class WStepDefDao {
 				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+"\n"+ex.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+"\n"+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			}
 
 			return retorno;
 
@@ -779,7 +842,13 @@ public class WStepDefDao {
 				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+"\n"+ex.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+"\n"+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			}
 
 			return retorno;
 
@@ -849,7 +918,7 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="WStepDefDao: 002 getWStepDefs() - can't obtain process list - " +
+			String message="HibernateException: 002 getWStepDefs() - can't obtain process list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(message );
 			throw new WStepDefException(message);
@@ -857,7 +926,7 @@ public class WStepDefDao {
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="WStepDefDao: 002B getWStepDefs() - can't obtain process list - " +
+			String message="Exception: 002B getWStepDefs() - can't obtain process list - " +
 					ex.getMessage()+"\n"+ex.getCause();
 			logger.warn(message );
 			throw new WStepDefException(message);

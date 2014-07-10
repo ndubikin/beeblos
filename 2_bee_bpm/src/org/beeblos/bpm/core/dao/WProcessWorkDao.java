@@ -58,10 +58,11 @@ public class WProcessWorkDao {
 	 * Insert a new process work -> new process is launched!
 	 * 
 	 * @param processWork
+	 * @param currentUserId 
 	 * @return
 	 * @throws WProcessWorkException
 	 */
-	public Integer add(WProcessWork processWork) throws WProcessWorkException {
+	public Integer add(WProcessWork processWork, Integer externalUserId ) throws WProcessWorkException {
 		
 		logger.debug(">>>>> add() WProcessWork - Name: ["+processWork.getReference()+"] <<<<<");
 		Integer id=null;
@@ -94,7 +95,7 @@ public class WProcessWorkDao {
 						new ManagedDataSynchronizerJavaAppImpl();
 				
 				// retrieves data from external sources and update fields in managed table
-				pwSynchronizer.synchronizeProcessWorkManagedData(processWork, md, STARTUP);
+				pwSynchronizer.synchronizeProcessWorkManagedData(processWork, md, STARTUP, externalUserId);
 				logger.debug(">> managed data has been syncrhonized ...");
 				
 			}

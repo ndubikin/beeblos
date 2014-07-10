@@ -32,7 +32,8 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 
 	private static final Log logger = LogFactory.getLog(ManagedDataSynchronizerJavaAppImpl.class.getName());
 	
-	public void synchronizeProcessWorkManagedData(WProcessWork processWork, ManagedData md, ProcessStage stage) 
+	public void synchronizeProcessWorkManagedData(
+			WProcessWork processWork, ManagedData md, ProcessStage stage, Integer externalUserId ) 
 			throws ManagedDataSynchronizerException {
 			logger.debug(">>> synchronizeProcessWorkManagedData ....");
 			
@@ -101,7 +102,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 				
 				for (WProcessDataField pdf: dftosApp) {
 					try {
-						syncrhonizeField(processWork, pdf, stage, md);
+						syncrhonizeField(processWork, pdf, stage, md,externalUserId );
 					} catch (ManagedDataSynchronizerException e) {
 						logger.error("ManagedDataSynchronizerException: Can't sinchronize field:"+(pdf!=null?pdf.getName():"null"));
 					} catch (Exception e) {
@@ -164,7 +165,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	 */
 	@Override
 	public Object syncrhonizeField(
-			WProcessWork work, WProcessDataField pdf, ProcessStage stage, ManagedData md) 
+			WProcessWork work, WProcessDataField pdf, ProcessStage stage, ManagedData md, Integer externalUserId ) 
 					throws ManagedDataSynchronizerException {
 		logger.debug(">> syncrhonizeField : "+(pdf!=null?pdf.getName():"null"));
 		
@@ -178,16 +179,16 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 //		if (stage.equals(STARTUP) || stage.equals(STEP_WORK_IS_INVOKED)) {
 			if (pdf.isAtProcessStartup() && stage.equals(STARTUP)) {
 				logger.debug(">> syncrho at STARTUP");
-				_setMDF(md, pdf.getName(), fromExternalDataSynchro(work.getIdObject(),pdf,stage));
+				_setMDF(md, pdf.getName(), fromExternalDataSynchro(work.getIdObject(),pdf,stage,externalUserId));
 			} else if(pdf.isWhenStepWorkIsInvoked() && stage.equals(STEP_WORK_IS_INVOKED)) {
 				logger.debug(">> syncrho at STEP_WORK_IS_INVOKED");
-				_setMDF(md, pdf.getName(), fromExternalDataSynchro(work.getIdObject(),pdf,stage));
+				_setMDF(md, pdf.getName(), fromExternalDataSynchro(work.getIdObject(),pdf,stage,externalUserId));
 			} else if (pdf.isAtProcessEnd() && stage.equals(END)) {
 				logger.debug(">> syncrho at END");
-				toExternalDataSynchro(work,pdf,stage,md);
+				toExternalDataSynchro(work,pdf,stage,md,externalUserId );
 			} else if (pdf.isWhenStepWorkIsProcessed() && stage.equals(STEP_WORK_WAS_PROCESSED)) {
 				logger.debug(">> syncrho at STEP_WORK_WAS_PROCESSED");
-				toExternalDataSynchro(work,pdf,stage,md);
+				toExternalDataSynchro(work,pdf,stage,md,externalUserId );
 			}
 //		} else if (stage.equals(END) || stage.equals(STEP_WORK_WAS_PROCESSED)) {
 //			toExternalDataSynchro(work,mdf,stage,md);
@@ -245,7 +246,8 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	 * @throws ManagedDataSynchronizerException
 	 */
 	private Object fromExternalDataSynchro(
-			Integer idObject, WProcessDataField mdf, ProcessStage stage) throws ManagedDataSynchronizerException {
+			Integer idObject, WProcessDataField mdf, ProcessStage stage, Integer externalUserId ) 
+					throws ManagedDataSynchronizerException {
 		logger.debug(":fromExternalDataSynchro obtaining external data... ");
 
 		// si va a recuperar datos de 1 fuente externa via app, tendrá que tener nombre de clase y método a invocar
@@ -263,11 +265,13 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		}
 		
 		Object returnedValue = new MethodSynchronizerImpl()
-									.invokeExternalMethodGet(
-											mdf.getClassName(), 
-											mdf.getGetMethod(), 
-											mdf.getParamType(), 
-											idObject ); 
+											.invokeExternalMethodGet(
+													mdf.getClassName() 
+													,mdf.getGetMethod() 
+													,mdf.getParamType() 
+													,idObject
+													,externalUserId // nes 20140707
+												); 
 		
 		logger.debug("returnedValue:"+(returnedValue!=null?returnedValue:"null"));
 		return returnedValue;
@@ -283,7 +287,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	 * @throws ManagedDataSynchronizerException
 	 */	
 	private Object toExternalDataSynchro(
-			WProcessWork work, WProcessDataField pdf, ProcessStage stage, ManagedData md) 
+			WProcessWork work, WProcessDataField pdf, ProcessStage stage, ManagedData md, Integer externalUserId ) 
 					throws ManagedDataSynchronizerException {
 		logger.debug(":toExternalDataSynchro sending data to another app... ");
 
@@ -299,11 +303,12 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 		
 		new MethodSynchronizerImpl()
 									.invokeExternalMethodPut( //classToInvoke, methodToInvoke, id, paramType, value)
-											pdf.getClassName(),
-											pdf.getPutMethod(),
-											work.getIdObject(), //idObject es el único vínculo entre el BPM y la app externa...
-											pdf.getParamType(), 
-											dataField.getValue() 
+											pdf.getClassName()
+											,pdf.getPutMethod()
+											,work.getIdObject() //idObject es el único vínculo entre el BPM y la app externa...
+											,pdf.getParamType() 
+											,dataField.getValue()
+											,externalUserId  // nes 20140707
 											); 
 		
 

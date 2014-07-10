@@ -4,6 +4,7 @@ package org.beeblos.bpm.core.model;
 
 import java.util.Arrays;
 
+import org.beeblos.bpm.core.model.noper.WProcessHeadLight;
 import org.joda.time.DateTime;
 
 /**
@@ -26,7 +27,7 @@ public class WExternalMethod implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private WProcessHead processHead;
+	private WProcessHeadLight processHead;
 	
 	/**
 	 * External class to be invoked
@@ -130,7 +131,7 @@ public class WExternalMethod implements java.io.Serializable {
 	public WExternalMethod(boolean createEmptyObject) {
 		
 		if (createEmptyObject){
-			this.processHead = new WProcessHead(createEmptyObject);
+			this.processHead = new WProcessHeadLight();
 		}
 		
 	}
@@ -143,11 +144,11 @@ public class WExternalMethod implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public WProcessHead getProcessHead() {
+	public WProcessHeadLight getProcessHead() {
 		return this.processHead;
 	}
 
-	public void setProcessHead(WProcessHead processHead) {
+	public void setProcessHead(WProcessHeadLight processHead) {
 		this.processHead = processHead;
 	}
 
