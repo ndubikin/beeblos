@@ -198,18 +198,12 @@ public class WProcessHeadDao {
 			tx = session.getTransaction();
 			tx.begin();
 
-			Object item = (Object) session.createCriteria(WProcessHead.class).add(
-					Restrictions.naturalId().set("id", id))
-					.setProjection(Projections.property("id"))
-					.setProjection(Projections.property("name"))
+			wpl = (WProcessHeadLight) session.createCriteria(WProcessHeadLight.class)
+					.add(Restrictions.naturalId().set("id", id))
 					.uniqueResult();
 
 			tx.commit();
 			
-			final Object[] fields = (Object[]) item;
-			
-			wpl = new WProcessHeadLight((Integer)fields[0],(String)fields[1]);
-
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
