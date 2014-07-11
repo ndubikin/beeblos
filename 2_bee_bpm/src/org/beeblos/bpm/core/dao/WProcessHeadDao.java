@@ -17,7 +17,9 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessHead;
+import org.beeblos.bpm.core.model.noper.WProcessHeadLight;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -146,7 +148,7 @@ public class WProcessHeadDao {
 		} 
 
 	}
-
+	
 	public WProcessHead getWProcessHeadByPK(Integer id) throws WProcessHeadException {
 
 		WProcessHead process = null;
@@ -166,14 +168,65 @@ public class WProcessHeadDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WProcessHeadDao: getWProcessByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessHeadException("WProcessHeadDao: getWProcessByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: getWProcessByPK - we can't obtain the required id = "+
+					id + "]  - "+ex.getMessage()+" - "+ex.getCause(); 
+			logger.warn(mess);
+			throw new WProcessHeadException(mess);
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWProcessByPK - we can't obtain the required id = "+
+					id + "]  - "+ex.getMessage()+" - "+ex.getCause()+" - "+ex.getClass(); 
+			logger.warn( mess );
+			throw new WProcessHeadException(mess);
 
 		}
 
 		return process;
+	}
+	
+	
+	public WProcessHeadLight getProcessHeadLightByPK(Integer id) throws WProcessHeadException {
+
+		WProcessHeadLight wpl = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			Object item = (Object) session.createCriteria(WProcessHead.class).add(
+					Restrictions.naturalId().set("id", id))
+					.setProjection(Projections.property("id"))
+					.setProjection(Projections.property("name"))
+					.uniqueResult();
+
+			tx.commit();
+			
+			final Object[] fields = (Object[]) item;
+			
+			wpl = new WProcessHeadLight((Integer)fields[0],(String)fields[1]);
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: getWProcessByPK - we can't obtain the required id = "+
+					id + "]  - "+ex.getMessage()+" - "+ex.getCause(); 
+			logger.warn(mess);
+			throw new WProcessHeadException(mess);
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWProcessByPK - we can't obtain the required id = "+
+					id + "]  - "+ex.getMessage()+" - "+ex.getCause()+" - "+ex.getClass(); 
+			logger.warn( mess );
+			throw new WProcessHeadException(mess);
+		}
+
+		return wpl;
 	}
 	
 	
@@ -199,10 +252,17 @@ public class WProcessHeadDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WProcessHeadDao: getWProcessByName - can't obtain process name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessHeadException("getWProcessByName;  can't obtain process name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: getWProcessByPK - we can't obtain process head by name = "+
+					name + "]  - "+ex.getMessage()+" - "+ex.getCause(); 
+			logger.warn(mess);
+			throw new WProcessHeadException(mess);
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWProcessByPK - we can't obtain process head by name = "+
+					name + "]  - "+ex.getMessage()+" - "+ex.getCause(); 
+			logger.warn( mess );
+			throw new WProcessHeadException(mess);
 
 		}
 
