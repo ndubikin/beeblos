@@ -13,6 +13,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.core.model.noper.WProcessHeadLight;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
@@ -162,7 +163,11 @@ public class WProcessHeadBL {
 
 		return new WProcessHeadDao().getWProcessHeadByPK(id);
 	}
-	
+
+	public WProcessHeadLight getProcessHeadLightByPK(Integer id, Integer currentUserId) throws WProcessHeadException {
+
+		return new WProcessHeadDao().getProcessHeadLightByPK(id);
+	}
 	
 	public WProcessHead getProcessHeadByName(String name, Integer currentUserId) throws WProcessHeadException {
 

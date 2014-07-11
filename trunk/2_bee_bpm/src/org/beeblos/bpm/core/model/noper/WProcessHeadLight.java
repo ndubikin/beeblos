@@ -15,10 +15,14 @@ public class WProcessHeadLight implements java.io.Serializable {
 	public WProcessHeadLight() {
 		super();
 	}
-
 	
 	public WProcessHeadLight(Integer id) {
 		this.id = id;
+	}
+
+	public WProcessHeadLight(Integer id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 
 	public Integer getId() {
