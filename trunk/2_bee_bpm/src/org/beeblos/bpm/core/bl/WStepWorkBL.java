@@ -1156,6 +1156,10 @@ public class WStepWorkBL {
 		
 		}
 		
+		if (qty==0) {
+			logger.warn(">>> no outgoing routes were generated ... this process finishes here ... ");
+		}
+		
 		return qty;
 		
 	}
