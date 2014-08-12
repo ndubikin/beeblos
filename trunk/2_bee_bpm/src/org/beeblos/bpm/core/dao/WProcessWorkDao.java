@@ -75,6 +75,8 @@ public class WProcessWorkDao {
 
 			id = Integer.valueOf(HibernateUtil.save(processWork));
 			
+			beforeJdbcOperation();//nes 20140812 - limpio la session para asegurar persistencia efectiva d los datos...
+			
 			// if no object related then relate with object itself
 			if (processWork.getIdObjectType()==WProcessWork.class.getName()) {
 				processWork.setIdObject(id);
@@ -115,6 +117,18 @@ public class WProcessWorkDao {
 		logger.debug(">>>>> ending add process work with id:"+id+" <<<<<");
 		return id;
 	}
+	
+	/**
+	 * hace un flush de la session factory antes de realizar operaciones jdbc ...
+	 */
+    private void beforeJdbcOperation() {
+    	logger.debug(">>> beforeJdbcOperation");
+        Session session = HibernateUtil.obtenerSession();
+        if (session.isDirty()) {
+            session.flush();
+            logger.debug(">>> flused ...");
+        }
+    }
 	
 	/**
 	 * Updates process work related with a given step work.
