@@ -1131,7 +1131,7 @@ public class TableManager {
 		sql += " CONSTRAINT `fk_"+tableName+"_1` FOREIGN KEY (`process_work_id`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION ";
 		sql += " ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		
-		System.out.println("sql:"+sql);
+		logger.debug(">>> sql:"+sql);
 		
 		return sql;
 	}
@@ -1199,7 +1199,8 @@ public class TableManager {
 	 */		
 	public void createTable( String schemaName, String tableName,  List<WProcessDataField> columns) 
 			throws TableManagerException {
-
+			logger.debug(">>> createTable:"+(tableName!=null?tableName:"null"));
+			
 			try {
 				connect();
 			} catch (ClassNotFoundException e2) {

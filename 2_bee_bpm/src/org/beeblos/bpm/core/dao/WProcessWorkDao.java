@@ -74,12 +74,13 @@ public class WProcessWorkDao {
 			}
 
 			id = Integer.valueOf(HibernateUtil.save(processWork));
-			
+
 			// nes 20140812 - dejo comentado porque no resolvió el problema ...
 			//			beforeJdbcOperation();//nes 20140812 - limpio la session para asegurar persistencia efectiva d los datos...
 			
 			// if no object related then relate with object itself
 			if (processWork.getIdObjectType()==WProcessWork.class.getName()) {
+
 				processWork.setIdObject(id);
 				HibernateUtil.update(processWork);
 			}
@@ -90,14 +91,14 @@ public class WProcessWorkDao {
 				if (processWork.getProcessDef().getProcessHead().getManagedTableConfiguration()!=null
 						&& processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()!=null
 						&& !"".equals(processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()) ) {
-					
+
 					ManagedData md = 
 							org.beeblos.bpm.tm.TableManagerBeeBpmUtil
 											.createManagedDataObject(processWork);
-					
+
 					ManagedDataSynchronizerJavaAppImpl pwSynchronizer = 
 							new ManagedDataSynchronizerJavaAppImpl();
-					
+
 					// retrieves data from external sources and update fields in managed table
 					pwSynchronizer.synchronizeProcessWorkManagedData(processWork, md, STARTUP, externalUserId);
 					logger.debug(">> managed data has been syncrhonized ...");
