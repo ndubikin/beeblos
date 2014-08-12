@@ -1416,6 +1416,8 @@ public class WProcessDefBL {
 	 */
 	public void createManagedTable(String schemaName, String tableName, List<WProcessDataField> dataFieldList) 
 			throws WProcessDefException {
+		logger.debug(">>> createManagedTable:"+(tableName!=null?tableName:"null"));
+		
 		try {
 			new TableManagerBLImpl()
 					.createManagedTable(
