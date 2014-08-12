@@ -75,7 +75,8 @@ public class WProcessWorkDao {
 
 			id = Integer.valueOf(HibernateUtil.save(processWork));
 			
-			beforeJdbcOperation();//nes 20140812 - limpio la session para asegurar persistencia efectiva d los datos...
+			// nes 20140812 - dejo comentado porque no resolvió el problema ...
+			//			beforeJdbcOperation();//nes 20140812 - limpio la session para asegurar persistencia efectiva d los datos...
 			
 			// if no object related then relate with object itself
 			if (processWork.getIdObjectType()==WProcessWork.class.getName()) {
@@ -83,25 +84,29 @@ public class WProcessWorkDao {
 				HibernateUtil.update(processWork);
 			}
 
-			// if exists managed data then will be explore if there are managed data fields to synchronize 
-			// at startup process level... and syncrhonize it...
-			if (processWork.getProcessDef().getProcessHead().getManagedTableConfiguration()!=null
-					&& processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()!=null
-					&& !"".equals(processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()) ) {
-				
-				ManagedData md = 
-						org.beeblos.bpm.tm.TableManagerBeeBpmUtil
-										.createManagedDataObject(processWork);
-				
-				ManagedDataSynchronizerJavaAppImpl pwSynchronizer = 
-						new ManagedDataSynchronizerJavaAppImpl();
-				
-				// retrieves data from external sources and update fields in managed table
-				pwSynchronizer.synchronizeProcessWorkManagedData(processWork, md, STARTUP, externalUserId);
-				logger.debug(">> managed data has been syncrhonized ...");
-				
+			try {
+				// if exists managed data then will be explore if there are managed data fields to synchronize 
+				// at startup process level... and syncrhonize it...
+				if (processWork.getProcessDef().getProcessHead().getManagedTableConfiguration()!=null
+						&& processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()!=null
+						&& !"".equals(processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()) ) {
+					
+					ManagedData md = 
+							org.beeblos.bpm.tm.TableManagerBeeBpmUtil
+											.createManagedDataObject(processWork);
+					
+					ManagedDataSynchronizerJavaAppImpl pwSynchronizer = 
+							new ManagedDataSynchronizerJavaAppImpl();
+					
+					// retrieves data from external sources and update fields in managed table
+					pwSynchronizer.synchronizeProcessWorkManagedData(processWork, md, STARTUP, externalUserId);
+					logger.debug(">> managed data has been syncrhonized ...");
+					
+				}
+			} catch (Exception e) {
+				logger.error("Error sincronizando managed table desde el add WProcessWork id:"+(id!=null?id:"null") );
+				// dejo seguir para que termine de insertar el proceso pero quedará inconsistente la información sincronizada...
 			}
-			
 		} catch (HibernateException ex) {
 			String mess="HibernateException: WProcessWorkDao: add - Can't store process definition record "+ 
 								processWork.getReference()+" - "+ex.getMessage()+"\n"+ex.getCause();
@@ -118,17 +123,23 @@ public class WProcessWorkDao {
 		return id;
 	}
 	
-	/**
-	 * hace un flush de la session factory antes de realizar operaciones jdbc ...
-	 */
-    private void beforeJdbcOperation() {
-    	logger.debug(">>> beforeJdbcOperation");
-        Session session = HibernateUtil.obtenerSession();
-        if (session.isDirty()) {
-            session.flush();
-            logger.debug(">>> flused ...");
-        }
-    }
+	// nota nes 20140812 - como no arregló el problema lo comento pero lo dejo aquí x si acaso necesito de nuevo probar algo de esto
+	// ahora estamos infiriendo q por ahi el problema es mysql y su caché, que se tara y no actualiza las cosas
+	// porque ocurrió que le quitamos la FK y resulta que ni caso hasta que no paramos tomcat e hicimos flush de todas
+	// las cosas de mysql ...
+//	/**
+//	 * hace un flush de la session factory antes de realizar operaciones jdbc ...
+//	 */
+//    private void beforeJdbcOperation() {
+//    	logger.debug(">>> beforeJdbcOperation");
+//        Session session = HibernateUtil.obtenerSession();
+//        Transaction tx = session.getTransaction();
+//		tx.begin();
+//        session.flush();
+//        tx.commit();
+//        
+//        logger.debug(">>> flused ...");
+//    }
 	
 	/**
 	 * Updates process work related with a given step work.
