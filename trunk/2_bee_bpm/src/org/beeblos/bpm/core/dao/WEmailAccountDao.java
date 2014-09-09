@@ -20,7 +20,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
 import com.email.core.error.UserEmailAccountException;
-import com.email.core.model.UserEmailAccount;
+import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
