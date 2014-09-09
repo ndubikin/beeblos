@@ -384,7 +384,7 @@
 
 	</class>
 
-	<class name="com.email.core.model.UserEmailAccount" table="usuario_cuentas_email">
+	<class name="com.sp.common.core.model.UserEmailAccount" table="usuario_cuentas_email">
 		<id name="id" type="java.lang.Integer">
 			<column name="id_uce" />
 			<generator class="identity" />
@@ -535,6 +535,19 @@
 		</property>
 	</class>
 
+	<class name="com.sp.common.core.model.noper.OrganizationUnitThin" table="organization_unit">
+	
+		<id name="id" type="java.lang.Integer">
+			<column name="id_departamento" />
+			<generator class="identity" />
+		</id>
+
+		<property generated="never" lazy="false" name="name"
+			type="string">
+			<column length="50" name="departamento_nombre" />
+		</property>
+	</class>
+
 	<class name="com.sp.common.core.model.UserDisplay" table="user">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -659,8 +672,15 @@
 			<column name="mod_user" />
 		</property>
 
+        <property name="automaticSend" type="java.lang.Boolean">
+            <column name="automatic_send" sql-type="bit"/>
+        </property>
+
 		<many-to-one class="com.sp.common.core.model.EmailTemplateTheme"
 			column="email_theme_id" lazy="false" name="emailTemplateTheme" />
+
+		<many-to-one class="com.sp.common.core.model.UserEmailAccount"
+			column="id_user_email_account" lazy="false" name="defaultEmailAccount" />
 
 	</class>
 
