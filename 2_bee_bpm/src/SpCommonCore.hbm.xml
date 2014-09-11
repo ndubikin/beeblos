@@ -657,6 +657,16 @@
 			<column name="template_file_name" />
 		</property>
 
+		<property name="to" type="java.lang.String">
+			<column name="to_" />
+		</property>
+		<property name="cc" type="java.lang.String">
+			<column name="cc" />
+		</property>
+		<property name="bcc" type="java.lang.String">
+			<column name="bcc" />
+		</property>
+
 		<property name="addDate"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="add_date" />
