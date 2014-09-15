@@ -535,7 +535,7 @@
 		</property>
 	</class>
 
-	<class name="com.sp.common.core.model.noper.OrganizationUnitThin" table="organization_unit">
+	<class name="com.sp.common.core.model.noper.OrganizationUnitThin" table="departamento">
 	
 		<id name="id" type="java.lang.Integer">
 			<column name="id_departamento" />
