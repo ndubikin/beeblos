@@ -97,3 +97,16 @@ ADD COLUMN `origen` SMALLINT NULL DEFAULT 0 COMMENT '0=Manual x sistema 1=Import
 DROP INDEX `fk_up_orden_pago_5` ,
 DROP INDEX `fk_ur_orden_pago_4` ,
 DROP INDEX `fk_ua_orden_pago_3` ; 
+
+##dml 20140909
+ALTER TABLE `bee_bpm_dev`.`email_template` 
+ADD COLUMN `automatic_send` BIT(1) NULL DEFAULT b'0' AFTER `email_theme_id`,
+ADD COLUMN `id_user_email_account` INT(11) DEFAULT NULL AFTER `automatic_send`;
+
+##dml 20140911
+ALTER TABLE `bee_bpm_dev`.`email_template` 
+ADD COLUMN `to_` VARCHAR(255) NULL DEFAULT NULL AFTER `template_file_name`,
+ADD COLUMN `cc` VARCHAR(255) NULL DEFAULT NULL AFTER `to_`,
+ADD COLUMN `bcc` VARCHAR(255) NULL DEFAULT NULL AFTER `cc`;
+
+
