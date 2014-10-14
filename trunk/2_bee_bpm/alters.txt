@@ -109,4 +109,9 @@ ADD COLUMN `to_` VARCHAR(255) NULL DEFAULT NULL AFTER `template_file_name`,
 ADD COLUMN `cc` VARCHAR(255) NULL DEFAULT NULL AFTER `to_`,
 ADD COLUMN `bcc` VARCHAR(255) NULL DEFAULT NULL AFTER `cc`;
 
+##dml 20141010
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+ADD COLUMN `priority` INT(11) NULL DEFAULT 0 AFTER `category`;
 
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+CHANGE COLUMN `label_user_readable` `label_user_readable` VARCHAR(255) NULL ;
