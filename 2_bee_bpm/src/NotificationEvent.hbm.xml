@@ -17,6 +17,9 @@
 		<property name="category" type="string">
 			<column name="category" />
 		</property>
+        <property name="priority" type="java.lang.Integer">
+            <column name="priority" />
+        </property>
 		<property name="labelUserReadable" type="string">
 			<column name="label_user_readable" />
 		</property>
