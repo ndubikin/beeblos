@@ -12,6 +12,15 @@ import org.hibernate.HibernateException;
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
+/**
+ * External method dao.
+ * 
+ * last mod: nes 20141016 - agregados catch exception que faltaban y ordenados mensajes a la nueva
+ * modalida.
+ * 
+ * @author nestor
+ *
+ */
 public class WExternalMethodDao {
 
 	private static final Log logger = LogFactory.getLog(WExternalMethodDao.class.getName());
@@ -29,10 +38,21 @@ public class WExternalMethodDao {
 			return Integer.valueOf(HibernateUtil.save(externalMethod));
 
 		} catch (HibernateException ex) {
-			logger.error("WExternalMethodDao: add - Can't store externalMethod definition record " + externalMethod.getClassname()
-					+ " - " + ex.getMessage() + "\n" + ex.getCause());
-			throw new WExternalMethodException("WExternalMethodDao: add - Can't store externalMethod definition record "
-					+ externalMethod.getClassname() + " - " + ex.getMessage() + "\n" + ex.getCause());
+			String mess = "HibernateException: add - Can't add external method definition "
+					+ (externalMethod!=null && externalMethod.getClass()!=null?externalMethod.getClassname():"null") 
+					+ " " + ex.getMessage()
+					+ " " + (ex.getCause()!=null?ex.getCause():"null"); 
+			logger.error(mess);
+			throw new WExternalMethodException(mess);
+
+		} catch (Exception ex) {
+			String mess = "Exception: add - Can't add external method definition "
+					+ (externalMethod!=null && externalMethod.getClass()!=null?externalMethod.getClassname():"null") 
+					+ " " + ex.getMessage()
+					+ " " + (ex.getCause()!=null?ex.getCause():"null")
+					+ " " + ex.getClass(); 
+			logger.error(mess);
+			throw new WExternalMethodException(mess);
 
 		}
 
@@ -47,13 +67,23 @@ public class WExternalMethodDao {
 			HibernateUtil.update(externalMethod);
 
 		} catch (HibernateException ex) {
-			logger.error("WExternalMethodDao: update - Can't update externalMethod definition record "
-					+ externalMethod.getClassname() + " - id = " + externalMethod.getId() + "\n - " + ex.getMessage() + "\n"
-					+ ex.getCause());
-			throw new WExternalMethodException(
-					"WExternalMethodDao: update - Can't update externalMethod definition record " + externalMethod.getClassname()
-							+ " - id = " + externalMethod.getId() + "\n - " + ex.getMessage() + "\n"
-							+ ex.getCause());
+			String mess = "HibernateException: update - Can't update external method definition "
+					+ (externalMethod!=null && externalMethod.getClass()!=null?externalMethod.getClassname():"null") 
+					+ " id:" + (externalMethod!=null && externalMethod.getId()!=null? externalMethod.getId():"null") 
+					+ " " + ex.getMessage()
+					+ " " + (ex.getCause()!=null?ex.getCause():"null"); 
+			logger.error(mess);
+			throw new WExternalMethodException(mess);
+
+		} catch (Exception ex) {
+			String mess = "Exception: update - Can't update external method definition "
+					+ (externalMethod!=null && externalMethod.getClass()!=null?externalMethod.getClassname():"null") 
+					+ " id:" + (externalMethod!=null && externalMethod.getId()!=null? externalMethod.getId():"null") 
+					+ " " + ex.getMessage()
+					+ " " + (ex.getCause()!=null?ex.getCause():"null")
+					+ " " + ex.getClass(); 
+			logger.error(mess);
+			throw new WExternalMethodException(mess);
 
 		}
 
@@ -70,21 +100,23 @@ public class WExternalMethodDao {
 			HibernateUtil.delete(externalMethod);
 
 		} catch (HibernateException ex) {
-			logger.error("WExternalMethodDao: delete - Can't delete proccess definition record "
-					+ externalMethod.getClassname() + " <id = " + externalMethod.getId() + "> \n" + " - " + ex.getMessage()
-					+ "\n" + ex.getCause());
-			throw new WExternalMethodException(
-					"WExternalMethodDao:  delete - Can't delete proccess definition record  "
-							+ externalMethod.getClassname() + " <id = " + externalMethod.getId() + "> \n" + " - "
-							+ ex.getMessage() + "\n" + ex.getCause());
+			String mess = "HibernateException: delete - Can't delete external method definition "
+					+ (externalMethod!=null && externalMethod.getClass()!=null?externalMethod.getClassname():"null") 
+					+ " id:" + (externalMethod!=null && externalMethod.getId()!=null? externalMethod.getId():"null") 
+					+ " " + ex.getMessage()
+					+ " " + (ex.getCause()!=null?ex.getCause():"null"); 
+			logger.error(mess);
+			throw new WExternalMethodException(mess);
 
-		} catch (WExternalMethodException e) {
-			logger.error("WExternalMethodDao: delete - Exception in deleting externalMethod rec " + externalMethod.getClassname()
-					+ " <id = " + externalMethod.getId() + "> no esta almacenada \n" + " - "
-					+ e.getMessage() + "\n" + e.getCause());
-			throw new WExternalMethodException("WExternalMethodDao: delete - Exception in deleting externalMethod rec "
-					+ externalMethod.getClassname() + " <id = " + externalMethod.getId() + "> not stored \n" + " - "
-					+ e.getMessage() + "\n" + e.getCause());
+		} catch (Exception ex) {
+			String mess = "Exception: delete - Can't delete external method definition "
+					+ (externalMethod!=null && externalMethod.getClass()!=null?externalMethod.getClassname():"null") 
+					+ " id:" + (externalMethod!=null && externalMethod.getId()!=null? externalMethod.getId():"null") 
+					+ " " + ex.getMessage()
+					+ " " + (ex.getCause()!=null?ex.getCause():"null")
+					+ " " + ex.getClass(); 
+			logger.error(mess);
+			throw new WExternalMethodException(mess);
 
 		}
 
@@ -109,11 +141,21 @@ public class WExternalMethodDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WExternalMethodDao: getWExternalMethodByPK - we can't obtain the required id = " + id
-					+ "] - \n" + ex.getMessage() + "\n" + ex.getCause());
-			throw new WExternalMethodException(
-					"WExternalMethodDao: getWExternalMethodByPK - we can't obtain the required id : " + id
-							+ " - " + ex.getMessage() + "\n" + ex.getCause());
+			String mess = "HibernateException: getWExternalMethodByPK - we can't obtain the required id = " + id
+					+ "] - " + ex.getMessage() 
+					+ " " + (ex.getCause()!=null?ex.getCause():"");
+			logger.warn(mess);
+			throw new WExternalMethodException(mess);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWExternalMethodByPK - we can't obtain the required id = " + id
+					+ "] - " + ex.getMessage() 
+					+ " " + (ex.getCause()!=null?ex.getCause():"")+ " "
+					+ ex.getClass();
+			logger.warn(mess);
+			throw new WExternalMethodException(mess);			
 
 		}
 
@@ -141,10 +183,22 @@ public class WExternalMethodDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WExternalMethodDao: getWExternalMethods() - can't obtain externalMethod list - "
-					+ ex.getMessage() + "\n" + ex.getCause());
-			throw new WExternalMethodException("WExternalMethodDao: getWExternalMethods() - can't obtain externalMethod list: "
-					+ ex.getMessage() + "\n" + ex.getCause());
+			String mess = "HibernateException: getWExternalMethodByPK - can't obtain externalMethod list - " 
+					+ "] - " + ex.getMessage() 
+					+ " " + (ex.getCause()!=null?ex.getCause():"");
+			logger.warn(mess);
+			throw new WExternalMethodException(mess);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWExternalMethodByPK - can't obtain externalMethod list - " 
+					+ "] - " + ex.getMessage() 
+					+ " " + (ex.getCause()!=null?ex.getCause():"")+ " "
+					+ ex.getClass();
+			logger.warn(mess);
+			throw new WExternalMethodException(mess);	
+
 
 		}
 
@@ -201,9 +255,21 @@ public class WExternalMethodDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			throw new WExternalMethodException("Can't obtain WExternalMethods combo list " + ex.getMessage()
-					+ "\n" + ex.getCause());
-		} catch (Exception e) {
+			String mess = "HibernateException: getWExternalMethodByPK - can't obtain externalMethod combo list - " 
+					+ "] - " + ex.getMessage() 
+					+ " " + (ex.getCause()!=null?ex.getCause():"");
+			logger.warn(mess);
+			throw new WExternalMethodException(mess);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWExternalMethodByPK - can't obtain externalMethod combo list - " 
+					+ "] - " + ex.getMessage() 
+					+ " " + (ex.getCause()!=null?ex.getCause():"")+ " "
+					+ ex.getClass();
+			logger.warn(mess);
+			throw new WExternalMethodException(mess);
 		}
 
 		return retorno;

@@ -480,6 +480,9 @@
 		<property generated="never" lazy="false" name="name" type="string">
 			<column name="name" />
 		</property>
+		<property name="systemRole" type="java.lang.Boolean">
+			<column name="system_role" sql-type="bit" />
+		</property>			
 		<property generated="never" lazy="false" name="description"
 			type="string">
 			<column name="description" />

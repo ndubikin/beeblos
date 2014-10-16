@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
@@ -67,7 +68,6 @@ import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
 import com.sp.common.core.error.BeeblosBLException;
 import com.sp.common.util.Resourceutil;
-import com.sp.common.util.StringPair;
 
 public class WStepWorkBL {
 	
@@ -118,7 +118,7 @@ public class WStepWorkBL {
 		}
 
 		// adds the new ProcessWork
-		WProcessWorkBL wpbl = new WProcessWorkBL(); 
+		WProcessWorkBL wpbl = new WProcessWorkBL();
 		workId = wpbl.add(work, currentUserId);
 		work = wpbl.getWProcessWorkByPK(workId, currentUserId); // checks all properties was correctly stored in the object
 		
@@ -137,15 +137,16 @@ public class WStepWorkBL {
 		stepw.setArrivingDate(new DateTime());
 		stepw.setInsertUser( new WUserDef(currentUserId) );
 		stepw.setModDate( DEFAULT_MOD_DATE_TIME);
-		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
 		
 		// nes 20140707 - assign users at runtime if there is defined ...
 		if ( stepw.getCurrentStep().isRuntimeAssignedUsers()) {
 			_assignRuntimeUsers(
-					stepw,
+					stepw, currentUserId,
 					stepw.getCurrentStep().getIdUserAssignmentMethod(),
 					currentUserId);
 		}
+
+		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
 		
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
 		this.createStepWorkSequenceLog(null, stepw, false, 
@@ -1048,7 +1049,7 @@ public class WStepWorkBL {
 		
 		Integer qty=0;
 
-		// create an emty object to build new steps
+		// create an empty object to build new steps
 		WStepWork newStepWork = new WStepWork();
 		
 		
@@ -1093,7 +1094,7 @@ public class WStepWorkBL {
 						
 						qty++;
 						
-						_setNewWorkingStepAndInsertRec(runtimeSettings,
+						_setNewWorkingStepAndPersists(runtimeSettings,
 								currentUser, currentStepWork, isAdminProcess,
 								now, newStepWork, route);
 						
@@ -1239,7 +1240,7 @@ public class WStepWorkBL {
 	 * @throws WStepDefException
 	 * @throws WStepWorkException
 	 */
-	private void _setNewWorkingStepAndInsertRec(
+	private void _setNewWorkingStepAndPersists(
 			WRuntimeSettings runtimeSettings, Integer currentUserId,
 			WStepWork currentStepWork, boolean isAdminProcess, DateTime now,
 			WStepWork newStepWork, WStepSequenceDef route)
@@ -1247,38 +1248,82 @@ public class WStepWorkBL {
 		
 		_setNewStep(newStepWork, currentStepWork, route.getToStep(), runtimeSettings, currentUserId, now, isAdminProcess );
 		
-		this.add(newStepWork, currentUserId);
-		
+		/**
+		 * Assign run time assigned users ...
+		 */
 		if ( newStepWork.getCurrentStep().isRuntimeAssignedUsers()) {
-			_assignRuntimeUsers(
-						newStepWork,
+			List<WStepWorkAssignment> swal = _assignRuntimeUsers(
+						newStepWork, currentStepWork.getwProcessWork().getInsertUser(), // nes 20141016
 						newStepWork.getCurrentStep().getIdUserAssignmentMethod(),
 						currentUserId);
+			if (swal!=null && swal.size()>0) {
+				newStepWork.getAssignedTo().addAll(swal);
+			}
 		}
+
+
+		/**
+		 * persist new step work
+		 */
+		this.add(newStepWork, currentUserId);
+	
 	}
 
 
 	/**
-	 * Assign runtime users and sent notification if the method fails or can't obtain almost
+	 * Runtime users must be defined by an external method, or because the step refers to the
+	 * system role 'originator' in which case we must assign the user at runtime...
+	 * 
+	 * Assign runtime users and send a notification if the method fails or can't obtain almost
 	 * 1 assigned user ...
 	 * 
 	 * If can't obtain almost 1 user to assign the step, then assigns it to administrator user (role ...)
 	 * 
+	 * lasmod: nes 20141016
+	 * 
 	 * @param newStepWork
-	 * @param methodId >> external method id
+	 * @param externalMethodId >> external method id to obtain runtime users id to assign to the step
 	 * @param currentUser
 	 */
-	private void _assignRuntimeUsers(WStepWork stepWork, Integer methodId, Integer currentUserId) {
+	private List<WStepWorkAssignment> _assignRuntimeUsers(
+			WStepWork stepWork, Integer idOriginatorUser, Integer externalMethodId, Integer currentUserId) {
+		logger.debug("--->_assignRuntimeUsers");
 		
 		int[] idAssignedUsers;
-		try {
-			
-			Object obj = _executeExternalMethod(stepWork, methodId, currentUserId);
-			
-		} catch (Exception e) {
-			
+		List<WStepWorkAssignment> swaList = new ArrayList<WStepWorkAssignment>();
+		
+		/**
+		 * if wstepdef indicates originator must have access to this step...
+		 */
+		if (stepWork.isSysroleOriginator()) {
+			WStepWorkAssignment assignedPerson = 
+					new WStepWorkAssignment(W_SYSROLE_ORIGINATOR_ID
+								, idOriginatorUser
+								, true // active
+								, false // reassigned
+								, null, null
+								, false // from reassignment
+								, null, null);
+			swaList.add(assignedPerson);
 		}
 		
+		/**
+		 * executes external method ...
+		 * External method to assign users or roles at runtime must be return an object
+		 * containing a list of IntegerPair
+		 */
+		try {
+			
+			Object objList = _executeExternalMethod(stepWork, externalMethodId, currentUserId);
+			
+		} catch (Exception e) {
+			logger.error("Error trying execute external method ... "+e.getMessage()+" "+e.getCause());
+			
+		}
+
+		if (swaList.size()<1) swaList=null;
+		
+		return swaList;
 		
 	}
 

@@ -3,6 +3,7 @@ package org.beeblos.bpm.core.model;
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
+import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -1230,7 +1232,22 @@ public class WStepDef implements java.io.Serializable {
 	 * @return
 	 */
 	public boolean isRuntimeAssignedUsers() {
-		return idUserAssignmentMethod!=null && idUserAssignmentMethod!=0;
+		return idUserAssignmentMethod!=null && idUserAssignmentMethod!=0
+				|| roleContainsSysroleOriginator();
+	}
+	
+	/**
+	 * checks if current roles for the step contains sysrole originator...
+	 * nes 20141014
+	 * @return
+	 */
+	private boolean roleContainsSysroleOriginator() {
+		for (WStepRole wsr: this.getRolesRelatedAsList()){
+			if (wsr.getRole().getId().equals(W_SYSROLE_ORIGINATOR_ID)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isCustomValidation() {
