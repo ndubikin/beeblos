@@ -128,3 +128,10 @@ CHANGE COLUMN `mod_date` `mod_date` DATETIME NOT NULL DEFAULT  '1970-01-02 00:00
 
 INSERT INTO `bee_bpm_dev`.`w_role_def` (`id`, `name`, `system_role`) VALUES ('1', 'ORIGINATOR', 1);
 INSERT INTO `bee_bpm_dev`.`w_role_def` (`id`, `name`, `system_role`) VALUES ('2', 'PROCESS_ADMINISTRATOR', 1);
+
+##dml 20141010
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+ADD COLUMN `priority` INT(11) NULL DEFAULT 0 AFTER `category`;
+
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+CHANGE COLUMN `label_user_readable` `label_user_readable` VARCHAR(255) NULL ;
