@@ -32,6 +32,15 @@ public class WRoleDef implements java.io.Serializable {
 	private Integer idObject;
 	private String idObjectType;
 	
+	/**
+	 * indicates this is a system role
+	 * system role can't be deleted by users
+	 * there are some mandatory roles must be exist in the system: ORIGINATOR
+	 * and PROCESS_ADMIN
+	 * nes 20141016
+	 */
+	private boolean systemRole;
+	
 	// MANY2MANY
 	Set<WUserRole> usersRelated=new HashSet<WUserRole>();
 
@@ -107,6 +116,19 @@ public class WRoleDef implements java.io.Serializable {
 		this.idObjectType = idObjectType;
 	}
 
+	/**
+	 * @return the systemRole
+	 */
+	public boolean isSystemRole() {
+		return systemRole;
+	}
+
+	/**
+	 * @param systemRole the systemRole to set
+	 */
+	public void setSystemRole(boolean systemRole) {
+		this.systemRole = systemRole;
+	}
 
 	public Set<WUserRole> getUsersRelated() {
 		return usersRelated;

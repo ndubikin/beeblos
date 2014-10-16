@@ -46,6 +46,19 @@ public class WStepWorkAssignment implements java.io.Serializable {
 	}
 
 
+	/**
+	 * Creates a WStepWorkAssignment
+	 * 
+	 * @param idAssignedRole
+	 * @param idAssignedUser
+	 * @param active
+	 * @param reassigned
+	 * @param reassignedBy
+	 * @param reassignedDate
+	 * @param fromReassignment
+	 * @param fromReassignmentBy
+	 * @param fromReassignmentDate
+	 */
 	public WStepWorkAssignment(Integer idAssignedRole, Integer idAssignedUser,
 			boolean active, boolean reassigned, Integer reassignedBy,
 			DateTime reassignedDate, boolean fromReassignment,

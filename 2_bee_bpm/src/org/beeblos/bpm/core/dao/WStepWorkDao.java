@@ -94,23 +94,36 @@ public class WStepWorkDao {
 			tx.commit();
 			
 		} catch (HibernateException ex) {
-			String mess="WStepWorkDao: add - Can't store swco definition record "+ 
-								stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause();
+			if (tx != null)
+				tx.rollback();
+			String mess="HibernateException: add - Can't store swco definition record "+ 
+								stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"");
 			logger.error( mess );
+			throw new WStepWorkException( mess );
 
+		} catch (WStepWorkException ex) {
 			if (tx != null)
 				tx.rollback();
 			
+			String mess="WStepWorkException: add - Can't store swco definition record "+ 
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"");
+			logger.error( mess );
 			throw new WStepWorkException( mess );
-		} catch (WStepWorkException ex) {
-			String mess="WStepWorkDao: add - Can't store swco definition record "+ 
-					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+"\n"+ex.getCause();
-					logger.error( mess );
-
+			
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-
-			throw new WStepWorkException( mess );
+			
+			String mess="Exception: add - Can't store swco definition record "+ 
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
+			logger.error( mess );
+			throw new WStepWorkException( mess );			
 		}
 
 		id=Integer.valueOf(res.toString());
@@ -153,25 +166,21 @@ public class WStepWorkDao {
 			}
 			
 		} catch (HibernateException ex) {
-			String mess= "HibernateException: update - Can't update swco definition record "+ 
-							stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
-							" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause();
-			logger.error( mess );
-
 			if (tx != null)
 				tx.rollback();
-			
+			String mess= "HibernateException: update - Can't update swco definition record "+ 
+							stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
+							" - id = "+stepw.getId()+"\n - "+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
+			logger.error( mess );
 			throw new WStepWorkException( mess );
 			
 		} catch (Exception ex) {
-			String mess= "Exception: update - Can't update swco definition record "+ 
-							stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
-							" - id = "+stepw.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause();
-			logger.error( mess );
-
 			if (tx != null)
 				tx.rollback();
-			
+			String mess= "Exception: update - Can't update swco definition record "+ 
+							stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()  +
+							" - id = "+stepw.getId()+"\n - "+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
+			logger.error( mess );
 			throw new WStepWorkException( mess );
 		}
 					
@@ -219,20 +228,20 @@ public class WStepWorkDao {
 					+ rowCount + "]");
 
 		} catch (HibernateException ex) {
-			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
 			String mess = "HibernateException: lock - can't update database table w_step_work - id = "
-					+ (id!=null?id:"null")	+ " - " + ex.getMessage() + " - " + ex.getCause();
+					+ (id!=null?id:"null")	+ " - " + ex.getMessage() + " - " + (ex.getCause()!=null?ex.getCause():"");
 			logger.error( mess );
 			throw new WStepWorkException(ex);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
 			String mess = "Exception: lock - can't update database table w_step_work - id = "
-					+ (id!=null?id:"null")	+ " - " + ex.getMessage() + " - " + ex.getCause();
+					+ (id!=null?id:"null")	+ " - " + ex.getMessage() + " - " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
 			logger.error( mess );
 			throw new WStepWorkException(ex);
 
@@ -282,20 +291,20 @@ public class WStepWorkDao {
 					+ rowCount + "]");
 
 		} catch (HibernateException ex) {
-			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
 			String mess ="HibernateException: unlock - can't update database table w_step_work - id = "
-					+ (id!=null?id:"null") + " - " + ex.getMessage() + " - " + ex.getCause();
+					+ (id!=null?id:"null") + " - " + ex.getMessage() + " - " + (ex.getCause()!=null?ex.getCause():"");
 			logger.error(mess);
 			throw new WStepWorkException(ex);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			if (tx != null)
 				tx.rollback();
 			String mess ="Exception: unlock - can't update database table w_step_work - id = "
-					+ (id!=null?id:"null") + " - " + ex.getMessage() + " - " + ex.getCause();
+					+ (id!=null?id:"null") + " - " + ex.getMessage() + " - " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
 			logger.error(mess);
 			throw new WStepWorkException(ex);
 		}
@@ -318,21 +327,21 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			String mess = "WStepWorkDao: HibernateException - delete - Can't delete proccess definition record "
 							+ stepw.getCurrentStep().getStepHead().getName()+" "+stepw.getwProcessWork().getReference() 
-							+ " <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause();
+							+ " <id = "+stepw.getId()+ "> \n"+" - "+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.error(mess);
 			throw new WStepWorkException(mess);
 
 		} catch (WStepWorkException e) {
 			String mess = "WStepWorkException: WStepWorkException - delete - Exception in deleting swco rec "
 						+ stepw.getCurrentStep().getStepHead().getName()+" "+stepw.getwProcessWork().getReference() 
-						+ " <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() ;
+						+ " <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+" "+e.getCause() ;
 			logger.error(mess);
 			throw new WStepWorkException(mess);
 			
 		} catch (Exception e) {
 			String mess = "Exception: WStepWorkException - delete - Exception in deleting swco rec "
 						+ stepw.getCurrentStep().getStepHead().getName()+" "+stepw.getwProcessWork().getReference() 
-						+ " <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() ;
+						+ " <id = "+stepw.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+" "+e.getCause() ;
 			logger.error(mess);
 			throw new WStepWorkException(mess);
 		} 
@@ -367,7 +376,7 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess="HibernateException: getWStepWorkByPK - we can't obtain the required id = "+
-							id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+							id + "]  almacenada - \n"+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(mess);
 			throw new WStepWorkException(mess);
 		
@@ -375,7 +384,7 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess="Exception: getWStepWorkByPK - we can't obtain the required id = "+
-							id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause();
+							id + "]  almacenada - \n"+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(mess);
 			throw new WStepWorkException(mess);
 		}
@@ -395,7 +404,7 @@ public class WStepWorkDao {
 	
 			} catch (WStepDataFieldException e) {
 				String mess = "WStepWorkDao: getWStepWorkByPK - WStepDataFieldException can't load related step data fields = "+
-									id + "] - \n"+e.getMessage()+"\n"+e.getCause();
+									id + "] - \n"+e.getMessage()+" "+e.getCause();
 				logger.error( mess );
 				throw new WStepWorkException( mess );
 			}		
@@ -440,7 +449,7 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "WStepWorkDao: getWStepWorkCheckObjectByPK HibernateException - we can't obtain the required swco id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause(); 
+					id + "]  almacenada - "+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""); 
 			logger.warn( mess );
 			throw new WStepWorkException( mess );
 
@@ -448,7 +457,8 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "WStepWorkDao: getWStepWorkCheckObjectByPK Exception - we can't obtain the required swco id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause(); 
+					id + "]  almacenada - "+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass(); 
 			logger.warn( mess );
 			throw new WStepWorkException( mess );
 		}
@@ -486,17 +496,17 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"") );
 			throw new WStepWorkException("WStepWorkDao: getWStepWorks() - can't obtain swco list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""));
 
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"") );
 			throw new WStepWorkException("WStepWorkDao: getWStepWorks() - can't obtain swco list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""));
 		}
 
 		// set  custom data
@@ -696,14 +706,14 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="HibernateException: 001 getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			String message="Exception: 001 getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 		}
@@ -758,14 +768,14 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="HibernateException: 001 getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			String message="Exception: 001 getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 		}
@@ -886,9 +896,11 @@ public class WStepWorkDao {
 				}
 			
 			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
 				e.printStackTrace();
 				logger.error("Error setting date fields to hibernate SQL Query: "
-						+ e.getMessage()+"\n"+e.getCause());	
+						+ e.getMessage()+" "+e.getCause());	
 			}
 				
 			// nes 20130221 - si es admin van todos, no se filtra por usuario ...
@@ -906,7 +918,7 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="WStepWorkDao: 002 getWorkListByProcess() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 
@@ -914,7 +926,7 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="WStepWorkDao: 002B getWorkListByProcess() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 		}
@@ -1009,10 +1021,18 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="WStepWorkDao: 002 getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception: 002 getWStepWorks() - can't obtain swco list - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
+			logger.warn(message );
+			throw new WStepWorkException(message);
 		}
 
 		return stepws;
@@ -1227,10 +1247,18 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="WStepWorkDao: 005 getWStepWorks() - can't obtain swco list - " +
-							ex.getMessage()+"\n"+ex.getCause();
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception: 005 getWStepWorks() - can't obtain swco list - " +
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+							+ex.getClass();
+			logger.warn(message );
+			throw new WStepWorkException(message);
 		}
 
 		return stepws;
@@ -1267,10 +1295,18 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="WStepWorkDao: 005 getWStepWorks() - can't obtain swco list - " +
-							ex.getMessage()+"\n"+ex.getCause();
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception: 005 getWStepWorks() - can't obtain swco list - " +
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+							+ex.getClass();
+			logger.warn(message );
+			throw new WStepWorkException(message);
 		}
 
 		return stepws;
@@ -1321,10 +1357,18 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="WStepWorkDao: 005 getStepListByIdWork() - can't obtain swco list - " +
-							ex.getMessage()+"\n"+ex.getCause();
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(message );
 			throw new WStepWorkException(message);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception: 005 getStepListByIdWork() - can't obtain swco list - " +
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+							+ex.getClass();
+			logger.warn(message );
+			throw new WStepWorkException(message);
 		}
 
 		return stepws;
@@ -1371,10 +1415,18 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String message="WStepWorkDao: 007 getWStepWorks() - can't obtain active stepwork list - " +
-							ex.getMessage()+"\n"+ex.getCause();
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.error(message );
 			throw new WStepWorkException(message);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception: 007 getWStepWorks() - can't obtain active stepwork list - " +
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+							+ex.getClass();
+			logger.error(message );
+			throw new WStepWorkException(message);
 		}
 
 		return stepws;
@@ -1448,7 +1500,7 @@ public class WStepWorkDao {
 //					tx.rollback();
 //				throw new WStepWorkException(
 //						"Can't obtain WStepWorks combo list "
-//						+ex.getMessage()+"\n"+ex.getCause());
+//						+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""));
 //			} catch (Exception e) {}
 //
 //			return retorno;
@@ -1521,9 +1573,18 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "WStepWorkDao: existsActiveProcess() HibernateException - can't obtain stepwork query list - " +
-					ex.getMessage()+"\n"+ex.getCause(); 
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""); 
 			logger.error( mess );
 			throw new WStepWorkException( mess );
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: existsActiveProcess() HibernateException - can't obtain stepwork query list - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WStepWorkException( mess );			
 
 		}
 		
@@ -1585,11 +1646,19 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepWorkDao: existsActiveProcess() - can't obtain stepwork query list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepWorkException("WStepWorkDao: existsActiveProcess() - can't obtain stepwork query list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: existsActiveProcess() - can't obtain stepwork query list - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
+			logger.warn( mess );
+			throw new WStepWorkException( mess );
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: existsActiveProcess() - can't obtain stepwork query list - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
+			logger.warn( mess );
+			throw new WStepWorkException( mess );
 		}
 		
 		return retorno;
@@ -1654,11 +1723,20 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess="WStepWorkDao: getWorkCount() - error trying count stepWork - " +
-					ex.getMessage()+"\n"+ex.getCause();
+			String mess="HibernateException: getWorkCount() - error trying count stepWork - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(mess);
 			throw new WStepWorkException(mess);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: getWorkCount() - error trying count stepWork - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+			
 		}
 		
 		if (qtySteps != null){
@@ -1739,10 +1817,19 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess="WStepWorkDao: getWorkCount() - error trying count stepWork - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(mess);
 			throw new WStepWorkException(mess);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: getWorkCount() - error trying count stepWork - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+			
 		}
 		
 		if (qtySteps != null){
@@ -1790,10 +1877,18 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess="WStepWorkDAO: isLockedByUser() error trying to access wstepwork id:"
-							+ pk+ " - " + ex.getMessage() + " " + ex.getCause();
+							+ pk+ " - " + ex.getMessage() + " " + (ex.getCause()!=null?ex.getCause():"");
 			logger.error(mess);
 			throw new WStepWorkException(mess);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: isLockedByUser() error trying to access wstepwork id:"
+							+ pk+ " - " + ex.getMessage() + " " + (ex.getCause()!=null?ex.getCause():"")+" "
+							+ex.getClass();
+			logger.error(mess);
+			throw new WStepWorkException(mess);
 		}
 		
 		if(stepLockedBy==null){ 
@@ -1871,7 +1966,7 @@ public class WStepWorkDao {
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("Error setting date fields of hibernate sql query: "
-						+ e.getMessage()+"\n"+e.getCause());	
+						+ e.getMessage()+" "+e.getCause());	
 			}
 			
 			stepws = q.list();	
@@ -1883,7 +1978,17 @@ public class WStepWorkDao {
 				tx.rollback();
 			ex.printStackTrace();
 			String message="WStepWorkDao: 001 getWStepWorks() - can't obtain swco list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
+			logger.warn(message );
+			throw new WStepWorkException(message);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			ex.printStackTrace();
+			String message="Exception: 001 getWStepWorks() - can't obtain swco list - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
 			logger.warn(message );
 			throw new WStepWorkException(message);
 
@@ -1942,10 +2047,19 @@ public class WStepWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "WStepWorkDao: getProcessIdList() - can't obtain id  list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.warn(mess);
 			throw new WStepWorkException(mess);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getProcessIdList() - can't obtain id  list - " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass();
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+			
 		}
 
 		return processIdList;
@@ -2310,17 +2424,26 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-				logger.warn("WProcessDefDao: getWorkingProcessStepListByFinder() - " +
-						"It cannot be posible to get the StepWorkLight list - "
-					+ ex.getMessage() + "\n" + ex.getLocalizedMessage() + " \n" + ex.getCause());
+			String mess = "HibernateException: getWorkingProcessStepListByFinder() - " +
+					"It cannot be posible to get the StepWorkLight list - "
+				+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " + (ex.getCause()!=null?ex.getCause():"");
+			logger.warn( mess );
 			throw new WStepWorkException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWorkingProcessStepListByFinder() - " +
+					"It cannot be posible to get the StepWorkLight list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " + (ex.getCause()!=null?ex.getCause():"")+" "+
+					ex.getClass();
+			logger.warn( mess );
+			throw new WStepWorkException(ex);
+			
 		}
 
 		return returnList;
 	}
-
-
 	
 	
 }

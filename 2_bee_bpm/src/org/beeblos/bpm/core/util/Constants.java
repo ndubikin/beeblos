@@ -3,12 +3,21 @@ package org.beeblos.bpm.core.util;
 import static com.sp.common.util.Resourceutil.getIntegerProperty;
 import static com.sp.common.util.Resourceutil.getStringProperty;
 
-import java.util.Date;
-
-import org.joda.time.DateTime;
-
 
 public class Constants {
+	
+	/**
+	 * rol de sistema para indicar el usuario originador de una instancia de un proceso
+	 * Se define como rol porque sería un rol dinámico que se asigna en tiempo de ejecución
+	 * para cada instancia.
+	 * nes 20141014
+	 */
+	public static final Integer W_SYSROLE_ORIGINATOR_ID=getIntegerProperty("system.role.originator",1);
+	/**
+	 * Rol genérico del sistema para asociar los administradores del proceso.
+	 * nes 20141014
+	 */
+	public static final Integer W_SYSROLE_PROCESS_ADMIN_ID=getIntegerProperty("system.role.process.admin",2);
 	
 	public static final String W_PROCESS_DEF_FORM_VIEW="/app/forms/wProcessDefFormCall.jsf";
 
