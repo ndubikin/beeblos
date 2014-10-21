@@ -577,27 +577,29 @@ public class WProcessDefDao {
 						.createSQLQuery(query)
 						.addEntity("WProcessDef", WProcessDef.class);
 
+				//rrl 20141021 No existen estos parametros insertdateFrom/insertdateTo y da errores
 				// setting date parameters
-				try {
-					
-					if (strictInsertDateFilter) {
-						DateTimeFormatter fmtShortDate = DateTimeFormat.forPattern(DATE_FORMAT);
-						DateTimeFormatter fmtLongDate = DateTimeFormat.forPattern(DATE_HOUR_COMPLETE_FORMAT);
-						
-						DateTime from = null;
-						DateTime to = null;
-						
-		                from = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)+" 00:00:00");                
-		                to = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)+" 23:59:59");                
-						q.setParameter("insertdateFrom", from);
-						q.setParameter("insertdateTo", to);
-					}
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.error("Error setting date fields to hibernate SQL Query: "
-							+ e.getMessage()+"\n"+e.getCause());	
-				}
+//				try {
+//					
+//					if (strictInsertDateFilter) {
+//
+//						DateTimeFormatter fmtShortDate = DateTimeFormat.forPattern(DATE_FORMAT);
+//						DateTimeFormatter fmtLongDate = DateTimeFormat.forPattern(DATE_HOUR_COMPLETE_FORMAT);
+//						
+//						DateTime from = null;
+//						DateTime to = null;
+//						
+//		                from = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)+" 00:00:00");                
+//		                to = fmtLongDate.parseDateTime(fmtShortDate.print(initialInsertDateFilter)+" 23:59:59");                
+//						q.setParameter("insertdateFrom", from);
+//						q.setParameter("insertdateTo", to);
+//					}
+//					
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					logger.error("Error setting date fields to hibernate SQL Query: "
+//							+ e.getMessage()+"\n"+e.getCause());	
+//				}
 				
 				// set userId
 				//q.setInteger("userId",userId);
