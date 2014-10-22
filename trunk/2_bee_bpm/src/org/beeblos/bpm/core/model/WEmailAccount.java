@@ -612,8 +612,7 @@ public class WEmailAccount implements java.io.Serializable{
 		if (outputPassword != null && !outputPassword.equals("")) return false;
 		if (idExchange != null && !idExchange.equals("")) return false;
 		
-		return false;
-		
+		return true;  //rrl 20141022
 	}
 	
 }

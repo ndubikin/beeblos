@@ -714,4 +714,45 @@ public class WProcessDef implements java.io.Serializable {
 				arrivingAdminNoticeTemplate,
 				arrivingUserNoticeTemplate);
 	}
+	
+	/**
+	 * @author rrl 20141022
+	 * 
+	 * nullates empty objects to persist
+	 */
+	public void nullateEmtpyObjects() {
+	   
+		if (process!=null && process.empty()) process=null;
+		if (beginStep!=null && beginStep.empty()) beginStep=null;
+		if (totalTimeUnit!=null && totalTimeUnit.empty()) totalTimeUnit=null;
+		if (systemEmailAccount!=null && systemEmailAccount.empty()) systemEmailAccount=null;
+		if (arrivingAdminNoticeTemplate!=null && arrivingAdminNoticeTemplate.empty()) arrivingAdminNoticeTemplate=null;
+		if (arrivingUserNoticeTemplate!=null && arrivingUserNoticeTemplate.empty()) arrivingUserNoticeTemplate=null;
+		if (rolesRelated!=null && rolesRelated.isEmpty()) rolesRelated=null;
+		if (usersRelated!=null && usersRelated.isEmpty()) usersRelated=null;
+		if (lSteps!=null && lSteps.isEmpty()) lSteps=null;
+		if (stepSequenceList!=null && stepSequenceList.isEmpty()) stepSequenceList=null;
+		if (systemObject!=null && systemObject.isEmpty()) systemObject=null;
+	}
+	
+    /**
+     * @author rrl 20141022
+     * 
+     * recover empty objects to persist
+     */
+    public void recoverEmtpyObjects() {
+
+		if (process==null) process = new WProcessHead(EMPTY_OBJECT);
+		if (beginStep==null) beginStep = new WStepDef(EMPTY_OBJECT);
+		if (totalTimeUnit==null) totalTimeUnit = new WTimeUnit(EMPTY_OBJECT);
+		if (systemEmailAccount==null) systemEmailAccount = new WEmailAccount(EMPTY_OBJECT);
+		if (arrivingAdminNoticeTemplate==null) arrivingAdminNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
+		if (arrivingUserNoticeTemplate==null) arrivingUserNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
+		if (rolesRelated==null) rolesRelated = new HashSet<WProcessRole>();
+		if (usersRelated==null) usersRelated = new HashSet<WProcessUser>();
+		if (lSteps==null) lSteps = new ArrayList<WStepDef>();
+		if (stepSequenceList==null) stepSequenceList = new ArrayList<WStepSequenceDef>();
+		if (systemObject==null) systemObject = new HashSet<SystemObject>();
+    }
+	
 }
