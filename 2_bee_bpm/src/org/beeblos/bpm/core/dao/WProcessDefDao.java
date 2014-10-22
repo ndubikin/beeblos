@@ -836,7 +836,8 @@ public class WProcessDefDao {
 			boolean strictProductionDateFilter, Integer productionUserFilter, String action, 
 			Integer processHeadId, String activeFilter, Integer currentUserId) 
 	throws WProcessDefException {
-
+		logger.debug(">>> finderWProcessDefLight");
+		
 		String filter = "";
 		
 		filter = buildFinderSQLFilter(onlyActiveWorkingProcessesFilter,
@@ -979,7 +980,7 @@ public class WProcessDefDao {
 		} else if (searchOrder!=null && searchOrder.equals(LAST_MODIFIED)) {
 			tmpQuery += " ORDER by wpd.mod_date DESC;";  //rrl 20130206 Ajuste antes estaba con i.fecha_modificacion
 		} else {
-			tmpQuery += " ORDER by wpd.id ASC;";
+			tmpQuery += " ORDER by wpd.head_id AND wpd.version AND wpd.id ASC;"; // nes 20141021
 		}
 
 		logger.debug("QUERY:" + tmpQuery);
