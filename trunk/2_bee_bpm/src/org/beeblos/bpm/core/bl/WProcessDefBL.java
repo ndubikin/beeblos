@@ -759,6 +759,21 @@ public class WProcessDefBL {
 
 	}
 
+	/**
+	 * Returns a list of working processes
+	 * @param onlyWorkingProcessesFilter
+	 * @param processNameFilter
+	 * @param initialProductionDateFilter
+	 * @param finalProductionDateFilter
+	 * @param strictProductionDateFilter
+	 * @param productionUserFilter
+	 * @param action
+	 * @param processHeadId
+	 * @param activeFilter
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
 	public List<WProcessDefLight> finderWProcessDefLight(boolean onlyWorkingProcessesFilter, 
 			String processNameFilter, LocalDate initialProductionDateFilter, LocalDate finalProductionDateFilter, 
 			boolean strictProductionDateFilter, Integer productionUserFilter, String action, 
