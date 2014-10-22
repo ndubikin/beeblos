@@ -1347,5 +1347,36 @@ public class WStepDef implements java.io.Serializable {
 
 	}
 	
+	/**
+	 * @author rrl 20141022
+	 * 
+	 * nullates empty objects to persist
+	 */
+	public void nullateEmtpyObjects() {
+
+		if (stepHead!=null && stepHead.empty()) stepHead=null;
+		if (timeUnit!=null && timeUnit.empty()) timeUnit=null;
+		if (reminderTimeUnit!=null && reminderTimeUnit.empty()) reminderTimeUnit=null;
+		if (response!=null && response.isEmpty()) response=null;
+		if (rolesRelated!=null && rolesRelated.isEmpty()) rolesRelated=null;
+		if (usersRelated!=null && usersRelated.isEmpty()) usersRelated=null;
+		if (dataFieldDef!=null && dataFieldDef.isEmpty()) dataFieldDef=null;
+	}
+	
+    /**
+     * @author rrl 20141022
+     * 
+     * recover empty objects to persist
+     */
+    public void recoverEmtpyObjects() {
+
+		if (stepHead==null) stepHead = new WStepHead();
+		if (timeUnit==null) timeUnit = new WTimeUnit(EMPTY_OBJECT);
+		if (reminderTimeUnit==null) reminderTimeUnit = new WTimeUnit(EMPTY_OBJECT);
+		if (response==null) response = new HashSet<WStepResponseDef>();
+		if (rolesRelated==null) rolesRelated = new HashSet<WStepRole>();
+		if (usersRelated==null) usersRelated = new HashSet<WStepUser>();
+		if (dataFieldDef==null) dataFieldDef = new ArrayList<WStepDataField>();
+    }
 
 }

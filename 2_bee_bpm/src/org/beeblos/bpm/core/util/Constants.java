@@ -18,8 +18,10 @@ public class Constants {
 	 * nes 20141014
 	 */
 	public static final Integer W_SYSROLE_PROCESS_ADMIN_ID=getIntegerProperty("system.role.process.admin",2);
-	
+
+	//rrl 20141022
 	public static final String W_PROCESS_DEF_FORM_VIEW="/app/forms/wProcessDefFormCall.jsf";
+	public static final String W_STEP_DEF_FORM_VIEW="/app/forms/wStepDefFormCall.jsf";
 
 	public static final String W_EMAIL_TEMPLATE_FORM_VIEW="/app/wfCrud/wEmailTemplateCrud/wEmailTemplateCrudWithTemplate.xhtml";
 	public static final String W_EMAIL_ACCOUNT_FORM_VIEW="/app/wfCrud/wUserEmailAccountCrud/wUserEmailAccountCrudWithTemplate.xhtml";
