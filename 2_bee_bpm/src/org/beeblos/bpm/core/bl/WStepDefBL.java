@@ -733,6 +733,12 @@ public class WStepDefBL {
 	}
 */
 	
+	/**
+	 * return a full list of step defs in the system
+	 * @param userId
+	 * @return
+	 * @throws WStepDefException
+	 */
 	public List<WStepDef> getStepDefs(Integer userId) throws WStepDefException {
 
 		// nota: falta revisar el tema de los permisos de usuario para esto ...
@@ -740,6 +746,15 @@ public class WStepDefBL {
 	
 	}
 	
+	/**
+	 * Returns the list of step def for a given processId
+	 * 
+	 * @param processId
+	 * @param deleted
+	 * @param userId
+	 * @return
+	 * @throws WStepDefException
+	 */
 	public List<WStepDef> getStepDefs(Integer processId, Boolean deleted, Integer userId) throws WStepDefException {
 
 		return new WStepDefDao().getStepDefs(processId, deleted);
