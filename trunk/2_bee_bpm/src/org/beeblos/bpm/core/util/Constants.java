@@ -56,8 +56,8 @@ public class Constants {
 	
 	// dml 20130709
 	public static String PROCESS_XML_MAP_LOCATION = getStringProperty("process.xml.map.location","/processXmlMapTmp.xml");
-	public static String WORKFLOW_EDITOR_URI = getStringProperty("workflow.editor.uri","/general/javascript/work/editors/workfloweditor.html");
-	public static String WORKFLOW_VIEW_URI = getStringProperty("workflow.view.xml.map.uri","/general/javascript/work/editors/workflowviewxmlmap.html");
+	public static String WORKFLOW_EDITOR_URI = getStringProperty("workflow.editor.uri","/general/javascript/work/editors/workfloweditor.jsf");
+	public static String WORKFLOW_VIEW_URI = getStringProperty("workflow.view.xml.map.uri","/general/javascript/work/editors/workflowviewxmlmap.jsf");
 
 	// dml 20130510
 	public static String HIBERNATE_CONFIGURATION_LIST_XML = ppxx();

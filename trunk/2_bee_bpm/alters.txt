@@ -135,3 +135,8 @@ ADD COLUMN `priority` INT(11) NULL DEFAULT 0 AFTER `category`;
 
 ALTER TABLE `bee_bpm_dev`.`notification_event` 
 CHANGE COLUMN `label_user_readable` `label_user_readable` VARCHAR(255) NULL ;
+
+#dml 20141020
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+ADD COLUMN `comments` VARCHAR(255) NULL DEFAULT NULL AFTER `priority`;
+
