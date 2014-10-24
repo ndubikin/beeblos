@@ -33,18 +33,31 @@ public class WStepDefDao {
 	}
 	
 	public Integer add(WStepDef step) throws WStepDefException {
-		
-		logger.debug("add() WStepDef - Name: ["+step.getStepHead().getName()+"]");
+		logger.debug("add() WStepDef - Name: ["+
+						(step!=null && step.getStepHead()!=null&&step.getStepHead().getName()!=null?step.getStepHead().getName():"null")
+								+"]");
 		
 		try {
 
 			return Integer.valueOf(HibernateUtil.save(step));
 
 		} catch (HibernateException ex) {
-			logger.error("WStepDefDao: add - Can't store step definition record "+ 
-					step.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepDefException("WStepDefDao: add - Can't store step definition record "+ 
-					step.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: add - Can't store step definition "
+					+ (step!=null && step.getStepHead()!=null&&step.getStepHead().getName()!=null?step.getStepHead().getName():"null") 
+					+" "+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():""); 
+			logger.error( mess );
+			throw new WStepDefException(mess);
+
+		} catch (Exception ex) {
+			String mess = "Exception: add - Can't store step definition "
+					+ (step!=null && step.getStepHead()!=null&&step.getStepHead().getName()!=null?step.getStepHead().getName():"null") 
+					+" "+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"")
+					+" "
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WStepDefException(mess);
 
 		}
 
@@ -61,12 +74,21 @@ public class WStepDefDao {
 
 
 		} catch (HibernateException ex) {
-			logger.error("WStepDefDao: update - Can't update step definition record "+ 
-					step.getName()  +
-					" - id = "+step.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WStepDefException("WStepDefDao: update - Can't update step definition record "+ 
-					step.getName()  +
-					" - id = "+step.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException:update - Can't update step definition record "
+					+ (step!=null && step.getStepHead()!=null&&step.getStepHead().getName()!=null?step.getStepHead().getName():"null") 
+					+" "+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():""); 
+			logger.error( mess );
+			throw new WStepDefException(mess);
+
+		} catch (Exception ex) {
+			String mess = "Exception - Can't update step definition record "
+					+ (step!=null && step.getStepHead()!=null&&step.getStepHead().getName()!=null?step.getStepHead().getName():"null") 
+					+" "+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WStepDefException(mess);			
 
 		}
 					
@@ -304,7 +326,12 @@ public class WStepDefDao {
 		return step;
 	}
 */
-	
+	/**
+	 * returns a full list of step def in the system
+	 * 
+	 * @return
+	 * @throws WStepDefException
+	 */
 	public List<WStepDef> getWStepDefs() throws WStepDefException {
 
 		org.hibernate.Session session = null;
@@ -433,6 +460,9 @@ public class WStepDefDao {
 	 * @author nes 20130502 (dml 20130829 - added the deleted where clause)
 	 * 
 	 * Returns the List<WStepDef> related with a given WProcessDef.
+	 * Step list only may be known from sequence list which are connected with
+	 * 
+	 * 
 	 * NOTA: ajustado al nuevo formato de campos de la sequence
 	 *
 	 * @param  Integer processId
