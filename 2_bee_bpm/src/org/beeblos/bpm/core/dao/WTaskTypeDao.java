@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WTaskTypeException;
 import org.beeblos.bpm.core.model.WTaskType;
 import org.hibernate.HibernateException;
@@ -30,11 +31,27 @@ public class WTaskTypeDao {
 			return Integer.valueOf(HibernateUtil.save(taskType));
 
 		} catch (HibernateException ex) {
-			logger.error("WTaskTypeDao: add - Can't store process definition record "+ 
-					taskType.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WTaskTypeException("WTaskTypeDao: add - Can't store process definition record "+ 
-					taskType.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: add() - " 
+				+ "It was not posible to get the WTaskType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
 
+		} catch (Exception ex) {
+			
+			String mess = "Exception: add() - "
+					+ "It was not posible to get the WTaskType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
+			
 		}
 
 	}
@@ -50,13 +67,27 @@ public class WTaskTypeDao {
 
 
 		} catch (HibernateException ex) {
-			logger.error("WTaskTypeDao: update - Can't update process definition record "+ 
-					taskType.getName()  +
-					" - id = "+taskType.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WTaskTypeException("WTaskTypeDao: update - Can't update process definition record "+ 
-					taskType.getName()  +
-					" - id = "+taskType.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: update() - " 
+				+ "It was not posible to get the WTaskType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
 
+		} catch (Exception ex) {
+			
+			String mess = "Exception: update() - "
+					+ "It was not posible to get the WTaskType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
+			
 		}
 					
 	}
@@ -71,12 +102,28 @@ public class WTaskTypeDao {
 			HibernateUtil.delete(taskType);
 
 		} catch (HibernateException ex) {
-			logger.error("WTaskTypeDao: delete - Can't delete proccess definition record "+ taskType.getName() +
-					" <id = "+taskType.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WTaskTypeException("WTaskTypeDao:  delete - Can't delete proccess definition record  "+ taskType.getName() +
-					" <id = "+taskType.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			
+			String mess = "HibernateException: delete() - " 
+				+ "It was not posible to get the WTaskType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
 
-		} 
+		} catch (Exception ex) {
+			
+			String mess = "Exception: delete() - "
+					+ "It was not posible to get the WTaskType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
+			
+		}
 
 	}
 
@@ -99,11 +146,29 @@ public class WTaskTypeDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WTaskTypeDao: getWTaskTypeByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WTaskTypeException("WTaskTypeDao: getWTaskTypeByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWTaskTypeByPK() - " 
+				+ "It was not posible to get the WTaskType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWTaskTypeByPK() - "
+					+ "It was not posible to get the WTaskType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
+			
 		}
 
 		return taskType;
@@ -132,11 +197,29 @@ public class WTaskTypeDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WTaskTypeDao: getWTaskTypeByName - can't obtain process name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WTaskTypeException("getWTaskTypeByName;  can't obtain process name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWTaskTypeByName() - " 
+				+ "It was not posible to get the WTaskType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWTaskTypeByName() - "
+					+ "It was not posible to get the WTaskType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
+			
 		}
 
 		return taskType;
@@ -164,11 +247,29 @@ public class WTaskTypeDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WTaskTypeDao: getWTaskTypeList() - can't obtain process list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WTaskTypeException("WTaskTypeDao: getWTaskTypeList() - can't obtain process list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWTaskTypeList() - " 
+				+ "It was not posible to get the WTaskType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWTaskTypeList() - "
+					+ "It was not posible to get the WTaskType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WTaskTypeException(ex);
+			
 		}
 
 		return taskType;
@@ -177,7 +278,8 @@ public class WTaskTypeDao {
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String firstLineText, String separationLine )
-	throws WTaskTypeException {
+	throws WTaskTypeException
+	{
 		 
 			List<WTaskType> ldt = null;
 			List<StringPair> retorno = new ArrayList<StringPair>(10);
@@ -229,10 +331,31 @@ public class WTaskTypeDao {
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();
-				throw new WTaskTypeException(
-						"Can't obtain WTaskType combo list "
-						+ex.getMessage()+"\n"+ex.getCause());
-			} catch (Exception e) {}
+				
+				String mess = "HibernateException: getComboList() - " 
+					+ "It was not posible to get the WTaskType list - "
+					+ ex.getMessage() + " " 
+					+ ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"");
+					
+				logger.warn( mess );
+				throw new WTaskTypeException(ex);
+
+			} catch (Exception ex) {
+				if (tx != null)
+					tx.rollback();
+				
+				String mess = "Exception: getComboList() - "
+						+ "It was not posible to get the WTaskType list - "
+						+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+						+ (ex.getCause()!=null?ex.getCause():"")+" "
+						+ ex.getClass();
+				
+				logger.warn( mess );
+				throw new WTaskTypeException(ex);
+				
+			}
+
 
 			return retorno;
 

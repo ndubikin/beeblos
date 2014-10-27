@@ -29,11 +29,27 @@ public class WSystemDao {
 			return Integer.valueOf(HibernateUtil.save(system));
 
 		} catch (HibernateException ex) {
-			logger.error("WSystemDao: add - Can't store process definition record "+ 
-					system.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WSystemException("WSystemDao: add - Can't store process definition record "+ 
-					system.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
 
+			String mess = "HibernateException: add() - " 
+				+ "It was not posible to get the WSystem list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WSystemException(ex);
+
+		} catch (Exception ex) {
+
+			String mess = "Exception: add() - "
+					+ "It was not posible to get the WSystem list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WSystemException(ex);
+			
 		}
 
 	}
@@ -49,13 +65,27 @@ public class WSystemDao {
 
 
 		} catch (HibernateException ex) {
-			logger.error("WSystemDao: update - Can't update process definition record "+ 
-					system.getName()  +
-					" - id = "+system.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WSystemException("WSystemDao: update - Can't update process definition record "+ 
-					system.getName()  +
-					" - id = "+system.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
 
+			String mess = "HibernateException: update() - " 
+				+ "It was not posible to get the WSystem list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WSystemException(ex);
+
+		} catch (Exception ex) {
+
+			String mess = "Exception: update() - "
+					+ "It was not posible to get the WSystem list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WSystemException(ex);
+			
 		}
 
 	}
@@ -70,12 +100,29 @@ public class WSystemDao {
 			HibernateUtil.delete(system);
 
 		} catch (HibernateException ex) {
-			logger.error("WSystemDao: delete - Can't delete proccess definition record "+ system.getName() +
-					" <id = "+system.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WSystemException("WSystemDao:  delete - Can't delete proccess definition record  "+ system.getName() +
-					" <id = "+system.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
 
-		} 
+			String mess = "HibernateException: delete() - " 
+				+ "It was not posible to get the WSystem list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WSystemException(ex);
+
+		} catch (Exception ex) {
+			
+			String mess = "Exception: delete() - "
+					+ "It was not posible to get the WSystem list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WSystemException(ex);
+			
+		}
+
 
 	}
 
@@ -98,11 +145,29 @@ public class WSystemDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WSystemDao: getWSystemByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WSystemException("WSystemDao: getWSystemByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWSystemByPK() - " 
+				+ "It was not posible to get the WSystem list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WSystemException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWSystemByPK() - "
+					+ "It was not posible to get the WSystem list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WSystemException(ex);
+			
 		}
 
 		return system;
@@ -131,13 +196,30 @@ public class WSystemDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WSystemDao: getWSystemByName - can't obtain process name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WSystemException("getWSystemByName;  can't obtain process name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWSystemByName() - " 
+				+ "It was not posible to get the WSystem list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WSystemException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWSystemByName() - "
+					+ "It was not posible to get the WSystem list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WSystemException(ex);
+			
 		}
-
 		return system;
 	}
 
@@ -163,12 +245,31 @@ public class WSystemDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WSystemDao: getWSystemList() - can't obtain process list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WSystemException("WSystemDao: getWSystemList() - can't obtain process list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWSystemList() - " 
+				+ "It was not posible to get the WSystem list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WSystemException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWSystemList() - "
+					+ "It was not posible to get the WSystem list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WSystemException(ex);
+			
 		}
+		
 
 		return system;
 	}
@@ -228,11 +329,31 @@ public class WSystemDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			throw new WSystemException(
-					"Can't obtain WSystem combo list "
-							+ex.getMessage()+"\n"+ex.getCause());
-		} catch (Exception e) {}
+			
+			String mess = "HibernateException: getComboList() - " 
+				+ "It was not posible to get the WSystem list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WSystemException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getComboList() - "
+					+ "It was not posible to get the WSystem list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WSystemException(ex);
+			
+		}
+		
 		return retorno;
 
 
