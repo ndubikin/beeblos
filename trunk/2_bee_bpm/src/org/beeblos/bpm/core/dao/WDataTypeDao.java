@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WDataTypeException;
+import org.beeblos.bpm.core.error.WSystemException;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
@@ -31,11 +32,27 @@ public class WDataTypeDao {
 			return Integer.valueOf(HibernateUtil.save(dataType));
 
 		} catch (HibernateException ex) {
-			logger.error("WDataTypeDao: add - Can't store process definition record "+ 
-					dataType.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WDataTypeException("WDataTypeDao: add - Can't store process definition record "+ 
-					dataType.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: add() - " 
+				+ "It was not posible to get the WDataType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
 
+		} catch (Exception ex) {
+			
+			String mess = "Exception: add() - "
+					+ "It was not posible to get the WDataType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
+			
 		}
 
 	}
@@ -51,13 +68,27 @@ public class WDataTypeDao {
 
 
 		} catch (HibernateException ex) {
-			logger.error("WDataTypeDao: update - Can't update process definition record "+ 
-					dataType.getName()  +
-					" - id = "+dataType.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WDataTypeException("WDataTypeDao: update - Can't update process definition record "+ 
-					dataType.getName()  +
-					" - id = "+dataType.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: update() - " 
+				+ "It was not posible to get the WDataType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
 
+		} catch (Exception ex) {
+			
+			String mess = "Exception: update() - "
+					+ "It was not posible to get the WDataType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
+			
 		}
 					
 	}
@@ -72,12 +103,28 @@ public class WDataTypeDao {
 			HibernateUtil.delete(dataType);
 
 		} catch (HibernateException ex) {
-			logger.error("WDataTypeDao: delete - Can't delete proccess definition record "+ dataType.getName() +
-					" <id = "+dataType.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WDataTypeException("WDataTypeDao:  delete - Can't delete proccess definition record  "+ dataType.getName() +
-					" <id = "+dataType.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			
+			String mess = "HibernateException: delete() - " 
+				+ "It was not posible to get the WDataType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
 
-		} 
+		} catch (Exception ex) {
+			
+			String mess = "Exception: delete() - "
+					+ "It was not posible to get the WDataType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
+			
+		}
 
 	}
 
@@ -100,11 +147,29 @@ public class WDataTypeDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WDataTypeDao: getWDataTypeByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WDataTypeException("WDataTypeDao: getWDataTypeByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWDataTypeByPK() - " 
+				+ "It was not posible to get the WDataType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWDataTypeByPK() - "
+					+ "It was not posible to get the WDataType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
+			
 		}
 
 		return dataType;
@@ -133,11 +198,29 @@ public class WDataTypeDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WDataTypeDao: getWDataTypeByName - can't obtain process name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WDataTypeException("getWDataTypeByName;  can't obtain process name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWDataTypeByName() - " 
+				+ "It was not posible to get the WDataType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWDataTypeByName() - "
+					+ "It was not posible to get the WDataType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
+			
 		}
 
 		return dataType;
@@ -165,11 +248,29 @@ public class WDataTypeDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WDataTypeDao: getWDataTypeList() - can't obtain process list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WDataTypeException("WDataTypeDao: getWDataTypeList() - can't obtain process list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			
+			String mess = "HibernateException: getWDataTypeList() - " 
+				+ "It was not posible to get the WDataType list - "
+				+ ex.getMessage() + " " 
+				+ ex.getLocalizedMessage() + " " 
+				+ (ex.getCause()!=null?ex.getCause():"");
+				
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			
+			String mess = "Exception: getWDataTypeList() - "
+					+ "It was not posible to get the WDataType list - "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+" "
+					+ ex.getClass();
+			
+			logger.warn( mess );
+			throw new WDataTypeException(ex);
+			
 		}
 
 		return dataType;
@@ -230,10 +331,30 @@ public class WDataTypeDao {
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();
-				throw new WDataTypeException(
-						"Can't obtain WDataType combo list "
-						+ex.getMessage()+"\n"+ex.getCause());
-			} catch (Exception e) {}
+				
+				String mess = "HibernateException: getComboList() - " 
+					+ "It was not posible to get the WDataType list - "
+					+ ex.getMessage() + " " 
+					+ ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"");
+					
+				logger.warn( mess );
+				throw new WDataTypeException(ex);
+
+			} catch (Exception ex) {
+				if (tx != null)
+					tx.rollback();
+				
+				String mess = "Exception: getComboList() - "
+						+ "It was not posible to get the WDataType list - "
+						+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+						+ (ex.getCause()!=null?ex.getCause():"")+" "
+						+ ex.getClass();
+				
+				logger.warn( mess );
+				throw new WDataTypeException(ex);
+				
+			}
 
 			return retorno;
 
