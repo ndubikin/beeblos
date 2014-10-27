@@ -6,10 +6,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WTaskTypeException;
+import org.beeblos.bpm.core.model.WTaskType;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
-import com.sp.common.model.WTaskType;
 import com.sp.common.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
