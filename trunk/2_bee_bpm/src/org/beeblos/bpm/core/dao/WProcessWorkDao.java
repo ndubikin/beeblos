@@ -8,21 +8,17 @@ import static org.beeblos.bpm.core.model.enumerations.ProcessStage.STARTUP;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.PROCESSED;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
-import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
-import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.beeblos.bpm.tm.impl.TableManagerBLImpl;
@@ -685,7 +681,8 @@ public class WProcessWorkDao {
 		tmpQuery += " ps.id AS processStatus, "; // status id 6 	nes 20130828
 		tmpQuery += " ps.name AS statusName, "; // status name
 		tmpQuery += " pw.end_time, ";
-		tmpQuery += " pw.id AS idWork";		// 9
+		tmpQuery += " pw.id AS id";		// 9 // nes 20141026 - cambié idWork por id porque es el id de este registro q c corresponde
+									         // con un w-process-work
 
 		tmpQuery += " FROM w_process_work pw ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
@@ -735,13 +732,38 @@ public class WProcessWorkDao {
 
 			tx.commit();
 
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: getWorkingProcessWorkListByFinder() - " +
+					"load of ProcessWork list fails... "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():""); 
+			logger.warn(mess);
+			throw new WProcessWorkException(ex);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getWorkingProcessWorkListByFinder() - " +
+					"load of ProcessWork list fails... "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+ " "
+					+ ex.getClass(); 
+			logger.warn(mess);
+			throw new WProcessWorkException(ex);
+
+		}
+
+		try {
+			
 			if (result != null) {
-
+	
 				for (Object irObj : result) {
-
+	
 					Object[] cols = (Object[]) irObj;
-
-
+	
+	
 					idProcess = (cols[0] != null ? new Integer(
 									cols[0].toString()) : null);
 					processName = (cols[1] != null ? cols[1].toString() : "");
@@ -752,7 +774,7 @@ public class WProcessWorkDao {
 					
 					//started = (cols[5] != null ? (Date) cols[5] : null);
 					started = (cols[5] != null ? new TimestampColumnDateTimeMapper().fromNonNullValue((Timestamp) cols[5]) : null);
-
+	
 					// nes 20130828
 					statusId = (cols[6] != null ? new Integer(
 								cols[6].toString()) : null);
@@ -763,27 +785,29 @@ public class WProcessWorkDao {
 					
 					idWork = (cols[9] != null ? new Integer(
 								cols[9].toString()) : null);
-
+	
 					returnList.add(new ProcessWorkLight(idProcess, processName, workReference, 
 							workComments, liveSteps, started, stausName, finished, idWork));
 				}
-
+	
 			} else {
-
+	
 				returnList = null;
 			}
+		
+		} catch (Exception ex) {
 
-		} catch (HibernateException ex) {
-			if (tx != null)
-				tx.rollback();
-				logger.warn("WProcessDefDao: getWorkingProcessWorkListByFinder() - " +
-						"It cannot be posible to get the ProcessWorkLight list - "
-					+ ex.getMessage() + "\n" + ex.getLocalizedMessage() + " \n" + ex.getCause());
+			String mess = "Exception: getWorkingProcessWorkListByFinder() - " +
+					"error loading list of ProcessWorkLigth from recordset ... "
+					+ ex.getMessage() + " " + ex.getLocalizedMessage() + " " 
+					+ (ex.getCause()!=null?ex.getCause():"")+ " "
+					+ ex.getClass(); 
+			logger.warn(mess);
 			throw new WProcessWorkException(ex);
-
 		}
 
 		return returnList;
+		
 	}	
 
 }

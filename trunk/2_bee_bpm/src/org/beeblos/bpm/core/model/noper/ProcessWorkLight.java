@@ -2,24 +2,74 @@ package org.beeblos.bpm.core.model.noper;
 
 import org.joda.time.DateTime;
 
+/**
+ * 
+ * ProcessWorkLight is a thin object resume of WProcessWork mainly created to manage lists of
+ * processWork objects to display purposes...
+ * 
+ * Process work are the instances of a defined process (WProcessDef) running in a bee-bpm server (or db)
+ * The process work must be injected or started by someone or somewhere... At start time the system
+ * creates the ProcessWork and their tasks (stepWork): only the tasks belonging to "start" event are 
+ * created and wait for processing.  
+ * This method search for all instances (active / all) works
+ * Each work can have many step-works: tasks to realize (or realized) in that instance of
+ * the process: 
+ *
+ *
+ */
 public class ProcessWorkLight {
 
+	/**
+	 * ProcessWork id
+	 */
+	private Integer id;
+	
+	/**
+	 * id process def for this processWork
+	 */
 	private Integer idProcess;
 	
+	/**
+	 * Process definition name
+	 */
 	private String processName;
+	
+	/**
+	 * reference (user readable) for this instance of 
+	 * process work
+	 */
 	private String workReference;
+	/**
+	 * reference (user readable) for this instance of 
+	 * process work 
+	 */
 	private String workComments;
+	/**
+	 * qty of live steps (WStepWork) runnint at this time for
+	 * this WProcessWork
+	 */
 	private Integer liveSteps;
 	
+	/**
+	 * time this instance was started (injected)
+	 */
 	private DateTime started;
-	
-	private Integer statusId;
-	private String status;
-	
+
+	/**
+	 * Finish date for this process.
+	 * Note: if the process if finished there is mandatory
+	 * that's no live steps exists
+	 */
 	private DateTime finished;
-	
-	// dml 20120124
-	private Integer idWork;
+	/**
+	 * Status id for this instance
+	 */
+	private Integer statusId;
+
+	/**
+	 * Status name for this instance
+	 */
+	private String status;
 	
 	public ProcessWorkLight() {
 		
@@ -27,7 +77,7 @@ public class ProcessWorkLight {
 	
 	public ProcessWorkLight(Integer idProcess, String processName,
 			String workReference, String workComments, Integer liveSteps, DateTime started, String status,
-			DateTime finished, Integer idWork) {
+			DateTime finished, Integer id) {
 		super();
 		this.idProcess = idProcess;
 		this.processName = processName;
@@ -37,7 +87,7 @@ public class ProcessWorkLight {
 		this.started = started;
 		this.status = status;
 		this.finished = finished;
-		this.idWork = idWork;
+		this.id = id;
 	}
 
 	public Integer getIdProcess() {
@@ -112,12 +162,12 @@ public class ProcessWorkLight {
 		this.finished = finished;
 	}
 
-	public Integer getIdWork() {
-		return idWork;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setIdWork(Integer idWork) {
-		this.idWork = idWork;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	@Override
@@ -135,7 +185,7 @@ public class ProcessWorkLight {
 				+ (statusId != null ? "statusId=" + statusId + ", " : "")
 				+ (status != null ? "status=" + status + ", " : "")
 				+ (finished != null ? "finished=" + finished + ", " : "")
-				+ (idWork != null ? "idWork=" + idWork : "") + "]";
+				+ (id != null ? "idWork=" + id : "") + "]";
 	}
 
 	@Override
@@ -146,7 +196,7 @@ public class ProcessWorkLight {
 				+ ((finished == null) ? 0 : finished.hashCode());
 		result = prime * result
 				+ ((idProcess == null) ? 0 : idProcess.hashCode());
-		result = prime * result + ((idWork == null) ? 0 : idWork.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((liveSteps == null) ? 0 : liveSteps.hashCode());
 		result = prime * result
@@ -181,10 +231,10 @@ public class ProcessWorkLight {
 				return false;
 		} else if (!idProcess.equals(other.idProcess))
 			return false;
-		if (idWork == null) {
-			if (other.idWork != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!idWork.equals(other.idWork))
+		} else if (!id.equals(other.id))
 			return false;
 		if (liveSteps == null) {
 			if (other.liveSteps != null)
@@ -224,5 +274,21 @@ public class ProcessWorkLight {
 		return true;
 	}
 	
-	
+	public boolean empty() {
+
+		if (id!=null && !id.equals(0)) return false;
+		if (idProcess!=null && !idProcess.equals(0)) return false;
+		if (liveSteps!=null && !liveSteps.equals(0)) return false;
+		if (statusId!=null && !statusId.equals(0)) return false;
+
+		if (processName!=null && ! "".equals(processName)) return false;
+		if (workReference!=null && ! "".equals(workReference)) return false;
+		if (workComments!=null && ! "".equals(workComments)) return false;
+		if (status!=null && ! "".equals(status)) return false;
+		
+		if (started!=null) return false;
+		if (finished!=null) return false;
+
+		return true;
+	}
 }
