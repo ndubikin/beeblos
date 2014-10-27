@@ -75,21 +75,6 @@ public class WStepWorkDao {
 
 //			id = Integer.valueOf(HibernateUtil.save(swco));
 			res = session.save(stepw);
-			
-			/*
-			 *  set  custom data
-			 *  idWork & idStepWork is assigned in previous add 
-			 */
-			if (stepw.getManagedData()!=null) {
-				stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
-				stepw.getManagedData().setCurrentStepWorkId(stepw.getId());
-				if (stepw.getManagedData().getPk()!=null && stepw.getManagedData().getPk()!=0){
-					logger.error("WStepWorkDao: add - trying insert managed custom data with assigned pk id:"+stepw.getManagedData().getPk()
-							+" pk will be forced to null.");
-					stepw.getManagedData().setPk(null);
-				}
-				_persistStepWorkManagedData(stepw);
-			}
 
 			tx.commit();
 			
@@ -98,17 +83,6 @@ public class WStepWorkDao {
 				tx.rollback();
 			String mess="HibernateException: add - Can't store swco definition record "+ 
 								stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "+ex.getMessage()+" "
-					+(ex.getCause()!=null?ex.getCause():"");
-			logger.error( mess );
-			throw new WStepWorkException( mess );
-
-		} catch (WStepWorkException ex) {
-			if (tx != null)
-				tx.rollback();
-			
-			String mess="WStepWorkException: add - Can't store swco definition record "+ 
-					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "
-					+ex.getMessage()+" "
 					+(ex.getCause()!=null?ex.getCause():"");
 			logger.error( mess );
 			throw new WStepWorkException( mess );
@@ -126,12 +100,50 @@ public class WStepWorkDao {
 			throw new WStepWorkException( mess );			
 		}
 
+		/**
+		 *  set  custom data
+		 *  idWork & idStepWork is assigned in previous add
+		 *  nes 20141024 - sacado afuera del session por charla con dml
+		 */
+		try {
+			if (stepw.getManagedData()!=null) {
+				stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
+				stepw.getManagedData().setCurrentStepWorkId(stepw.getId());
+				if (stepw.getManagedData().getPk()!=null && stepw.getManagedData().getPk()!=0){
+					logger.error("WStepWorkDao: add - trying insert managed custom data with assigned pk id:"+stepw.getManagedData().getPk()
+							+" pk will be forced to null.");
+					stepw.getManagedData().setPk(null);
+				}
+				_persistStepWorkManagedData(stepw);
+			}
+		} catch (WStepWorkException ex) {
+			String mess="WStepWorkException: add - Can't store swco definition record "+ 
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"");
+			logger.error( mess );
+			throw ex;
+		} catch (Exception ex) {
+			String mess="WStepWorkException: add - Can't store swco definition record "+ 
+					stepw.getCurrentStep().getName()+" "+stepw.getwProcessWork().getReference()+" - "
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"");
+			logger.error( mess );
+			throw new WStepWorkException( mess );
+		}
+		
 		id=Integer.valueOf(res.toString());
 		return id;
 		
 	}
 	
-	
+	/**
+	 * 2 phase update: 1st hibernate mapped data, 2nd: managed data (vía jdbc)
+	 * 
+	 * @param stepw
+	 * @param currentUserId
+	 * @throws WStepWorkException
+	 */
 	public void update(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
 		logger.debug("update() WStepWork  id:["+(stepw!=null?stepw.getId():"null")+"]");
 		
@@ -148,22 +160,6 @@ public class WStepWorkDao {
 //			HibernateUtil.update(swco);
 
 			tx.commit();
-
-			/*
-			 *  set  custom data
-			 *  idWork & idStepWork is assigned in add 
-			 */
-			if (stepw.getManagedData()!=null) {
-				stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
-				stepw.getManagedData().setCurrentStepWorkId(stepw.getId());
-				if (stepw.getManagedData().getPk()==null || stepw.getManagedData().getPk()==0){
-					logger.error("WStepWorkDao: update - trying update managed custom data with null pk id - "
-							+" A new record will be inserted in table:"+stepw.getManagedData().getManagedTableConfiguration().getName());
-					stepw.getManagedData().setPk(null);
-				}
-				_persistStepWorkManagedData(stepw);
-				_synchronizeManagedData(stepw,currentUserId); // nes 20140629
-			}
 			
 		} catch (HibernateException ex) {
 			if (tx != null)
@@ -183,7 +179,24 @@ public class WStepWorkDao {
 			logger.error( mess );
 			throw new WStepWorkException( mess );
 		}
-					
+		
+		/**
+		 *  set  custom data
+		 *  idWork & idStepWork is assigned in add
+		 *   nes 20141024 - sacado afuera del session por charla con dml 
+		 */
+		if (stepw.getManagedData()!=null) {
+			stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
+			stepw.getManagedData().setCurrentStepWorkId(stepw.getId());
+			if (stepw.getManagedData().getPk()==null || stepw.getManagedData().getPk()==0){
+				logger.error("WStepWorkDao: update - trying update managed custom data with null pk id - "
+						+" A new record will be inserted in table:"+stepw.getManagedData().getManagedTableConfiguration().getName());
+				stepw.getManagedData().setPk(null);
+			}
+			_persistStepWorkManagedData(stepw);
+			_synchronizeManagedData(stepw,currentUserId); // nes 20140629
+		}
+		
 	}
 
 	public void lockStepWork( 
