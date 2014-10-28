@@ -15,8 +15,14 @@ public class WProcessWork implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * process work id (instance id)
+	 */
 	private Integer id;
 
+	/**
+	 * process work instance status from WProcessSatus table
+	 */
 	private WProcessStatus status;
 
 	/**
@@ -27,20 +33,41 @@ public class WProcessWork implements java.io.Serializable {
 //	@Deprecated
 //	private int version;
 	
+	/**
+	 * DateTime at this instance was created (injected / started)
+	 */
 	private DateTime startingTime;
+	/**
+	 * TODO: VER PA Q PUSE ESTO ...
+	 */
 	private Integer startingType;
 	
+	/**
+	 * DateTime at this instance of process is finished.
+	 * There is mandatory a finished process work will have all their
+	 * related step works finished too.
+	 * 
+	 */
 	private DateTime endTime;
 	
 	private String reference;
 	private String comments;
 	
+	/**
+	 * timestamps
+	 */
 	private Integer insertUser;
 	private DateTime insertDate;
 	private Integer modUser;
 	private DateTime modDate;
 	
+	/**
+	 * related object referred by this instance
+	 */
 	private Integer idObject;
+	/**
+	 * related object type (java class) referred by this instance
+	 */
 	private String idObjectType;
 
 	public WProcessWork() {

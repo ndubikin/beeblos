@@ -604,27 +604,28 @@ public class WProcessDefBL {
 		WProcessDef wpd;
 		wpd = new WProcessDefDao().getWProcessDefByPK(id, currentUserId);
 		
-		if (wpd != null){
-			
-			try {
-				
-				wpd.setlSteps(this._loadStepList(wpd.getId(),currentUserId));
-//				wpd.setManagedDataDef(loadManagedDataDef(wpd));
-				
-				
-			} catch (WStepDefException e1) {
-				String mess="Error: getWProcessDefByPK "+e1.getMessage();
-				throw new WStepSequenceDefException(mess);
-			}
-			
-			try {
-				wpd.setStepSequenceList(this._loadStepSequenceList(wpd.getId(),currentUserId));
-			} catch (WStepSequenceDefException e) {
-				String mess="Error: getWProcessDefByPK "+e.getMessage();
-				throw new WStepSequenceDefException(mess);
-			}
-			
-		}
+	// nes 20141027 - added relation tabla and mapped in hbm file...
+//		if (wpd != null){
+//			
+//			try {
+//				
+//				wpd.setlSteps(this._loadStepList(wpd.getId(),currentUserId));
+////				wpd.setManagedDataDef(loadManagedDataDef(wpd));
+//				
+//				
+//			} catch (WStepDefException e1) {
+//				String mess="Error: getWProcessDefByPK "+e1.getMessage();
+//				throw new WStepSequenceDefException(mess);
+//			}
+//			
+//			try {
+//				wpd.setStepSequenceList(this._loadStepSequenceList(wpd.getId(),currentUserId));
+//			} catch (WStepSequenceDefException e) {
+//				String mess="Error: getWProcessDefByPK "+e.getMessage();
+//				throw new WStepSequenceDefException(mess);
+//			}
+//			
+//		}
 		
 		return wpd;
 		
@@ -679,39 +680,39 @@ public class WProcessDefBL {
 
 		List<WProcessDef> wpdList = new WProcessDefDao().getWProcessDefs(currentUserId);
 		
-		// dml 20130506
-		if (wpdList != null){
-		
-			for (WProcessDef wpd : wpdList){
-				
-				try {
-					
-					wpd.setlSteps(this._loadStepList(wpd.getId(),currentUserId));
-					wpd.setStepSequenceList(this._loadStepSequenceList(wpd.getId(), currentUserId));
-				
-				} catch (WStepSequenceDefException e) {
-				
-					String mess="Error: getProcessList: can't get routes related with process id: "
-							+ wpd.getId() + "Error: " + e.getMessage();
-					logger.error(mess);
-				
-				} catch (WStepDefException e) {
-					
-					String mess="Error: getProcessList: can't get step sequence for process id: "
-							+ wpd.getId() + "Error: " + e.getMessage();
-					logger.error(mess);
-				
-				}
-				
-			}
-			
-		} else {
-			
-			String mess="Error: getWProcessDefs: Impossible to get the current wProcessDefList";
-			logger.error(mess);
-			throw new WProcessDefException(mess);
-			
-		}
+//		// dml 20130506
+//		if (wpdList != null){
+//		
+//			for (WProcessDef wpd : wpdList){
+//				
+//				try {
+//					
+//					wpd.setlSteps(this._loadStepList(wpd.getId(),currentUserId));
+//					wpd.setStepSequenceList(this._loadStepSequenceList(wpd.getId(), currentUserId));
+//				
+//				} catch (WStepSequenceDefException e) {
+//				
+//					String mess="Error: getProcessList: can't get routes related with process id: "
+//							+ wpd.getId() + "Error: " + e.getMessage();
+//					logger.error(mess);
+//				
+//				} catch (WStepDefException e) {
+//					
+//					String mess="Error: getProcessList: can't get step sequence for process id: "
+//							+ wpd.getId() + "Error: " + e.getMessage();
+//					logger.error(mess);
+//				
+//				}
+//				
+//			}
+//			
+//		} else {
+//			
+//			String mess="Error: getWProcessDefs: Impossible to get the current wProcessDefList";
+//			logger.error(mess);
+//			throw new WProcessDefException(mess);
+//			
+//		}
 		
 		return wpdList;
 	

@@ -543,16 +543,32 @@ public class WProcessWorkDao {
 		return processs;
 	}
 	
-	public List<ProcessWorkLight> finderWorkingWork(Integer idProcess, 
-			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
+	/**
+	 * Find process work instances ...
+	 * 
+	 * @param idProcess - process def id
+	 * @param workTypeFilter
+	 * @param onlyActiveProcessWorkFilter
+	 * @param initialStartedDateFilter
+	 * @param finalStartedDateFilter
+	 * @param estrictStartedDateFilter
+	 * @param initialFinishedDateFilter
+	 * @param finalFinishedDateFilter
+	 * @param estrictFinishedDateFilter
+	 * @param action
+	 * @return
+	 * @throws WProcessWorkException
+	 */
+	public List<ProcessWorkLight> finderProcessWork(Integer idProcess, 
+			String workTypeFilter, boolean onlyActiveProcessWorkFilter, 
 			LocalDate initialStartedDateFilter, LocalDate finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action) throws WProcessWorkException {
 
 		String filter = "";
 
-		filter = buildWorkingWorkFilter(idProcess, workTypeFilter,
-				onlyActiveWorkingProcessesFilter, initialStartedDateFilter, finalStartedDateFilter,
+		filter = buildProcessWorkFilter(idProcess, workTypeFilter,
+				onlyActiveProcessWorkFilter, initialStartedDateFilter, finalStartedDateFilter,
 				estrictStartedDateFilter, initialFinishedDateFilter,
 				finalFinishedDateFilter, estrictFinishedDateFilter, filter);
 
@@ -569,8 +585,8 @@ public class WProcessWorkDao {
 		
 	}
 
-	private String buildWorkingWorkFilter(Integer idProcess,
-			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
+	private String buildProcessWorkFilter(Integer idProcess,
+			String workTypeFilter, boolean onlyActiveProcessWorkFilter, 
 			LocalDate initialStartedDateFilter,
 			LocalDate finalStartedDateFilter, boolean estrictStartedDateFilter,
 			LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter,
@@ -597,7 +613,7 @@ public class WProcessWorkDao {
 			}
 		}
 		
-		if (onlyActiveWorkingProcessesFilter) {
+		if (onlyActiveProcessWorkFilter) {
 			if (!"".equals(filter)) {
 				filter += " AND wpd.active IS TRUE ";
 			} else {

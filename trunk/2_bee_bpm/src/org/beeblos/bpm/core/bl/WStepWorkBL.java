@@ -2042,21 +2042,21 @@ public class WStepWorkBL {
 	}
 	
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
-			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
+			Integer stepIdFilter, String stepWorkProcessingStatusFilter, String referenceFilter, Integer idWorkFilter, 
 			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
 			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
-			String action, boolean onlyActiveWorkingProcessesFilter)
+			String action, boolean onlyActiveProcessDefFilter)
 	throws WStepWorkException {
 
 		return new WStepWorkDao().finderStepWork(processIdFilter, stepIdFilter, 
-				stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
+				stepWorkProcessingStatusFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter, 
 				finalArrivingDateFilter, estrictArrivingDateFilter, 
 				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 				initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
 				initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
-				action, onlyActiveWorkingProcessesFilter);
+				action, onlyActiveProcessDefFilter);
 		
 	}
 	

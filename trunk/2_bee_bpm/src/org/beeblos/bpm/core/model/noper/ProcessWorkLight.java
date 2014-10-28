@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.model.noper;
 
+import java.io.Serializable;
+
 import org.joda.time.DateTime;
 
 /**
@@ -17,7 +19,12 @@ import org.joda.time.DateTime;
  *
  *
  */
-public class ProcessWorkLight {
+public class ProcessWorkLight implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * ProcessWork id

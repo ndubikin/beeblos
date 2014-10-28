@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;

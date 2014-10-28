@@ -16,7 +16,12 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
+import org.beeblos.bpm.core.model.WStepWork;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 
 import com.sp.common.util.HibernateUtil;
@@ -671,7 +676,7 @@ public class WStepDefDao {
 			Integer processDefId, String firstLineText, String blank )
 	throws WProcessDefException {
 		 
-			List<Object> lwsd = null;
+			List<WStepDef> lwsd = null;
 			List<StringPair> retorno = new ArrayList<StringPair>(10);
 			
 			org.hibernate.Session session = null;
@@ -681,7 +686,29 @@ public class WStepDefDao {
 
 				session = HibernateUtil.obtenerSession();
 				tx = session.getTransaction();
+				
 				tx.begin();
+//				
+//				Criteria crit = session.createCriteria(WStepDef.class, "wsd")
+//						.createAlias("wStepHead", "wsh", JoinType.LEFT_OUTER_JOIN)
+//						.createAlias("WStepSequenceDef", "wss", JoinType.LEFT_OUTER_JOIN);
+//						
+//						crit.setProjection(Projections.rowCount());
+//						if (idProcess!=null) crit.add( Restrictions.eq("processDef.id",idProcess));
+//						if (idObject!=null) crit.add( Restrictions.eq("wpw.idObject",idObject));
+//						if (idObjectType!=null) crit.add( Restrictions.eq("wpw.idObjectType",idObjectType.trim()));
+//						
+//						// como indica "activos", estarán activos o no resueltos los q no tengan fecha de resolución ...
+//						crit.add(Restrictions.eq("decidedDate", null));
+//
+//						lwsd = (List<WStepDef>) crit.list();
+//
+//						tx.commit();
+//				lwsd = (List<WStepDef>) session.createCriteria(WStepDef.class).add(
+//						Restrictions.naturalId().set("name", name))
+//						.uniqueResult();
+//
+//				tx.commit();
 
 				lwsd = session
 							.createQuery("Select Distinct w.id, w.stepHead.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.stepHead.name")
