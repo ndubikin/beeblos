@@ -2080,24 +2080,24 @@ public class WStepWorkDao {
 	}	
 
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
-			Integer stepIdFilter, String stepTypeFilter, String referenceFilter, Integer idWorkFilter, 
+			Integer stepIdFilter, String stepWorkProcessingStatusFilter, String referenceFilter, Integer idWorkFilter, 
 			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
 			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
-			String action, boolean onlyActiveWorkingProcessesFilter) 
+			String action, boolean onlyActiveProcessDefFilter) 
 					throws WStepWorkException {
 		
 		String filter = "";
 
 		filter = buildWorkingStepFilter(processIdFilter, stepIdFilter,
-				stepTypeFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter,
+				stepWorkProcessingStatusFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter,
 				finalArrivingDateFilter, estrictArrivingDateFilter,
 				initialOpenedDateFilter, finalOpenedDateFilter,
 				estrictOpenedDateFilter, initialDeadlineDateFilter,
 				finalDeadlineDateFilter, estrictDeadlineDateFilter,
 				initialDecidedDateFilter, finalDecidedDateFilter,
-				estrictDecidedDateFilter, onlyActiveWorkingProcessesFilter, filter);
+				estrictDecidedDateFilter, onlyActiveProcessDefFilter, filter);
 
 		if (filter != null && !"".equals(filter)){
 			filter = "WHERE " + filter;
@@ -2105,7 +2105,7 @@ public class WStepWorkDao {
 
 		String query = buildWorkingStepQuery(filter, action);
 		
-		System.out.println("------>> getWorkingStepListFinder -> query:" + query
+		logger.debug("------>> finderStepWork -> query:" + query
 				+ "<<-------");
 
 		return getWorkingStepList(query);
@@ -2113,17 +2113,17 @@ public class WStepWorkDao {
 	}
 
 	private String buildWorkingStepFilter(Integer processIdFilter,
-			Integer stepIdFilter, String stepTypeFilter,
+			Integer stepIdFilter, String stepWorkProcessingStatusFilter,
 			String referenceFilter, Integer idWorkFilter, LocalDate initialArrivingDateFilter,
 			LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter,
 			boolean estrictOpenedDateFilter, LocalDate initialDeadlineDateFilter,
 			LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
 			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter,
-			boolean estrictDecidedDateFilter, boolean onlyActiveWorkingProcessesFilter, 
+			boolean estrictDecidedDateFilter, boolean onlyActiveProcessDefFilter, 
 			String filter) {
 		
-		if (onlyActiveWorkingProcessesFilter) {
+		if (onlyActiveProcessDefFilter) {
 			if (!"".equals(filter)) {
 				filter += " AND wpd.active IS TRUE ";
 			} else {
@@ -2146,13 +2146,13 @@ public class WStepWorkDao {
 			filter += " sw.id_current_step = " + stepIdFilter;
 		}
 		
-		if (!"".equals(stepTypeFilter) || !"ALL".equals(stepTypeFilter)) {
-			if ("PENDING".equals(stepTypeFilter)) {
+		if (!"".equals(stepWorkProcessingStatusFilter) || !"ALL".equals(stepWorkProcessingStatusFilter)) {
+			if ("PENDING".equals(stepWorkProcessingStatusFilter)) {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
 				filter += " sw.decided_date IS NULL ";				
-			} else if ("PROCESSED".equals(stepTypeFilter)){
+			} else if ("PROCESSED".equals(stepWorkProcessingStatusFilter)){
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}

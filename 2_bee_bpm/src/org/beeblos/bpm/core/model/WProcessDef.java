@@ -84,9 +84,17 @@ public class WProcessDef implements java.io.Serializable {
 	private Set<WProcessRole> rolesRelated = new HashSet<WProcessRole>();
 	private Set<WProcessUser> usersRelated = new HashSet<WProcessUser>();
 	
-	// nes 20130502 - traje desde backing bean ...
-	// se carga "a mano" en la BL pues no está mapeado por hibernate
-	private List<WStepDef> lSteps = new ArrayList<WStepDef>(); 
+//	// nes 20130502 - traje desde backing bean ...
+//	// se carga "a mano" en la BL pues no está mapeado por hibernate
+//	private List<WStepDef> lSteps = new ArrayList<WStepDef>();
+	/**
+	 * Step list (task list) used by this process.
+	 * 
+	 * nes 20141027: added relation tabla w_process_step_def and loaded step
+	 * list directly from the relation  
+	 */
+	private Set<WStepDef> steps = new HashSet<WStepDef>();
+	
 	private List<WStepSequenceDef> stepSequenceList; 
 	
 	private Set<SystemObject> systemObject = new HashSet<SystemObject>(0);
@@ -413,13 +421,30 @@ public class WProcessDef implements java.io.Serializable {
 		this.arrivingUserNoticeTemplate = arrivingUserNoticeTemplate;
 	}
 
+	@Deprecated // nes 20141027 - deprecated by steps
 	public List<WStepDef> getlSteps() {
-		return lSteps;
+		return getWStepDefAsList();
 	}
 
-	public void setlSteps(List<WStepDef> lSteps) {
-		this.lSteps = lSteps;
+	public List<WStepDef> getWStepDefAsList() {
+		return new ArrayList<WStepDef>(steps);
 	}
+
+	/**
+	 * @return the steps
+	 */
+	public Set<WStepDef> getSteps() {
+		return steps;
+	}
+
+
+	/**
+	 * @param steps the steps to set
+	 */
+	public void setSteps(Set<WStepDef> steps) {
+		this.steps = steps;
+	}
+
 
 	public List<WStepSequenceDef> getStepSequenceList() {
 		return stepSequenceList;
@@ -730,7 +755,8 @@ public class WProcessDef implements java.io.Serializable {
 		if (arrivingUserNoticeTemplate!=null && arrivingUserNoticeTemplate.empty()) arrivingUserNoticeTemplate=null;
 		if (rolesRelated!=null && rolesRelated.isEmpty()) rolesRelated=null;
 		if (usersRelated!=null && usersRelated.isEmpty()) usersRelated=null;
-		if (lSteps!=null && lSteps.isEmpty()) lSteps=null;
+//		if (lSteps!=null && lSteps.isEmpty()) lSteps=null;
+		if (steps!=null && steps.isEmpty()) steps=null;
 		if (stepSequenceList!=null && stepSequenceList.isEmpty()) stepSequenceList=null;
 		if (systemObject!=null && systemObject.isEmpty()) systemObject=null;
 	}
@@ -750,7 +776,8 @@ public class WProcessDef implements java.io.Serializable {
 		if (arrivingUserNoticeTemplate==null) arrivingUserNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
 		if (rolesRelated==null) rolesRelated = new HashSet<WProcessRole>();
 		if (usersRelated==null) usersRelated = new HashSet<WProcessUser>();
-		if (lSteps==null) lSteps = new ArrayList<WStepDef>();
+		//if (lSteps==null) lSteps = new ArrayList<WStepDef>();
+		if (steps==null) steps = new HashSet<WStepDef>();
 		if (stepSequenceList==null) stepSequenceList = new ArrayList<WStepSequenceDef>();
 		if (systemObject==null) systemObject = new HashSet<SystemObject>();
     }

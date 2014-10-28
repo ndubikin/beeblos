@@ -1,11 +1,18 @@
 package org.beeblos.bpm.core.model.noper;
 
+import java.io.Serializable;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
-public class StepWorkLight {
+public class StepWorkLight implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer idProcess;
 	private Integer idStep;
 	private String stepName;

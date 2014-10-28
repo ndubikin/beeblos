@@ -214,29 +214,12 @@ public class WProcessWorkBL {
 	}
 	
 	
-	public List<ProcessWorkLight> finderWorkingWork(Integer idProcess, 
-			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
-			LocalDate initialStartedDateFilter, LocalDate finalStartedDateFilter, 
-			boolean estrictStartedDateFilter, LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter, 
-			boolean estrictFinishedDateFilter, String action)
-	throws WProcessWorkException {
-		
-		return new WProcessWorkDao().finderWorkingWork(idProcess, workTypeFilter,
-				onlyActiveWorkingProcessesFilter, initialStartedDateFilter, finalStartedDateFilter, 
-				estrictStartedDateFilter, initialFinishedDateFilter, finalFinishedDateFilter, 
-				estrictFinishedDateFilter, action);
-		
-	}
-
 	/**
-	 * NOTA: ESTE ES EL MÉTODO VIEJO, EL NUEVO CON DATETIME DE JODA ES EL DE ARRIBA, ESTE SOLO LO DEJAMOS PARA
-	 * EL MANTENIMIENTO DE BEE_BPM MIENTRAS NO LO MIGRAMOS A JSF2
-	 * 
-	 * @author dmuleiro 20140212
+	 * Finds process works instances ...
 	 * 
 	 * @param idProcess
 	 * @param workTypeFilter
-	 * @param onlyActiveWorkingProcessesFilter
+	 * @param onlyActiveProcessWorkFilter
 	 * @param initialStartedDateFilter
 	 * @param finalStartedDateFilter
 	 * @param estrictStartedDateFilter
@@ -247,32 +230,19 @@ public class WProcessWorkBL {
 	 * @return
 	 * @throws WProcessWorkException
 	 */
-/*	@Deprecated
-	public List<ProcessWorkLight> finderWorkingWorkVIEJO(Integer idProcess, 
-			String workTypeFilter, boolean onlyActiveWorkingProcessesFilter, 
-			DateTime initialStartedDateFilter, DateTime finalStartedDateFilter, 
-			boolean estrictStartedDateFilter, DateTime initialFinishedDateFilter, DateTime finalFinishedDateFilter, 
+	public List<ProcessWorkLight> finderProcessWork(Integer idProcess, 
+			String workTypeFilter, boolean onlyActiveProcessWorkFilter, 
+			LocalDate initialStartedDateFilter, LocalDate finalStartedDateFilter, 
+			boolean estrictStartedDateFilter, LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action)
 	throws WProcessWorkException {
 		
-		DateTime initialStartedDateFilterDATETIME = 
-				(initialStartedDateFilter != null)?new DateTime(initialStartedDateFilter.getTime()):null;
-		DateTime finalStartedDateFilterDATETIME = 
-				(finalStartedDateFilter != null)?new DateTime(finalStartedDateFilter.getTime()):null;
-
-		DateTime initialFinishedDateFilterDATETIME = 
-				(initialFinishedDateFilter != null)?new DateTime(initialFinishedDateFilter.getTime()):null;
-		DateTime finalFinishedDateFilterDATETIME = 
-				(finalFinishedDateFilter != null)?new DateTime(finalFinishedDateFilter.getTime()):null;
-
-		
-		return this.finderWorkingWork(idProcess, workTypeFilter,
-				onlyActiveWorkingProcessesFilter, initialStartedDateFilterDATETIME, finalStartedDateFilterDATETIME, 
-				estrictStartedDateFilter, initialFinishedDateFilterDATETIME, finalFinishedDateFilterDATETIME, 
+		return new WProcessWorkDao().finderProcessWork(idProcess, workTypeFilter,
+				onlyActiveProcessWorkFilter, initialStartedDateFilter, finalStartedDateFilter, 
+				estrictStartedDateFilter, initialFinishedDateFilter, finalFinishedDateFilter, 
 				estrictFinishedDateFilter, action);
 		
 	}
-*/
 
 	/**
 	 * returns qty of existing process work for a given processId
