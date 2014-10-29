@@ -18,6 +18,7 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepWork;
+import org.beeblos.bpm.core.model.enumerations.ProcessWorkStatus;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
@@ -292,7 +293,7 @@ public class WProcessWorkDao {
 
 	@SuppressWarnings("unchecked")
 	public List<WProcessWork> getWProcessWorkList(
-			Integer processId, Integer idObject, String idObjectType, String mode, 
+			Integer processId, Integer idObject, String idObjectType, ProcessWorkStatus processWorkStatus, 
 			Integer currentUserId, boolean isAdminMode)
 			throws WProcessWorkException {
 
@@ -318,7 +319,7 @@ public class WProcessWorkDao {
 			criteria = this._agregarFiltrosACriteria(criteria,
 					processId, idObject, idObjectType);
 
-			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(mode);
+			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(processWorkStatus);
 
 			if (criteriaWStepWork != null){
 				criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
@@ -353,7 +354,7 @@ public class WProcessWorkDao {
 
 	@SuppressWarnings("unchecked")
 	public Integer getWorkCount(
-			Integer processId, Integer idObject, String idObjectType, String mode)
+			Integer processId, Integer idObject, String idObjectType, ProcessWorkStatus processWorkStatus)
 			throws WProcessWorkException {
 
 		org.hibernate.Session session = null;
@@ -378,7 +379,7 @@ public class WProcessWorkDao {
 			criteria = this._agregarFiltrosACriteria(criteria,
 					processId, idObject, idObjectType);
 
-			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(mode);
+			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(processWorkStatus);
 
 			if (criteriaWStepWork != null){
 				criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
@@ -443,22 +444,26 @@ public class WProcessWorkDao {
 		
 	}
 
-	private DetachedCriteria _filtroCriteriaWStepWork(String mode){
+	/**
+	 * nes 20141028 - pasado a enum
+	 * @param processWorkStatus
+	 * @return
+	 */
+	private DetachedCriteria _filtroCriteriaWStepWork(ProcessWorkStatus processWorkStatus){
 		
 		// DetachedCriteria para los datos que se buscarán sobre el evaluador
 		DetachedCriteria criteriaWStepWork = DetachedCriteria.forClass(WStepWork.class, "wsw")
 				.createAlias("wProcessWork", "wProcessWork", JoinType.LEFT_OUTER_JOIN)
 				.setProjection(Property.forName("wProcessWork.id"));
 		
-		if (mode != null){
-			if (mode.equals(ALIVE)) {
-				criteriaWStepWork = criteriaWStepWork
-						.add( Restrictions.isNull("wsw.decidedDate") );
-			} else if (mode.equals(PROCESSED)) {
-				criteriaWStepWork = criteriaWStepWork
-						.add( Restrictions.isNotNull("wsw.decidedDate") );
-			} 
-		}
+
+		if (processWorkStatus.equals(ProcessWorkStatus.ALIVE)) {
+			criteriaWStepWork = criteriaWStepWork
+					.add( Restrictions.isNull("wsw.decidedDate") );
+		} else if (processWorkStatus.equals(ProcessWorkStatus.PROCESSED)) {
+			criteriaWStepWork = criteriaWStepWork
+					.add( Restrictions.isNotNull("wsw.decidedDate") );
+		} 
 
 		return criteriaWStepWork;
 
@@ -547,7 +552,7 @@ public class WProcessWorkDao {
 	 * Find process work instances ...
 	 * 
 	 * @param idProcess - process def id
-	 * @param workTypeFilter
+	 * @param ProcessWorkStatus - processWorkStatus enum
 	 * @param onlyActiveProcessWorkFilter
 	 * @param initialStartedDateFilter
 	 * @param finalStartedDateFilter
@@ -560,14 +565,14 @@ public class WProcessWorkDao {
 	 * @throws WProcessWorkException
 	 */
 	public List<ProcessWorkLight> finderProcessWork(Integer idProcess, 
-			String workTypeFilter, boolean onlyActiveProcessWorkFilter, 
+			ProcessWorkStatus processWorkStatus, boolean onlyActiveProcessWorkFilter, 
 			LocalDate initialStartedDateFilter, LocalDate finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action) throws WProcessWorkException {
 
 		String filter = "";
 
-		filter = buildProcessWorkFilter(idProcess, workTypeFilter,
+		filter = buildProcessWorkFilter(idProcess, processWorkStatus,
 				onlyActiveProcessWorkFilter, initialStartedDateFilter, finalStartedDateFilter,
 				estrictStartedDateFilter, initialFinishedDateFilter,
 				finalFinishedDateFilter, estrictFinishedDateFilter, filter);
@@ -586,7 +591,7 @@ public class WProcessWorkDao {
 	}
 
 	private String buildProcessWorkFilter(Integer idProcess,
-			String workTypeFilter, boolean onlyActiveProcessWorkFilter, 
+			ProcessWorkStatus processWorkStatus, boolean onlyActiveProcessWorkFilter, 
 			LocalDate initialStartedDateFilter,
 			LocalDate finalStartedDateFilter, boolean estrictStartedDateFilter,
 			LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter,
@@ -599,18 +604,20 @@ public class WProcessWorkDao {
 			filter += " wpd.id = " + idProcess;
 		}
 		
-		if (!"".equals(workTypeFilter) || !"ALL".equals(workTypeFilter)) {
-			if ("PROCESSING".equals(workTypeFilter)) {
-				if (!"".equals(filter)) {
-					filter += " AND ";
-				}
-				filter += " pw.end_time IS NULL ";				
-			} else if ("FINISHED".equals(workTypeFilter)){
-				if (!"".equals(filter)) {
-					filter += " AND ";
-				}
-				filter += " pw.end_time IS NOT NULL ";				
+
+		/**
+		 * nes 20141028 - pasado a enum
+		 */
+		if (processWorkStatus.equals(ProcessWorkStatus.ALIVE)) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
 			}
+			filter += " pw.end_time IS NULL ";				
+		} else if (processWorkStatus.equals(ProcessWorkStatus.PROCESSED)){
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			filter += " pw.end_time IS NOT NULL ";				
 		}
 		
 		if (onlyActiveProcessWorkFilter) {

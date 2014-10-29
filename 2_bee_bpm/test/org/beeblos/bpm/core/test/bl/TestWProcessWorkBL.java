@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.beeblos.bpm.core.bl.WProcessWorkBL;
 import org.beeblos.bpm.core.dao.WProcessWorkDao;
 import org.beeblos.bpm.core.model.WProcessWork;
+import org.beeblos.bpm.core.model.enumerations.ProcessWorkStatus;
 import org.junit.Test;
 
 
@@ -40,7 +41,7 @@ public class TestWProcessWorkBL extends TestCase{
 		public void testCriteriaWProcessWork() throws Exception {
 			
 			List<WProcessWork> wpwList = new WProcessWorkDao()
-				.getWProcessWorkList(null, null, "", "ALIVE", 1000, false);		
+				.getWProcessWorkList(null, null, "", ProcessWorkStatus.ALIVE, 1000, false);		
 			
 			if (wpwList != null){
 				System.out.println("elementos: " + wpwList.size());
