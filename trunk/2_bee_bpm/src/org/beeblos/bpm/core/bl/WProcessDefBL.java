@@ -138,10 +138,12 @@ public class WProcessDefBL {
 	public void update(WProcessDef process, Integer currentUserId) throws WProcessDefException {
 		
 		logger.debug("update() WProcessDef < id = "+process.getId()+">");
+
 		
 		WProcessDef storedProcess = new WProcessDefDao().getWProcessDefByPK(process.getId(), currentUserId); 
+/* dml 20141029 COMENTADO POR ERRORES DE DUPLICIDAD
 		if (!process.equals(storedProcess) ) {
-
+*/
 			DateTime now = new DateTime();
 			
 			// timestamp & trace info
@@ -199,12 +201,14 @@ public class WProcessDefBL {
 			
 			
 			new WProcessDefDao().update(process, currentUserId);
+
+/* dml 20141029 COMENTADO POR ERRORES DE DUPLICIDAD
 			
 		} else {
 			
 			logger.debug("WProcessDefBL.update - nothing to do ...");
 		}
-			
+*/			
 	}
 	
 	// dml 20130703
