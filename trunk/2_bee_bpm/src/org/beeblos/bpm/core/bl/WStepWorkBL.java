@@ -1,7 +1,6 @@
 package org.beeblos.bpm.core.bl;
 
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
-import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
@@ -10,6 +9,7 @@ import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
 import static org.beeblos.bpm.core.util.Constants.WRITE_EMAIL_TO_FILESYSTEM;
+import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -54,6 +54,7 @@ import org.beeblos.bpm.core.model.WStepWorkAssignment;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRole;
+import org.beeblos.bpm.core.model.enumerations.StepWorkStatus;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WProcessDefThin;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
@@ -2041,8 +2042,32 @@ public class WStepWorkBL {
 		return new WStepWorkDao().getStepListByProcessName(idProcess, arrivingDate, openedDate, deadlineDate, status, currentUser);
 	}
 	
+	/**
+	 * Finder for stepWork 
+	 * @param processIdFilter
+	 * @param stepIdFilter
+	 * @param stepWorkProcessingStatusFilter - StepWorkStatus
+	 * @param referenceFilter
+	 * @param idWorkFilter
+	 * @param initialArrivingDateFilter
+	 * @param finalArrivingDateFilter
+	 * @param estrictArrivingDateFilter
+	 * @param initialOpenedDateFilter
+	 * @param finalOpenedDateFilter
+	 * @param estrictOpenedDateFilter
+	 * @param initialDeadlineDateFilter
+	 * @param finalDeadlineDateFilter
+	 * @param estrictDeadlineDateFilter
+	 * @param initialDecidedDateFilter
+	 * @param finalDecidedDateFilter
+	 * @param estrictDecidedDateFilter
+	 * @param action
+	 * @param onlyActiveProcessDefFilter
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
-			Integer stepIdFilter, String stepWorkProcessingStatusFilter, String referenceFilter, Integer idWorkFilter, 
+			Integer stepIdFilter, StepWorkStatus stepWorkProcessingStatusFilter, String referenceFilter, Integer idWorkFilter, 
 			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		

@@ -19,8 +19,8 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepWork;
-import org.beeblos.bpm.core.model.WUseridmapper;
 import org.beeblos.bpm.core.model.enumerations.ProcessStage;
+import org.beeblos.bpm.core.model.enumerations.StepWorkStatus;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.tm.TableManager;
@@ -44,9 +44,7 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.sp.common.model.ManagedDataField;
 import com.sp.common.util.HibernateUtil;
-import com.sp.common.util.StringPair;
 
 
 public class WStepWorkDao {
@@ -2079,8 +2077,33 @@ public class WStepWorkDao {
 	
 	}	
 
+	/**
+	 * Finder for step work 
+	 * 
+	 * @param processIdFilter
+	 * @param stepIdFilter
+	 * @param stepWorkProcessingStatusFilter - StepWorkStatus enum
+	 * @param referenceFilter
+	 * @param idWorkFilter
+	 * @param initialArrivingDateFilter
+	 * @param finalArrivingDateFilter
+	 * @param estrictArrivingDateFilter
+	 * @param initialOpenedDateFilter
+	 * @param finalOpenedDateFilter
+	 * @param estrictOpenedDateFilter
+	 * @param initialDeadlineDateFilter
+	 * @param finalDeadlineDateFilter
+	 * @param estrictDeadlineDateFilter
+	 * @param initialDecidedDateFilter
+	 * @param finalDecidedDateFilter
+	 * @param estrictDecidedDateFilter
+	 * @param action
+	 * @param onlyActiveProcessDefFilter
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
-			Integer stepIdFilter, String stepWorkProcessingStatusFilter, String referenceFilter, Integer idWorkFilter, 
+			Integer stepIdFilter, StepWorkStatus stepWorkProcessingStatusFilter, String referenceFilter, Integer idWorkFilter, 
 			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
@@ -2113,7 +2136,7 @@ public class WStepWorkDao {
 	}
 
 	private String buildWorkingStepFilter(Integer processIdFilter,
-			Integer stepIdFilter, String stepWorkProcessingStatusFilter,
+			Integer stepIdFilter, StepWorkStatus stepWorkProcessingStatusFilter,
 			String referenceFilter, Integer idWorkFilter, LocalDate initialArrivingDateFilter,
 			LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter,
@@ -2146,18 +2169,19 @@ public class WStepWorkDao {
 			filter += " sw.id_current_step = " + stepIdFilter;
 		}
 		
-		if (!"".equals(stepWorkProcessingStatusFilter) || !"ALL".equals(stepWorkProcessingStatusFilter)) {
-			if ("PENDING".equals(stepWorkProcessingStatusFilter)) {
-				if (!"".equals(filter)) {
-					filter += " AND ";
-				}
-				filter += " sw.decided_date IS NULL ";				
-			} else if ("PROCESSED".equals(stepWorkProcessingStatusFilter)){
-				if (!"".equals(filter)) {
-					filter += " AND ";
-				}
-				filter += " sw.decided_date IS NOT NULL ";				
+		/**
+		 * nes 20141028 - pasado a enum
+		 */
+		if (stepWorkProcessingStatusFilter.equals(StepWorkStatus.PENDING)) {
+			if (!"".equals(filter)) {
+				filter += " AND ";
 			}
+			filter += " sw.decided_date IS NULL ";				
+		} else if (stepWorkProcessingStatusFilter.equals(StepWorkStatus.PROCESSED)){
+			if (!"".equals(filter)) {
+				filter += " AND ";
+			}
+			filter += " sw.decided_date IS NOT NULL ";				
 		}
 		
 		if (referenceFilter != null && !"".equals(referenceFilter)) {

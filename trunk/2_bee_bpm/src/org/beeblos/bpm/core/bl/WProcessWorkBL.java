@@ -12,6 +12,7 @@ import org.beeblos.bpm.core.error.WProcessStatusException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
+import org.beeblos.bpm.core.model.enumerations.ProcessWorkStatus;
 import org.beeblos.bpm.core.model.noper.ProcessWorkLight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -169,12 +170,12 @@ public class WProcessWorkBL {
 	 * @throws WProcessWorkException
 	 */
 	public List<WProcessWork> getWProcessWorkList(
-			Integer processId, Integer idObject, String idObjectType, String mode, 
+			Integer processId, Integer idObject, String idObjectType, ProcessWorkStatus processWorkStatus, 
 			Integer currentUserId, boolean isAdminMode) 
 		throws WProcessWorkException {
 
 		return new WProcessWorkDao().getWProcessWorkList(
-				processId, idObject, idObjectType, mode, currentUserId, isAdminMode);
+				processId, idObject, idObjectType, processWorkStatus, currentUserId, isAdminMode);
 
 	}
 	
@@ -184,19 +185,19 @@ public class WProcessWorkBL {
 	 * @param processId
 	 * @param idObject
 	 * @param idObjectType
-	 * @param mode: ALL / ALIVE / PROCESSED
+	 * @param ProcessWorkStatus: ALL / ALIVE / PROCESSED ProcessWorkStatus enum
 	 * @param currentUserId
 	 * boolean isAdminMode -> indica que se está trabajando en modo admin y que no hay que filtrar por el usuario ...
 	 * @return
 	 * @throws WProcessWorkException
 	 */
 	public List<WProcessWork> getWProcessWorkList(
-			Integer idObject, String idObjectType, String mode, 
+			Integer idObject, String idObjectType, ProcessWorkStatus processWorkStatus, 
 			Integer currentUserId, boolean isAdminMode) 
 		throws WProcessWorkException {
 
 		return new WProcessWorkDao().getWProcessWorkList(
-				null, idObject, idObjectType, mode, currentUserId, isAdminMode);
+				null, idObject, idObjectType, processWorkStatus, currentUserId, isAdminMode);
 
 	}	
 	
@@ -218,7 +219,7 @@ public class WProcessWorkBL {
 	 * Finds process works instances ...
 	 * 
 	 * @param idProcess
-	 * @param workTypeFilter
+	 * @param ProcessWorkStatus - processWorkStatus enum
 	 * @param onlyActiveProcessWorkFilter
 	 * @param initialStartedDateFilter
 	 * @param finalStartedDateFilter
@@ -231,13 +232,13 @@ public class WProcessWorkBL {
 	 * @throws WProcessWorkException
 	 */
 	public List<ProcessWorkLight> finderProcessWork(Integer idProcess, 
-			String workTypeFilter, boolean onlyActiveProcessWorkFilter, 
+			ProcessWorkStatus processWorkStatus, boolean onlyActiveProcessWorkFilter, 
 			LocalDate initialStartedDateFilter, LocalDate finalStartedDateFilter, 
 			boolean estrictStartedDateFilter, LocalDate initialFinishedDateFilter, LocalDate finalFinishedDateFilter, 
 			boolean estrictFinishedDateFilter, String action)
 	throws WProcessWorkException {
 		
-		return new WProcessWorkDao().finderProcessWork(idProcess, workTypeFilter,
+		return new WProcessWorkDao().finderProcessWork(idProcess, processWorkStatus,
 				onlyActiveProcessWorkFilter, initialStartedDateFilter, finalStartedDateFilter, 
 				estrictStartedDateFilter, initialFinishedDateFilter, finalFinishedDateFilter, 
 				estrictFinishedDateFilter, action);
@@ -249,12 +250,12 @@ public class WProcessWorkBL {
 	 * default: ALL
 	 * 
 	 * @param processId
-	 * @param mode: ALL / ALIVE / PROCESSED
+	 * @param ProcessWorkStatus: ALL / ALIVE / PROCESSED - ProcessWorkStatus enum
 	 * @return
 	 * @throws WProcessWorkException
 	 */
-	public Integer getWorkCount (Integer processId, String mode) throws WProcessWorkException {
-		return new WProcessWorkDao().getWorkCount(processId, null, null, mode);
+	public Integer getWorkCount (Integer processId, ProcessWorkStatus processWorkStatus) throws WProcessWorkException {
+		return new WProcessWorkDao().getWorkCount(processId, null, null, processWorkStatus);
 	}
 	
 	/**
@@ -268,9 +269,9 @@ public class WProcessWorkBL {
 	 * @return
 	 * @throws WProcessWorkException
 	 */
-	public Integer getWorkCount (Integer processId, Integer idObject, String idObjectType, String mode) 
+	public Integer getWorkCount (Integer processId, Integer idObject, String idObjectType, ProcessWorkStatus processWorkStatus) 
 			throws WProcessWorkException {
-		return new WProcessWorkDao().getWorkCount(processId, idObject, idObjectType, mode);
+		return new WProcessWorkDao().getWorkCount(processId, idObject, idObjectType, processWorkStatus);
 	}
 	
 	/**
@@ -279,13 +280,13 @@ public class WProcessWorkBL {
 	 *
 	 * @param idObject
 	 * @param idObjectType
-	 * @param mode: ALL / ALIVE / PROCESSED
+	 * @param ProcessWorkStatus: ALL / ALIVE / PROCESSED - ProcessWorkStatus enum
 	 * @return
 	 * @throws WProcessWorkException
 	 */
-	public Integer getWorkCount (Integer idObject, String idObjectType, String mode) 
+	public Integer getWorkCount (Integer idObject, String idObjectType, ProcessWorkStatus processWorkStatus) 
 			throws WProcessWorkException {
-		return new WProcessWorkDao().getWorkCount(null, idObject, idObjectType, mode);
+		return new WProcessWorkDao().getWorkCount(null, idObject, idObjectType, processWorkStatus);
 	}
 	
 	

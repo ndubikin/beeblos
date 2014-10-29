@@ -1,9 +1,9 @@
 package org.beeblos.bpm.core.bl;
 
-import static org.beeblos.bpm.core.util.Constants.ALIVE;
-import static org.beeblos.bpm.core.util.Constants.ALL;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
+import static org.beeblos.bpm.core.util.Constants.ALL;
 import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+import org.beeblos.bpm.core.model.enumerations.ProcessWorkStatus;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;
@@ -275,7 +276,7 @@ public class WProcessDefBL {
 		}
 			
 		try {
-			qtyWorks = new WProcessWorkBL().getWorkCount(processDefId,ALL);
+			qtyWorks = new WProcessWorkBL().getWorkCount(processDefId,ProcessWorkStatus.ALL);
 		} catch (WProcessWorkException e) {
 			String mess = "Error verifiyng existence of works related with this process id:"+processDefId
 					+ " "+e.getMessage()+" - "+e.getCause();
