@@ -13,34 +13,73 @@ public class StepWorkLight implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * WProcessDef id for this stepWork
+	 */
 	private Integer idProcess;
+	/**
+	 * WStepDef id for this step 
+	 */
 	private Integer idStep;
+	/**
+	 * step/task name
+	 */
 	private String stepName;
+	/**
+	 * Step/task reference for this item
+	 */
 	private String reference;
+	/**
+	 * comments for this item...
+	 */
 	private String comments;
 	
 	private DateTime arrivingDate;
-	private DateTime openedDate;
 	
+	
+	/**
+	 * first person/user to view the task / work
+	 */
 	private Integer openerUser;
-	
-	private DateTime decidedDate;
-	
+	private String openerUserLogin;
+	private String openerUserName;
+	/**
+	 * Datetime the step/task was open (view for a person or system)
+	 */
+	private DateTime openedDate;
+
+	/**
+	 * person who realize the work / task
+	 */
 	private Integer performer;
+	private String performerLogin;
+	private String performerName;
+
+	/**
+	 * Datetime the task was realized
+	 */
+	private DateTime decidedDate;
 	
 	private LocalTime deadlineTime;
 	private LocalDate deadlineDate;
 	
 	// dml 20120123
+	/**
+	 * Indicates the stepWork is locked.
+	 * Only pending stepWork can be locked
+	 */
 	private boolean locked;
+	/**
+	 * Userid who locks the task/step
+	 */
 	private Integer lockedBy;
+	
+	/**
+	 * stepWork pk
+	 */
 	private Integer idStepWork;
 	
-	// dml 20120124
-	private String openerUserLogin;
-	private String openerUserName;
-	private String performerLogin;
-	private String performerName;
+
 	
 	public StepWorkLight() {
 		
@@ -50,7 +89,8 @@ public class StepWorkLight implements Serializable {
 			String stepName, String reference, String comments, DateTime arrivingDate, DateTime openedDate,
 			Integer openerUser, DateTime decidedDate, Integer performer,
 			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedBy,
-			Integer idStepWork, String openerUserLogin, String openerUserName,
+			Integer idStepWork, 
+			String openerUserLogin, String openerUserName,
 			String performerLogin, String performerName) {
 		super();
 		this.idProcess = idProcess;
