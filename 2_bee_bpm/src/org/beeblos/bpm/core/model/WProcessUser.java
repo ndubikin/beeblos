@@ -19,15 +19,23 @@ public class WProcessUser implements java.io.Serializable, WUserCol {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private WProcessDef process;
+	private Integer id;
+	
+	private Integer idProcess;
 	private WUserDef user;
+	
 	private boolean admin;
 	private Integer idObject;
 	private String idObjectType;
+	
 	private Integer insertUser;
 	private DateTime insertDate;
 
 	public WProcessUser() {
+	}
+
+	public WProcessUser(Integer id) {
+		this.id = id;
 	}
 
 
@@ -41,20 +49,21 @@ public class WProcessUser implements java.io.Serializable, WUserCol {
 		this.insertDate = insertDate;
 	}
 
-
-
-
-	public WProcessDef getProcess() {
-		return process;
+	public Integer getId() {
+		return id;
 	}
 
-
-
-	public void setProcess(WProcessDef process) {
-		this.process = process;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
+	public Integer getIdProcess() {
+		return idProcess;
+	}
 
+	public void setIdProcess(Integer idProcess) {
+		this.idProcess = idProcess;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.beeblos.bpm.core.model.WUserCol#getUser()
@@ -167,5 +176,65 @@ public class WProcessUser implements java.io.Serializable, WUserCol {
 	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (admin ? 1231 : 1237);
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((idObject == null) ? 0 : idObject.hashCode());
+		result = prime * result + ((idObjectType == null) ? 0 : idObjectType.hashCode());
+		result = prime * result + ((idProcess == null) ? 0 : idProcess.hashCode());
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WProcessUser other = (WProcessUser) obj;
+		if (admin != other.admin)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (idObject == null) {
+			if (other.idObject != null)
+				return false;
+		} else if (!idObject.equals(other.idObject))
+			return false;
+		if (idObjectType == null) {
+			if (other.idObjectType != null)
+				return false;
+		} else if (!idObjectType.equals(other.idObjectType))
+			return false;
+		if (idProcess == null) {
+			if (other.idProcess != null)
+				return false;
+		} else if (!idProcess.equals(other.idProcess))
+			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "WProcessUser [id=" + id + ", idProcess=" + idProcess + ", user=" + user + ", admin=" + admin
+				+ ", idObject=" + idObject + ", idObjectType=" + idObjectType + ", insertUser=" + insertUser
+				+ ", insertDate=" + insertDate + "]";
+	}
+	
 
 }

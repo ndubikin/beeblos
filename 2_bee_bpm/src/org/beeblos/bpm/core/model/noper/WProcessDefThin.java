@@ -68,6 +68,12 @@ public class WProcessDefThin implements java.io.Serializable {
 		super();
 	}
 
+	public WProcessDefThin(Integer id) {
+		super();
+		
+		this.id = id;
+	}
+
 	public WProcessDefThin(WProcessDefThin pdth) {
 		this.id = pdth.getId();
 		this.version = pdth.getVersion();

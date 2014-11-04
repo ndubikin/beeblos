@@ -19,18 +19,20 @@ public class WStepRole implements java.io.Serializable, WRoleCol {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private WStepDef step;
+	private Integer id;
+	
+	private Integer idStep;
 	private WRoleDef role;
+	
 	private boolean admin;
 	private Integer idObject;
 	private String idObjectType;
+	
 	private Integer insertUser;
 	private DateTime insertDate;
 
 	public WStepRole() {
 	}
-
-
 
 	public WStepRole(boolean admin, Integer idObject, String idObjectType, 
 			Integer insertUser, DateTime insertDate) {
@@ -42,17 +44,26 @@ public class WStepRole implements java.io.Serializable, WRoleCol {
 	}
 
 
-
-
-
-	public WStepDef getStep() {
-		return step;
+	public Integer getId() {
+		return id;
 	}
 
 
 
-	public void setStep(WStepDef step) {
-		this.step = step;
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+
+
+	public Integer getIdStep() {
+		return idStep;
+	}
+
+
+
+	public void setIdStep(Integer idStep) {
+		this.idStep = idStep;
 	}
 
 
@@ -119,6 +130,65 @@ public class WStepRole implements java.io.Serializable, WRoleCol {
 
 	public void setInsertDate(DateTime insertDate) {
 		this.insertDate = insertDate;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (admin ? 1231 : 1237);
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((idObject == null) ? 0 : idObject.hashCode());
+		result = prime * result + ((idObjectType == null) ? 0 : idObjectType.hashCode());
+		result = prime * result + ((idStep == null) ? 0 : idStep.hashCode());
+		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WStepRole other = (WStepRole) obj;
+		if (admin != other.admin)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (idObject == null) {
+			if (other.idObject != null)
+				return false;
+		} else if (!idObject.equals(other.idObject))
+			return false;
+		if (idObjectType == null) {
+			if (other.idObjectType != null)
+				return false;
+		} else if (!idObjectType.equals(other.idObjectType))
+			return false;
+		if (idStep == null) {
+			if (other.idStep != null)
+				return false;
+		} else if (!idStep.equals(other.idStep))
+			return false;
+		if (role == null) {
+			if (other.role != null)
+				return false;
+		} else if (!role.equals(other.role))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "WStepRole [id=" + id + ", idStep=" + idStep + ", role=" + role + ", admin=" + admin + ", idObject="
+				+ idObject + ", idObjectType=" + idObjectType + ", insertUser=" + insertUser + ", insertDate="
+				+ insertDate + "]";
 	}
 
 }

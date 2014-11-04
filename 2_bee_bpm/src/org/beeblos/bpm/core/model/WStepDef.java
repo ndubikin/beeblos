@@ -1176,7 +1176,7 @@ public class WStepDef implements java.io.Serializable {
 	public void setRouteEvalOrder(Character routeEvalOrder) {
 		this.routeEvalOrder = routeEvalOrder;
 	}
-
+/* dml 20141031 - AHORA SE USA SU PROPIA BL
 	// nes 20111209
 	public void addRole( WRoleDef role, boolean admin, Integer idObject, String idObjectType, Integer insertUser ) {
 		WStepRole wsr = new WStepRole(admin, idObject, idObjectType, insertUser, new DateTime() );
@@ -1192,7 +1192,7 @@ public class WStepDef implements java.io.Serializable {
 		wsu.setUser(user);
 		usersRelated.add(wsu);
 	}
-
+*/
 	// dml 20120110
 	public void addResponse( WStepResponseDef wStepResponseDef ) {
 		response.add(wStepResponseDef);

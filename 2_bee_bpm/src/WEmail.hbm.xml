@@ -124,7 +124,7 @@
 			</column>
 		</property>
 		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
-			lazy="false" name="wUserDef">
+			lazy="false" fetch="join" name="wUserDef">
 			<column name="id_user" />
 		</many-to-one>
 	</class>
@@ -149,7 +149,7 @@
 			<column name="mobile_template" />
 		</property>
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplateGroups"
-			column="id_email_grouping" lazy="false" name="wEmailTemplateGroup" />
+			column="id_email_grouping" lazy="false" fetch="join" name="wEmailTemplateGroup" />
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WEmailTemplateGroups"

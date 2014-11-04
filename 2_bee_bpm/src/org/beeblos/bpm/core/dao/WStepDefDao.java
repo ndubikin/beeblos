@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
@@ -256,7 +257,7 @@ public class WStepDefDao {
 //		        System.out.println("--->> filtro:"+processHeadId);					
 //			}
 			
-			step = (WStepDef) session.createQuery("From WStepDef where id="+id).uniqueResult();
+			step = (WStepDef) session.get(WStepDef.class, id);
 
 			tx.commit();
 

@@ -111,7 +111,7 @@
 			<generator class="identity" />
 		</id>
 		<many-to-one name="processHead"
-			class="org.beeblos.bpm.core.model.noper.WProcessHeadLight" lazy="false">
+			class="org.beeblos.bpm.core.model.noper.WProcessHeadLight" lazy="false" fetch="join">
 			<column name="process_head_id" />
 		</many-to-one>
 		<property name="classname" type="string">
@@ -286,11 +286,11 @@
 			<column name="process_map" />
 		</property>
 
-		<set name="systemObject" cascade="save-update" lazy="false"
+		<set name="systemObject" cascade="save-update" lazy="false" fetch="join"
 			table="w_process_system_object">
 			<key column="process_id" />
 			<many-to-many class="com.sp.common.core.model.SystemObject"
-				column="system_object_id" />
+				fetch="join" column="system_object_id" />
 		</set>
 
 		<many-to-one cascade="save-update"
@@ -301,24 +301,24 @@
 			column="id_begin" name="beginStep" fetch="join" lazy="false" />
 
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
-			lazy="false" name="totalTimeUnit">
+			lazy="false" fetch="join" name="totalTimeUnit">
 			<column name="total_time_unit" />
 		</many-to-one>
 
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailAccount"
-			lazy="false" name="systemEmailAccount">
+			lazy="false" fetch="join" name="systemEmailAccount">
 			<column name="id_system_email" />
 		</many-to-one>
 
 		<!-- dml 20120306 -->
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
-			lazy="false" name="arrivingAdminNoticeTemplate">
+			lazy="false" fetch="join" name="arrivingAdminNoticeTemplate">
 			<column name="id_arriving_admin_notice_template" />
 		</many-to-one>
 
 		<!-- dml 20120306 -->
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
-			lazy="false" name="arrivingUserNoticeTemplate">
+			lazy="false" fetch="join" name="arrivingUserNoticeTemplate">
 			<column name="id_arriving_user_notice_template" />
 		</many-to-one>
 
@@ -328,12 +328,21 @@
 				unique="false" lazy="false" fetch="join"/>
 		</set>
 
+		<set name="rolesRelated" table="w_process_role" cascade="save-update"
+			lazy="false" fetch="join">
+			<key>
+				<column name="id_process" />
+			</key>
+			<one-to-many class="org.beeblos.bpm.core.model.WProcessRole" />
+		</set>
+		
+<!-- dml 20141030 - comentado resolver roles 
 		<set cascade="all" name="rolesRelated" sort="unsorted" table="w_process_role"
-			lazy="false">
+			lazy="false" fetch="join">
 			<key column="id_process" />
 			<composite-element class="org.beeblos.bpm.core.model.WProcessRole">
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
-					column="id_role" cascade="save-update" lazy="false" />
+					column="id_role" cascade="save-update" lazy="false" fetch="join" />
 				<property name="admin" type="java.lang.Boolean">
 					<column name="admin" sql-type="bit">
 						<comment>indicates this role is an admin role for this process</comment>
@@ -353,13 +362,24 @@
 				</property>
 			</composite-element>
 		</set>
+-->
 
+		<set name="usersRelated" table="w_process_role" cascade="save-update"
+			lazy="false" fetch="join">
+			<key>
+				<column name="id_process" />
+			</key>
+			<one-to-many class="org.beeblos.bpm.core.model.WProcessUser" />
+		</set>
+
+
+<!-- dml 20141030 - comentado resolver roles 
 		<set cascade="all" name="usersRelated" sort="unsorted" table="w_process_user"
-			lazy="false">
+			lazy="false" fetch="join">
 			<key column="id_process" />
 			<composite-element class="org.beeblos.bpm.core.model.WProcessUser">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
-					column="id_user" cascade="save-update" lazy="false" />
+					column="id_user" cascade="save-update" lazy="false" fetch="join" />
 				<property name="admin" type="java.lang.Boolean">
 					<column name="admin" sql-type="bit">
 						<comment>indicates this role is an admin role for this process</comment>
@@ -379,6 +399,81 @@
 				</property>
 			</composite-element>
 		</set>
+-->
+	</class>
+
+	<class name="org.beeblos.bpm.core.model.WProcessRole"
+		table="w_process_role">
+
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		
+		<property name="idProcess" type="java.lang.Integer">
+			<column name="id_process" />
+		</property>
+
+		<property name="admin" type="java.lang.Boolean">
+			<column name="admin" sql-type="bit">
+				<comment>indicates if this role is an admin role for this process</comment>
+			</column>
+		</property>
+		<property name="idObject" type="java.lang.Integer">
+			<column name="id_object" />
+		</property>
+		<property name="idObjectType" type="java.lang.String">
+			<column name="id_object_type" />
+		</property>
+		<property name="insertUser" type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="insert_date" not-null="true" />
+		</property>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WRoleDef"
+			lazy="false" fetch="join" name="role">
+			<column name="id_role" />
+		</many-to-one>
+
+	</class>
+
+	<class name="org.beeblos.bpm.core.model.WProcessUser"
+		table="w_process_user">
+
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		
+		<property name="idProcess" type="java.lang.Integer">
+			<column name="id_process" />
+		</property>
+
+		<property name="admin" type="java.lang.Boolean">
+			<column name="admin" sql-type="bit">
+				<comment>indicates if this user is an admin user for this process</comment>
+			</column>
+		</property>
+		<property name="idObject" type="java.lang.Integer">
+			<column name="id_object" />
+		</property>
+		<property name="idObjectType" type="java.lang.String">
+			<column name="id_object_type" />
+		</property>
+		<property name="insertUser" type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="insert_date" not-null="true" />
+		</property>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
+			lazy="false" fetch="join" name="user">
+			<column name="id_user" />
+		</many-to-one>
+
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.noper.WProcessDefThin"
@@ -455,24 +550,24 @@
 			name="processHead" fetch="join" lazy="false" />
 
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
-			lazy="false" name="totalTimeUnit">
+			lazy="false" fetch="join" name="totalTimeUnit">
 			<column name="total_time_unit" />
 		</many-to-one>
 
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailAccount"
-			lazy="false" name="systemEmailAccount">
+			lazy="false" fetch="join" name="systemEmailAccount">
 			<column name="id_system_email" />
 		</many-to-one>
 
 		<!-- dml 20120306 -->
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
-			lazy="false" name="arrivingAdminNoticeTemplate">
+			lazy="false" fetch="join" name="arrivingAdminNoticeTemplate">
 			<column name="id_arriving_admin_notice_template" />
 		</many-to-one>
 
 		<!-- dml 20120306 -->
 		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplates"
-			lazy="false" name="arrivingUserNoticeTemplate">
+			lazy="false" fetch="join" name="arrivingUserNoticeTemplate">
 			<column name="id_arriving_user_notice_template" />
 		</many-to-one>
 
@@ -521,11 +616,11 @@
 		</property>
 
 		<set cascade="all" name="usersRelated" sort="unsorted" table="w_user_role"
-			lazy="false">
+			lazy="false" fetch="join">
 			<key column="id_role" />
 			<composite-element class="org.beeblos.bpm.core.model.WUserRole">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
-					column="id_user" cascade="none" lazy="false" />
+					column="id_user" cascade="none" lazy="false" fetch="join" />
 				<property name="active" type="java.lang.Boolean">
 					<column name="active" sql-type="bit" />
 				</property>
@@ -867,30 +962,39 @@
 			fetch="join" lazy="false" />
 
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
-			lazy="false" name="timeUnit">
+			lazy="false" fetch="join" name="timeUnit">
 			<column name="id_time_unit">
 				<comment>UNIDAD DE MEDIDA DE TIEMPO</comment>
 			</column>
 		</many-to-one>
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
-			lazy="false" name="reminderTimeUnit">
+			lazy="false" fetch="join" name="reminderTimeUnit">
 			<column name="reminder_id_time_unit">
 				<comment>UNIDAD DE MEDIDA DE TIEMPO PARA EL DEADLINE</comment>
 			</column>
 		</many-to-one>
 
-		<set cascade="all" lazy="false" name="response" order-by="respOrder">
+		<set cascade="all" lazy="false" fetch="join" name="response" order-by="respOrder">
 			<key column="id_step" />
 			<one-to-many class="org.beeblos.bpm.core.model.WStepResponseDef" />
 		</set>
 
+		<set name="rolesRelated" table="w_step_role" cascade="save-update"
+			lazy="false" fetch="join">
+			<key>
+				<column name="id_step" />
+			</key>
+			<one-to-many class="org.beeblos.bpm.core.model.WStepRole" />
+		</set>
+
+<!-- dml 20141030 - comentado resolver roles 
 
 		<set cascade="all" name="rolesRelated" sort="unsorted" table="w_step_role"
-			lazy="false">
+			lazy="false" fetch="join">
 			<key column="id_step" />
 			<composite-element class="org.beeblos.bpm.core.model.WStepRole">
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
-					column="id_role" lazy="false" />
+					column="id_role" lazy="false" fetch="join" />
 				<property name="admin" type="java.lang.Boolean">
 					<column name="admin" sql-type="bit">
 						<comment>indicates this role is an admin role for this process</comment>
@@ -911,13 +1015,23 @@
 				</property>
 			</composite-element>
 		</set>
+-->
 
+		<set name="usersRelated" table="w_step_user" cascade="save-update"
+			lazy="false" fetch="join">
+			<key>
+				<column name="id_step" />
+			</key>
+			<one-to-many class="org.beeblos.bpm.core.model.WStepUser" />
+		</set>
+
+<!-- dml 20141030 - comentado resolver roles 
 		<set cascade="all" name="usersRelated" sort="unsorted" table="w_step_user"
-			lazy="false">
+			lazy="false" fetch="join">
 			<key column="id_step" />
 			<composite-element class="org.beeblos.bpm.core.model.WStepUser">
 				<many-to-one name="user" class="org.beeblos.bpm.core.model.WUserDef"
-					column="id_user" lazy="false" />
+					column="id_user" lazy="false" fetch="join" />
 				<property name="admin" type="java.lang.Boolean">
 					<column name="admin" sql-type="bit">
 						<comment>indicates this role is an admin role for this step</comment>
@@ -938,9 +1052,84 @@
 				</property>
 			</composite-element>
 		</set>
-
+-->
 
 	</class>	
+
+	<class name="org.beeblos.bpm.core.model.WStepRole"
+		table="w_step_role">
+
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		
+		<property name="idStep" type="java.lang.Integer">
+			<column name="id_step" />
+		</property>
+
+		<property name="admin" type="java.lang.Boolean">
+			<column name="admin" sql-type="bit">
+				<comment>indicates if this role is an admin role for this step</comment>
+			</column>
+		</property>
+		<property name="idObject" type="java.lang.Integer">
+			<column name="id_object" />
+		</property>
+		<property name="idObjectType" type="java.lang.String">
+			<column name="id_object_type" />
+		</property>
+		<property name="insertUser" type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="insert_date" not-null="true" />
+		</property>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WRoleDef"
+			lazy="false" fetch="join" name="role">
+			<column name="id_role" />
+		</many-to-one>
+
+	</class>
+
+	<class name="org.beeblos.bpm.core.model.WStepUser"
+		table="w_step_user">
+
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		
+		<property name="idStep" type="java.lang.Integer">
+			<column name="id_step" />
+		</property>
+
+		<property name="admin" type="java.lang.Boolean">
+			<column name="admin" sql-type="bit">
+				<comment>indicates if this user is an admin user for this step</comment>
+			</column>
+		</property>
+		<property name="idObject" type="java.lang.Integer">
+			<column name="id_object" />
+		</property>
+		<property name="idObjectType" type="java.lang.String">
+			<column name="id_object_type" />
+		</property>
+		<property name="insertUser" type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="insert_date" not-null="true" />
+		</property>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
+			lazy="false" fetch="join" name="user">
+			<column name="id_user" />
+		</many-to-one>
+
+	</class>
+
 	<class name="org.beeblos.bpm.core.model.WStepResponseDef" table="w_step_response_def">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -1032,11 +1221,11 @@
 			<column name="mod_user" />
 		</property>
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			column="id_origin_step" lazy="false" name="fromStep" />
+			column="id_origin_step" lazy="false" fetch="join" name="fromStep" />
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			column="id_dest_step" lazy="false" name="toStep" />
+			column="id_dest_step" lazy="false" fetch="join" name="toStep" />
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
-			column="process_id" lazy="false" name="process" />
+			column="process_id" lazy="false" fetch="join" name="process" />
 
 		<set name="externalMethod" table="w_stepsequence_method" inverse="true"
 			lazy="false" fetch="join" cascade="save-update">
@@ -1089,16 +1278,16 @@
 		</property>
 
 		<many-to-one class="org.beeblos.bpm.core.model.WStepWork"
-			column="step_work_id" lazy="false" name="stepWork" />
+			column="step_work_id" lazy="false" fetch="join" name="stepWork" />
 
 		<many-to-one class="org.beeblos.bpm.core.model.WStepSequenceDef"
-			column="step_sequence_def_id" lazy="false" name="stepSequence" />
+			column="step_sequence_def_id" lazy="false" fetch="join" name="stepSequence" />
 
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			column="begin_step_id" lazy="false" name="beginStep" />
+			column="begin_step_id" lazy="false" fetch="join" name="beginStep" />
 
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			column="end_step_id" lazy="false" name="endStep" />
+			column="end_step_id" lazy="false" fetch="join" name="endStep" />
 
 	</class>
 
@@ -1350,7 +1539,7 @@
 			</column>
 		</many-to-one>
 
-		<set cascade="all" lazy="false" name="assignedTo" sort="unsorted">
+		<set cascade="all" lazy="false" fetch="join" name="assignedTo" sort="unsorted">
 			<key column="id_step_work" />
 			<one-to-many class="org.beeblos.bpm.core.model.WStepWorkAssignment" />
 		</set>
@@ -1619,11 +1808,11 @@
 		</property>
 
 		<set cascade="all" name="rolesRelated" sort="unsorted" table="w_user_role"
-			lazy="false">
+			lazy="false" fetch="join">
 			<key column="id_user" />
 			<composite-element class="org.beeblos.bpm.core.model.WUserRole">
 				<many-to-one name="role" class="org.beeblos.bpm.core.model.WRoleDef"
-					column="id_role" cascade="none" lazy="false" />
+					column="id_role" cascade="none" lazy="false" fetch="join" />
 				<property name="active" type="java.lang.Boolean">
 					<column name="active" sql-type="bit" />
 				</property>
@@ -1635,7 +1824,6 @@
 				</property>
 			</composite-element>
 		</set>
-
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WUseridmapper" table="w_useridmapper">
@@ -1726,17 +1914,17 @@
 		</property>
 
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
-			column="id_process" lazy="false" name="process" />
+			column="id_process" lazy="false" fetch="join" name="process" />
 
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			lazy="false" name="previousStep">
+			lazy="false" fetch="join" name="previousStep">
 			<column name="id_previous_step" not-null="false">
 				<comment>PASO QUE LO ENVIO AQUI // si está en null quiere decir que
 					es el de inicio o que fué inyectado aquí ...</comment>
 			</column>
 		</many-to-one>
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			lazy="false" name="currentStep">
+			lazy="false" fetch="join" name="currentStep">
 			<column name="id_current_step">
 				<comment>PASO ACTUAL DEL OBJETO</comment>
 			</column>
@@ -1807,7 +1995,7 @@
 		</property>
 
 		<many-to-one class="com.sp.hb4util.core.model.EnvType"
-			column="env_type_id" lazy="false" name="envType" cascade="none" />
+			column="env_type_id" lazy="false" fetch="join" name="envType" cascade="none" />
 
 	</class>
 
