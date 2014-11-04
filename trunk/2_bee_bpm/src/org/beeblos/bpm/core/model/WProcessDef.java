@@ -107,6 +107,10 @@ public class WProcessDef implements java.io.Serializable {
 		super();
 	}
 
+	public WProcessDef(Integer id) {
+		super();
+		this.id = id;
+	}
 	
 	public WProcessDef(boolean createEmtpyObjects ){
 		super();
@@ -529,18 +533,14 @@ public class WProcessDef implements java.io.Serializable {
 				+ ((productionDate == null) ? 0 : productionDate.hashCode());
 		result = prime * result
 				+ ((productionUser == null) ? 0 : productionUser.hashCode());
-/* dml 20141029 COMENTADO POR ERRORES DE DUPLICIDAD
 		result = prime * result
 				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
-*/
 		result = prime * result
 				+ ((totalTime == null) ? 0 : totalTime.hashCode());
 		result = prime * result
 				+ ((totalTimeUnit == null) ? 0 : totalTimeUnit.hashCode());
-/* dml 20141029 COMENTADO POR ERRORES DE DUPLICIDAD
 		result = prime * result
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
-*/
 		result = prime
 				* result
 				+ ((systemEmailAccount == null) ? 0 : systemEmailAccount
@@ -631,13 +631,11 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!productionUser.equals(other.productionUser))
 			return false;
-/* dml 20141029 COMENTADO POR ERRORES DE DUPLICIDAD
 		if (rolesRelated == null) {
 			if (other.rolesRelated != null)
 				return false;
 		} else if (!rolesRelated.equals(other.rolesRelated))
 			return false;
-*/
 		if (totalTime == null) {
 			if (other.totalTime != null)
 				return false;
@@ -648,13 +646,11 @@ public class WProcessDef implements java.io.Serializable {
 				return false;
 		} else if (!totalTimeUnit.equals(other.totalTimeUnit))
 			return false;
-/* dml 20141029 COMENTADO POR ERRORES DE DUPLICIDAD
 		if (usersRelated == null) {
 			if (other.usersRelated != null)
 				return false;
 		} else if (!usersRelated.equals(other.usersRelated))
 			return false;
-*/			
 		if (systemEmailAccount == null) {
 			if (other.systemEmailAccount != null)
 				return false;
@@ -712,7 +708,7 @@ public class WProcessDef implements java.io.Serializable {
 		return true;
 	}
 	
-
+/* dml 20141031 - AHORA SE USA SU PROPIA BL
 	public void addRole( WRoleDef role, boolean admin, Integer idObject, String idObjectType, Integer insertUser ) {
 		WProcessRole wpr = new WProcessRole(admin, idObject, idObjectType, insertUser, new DateTime() );
 //		wpr.setProcess(this);
@@ -726,7 +722,7 @@ public class WProcessDef implements java.io.Serializable {
 		wpu.setUser(user);
 		usersRelated.add(wpu);
 	}
-
+*/
 	
 	public WProcessDefThin getAsProcessDefThin() {
 		return new WProcessDefThin(

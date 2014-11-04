@@ -4,11 +4,14 @@ package org.beeblos.bpm.core.test.bl;
 import junit.framework.TestCase;
 
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WProcessRoleBL;
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WProcessRole;
+import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WUserDef;
@@ -41,7 +44,62 @@ public class TestWProcessDefBL extends TestCase{
 		}
 		
 		@Test
-		
+		public final void testCrudProcessRelatedRole() throws Exception {
+
+			WProcessDef process = new WProcessDefBL().getWProcessDefByPK(1, 1000);
+			
+			WProcessDef process2 = new WProcessDefBL().addProcessRelatedRole(process, 2, true, 1000);
+			
+			if (process.getRolesRelated() != null){
+				for (WProcessRole role : process.getRolesRelated()){
+					if (role.getRole().getId().equals(2)){
+						
+						role.setAdmin(false);
+						role.setIdObject(1000);
+
+						break;
+						
+					}
+				}
+			}
+
+			new WProcessDefBL().update(process, 1000);
+			
+			new WProcessDefBL().deleteProcessRelatedRole(process, 2, 1000);
+			
+			System.out.println("Done");
+			
+		}
+
+		@Test
+		public final void testCrudProcessRelatedUser() throws Exception {
+
+			WProcessDef process = new WProcessDefBL().getWProcessDefByPK(1, 1000);
+			
+			WProcessDef process2 = new WProcessDefBL().addProcessRelatedUser(process, 666, true, 1000);
+			
+			if (process.getUsersRelated() != null){
+				for (WProcessUser user : process.getUsersRelated()){
+					if (user.getUser().getId().equals(666)){
+						
+						user.setAdmin(false);
+						user.setIdObject(1000);
+
+						break;
+						
+					}
+				}
+			}
+
+			new WProcessDefBL().update(process, 1000);
+			
+			new WProcessDefBL().deleteProcessRelatedUser(process, 666, 1000);
+			
+			System.out.println("Done");
+			
+		}
+
+		@Test
 		public void testAgregarWProcessDef() throws Exception {
 			
 			WRoleDefBL roleBl = new WRoleDefBL();
@@ -67,10 +125,10 @@ public class TestWProcessDefBL extends TestCase{
 			
 			assertEquals(iproc, processBL.getWProcessDefByPK(iproc, 1000).getId());
 			
-			process.addRole( roleBl.getWRoleDefByPK(idRol1, 1000), false, 55, "tipo-ojeto", 1000);
-			process.addRole(roleBl.getWRoleDefByPK(idRol2, 1000), true, 55, "tipo-ojeto", 1000);
+//			process.addRole( roleBl.getWRoleDefByPK(idRol1, 1000), false, 55, "tipo-ojeto", 1000);
+//			process.addRole(roleBl.getWRoleDefByPK(idRol2, 1000), true, 55, "tipo-ojeto", 1000);
 			
-			process.addUser(userBl.getWUserDefByPK(idUser1, 1000), false, 44, "hola", 1000);
+//			process.addUser(userBl.getWUserDefByPK(idUser1, 1000), false, 44, "hola", 1000);
 
 			processBL.update(process, 1000); // persist relation tables ( roles y users )
 			

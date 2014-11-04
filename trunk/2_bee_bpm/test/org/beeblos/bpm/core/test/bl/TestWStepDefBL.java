@@ -13,6 +13,7 @@ import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
+import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -46,6 +47,62 @@ public class TestWStepDefBL extends TestCase{
 		}
 		
 		@Test
+		public final void testCrudStepRelatedRole() throws Exception {
+
+			WStepDef step = new WStepDefBL().getWStepDefByPK(1, 1, 1000);
+			
+			WStepDef step2 = new WStepDefBL().addStepRelatedRole(step, 2, true, 1000);
+			
+			if (step.getRolesRelated() != null){
+				for (WStepRole role : step.getRolesRelated()){
+					if (role.getRole().getId().equals(2)){
+						
+						role.setAdmin(false);
+						role.setIdObject(1000);
+
+						break;
+						
+					}
+				}
+			}
+
+			new WStepDefBL().update(step, 1, 1000);
+			
+			new WStepDefBL().deleteStepRelatedRole(step, 2, 1000);
+			
+			System.out.println("Done");
+			
+		}
+
+		@Test
+		public final void testCrudStepRelatedUser() throws Exception {
+
+			WStepDef step = new WStepDefBL().getWStepDefByPK(1, 1, 1000);
+			
+			WStepDef step2 = new WStepDefBL().addStepRelatedUser(step, 666, true, 1000);
+			
+			if (step.getUsersRelated() != null){
+				for (WStepUser user : step.getUsersRelated()){
+					if (user.getUser().getId().equals(666)){
+						
+						user.setAdmin(false);
+						user.setIdObject(1000);
+
+						break;
+						
+					}
+				}
+			}
+
+			new WStepDefBL().update(step, 1, 1000);
+			
+			new WStepDefBL().deleteStepRelatedUser(step, 666, 1000);
+			
+			System.out.println("Done");
+			
+		}
+
+		@Test
 		public void testAgregarWStepDef() {
 			
 			try {
@@ -61,10 +118,10 @@ public class TestWStepDefBL extends TestCase{
 			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));
 //			step.getAssigned().add(new WStepAssignedDef("pepe","user"));
 			
-			step.addRole( roleBl.getWRoleDefByPK(idRol1, 1000), false, 55, "tipo-objeto", 1000);
-			step.addRole(roleBl.getWRoleDefByPK(idRol2, 1000), true, 55, "tipo-objeto", 1000);
+//			step.addRole( roleBl.getWRoleDefByPK(idRol1, 1000), false, 55, "tipo-objeto", 1000);
+//			step.addRole(roleBl.getWRoleDefByPK(idRol2, 1000), true, 55, "tipo-objeto", 1000);
 			
-			step.addUser(userBl.getWUserDefByPK(idUser1, 1000), false, 44, "hola", 1000);
+//			step.addUser(userBl.getWUserDefByPK(idUser1, 1000), false, 44, "hola", 1000);
 
 			iproc = stepBL.add(step,1000);
 			

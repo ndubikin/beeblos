@@ -17,7 +17,9 @@ import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
+import org.beeblos.bpm.core.error.WStepRoleException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepDataField;
@@ -458,6 +460,7 @@ public class WStepDefBL {
 	 * @throws WStepSequenceDefException
 	 * @throws WStepDefException
 	 */
+	//TODO dml CAMBIO ROLES Y USERS
 	public Integer cloneWStepDef(Integer stepId, Integer stepHeadId, Integer processId, Integer processHeadId,
 									boolean generateNewStep, boolean cloneRoutes,
 									boolean cloneResponses,
@@ -496,23 +499,25 @@ public class WStepDefBL {
 			if (clonePermissions) {
 				if ( currentStep.getRolesRelated().size()>0) {
 					for ( WStepRole stepRole: currentStep.getRolesRelated() ) {
-						stepRole.setStep(null);
+						System.out.println("dml ARREGLAR ESTO EN 'WStepDefBL.cloneWStepDef'");
+/*						stepRole.setStep(null);
 						newStep
 							.addRole(
 									stepRole.getRole(), stepRole.isAdmin(), 
 									stepRole.getIdObject(), stepRole.getIdObjectType(), 
-									userId);
+									userId);*/
 					}
 				}
 
 				if ( currentStep.getUsersRelated().size()>0) {
 					for ( WStepUser stepUser: currentStep.getUsersRelated() ) {
-						stepUser.setStep(null);
+						System.out.println("dml ARREGLAR ESTO EN 'WStepDefBL.cloneWStepDef'");
+/*						stepUser.setStep(null);
 						newStep
 							.addUser(
 									stepUser.getUser(), stepUser.isAdmin(), 
 									stepUser.getIdObject(), stepUser.getIdObjectType(), 
-									userId);
+									userId);*/
 					}
 				}
 			}
@@ -942,6 +947,229 @@ public class WStepDefBL {
 		return false;
 	}
 
+	/**
+	 * Adds the step related role to the step "rolesRelated" list and returns the same step
+	 * with the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param stepDef
+	 *            the step def
+	 * @param idRole
+	 *            the role id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WStepDefException
+	 *             the w step def exception
+	 */
+	public WStepDef addStepRelatedRole(WStepDef stepDef, Integer idRole, boolean isAdmin, Integer idCurrentUser) throws WStepDefException{
+		
+		if (stepDef == null || stepDef.getId() == null || stepDef.getId().equals(0)){
+			throw new WStepDefException("addStepRelatedRole(): The step is not valid!");
+		}
+		
+		if (idRole == null || idRole.equals(0)){
+			throw new WStepDefException("addStepRelatedRole(): The role id is not valid!");
+		}
+		
+		try {
+			WStepRole stepRole = 
+					new WStepRoleBL().addNewStepRole(stepDef.getId(), idRole, isAdmin, idCurrentUser);
+			
+			if (stepRole != null){
+				
+				if (stepDef.getRolesRelated() == null){
+					stepDef.setRolesRelated(new HashSet<WStepRole>());
+				}
+				stepDef.getRolesRelated().add(stepRole);
+				
+			}
+			
+		} catch (WStepRoleException e) {
+			String mess = "addStepRelatedRole(): Error trying to create the step role. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		return stepDef;
+		
+	}
+	
+	/**
+	 * Deletes the step related role from the step "rolesRelated" list and returns the same step
+	 * without the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param stepDef
+	 *            the step def
+	 * @param idRole
+	 *            the role id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WStepDefException
+	 *             the w step def exception
+	 */
+	public WStepDef deleteStepRelatedRole(WStepDef stepDef, Integer idRole, Integer idCurrentUser) throws WStepDefException{
+		
+		if (stepDef == null || stepDef.getId() == null || stepDef.getId().equals(0)){
+			throw new WStepDefException("addStepRelatedRole(): The step is not valid!");
+		}
+		
+		if (idRole == null || idRole.equals(0)){
+			throw new WStepDefException("addStepRelatedRole(): The role id is not valid!");
+		}
+		
+		WStepRole stepRoleToDelete = null;
+		if (stepDef != null && stepDef.getRolesRelated() != null){
+			for (WStepRole stepRole : stepDef.getRolesRelated()){
+				if (stepRole != null && stepRole.getRole() != null
+						&& stepRole.getRole() != null
+						&& stepRole.getRole().getId().equals(idRole)){
+					stepRoleToDelete = stepRole;
+					break;
+				}
+			}
+		}
+		
+		if (stepRoleToDelete == null){
+			throw new WStepDefException("The relation between the role with id: " + idRole
+					+ " and the step: " + stepDef.getId() + " does not exist.");
+		}
+		
+		stepDef.getRolesRelated().remove(stepRoleToDelete);
+
+		try {
+			
+			new WStepRoleBL().delete(stepRoleToDelete, idCurrentUser);
+			
+		} catch (WStepRoleException e) {
+			String mess = "deleteStepRelatedRole(): Error trying to delete the step role. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		return stepDef;
+		
+	}
+	
+	/**
+	 * Adds the step related user to the step "usersRelated" list and returns the same step
+	 * with the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param stepDef
+	 *            the step def
+	 * @param idUser
+	 *            the user id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WStepDefException
+	 *             the w step def exception
+	 */
+	public WStepDef addStepRelatedUser(WStepDef stepDef, Integer idUser, boolean isAdmin, Integer idCurrentUser) throws WStepDefException{
+		
+		if (stepDef == null || stepDef.getId() == null || stepDef.getId().equals(0)){
+			throw new WStepDefException("addStepRelatedUser(): The step is not valid!");
+		}
+		
+		if (idUser == null || idUser.equals(0)){
+			throw new WStepDefException("addStepRelatedUser(): The user id is not valid!");
+		}
+		
+		try {
+			WStepUser stepUser = 
+					new WStepUserBL().addNewStepUser(stepDef.getId(), idUser, isAdmin, idCurrentUser);
+			
+			if (stepUser != null){
+				
+				if (stepDef.getUsersRelated() == null){
+					stepDef.setUsersRelated(new HashSet<WStepUser>());
+				}
+				stepDef.getUsersRelated().add(stepUser);
+				
+			}
+			
+		} catch (WStepUserException e) {
+			String mess = "addStepRelatedUser(): Error trying to create the step user. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		return stepDef;
+		
+	}
+	
+	/**
+	 * Deletes the step related user from the step "usersRelated" list and returns the same step
+	 * without the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param stepDef
+	 *            the step def
+	 * @param idUser
+	 *            the user id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WStepDefException
+	 *             the w step def exception
+	 */
+	public WStepDef deleteStepRelatedUser(WStepDef stepDef, Integer idUser, Integer idCurrentUser) throws WStepDefException{
+		
+		if (stepDef == null || stepDef.getId() == null || stepDef.getId().equals(0)){
+			throw new WStepDefException("addStepRelatedUser(): The step is not valid!");
+		}
+		
+		if (idUser == null || idUser.equals(0)){
+			throw new WStepDefException("addStepRelatedUser(): The user id is not valid!");
+		}
+		
+		WStepUser stepUserToDelete = null;
+		if (stepDef != null && stepDef.getUsersRelated() != null){
+			for (WStepUser stepUser : stepDef.getUsersRelated()){
+				if (stepUser != null && stepUser.getUser() != null
+						&& stepUser.getUser() != null
+						&& stepUser.getUser().getId().equals(idUser)){
+					stepUserToDelete = stepUser;
+					break;
+				}
+			}
+		}
+		
+		if (stepUserToDelete == null){
+			throw new WStepDefException("The relation between the user with id: " + idUser
+					+ " and the step: " + stepDef.getId() + " does not exist.");
+		}
+		
+		stepDef.getUsersRelated().remove(stepUserToDelete);
+
+		try {
+			
+			new WStepUserBL().delete(stepUserToDelete, idCurrentUser);
+			
+		} catch (WStepUserException e) {
+			String mess = "deleteStepRelatedUser(): Error trying to delete the step user. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
+		return stepDef;
+		
+	}
 
 }
 	

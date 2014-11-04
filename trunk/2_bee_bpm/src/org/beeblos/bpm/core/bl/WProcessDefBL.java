@@ -19,6 +19,8 @@ import org.beeblos.bpm.core.error.WDataTypeException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
+import org.beeblos.bpm.core.error.WProcessRoleException;
+import org.beeblos.bpm.core.error.WProcessUserException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
@@ -102,7 +104,6 @@ public class WProcessDefBL {
 		return newProcessId;
 
 	}
-	
 	
 	// dml 20130430
 	private void _setFirstWProcessDefData(WProcessDef process, Integer processHeadId, Integer currentUserId) 
@@ -756,12 +757,12 @@ public class WProcessDefBL {
 	public List<WProcessDef> finderWProcessDefLight(LocalDate initialInsertDateFilter, LocalDate finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 
 			String listZoneFilter, String workZoneFilter, String additinalZoneFilter,
-			Integer userId, boolean isAdmin, String searchOrder, Integer currentUserId ) 
+			Integer idUser, boolean isAdmin, String searchOrder, Integer currentUserId ) 
 	throws WProcessDefException {
 		
 		return new WProcessDefDao().finderWProcessDef(initialInsertDateFilter, finalInsertDateFilter, 
 				strictInsertDateFilter, nameFilter, commentFilter, listZoneFilter, 
-				workZoneFilter, additinalZoneFilter, userId, isAdmin, searchOrder, currentUserId);
+				workZoneFilter, additinalZoneFilter, idUser, isAdmin, searchOrder, currentUserId);
 
 	}
 
@@ -1178,6 +1179,7 @@ public class WProcessDefBL {
 	}
 	
 
+	//TODO dml CAMBIO ROLES Y USERS
 	private void loadUsersAndRoles(Integer currentUserId,
 			boolean emptyRoleList, boolean emptyUserList,
 			WProcessDef newprocver, WProcessDef procver) {
@@ -1187,23 +1189,25 @@ public class WProcessDefBL {
 		
 		if ( !emptyRoleList && procver.getRolesRelated().size()>0) {
 			for ( WProcessRole processRole: procver.getRolesRelated() ) {
-				processRole.setProcess(null);
+				System.out.println("dml ARREGLAR ESTO EN 'WProcessDefBL.loadUsersAndRoles'");
+/*				processRole.setProcess(null);
 				newprocver
 					.addRole(
 							processRole.getRole(), processRole.isAdmin(), 
 							processRole.getIdObject(), processRole.getIdObjectType(), 
-							currentUserId);
+							currentUserId);*/
 			}
 		}
 
 		if ( !emptyUserList && procver.getUsersRelated().size()>0) {
 			for ( WProcessUser processUser: procver.getUsersRelated() ) {
-				processUser.setProcess(null);
+				System.out.println("dml ARREGLAR ESTO EN 'WProcessDefBL.loadUsersAndRoles'");
+/*				processUser.setProcess(null);
 				newprocver
 					.addUser(
 							processUser.getUser(), processUser.isAdmin(), 
 							processUser.getIdObject(), processUser.getIdObjectType(), 
-							currentUserId);
+							currentUserId);*/
 			}
 		}
 	}
@@ -1300,17 +1304,17 @@ public class WProcessDefBL {
 	/**
 	 * Returns true if requested user id is Process Administrator for indicated processId
 	 * 
-	 * @param userId
+	 * @param idUser
 	 * @param processId
 	 * @param currentUserId
 	 * @return
 	 * @throws WProcessDefException
 	 */
 	public boolean userIsProcessAdmin(
-			Integer userId, Integer processId, Integer currentUserId) 
+			Integer idUser, Integer processId, Integer currentUserId) 
 					throws WProcessDefException{
 		
-		return new WProcessDefDao().userIsProcessAdmin(userId, processId, currentUserId);
+		return new WProcessDefDao().userIsProcessAdmin(idUser, processId, currentUserId);
 		
 	}
 	
@@ -1462,5 +1466,230 @@ public class WProcessDefBL {
 	public boolean hasVersions(Integer processHeadId) throws WProcessDefException {
 		return new WProcessDefDao().hasVersions(processHeadId);
 	}
-}
 	
+	/**
+	 * Adds the process related role to the process "rolesRelated" list and returns the same process
+	 * with the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param processDef
+	 *            the process def
+	 * @param idRole
+	 *            the role id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WProcessDefException
+	 *             the w process def exception
+	 */
+	public WProcessDef addProcessRelatedRole(WProcessDef processDef, Integer idRole, boolean isAdmin, Integer idCurrentUser) throws WProcessDefException{
+		
+		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
+			throw new WProcessDefException("addProcessRelatedRole(): The process is not valid!");
+		}
+		
+		if (idRole == null || idRole.equals(0)){
+			throw new WProcessDefException("addProcessRelatedRole(): The role id is not valid!");
+		}
+		
+		try {
+			WProcessRole processRole = 
+					new WProcessRoleBL().addNewProcessRole(processDef.getId(), idRole, isAdmin, idCurrentUser);
+			
+			if (processRole != null){
+				
+				if (processDef.getRolesRelated() == null){
+					processDef.setRolesRelated(new HashSet<WProcessRole>());
+				}
+				processDef.getRolesRelated().add(processRole);
+				
+			}
+			
+		} catch (WProcessRoleException e) {
+			String mess = "addProcessRelatedRole(): Error trying to create the process role. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+		
+		return processDef;
+		
+	}
+	
+	/**
+	 * Deletes the process related role from the process "rolesRelated" list and returns the same process
+	 * without the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param processDef
+	 *            the process def
+	 * @param idRole
+	 *            the role id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WProcessDefException
+	 *             the w process def exception
+	 */
+	public WProcessDef deleteProcessRelatedRole(WProcessDef processDef, Integer idRole, Integer idCurrentUser) throws WProcessDefException{
+		
+		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
+			throw new WProcessDefException("addProcessRelatedRole(): The process is not valid!");
+		}
+		
+		if (idRole == null || idRole.equals(0)){
+			throw new WProcessDefException("addProcessRelatedRole(): The role id is not valid!");
+		}
+		
+		WProcessRole processRoleToDelete = null;
+		if (processDef != null && processDef.getRolesRelated() != null){
+			for (WProcessRole processRole : processDef.getRolesRelated()){
+				if (processRole != null && processRole.getRole() != null
+						&& processRole.getRole() != null
+						&& processRole.getRole().getId().equals(idRole)){
+					processRoleToDelete = processRole;
+					break;
+				}
+			}
+		}
+		
+		if (processRoleToDelete == null){
+			throw new WProcessDefException("The relation between the role with id: " + idRole
+					+ " and the process: " + processDef.getId() + " does not exist.");
+		}
+		
+		processDef.getRolesRelated().remove(processRoleToDelete);
+
+		try {
+			
+			new WProcessRoleBL().delete(processRoleToDelete, idCurrentUser);
+			
+		} catch (WProcessRoleException e) {
+			String mess = "deleteProcessRelatedRole(): Error trying to delete the process role. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+		
+		return processDef;
+		
+	}
+	
+	/**
+	 * Adds the process related user to the process "usersRelated" list and returns the same process
+	 * with the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param processDef
+	 *            the process def
+	 * @param idUser
+	 *            the user id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WProcessDefException
+	 *             the w process def exception
+	 */
+	public WProcessDef addProcessRelatedUser(WProcessDef processDef, Integer idUser, boolean isAdmin, Integer idCurrentUser) throws WProcessDefException{
+		
+		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
+			throw new WProcessDefException("addProcessRelatedUser(): The process is not valid!");
+		}
+		
+		if (idUser == null || idUser.equals(0)){
+			throw new WProcessDefException("addProcessRelatedUser(): The user id is not valid!");
+		}
+		
+		try {
+			WProcessUser processUser = 
+					new WProcessUserBL().addNewProcessUser(processDef.getId(), idUser, isAdmin, idCurrentUser);
+			
+			if (processUser != null){
+				
+				if (processDef.getUsersRelated() == null){
+					processDef.setUsersRelated(new HashSet<WProcessUser>());
+				}
+				processDef.getUsersRelated().add(processUser);
+				
+			}
+			
+		} catch (WProcessUserException e) {
+			String mess = "addProcessRelatedUser(): Error trying to create the process user. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+		
+		return processDef;
+		
+	}
+	
+	/**
+	 * Deletes the process related user from the process "usersRelated" list and returns the same process
+	 * without the new value added.
+	 * 
+	 * @author dmuleiro 20141031
+	 *
+	 * @param processDef
+	 *            the process def
+	 * @param idUser
+	 *            the user id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @throws WProcessDefException
+	 *             the w process def exception
+	 */
+	public WProcessDef deleteProcessRelatedUser(WProcessDef processDef, Integer idUser, Integer idCurrentUser) throws WProcessDefException{
+		
+		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
+			throw new WProcessDefException("addProcessRelatedUser(): The process is not valid!");
+		}
+		
+		if (idUser == null || idUser.equals(0)){
+			throw new WProcessDefException("addProcessRelatedUser(): The user id is not valid!");
+		}
+		
+		WProcessUser processUserToDelete = null;
+		if (processDef != null && processDef.getUsersRelated() != null){
+			for (WProcessUser processUser : processDef.getUsersRelated()){
+				if (processUser != null && processUser.getUser() != null
+						&& processUser.getUser() != null
+						&& processUser.getUser().getId().equals(idUser)){
+					processUserToDelete = processUser;
+					break;
+				}
+			}
+		}
+		
+		if (processUserToDelete == null){
+			throw new WProcessDefException("The relation between the user with id: " + idUser
+					+ " and the process: " + processDef.getId() + " does not exist.");
+		}
+		
+		processDef.getUsersRelated().remove(processUserToDelete);
+
+		try {
+			
+			new WProcessUserBL().delete(processUserToDelete, idCurrentUser);
+			
+		} catch (WProcessUserException e) {
+			String mess = "deleteProcessRelatedUser(): Error trying to delete the process user. "
+					+ e.getMessage() + (e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			throw new WProcessDefException(mess);
+		}
+		
+		return processDef;
+		
+	}
+	
+
+}

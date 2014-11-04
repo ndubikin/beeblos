@@ -319,10 +319,12 @@ public class WProcessWorkDao {
 			criteria = this._agregarFiltrosACriteria(criteria,
 					processId, idObject, idObjectType);
 
-			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(processWorkStatus);
+			if (processWorkStatus != null){
+				DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(processWorkStatus);
 
-			if (criteriaWStepWork != null){
-				criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
+				if (criteriaWStepWork != null){
+					criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
+				}
 			}
 
 			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -334,7 +336,7 @@ public class WProcessWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "
+			String mensaje = "WProcessWorkDao.getWProcessWorkList: No se pudo recuperar la lista de process works "
 					+ ex.getMessage()+"\n"+ex.getCause(); 
 			logger.warn(mensaje);
 			throw new WProcessWorkException(mensaje);
@@ -342,7 +344,7 @@ public class WProcessWorkDao {
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "
+			String mensaje = "WProcessWorkDao.getWProcessWorkList: No se pudo recuperar la lista de process works "
 				+ ex.getMessage()+"\n"+ex.getCause()+" - "+ex.getClass(); 
 			logger.warn(mensaje);
 			throw new WProcessWorkException(mensaje);
@@ -379,10 +381,12 @@ public class WProcessWorkDao {
 			criteria = this._agregarFiltrosACriteria(criteria,
 					processId, idObject, idObjectType);
 
-			DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(processWorkStatus);
+			if (processWorkStatus != null){
+				DetachedCriteria criteriaWStepWork = this._filtroCriteriaWStepWork(processWorkStatus);
 
-			if (criteriaWStepWork != null){
-				criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
+				if (criteriaWStepWork != null){
+					criteria.add(Property.forName("wpw.id").in(criteriaWStepWork));
+				}
 			}
 			
 			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -396,14 +400,14 @@ public class WProcessWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			String mensaje = "WProcessWorkDao.getWorkCount: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
 			logger.warn(mensaje);
 			throw new WProcessWorkException(mensaje);
 
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String mensaje = "WProcessWorkDao.finderWProcessWorkConCriteria: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
+			String mensaje = "WProcessWorkDao.getWorkCount: No se pudo recuperar la lista de process works "+ ex.getMessage()+"\n"+ex.getCause(); 
 			logger.warn(mensaje);
 			throw new WProcessWorkException(mensaje);
 		}
@@ -456,14 +460,15 @@ public class WProcessWorkDao {
 				.createAlias("wProcessWork", "wProcessWork", JoinType.LEFT_OUTER_JOIN)
 				.setProjection(Property.forName("wProcessWork.id"));
 		
-
-		if (processWorkStatus.equals(ProcessWorkStatus.ALIVE)) {
-			criteriaWStepWork = criteriaWStepWork
-					.add( Restrictions.isNull("wsw.decidedDate") );
-		} else if (processWorkStatus.equals(ProcessWorkStatus.PROCESSED)) {
-			criteriaWStepWork = criteriaWStepWork
-					.add( Restrictions.isNotNull("wsw.decidedDate") );
-		} 
+		if (processWorkStatus != null){
+			if (processWorkStatus.equals(ProcessWorkStatus.ALIVE)) {
+				criteriaWStepWork = criteriaWStepWork
+						.add( Restrictions.isNull("wsw.decidedDate") );
+			} else if (processWorkStatus.equals(ProcessWorkStatus.PROCESSED)) {
+				criteriaWStepWork = criteriaWStepWork
+						.add( Restrictions.isNotNull("wsw.decidedDate") );
+			} 
+		}
 
 		return criteriaWStepWork;
 

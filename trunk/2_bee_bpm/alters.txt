@@ -158,4 +158,47 @@ FROM w_step_def sd
 WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  w_step_sequence_def wsd WHERE wsd.process_id = 1
 	UNION SELECT DISTINCT id_dest_step FROM w_step_sequence_def WHERE process_id = 1  ) ;
 	
-	
+
+-- dml 20141031 - Cambios tablas de relacion process-role
+ALTER TABLE `bee_bpm_dev`.`w_process_role` 
+DROP PRIMARY KEY;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_role` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+
+-- dml 20141031 - Cambios tablas de relacion process-user
+ALTER TABLE `bee_bpm_dev`.`w_process_user` 
+DROP PRIMARY KEY;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_user` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+
+
+-- dml 20141031 - Cambios tablas de relacion step-role
+ALTER TABLE `bee_bpm_dev`.`w_step_role`
+DROP FOREIGN KEY `fk_rol`,
+DROP FOREIGN KEY `fk_step`;
+ALTER TABLE `bee_bpm_dev`.`w_step_role`
+DROP PRIMARY KEY;
+ALTER TABLE `bee_bpm_dev`.`w_step_role`
+ADD CONSTRAINT `fk_rol_1z`
+  FOREIGN KEY (`id_role`)
+  REFERENCES `bee_bpm_dev`.`w_role_def` (`id`),
+ADD CONSTRAINT `fk_step_1z`
+  FOREIGN KEY (`id_step`)
+  REFERENCES `bee_bpm_dev`.`w_step_def` (`id`); 
+  
+ALTER TABLE `bee_bpm_dev`.`w_step_role` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+
+-- dml 20141031 - Cambios tablas de relacion step-user
+ALTER TABLE `bee_bpm_dev`.`w_step_user` 
+DROP PRIMARY KEY;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_user` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+

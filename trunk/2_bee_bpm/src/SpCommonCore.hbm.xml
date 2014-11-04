@@ -336,7 +336,7 @@
 		</property>
 
 		<many-to-one name="personCore" class="com.sp.common.core.model.PersonCore"
-			column="id_persona" lazy="false" />
+			column="id_persona" lazy="false" fetch="join" />
 
 		<many-to-one name="businessCalendar" class="com.sp.calendar.model.BusinessCalendar"
 			lazy="false" fetch="join">
@@ -345,7 +345,7 @@
 
 		<many-to-one name="organizationUnit"
 			class="com.sp.common.core.model.OrganizationUnit" column="id_depto"
-			lazy="false" />
+			lazy="false" fetch="join" />
 
 		<one-to-one name="userSettings" class="com.sp.common.core.model.UserSettings"
 			cascade="save-update,delete" />
@@ -687,10 +687,10 @@
         </property>
 
 		<many-to-one class="com.sp.common.core.model.EmailTemplateTheme"
-			column="email_theme_id" lazy="false" name="emailTemplateTheme" />
+			column="email_theme_id" lazy="false" fetch="join" name="emailTemplateTheme" />
 
 		<many-to-one class="com.sp.common.core.model.UserEmailAccount"
-			column="id_user_email_account" lazy="false" name="defaultEmailAccount" />
+			column="id_user_email_account" lazy="false" fetch="join" name="defaultEmailAccount" />
 
 	</class>
 
