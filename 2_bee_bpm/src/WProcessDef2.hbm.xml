@@ -615,6 +615,15 @@
 			<column name="mod_user" />
 		</property>
 
+		<set name="usersRelated" table="w_user_role" cascade="save-update"
+			lazy="false" fetch="join">
+			<key>
+				<column name="id_role" />
+			</key>
+			<one-to-many class="org.beeblos.bpm.core.model.WUserRole" />
+		</set>
+
+<!-- dml 20141030 - comentado resolver roles 
 		<set cascade="all" name="usersRelated" sort="unsorted" table="w_user_role"
 			lazy="false" fetch="join">
 			<key column="id_role" />
@@ -633,7 +642,7 @@
 				</property>
 			</composite-element>
 		</set>
-
+-->
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WStepDataField" table="w_step_data_field">
@@ -1807,6 +1816,15 @@
 			<column name="mod_user" />
 		</property>
 
+		<set name="rolesRelated" table="w_user_role" cascade="save-update"
+			lazy="false" fetch="join">
+			<key>
+				<column name="id_user" />
+			</key>
+			<one-to-many class="org.beeblos.bpm.core.model.WUserRole" />
+		</set>
+
+<!-- dml 20141030 - comentado resolver roles 
 		<set cascade="all" name="rolesRelated" sort="unsorted" table="w_user_role"
 			lazy="false" fetch="join">
 			<key column="id_user" />
@@ -1824,6 +1842,40 @@
 				</property>
 			</composite-element>
 		</set>
+-->
+
+	</class>	
+
+	<class name="org.beeblos.bpm.core.model.WUserRole"
+		table="w_user_role">
+
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		
+		<property name="active" type="java.lang.Boolean">
+			<column name="active" sql-type="bit">
+				<comment>indicates if this role is active</comment>
+			</column>
+		</property>
+		<property name="insertUser" type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property name="insertDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="insert_date" not-null="true" />
+		</property>
+		
+		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
+			lazy="false" fetch="join" name="user">
+			<column name="id_user" />
+		</many-to-one>
+
+		<many-to-one class="org.beeblos.bpm.core.model.WRoleDef"
+			lazy="false" fetch="join" name="role">
+			<column name="id_role" />
+		</many-to-one>
+
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WUseridmapper" table="w_useridmapper">

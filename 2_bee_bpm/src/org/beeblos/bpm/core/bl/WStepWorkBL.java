@@ -26,7 +26,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
-import org.beeblos.bpm.core.dao.WUserRoleDao;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
 import org.beeblos.bpm.core.error.WExternalMethodException;
 import org.beeblos.bpm.core.error.WProcessDefException;
@@ -39,6 +38,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.error.WUserRoleException;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -1940,9 +1940,9 @@ public class WStepWorkBL {
 			
 			try {
 					
-				roleUsers = new WUserRoleDao().getWUserDefByRole(stepRole.getRole().getId(), null);
+				roleUsers = new WUserRoleBL().getUserDefListByRole(stepRole.getRole().getId(), null);
 				
-			} catch (WUserDefException e) {
+			} catch (WUserRoleException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

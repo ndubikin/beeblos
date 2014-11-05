@@ -2,7 +2,9 @@ package org.beeblos.bpm.core.model;
 
 // Generated Nov 9, 2011 1:15:47 PM by Hibernate Tools 3.4.0.CR1
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -132,6 +134,13 @@ public class WUserDef implements java.io.Serializable {
 		return rolesRelated;
 	}
 
+	public List<WUserRole> getRolesRelatedAsList() {
+		if (rolesRelated != null){
+			return new ArrayList<WUserRole>(rolesRelated);
+		}
+		return null;
+	}
+
 	public void setRolesRelated(Set<WUserRole> rolesRelated) {
 		this.rolesRelated = rolesRelated;
 	}
@@ -179,6 +188,11 @@ public class WUserDef implements java.io.Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (rolesRelated == null) {
+			if (other.rolesRelated != null)
+				return false;
+		} else if (!rolesRelated.equals(other.rolesRelated))
+			return false;
 		return true;
 	}
 
@@ -203,7 +217,7 @@ public class WUserDef implements java.io.Serializable {
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ "]";
 	}
-
+/*
 	// dml 20120508
 	public void addRole( WRoleDef role, boolean active, Integer insertUser ) {
 		WUserRole wur = new WUserRole(active, insertUser, new DateTime());
@@ -211,6 +225,6 @@ public class WUserDef implements java.io.Serializable {
 		wur.setRole(role);
 		rolesRelated.add(wur);
 	}
-
+*/
 	
 }

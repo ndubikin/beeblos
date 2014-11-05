@@ -1,6 +1,8 @@
 package org.beeblos.bpm.core.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -134,6 +136,13 @@ public class WRoleDef implements java.io.Serializable {
 		return usersRelated;
 	}
 
+	public List<WUserRole> getUsersRelatedAsList() {
+		if (usersRelated != null){
+			return new ArrayList<WUserRole>(usersRelated);
+		}
+		return null;
+	}
+	
 	public void setUsersRelated(Set<WUserRole> usersRelated) {
 		this.usersRelated = usersRelated;
 	}
@@ -233,6 +242,11 @@ public class WRoleDef implements java.io.Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (usersRelated == null) {
+			if (other.usersRelated != null)
+				return false;
+		} else if (!usersRelated.equals(other.usersRelated))
+			return false;
 		return true;
 	}		
 	
@@ -248,7 +262,7 @@ public class WRoleDef implements java.io.Serializable {
 		
 		return true;
 	}
-
+/*
 	// dml 20120508
 	public void addUser( WUserDef user, boolean active, Integer insertUser ) {
 		WUserRole wur = new WUserRole(active, insertUser, new DateTime());
@@ -256,5 +270,5 @@ public class WRoleDef implements java.io.Serializable {
 		wur.setUser(user);
 		usersRelated.add(wur);
 	}
-	
+*/	
 }
