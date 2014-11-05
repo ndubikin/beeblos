@@ -18,8 +18,11 @@ public class WUserRole implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Integer id;
+	
 	private WUserDef user;
 	private WRoleDef role;
+	
 	private boolean active;
 	private Integer insertUser;
 	private DateTime insertDate;
@@ -50,6 +53,14 @@ public class WUserRole implements java.io.Serializable {
 		this.active = active;
 		this.insertUser = insertUser;
 		this.insertDate = insertDate;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public WUserDef getUser() {

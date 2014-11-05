@@ -211,25 +211,6 @@ public class WUserDefDao {
 
 		return users;
 	}
-
-	 /**
-	   * returns the user list for a given Role
-	   * orderBy: id (user) or name
-	   */
-	public List<WUserDef> getWUserDefByRole( Integer idRole, String orderBy ) throws WUserDefException {
-		
-		return new WUserRoleDao().getWUserDefByRole(idRole, orderBy);
-
-	}
-
-	 /**
-	   * returns the ID user list for a given Role
-	   * orderBy: id (user) or name
-	   */
-	public List<Integer> getWUserDefIdByRole( Integer idRole ) throws WUserDefException {
-
-		return new WUserRoleDao().getWUserDefIdByRole(idRole);
-	}
 	
 	// dml 20120425
 	public List<WUserDef> getWUserDefList(WUserDef wUserDef) throws WUserDefException{

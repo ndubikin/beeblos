@@ -202,3 +202,8 @@ ALTER TABLE `bee_bpm_dev`.`w_step_user`
 ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
 ADD PRIMARY KEY (`id`);
 
+-- dml 20141104 - Cambios tablas de relacion w_user_def-w_role_def
+ALTER TABLE `bee_bpm_dev`.`w_user_role` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id`);

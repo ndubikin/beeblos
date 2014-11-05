@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
+import org.beeblos.bpm.core.bl.WUserRoleBL;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.junit.Test;
@@ -39,7 +40,17 @@ public class TestWUserDefBL extends TestCase{
 		}
 		
 		@Test
+		public void test() throws Exception {
+			
+			List<Integer> l2 = new WUserRoleBL().getUserDefIdsByRole(28);
+			
+			List<WUserDef> l = new WUserRoleBL().getUserDefListByRole(28, "id");
 		
+			System.out.println("Done");
+			
+		}
+		
+		@Test
 		public void testAgregarWUserDef() throws Exception {
 			
 

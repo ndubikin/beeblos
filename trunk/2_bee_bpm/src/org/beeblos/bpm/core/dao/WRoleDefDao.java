@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.error.WUserRoleException;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.hibernate.HibernateException;
@@ -283,25 +284,6 @@ public class WRoleDefDao {
 			} catch (Exception e) {}
 
 			return retorno;
-	}
-
-	 /**
-	   * returns the role list for a given Role
-	   * orderBy: id (role) or name
-	   */
-	public List<WUserDef> getWUserDefByRole( Integer idRole, String orderBy ) throws WUserDefException {
-		
-		return new WUserRoleDao().getWUserDefByRole(idRole, orderBy);
-
-	}
-
-	 /**
-	   * returns the ID role list for a given Role
-	   * orderBy: id (role) or name
-	   */
-	public List<Integer> getWUserDefIdByRole( Integer idRole ) throws WUserDefException {
-
-		return new WUserRoleDao().getWUserDefIdByRole(idRole);
 	}
 	
 	public List<WRoleDef> getWRoleDefListByUser( Integer idUser ) throws WUserDefException {
