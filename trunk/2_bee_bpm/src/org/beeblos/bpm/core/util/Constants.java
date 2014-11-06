@@ -162,6 +162,10 @@ public class Constants {
 	public static final String PAGINA_GUARDAR_OK_DEFAULT ="/dap/procesarProyectoDAP/pestanias/guardarOkDefault.xhtml";
 	public static final String PAGINA_PROCESO_CANCEL_DEFAULT ="/dap/procesarProyectoDAP/pestanias/procesoCancelDefault.xhtml";
 	
+	public static final String PAGINA_PROCESO_PROYECTO_CANCEL_DEFAULT ="/dap/procesarProyectoDAP/pestanias/procesoCancelDefault.xhtml";
+	
+	public static final String TASK_SUCCESSFULLY_PROCESSED_URI="/app/bpm/taskSuccessfullyProcessed.jsf"; //rrl 20140206
+	
 	public static final String TASK_PROCESSED_OK ="TASK_PROCESSED_OK";
 	
 	public static final String NONE = "NONE";
