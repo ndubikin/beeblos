@@ -68,12 +68,14 @@ public class WProcessDefDao {
 
 
 		} catch (HibernateException ex) {
-			logger.error("WProcessDefDao: update - Can't update process definition record "+ 
-					process.getName()  +
-					" - id = "+process.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause()   );
-			throw new WProcessDefException("WProcessDefDao: update - Can't update process definition record "+ 
-					process.getName()  +
-					" - id = "+process.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+			String mess = "WProcessDefDao: update - Can't update process definition record " 
+					+ (process.getName()!=null?process.getName():"null name")
+					+" id:"+(process.getId()!=null?process.getId():"null id")
+					+" "
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():" "); 
+			logger.error( mess );
+			throw new WProcessDefException(mess);
 
 		}
 					
