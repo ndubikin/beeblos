@@ -377,6 +377,31 @@ public class WStepSequenceDef implements java.io.Serializable {
 		this.modDate = modDate;
 	}
 
+	/**
+	 * @author rrl 20141104
+	 * 
+	 * nullates empty objects to persist
+	 */
+	public void nullateEmtpyObjects() {
+
+		if (process!=null && process.empty()) process=null;
+		if (fromStep!=null && fromStep.empty()) fromStep=null;
+		if (toStep!=null && toStep.empty()) toStep=null;
+		if (externalMethod!=null && externalMethod.isEmpty()) externalMethod=null;
+	}
+	
+	/**
+	  * @author rrl 20141104
+	  * 
+	  * recover empty objects to persist
+	  */
+	public void recoverEmtpyObjects() {
+
+		if (process==null) process = new WProcessDef();
+		if (fromStep==null) fromStep = new WStepDef();
+		if (toStep==null) toStep = new WStepDef();
+		if (externalMethod==null) externalMethod = new HashSet<WExternalMethod>();
+	}
 
 	@Override
 	public int hashCode() {
