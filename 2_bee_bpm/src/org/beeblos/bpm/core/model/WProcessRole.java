@@ -15,9 +15,18 @@ public class WProcessRole implements java.io.Serializable, WRoleCol {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Autonumeric id to manage relation manually 
+	 */
 	private Integer id;
 	
+	/**
+	 * WProcessDef id
+	 */
 	private Integer idProcess;
+	/**
+	 * Related role assigned to wProcessDef
+	 */
 	private WRoleDef role;
 	
 	private boolean admin;

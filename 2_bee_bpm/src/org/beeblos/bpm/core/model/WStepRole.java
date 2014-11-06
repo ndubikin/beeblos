@@ -19,9 +19,17 @@ public class WStepRole implements java.io.Serializable, WRoleCol {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * autonumeric id to manage the relation manually
+	 */
 	private Integer id;
-	
+	/**
+	 * id wStepDef related
+	 */
 	private Integer idStep;
+	/**
+	 * Assigned role to a WStepDef
+	 */
 	private WRoleDef role;
 	
 	private boolean admin;
