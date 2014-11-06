@@ -535,446 +535,6 @@ public class WStepDef implements java.io.Serializable {
 		this.timeUnit = timeUnit;
 	}
 
-
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (active ? 1231 : 1237);
-		result = prime * result + (arrivingAdminNotice ? 1231 : 1237);
-		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
-		result = prime * result
-				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
-		result = prime * result + (backingBean ? 1231 : 1237);
-		result = prime
-				* result
-				+ ((customSaveMethod == null) ? 0 : customSaveMethod.hashCode());
-		result = prime
-				* result
-				+ ((customSaveRefClass == null) ? 0 : customSaveRefClass
-						.hashCode());
-		result = prime * result + (customValidation ? 1231 : 1237);
-		result = prime
-				* result
-				+ ((customValidationMethod == null) ? 0
-						: customValidationMethod.hashCode());
-		result = prime
-				* result
-				+ ((customValidationRefClass == null) ? 0
-						: customValidationRefClass.hashCode());
-		result = prime * result
-				+ ((dataFieldDef == null) ? 0 : dataFieldDef.hashCode());
-		result = prime * result + (deadlineAdminNotice ? 1231 : 1237);
-		result = prime * result
-				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
-		result = prime * result
-				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
-		result = prime * result + (deadlineUserNotice ? 1231 : 1237);
-		result = prime * result + (deleted ? 1231 : 1237);
-		result = prime * result + (emailNotification ? 1231 : 1237);
-		result = prime * result + (engineNotification ? 1231 : 1237);
-		result = prime * result + (expiredAdminNotice ? 1231 : 1237);
-		result = prime * result + (expiredUserNotice ? 1231 : 1237);
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime
-				* result
-				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
-		result = prime
-				* result
-				+ ((idDefaultProcessor == null) ? 0 : idDefaultProcessor
-						.hashCode());
-		result = prime * result + ((idDept == null) ? 0 : idDept.hashCode());
-		result = prime * result
-				+ ((idListZone == null) ? 0 : idListZone.hashCode());
-		result = prime * result + ((idPhase == null) ? 0 : idPhase.hashCode());
-		result = prime * result
-				+ ((idWorkZone == null) ? 0 : idWorkZone.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
-		result = prime * result
-				+ ((instructions == null) ? 0 : instructions.hashCode());
-		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
-		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
-		result = prime * result
-				+ ((postconditions == null) ? 0 : postconditions.hashCode());
-		result = prime * result
-				+ ((preconditions == null) ? 0 : preconditions.hashCode());
-		result = prime * result + (reminderAdminNotice ? 1231 : 1237);
-		result = prime * result
-				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
-		result = prime
-				* result
-				+ ((reminderTimeUnit == null) ? 0 : reminderTimeUnit.hashCode());
-		result = prime * result + (reminderUserNotice ? 1231 : 1237);
-		result = prime * result
-				+ ((response == null) ? 0 : response.hashCode());
-		result = prime * result
-				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
-		result = prime * result
-				+ ((routeEvalOrder == null) ? 0 : routeEvalOrder.hashCode());
-		result = prime * result + ((rules == null) ? 0 : rules.hashCode());
-		result = prime * result + (runtimeModifiable ? 1231 : 1237);
-		result = prime * result + (sentAdminNotice ? 1231 : 1237);
-		result = prime * result + (sentUserNotice ? 1231 : 1237);
-		result = prime * result + (shared ? 1231 : 1237);
-		result = prime * result
-				+ ((stepComments == null) ? 0 : stepComments.hashCode());
-		result = prime * result
-				+ ((stepHead == null) ? 0 : stepHead.hashCode());
-		result = prime * result
-				+ ((submitForm == null) ? 0 : submitForm.hashCode());
-		result = prime * result
-				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
-		result = prime * result
-				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
-		return result;
-	}
-
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof WStepDef))
-			return false;
-		WStepDef other = (WStepDef) obj;
-		if (active != other.active)
-			return false;
-		if (arrivingAdminNotice != other.arrivingAdminNotice)
-			return false;
-		if (arrivingUserNotice != other.arrivingUserNotice)
-			return false;
-		if (assignedTime == null) {
-			if (other.assignedTime != null)
-				return false;
-		} else if (!assignedTime.equals(other.assignedTime))
-			return false;
-		if (backingBean != other.backingBean)
-			return false;
-		if (customSaveMethod == null) {
-			if (other.customSaveMethod != null)
-				return false;
-		} else if (!customSaveMethod.equals(other.customSaveMethod))
-			return false;
-		if (customSaveRefClass == null) {
-			if (other.customSaveRefClass != null)
-				return false;
-		} else if (!customSaveRefClass.equals(other.customSaveRefClass))
-			return false;
-		if (customValidation != other.customValidation)
-			return false;
-		if (customValidationMethod == null) {
-			if (other.customValidationMethod != null)
-				return false;
-		} else if (!customValidationMethod.equals(other.customValidationMethod))
-			return false;
-		if (customValidationRefClass == null) {
-			if (other.customValidationRefClass != null)
-				return false;
-		} else if (!customValidationRefClass
-				.equals(other.customValidationRefClass))
-			return false;
-		if (dataFieldDef == null) {
-			if (other.dataFieldDef != null)
-				return false;
-		} else if (!dataFieldDef.equals(other.dataFieldDef))
-			return false;
-		if (deadlineAdminNotice != other.deadlineAdminNotice)
-			return false;
-		if (deadlineDate == null) {
-			if (other.deadlineDate != null)
-				return false;
-		} else if (!deadlineDate.equals(other.deadlineDate))
-			return false;
-		if (deadlineTime == null) {
-			if (other.deadlineTime != null)
-				return false;
-		} else if (!deadlineTime.equals(other.deadlineTime))
-			return false;
-		if (deadlineUserNotice != other.deadlineUserNotice)
-			return false;
-		if (deleted != other.deleted)
-			return false;
-		if (emailNotification != other.emailNotification)
-			return false;
-		if (engineNotification != other.engineNotification)
-			return false;
-		if (expiredAdminNotice != other.expiredAdminNotice)
-			return false;
-		if (expiredUserNotice != other.expiredUserNotice)
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (idAdditionalZone == null) {
-			if (other.idAdditionalZone != null)
-				return false;
-		} else if (!idAdditionalZone.equals(other.idAdditionalZone))
-			return false;
-		if (idDefaultProcessor == null) {
-			if (other.idDefaultProcessor != null)
-				return false;
-		} else if (!idDefaultProcessor.equals(other.idDefaultProcessor))
-			return false;
-		if (idDept == null) {
-			if (other.idDept != null)
-				return false;
-		} else if (!idDept.equals(other.idDept))
-			return false;
-		if (idListZone == null) {
-			if (other.idListZone != null)
-				return false;
-		} else if (!idListZone.equals(other.idListZone))
-			return false;
-		if (idPhase == null) {
-			if (other.idPhase != null)
-				return false;
-		} else if (!idPhase.equals(other.idPhase))
-			return false;
-		if (idWorkZone == null) {
-			if (other.idWorkZone != null)
-				return false;
-		} else if (!idWorkZone.equals(other.idWorkZone))
-			return false;
-		if (insertDate == null) {
-			if (other.insertDate != null)
-				return false;
-		} else if (!insertDate.equals(other.insertDate))
-			return false;
-		if (insertUser == null) {
-			if (other.insertUser != null)
-				return false;
-		} else if (!insertUser.equals(other.insertUser))
-			return false;
-		if (instructions == null) {
-			if (other.instructions != null)
-				return false;
-		} else if (!instructions.equals(other.instructions))
-			return false;
-		if (modDate == null) {
-			if (other.modDate != null)
-				return false;
-		} else if (!modDate.equals(other.modDate))
-			return false;
-		if (modUser == null) {
-			if (other.modUser != null)
-				return false;
-		} else if (!modUser.equals(other.modUser))
-			return false;
-		if (postconditions == null) {
-			if (other.postconditions != null)
-				return false;
-		} else if (!postconditions.equals(other.postconditions))
-			return false;
-		if (preconditions == null) {
-			if (other.preconditions != null)
-				return false;
-		} else if (!preconditions.equals(other.preconditions))
-			return false;
-		if (reminderAdminNotice != other.reminderAdminNotice)
-			return false;
-		if (reminderTime == null) {
-			if (other.reminderTime != null)
-				return false;
-		} else if (!reminderTime.equals(other.reminderTime))
-			return false;
-		if (reminderTimeUnit == null) {
-			if (other.reminderTimeUnit != null)
-				return false;
-		} else if (!reminderTimeUnit.equals(other.reminderTimeUnit))
-			return false;
-		if (reminderUserNotice != other.reminderUserNotice)
-			return false;
-		if (response == null) {
-			if (other.response != null)
-				return false;
-		} else if (!response.equals(other.response))
-			return false;
-		if (rolesRelated == null) {
-			if (other.rolesRelated != null)
-				return false;
-		} else if (!rolesRelated.equals(other.rolesRelated))
-			return false;
-		if (routeEvalOrder == null) {
-			if (other.routeEvalOrder != null)
-				return false;
-		} else if (!routeEvalOrder.equals(other.routeEvalOrder))
-			return false;
-		if (rules == null) {
-			if (other.rules != null)
-				return false;
-		} else if (!rules.equals(other.rules))
-			return false;
-		if (runtimeModifiable != other.runtimeModifiable)
-			return false;
-		if (sentAdminNotice != other.sentAdminNotice)
-			return false;
-		if (sentUserNotice != other.sentUserNotice)
-			return false;
-		if (shared != other.shared)
-			return false;
-		if (stepComments == null) {
-			if (other.stepComments != null)
-				return false;
-		} else if (!stepComments.equals(other.stepComments))
-			return false;
-		if (stepHead == null) {
-			if (other.stepHead != null)
-				return false;
-		} else if (!stepHead.equals(other.stepHead))
-			return false;
-		if (submitForm == null) {
-			if (other.submitForm != null)
-				return false;
-		} else if (!submitForm.equals(other.submitForm))
-			return false;
-		if (timeUnit == null) {
-			if (other.timeUnit != null)
-				return false;
-		} else if (!timeUnit.equals(other.timeUnit))
-			return false;
-		if (usersRelated == null) {
-			if (other.usersRelated != null)
-				return false;
-		} else if (!usersRelated.equals(other.usersRelated))
-			return false;
-		if (version == null) {
-			if (other.version != null)
-				return false;
-		} else if (!version.equals(other.version))
-			return false;
-		return true;
-	}
-
-
-
-
-	@Override
-	public String toString() {
-		return "WStepDef ["
-				+ (id != null ? "id=" + id + ", " : "")
-				+ (stepHead != null ? "stepHead=" + stepHead + ", " : "")
-				+ (version != null ? "version=" + version + ", " : "")
-				+ "active="
-				+ active
-				+ ", shared="
-				+ shared
-				+ ", deleted="
-				+ deleted
-				+ ", "
-				+ (idDept != null ? "idDept=" + idDept + ", " : "")
-				+ (idPhase != null ? "idPhase=" + idPhase + ", " : "")
-				+ (instructions != null ? "instructions=" + instructions + ", "
-						: "")
-				+ (stepComments != null ? "stepComments=" + stepComments + ", "
-						: "")
-				+ (idListZone != null ? "idListZone=" + idListZone + ", " : "")
-				+ (idWorkZone != null ? "idWorkZone=" + idWorkZone + ", " : "")
-				+ (idAdditionalZone != null ? "idAdditionalZone="
-						+ idAdditionalZone + ", " : "")
-				+ (idDefaultProcessor != null ? "idDefaultProcessor="
-						+ idDefaultProcessor + ", " : "")
-				+ (submitForm != null ? "submitForm=" + submitForm + ", " : "")
-				+ (timeUnit != null ? "timeUnit=" + timeUnit + ", " : "")
-				+ (assignedTime != null ? "assignedTime=" + assignedTime + ", "
-						: "")
-				+ (deadlineDate != null ? "deadlineDate=" + deadlineDate + ", "
-						: "")
-				+ (deadlineTime != null ? "deadlineTime=" + deadlineTime + ", "
-						: "")
-				+ (reminderTimeUnit != null ? "reminderTimeUnit="
-						+ reminderTimeUnit + ", " : "")
-				+ (reminderTime != null ? "reminderTime=" + reminderTime + ", "
-						: "")
-				+ "runtimeModifiable="
-				+ runtimeModifiable
-				+ ", sentAdminNotice="
-				+ sentAdminNotice
-				+ ", arrivingAdminNotice="
-				+ arrivingAdminNotice
-				+ ", deadlineAdminNotice="
-				+ deadlineAdminNotice
-				+ ", reminderAdminNotice="
-				+ reminderAdminNotice
-				+ ", expiredAdminNotice="
-				+ expiredAdminNotice
-				+ ", sentUserNotice="
-				+ sentUserNotice
-				+ ", arrivingUserNotice="
-				+ arrivingUserNotice
-				+ ", deadlineUserNotice="
-				+ deadlineUserNotice
-				+ ", reminderUserNotice="
-				+ reminderUserNotice
-				+ ", expiredUserNotice="
-				+ expiredUserNotice
-				+ ", emailNotification="
-				+ emailNotification
-				+ ", engineNotification="
-				+ engineNotification
-				+ ", "
-				+ (routeEvalOrder != null ? "routeOrderEval=" + routeEvalOrder
-						+ ", " : "")
-				+ (response != null ? "response=" + response + ", " : "")
-				+ (rolesRelated != null ? "rolesRelated=" + rolesRelated + ", "
-						: "")
-				+ (usersRelated != null ? "usersRelated=" + usersRelated + ", "
-						: "")
-				+ "customValidation="
-				+ customValidation
-				+ ", "
-				+ (customValidationRefClass != null ? "customValidationRefClass="
-						+ customValidationRefClass + ", "
-						: "")
-				+ (customValidationMethod != null ? "customValidationMethod="
-						+ customValidationMethod + ", " : "")
-				+ "backingBean="
-				+ backingBean
-				+ ", "
-				+ (customSaveMethod != null ? "customSaveMethod="
-						+ customSaveMethod + ", " : "")
-				+ (customSaveRefClass != null ? "customSaveRefClass="
-						+ customSaveRefClass + ", " : "")
-				+ (rules != null ? "rules=" + rules + ", " : "")
-				+ (preconditions != null ? "preconditions=" + preconditions
-						+ ", " : "")
-				+ (postconditions != null ? "postconditions=" + postconditions
-						+ ", " : "")
-				+ (dataFieldDef != null ? "dataFieldDef=" + dataFieldDef + ", "
-						: "")
-				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
-				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser : "") + "]";
-	}
-
-
-
-
-	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
-			if (i > 0)
-				builder.append(", ");
-			builder.append(iterator.next());
-		}
-		builder.append("]");
-		return builder.toString();
-	}
-
-
 	public boolean empty() {
 
 		if (id!=null && ! id.equals(0)) return false;
@@ -1377,5 +937,346 @@ public class WStepDef implements java.io.Serializable {
 		if (usersRelated==null) usersRelated = new HashSet<WStepUser>();
 		if (dataFieldDef==null) dataFieldDef = new ArrayList<WStepDataField>();
     }
+
+    //TODO: rrl 20141106 No incluir colecciones Set/List en el hashCode/equals (no funciona y se queda colgado)
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (active ? 1231 : 1237);
+		result = prime * result + (arrivingAdminNotice ? 1231 : 1237);
+		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
+		result = prime * result
+				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
+		result = prime * result + (backingBean ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((customSaveMethod == null) ? 0 : customSaveMethod.hashCode());
+		result = prime
+				* result
+				+ ((customSaveRefClass == null) ? 0 : customSaveRefClass
+						.hashCode());
+		result = prime * result + (customValidation ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((customValidationMethod == null) ? 0
+						: customValidationMethod.hashCode());
+		result = prime
+				* result
+				+ ((customValidationRefClass == null) ? 0
+						: customValidationRefClass.hashCode());
+		result = prime * result + (deadlineAdminNotice ? 1231 : 1237);
+		result = prime * result
+				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
+		result = prime * result
+				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
+		result = prime * result + (deadlineUserNotice ? 1231 : 1237);
+		result = prime * result + (deleted ? 1231 : 1237);
+		result = prime * result + (emailNotification ? 1231 : 1237);
+		result = prime * result + (engineNotification ? 1231 : 1237);
+		result = prime * result + (expiredAdminNotice ? 1231 : 1237);
+		result = prime * result + (expiredUserNotice ? 1231 : 1237);
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime
+				* result
+				+ ((idAdditionalZone == null) ? 0 : idAdditionalZone.hashCode());
+		result = prime
+				* result
+				+ ((idDefaultProcessor == null) ? 0 : idDefaultProcessor
+						.hashCode());
+		result = prime * result + ((idDept == null) ? 0 : idDept.hashCode());
+		result = prime * result
+				+ ((idListZone == null) ? 0 : idListZone.hashCode());
+		result = prime * result + ((idPhase == null) ? 0 : idPhase.hashCode());
+		result = prime
+				* result
+				+ ((idUserAssignmentMethod == null) ? 0
+						: idUserAssignmentMethod.hashCode());
+		result = prime * result
+				+ ((idWorkZone == null) ? 0 : idWorkZone.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result
+				+ ((instructions == null) ? 0 : instructions.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result
+				+ ((postconditions == null) ? 0 : postconditions.hashCode());
+		result = prime * result
+				+ ((preconditions == null) ? 0 : preconditions.hashCode());
+		result = prime * result + (reminderAdminNotice ? 1231 : 1237);
+		result = prime * result
+				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
+		result = prime
+				* result
+				+ ((reminderTimeUnit == null) ? 0 : reminderTimeUnit.hashCode());
+		result = prime * result + (reminderUserNotice ? 1231 : 1237);
+		result = prime * result
+				+ ((routeEvalOrder == null) ? 0 : routeEvalOrder.hashCode());
+		result = prime * result + ((rules == null) ? 0 : rules.hashCode());
+		result = prime * result + (runtimeModifiable ? 1231 : 1237);
+		result = prime * result + (sentAdminNotice ? 1231 : 1237);
+		result = prime * result + (sentUserNotice ? 1231 : 1237);
+		result = prime * result + (shared ? 1231 : 1237);
+		result = prime * result
+				+ ((stepComments == null) ? 0 : stepComments.hashCode());
+		result = prime * result
+				+ ((stepHead == null) ? 0 : stepHead.hashCode());
+		result = prime * result
+				+ ((submitForm == null) ? 0 : submitForm.hashCode());
+		result = prime * result
+				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WStepDef other = (WStepDef) obj;
+		if (active != other.active)
+			return false;
+		if (arrivingAdminNotice != other.arrivingAdminNotice)
+			return false;
+		if (arrivingUserNotice != other.arrivingUserNotice)
+			return false;
+		if (assignedTime == null) {
+			if (other.assignedTime != null)
+				return false;
+		} else if (!assignedTime.equals(other.assignedTime))
+			return false;
+		if (backingBean != other.backingBean)
+			return false;
+		if (customSaveMethod == null) {
+			if (other.customSaveMethod != null)
+				return false;
+		} else if (!customSaveMethod.equals(other.customSaveMethod))
+			return false;
+		if (customSaveRefClass == null) {
+			if (other.customSaveRefClass != null)
+				return false;
+		} else if (!customSaveRefClass.equals(other.customSaveRefClass))
+			return false;
+		if (customValidation != other.customValidation)
+			return false;
+		if (customValidationMethod == null) {
+			if (other.customValidationMethod != null)
+				return false;
+		} else if (!customValidationMethod.equals(other.customValidationMethod))
+			return false;
+		if (customValidationRefClass == null) {
+			if (other.customValidationRefClass != null)
+				return false;
+		} else if (!customValidationRefClass
+				.equals(other.customValidationRefClass))
+			return false;
+		if (deadlineAdminNotice != other.deadlineAdminNotice)
+			return false;
+		if (deadlineDate == null) {
+			if (other.deadlineDate != null)
+				return false;
+		} else if (!deadlineDate.equals(other.deadlineDate))
+			return false;
+		if (deadlineTime == null) {
+			if (other.deadlineTime != null)
+				return false;
+		} else if (!deadlineTime.equals(other.deadlineTime))
+			return false;
+		if (deadlineUserNotice != other.deadlineUserNotice)
+			return false;
+		if (deleted != other.deleted)
+			return false;
+		if (emailNotification != other.emailNotification)
+			return false;
+		if (engineNotification != other.engineNotification)
+			return false;
+		if (expiredAdminNotice != other.expiredAdminNotice)
+			return false;
+		if (expiredUserNotice != other.expiredUserNotice)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (idAdditionalZone == null) {
+			if (other.idAdditionalZone != null)
+				return false;
+		} else if (!idAdditionalZone.equals(other.idAdditionalZone))
+			return false;
+		if (idDefaultProcessor == null) {
+			if (other.idDefaultProcessor != null)
+				return false;
+		} else if (!idDefaultProcessor.equals(other.idDefaultProcessor))
+			return false;
+		if (idDept == null) {
+			if (other.idDept != null)
+				return false;
+		} else if (!idDept.equals(other.idDept))
+			return false;
+		if (idListZone == null) {
+			if (other.idListZone != null)
+				return false;
+		} else if (!idListZone.equals(other.idListZone))
+			return false;
+		if (idPhase == null) {
+			if (other.idPhase != null)
+				return false;
+		} else if (!idPhase.equals(other.idPhase))
+			return false;
+		if (idUserAssignmentMethod == null) {
+			if (other.idUserAssignmentMethod != null)
+				return false;
+		} else if (!idUserAssignmentMethod.equals(other.idUserAssignmentMethod))
+			return false;
+		if (idWorkZone == null) {
+			if (other.idWorkZone != null)
+				return false;
+		} else if (!idWorkZone.equals(other.idWorkZone))
+			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (instructions == null) {
+			if (other.instructions != null)
+				return false;
+		} else if (!instructions.equals(other.instructions))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
+			return false;
+		if (postconditions == null) {
+			if (other.postconditions != null)
+				return false;
+		} else if (!postconditions.equals(other.postconditions))
+			return false;
+		if (preconditions == null) {
+			if (other.preconditions != null)
+				return false;
+		} else if (!preconditions.equals(other.preconditions))
+			return false;
+		if (reminderAdminNotice != other.reminderAdminNotice)
+			return false;
+		if (reminderTime == null) {
+			if (other.reminderTime != null)
+				return false;
+		} else if (!reminderTime.equals(other.reminderTime))
+			return false;
+		if (reminderTimeUnit == null) {
+			if (other.reminderTimeUnit != null)
+				return false;
+		} else if (!reminderTimeUnit.equals(other.reminderTimeUnit))
+			return false;
+		if (reminderUserNotice != other.reminderUserNotice)
+			return false;
+		if (routeEvalOrder == null) {
+			if (other.routeEvalOrder != null)
+				return false;
+		} else if (!routeEvalOrder.equals(other.routeEvalOrder))
+			return false;
+		if (rules == null) {
+			if (other.rules != null)
+				return false;
+		} else if (!rules.equals(other.rules))
+			return false;
+		if (runtimeModifiable != other.runtimeModifiable)
+			return false;
+		if (sentAdminNotice != other.sentAdminNotice)
+			return false;
+		if (sentUserNotice != other.sentUserNotice)
+			return false;
+		if (shared != other.shared)
+			return false;
+		if (stepComments == null) {
+			if (other.stepComments != null)
+				return false;
+		} else if (!stepComments.equals(other.stepComments))
+			return false;
+		if (stepHead == null) {
+			if (other.stepHead != null)
+				return false;
+		} else if (!stepHead.equals(other.stepHead))
+			return false;
+		if (submitForm == null) {
+			if (other.submitForm != null)
+				return false;
+		} else if (!submitForm.equals(other.submitForm))
+			return false;
+		if (timeUnit == null) {
+			if (other.timeUnit != null)
+				return false;
+		} else if (!timeUnit.equals(other.timeUnit))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "WStepDef [id=" + id + ", stepHead=" + stepHead + ", version="
+				+ version + ", active=" + active + ", shared=" + shared
+				+ ", deleted=" + deleted + ", idDept=" + idDept + ", idPhase="
+				+ idPhase + ", instructions=" + instructions
+				+ ", stepComments=" + stepComments + ", idListZone="
+				+ idListZone + ", idWorkZone=" + idWorkZone
+				+ ", idAdditionalZone=" + idAdditionalZone
+				+ ", idDefaultProcessor=" + idDefaultProcessor
+				+ ", submitForm=" + submitForm + ", timeUnit=" + timeUnit
+				+ ", assignedTime=" + assignedTime + ", deadlineDate="
+				+ deadlineDate + ", deadlineTime=" + deadlineTime
+				+ ", reminderTimeUnit=" + reminderTimeUnit + ", reminderTime="
+				+ reminderTime + ", runtimeModifiable=" + runtimeModifiable
+				+ ", sentAdminNotice=" + sentAdminNotice
+				+ ", arrivingAdminNotice=" + arrivingAdminNotice
+				+ ", deadlineAdminNotice=" + deadlineAdminNotice
+				+ ", reminderAdminNotice=" + reminderAdminNotice
+				+ ", expiredAdminNotice=" + expiredAdminNotice
+				+ ", sentUserNotice=" + sentUserNotice
+				+ ", arrivingUserNotice=" + arrivingUserNotice
+				+ ", deadlineUserNotice=" + deadlineUserNotice
+				+ ", reminderUserNotice=" + reminderUserNotice
+				+ ", expiredUserNotice=" + expiredUserNotice
+				+ ", emailNotification=" + emailNotification
+				+ ", engineNotification=" + engineNotification
+				+ ", routeEvalOrder=" + routeEvalOrder + ", response="
+				+ response + ", rolesRelated=" + rolesRelated
+				+ ", usersRelated=" + usersRelated
+				+ ", idUserAssignmentMethod=" + idUserAssignmentMethod
+				+ ", customValidation=" + customValidation
+				+ ", customValidationRefClass=" + customValidationRefClass
+				+ ", customValidationMethod=" + customValidationMethod
+				+ ", backingBean=" + backingBean + ", customSaveMethod="
+				+ customSaveMethod + ", customSaveRefClass="
+				+ customSaveRefClass + ", rules=" + rules + ", preconditions="
+				+ preconditions + ", postconditions=" + postconditions
+				+ ", dataFieldDef=" + dataFieldDef + ", insertDate="
+				+ insertDate + ", insertUser=" + insertUser + ", modDate="
+				+ modDate + ", modUser=" + modUser + "]";
+	}
 
 }

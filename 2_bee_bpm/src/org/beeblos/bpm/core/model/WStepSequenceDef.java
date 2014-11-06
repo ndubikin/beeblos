@@ -403,6 +403,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 		if (externalMethod==null) externalMethod = new HashSet<WExternalMethod>();
 	}
 
+    //TODO: rrl 20141106 No incluir colecciones Set/List en el hashCode/equals (no funciona y se queda colgado)
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -413,6 +414,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime * result + ((process == null) ? 0 : process.hashCode());
@@ -424,14 +431,13 @@ public class WStepSequenceDef implements java.io.Serializable {
 	}
 
 
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof WStepSequenceDef))
+		if (getClass() != obj.getClass())
 			return false;
 		WStepSequenceDef other = (WStepSequenceDef) obj;
 		if (afterAll != other.afterAll)
@@ -449,6 +455,26 @@ public class WStepSequenceDef implements java.io.Serializable {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
+			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -483,50 +509,16 @@ public class WStepSequenceDef implements java.io.Serializable {
 		return true;
 	}
 
-
-
 	@Override
 	public String toString() {
-		final int maxLen = 2;
-		return "WStepSequenceDef ["
-				+ (id != null ? "id=" + id + ", " : "")
-				+ (process != null ? "process=" + process + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
-				+ (order != null ? "order=" + order + ", " : "")
-				+ (fromStep != null ? "fromStep=" + fromStep + ", " : "")
-				+ (toStep != null ? "toStep=" + toStep + ", " : "")
-				+ "enabled="
-				+ enabled
-				+ ", afterAll="
-				+ afterAll
-				+ ", deleted="
-				+ deleted
-				+ ", "
-				+ (validResponses != null ? "validResponses=" + validResponses
-						+ ", " : "")
-				+ (rules != null ? "rules=" + rules + ", " : "")
-				+ (externalMethod != null ? "externalMethod="
-						+ toString(externalMethod, maxLen) + ", " : "")
-				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
-				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser + ", " : "")
-				+ (modDate != null ? "modDate=" + modDate : "") + "]";
+		return "WStepSequenceDef [id=" + id + ", process=" + process
+				+ ", name=" + name + ", order=" + order + ", fromStep="
+				+ fromStep + ", toStep=" + toStep + ", enabled=" + enabled
+				+ ", afterAll=" + afterAll + ", deleted=" + deleted
+				+ ", validResponses=" + validResponses + ", rules=" + rules
+				+ ", externalMethod=" + externalMethod + ", insertUser="
+				+ insertUser + ", insertDate=" + insertDate + ", modUser="
+				+ modUser + ", modDate=" + modDate + "]";
 	}
-
-
-	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
-			if (i > 0)
-				builder.append(", ");
-			builder.append(iterator.next());
-		}
-		builder.append("]");
-		return builder.toString();
-	}
-
 
 }
