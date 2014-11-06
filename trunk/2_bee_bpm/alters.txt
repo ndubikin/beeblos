@@ -158,6 +158,24 @@ FROM w_step_def sd
 WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  w_step_sequence_def wsd WHERE wsd.process_id = 1
 	UNION SELECT DISTINCT id_dest_step FROM w_step_sequence_def WHERE process_id = 1  ) ;
 	
+# nes 20141027
+CREATE TABLE `bee_bpm_dev`.`w_process_step_def` (
+  `id_process` int(11) NOT NULL,
+  `id_step` int(11) NOT NULL,
+  `add_date` timestamp NOT NULL DEFAULT '1970-01-01 02:01:00',
+  `add_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_process`,`id_step`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation between process and their steps';
+
+## carga los step para el proceso id=1
+insert into `bee_bpm_dev`.`w_process_step_def`
+SELECT 1, sd.id,null,null,null,null 
+FROM `bee_bpm_dev`.`w_step_def` sd  
+WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  `bee_bpm_dev`.`w_step_sequence_def` wsd WHERE wsd.process_id = 1
+	UNION SELECT DISTINCT id_dest_step FROM `bee_bpm_dev`.`w_step_sequence_def` WHERE process_id = 1  ) ;
+	
 
 -- dml 20141031 - Cambios tablas de relacion process-role
 ALTER TABLE `bee_bpm_dev`.`w_process_role` 
