@@ -23,6 +23,9 @@ public class Constants {
 	public static final String W_PROCESS_DEF_FORM_VIEW="/app/forms/wProcessDefFormCall.jsf";
 	public static final String W_STEP_DEF_FORM_VIEW="/app/forms/wStepDefFormCall.jsf";
 
+	//rrl 20141111
+	public static final String W_STEP_HEAD_FORM_VIEW="/app/forms/wStepHeadFormCall.jsf";
+	
 	public static final String W_EMAIL_TEMPLATE_FORM_VIEW="/app/wfCrud/wEmailTemplateCrud/wEmailTemplateCrudWithTemplate.xhtml";
 	public static final String W_EMAIL_ACCOUNT_FORM_VIEW="/app/wfCrud/wUserEmailAccountCrud/wUserEmailAccountCrudWithTemplate.xhtml";
 
