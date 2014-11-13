@@ -508,7 +508,6 @@ public class WStepDefBL {
 			throw new WStepHeadException(mess);
 		}			
 
-		//rrl 20141113 Una vez que tenemos el "id" del nuevo WStepDef, creamos las relaciones con WRoleDef y WUserDef directamente.
 		// cloning permissions ...
 		try {
 
@@ -520,17 +519,10 @@ public class WStepDefBL {
 			newStep.setRolesRelated(new HashSet<WStepRole>());
 			newStep.setUsersRelated(new HashSet<WStepUser>());
 			
+			//rrl 20141113 Una vez que tenemos el "id" del nuevo WStepDef, creamos las relaciones con WRoleDef y WUserDef directamente.
 			if (clonePermissions) {
 				if ( currentStep.getRolesRelated().size()>0) {
 					for ( WStepRole stepRole: currentStep.getRolesRelated() ) {
-						System.out.println("dml ARREGLAR ESTO EN 'WStepDefBL.cloneWStepDef'");
-/*						stepRole.setStep(null);
-						newStep
-							.addRole(
-									stepRole.getRole(), stepRole.isAdmin(), 
-									stepRole.getIdObject(), stepRole.getIdObjectType(), 
-									userId);*/						
-						
 						tmpStepRole = wStepRoleBL.addNewStepRole(newStep.getId(), stepRole.getRole().getId(), stepRole.isAdmin(), userId);
 						newStep.getRolesRelated().add(tmpStepRole);
 					}
@@ -538,30 +530,12 @@ public class WStepDefBL {
 
 				if ( currentStep.getUsersRelated().size()>0) {
 					for ( WStepUser stepUser: currentStep.getUsersRelated() ) {
-						System.out.println("dml ARREGLAR ESTO EN 'WStepDefBL.cloneWStepDef'");
-/*						stepUser.setStep(null);
-						newStep
-							.addUser(
-									stepUser.getUser(), stepUser.isAdmin(), 
-									stepUser.getIdObject(), stepUser.getIdObjectType(), 
-									userId);*/
-						
 						tmpStepUser = wStepUserBL.addNewStepUser(newStep.getId(), stepUser.getUser().getId(), stepUser.isAdmin(), userId);
 						newStep.getUsersRelated().add(tmpStepUser);
 					}
 				}
 			}
 
-			if (newStep.getRolesRelated().isEmpty()) {
-				newStep.setRolesRelated(null);
-			}
-			if (newStep.getUsersRelated().isEmpty()) {
-				newStep.setUsersRelated(null);
-			}
-			if (newStep.getRolesRelated()!=null || newStep.getUsersRelated()!=null) {
-				this.update(newStep, processHeadId, userId);
-			}
-			
 		} catch (Exception e) {
 			String mess = "Error cloning step version:"+stepId+" can't clone related role or user list ..."
 					+" - "+e.getClass()+" -" +e.getMessage()+" - "+e.getCause();
