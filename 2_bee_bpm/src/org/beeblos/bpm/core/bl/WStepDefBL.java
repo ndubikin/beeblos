@@ -487,12 +487,36 @@ public class WStepDefBL {
 							+" - "+e.getMessage()+" - "+e.getCause();
 			throw new WStepDefException(mess);
 		}
-		
+
+		// persist new step without permissions ...
+		try {
+
+			//rrl 20141113
+			newStep.setId(null);
+			newStep.setVersion(newVersion); // new version number ....
+			newStep.setRolesRelated(null);
+			newStep.setUsersRelated(null);
+			
+			clonedId = this.add(newStep,userId);
+		} catch (WStepDefException e) {
+			String mess = "Error cloning step version: can't ADD new clone step version original-id:"+stepId
+					+" - "+e.getMessage()+" - "+e.getCause();
+			throw new WStepDefException(mess);
+		} catch (WStepHeadException e) {
+			String mess = "Error cloning step version: can't ADD new clone step version original-id:"+stepId
+					+" - "+e.getMessage()+" - "+e.getCause();
+			throw new WStepHeadException(mess);
+		}			
+
+		//rrl 20141113 Una vez que tenemos el "id" del nuevo WStepDef, creamos las relaciones con WRoleDef y WUserDef directamente.
 		// cloning permissions ...
 		try {
 
-			newStep.setId(null);
-			newStep.setVersion(newVersion); // new version number ....
+			WStepRoleBL wStepRoleBL = new WStepRoleBL();
+			WStepUserBL wStepUserBL = new WStepUserBL();
+			WStepRole tmpStepRole;
+			WStepUser tmpStepUser;
+
 			newStep.setRolesRelated(new HashSet<WStepRole>());
 			newStep.setUsersRelated(new HashSet<WStepUser>());
 			
@@ -505,7 +529,10 @@ public class WStepDefBL {
 							.addRole(
 									stepRole.getRole(), stepRole.isAdmin(), 
 									stepRole.getIdObject(), stepRole.getIdObjectType(), 
-									userId);*/
+									userId);*/						
+						
+						tmpStepRole = wStepRoleBL.addNewStepRole(newStep.getId(), stepRole.getRole().getId(), stepRole.isAdmin(), userId);
+						newStep.getRolesRelated().add(tmpStepRole);
 					}
 				}
 
@@ -518,8 +545,21 @@ public class WStepDefBL {
 									stepUser.getUser(), stepUser.isAdmin(), 
 									stepUser.getIdObject(), stepUser.getIdObjectType(), 
 									userId);*/
+						
+						tmpStepUser = wStepUserBL.addNewStepUser(newStep.getId(), stepUser.getUser().getId(), stepUser.isAdmin(), userId);
+						newStep.getUsersRelated().add(tmpStepUser);
 					}
 				}
+			}
+
+			if (newStep.getRolesRelated().isEmpty()) {
+				newStep.setRolesRelated(null);
+			}
+			if (newStep.getUsersRelated().isEmpty()) {
+				newStep.setUsersRelated(null);
+			}
+			if (newStep.getRolesRelated()!=null || newStep.getUsersRelated()!=null) {
+				this.update(newStep, processHeadId, userId);
 			}
 			
 		} catch (Exception e) {
@@ -528,18 +568,6 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 
-		// persist new step with permissions ...
-		try {
-			clonedId = this.add(newStep,userId);
-		} catch (WStepDefException e) {
-			String mess = "Error cloning step version: can't ADD new clone step version original-id:"+stepId
-					+" - "+e.getMessage()+" - "+e.getCause();
-			throw new WStepDefException(mess);
-		} catch (WStepHeadException e) {
-			String mess = "Error cloning step version: can't ADD new clone step version original-id:"+stepId
-					+" - "+e.getMessage()+" - "+e.getCause();
-			throw new WStepHeadException(mess);
-		}			
 		
 		// cloning routes (the workflow map really ...)
 		if (cloneRoutes) {
