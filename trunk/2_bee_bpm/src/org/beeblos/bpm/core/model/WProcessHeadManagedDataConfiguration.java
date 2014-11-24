@@ -223,6 +223,17 @@ public class WProcessHeadManagedDataConfiguration implements java.io.Serializabl
 				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
-	
+	//rrl 20141124
+	public boolean empty() {
+
+		if (headId!=null && ! headId.equals(0)) return false;
+		if (name!=null && ! "".equals(name)) return false;
+//		if (ignoreCase!=null) return false;
+		if (schema!=null && ! "".equals(schema)) return false;
+		if (catalog!=null && ! "".equals(catalog)) return false;
+		if (comment!=null && ! "".equals(comment)) return false;
+		
+		return true;
+	}
 
 }

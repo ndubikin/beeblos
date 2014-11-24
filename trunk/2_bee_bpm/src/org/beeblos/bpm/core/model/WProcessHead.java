@@ -326,5 +326,30 @@ public class WProcessHead implements java.io.Serializable {
 		
 		return true;
 	}
+
+	/**
+	 * @author rrl 20141024
+	 * 
+	 * nullates empty objects to persist
+	 */
+	public void nullateEmtpyObjects() {
+
+		if (managedTableConfiguration!=null && managedTableConfiguration.empty()) managedTableConfiguration=null;
+		if (processDataFieldDef!=null && processDataFieldDef.isEmpty()) processDataFieldDef=null;
+		if (externalMethod!=null && externalMethod.isEmpty()) externalMethod=null;
+	}
+	
+    /**
+     * @author rrl 20141024
+     * 
+     * recover empty objects to persist
+     */
+    public void recoverEmtpyObjects() {
+    	
+		if (managedTableConfiguration==null) managedTableConfiguration = new WProcessHeadManagedDataConfiguration();
+		if (processDataFieldDef==null) processDataFieldDef = new HashSet<WProcessDataField>();
+		if (externalMethod==null) externalMethod = new HashSet<WExternalMethod>();
+    }
+	
 	
 }
