@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
  * un step en tiempo de definición (WStepDef)
  * 
  * nes 20141029 - agregado implements WRoleCol
- * 
+ * nes 20141125 - OJO para ROLE no puede ir la comparación habitual!
  * 
  */
 public class WStepRole implements java.io.Serializable, WRoleCol {
@@ -153,6 +153,9 @@ public class WStepRole implements java.io.Serializable, WRoleCol {
 		return result;
 	}
 
+	/**
+	 * nes 20141125 - OJO para ROLE no puede ir la comparación habitual!
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -184,11 +187,23 @@ public class WStepRole implements java.io.Serializable, WRoleCol {
 				return false;
 		} else if (!idStep.equals(other.idStep))
 			return false;
+		
+		// nes 20141125 - OJO no puede ir la comparación habitual!
 		if (role == null) {
 			if (other.role != null)
 				return false;
-		} else if (!role.equals(other.role))
-			return false;
+		} else { 
+			if ( role.getId()== null ) {
+				if (other.role.getId()==null) {
+					return false;
+				}
+			} else {
+				if (!role.getId().equals(other.getId())) {
+					return false;
+				}
+			}
+		}
+
 		return true;
 	}
 
