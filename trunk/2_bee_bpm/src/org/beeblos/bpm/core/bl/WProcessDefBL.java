@@ -909,6 +909,8 @@ public class WProcessDefBL {
 			newprocver.setId(null);
 			newprocver.getProcess().setId(null);
 			newprocver.setVersion(newversion);
+			newprocver.setRolesRelated(null);
+			newprocver.setUsersRelated(null);
 			
 			// reserving Managed Data Configuration and Process Data Field list
 			if (newprocver.getProcess().getManagedTableConfiguration()!=null) {
@@ -927,9 +929,12 @@ public class WProcessDefBL {
 			newprocver.setProcess(new WProcessHead());
 			newprocver.setName(newProcessName);
 
+			//rrl 20141125 SE LLAMA MAS ABAJO... 
+			//Primero hay que guardar WProcessDef para obtener el id y luego guardar los permisos para ese id
+			//
 			// replicate user and role list
-			loadUsersAndRoles(currentUserId, emptyRoleList, emptyUserList,
-					newprocver, procver);
+//			loadUsersAndRoles(currentUserId, emptyRoleList, emptyUserList,
+//					newprocver, procver);
 			
 		} catch (Exception e) {
 			String mess = "Error cloning process version:"+processDefId+" can't clone related role or user list ..."
@@ -945,6 +950,10 @@ public class WProcessDefBL {
 		// persist process def and obtain process head id of new process
 		clonedId = addClonedProcessDef(processDefId, currentUserId, clonedId,
 				newprocver);			
+
+		//rrl 20141125 replicate user and role list (ya tengo newprocver.getId() relleno)
+		loadUsersAndRoles(currentUserId, emptyRoleList, emptyUserList,
+				newprocver, procver);
 		
 		// build managed table (if exists)
 		buildManagedTable(currentUserId, newprocver, procver, mdf, dataFieldDef);
@@ -1177,38 +1186,47 @@ public class WProcessDefBL {
 								newprocver.getProcess().getProcessDataFieldDefAsList());
 		}
 	}
-	
 
-	//TODO dml CAMBIO ROLES Y USERS
+	//rrl 20141125
 	private void loadUsersAndRoles(Integer currentUserId,
 			boolean emptyRoleList, boolean emptyUserList,
-			WProcessDef newprocver, WProcessDef procver) {
-		// load users and roles
-		newprocver.setRolesRelated(new HashSet<WProcessRole>());
-		newprocver.setUsersRelated(new HashSet<WProcessUser>());				
+			WProcessDef newprocver, WProcessDef procver) throws WProcessDefException {
 		
-		if ( !emptyRoleList && procver.getRolesRelated().size()>0) {
-			for ( WProcessRole processRole: procver.getRolesRelated() ) {
-				System.out.println("dml ARREGLAR ESTO EN 'WProcessDefBL.loadUsersAndRoles'");
-/*				processRole.setProcess(null);
-				newprocver
-					.addRole(
-							processRole.getRole(), processRole.isAdmin(), 
-							processRole.getIdObject(), processRole.getIdObjectType(), 
-							currentUserId);*/
-			}
-		}
+		try {
 
-		if ( !emptyUserList && procver.getUsersRelated().size()>0) {
-			for ( WProcessUser processUser: procver.getUsersRelated() ) {
-				System.out.println("dml ARREGLAR ESTO EN 'WProcessDefBL.loadUsersAndRoles'");
-/*				processUser.setProcess(null);
-				newprocver
-					.addUser(
-							processUser.getUser(), processUser.isAdmin(), 
-							processUser.getIdObject(), processUser.getIdObjectType(), 
-							currentUserId);*/
+			WProcessRoleBL wProcessRoleBL = new WProcessRoleBL();
+			WProcessUserBL wProcessUserBL = new WProcessUserBL();
+//			WProcessRole tmpProcessRole;
+//			WProcessUser tmpProcessUser;
+			
+			// load users and roles
+//			newprocver.setRolesRelated(new HashSet<WProcessRole>());
+//			newprocver.setUsersRelated(new HashSet<WProcessUser>());				
+			
+			if ( !emptyRoleList && procver.getRolesRelated().size()>0) {
+				for ( WProcessRole processRole: procver.getRolesRelated() ) {
+					
+					wProcessRoleBL.addNewProcessRole(newprocver.getId(), processRole.getRole().getId(), processRole.isAdmin(), currentUserId);
+					
+//					tmpProcessRole = wProcessRoleBL.addNewProcessRole(newprocver.getId(), processRole.getRole().getId(), processRole.isAdmin(), currentUserId);
+//					newprocver.getRolesRelated().add(tmpProcessRole);
+				}
 			}
+
+			if ( !emptyUserList && procver.getUsersRelated().size()>0) {
+				for ( WProcessUser processUser: procver.getUsersRelated() ) {
+					
+					wProcessUserBL.addNewProcessUser(newprocver.getId(), processUser.getUser().getId(), processUser.isAdmin(), currentUserId);
+					
+//					tmpProcessUser = wProcessUserBL.addNewProcessUser(newprocver.getId(), processUser.getUser().getId(), processUser.isAdmin(), currentUserId);
+//					newprocver.getUsersRelated().add(tmpProcessUser);
+				}
+			}
+			
+		} catch (Exception e) {
+			String mess = "Error cloning process version:"+procver.getId()+" can't clone related role or user list ..."
+					+" - "+e.getClass()+" -" +e.getMessage()+" - "+e.getCause();
+			throw new WProcessDefException(mess);
 		}
 	}
 	
