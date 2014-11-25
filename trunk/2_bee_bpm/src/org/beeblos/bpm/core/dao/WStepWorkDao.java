@@ -143,7 +143,7 @@ public class WStepWorkDao {
 	 * @throws WStepWorkException
 	 */
 	public void update(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
-		logger.debug("update() WStepWork  id:["+(stepw!=null?stepw.getId():"null")+"]");
+		logger.debug(">> update WStepWork  id:"+(stepw!=null && stepw.getId()!=null?stepw.getId():"null"));
 		
 		// note: add basic transactional control to grant insert in 2 tables (w_step_work & managed table if exists)
 		// or rollback it ...
@@ -184,15 +184,21 @@ public class WStepWorkDao {
 		 *   nes 20141024 - sacado afuera del session por charla con dml 
 		 */
 		if (stepw.getManagedData()!=null) {
+			logger.debug(">>> updating managed data ...");
 			stepw.getManagedData().setIdWork(stepw.getwProcessWork().getId());
+			logger.debug(">>> updating managed data ... 1");
 			stepw.getManagedData().setCurrentStepWorkId(stepw.getId());
+			logger.debug(">>> updating managed data ... 2");			
 			if (stepw.getManagedData().getPk()==null || stepw.getManagedData().getPk()==0){
 				logger.error("WStepWorkDao: update - trying update managed custom data with null pk id - "
 						+" A new record will be inserted in table:"+stepw.getManagedData().getManagedTableConfiguration().getName());
 				stepw.getManagedData().setPk(null);
 			}
+			logger.debug(">>> updating managed data ... 3");
 			_persistStepWorkManagedData(stepw);
+			logger.debug(">>> updating managed data ... 4");
 			_synchronizeManagedData(stepw,currentUserId); // nes 20140629
+			logger.debug(">>> finishing update managed data ... ");
 		}
 		
 	}
@@ -367,7 +373,7 @@ public class WStepWorkDao {
 	 * @throws WStepWorkException
 	 */
 	public WStepWork getWStepWorkByPK(Integer id) throws WStepWorkException {
-		logger.debug(">> getWStepWorkByPK() WStepWork  id:["+(id!=null?id:"null")+"]");
+		logger.debug(">>> getWStepWorkByPK WStepWork  id:"+(id!=null?id:"null"));
 		
 		WStepWork stepw = null;
 		org.hibernate.Session session = null;
@@ -401,7 +407,7 @@ public class WStepWorkDao {
 		}
 		
 		if ( stepw != null && stepw.getCurrentStep() != null ) {
-			logger.debug("loading step data fields...  id:["+(id!=null?id:"null")+"]");
+			logger.debug(">>> loading step data fields...  id:"+(id!=null?id:"null"));
 
 			try {
 	
@@ -423,13 +429,13 @@ public class WStepWorkDao {
 			// set  custom data
 			if (stepw.getCurrentStep().getDataFieldDef()!=null
 				&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
-				
+				logger.debug(">>> entrando en _loadStepWorkManagedData");
 				_loadStepWorkManagedData(stepw);
 			
 			}
 		
 		}
-		
+		logger.debug(">>> getWStepWorkByPK ending ...");
 		return stepw;
 	}
 	
@@ -538,6 +544,7 @@ public class WStepWorkDao {
 	// >>data field list (definition) for this step
 	// >>current data from managed table
 	private void _loadStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
+		logger.debug(">>> _loadStepWorkManagedData");
 		
 		if (stepWork.getCurrentStep().getDataFieldDef()!=null 
 				&& stepWork.getCurrentStep().getDataFieldDef().size()>0){

@@ -68,6 +68,7 @@ import com.email.core.bl.SendEmailBL;
 import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
 import com.sp.common.core.error.BeeblosBLException;
+import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.util.Resourceutil;
 
 public class WStepWorkBL {
@@ -191,9 +192,11 @@ public class WStepWorkBL {
 
 		// insert new steps 
 		if ( typeOfProcess.equals(PROCESS_STEP) ) {
-
+			logger.debug(">>> PROCESS_STEP");
+			
 			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
-
+			logger.debug(">>> qty routes:"+qtyNewRoutes); 
+			
 			// if no new routes nor alive tasks then the process work is finished ...
 			if(qtyNewRoutes.equals(0) 
 				&& getStepWorkCountByProcess(
@@ -242,22 +245,21 @@ public class WStepWorkBL {
 	 * @throws WStepWorkException
 	 */
 	public void update(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
-		
-		logger.debug("update() WStepWork < id = "+stepw.getId()+">");
+		logger.debug(">>> update WStepWork id:" + (stepw!=null && stepw.getId()!=null?stepw.getId():"null") );
 		
 		if ( !stepw.equals(new WStepWorkDao().getWStepWorkByPK(stepw.getId())) ) {
-
+			logger.debug(">>>>>>>> 0");
 			// timestamp & trace info
 			stepw.setModDate(new DateTime());
 			stepw.setModUser(currentUserId);
-
+			logger.debug(">>>>>>>> 1");
 			new WStepWorkDao().update(stepw,currentUserId);
-			
+			logger.debug(">>>>>>>> 2");
 		} else {
 			
 			logger.debug("WStepWorkBL.update - nothing to do ...");
 		}
-				
+		logger.debug(">>>>>>>> 3");
 	}
 	
 	
@@ -1590,6 +1592,7 @@ public class WStepWorkBL {
 	
 
 	private void _emailNotificationArrivingStep( WStepWork stepWork, String subject, Integer currentUserId ) throws SendEmailException {
+		logger.debug(">>> emailNotificationArrivingStep");
 		
 		if ( ! stepWork.getCurrentStep().isArrivingAdminNotice() && 
 				! stepWork.getCurrentStep().isArrivingUserNotice()) return; 
@@ -1605,6 +1608,10 @@ public class WStepWorkBL {
 			subject=EMAIL_DEFAULT_SUBJECT;
 		}
 
+		/**
+		 * builds email object with process.getSystemEmailAccount() as email
+		 * sender account ...
+		 */
 		Email emailMessage = 
 			this._buildEmail(
 				process.getSystemEmailAccount(), 
@@ -1612,9 +1619,10 @@ public class WStepWorkBL {
 		
 		if ( stepWork.getCurrentStep().isArrivingAdminNotice() ) {
 			
-			System.out.println("ADMIN EMAIL TEMPLATE: ");
-			
-			if ( process.getArrivingAdminNoticeTemplate() != null ) {
+			if ( process.getArrivingAdminNoticeTemplate() != null 
+					&& process.getArrivingAdminNoticeTemplate().getId() != null) { // nes 20141124
+				logger.debug(">>> emailNotificationArrivingStep ArrivingAdminNoticeTemplate id:"+
+						process.getArrivingAdminNoticeTemplate().getId() );
 			
 				String templateWithObjectData = this._buildTemplate(process.getArrivingAdminNoticeTemplate().getTemplate(), stepWork);
 			
@@ -1704,11 +1712,35 @@ public class WStepWorkBL {
 	
 	// dml 20120307
 	private Email _buildEmail(WEmailAccount senderEmailAccount, String emailSubject) {
+		logger.debug(">>> _buildEmail senderEmailAccount:"
+				+(senderEmailAccount!=null?senderEmailAccount.getEmail():"null"));
 		
 		Email emailMessage = new Email();
 		
+		// nes 20141125
+		UserEmailAccount uea = new UserEmailAccount(senderEmailAccount.getwUserDef().getId(), 
+				senderEmailAccount.getName(), 
+				senderEmailAccount.isUserDefaultAccount(), senderEmailAccount.getEmail(), 
+				senderEmailAccount.getReplyTo(), senderEmailAccount.getSignatureTxt(), 
+				senderEmailAccount.getSignatureText(),  senderEmailAccount.getSignatureHtml(),  
+				senderEmailAccount.getSignatureFile(), 
+				senderEmailAccount.getInputServerType(), senderEmailAccount.getInputServerName(), 
+				senderEmailAccount.getInputPort(), 
+				senderEmailAccount.getConnectionSecurity(), senderEmailAccount.getIdentificationMethod(), 
+				senderEmailAccount.getFormat(), 
+				senderEmailAccount.getOutputServerName(), senderEmailAccount.getOutputServer(), 
+				senderEmailAccount.getOutputPort(), 
+				senderEmailAccount.getOutputConnectionSecurity(), senderEmailAccount.getOutputIdentificationMethod(), 
+				senderEmailAccount.getOutputUserName(), senderEmailAccount.getOutputPassword(), 
+				senderEmailAccount.getIdExchange());
+		
+		logger.debug("uea-->"+uea.toString());
+		
 		emailMessage.setFrom(senderEmailAccount.getEmail());
 		// dml 20140313 BORRAR emailMessage.setIdFrom(senderEmailAccount.getId());
+		
+		emailMessage.setFromUserEmailAccount(uea); // nes 20141125
+		
 		emailMessage.setPwd(senderEmailAccount.getOutputPassword());
 		
 		emailMessage.setSubject(emailSubject);
@@ -1719,8 +1751,8 @@ public class WStepWorkBL {
 	
 	// dml 20120315
 	private String _buildTemplate(String template, WStepWork wsw){
-		
-		System.out.println("TEMPLATE ANTES DE SUSTITUIR: "+ template);
+		logger.debug(">>> _buildTemplate TEMPLATE ANTES DE SUSTITUIR:"
+							+(template!=null?template:"null"));
 		
 		String pattern = ""; 
 		String objectData = "";
@@ -1752,7 +1784,8 @@ public class WStepWorkBL {
 				
 		}
 		
-		System.out.println("TEMPLATE DESPUES DE SUSTITUIR: "+ template);
+		logger.debug(">>> _buildTemplate TEMPLATE DESPUES DE SUSTITUIR:"
+				+(template!=null?template:"null"));
 		
 		return template;
 		
@@ -2010,20 +2043,27 @@ public class WStepWorkBL {
 
 	private void _setCurrentWorkitemToProcessed( WStepWork currentStep, Integer idResponse, 
 			DateTime now, Integer currentUser) throws WStepWorkException {
+		logger.debug(">>> _setCurrentWorkitemToProcessed currentStep id:"
+			+(currentStep!=null && currentStep.getId()!=null?currentStep.getId():"null")); // nes 20141125
 		
 		currentStep.setDecidedDate( now );
 		currentStep.setPerformer(new WUserDef(currentUser));// nes 20120126
 		currentStep.setLocked(false);
 		currentStep.setLockedBy(null);
 		currentStep.setLockedSince(null);
-
+		
+		logger.debug(">>> _setCurrentWorkitemToProcessed 1...");
+		
 		if ( idResponse != null && idResponse != 0 ) { // nes 20121222
 			currentStep.setResponse(idResponse.toString());
 		} else {
 			currentStep.setResponse("no responses list");
 		}
 		
+		logger.debug(">>> _setCurrentWorkitemToProcessed 2...");
+		
 		new WStepWorkBL().update(currentStep, currentUser); // actualiza el paso actual a "ejecutado" y lo desbloquea
+		logger.debug(">>> wStepWork updated...");
 		
 	}
 	
