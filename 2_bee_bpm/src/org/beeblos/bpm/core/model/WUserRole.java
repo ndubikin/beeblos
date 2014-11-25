@@ -133,6 +133,8 @@ public class WUserRole implements java.io.Serializable {
 		WUserRole other = (WUserRole) obj;
 		if (active != other.active)
 			return false;
+		
+		// nes 20141125
 		if (role == null) {
 			if (other.role != null)
 				return false;
@@ -147,6 +149,8 @@ public class WUserRole implements java.io.Serializable {
 				}
 			}
 		}
+		
+		// nes 20141125
 		if (user == null) {
 			if (other.user != null)
 				return false;
