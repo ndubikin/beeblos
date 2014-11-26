@@ -689,10 +689,55 @@
 		<many-to-one class="com.sp.common.core.model.EmailTemplateTheme"
 			column="email_theme_id" lazy="false" fetch="join" name="emailTemplateTheme" />
 
+<!-- dml 20141126 descomentar para usar...(esto y el mapping de la clase)
+
 		<many-to-one class="com.sp.common.core.model.UserEmailAccount"
 			column="id_user_email_account" lazy="false" fetch="join" name="defaultEmailAccount" />
 
+       <set name="systemObjectMethodsRelated" table="email_template_system_object" 
+			lazy="false" fetch="join">
+            <key>
+                <column name="email_template_id" />
+            </key>
+            <one-to-many class="com.sp.common.core.model.rel.EmailTemplateSystemObject" />
+        </set>
+ -->
 	</class>
+
+<!-- dml 20141126 descomentar para usar...
+	<class name="com.sp.common.core.model.rel.EmailTemplateSystemObject"
+		table="email_template_system_object">
+		<id name="id" type="java.lang.Integer">
+			<column name="ettso_id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one name="emailTemplate" class="com.sp.common.core.model.EmailTemplate"
+			fetch="join" lazy="false">
+			<column name="email_template_id" />
+		</many-to-one>
+		<many-to-one name="systemObject" class="com.sp.common.core.model.SystemObject"
+			fetch="join" lazy="false">
+			<column name="system_object_id" />
+		</many-to-one>
+		<property name="method" type="java.lang.String">
+			<column name="method" />
+		</property>
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+	</class>
+-->
 
 	<class name="com.sp.common.core.model.EmailTemplateTheme" table="email_template_theme">
 		<id name="id" type="java.lang.Integer">
