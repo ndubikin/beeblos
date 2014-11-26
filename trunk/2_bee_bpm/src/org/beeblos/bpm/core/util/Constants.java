@@ -76,7 +76,6 @@ public class Constants {
 	public static Integer FIRST_WSTEPDEF_VERSION = 1; // dml 20130508
 	
 	public static final boolean WRITE_EMAIL_TO_FILESYSTEM = getStringProperty("email.to.filesystem","no").equals("yes");
-	public static final String EMAIL_DEFAULT_SUBJECT = getStringProperty("email.default.subject");
 	
 	public static String BEEBLOS_PROTOCOL = getStringProperty("repository.protocol");
 	public static String BEEBLOS_IP = getStringProperty("repository.ip");

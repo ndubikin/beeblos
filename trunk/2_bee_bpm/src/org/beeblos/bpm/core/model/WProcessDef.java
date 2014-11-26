@@ -10,6 +10,7 @@ import java.util.Set;
 import org.beeblos.bpm.core.model.noper.WProcessDefThin;
 import org.joda.time.DateTime;
 
+import com.sp.common.core.model.EmailTemplate;
 import com.sp.common.core.model.SystemObject;
 
 
@@ -72,8 +73,8 @@ public class WProcessDef implements java.io.Serializable {
 	private WEmailAccount systemEmailAccount;
 	
 	// dml 20120306
-	private WEmailTemplates arrivingAdminNoticeTemplate;
-	private WEmailTemplates arrivingUserNoticeTemplate;
+	private EmailTemplate arrivingAdminNoticeTemplate;
+	private EmailTemplate arrivingUserNoticeTemplate;
 		
 	private DateTime insertDate;
 	private Integer insertUser;
@@ -118,8 +119,8 @@ public class WProcessDef implements java.io.Serializable {
 			this.process = new WProcessHead();
 			this.beginStep = new WStepDef( EMPTY_OBJECT );
 			this.systemEmailAccount = new WEmailAccount(EMPTY_OBJECT);
-			this.arrivingAdminNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
-			this.arrivingUserNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
+			this.arrivingAdminNoticeTemplate = new EmailTemplate(EMPTY_OBJECT);
+			this.arrivingUserNoticeTemplate = new EmailTemplate(EMPTY_OBJECT);
 		}	
 	}
 	
@@ -404,24 +405,24 @@ public class WProcessDef implements java.io.Serializable {
 	}
 
 
-	public WEmailTemplates getArrivingAdminNoticeTemplate() {
+	public EmailTemplate getArrivingAdminNoticeTemplate() {
 		return arrivingAdminNoticeTemplate;
 	}
 
 
 	public void setArrivingAdminNoticeTemplate(
-			WEmailTemplates arrivingAdminNoticeTemplate) {
+			EmailTemplate arrivingAdminNoticeTemplate) {
 		this.arrivingAdminNoticeTemplate = arrivingAdminNoticeTemplate;
 	}
 
 
-	public WEmailTemplates getArrivingUserNoticeTemplate() {
+	public EmailTemplate getArrivingUserNoticeTemplate() {
 		return arrivingUserNoticeTemplate;
 	}
 
 
 	public void setArrivingUserNoticeTemplate(
-			WEmailTemplates arrivingUserNoticeTemplate) {
+			EmailTemplate arrivingUserNoticeTemplate) {
 		this.arrivingUserNoticeTemplate = arrivingUserNoticeTemplate;
 	}
 
@@ -776,8 +777,8 @@ public class WProcessDef implements java.io.Serializable {
 		if (beginStep==null) beginStep = new WStepDef(EMPTY_OBJECT);
 		if (totalTimeUnit==null) totalTimeUnit = new WTimeUnit(EMPTY_OBJECT);
 		if (systemEmailAccount==null) systemEmailAccount = new WEmailAccount(EMPTY_OBJECT);
-		if (arrivingAdminNoticeTemplate==null) arrivingAdminNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
-		if (arrivingUserNoticeTemplate==null) arrivingUserNoticeTemplate = new WEmailTemplates(EMPTY_OBJECT);
+		if (arrivingAdminNoticeTemplate==null) arrivingAdminNoticeTemplate = new EmailTemplate(EMPTY_OBJECT);
+		if (arrivingUserNoticeTemplate==null) arrivingUserNoticeTemplate = new EmailTemplate(EMPTY_OBJECT);
 		if (rolesRelated==null) rolesRelated = new HashSet<WProcessRole>();
 		if (usersRelated==null) usersRelated = new HashSet<WProcessUser>();
 		//if (lSteps==null) lSteps = new ArrayList<WStepDef>();

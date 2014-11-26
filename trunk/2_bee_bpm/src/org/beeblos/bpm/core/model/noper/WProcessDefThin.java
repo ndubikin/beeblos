@@ -1,10 +1,11 @@
 package org.beeblos.bpm.core.model.noper;
 
 import org.beeblos.bpm.core.model.WEmailAccount;
-import org.beeblos.bpm.core.model.WEmailTemplates;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WTimeUnit;
 import org.joda.time.DateTime;
+
+import com.sp.common.core.model.EmailTemplate;
 
 
 /**
@@ -61,8 +62,8 @@ public class WProcessDefThin implements java.io.Serializable {
 	 */
 
 	private WEmailAccount systemEmailAccount;
-	private WEmailTemplates arrivingAdminNoticeTemplate;
-	private WEmailTemplates arrivingUserNoticeTemplate;	
+	private EmailTemplate arrivingAdminNoticeTemplate;
+	private EmailTemplate arrivingUserNoticeTemplate;	
 
 	public WProcessDefThin() {
 		super();
@@ -108,8 +109,8 @@ public class WProcessDefThin implements java.io.Serializable {
 			WTimeUnit totalTimeUnit, String globalDeadlineDate,
 			DateTime insertDate, Integer insertUser, DateTime modDate, Integer modUser,
 			WEmailAccount systemEmailAccount,
-			WEmailTemplates arrivingAdminNoticeTemplate,
-			WEmailTemplates arrivingUserNoticeTemplate) {
+			EmailTemplate arrivingAdminNoticeTemplate,
+			EmailTemplate arrivingUserNoticeTemplate) {
 		this.id = id;
 		this.processHead = processHead;
 		this.active = active;
@@ -562,24 +563,24 @@ public class WProcessDefThin implements java.io.Serializable {
 	}
 
 
-	public WEmailTemplates getArrivingAdminNoticeTemplate() {
+	public EmailTemplate getArrivingAdminNoticeTemplate() {
 		return arrivingAdminNoticeTemplate;
 	}
 
 
 	public void setArrivingAdminNoticeTemplate(
-			WEmailTemplates arrivingAdminNoticeTemplate) {
+			EmailTemplate arrivingAdminNoticeTemplate) {
 		this.arrivingAdminNoticeTemplate = arrivingAdminNoticeTemplate;
 	}
 
 
-	public WEmailTemplates getArrivingUserNoticeTemplate() {
+	public EmailTemplate getArrivingUserNoticeTemplate() {
 		return arrivingUserNoticeTemplate;
 	}
 
 
 	public void setArrivingUserNoticeTemplate(
-			WEmailTemplates arrivingUserNoticeTemplate) {
+			EmailTemplate arrivingUserNoticeTemplate) {
 		this.arrivingUserNoticeTemplate = arrivingUserNoticeTemplate;
 	}
 

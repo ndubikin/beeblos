@@ -4,7 +4,6 @@ import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
-import static org.beeblos.bpm.core.util.Constants.EMAIL_DEFAULT_SUBJECT;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 import static org.beeblos.bpm.core.util.Constants.TURNBACK_STEP;
@@ -16,7 +15,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +65,7 @@ import org.joda.time.LocalDate;
 import com.email.core.bl.SendEmailBL;
 import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
+import com.email.tray.core.util.EmailPersonalizationUtilBL;
 import com.sp.common.core.error.BeeblosBLException;
 import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.util.Resourceutil;
@@ -1331,15 +1330,19 @@ public class WStepWorkBL {
 	}
 
 	private void _sendEmailNotification(WStepWork newStep, Integer currentUserId) {
+		
 		if ( newStep.getCurrentStep().isEmailNotification()  ) {		
 			try {
-				_emailNotificationArrivingStep(newStep, "", currentUserId);
+		
+				this._sendArrivingStepEmailNotifications(newStep, currentUserId);
+			
 			} catch (SendEmailException e) {
 				logger.info("SendEmailException: there is not possible sending email notification to users involved");
 			} catch (Exception e) {
 				logger.info("Exception: there is not possible sending email notification to users involved");
 			}
 		}
+		
 	}
 	
 	/**
@@ -1591,42 +1594,54 @@ public class WStepWorkBL {
 	}
 	
 
-	private void _emailNotificationArrivingStep( WStepWork stepWork, String subject, Integer currentUserId ) throws SendEmailException {
-		logger.debug(">>> emailNotificationArrivingStep");
+	private void _sendArrivingStepEmailNotifications( 
+			WStepWork stepWork, Integer currentUserId ) throws SendEmailException {
 		
-		if ( ! stepWork.getCurrentStep().isArrivingAdminNotice() && 
-				! stepWork.getCurrentStep().isArrivingUserNotice()) return; 
+		logger.debug("_sendArrivingStepEmailNotifications init");
+		
+		if ( !stepWork.getCurrentStep().isArrivingAdminNotice() 
+				&& !stepWork.getCurrentStep().isArrivingUserNotice()) {
+			return; 
+		}
 
 		WProcessDefThin process = stepWork.getwProcessWork().getProcessDef();// nes 20130830
 		
 		if ( process == null ) {
-			logger.error("there is trying to send an email and process arrives null ...");
+			logger.error("_sendArrivingStepEmailNotifications: process is not valid");
 			return;
 		}
 		
-		if ( subject==null || "".equals(subject) ) {
-			subject=EMAIL_DEFAULT_SUBJECT;
-		}
-
 		/**
 		 * builds email object with process.getSystemEmailAccount() as email
 		 * sender account ...
 		 */
-		Email emailMessage = 
-			this._buildEmail(
-				process.getSystemEmailAccount(), 
-				( subject==null || "".equals(subject)?"":subject ) );
+		Email emailMessage = this._buildEmail(process.getSystemEmailAccount());
+		
+		// Creamos la lista con el único objeto que vamos a usar para la personalizacion del email template (stepWork)
+		List<Object> stepWorkObjectAsList = new ArrayList<Object>();
+		stepWorkObjectAsList.add(stepWork);
 		
 		if ( stepWork.getCurrentStep().isArrivingAdminNotice() ) {
 			
 			if ( process.getArrivingAdminNoticeTemplate() != null 
 					&& process.getArrivingAdminNoticeTemplate().getId() != null) { // nes 20141124
-				logger.debug(">>> emailNotificationArrivingStep ArrivingAdminNoticeTemplate id:"+
+				
+				logger.debug("_sendArrivingStepEmailNotifications: ArrivingAdminNoticeTemplate id: "+
 						process.getArrivingAdminNoticeTemplate().getId() );
 			
-				String templateWithObjectData = this._buildTemplate(process.getArrivingAdminNoticeTemplate().getTemplate(), stepWork);
-			
-				emailMessage.setBodyText(templateWithObjectData);
+				// Personalizamos el "subject"
+				String subject = EmailPersonalizationUtilBL.personalizeEmailPart(
+						process.getArrivingAdminNoticeTemplate().getSubject(), 
+						stepWorkObjectAsList);
+
+				emailMessage.setSubject(subject);
+				
+				// Personalizamos el "body" (aquí se usa el txt, o por lo menos es el que usabamos hasta ahora)
+				String body = EmailPersonalizationUtilBL.personalizeEmailPart(
+						process.getArrivingAdminNoticeTemplate().getTxtTemplate(), 
+						stepWorkObjectAsList);
+
+				emailMessage.setBodyText(body);
 				
 				//ESTE MÉTODO PRIVADO SERÁ EL ENCARGADO DE OBTENER TODAS LAS CUENTAS DE EMAIL SIN REPETIR
 				//EL SEGUNDO ATRIBUTO INDICA SI LAS CUENTAS SERÁN DE ADMINISTRADORES (true) O DE USUARIOS NORMALES (false)
@@ -1635,10 +1650,8 @@ public class WStepWorkBL {
 				this._sendEmail(emailMessage, currentUserId);
 				
 			} else {
-				logger.error("there is no template associated to process or step to send email to tracker ...");
+				logger.error("There is no email template associated to process in order to send email to tracker");
 			}
-			
-			
 		}
 		
 		
@@ -1646,23 +1659,33 @@ public class WStepWorkBL {
 		if ( stepWork.getCurrentStep().isArrivingUserNotice() ) {
 			// avisar a los usuarios y roles definidos
 			
-			System.out.println("USER EMAIL TEMPLATE: ");
-
 			if (process != null 
 					&& process.getArrivingUserNoticeTemplate() != null) {
 			
-				String templateWithObjectData = this._buildTemplate(process.getArrivingUserNoticeTemplate().getTemplate(), stepWork);
-			
-				emailMessage.setBodyText(templateWithObjectData);
-	
+				logger.debug("_sendArrivingStepEmailNotifications: ArrivingUserNotiveTemplate id: "+
+						process.getArrivingAdminNoticeTemplate().getId() );
+
+				// Personalizamos el "subject"
+				String subject = EmailPersonalizationUtilBL.personalizeEmailPart(
+						process.getArrivingUserNoticeTemplate().getSubject(), 
+						stepWorkObjectAsList);
+
+				emailMessage.setSubject(subject);
 				
+				// Personalizamos el "body" (aquí se usa el txt, o por lo menos es el que usabamos hasta ahora)
+				String body = EmailPersonalizationUtilBL.personalizeEmailPart(
+						process.getArrivingUserNoticeTemplate().getTxtTemplate(), 
+						stepWorkObjectAsList);
+
+				emailMessage.setBodyText(body);
+
 				//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
 				emailMessage.setListaTo(this.getEmailAccountList(stepWork, false));
 				
 				this._sendEmail(emailMessage, currentUserId);
 
 			} else {
-				logger.error("there is no template associated to process or step to send email to Worker ...");
+				logger.error("There is no email template associated to process in order to send email to worker");
 			}
 
 		}
@@ -1711,7 +1734,7 @@ public class WStepWorkBL {
 	}
 	
 	// dml 20120307
-	private Email _buildEmail(WEmailAccount senderEmailAccount, String emailSubject) {
+	private Email _buildEmail(WEmailAccount senderEmailAccount) {
 		logger.debug(">>> _buildEmail senderEmailAccount:"
 				+(senderEmailAccount!=null?senderEmailAccount.getEmail():"null"));
 		
@@ -1734,7 +1757,7 @@ public class WStepWorkBL {
 				senderEmailAccount.getOutputUserName(), senderEmailAccount.getOutputPassword(), 
 				senderEmailAccount.getIdExchange());
 		
-		logger.debug("uea-->"+uea.toString());
+		logger.debug("_buildEmail: Sender email account--> "+uea.toString());
 		
 		emailMessage.setFrom(senderEmailAccount.getEmail());
 		// dml 20140313 BORRAR emailMessage.setIdFrom(senderEmailAccount.getId());
@@ -1743,12 +1766,11 @@ public class WStepWorkBL {
 		
 		emailMessage.setPwd(senderEmailAccount.getOutputPassword());
 		
-		emailMessage.setSubject(emailSubject);
-		
 		return emailMessage;
 		
 	}
 	
+/* dml 20141126 BORRAR: PASAMOS A USAR EL MÉTODO 'personalizeEmailPart' DE EmailPersonalizationUtilBL	
 	// dml 20120315
 	private String _buildTemplate(String template, WStepWork wsw){
 		logger.debug(">>> _buildTemplate TEMPLATE ANTES DE SUSTITUIR:"
@@ -1790,7 +1812,7 @@ public class WStepWorkBL {
 		return template;
 		
 	}
-	
+
 	private String _getData(WStepWork wsw, String data){
 		
 		try {
@@ -1853,6 +1875,7 @@ public class WStepWorkBL {
 		
 		
 	}
+*/	
 	
 	private void _buildFile(Email email) throws IOException{
 		
@@ -1864,7 +1887,7 @@ public class WStepWorkBL {
 		
 		File f = new File(path);
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
-		System.out.println(">>>>>>> email will be writing in: "+f.getAbsolutePath() );
+		logger.info(">>>>>>> email will be writing in: "+f.getAbsolutePath() );
 		
 		bufferedWriter.append("SEND FROM: \n");
 		bufferedWriter.append(" -> " + email.getFrom()+"\n");
@@ -1882,7 +1905,7 @@ public class WStepWorkBL {
 
 		bufferedWriter.flush();
 		
-		System.out.println(" - Email NO enviado, creado en la ruta: " + path);
+		logger.info(" - Email NO enviado, creado en la ruta: " + path);
 		
 		
 	}

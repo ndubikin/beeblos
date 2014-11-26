@@ -129,38 +129,4 @@
 		</many-to-one>
 	</class>
 
-	<class name="org.beeblos.bpm.core.model.WEmailTemplates" table="w_email_templates">
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-		<property generated="never" lazy="false" name="name" type="string">
-			<column length="50" name="name" />
-		</property>
-		<property generated="never" lazy="false" name="type" type="string">
-			<column length="10" name="type" />
-		</property>
-		<property generated="never" lazy="false" name="template"
-			type="text">
-			<column name="template" />
-		</property>
-		<property generated="never" lazy="false" name="mobileTemplate"
-			type="text">
-			<column name="mobile_template" />
-		</property>
-		<many-to-one class="org.beeblos.bpm.core.model.WEmailTemplateGroups"
-			column="id_email_grouping" lazy="false" fetch="join" name="wEmailTemplateGroup" />
-	</class>
-
-	<class name="org.beeblos.bpm.core.model.WEmailTemplateGroups"
-		table="w_email_template_groups">
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-		<property generated="never" lazy="false" name="name" type="string">
-			<column length="50" name="name" />
-		</property>
-	</class>
-
 </hibernate-mapping>
