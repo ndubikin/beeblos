@@ -1622,12 +1622,12 @@ public class WStepWorkBL {
 		// Creamos la lista con el único objeto que vamos a usar para la personalizacion del email template (stepWork)
 		List<Object> stepWorkObjectAsList = new ArrayList<Object>();
 		stepWorkObjectAsList.add(stepWork);
-		logger.debug(">>>> 1  ");
+		
 		if ( stepWork.getCurrentStep().isArrivingAdminNotice() ) {
-			logger.debug(">>>> 2");
+		
 			if ( process.getArrivingAdminNoticeTemplate() != null 
 					&& process.getArrivingAdminNoticeTemplate().getId() != null) { // nes 20141124
-				logger.debug(">>>> 3");
+		
 				logger.debug(">>> _sendArrivingStepEmailNotifications: ArrivingAdminNoticeTemplate id: "+
 						process.getArrivingAdminNoticeTemplate().getId() );
 			
@@ -1656,16 +1656,15 @@ public class WStepWorkBL {
 			}
 		}
 		
-		logger.debug(">>>> 4");
+		
 		
 		if ( stepWork.getCurrentStep().isArrivingUserNotice() ) {
 			// avisar a los usuarios y roles definidos
-			logger.debug(">>>> 5");
+			
 			if (process != null 
 					&& process.getArrivingUserNoticeTemplate() != null) {
 			
-				logger.debug("_sendArrivingStepEmailNotifications: ArrivingUserNotiveTemplate id: "+
-						process.getArrivingAdminNoticeTemplate().getId() );
+				logger.debug("_sendArrivingStepEmailNotifications: ArrivingUserNotiveTemplate ... "  ); // nes 20141127
 
 				// Personalizamos el "subject"
 				String subject = EmailPersonalizationUtilBL.personalizeEmailPart(
