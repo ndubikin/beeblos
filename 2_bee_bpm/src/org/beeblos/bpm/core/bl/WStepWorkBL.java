@@ -1330,6 +1330,7 @@ public class WStepWorkBL {
 	}
 
 	private void _sendEmailNotification(WStepWork newStep, Integer currentUserId) {
+		logger.debug(">>> _sendEmailNotification");
 		
 		if ( newStep.getCurrentStep().isEmailNotification()  ) {		
 			try {
@@ -1337,9 +1338,10 @@ public class WStepWorkBL {
 				this._sendArrivingStepEmailNotifications(newStep, currentUserId);
 			
 			} catch (SendEmailException e) {
-				logger.info("SendEmailException: there is not possible sending email notification to users involved");
+				logger.error("SendEmailException: there is not possible to send email notifications to involved users...");
 			} catch (Exception e) {
-				logger.info("Exception: there is not possible sending email notification to users involved");
+				logger.error("Exception: there is not possible to send email notifications to involved users..."
+						+" "+e.getMessage()+" "+e.getCause()+" "+e.getClass());
 			}
 		}
 		
@@ -1596,8 +1598,7 @@ public class WStepWorkBL {
 
 	private void _sendArrivingStepEmailNotifications( 
 			WStepWork stepWork, Integer currentUserId ) throws SendEmailException {
-		
-		logger.debug("_sendArrivingStepEmailNotifications init");
+		logger.debug(">>> _sendArrivingStepEmailNotifications init");
 		
 		if ( !stepWork.getCurrentStep().isArrivingAdminNotice() 
 				&& !stepWork.getCurrentStep().isArrivingUserNotice()) {
@@ -1616,17 +1617,18 @@ public class WStepWorkBL {
 		 * sender account ...
 		 */
 		Email emailMessage = this._buildEmail(process.getSystemEmailAccount());
+		logger.debug(">> email account is loaded ...");
 		
 		// Creamos la lista con el único objeto que vamos a usar para la personalizacion del email template (stepWork)
 		List<Object> stepWorkObjectAsList = new ArrayList<Object>();
 		stepWorkObjectAsList.add(stepWork);
-		
+		logger.debug(">>>> 1  ");
 		if ( stepWork.getCurrentStep().isArrivingAdminNotice() ) {
-			
+			logger.debug(">>>> 2");
 			if ( process.getArrivingAdminNoticeTemplate() != null 
 					&& process.getArrivingAdminNoticeTemplate().getId() != null) { // nes 20141124
-				
-				logger.debug("_sendArrivingStepEmailNotifications: ArrivingAdminNoticeTemplate id: "+
+				logger.debug(">>>> 3");
+				logger.debug(">>> _sendArrivingStepEmailNotifications: ArrivingAdminNoticeTemplate id: "+
 						process.getArrivingAdminNoticeTemplate().getId() );
 			
 				// Personalizamos el "subject"
@@ -1654,11 +1656,11 @@ public class WStepWorkBL {
 			}
 		}
 		
-		
+		logger.debug(">>>> 4");
 		
 		if ( stepWork.getCurrentStep().isArrivingUserNotice() ) {
 			// avisar a los usuarios y roles definidos
-			
+			logger.debug(">>>> 5");
 			if (process != null 
 					&& process.getArrivingUserNoticeTemplate() != null) {
 			
@@ -1689,7 +1691,7 @@ public class WStepWorkBL {
 			}
 
 		}
-		
+		logger.debug(">>>> 6");
 			
 	}
 	
@@ -1733,38 +1735,53 @@ public class WStepWorkBL {
 		
 	}
 	
-	// dml 20120307
-	private Email _buildEmail(WEmailAccount senderEmailAccount) {
+	/**
+	 * creates Email object and load with UserEmailAccount, user and password 
+	 * dml 20120307 - nes 20141127
+	 * 
+	 * @param senderEmailAccount
+	 * @return
+	 * @throws SendEmailException
+	 */
+	private Email _buildEmail(WEmailAccount senderEmailAccount) throws SendEmailException {
 		logger.debug(">>> _buildEmail senderEmailAccount:"
 				+(senderEmailAccount!=null?senderEmailAccount.getEmail():"null"));
-		
+
 		Email emailMessage = new Email();
 		
-		// nes 20141125
-		UserEmailAccount uea = new UserEmailAccount(senderEmailAccount.getwUserDef().getId(), 
-				senderEmailAccount.getName(), 
-				senderEmailAccount.isUserDefaultAccount(), senderEmailAccount.getEmail(), 
-				senderEmailAccount.getReplyTo(), senderEmailAccount.getSignatureTxt(), 
-				senderEmailAccount.getSignatureText(),  senderEmailAccount.getSignatureHtml(),  
-				senderEmailAccount.getSignatureFile(), 
-				senderEmailAccount.getInputServerType(), senderEmailAccount.getInputServerName(), 
-				senderEmailAccount.getInputPort(), 
-				senderEmailAccount.getConnectionSecurity(), senderEmailAccount.getIdentificationMethod(), 
-				senderEmailAccount.getFormat(), 
-				senderEmailAccount.getOutputServerName(), senderEmailAccount.getOutputServer(), 
-				senderEmailAccount.getOutputPort(), 
-				senderEmailAccount.getOutputConnectionSecurity(), senderEmailAccount.getOutputIdentificationMethod(), 
-				senderEmailAccount.getOutputUserName(), senderEmailAccount.getOutputPassword(), 
-				senderEmailAccount.getIdExchange());
-		
-		logger.debug("_buildEmail: Sender email account--> "+uea.toString());
-		
-		emailMessage.setFrom(senderEmailAccount.getEmail());
-		// dml 20140313 BORRAR emailMessage.setIdFrom(senderEmailAccount.getId());
-		
-		emailMessage.setFromUserEmailAccount(uea); // nes 20141125
-		
-		emailMessage.setPwd(senderEmailAccount.getOutputPassword());
+		try {
+			
+			// nes 20141125
+			UserEmailAccount uea = new UserEmailAccount(senderEmailAccount.getwUserDef().getId(), 
+					senderEmailAccount.getName(), 
+					senderEmailAccount.isUserDefaultAccount(), senderEmailAccount.getEmail(), 
+					senderEmailAccount.getReplyTo(), senderEmailAccount.getSignatureTxt(), 
+					senderEmailAccount.getSignatureText(),  senderEmailAccount.getSignatureHtml(),  
+					senderEmailAccount.getSignatureFile(), 
+					senderEmailAccount.getInputServerType(), senderEmailAccount.getInputServerName(), 
+					senderEmailAccount.getInputPort(), 
+					senderEmailAccount.getConnectionSecurity(), senderEmailAccount.getIdentificationMethod(), 
+					senderEmailAccount.getFormat(), 
+					senderEmailAccount.getOutputServerName(), senderEmailAccount.getOutputServer(), 
+					senderEmailAccount.getOutputPort(), 
+					senderEmailAccount.getOutputConnectionSecurity(), senderEmailAccount.getOutputIdentificationMethod(), 
+					senderEmailAccount.getOutputUserName(), senderEmailAccount.getOutputPassword(), 
+					senderEmailAccount.getIdExchange());
+			
+			logger.debug("_buildEmail: Sender email account--> "+uea.toString());
+			
+			emailMessage.setFrom(senderEmailAccount.getEmail());
+			// dml 20140313 BORRAR emailMessage.setIdFrom(senderEmailAccount.getId());
+			
+			emailMessage.setFromUserEmailAccount(uea); // nes 20141125
+			
+			emailMessage.setPwd(senderEmailAccount.getOutputPassword());
+
+		} catch (Exception e) {
+			String mess = "Exception: _buildEmail "+e.getMessage()+" "+e.getCause()+" "+e.getClass();
+			logger.error(mess);
+			throw new SendEmailException(mess);
+		}
 		
 		return emailMessage;
 		
