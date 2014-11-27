@@ -54,6 +54,15 @@ public class WProcessDef implements java.io.Serializable {
 	private String idWorkZone; // pag que define la zona de trabajo
 	private String idAdditionalZone; // pag que define la zona de ayuda ( info adicional )
 	
+	/**
+	 * id / may be URL for a web app for the default processor for this process.
+	 * If bee-bpm is used in a web application the url for default processor must be
+	 * built with a root url + this field + instance specific parameters.
+	 * Any of this 3 parts may be blank ...
+	 * WStepDef.idDefaultProcessor has higher priority to obtain URL (or id). This is
+	 * the default if the steps has not their own id
+	 * nes 20141127
+	 */
 	private String idProcessorStep; // dml 20120619
 
 	// dml 20120105
@@ -239,13 +248,28 @@ public class WProcessDef implements java.io.Serializable {
 		this.idAdditionalZone = idAdditionalZone;
 	}
 
-
-	
+	/**
+	 * id / may be URL for a web app for the default processor for this process.
+	 * If bee-bpm is used in a web application the url for default processor must be
+	 * built with a root url + this field + instance specific parameters.
+	 * Any of this 3 parts may be blank ...
+	 * WStepDef.idDefaultProcessor has higher priority to obtain URL (or id). This is
+	 * the default if the steps has not their own id
+	 * nes 20141127
+	 */
 	public String getIdProcessorStep() {
 		return idProcessorStep;
 	}
 
-
+	/**
+	 * id / may be URL for a web app for the default processor for this process.
+	 * If bee-bpm is used in a web application the url for default processor must be
+	 * built with a root url + this field + instance specific parameters.
+	 * Any of this 3 parts may be blank ...
+	 * WStepDef.idDefaultProcessor has higher priority to obtain URL (or id). This is
+	 * the default if the steps has not their own id
+	 * nes 20141127
+	 */
 	public void setIdProcessorStep(String idProcessorStep) {
 		this.idProcessorStep = idProcessorStep;
 	}

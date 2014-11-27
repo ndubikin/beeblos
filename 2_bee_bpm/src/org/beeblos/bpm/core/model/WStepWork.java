@@ -16,7 +16,7 @@ import org.joda.time.LocalTime;
 
 
 /**
- * WStepWork - represents a task or item
+ * WStepWork - represents a task or item instance
  */
 public class WStepWork implements java.io.Serializable {
 
@@ -100,6 +100,17 @@ public class WStepWork implements java.io.Serializable {
 	private DateTime lockedSince;
 	
 	private boolean sentBack;
+	
+	/**
+	 * Field to store id or url data specific for this instance.
+	 * At definition time the arquitect can indicate de idDefaultProcessor (i.e. an URL) with
+	 * the step may be processed (manual or automatic)
+	 * If the URL requires specific instance data, this is the property hold this info.
+	 * This info + wStepDef.idDefaultProcessor (or wProcessDef.idProcessorStep) + url base will
+	 * be a full url to access to process the instance (wstepwork)
+	 * 
+	 */
+	private String urlData;
 	
 	/**
 	 * a list of persons or roles have assigned this task
@@ -595,6 +606,38 @@ public class WStepWork implements java.io.Serializable {
 		this.sentBack = sentBack;
 	}
 	
+	
+	
+	/**
+	 * @return the urlData
+	 * 
+	 * Field to store id or url data specific for this instance.
+	 * At definition time the arquitect can indicate de idDefaultProcessor (i.e. an URL) with
+	 * the step may be processed (manual or automatic)
+	 * If the URL requires specific instance data, this is the property hold this info.
+	 * This info + wStepDef.idDefaultProcessor (or wProcessDef.idProcessorStep) + url base will
+	 * be a full url to access to process the instance (wstepwork)
+	 * 
+	 */
+	public String getUrlData() {
+		return urlData;
+	}
+
+	/**
+	 * @param urlData the urlData to set
+	 *
+	 * Field to store id or url data specific for this instance.
+	 * At definition time the arquitect can indicate de idDefaultProcessor (i.e. an URL) with
+	 * the step may be processed (manual or automatic)
+	 * If the URL requires specific instance data, this is the property hold this info.
+	 * This info + wStepDef.idDefaultProcessor (or wProcessDef.idProcessorStep) + url base will
+	 * be a full url to access to process the instance (wstepwork)
+	 * 
+	 */
+	public void setUrlData(String urlData) {
+		this.urlData = urlData;
+	}
+
 	/**
 	 * checks if current stepWork has assigned sysrole-originator
 	 * nes 20141014
