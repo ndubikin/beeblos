@@ -6,9 +6,7 @@ import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
