@@ -1715,8 +1715,8 @@ public class WStepWorkBL {
 			String stepWorkUrl = null;
 			
 			/**
-			 *  First of all, we check if we have a specific step default processor. ('then' part)
-			 *  If it is not we check if we have the general process default processor (first 'else').
+			 *  First checks for specific step default processor is defined. ('then' part)
+			 *  If not then checks for general process default processor (first 'else').
 			 *  If there is not step work processor url we return null value (second 'else')
 			 */
 			if (stepWork.getCurrentStep().getIdDefaultProcessor() != null
