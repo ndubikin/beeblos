@@ -33,6 +33,28 @@ public class WRuntimeSettings implements java.io.Serializable {
 //	private String idWorkZone;
 //	private String idAdditionalZone;
 	
+	/**
+	 * Base URL of webapp
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData
+	 * 
+	 */
+	private String baseUrl;
+	/**
+	 * Application specific URL with step processor info and some of
+	 * standard parameters (ie: idStepWork, idObject, idObjectType)
+	 * This info is programmer responsability
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData
+	 */
+	private String appUrl;
+	/**
+	 * Specific url string with data of the instance.
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData
+	 */
+	private String urlData;
+	
 	private WTimeUnit timeUnit;
 	private Integer assignedTime;
 	private LocalDate deadlineDate;
@@ -188,6 +210,74 @@ public class WRuntimeSettings implements java.io.Serializable {
 
 
 
+
+
+	/**
+	 * @return the baseUrl
+	 * Base URL of webapp
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData
+	 * 
+	 */
+	public String getBaseUrl() {
+		return baseUrl;
+	}
+
+
+	/**
+	 * @param baseUrl the baseUrl to set
+	 * Base URL of webapp
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData
+	 * 
+	 */
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
+
+
+	/**
+	 * @return the appUrl
+	 * Specific url string with data of the instance.
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData 
+	 */
+	public String getAppUrl() {
+		return appUrl;
+	}
+
+
+	/**
+	 * @param appUrl the appUrl to set
+	 * Specific url string with data of the instance.
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData 
+	 */
+	public void setAppUrl(String appUrl) {
+		this.appUrl = appUrl;
+	}
+
+
+	/**
+	 * @return the urlData
+	 * Specific url string with data of the instance.
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData 
+	 */
+	public String getUrlData() {
+		return urlData;
+	}
+
+
+	/**
+	 * @param urlData the urlData to set
+	 * Specific url string with data of the instance.
+	 * Optional
+	 * Full URL must be built with baseUrl+appUrl+urlData 
+	 */
+	public void setUrlData(String urlData) {
+		this.urlData = urlData;
+	}
 
 
 	/* (non-Javadoc)
