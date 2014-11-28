@@ -225,3 +225,7 @@ ALTER TABLE `bee_bpm_dev`.`w_user_role`
 ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (`id`);
+
+-- dml 20141128
+ALTER TABLE `bee_bpm_dev`.`w_step_work` 
+ADD COLUMN `url_data` VARCHAR(255) NULL DEFAULT NULL AFTER `send_user_notes_to_next_step`;

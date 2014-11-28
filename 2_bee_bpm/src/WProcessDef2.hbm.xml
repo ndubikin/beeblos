@@ -1500,6 +1500,12 @@
 					devuelto</comment>
 			</column>
 		</property>
+
+		<property generated="never" lazy="false" name="urlData"
+			type="string">
+			<column name="url_data" />
+		</property>
+
 		<property generated="never" lazy="false" name="myNotes"
 			type="java.lang.Boolean">
 			<column name="my_notes" sql-type="bit">
