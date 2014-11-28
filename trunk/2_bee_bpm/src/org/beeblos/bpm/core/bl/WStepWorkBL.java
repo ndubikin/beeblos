@@ -1649,7 +1649,8 @@ public class WStepWorkBL {
 						process.getArrivingAdminNoticeTemplate().getHtmlTemplate(), 
 						stepWorkObjectAsList);
 
-				emailMessage.setBodyText(body);
+				emailMessage.setHtmlFormatted(true);
+				emailMessage.setBodyHtml(body);
 				
 				//ESTE MÉTODO PRIVADO SERÁ EL ENCARGADO DE OBTENER TODAS LAS CUENTAS DE EMAIL SIN REPETIR
 				//EL SEGUNDO ATRIBUTO INDICA SI LAS CUENTAS SERÁN DE ADMINISTRADORES (true) O DE USUARIOS NORMALES (false)
@@ -1684,7 +1685,8 @@ public class WStepWorkBL {
 						process.getArrivingUserNoticeTemplate().getTxtTemplate(), 
 						stepWorkObjectAsList);
 
-				emailMessage.setBodyText(body);
+				emailMessage.setHtmlFormatted(true);
+				emailMessage.setBodyHtml(body);
 
 				//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
 				emailMessage.setListaTo(this.getEmailAccountList(stepWork, false));
