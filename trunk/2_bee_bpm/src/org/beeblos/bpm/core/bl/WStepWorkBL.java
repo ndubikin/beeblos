@@ -1682,7 +1682,7 @@ public class WStepWorkBL {
 				
 				// Personalizamos el "body" (aquí se usa el txt, o por lo menos es el que usabamos hasta ahora)
 				String body = EmailPersonalizationUtilBL.personalizeEmailPart(
-						process.getArrivingUserNoticeTemplate().getTxtTemplate(), 
+						process.getArrivingUserNoticeTemplate().getHtmlTemplate(), 
 						stepWorkObjectAsList);
 
 				emailMessage.setHtmlFormatted(true);
