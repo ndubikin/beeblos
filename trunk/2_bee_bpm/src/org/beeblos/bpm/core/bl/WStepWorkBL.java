@@ -68,6 +68,7 @@ import com.email.core.model.Email;
 import com.email.tray.core.util.EmailPersonalizationUtilBL;
 import com.sp.common.core.error.BeeblosBLException;
 import com.sp.common.core.model.UserEmailAccount;
+import com.sp.common.core.model.noper.ObjGeneralParams;
 import com.sp.common.util.Resourceutil;
 
 public class WStepWorkBL {
@@ -1619,9 +1620,14 @@ public class WStepWorkBL {
 		Email emailMessage = this._buildEmail(process.getSystemEmailAccount());
 		logger.debug(">> email account is loaded ...");
 		
-		// Creamos la lista con el único objeto que vamos a usar para la personalizacion del email template (stepWork)
+		// We create the list with the object that we will use to replace in the email subject and body
 		List<Object> stepWorkObjectAsList = new ArrayList<Object>();
 		stepWorkObjectAsList.add(stepWork);
+		
+		ObjGeneralParams objParams = this._buildStepWorkProcessorUrl(stepWork);
+		if (objParams != null){
+			stepWorkObjectAsList.add(objParams);
+		}
 		
 		if ( stepWork.getCurrentStep().isArrivingAdminNotice() ) {
 		
@@ -1631,16 +1637,16 @@ public class WStepWorkBL {
 				logger.debug(">>> _sendArrivingStepEmailNotifications: ArrivingAdminNoticeTemplate id: "+
 						process.getArrivingAdminNoticeTemplate().getId() );
 			
-				// Personalizamos el "subject"
+				// "subject" personalization
 				String subject = EmailPersonalizationUtilBL.personalizeEmailPart(
 						process.getArrivingAdminNoticeTemplate().getSubject(), 
 						stepWorkObjectAsList);
 
 				emailMessage.setSubject(subject);
 				
-				// Personalizamos el "body" (aquí se usa el txt, o por lo menos es el que usabamos hasta ahora)
+				// "body" personalization
 				String body = EmailPersonalizationUtilBL.personalizeEmailPart(
-						process.getArrivingAdminNoticeTemplate().getTxtTemplate(), 
+						process.getArrivingAdminNoticeTemplate().getHtmlTemplate(), 
 						stepWorkObjectAsList);
 
 				emailMessage.setBodyText(body);
@@ -1694,7 +1700,70 @@ public class WStepWorkBL {
 			
 	}
 	
+	/**
+	 * Algorithm that builds the WorkStep URL (inside the ObjGeneralParams) in order to process itself
+	 * 
+	 * @author dmuleiro 20141128
+	 * 
+	 * @param stepWork
+	 * @return
+	 */
+	private ObjGeneralParams _buildStepWorkProcessorUrl(WStepWork stepWork){
+		
+		try {
+		
+			String stepWorkUrl = null;
+			
+			/**
+			 *  First of all, we check if we have a specific step default processor. ('then' part)
+			 *  If it is not we check if we have the general process default processor (first 'else').
+			 *  If there is not step work processor url we return null value (second 'else')
+			 */
+			if (stepWork.getCurrentStep().getIdDefaultProcessor() != null
+					&& !"".equals(stepWork.getCurrentStep().getIdDefaultProcessor())){
+				
+				stepWorkUrl = stepWork.getCurrentStep().getIdDefaultProcessor();
+				
+			} else if (stepWork.getwProcessWork().getProcessDef().getProcessorStepId() != null
+					&& !"".equals(stepWork.getwProcessWork().getProcessDef().getProcessorStepId())){
+				
+				stepWorkUrl = stepWork.getwProcessWork().getProcessDef().getProcessorStepId();
+				
+			} else {
+				
+				logger.info("The step work with id: " + stepWork.getId() + " have not a valid URL to process itself!");
+				return null;
+				
+			}
+			
+			/**
+			 *  Second step: we take the parameter data to identify this specific step work
+			 */
+			if (stepWork.getUrlData() != null
+					&& !"".equals(stepWork.getUrlData())){
+				stepWorkUrl += stepWork.getUrlData();
+			} 
+			
+			/**
+			 * Third step: We replace the parameters
+			 */
+			stepWorkUrl = stepWorkUrl.replace("[idStepWork]", stepWork.getId().toString());
+			stepWorkUrl = stepWorkUrl.replace("[idObject]", stepWork.getwProcessWork().getIdObject().toString());
+			stepWorkUrl = stepWorkUrl.replace("[idObjectType]", stepWork.getwProcessWork().getIdObjectType());
+			
+			/**
+			 *  Fourth step: We build the final URL with the "process step id" and the "step work url data"
+			 */
+			return new ObjGeneralParams(stepWorkUrl);
 
+		} catch (Exception e){
+			logger.info("The step's work (with id: " + stepWork.getId()
+					+ ") URL sustitution has fail. The step work {publicUrl} will not be set!");
+			return null;
+		}
+			
+	}
+	
 	private void _sendEmail(Email email, Integer currentUserId) throws SendEmailException {
 
 		try {
