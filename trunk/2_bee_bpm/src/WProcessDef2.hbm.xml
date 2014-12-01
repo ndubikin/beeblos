@@ -2195,6 +2195,19 @@
 
 	</class>
 
+	<class name="org.beeblos.bpm.core.model.WTaskType" table="w_task_type">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="comments" type="string">
+			<column name="comments" />
+		</property>
+	</class>
+
 	<filter-def name="byProcessHeadId">
 		<filter-param name="filterProcessHeadId" type="java.lang.Integer" />
 	</filter-def>
