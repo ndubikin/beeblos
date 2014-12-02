@@ -4,7 +4,7 @@
 <!-- Generated May 21, 2012 10:49:10 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
 
-    <class name="com.sp.common.core.model.SystemObject" table="system_object">
+     <class name="com.sp.common.core.model.SystemObject" table="system_object">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -14,6 +14,9 @@
         </property>
         <property name="objectClass" type="string">
             <column name="object_class"/>
+        </property>
+        <property name="objectClassBL" type="string">
+            <column name="object_class_bl"/>
         </property>
         <property name="hierarchy" type="java.lang.Integer">
             <column name="hierarchy"  />
