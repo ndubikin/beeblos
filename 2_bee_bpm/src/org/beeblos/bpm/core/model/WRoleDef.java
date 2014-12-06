@@ -1,7 +1,9 @@
 package org.beeblos.bpm.core.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -59,6 +61,14 @@ public class WRoleDef implements java.io.Serializable {
 	 *  
 	 */
 	private boolean runtimeRole;
+	
+	/**
+	 * External method related with runtime role which must provide id user list to assign
+	 * to this runtime role...
+	 * nes 20141206
+	 * 
+	 */
+	private Integer idExternalMethod;
 	
 	/**
 	 * Users belonging this role
@@ -155,6 +165,70 @@ public class WRoleDef implements java.io.Serializable {
 		this.systemRole = systemRole;
 	}
 
+	
+	
+	/**
+	 * idicates if the role is a predefined (static) role or it is a 
+	 * runtime role.
+	 * Runtime role indicates the users are assigned to role at runtime.
+	 * The fact to assign the users at runtime implies same role (roleId-rolename)
+	 * may have different users for different objects or process.
+	 * At this time the runtime role will be related with a process work (WProcessWork):
+	 * each runtime role there will be same for a WProcessWork and it will be change
+	 * between different WProcessWork.
+	 * This flag will be related with WUserRoleWork (w_user_role_work): if the role
+	 * is a runtime role the WUserRoleWork will be the users belonging to this role
+	 * for each WProcessWork using it.
+	 * nes 20141206
+	 *  
+	 * @return the runtimeRole
+	 */
+	public boolean isRuntimeRole() {
+		return runtimeRole;
+	}
+
+	/**
+	 * idicates if the role is a predefined (static) role or it is a 
+	 * runtime role.
+	 * Runtime role indicates the users are assigned to role at runtime.
+	 * The fact to assign the users at runtime implies same role (roleId-rolename)
+	 * may have different users for different objects or process.
+	 * At this time the runtime role will be related with a process work (WProcessWork):
+	 * each runtime role there will be same for a WProcessWork and it will be change
+	 * between different WProcessWork.
+	 * This flag will be related with WUserRoleWork (w_user_role_work): if the role
+	 * is a runtime role the WUserRoleWork will be the users belonging to this role
+	 * for each WProcessWork using it.
+	 * nes 20141206
+	 *  
+	 * @param runtimeRole the runtimeRole to set
+	 */
+	public void setRuntimeRole(boolean runtimeRole) {
+		this.runtimeRole = runtimeRole;
+	}
+
+	/**
+	 * External method related with runtime role which must provide id user list to assign
+	 * to this runtime role...
+	 * nes 20141206
+	 * 
+	 * @return the idExternalMethod
+	 */
+	public Integer getIdExternalMethod() {
+		return idExternalMethod;
+	}
+
+	/**
+	 * External method related with runtime role which must provide id user list to assign
+	 * to this runtime role...
+	 * nes 20141206
+	 * 
+	 * @param idExternalMethod the idExternalMethod to set
+	 */
+	public void setIdExternalMethod(Integer idExternalMethod) {
+		this.idExternalMethod = idExternalMethod;
+	}
+
 	public Set<WUserRole> getUsersRelated() {
 		return usersRelated;
 	}
@@ -203,20 +277,43 @@ public class WRoleDef implements java.io.Serializable {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((idObject == null) ? 0 : idObject.hashCode());
-		result = prime * result + ((idObjectType == null) ? 0 : idObjectType.hashCode());
+		result = prime
+				* result
+				+ ((idExternalMethod == null) ? 0 : idExternalMethod.hashCode());
+		result = prime * result
+				+ ((idObject == null) ? 0 : idObject.hashCode());
+		result = prime * result
+				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (runtimeRole ? 1231 : 1237);
+		result = prime * result + (systemRole ? 1231 : 1237);
+		result = prime * result
+				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
+		final int maxLen = 2;
 		return "WRoleDef ["
 				+ (id != null ? "id=" + id + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
@@ -225,19 +322,31 @@ public class WRoleDef implements java.io.Serializable {
 				+ (idObject != null ? "idObject=" + idObject + ", " : "")
 				+ (idObjectType != null ? "idObjectType=" + idObjectType + ", "
 						: "")
+				+ "systemRole="
+				+ systemRole
+				+ ", runtimeRole="
+				+ runtimeRole
+				+ ", "
+				+ (idExternalMethod != null ? "idExternalMethod="
+						+ idExternalMethod + ", " : "")
+				+ (usersRelated != null ? "usersRelated="
+						+ toString(usersRelated, maxLen) + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate : "") + "]";
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WRoleDef))
 			return false;
 		WRoleDef other = (WRoleDef) obj;
 		if (description == null) {
@@ -250,6 +359,11 @@ public class WRoleDef implements java.io.Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (idExternalMethod == null) {
+			if (other.idExternalMethod != null)
+				return false;
+		} else if (!idExternalMethod.equals(other.idExternalMethod))
+			return false;
 		if (idObject == null) {
 			if (other.idObject != null)
 				return false;
@@ -260,10 +374,34 @@ public class WRoleDef implements java.io.Serializable {
 				return false;
 		} else if (!idObjectType.equals(other.idObjectType))
 			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (runtimeRole != other.runtimeRole)
+			return false;
+		if (systemRole != other.systemRole)
 			return false;
 		if (usersRelated == null) {
 			if (other.usersRelated != null)
@@ -274,6 +412,20 @@ public class WRoleDef implements java.io.Serializable {
 	}		
 	
 
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
 	public boolean empty() {
 
 		if (id!=null && ! id.equals(0)) return false;
@@ -282,6 +434,9 @@ public class WRoleDef implements java.io.Serializable {
 		if (description!=null && ! "".equals(description)) return false;
 		if (idObject!=null && ! idObject.equals(0)) return false;
 		if (idObjectType!=null && ! "".equals(idObjectType)) return false;		
+		
+		//nes 20141206
+		if (idExternalMethod!=null && ! idExternalMethod.equals(0)) return false;
 		
 		return true;
 	}
