@@ -375,6 +375,8 @@ public class WStepWorkBL {
 	/**
 	 * Returns alive stepWork items for a given idObject / idObjectType WITH PERMISSIONS!
 	 * 
+	 * ***** WORK method ******
+	 * 
 	 * @author dmuleiro 20140529
 	 * 
 	 * @param idObject
@@ -529,8 +531,24 @@ public class WStepWorkBL {
 		
 		return false;
 	}
-	// retrieve workitems for an userId and for a 
-	// status: null=all, A=alive P=Processed
+
+	
+	/**
+	 *
+	 * retrieve workitems for an userId with
+	 * status: null=all, A=alive P=Processed	 
+	 *
+	 * ***** WORK method ******  
+	 * 
+	 * @param userId
+	 * @param idProcess
+	 * @param status
+	 * @param currentUser
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getStepListByUser(
 			Integer userId, Integer idProcess, String status, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
@@ -542,8 +560,21 @@ public class WStepWorkBL {
 
 	
 	
-	// retrieves workitems for a process
-	// status: null=all, A=alive P=Processed
+	/**
+	 * 
+	 * retrieves workitems for a process
+	 * status: null=all, A=alive P=Processed
+	 * 
+	 * ***** ADMIN method ****** 
+	 * 
+	 * @param idProcess
+	 * @param status
+	 * @param currentUser
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getWorkListByProcessAndStatus(
 			Integer idProcess, String status, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
@@ -555,7 +586,21 @@ public class WStepWorkBL {
 	}
 
 
-	// retrieves workitems for a process and a step ( idCurrentStep ) 
+ 
+	/**
+	 * returns workitems for a process and a step ( idCurrentStep )
+	 * 
+	 * ***** ADMIN method ****** 
+	 * 
+	 * @param idProcess
+	 * @param idCurrentStep
+	 * @param currentUser
+	 * @param status
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getWorkListByProcessAndStep(
 			Integer idProcess, Integer idCurrentStep, Integer currentUser, String status ) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
@@ -638,11 +683,21 @@ public class WStepWorkBL {
 		return userHasAdminRights;
 	}
 	
-	
-	
-			
 
-	// recupera los workitems de 1 objeto para 1 proceso dado
+	/**
+	 * returns workitems for an object of a given process
+	 * (recupera los workitems de 1 objeto para 1 proceso dado)
+	 * ADMIN method
+	 *  
+	 * @param idProcess
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 */
 	public List<WStepWork> getWorkListByProcess(
 			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
@@ -661,6 +716,9 @@ public class WStepWorkBL {
 	 * todos los de un idObject/idObjectType pero que estén activos ...
 	 * 
 	 * creó: rrl 20110118
+	 * 
+	 * ***** ADMIN method ******
+	 * 
 	 *  
 	 * @param idObject
 	 * @param idObjectType
@@ -678,15 +736,17 @@ public class WStepWorkBL {
 		
 	}
 	
-	//rrl 20110118: recupera los workitems de 1 objeto dado
 	/**
-	 * Devuelve TODOS los workitems para un idObject/idObjectType
-	 * para recuperar solo los "ALIVE" ver método getActiveSteps en esta misma clase
 	 * 
+	 * returns all workitems for a given ProcessWork - 
+	 * add filter by processed or all workitems.
+	 * idProcessWork must not be null.
+	 * 
+	 * ***** ADMIN method ******
 	 *  ATENCION: no filtra los del currentUserId, devuelve todos.
 	 *  Es un método para admin...
 	 *  
-	 * @param idWork
+	 * @param idProcessWork
 	 * @param status
 	 * @param currentUser
 	 * @return
@@ -695,10 +755,10 @@ public class WStepWorkBL {
 	 * @throws WStepWorkException
 	 */
 	public List<WStepWork> getWorkListByIdWorkAndStatus(
-			Integer idWork, String status, Integer currentUser) 
+			Integer idProcessWork, String status, Integer currentUser) 
 	throws WProcessDefException, WStepDefException, WStepWorkException {
 		
-		return new WStepWorkDao().getWorkListByIdWorkAndStatus(idWork, status, currentUser);
+		return new WStepWorkDao().getWorkListByIdWorkAndStatus(idProcessWork, status, currentUser);
 		
 	}
 	

@@ -37,15 +37,38 @@ public class WRoleDef implements java.io.Serializable {
 	/**
 	 * indicates this is a system role
 	 * system role can't be deleted by users
-	 * there are some mandatory roles must be exist in the system: ORIGINATOR
+	 * there are some mandatory roles must be exist in the system: ie: ORIGINATOR
 	 * and PROCESS_ADMIN
 	 * nes 20141016
 	 */
 	private boolean systemRole;
 	
-	// MANY2MANY
+	/**
+	 * idicates if the role is a predefined (static) role or it is a 
+	 * runtime role.
+	 * Runtime role indicates the users are assigned to role at runtime.
+	 * The fact to assign the users at runtime implies same role (roleId-rolename)
+	 * may have different users for different objects or process.
+	 * At this time the runtime role will be related with a process work (WProcessWork):
+	 * each runtime role there will be same for a WProcessWork and it will be change
+	 * between different WProcessWork.
+	 * This flag will be related with WUserRoleWork (w_user_role_work): if the role
+	 * is a runtime role the WUserRoleWork will be the users belonging to this role
+	 * for each WProcessWork using it.
+	 * nes 20141206
+	 *  
+	 */
+	private boolean runtimeRole;
+	
+	/**
+	 * Users belonging this role
+	 * MANY2MANY
+	 */
 	Set<WUserRole> usersRelated=new HashSet<WUserRole>();
 
+	/**
+	 * timestamps
+	 */
 	private Integer insertUser;
 	private DateTime insertDate;
 	private Integer modUser;
