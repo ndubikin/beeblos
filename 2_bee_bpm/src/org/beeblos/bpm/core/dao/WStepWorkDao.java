@@ -667,7 +667,22 @@ public class WStepWorkDao {
 		} 
 	}
 	
-	// ALL WORKITEMS
+
+	/**
+	 * returns step list by user
+	 * 	// ALL WORKITEMS
+	 * 
+	 * NOTA NES 20141206 - REVISAR A VER SI ESTE MÉTODO LO UTILIZAMOS PARA ALGO PORQUE AHORA MISMO
+	 * PARA WORK UTILIZAMOS EL getWorkListByProcess QUE ESTÁ UN POCO MAS ABAJO...
+	 * NO OBSTANTE UNIFIQUÉ EL ARMADO DE QUERIES PARA QUE NO TENGAMOS COSAS REPETIDAS EN DIFERENTES
+	 * SITIOS DE LA CLASE ...
+	 * 
+	 * @param userId
+	 * @param idProcess
+	 * @param status
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getStepListByUser (
 			Integer userId, Integer idProcess, String status ) 
@@ -687,51 +702,64 @@ public class WStepWorkDao {
 			statusHQLFilter=" AND w.decided_date IS NULL ";
 			
 		}
-
-		String query="SELECT * FROM w_step_work w ";
 		
-		query +="left join w_step_def wsd on w.id_current_step=wsd.id ";			// WSD - stepDef
-		query +="left join w_step_role wsr on wsd.id=wsr.id_step ";					// WSR - step-role rel
-		query +="left join w_step_user wsu on wsd.id=wsu.id_step ";					// WSU - step-user rel
-		query +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";	// WSWA - step work assignment
+		// nes 20141206
+		String query = getBaseQuery(false,userId);
 		
-		query +=" where ( ";
-
-		/**
-		 * permissions check from database ...
-		 * role(s) has permissions for the step and user belongs the role(s) - definition time
-		 */
-		query +=" wsr.id_role in "; 
-		query +=" (select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId ) OR  ";
-
-		/**
-		 * user has explicit permissions for this step ...  - definition time
-		 */
-		query +=" ( wsu.id_user =:userId ) OR  ";
+		// nes 20141206 - recupero del método getBaseQuery que arma este mismo trozo de query
+		// dejo comentado hasta verificar que va bien
+//		String query="SELECT * FROM w_step_work w ";
+//		
+//		query +="left join w_step_def wsd on w.id_current_step=wsd.id ";			// WSD - stepDef
+//		query +="left join w_step_role wsr on wsd.id=wsr.id_step ";					// WSR - step-role rel
+//		query +="left join w_step_user wsu on wsd.id=wsu.id_step ";					// WSU - step-user rel
+//		query +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";	// WSWA - step work assignment
 		
-		/**
-		 * role has permissions for this step ...  -  work time - explicit permissions for the role to
-		 * this stepWork given at runtime
-		 */
-		query +=" ( wswa.id_role in ";
-		query +=" (select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId )) OR  ";
-
-		/**
-		 * user has permissions for this step ... -  work time - explicit permissions for the user to
-		 * this stepWork given at runtime
-		 */
-		query +=" ( wswa.id_user =:userId ) ";
+		// nes 20141206 - recupero del método getRequiredFilter que arma este mismo trozo de query
+		// dejo comentado hasta verificar que va bien
 		
-		/**
-		 * run time role belongs this step... -  work time - explicit permissions for the runtime role to
-		 * this stepWork given at runtime
-		 * nes 20141206
-		 */
+		query +=" WHERE ";
+		query += getRequiredFilter(userId,false); // nes 20141206 - paso el parametro admin como false porque este método
+												  // no permite o no prevé que se devuelvan pasos en modo admin...
 		
-		
-		query +=" ) ";// end where
+//		query +=" where ( ";
+//
+//		/**
+//		 * permissions check from database ...
+//		 * role(s) has permissions for the step and user belongs the role(s) - definition time
+//		 */
+//		query +=" wsr.id_role in "; 
+//		query +=" (select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId ) OR  ";
+//
+//		/**
+//		 * user has explicit permissions for this step ...  - definition time
+//		 */
+//		query +=" ( wsu.id_user =:userId ) OR  ";
+//		
+//		/**
+//		 * role has permissions for this step ...  -  work time - explicit permissions for the role to
+//		 * this stepWork given at runtime
+//		 */
+//		query +=" ( wswa.id_role in ";
+//		query +=" (select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId )) OR  ";
+//
+//		/**
+//		 * user has permissions for this step ... -  work time - explicit permissions for the user to
+//		 * this stepWork given at runtime
+//		 */
+//		query +=" ( wswa.id_user =:userId ) ";
+//		
+//		/**
+//		 * run time role belongs this step... -  work time - explicit permissions for the runtime role to
+//		 * this stepWork given at runtime
+//		 * nes 20141206
+//		 */
+//		
+//		
+//		query +=" ) ";// end where
 
 		query +=statusHQLFilter; // add status filter defined before ...
+		
 		query += " ORDER BY w.arriving_date DESC ";
 	
 		logger.debug("-->>> getStepListByUser: "+query);
@@ -773,6 +801,16 @@ public class WStepWorkDao {
 	
 	
 	// ALL WORKITEMS
+	/**
+	 * OJO - METODO QUE DEBEMOS REVISAR
+	 * AHORA MISMO LO UTILIZAMOS DESE DevelopmentBL para obtener la lista de steps y luego hacer delete
+	 * comentario de nes 20141206
+	 * 
+	 * @param idProcess
+	 * @param status
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWorkListByProcessAndStatus (
 			Integer idProcess, String status ) 
@@ -836,6 +874,8 @@ public class WStepWorkDao {
 	/**
 	 * returns list of step work for a given processId, userId (optional if currentUserId is
 	 * a  Admin)
+	 * 
+	 * METODO UTILIZADO POR BL PARA TRABAJAR - RECUPERAR TAREAS DE LOS USUARIOS
 	 * 
 	 * @param idProcess
 	 * @param idCurrentStep
@@ -984,17 +1024,58 @@ public class WStepWorkDao {
 	}
 
 
+	/**
+	 * required filter is set the conditions to recover only steps the given user can be process/view
+	 * if comes in admin mode the filter will recover all steps for this admin...
+	 * 
+	 * nes 20141206 - agregado filtro para runtime roles introducido en esta version (w_USER_ROLE_WORK)
+	 * 
+	 * @param userId
+	 * @param isAdmin
+	 * @return
+	 */
 	private String getRequiredFilter ( Integer userId, boolean isAdmin ) {
 		
 		String reqFilter=""; // para las queries no se puede devolver null, hay que devolver ""
+		
 		// nes 20130221 - if isAdmin doesn't filter result ...
 		if (!isAdmin) {
-			reqFilter = " ( ( wsr.id_role in ";
-			reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
+			reqFilter = " ( ";
+
+			/**
+			 * permissions check from database ...
+			 * role(s) has permissions for the step and user belongs the role(s) - definition time
+			 */			
+			reqFilter += " ( wsr.id_role in ";
+			reqFilter +=" 	(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
+
+			/**
+			 * user has explicit permissions for this step ...  - definition time
+			 */
 			reqFilter +=" ( wsu.id_user=:userId ) OR "; // nes 20140204 - faltaba que traiga los del usuario específicamente indicado en el step (solo traiamos los usuarios que pertenecian a roles)
+
+			/**
+			 * runtime role(s) has permissions for the step and user belongs the role(s) - work time time
+			 * nes 20141206
+			 */			
+			reqFilter += " ( wsr.id_role in ";
+			reqFilter +=" 	 (select WURW.id_role from w_USER_ROLE_WORK WURW where WURW.id_user=:userId AND w.id_work=WURW.id_process_work ) ) OR  ";
+			
+			/**
+			 * role has permissions for this step ...  -  work time - explicit permissions for the role to
+			 * this stepWork given at runtime
+			 */
 			reqFilter +=" ( wswa.id_role in ";
-			reqFilter +="(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
-			reqFilter +=" ( wswa.id_user =:userId ) ) ";
+			reqFilter +=" 	(select wur.id_role from w_user_role wur where wur.id_user=:userId )) OR  ";
+
+			/**
+			 * user has permissions for this step ... -  work time - explicit permissions for the user to
+			 * this stepWork given at runtime
+			 */
+			reqFilter +=" ( wswa.id_user =:userId ) ";
+			
+			reqFilter = " ) ";
+			
 		} else {
 			
 			// si viene con el filtro de "isAdmin" prendido, entonces devuelvo la lista de procesos sobre los que
@@ -1012,7 +1093,9 @@ public class WStepWorkDao {
 
 			reqFilter += "    WHERE wur.id_user=:userId ";
 			reqFilter += "            OR (wpu.admin=1 AND wpu.id_user=:userId) ) ) ";
+			
 		}
+		
 		return reqFilter;
 		
 	}
