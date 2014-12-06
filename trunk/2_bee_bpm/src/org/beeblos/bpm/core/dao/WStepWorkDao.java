@@ -486,6 +486,8 @@ public class WStepWorkDao {
 	/**
 	 * Returns a list with all existing step works without any filter nor condition ...
 	 * 
+	 * ***** ADMIN method ****** 
+	 * 
 	 * 
 	 * @return
 	 * @throws WStepWorkException
@@ -687,18 +689,47 @@ public class WStepWorkDao {
 		}
 
 		String query="SELECT * FROM w_step_work w ";
-		query +="left join w_step_def wsd on w.id_current_step=wsd.id ";
-		query +="left join w_step_role wsr on wsd.id=wsr.id_step ";
-		query +="left join w_step_user wsu on wsd.id=wsu.id_step ";
-		query +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";	
 		
-		// permissions check from database ...
-		query +="where ( wsr.id_role in ";
-		query +="(select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId ) OR  ";
+		query +="left join w_step_def wsd on w.id_current_step=wsd.id ";			// WSD - stepDef
+		query +="left join w_step_role wsr on wsd.id=wsr.id_step ";					// WSR - step-role rel
+		query +="left join w_step_user wsu on wsd.id=wsu.id_step ";					// WSU - step-user rel
+		query +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";	// WSWA - step work assignment
+		
+		query +=" where ( ";
+
+		/**
+		 * permissions check from database ...
+		 * role(s) has permissions for the step and user belongs the role(s) - definition time
+		 */
+		query +=" wsr.id_role in "; 
+		query +=" (select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId ) OR  ";
+
+		/**
+		 * user has explicit permissions for this step ...  - definition time
+		 */
 		query +=" ( wsu.id_user =:userId ) OR  ";
+		
+		/**
+		 * role has permissions for this step ...  -  work time - explicit permissions for the role to
+		 * this stepWork given at runtime
+		 */
 		query +=" ( wswa.id_role in ";
-		query +="(select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId )) OR  ";
-		query +=" ( wswa.id_user =:userId )  ) ";
+		query +=" (select wur.id_role from w_user_def wud, w_user_role wur where wur.id_user=:userId )) OR  ";
+
+		/**
+		 * user has permissions for this step ... -  work time - explicit permissions for the user to
+		 * this stepWork given at runtime
+		 */
+		query +=" ( wswa.id_user =:userId ) ";
+		
+		/**
+		 * run time role belongs this step... -  work time - explicit permissions for the runtime role to
+		 * this stepWork given at runtime
+		 * nes 20141206
+		 */
+		
+		
+		query +=" ) ";// end where
 
 		query +=statusHQLFilter; // add status filter defined before ...
 		query += " ORDER BY w.arriving_date DESC ";
@@ -1000,7 +1031,18 @@ public class WStepWorkDao {
 	
 	}
 	
-	// ALL WORKITEMS FOR A PROCESS IN A CONCRETE STEP
+	// ALL WORKITEMS FOR A PROCESS IN A SINGLE STEP
+	/**
+	 * returns all workitems for a process and a single step
+	 * 
+	 * ***** ADMIN method ****** 
+	 * 
+	 * @param idProcess
+	 * @param idCurrentStep
+	 * @param status
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWorkListByProcessAndStep (
 			Integer idProcess, Integer idCurrentStep, String status ) 
@@ -1231,10 +1273,21 @@ public class WStepWorkDao {
 		
 	}
 	
-	
-	
 
-	// ALL WORKITEMS FOR 1 OBJECT ( AND OBJECT TYPE ) 
+	/**
+	 * returns workitems for an object of a given process
+	 * (recupera los workitems de 1 objeto para 1 proceso dado)
+	 * Parameters must not be null.
+	 * 
+	 * ***** ADMIN method ******
+	 * 
+	 * @param idProcess
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWorkListByProcess(
 			Integer idProcess, Integer idObject, String idObjectType, Integer currentUser ) 
@@ -1281,9 +1334,25 @@ public class WStepWorkDao {
 
 		return stepws;
 	}
-	// NES 20140529
-	// ESTE PARECE EL MISMO QUE EL DE LA LINEA 1229 SALVO QUE EL OTRO RETORNA SOLO LOS "ALIVE" Y ESTE PARECE QUE "TODOS"
-	//rrl 20110118 
+
+	
+	/**
+	 * returns all workitems for an idObject and idObjectType
+	 * (recupera los workitems de 1 objeto para 1 proceso dado)
+	 * Parameters must not be null.
+	 * 
+	 * ***** ADMIN method ******
+	 * 
+	 * 	NES 20140529
+		ESTE PARECE EL MISMO QUE EL DE LA LINEA 1229 SALVO QUE EL OTRO RETORNA SOLO LOS "ALIVE" Y ESTE PARECE QUE "TODOS"
+		rrl 20110118 
+	 *  
+	 * @param idObject
+	 * @param idObjectType
+	 * @param currentUser
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWorkListByIdObject(
 			Integer idObject, String idObjectType, Integer currentUser ) 
@@ -1330,10 +1399,26 @@ public class WStepWorkDao {
 		return stepws;
 	}
 	
-	// dml 20120130
+
+	/**
+	 * 
+	 * returns all workitems for a given ProcessWork - 
+	 * add filter by processed or all workitems.
+	 * idProcessWork must not be null.
+	 * 
+	 * ***** ADMIN method ******
+	 *  
+	 *  dml 20120130
+	 * 
+	 * @param idProcessWork
+	 * @param status
+	 * @param currentUser
+	 * @return
+	 * @throws WStepWorkException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getWorkListByIdWorkAndStatus(
-			Integer idWork, String status, Integer currentUser ) 
+			Integer idProcessWork, String status, Integer currentUser ) 
 	throws WStepWorkException {
 
 		org.hibernate.Session session = null;
@@ -1352,19 +1437,19 @@ public class WStepWorkDao {
 			if ( status==null || "".equals(status) ) {
 				stepws = session
 						.createQuery("From WStepWork where wProcessWork.id = :idWork Order By openedDate ")
-						.setParameter("idWork", idWork)
+						.setParameter("idWork", idProcessWork)
 						.list();
 			} else {
 
 				if ( status.equals(PROCESSED)) {
 					stepws = session
 							.createQuery("From WStepWork Where wProcessWork.id = :idWork And decidedDate IS NOT NULL Order By openedDate")
-							.setParameter("idWork", idWork)
+							.setParameter("idWork", idProcessWork)
 							.list();
 				} else { // ALIVE
 					stepws = session
 							.createQuery("From WStepWork Where wProcessWork.id = :idWork And decidedDate IS NULL Order By openedDate")
-							.setParameter("idWork", idWork)
+							.setParameter("idWork", idProcessWork)
 							.list();					
 				}
 			}
@@ -1397,6 +1482,8 @@ public class WStepWorkDao {
 	/**
 	 * Returns active stepWork list for given idObject/idObjectType
 	 * IMPORTANT: This query don't check permissions for given user ... 
+	 * 
+	 * ***** ADMIN method ****** 
 	 * 
 	 * @param idObject
 	 * @param idObjectType
@@ -2085,7 +2172,7 @@ public class WStepWorkDao {
 	}	
 
 	/**
-	 * Finder for step work 
+	 * StepWork finder 
 	 * 
 	 * @param processIdFilter
 	 * @param stepIdFilter
