@@ -573,6 +573,7 @@
 
 	</class>
 
+	<!--  atencion hay named queries al final que afectan a roledef -->
 	<class name="org.beeblos.bpm.core.model.WRoleDef" table="w_role_def">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -583,7 +584,18 @@
 		</property>
 		<property name="systemRole" type="java.lang.Boolean">
 			<column name="system_role" sql-type="bit" />
-		</property>			
+		</property>
+		<property name="runtimeRole" type="java.lang.Boolean">
+			<column name="runtime_role" sql-type="bit" >
+				<comment>indicate the role will be associated with users at runtime / related at wProcessWork level</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idExternalMethod"
+			type="java.lang.Integer">
+			<column name="id_external_method">
+				<comment>metodo que debe devovler la lista de user id para cargar el runtime role array[int]</comment>
+			</column>
+		</property>	
 		<property generated="never" lazy="false" name="description"
 			type="string">
 			<column name="description" />
@@ -1063,7 +1075,7 @@
 		</set>
 -->
 
-	</class>	
+	</class>
 
 	<class name="org.beeblos.bpm.core.model.WStepRole"
 		table="w_step_role">
@@ -2208,7 +2220,35 @@
 		</property>
 	</class>
 
+	<!-- returns a list of all runtime role ids in the system -->
+    <sql-query name="findRuntimeRoleIds">
+		<return-scalar column="wsr.id_role" type="java.lang.Integer"/>
+		<![CDATA[select distinct wsr.id_role from w_step_role wsr 
+						left join w_process_step_def wpsd ON wsr.id_step=wpsd.id_step 
+						left join w_role_def wrd ON wrd.id=wsr.id_role 
+					WHERE wrd.runtime_role]]>
+    </sql-query>
+
+    <!-- returns a list of all runtime role ids for given processId -->
+    <sql-query name="findProcessRuntimeRoleId">
+		<return-scalar column="wsr.id_role" type="java.lang.Integer"/>
+		<![CDATA[select distinct wsr.id_role from w_step_role wsr 
+						left join w_process_step_def wpsd ON wsr.id_step=wpsd.id_step 
+						left join w_role_def wrd ON wrd.id=wsr.id_role 
+					WHERE wrd.runtime_role AND wpsd.id_process= :idProcess]]>
+    </sql-query>
+    
+    <!-- returns a list of all runtime roles for given processId -->
+    <sql-query name="findProcessRuntimeRole">
+		<return alias="wRoleDef" class="org.beeblos.bpm.core.model.WRoleDef"/>
+		<![CDATA[select distinct wrd.* from w_step_role wsr 
+						left join w_process_step_def wpsd ON wsr.id_step=wpsd.id_step 
+						left join w_role_def wrd ON wrd.id=wsr.id_role 
+					WHERE wrd.runtime_role AND wpsd.id_process= :idProcess]]>
+    </sql-query>
+
 	<filter-def name="byProcessHeadId">
 		<filter-param name="filterProcessHeadId" type="java.lang.Integer" />
 	</filter-def>
+	
 </hibernate-mapping>
