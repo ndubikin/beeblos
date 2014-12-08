@@ -24,6 +24,7 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepHead;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
@@ -48,28 +49,96 @@ public class WStepDefBL {
 		
 		logger.debug("add() WStepDef - Name: ["+step.getName()+"]");
 		
+		DateTime now = new DateTime();
+		
 		// dml 20130430 - si es un nuevo WStepHead se guarda antes de guardar el WStepDef y se rellena la informacion esencial
-		if (step.getStepHead() != null
-				&& (step.getStepHead().getId() == null
-				|| step.getStepHead().getId().equals(0))){
-			
-			Integer stepHeadId = new WStepHeadBL().add(step.getStepHead(), currentUserId);
-
-			this._setFirstWStepDefData(step, stepHeadId, step.getRules(), 
-					step.getStepComments(), step.getInstructions(), currentUserId);
-			
-			
-		}
+		// nes 20141206 - if there is not a WStepHead then will be created with WStepDef data...
+		_setAndSaveStepHead(step, now, currentUserId);
+		_checkResponsesTimestamps(step,now,currentUserId);
 		
 		// timestamp & trace info
-		step.setInsertDate(new DateTime());
+		step.setInsertDate(now);
 		step.setModDate( DEFAULT_MOD_DATE_TIME );
 		step.setInsertUser(currentUserId);
 		step.setModUser(currentUserId);
 		return new WStepDefDao().add(step);
 
 	}
+
+	/**
+	 * Set WStepHead and persist. Update WStepDef with persisted data...
+	 * nes 20141206
+	 * @param step
+	 * @param currentUserId
+	 * @throws WStepHeadException
+	 */
+	private void _setAndSaveStepHead(WStepDef step, DateTime now, Integer currentUserId)
+			throws WStepHeadException {
+		
+		Integer stepHeadId=null;
+		
+		if (step.getStepHead() != null
+				&& (step.getStepHead().getId() == null
+				|| step.getStepHead().getId().equals(0))){
+			
+			stepHeadId = new WStepHeadBL().add(step.getStepHead(), currentUserId);
+			
+		} else if (step.getStepHead()==null) {
+			
+			stepHeadId = persistStepHeadComingNull(step,now,currentUserId);
+
+		}
+		
+		if (stepHeadId!=null) {
+
+			this._setFirstWStepDefData(step, stepHeadId, step.getRules(), 
+					step.getStepComments(), step.getInstructions(), currentUserId);
+		}
+	}
 	
+	/**
+	 * creates a WStepHead for a new WStepDef with arrives with a null WStepHead
+	 * Esto lo creé porque los test fallan al intentar agregar un nuevo WStepDef si no le hemos
+	 * definido previamente su WStepHead. Como esta situación se podría dar a nivel de uso 
+	 * por API del BeeBPM, prefiero agregar esta solución para que quede mas robusta la BL
+	 * nes 20141206
+	 * @param step
+	 * @param currentUserId
+	 * @return
+	 */
+	private Integer persistStepHeadComingNull(WStepDef step, DateTime now, Integer currentUserId) {
+		
+		WStepHead stepHead = new WStepHead("pending name...","", now, DEFAULT_MOD_DATE_TIME );
+		Integer stepHeadId;
+		try {
+			stepHeadId = new WStepHeadBL().add(stepHead, currentUserId);
+		} catch (WStepHeadException e) {
+			stepHeadId=null;
+			String mess = "Error creating new WStepHead for WStepDef with empty WStepHead..."+ e.getMessage()
+							+" "+(e.getCause()!=null?e.getCause():"null");
+			logger.error(mess);
+		}
+		return stepHeadId;
+	}
+	
+	/**
+	 * set timestamps for responses in a new step
+	 * this method only can be called from add step!!!!!!!!
+	 * nes 20141206
+	 * @param step
+	 * @param now
+	 * @param currentUserId
+	 */
+	private void _checkResponsesTimestamps(WStepDef step, DateTime now, Integer currentUserId) {
+		if (step.getResponse()!=null && step.getResponse().size()>0){
+			for(WStepResponseDef response: step.getResponse()) {
+				response.setInsertDate(now);
+				response.setModDate(DEFAULT_MOD_DATE_TIME);
+				response.setInsertUser(currentUserId);
+				response.setModUser(null);
+			}
+		}
+	}
 	/**
 	 * 
 	 * Este método es el encargado de asignar el "WStepHead" creado al "WStepDef" antes de persistirlo. 
@@ -136,7 +205,15 @@ public class WStepDefBL {
 		
 	}
 
-	public void update(WStepDef step, Integer processHeadId, Integer currentUserId) 
+	/**
+	 * Update an existing WStepDef
+	 * 
+	 * @param step
+	 * @param processHeadId
+	 * @param currentUserId
+	 * @throws WStepDefException
+	 */
+	public void update(WStepDef step, Integer processHeadId, Integer currentUserId) //@TODO *** hay que ver por q le meti el processHeadId aquí Y DOCUMENTARLO...***
 			throws WStepDefException {
 		
 		logger.debug("update() WStepDef < id = "+step.getId()+">");

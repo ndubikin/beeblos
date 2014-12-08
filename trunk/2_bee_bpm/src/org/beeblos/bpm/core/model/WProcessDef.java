@@ -105,7 +105,7 @@ public class WProcessDef implements java.io.Serializable {
 	 */
 	private Set<WStepDef> steps = new HashSet<WStepDef>();
 	
-	private List<WStepSequenceDef> stepSequenceList; 
+	private List<WStepSequenceDef> stepSequenceList;
 	
 	private Set<SystemObject> systemObject = new HashSet<SystemObject>(0);
 

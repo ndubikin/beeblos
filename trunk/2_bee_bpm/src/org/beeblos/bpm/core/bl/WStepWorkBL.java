@@ -103,7 +103,7 @@ public class WStepWorkBL {
 		
 		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"] ...");
 		
-		Integer workId;
+		Integer idWork;//nes 20141206 refactorized
 
 		if ( work.getId()!=null && work.getId()!=0 ) {
 			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+work.getId()+")");
@@ -121,8 +121,8 @@ public class WStepWorkBL {
 
 		// adds the new ProcessWork
 		WProcessWorkBL wpbl = new WProcessWorkBL();
-		workId = wpbl.add(work, currentUserId);
-		work = wpbl.getWProcessWorkByPK(workId, currentUserId); // checks all properties was correctly stored in the object
+		idWork = wpbl.add(work, currentUserId);
+		work = wpbl.getWProcessWorkByPK(idWork, currentUserId); // checks all properties was correctly stored in the object
 		
 		// if exists managed data set with just created work id
 		if (stepw.getManagedData()!=null) {
@@ -140,7 +140,7 @@ public class WStepWorkBL {
 		stepw.setInsertUser( new WUserDef(currentUserId) );
 		stepw.setModDate( DEFAULT_MOD_DATE_TIME);
 		
-		// nes 20140707 - assign users at runtime if there is defined ...
+		// nes 20140707 - assign users at runtime if they're defined ...
 		if ( stepw.getCurrentStep().isRuntimeAssignedUsers()) {
 			_assignRuntimeUsers(
 					stepw, currentUserId,
@@ -148,6 +148,9 @@ public class WStepWorkBL {
 					currentUserId);
 		}
 
+		// nes 20141206 - assign users to runtime roles if they're defined...
+		
+		
 		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
 		
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step

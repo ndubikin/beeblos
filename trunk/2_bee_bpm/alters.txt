@@ -235,3 +235,32 @@ ADD COLUMN `url_data` VARCHAR(255) NULL DEFAULT NULL AFTER `send_user_notes_to_n
 ## nes 20141128
 ALTER TABLE `bee_bpm_dev`.`system_object` 
 ADD COLUMN `object_class_bl` VARCHAR(255) NULL DEFAULT NULL AFTER `object_class`;
+
+## nes 20141206
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+ADD COLUMN `runtime_role` BIT(1) NULL DEFAULT b'0' AFTER `system_role`;
+
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+ADD COLUMN `id_external_method` INT DEFAULT NULL AFTER `runtime_role`;
+
+
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+ADD INDEX `fk_external_method_01_idx` (`id_external_method` ASC);
+
+ALTER TABLE `bee_bpm_dev`.`w_role_def`
+ADD CONSTRAINT `fk_external_method_01`
+  FOREIGN KEY (`id_external_method`)
+  REFERENCES `bee_bpm_dev`.`w_process_head_method` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+ALTER TABLE `bee_bpm_dev`.`w_process_def` 
+CHANGE COLUMN `version` `version` INT(3) NOT NULL DEFAULT 1 COMMENT 'version del proceso' ;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+CHANGE COLUMN `active` `active` BIT(1) NOT NULL DEFAULT b'1' ;
+
+## mod user debe poder ser null porque si no se ha modificado el registro ...
+ALTER TABLE `bee_bpm_dev`.`w_step_response_def` 
+CHANGE COLUMN `mod_user` `mod_user` INT(11) NULL ;
+
