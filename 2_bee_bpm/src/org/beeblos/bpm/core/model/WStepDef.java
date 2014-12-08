@@ -239,12 +239,25 @@ public class WStepDef implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public WStepDef(Integer id, Integer idDept, Integer idPhase,
+	/**
+	 * nes 20141206 - added version as parameter (mandatory field ...)
+	 * @param id
+	 * @param version
+	 * @param idDept
+	 * @param idPhase
+	 * @param instructions
+	 * @param stepComments
+	 * @param idListZone
+	 * @param idWorkZone
+	 * @param idAdditionalZone
+	 */
+	public WStepDef(Integer id, Integer version, Integer idDept, Integer idPhase,
 			String instructions, String stepComments, String idListZone,
 			String idWorkZone, String idAdditionalZone/*,
 			Set<WStepResponseDef> response*/) {
 		super();
 		this.id = id;
+		this.version=version;
 		this.idDept = idDept;
 		this.idPhase = idPhase;
 		this.instructions = instructions;

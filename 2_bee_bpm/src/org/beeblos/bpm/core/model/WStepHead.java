@@ -11,7 +11,7 @@ public class WStepHead implements java.io.Serializable {
 
 	private Integer id;
 
-	private String name;	
+	private String name;
 	private String comments;
 
 	private DateTime insertDate;
@@ -32,12 +32,19 @@ public class WStepHead implements java.io.Serializable {
 		this.name = name;
 	}
 
+	/**
+	 * Creates a new WStepHead object with params
+	 * @param name
+	 * @param comments
+	 * @param insertDate
+	 * @param modDate
+	 */
 	public WStepHead(String name, String comments, 
-			DateTime fechaAlta, DateTime fechaModificacion) {
+			DateTime insertDate, DateTime modDate) {
 		this.name = name;
 		this.comments = comments;
-		this.insertDate = fechaAlta;
-		this.modDate = fechaModificacion;
+		this.insertDate = insertDate;
+		this.modDate = modDate;
 	}
 
 	public WStepHead(String name, String comments,

@@ -33,6 +33,7 @@ import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.WProcessHeadManagedDataConfiguration;
 import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
+import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.enumerations.ProcessWorkStatus;
@@ -752,7 +753,48 @@ public class WProcessDefBL {
 	
 		return new WProcessDefDao().getComboActiveProcessList(firstLineText, blank, currentUserId);
 	
-	}	
+	}
+
+	/**
+	 * Return a list with role id with permissions for the given process
+	 * For each step belonging the given process recovers the role list with  permissions
+	 * unifying it by role Id
+	 * 
+	 * 
+	 * de la lista de steps del proceso (w_process_step_def) obtengo la lista de roles utilizados,
+	 * y filtro por lo que son runtimeRole....3
+	 * 
+	 * nes 20141206
+	 * 
+	 * @param idProcess
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException 
+	 */
+	public List<Integer> getProcessRoles(Integer idProcess, Integer currentUserId) throws WProcessDefException {
+		
+		return new WProcessDefDao().getProcessRuntimeRoleIds(idProcess);
+	}
+	
+	/**
+	 * Return a WRoleDef (role) list with permissions for given process
+	 * For each step belonging the given process recovers the role list with  permissions
+	 * unifying it by role Id
+	 * 
+	 * 
+	 * de la lista de steps del proceso (w_process_step_def) obtengo la lista de roles utilizados,
+	 * y filtro por lo que son runtimeRole....3
+	 * 
+	 * nes 20141206
+	 * 
+	 * @param idProcess
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException 
+	 */
+	public List<WRoleDef> getProcessRuntimeRoles(Integer idProcess) throws WProcessDefException {
+		return new WProcessDefDao().getProcessRuntimeRoles(idProcess);
+	}
 	
 	public List<WProcessDef> finderWProcessDefLight(LocalDate initialInsertDateFilter, LocalDate finalInsertDateFilter, 
 			boolean strictInsertDateFilter, String nameFilter, String commentFilter, 

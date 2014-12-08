@@ -4,7 +4,6 @@ package org.beeblos.bpm.core.test.bl;
 import junit.framework.TestCase;
 
 import org.beeblos.bpm.core.bl.WProcessDefBL;
-import org.beeblos.bpm.core.bl.WProcessRoleBL;
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
@@ -14,6 +13,7 @@ import org.beeblos.bpm.core.model.WProcessRole;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepHead;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -111,7 +111,8 @@ public class TestWProcessDefBL extends TestCase{
 			Integer idUser2 = userBl.add(new WUserDef( "maria", "mr", true, 1000, new DateTime()), 1000);
 			
 			WStepDefBL stepBL = new WStepDefBL();
-			Integer idStep = stepBL.add(new WStepDef(null,2,3,"ejecute este paso plis","sincomentarios ...",null,null,null),1000);
+			WStepHead stepHead = new WStepHead();
+			Integer idStep = stepBL.add(new WStepDef(null,1,2,3,"ejecute este paso plis","sincomentarios ...",null,null,null),1000); // nes 20141206 - added version and stepHead
 			
 			process.setBeginStep(stepBL.getWStepDefByPK(idStep, process.getProcess().getId(), 1000));
 			process.setComments("mis comentarios");

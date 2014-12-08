@@ -16,9 +16,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
+import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jadira.usertype.dateandtime.joda.columnmapper.TimestampColumnDateTimeMapper;
@@ -49,9 +51,9 @@ public class WProcessDefDao {
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: add - Can't store process definition record "+ 
-					process.getName()+" - "+ex.getMessage()+"\n"+ex.getCause() );
+					process.getName()+" - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("WProcessDefDao: add - Can't store process definition record "+ 
-					process.getName()+" - "+ex.getMessage()+"\n"+ex.getCause());
+					process.getName()+" - "+ex.getMessage()+" "+ex.getCause());
 
 		}
 
@@ -111,7 +113,7 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			String message = "HibernateException: update - Can't update xml map for process " + processId
-					+ " - and processMap = " + processMap + "\n - " + ex.getMessage() + "\n"
+					+ " - and processMap = " + processMap + "  - " + ex.getMessage() + " "
 					+ ex.getCause();
 			logger.error(message);
 			throw new WProcessDefException(message);
@@ -119,7 +121,7 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();			
 			String message = "Exception: update - Can't update xml map for process " + processId
-					+ " - and processMap = " + processMap + "\n - " + ex.getMessage() + "\n"
+					+ " - and processMap = " + processMap + "  - " + ex.getMessage() + " "
 					+ ex.getCause();
 			logger.error(message);
 			throw new WProcessDefException(message);			
@@ -140,15 +142,15 @@ public class WProcessDefDao {
 
 		} catch (HibernateException ex) {
 			logger.error("WProcessDefDao: delete - Can't delete proccess definition record "+ process.getName() +
-					" <id = "+process.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+					" <id = "+process.getId()+ "> "+" - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("WProcessDefDao:  delete - Can't delete proccess definition record  "+ process.getName() +
-					" <id = "+process.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+					" <id = "+process.getId()+ "> "+" - "+ex.getMessage()+" "+ex.getCause() );
 
 //		} catch (WProcessDefException e) {
 //			logger.error("WProcessDefDao: delete - Exception in deleting process rec "+ process.getName() +
-//					" <id = "+process.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
+//					" <id = "+process.getId()+ "> no esta almacenada "+" - "+e.getMessage()+" "+e.getCause() );
 //			throw new WProcessDefException("WProcessDefDao: delete - Exception in deleting process rec "+ process.getName() +
-//					" <id = "+process.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
+//					" <id = "+process.getId()+ "> not stored "+" - "+e.getMessage()+" "+e.getCause() );
 
 		} 
 
@@ -173,17 +175,22 @@ public class WProcessDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("HibernateException: getWProcessDefByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessDefException("WProcessDefDao: getWProcessDefByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: getWProcessDefByPK - can't obtain WProcessDef with id:"
+							+ (id!=null?id:"null") 
+							+ " - "+ex.getMessage()+" "
+							+(ex.getCause()!=null?ex.getCause():" "); 
+			logger.error(mess);
+			throw new WProcessDefException(mess);
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("Exception: getWProcessDefByPK - we can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WProcessDefException("WProcessDefDao: getWProcessDefByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());			
+			String mess = "Exception: getWProcessDefByPK - can't obtain WProcessDef with id:"
+					+ (id!=null?id:"null") 
+					+ " - "+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():" ")+" "
+					+ ex.getClass(); 
+			logger.error(mess);
+			throw new WProcessDefException(mess);	
 
 		}
 
@@ -214,9 +221,9 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("WProcessDefDao: getWProcessDefByName - can't obtain process name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					name + "]  almacenada - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("getWProcessDefByName;  can't obtain process name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+					name + " - " + ex.getMessage()+" "+ex.getCause());
 
 		}
 
@@ -249,16 +256,16 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getWProcessDefByPK - we can't obtain the required id = "+
-					versionId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					versionId + "]  almacenada - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("WProcessDefDao: getWProcessDefByPK - we can't obtain the required id : " + 
-					versionId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					versionId + " - " + ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getWProcessDefByPK - we can't obtain the required id = "+
-					versionId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					versionId + "]  almacenada - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("WProcessDefDao: getWProcessDefByPK - we can't obtain the required id : " + 
-					versionId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					versionId + " - " + ex.getMessage()+" "+ex.getCause());
 		}
 
 		return name;
@@ -287,16 +294,16 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getLastWProcessDefVersion - can't obtain process last version = " +
-					processHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					processHeadId + "]  almacenada - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("getLastWProcessDefVersion;  can't obtain process last version: " + 
-					processHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					processHeadId + " - " + ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getLastWProcessDefVersion - can't obtain process last version = " +
-					processHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					processHeadId + "]  almacenada - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("getLastWProcessDefVersion;  can't obtain process last version: " + 
-					processHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					processHeadId + " - " + ex.getMessage()+" "+ex.getCause());
 		}
 
 		if (version == null){
@@ -330,16 +337,16 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getProcessDefXmlMap - can't obtain process xml map = " +
-					processDefId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					processDefId + "]  almacenada - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("getLastWProcessDefVersion;  can't obtain process xml map: " + 
-					processDefId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					processDefId + " - " + ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getProcessDefXmlMap - can't obtain process xml map = " +
-					processDefId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					processDefId + "]  almacenada - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("getLastWProcessDefVersion;  can't obtain process xml map: " + 
-					processDefId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					processDefId + " - " + ex.getMessage()+" "+ex.getCause());
 		}
 
 		return processMap;
@@ -367,16 +374,16 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getWProcessDefs() - can't obtain process list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("WProcessDefDao: getWProcessDefs() - can't obtain process list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getWProcessDefs() - can't obtain process list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+ex.getCause() );
 			throw new WProcessDefException("WProcessDefDao: getWProcessDefs() - can't obtain process list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		}
 
 		return processList;
@@ -441,13 +448,13 @@ public class WProcessDefDao {
 					tx.rollback();
 				throw new WProcessDefException(
 						"Can't obtain WProcessDefs combo list "
-						+ex.getMessage()+"\n"+ex.getCause());
+						+ex.getMessage()+" "+ex.getCause());
 			} catch (Exception e) {
 				if (tx != null)
 					tx.rollback();
 				throw new WProcessDefException(
 						"Can't obtain WProcessDefs combo list "
-						+e.getMessage()+"\n"+e.getCause());				
+						+e.getMessage()+" "+e.getCause());				
 			}
 
 			return retorno;
@@ -525,6 +532,136 @@ public class WProcessDefDao {
 
 
 	}
+	
+	
+	/**
+	 * Return a role id list with permissions for given process
+	 * For each step belonging the given process recovers the role list with  permissions
+	 * unifying it by role Id
+	 * 
+	 * 			
+	 * de la lista de steps del proceso (w_process_step_def) obtengo la lista de roles utilizados,
+	 * y filtro por lo que son runtimeRole....3
+	 * 
+	 * Atención: resuelto con named query 'findProcessRuntimeRoleId'
+	 * 
+	 * nes 20141206
+	 * 
+	 * @param idProcess - wProcessDef id (version)
+	 * @return - list inteber roles with runtimeRole=true
+	 * @throws WProcessDefException 
+	 */
+	public List<Integer> getProcessRuntimeRoleIds(Integer idProcess) throws WProcessDefException {
+		logger.debug(">>> getProcessRuntimeRoleIds >> idProcess:"
+				+(idProcess!=null?idProcess:"null"));
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<Integer> retorno=null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			Query query = session.getNamedQuery("findProcessRuntimeRoleId")
+					.setInteger("idProcess", idProcess);
+			
+			retorno = query.list();
+
+			tx.commit();
+			
+
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: getProcessRuntimeRoleIds() error recovering process runtime role id list... " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""); 
+			logger.error( mess );
+			throw new WProcessDefException( mess );
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getProcessRuntimeRoleIds() error recovering process runtime role id list... " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WProcessDefException( mess );			
+
+		}
+		
+		return retorno;		
+		
+	}
+	
+	/**
+	 * Return a role list with permissions for given process
+	 * For each step belonging the given process recovers the role list with  permissions
+	 * unifying it by role Id
+	 *
+	 * de la lista de steps del proceso (w_process_step_def) obtengo la lista de roles utilizados,
+	 * y filtro por lo que son runtimeRole....3
+	 * 
+	 * Atención: resuelto con named query 'findProcessRuntimeRoleId'
+	 * 
+	 * nes 20141208
+	 * 
+	 * @param idProcess - wProcessDef id (version)
+	 * @return - list WRoleDef roles with runtimeRole=true
+	 * @throws WProcessDefException 
+	 */
+	public List<WRoleDef> getProcessRuntimeRoles(Integer idProcess) throws WProcessDefException {
+		logger.debug(">>> getProcessRuntimeRoles >> idProcess:"
+				+(idProcess!=null?idProcess:"null"));
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WRoleDef> retorno=null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			Query query = session.getNamedQuery("findProcessRuntimeRole")
+					.setInteger("idProcess", idProcess);
+			
+			retorno = query.list();
+
+			tx.commit();
+			
+
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: getProcessRuntimeRoleIds() error recovering process runtime role id list... " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""); 
+			logger.error( mess );
+			throw new WProcessDefException( mess );
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: getProcessRuntimeRoleIds() error recovering process runtime role id list... " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WProcessDefException( mess );			
+
+		}
+		
+		return retorno;		
+		
+	}	
 
 	@SuppressWarnings("unchecked")
 	public List<WProcessDef> finderWProcessDef (LocalDate initialInsertDateFilter, LocalDate finalInsertDateFilter, 
@@ -600,7 +737,7 @@ public class WProcessDefDao {
 //				} catch (Exception e) {
 //					e.printStackTrace();
 //					logger.error("Error setting date fields to hibernate SQL Query: "
-//							+ e.getMessage()+"\n"+e.getCause());	
+//							+ e.getMessage()+" "+e.getCause());	
 //				}
 				
 				// set userId
@@ -615,7 +752,7 @@ public class WProcessDefDao {
 				if (tx != null)
 					tx.rollback();
 				String message="WProcessDefDao: 002 getWProcessDefs() - can't obtain process list - " +
-						ex.getMessage()+"\n"+ex.getCause();
+						ex.getMessage()+" "+ex.getCause();
 				logger.warn(message );
 				throw new WProcessDefException(message);
 
@@ -623,7 +760,7 @@ public class WProcessDefDao {
 				if (tx != null)
 					tx.rollback();
 				String message="WProcessDefDao: 002B getWProcessDefs() - can't obtain process list - " +
-						ex.getMessage()+"\n"+ex.getCause();
+						ex.getMessage()+" "+ex.getCause();
 				logger.warn(message );
 				throw new WProcessDefException(message);
 			}
@@ -1064,9 +1201,9 @@ public class WProcessDefDao {
 				tx.rollback();
 			logger.error("HibernateException: getWorkingProcessListByFinder() - Can't get the WProcessDefLight list - "
 					+ ex.getMessage()
-					+ "\n"
+					+ " "
 					+ ex.getLocalizedMessage()
-					+ " \n"
+					+ " "
 					+ ex.getCause());
 			throw new WProcessDefException(ex);
 		} catch (Exception ex) {
@@ -1074,9 +1211,9 @@ public class WProcessDefDao {
 				tx.rollback();
 			logger.error("Exception: getWorkingProcessListByFinder() - Can't get the WProcessDefLight list - "
 					+ ex.getMessage()
-					+ "\n"
+					+ " "
 					+ ex.getLocalizedMessage()
-					+ " \n"
+					+ " "
 					+ ex.getCause());
 			throw new WProcessDefException(ex);
 		}
@@ -1117,10 +1254,10 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("WProcessDefDao: userIsProcessAdmin() - can't obtain process list - "
-					+ ex.getMessage() + "\n" + ex.getCause());
+					+ ex.getMessage() + " " + ex.getCause());
 			throw new WProcessDefException(
 					"WProcessDefDao: userIsProcessAdmin() - can't obtain process list: "
-							+ ex.getMessage() + "\n" + ex.getCause());
+							+ ex.getMessage() + " " + ex.getCause());
 
 		}
 
@@ -1168,14 +1305,14 @@ public class WProcessDefDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "HibernateException: existsProcessVersions - can't obtain count of process for process head id = " +
-								processHeadId + "]  "+ex.getMessage()+"\n"+ex.getCause();
+								processHeadId + "]  "+ex.getMessage()+" "+ex.getCause();
 			logger.warn( mess );
 			throw new WProcessDefException(mess);
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			String mess = "Exception: existsProcessVersions - can't obtain count of process for process head id = " +
-								processHeadId + "]  "+ex.getMessage()+"\n"+ex.getCause();
+								processHeadId + "]  "+ex.getMessage()+" "+ex.getCause();
 			logger.warn( mess );
 			throw new WProcessDefException(mess);
 		}

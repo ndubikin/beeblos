@@ -13,16 +13,10 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
-import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
-import org.beeblos.bpm.core.model.WStepWork;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 
 import com.sp.common.util.HibernateUtil;
@@ -143,7 +137,7 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			String message = "HibernateException: update - Can't update deleted field for step " + stepId
-					+ " - and deleted = " + deleted + "\n - " + ex.getMessage() + "\n"
+					+ " - and deleted = " + deleted + "  - " + ex.getMessage() + " "
 					+ ex.getCause();
 			logger.error(message);
 			throw new WStepDefException(message);
@@ -151,7 +145,7 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			String message = "Exception: update - Can't update deleted field for step " + stepId
-					+ " - and deleted = " + deleted + "\n - " + ex.getMessage() + "\n"
+					+ " - and deleted = " + deleted + "  - " + ex.getMessage() + " "
 					+ ex.getCause();
 			logger.error(message);
 			throw new WStepDefException(message);
@@ -171,15 +165,15 @@ public class WStepDefDao {
 
 		} catch (HibernateException ex) {
 			logger.error("WStepDefDao: delete - Can't delete proccess definition record "+ step.getName() +
-					" <id = "+step.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+					" <id = "+step.getId()+ ">  "+" - "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("WStepDefDao:  delete - Can't delete proccess definition record  "+ step.getName() +
-					" <id = "+step.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+					" <id = "+step.getId()+ ">  "+" - "+ex.getMessage()+" "+ex.getCause() );
 
 		} catch (WStepDefException e) {
 			logger.error("WStepDefDao: delete - Exception in deleting step rec "+ step.getName() +
-					" <id = "+step.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
+					" <id = "+step.getId()+ "> no esta almacenada  "+" - "+e.getMessage()+" "+e.getCause() );
 			throw new WStepDefException("WStepDefDao: delete - Exception in deleting step rec "+ step.getName() +
-					" <id = "+step.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
+					" <id = "+step.getId()+ "> not stored  "+" - "+e.getMessage()+" "+e.getCause() );
 
 		} 
 
@@ -219,16 +213,16 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getWStepDefByPK - we can't obtain the required id = "+
-					step.getId() + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					step.getId() + "] -  "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefByPK - we can't obtain the required id : " + step.getId() + " - "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getWStepDefByPK - we can't obtain the required id = "+
-					step.getId() + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					step.getId() + "] -  "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefByPK - we can't obtain the required id : " + step.getId() + " - "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		}
 
 	}
@@ -264,17 +258,24 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.error("HibernateException: getWStepDefByPK - we can't obtain the required id = "+
-					id + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepDefException("WStepDefDao: getWStepDefByPK - HibernateException we can't obtain the required id : " + id + " - "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: getWStepDefByPK - can't obtain WStepDef with id:"+
+					(id!=null?id:"null") + " " 
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():" "); 
+			logger.error(mess);
+			throw new WStepDefException(mess);
+			
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.error("Exception: getWStepDefByPK - we can't obtain the required id = "+
-					id + "] - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepDefException("WStepDefDao: getWStepDefByPK - HibernateException we can't obtain the required id : " + id + " - "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: getWStepDefByPK - can't obtain WStepDef with id:"+
+					(id!=null?id:"null") + " " 
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():" ")+" "
+					+ex.getClass(); 
+			logger.error(mess);
+			throw new WStepDefException(mess);
+
 		}
 
 		try {
@@ -286,7 +287,7 @@ public class WStepDefDao {
 
 		} catch (WStepDataFieldException e) {
 			String mess = "WStepDefDao: getWStepDefByPK - WStepDataFieldException can't load related step data fields = "+
-								id + "] - \n"+e.getMessage()+"\n"+e.getCause();
+								id + "] -  "+e.getMessage()+" "+e.getCause();
 			logger.error( mess );
 			throw new WStepDefException( mess );
 		}
@@ -323,9 +324,9 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("WStepDefDao: getWStepDefByName - can't obtain step name = " +
-					name + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					name + "]  almacenada -  "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("getWStepDefByName;  can't obtain step name: " + 
-					name + " - " + ex.getMessage()+"\n"+ex.getCause());
+					name + " - " + ex.getMessage()+" "+ex.getCause());
 
 		}
 
@@ -360,16 +361,16 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getWStepDefs() - can't obtain step list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getWStepDefs() - can't obtain step list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		}
 
 		// TODO HAY QUE CARGAR EL MANAGED DATA PARA CADA STEP-DEF
@@ -400,16 +401,16 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getLastVersionNumber - can't obtain step last version = " +
-					stepHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					stepHeadId + "]  almacenada -  "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("getLastVersionNumber;  can't obtain step last version: " + 
-					stepHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					stepHeadId + " - " + ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getLastVersionNumber - can't obtain step last version = " +
-					stepHeadId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					stepHeadId + "]  almacenada -  "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("getLastVersionNumber;  can't obtain step last version: " + 
-					stepHeadId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					stepHeadId + " - " + ex.getMessage()+" "+ex.getCause());
 		}
 
 		if (version == null){
@@ -442,16 +443,16 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: existsStep - can't obtain step id = " +
-					stepId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					stepId + "]  almacenada -  "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("existsStep;  can't obtain step id: " + 
-					stepId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					stepId + " - " + ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: existsStep - can't obtain step id = " +
-					stepId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
+					stepId + "]  almacenada -  "+ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("existsStep;  can't obtain step id: " + 
-					stepId + " - " + ex.getMessage()+"\n"+ex.getCause());
+					stepId + " - " + ex.getMessage()+" "+ex.getCause());
 		}
 
 		if (storedId == null){
@@ -518,26 +519,42 @@ public class WStepDefDao {
 			logger.debug("[QUERY]: "+query);
 			
 			steps = session.createSQLQuery(query)
-					.addEntity("WStepDef", WStepDef.class)
-					.setParameter("processId", processDefId)
-					.list();
+							.addEntity("WStepDef", WStepDef.class)
+							.setParameter("processId", processDefId)
+							.list();
 
+//			Criteria criteria = session.createCriteria(WStepDef.class, "wsd")
+////					.createAlias("wStepHead", "wsh", JoinType.LEFT_OUTER_JOIN)
+////					.createAlias("WStepSequenceDef", "wss", JoinType.LEFT_OUTER_JOIN)
+//					;
+//				
+//				
+//				DetachedCriteria criteriaWProcessStepDef = 
+//						DetachedCriteria.forClass(WProcessDef.class, "wpd")
+//						.createAlias("steps", "steps", JoinType.LEFT_OUTER_JOIN)
+//						.setProjection(Property.forName("steps.id"))
+//						.add( Restrictions.eq("id",processDefId) );
+//				
+//				criteria.add(Property.forName("wsd.id").in(criteriaWProcessStepDef));
+//				
+//
+//				steps = (List<WStepDef>) criteria.list();			
 			tx.commit();
 
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("HibernateException: getWStepDefs() - can't obtain step list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			logger.warn("Exception: getWStepDefs() - can't obtain step list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
+					ex.getMessage()+" "+ex.getCause() );
 			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+					+ ex.getMessage()+" "+ex.getCause());
 		}
 
 		return steps;
@@ -583,14 +600,14 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "HibernateException: getProcessIdList() - can't obtain process id list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+ex.getCause();
 			logger.warn(mess);
 			throw new WStepDefException(mess);
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
 			String mess = "Exception: getProcessIdList() - can't obtain process id list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+ex.getCause();
 			logger.warn(mess);
 			throw new WStepDefException(mess);
 		}
@@ -657,13 +674,13 @@ public class WStepDefDao {
 					tx.rollback();
 				throw new WStepDefException(
 						"Can't obtain WStepDefs combo list "
-						+ex.getMessage()+"\n"+ex.getCause());
+						+ex.getMessage()+" "+ex.getCause());
 			} catch (Exception e) {
 				if (tx != null)
 					tx.rollback();
 				throw new WStepDefException(
 						"Can't obtain WStepDefs combo list "
-						+e.getMessage()+"\n"+e.getCause());				
+						+e.getMessage()+" "+e.getCause());				
 			}
 
 			return retorno;
@@ -756,13 +773,13 @@ public class WStepDefDao {
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();
-				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+"\n"+ex.getCause();
+				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
 			} catch (Exception e) {
 				if (tx != null)
 					tx.rollback();
-				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+"\n"+e.getCause();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
 			}
@@ -897,13 +914,13 @@ public class WStepDefDao {
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();
-				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+"\n"+ex.getCause();
+				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
 			} catch (Exception e) {
 				if (tx != null)
 					tx.rollback();
-				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+"\n"+e.getCause();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
 			}
@@ -977,7 +994,7 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			String message="HibernateException: 002 getWStepDefs() - can't obtain process list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+ex.getCause();
 			logger.warn(message );
 			throw new WStepDefException(message);
 
@@ -985,7 +1002,7 @@ public class WStepDefDao {
 			if (tx != null)
 				tx.rollback();
 			String message="Exception: 002B getWStepDefs() - can't obtain process list - " +
-					ex.getMessage()+"\n"+ex.getCause();
+					ex.getMessage()+" "+ex.getCause();
 			logger.warn(message );
 			throw new WStepDefException(message);
 		}
