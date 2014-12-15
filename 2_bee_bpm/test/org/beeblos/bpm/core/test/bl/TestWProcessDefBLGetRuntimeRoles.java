@@ -50,17 +50,17 @@ public class TestWProcessDefBLGetRuntimeRoles extends TestCase{
 			
 			List<Integer> roleIdList;
 			
-			roleIdList = processBL.getProcessRoles(process.getId(), 1000);
+			roleIdList = processBL.getProcessRuntimeRoleIds(process.getId(), 1000);
 			
 			if (roleIdList!=null && roleIdList.size()>0){
 				for (Integer i: roleIdList) {
 					System.out.println("role id:"+i);
 				}
 			} else {
-				System.out.println("No runtimeRoles found...");
+				System.out.println("No runtime Roles found...");
 			}
 			
-			List<WRoleDef> roleList = processBL.getProcessRuntimeRoles(process.getId());
+			List<WRoleDef> roleList = processBL.getProcessRuntimeRoles(process.getId(),1000);
 			
 			if (roleList!=null && roleList.size()>0){
 				for (WRoleDef role: roleList) {

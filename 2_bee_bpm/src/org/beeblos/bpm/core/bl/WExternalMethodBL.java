@@ -85,6 +85,13 @@ public class WExternalMethodBL {
 
 	}
 
+	/**
+	 * load external method by pk
+	 * 
+	 * @param pk
+	 * @return
+	 * @throws WExternalMethodException
+	 */
 	public WExternalMethod getExternalMethodByPK(Integer pk)
 			throws WExternalMethodException {
 		WExternalMethodDao wExternalMethodDao = new WExternalMethodDao();
