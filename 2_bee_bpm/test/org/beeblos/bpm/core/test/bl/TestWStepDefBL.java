@@ -114,7 +114,9 @@ public class TestWStepDefBL extends TestCase{
 			Integer idUser1 = userBl.add(new WUserDef( "juan ss", "jn", true, 1000, new DateTime()), 1000);
 			Integer idUser2 = userBl.add(new WUserDef( "maria ss", "mr", true, 1000, new DateTime()), 1000);
 			
+
 			step = new WStepDef(null,1,2,3,"ejecute este paso plis","sincomentarios ...",null,null,null);
+
 			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));
 //			step.getAssigned().add(new WStepAssignedDef("pepe","user"));
 			
