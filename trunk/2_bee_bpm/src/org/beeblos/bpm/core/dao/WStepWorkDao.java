@@ -1074,7 +1074,7 @@ public class WStepWorkDao {
 			 */
 			reqFilter +=" ( wswa.id_user =:userId ) ";
 			
-			reqFilter = " ) ";
+			reqFilter += " ) ";
 			
 		} else {
 			
