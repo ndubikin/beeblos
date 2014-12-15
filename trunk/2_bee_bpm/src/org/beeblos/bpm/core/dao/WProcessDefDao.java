@@ -551,9 +551,9 @@ public class WProcessDefDao {
 	 * @return - list inteber roles with runtimeRole=true
 	 * @throws WProcessDefException 
 	 */
-	public List<Integer> getProcessRuntimeRoleIds(Integer idProcess) throws WProcessDefException {
+	public List<Integer> getProcessRuntimeRoleIds(Integer idProcessDef) throws WProcessDefException {
 		logger.debug(">>> getProcessRuntimeRoleIds >> idProcess:"
-				+(idProcess!=null?idProcess:"null"));
+				+(idProcessDef!=null?idProcessDef:"null"));
 		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -568,7 +568,7 @@ public class WProcessDefDao {
 			tx.begin();
 
 			Query query = session.getNamedQuery("findProcessRuntimeRoleId")
-					.setInteger("idProcess", idProcess);
+					.setInteger("idProcessDef", idProcessDef);
 			
 			retorno = query.list();
 
@@ -615,9 +615,9 @@ public class WProcessDefDao {
 	 * @return - list WRoleDef roles with runtimeRole=true
 	 * @throws WProcessDefException 
 	 */
-	public List<WRoleDef> getProcessRuntimeRoles(Integer idProcess) throws WProcessDefException {
+	public List<WRoleDef> getProcessRuntimeRoles(Integer idProcessDef) throws WProcessDefException {
 		logger.debug(">>> getProcessRuntimeRoles >> idProcess:"
-				+(idProcess!=null?idProcess:"null"));
+				+(idProcessDef!=null?idProcessDef:"null"));
 		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -632,7 +632,7 @@ public class WProcessDefDao {
 			tx.begin();
 
 			Query query = session.getNamedQuery("findProcessRuntimeRole")
-					.setInteger("idProcess", idProcess);
+					.setInteger("idProcessDef", idProcessDef);
 			
 			retorno = query.list();
 
@@ -643,7 +643,7 @@ public class WProcessDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "HibernateException: getProcessRuntimeRoleIds() error recovering process runtime role id list... " +
+			String mess = "HibernateException: getProcessRuntimeRoles() error recovering process runtime role id list... " +
 					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""); 
 			logger.error( mess );
 			throw new WProcessDefException( mess );
@@ -651,7 +651,7 @@ public class WProcessDefDao {
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "Exception: getProcessRuntimeRoleIds() error recovering process runtime role id list... " +
+			String mess = "Exception: getProcessRuntimeRoles() error recovering process runtime role id list... " +
 					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
 					+ex.getClass(); 
 			logger.error( mess );

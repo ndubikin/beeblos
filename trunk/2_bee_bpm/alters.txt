@@ -140,23 +140,24 @@ CHANGE COLUMN `label_user_readable` `label_user_readable` VARCHAR(255) NULL ;
 ALTER TABLE `bee_bpm_dev`.`notification_event` 
 ADD COLUMN `comments` VARCHAR(255) NULL DEFAULT NULL AFTER `priority`;
 
-# nes 20141027
-CREATE TABLE `w_process_step_def` (
-  `id_process` int(11) NOT NULL,
-  `id_step` int(11) NOT NULL,
-  `add_date` timestamp NOT NULL DEFAULT '1970-01-01 02:01:00',
-  `add_user` int(11) DEFAULT NULL,
-  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `mod_user` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_process`,`id_step`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation between process and their steps';
-
-## carga los step para el proceso id=1
-insert into w_process_step_def
-SELECT 1, sd.id,null,null,null,null 
-FROM w_step_def sd  
-WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  w_step_sequence_def wsd WHERE wsd.process_id = 1
-	UNION SELECT DISTINCT id_dest_step FROM w_step_sequence_def WHERE process_id = 1  ) ;
+### repetido mas abajo - nes 20141215
+## nes 20141027
+#CREATE TABLE `w_process_step_def` (
+#  `id_process` int(11) NOT NULL,
+#  `id_step` int(11) NOT NULL,
+#  `add_date` timestamp NOT NULL DEFAULT '1970-01-01 02:01:00',
+#  `add_user` int(11) DEFAULT NULL,
+#  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#  `mod_user` int(11) DEFAULT NULL,
+#  PRIMARY KEY (`id_process`,`id_step`)
+#) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation between process and their steps';
+#
+### carga los step para el proceso id=1
+#insert into w_process_step_def
+#SELECT 1, sd.id,null,null,null,null 
+#FROM w_step_def sd  
+#WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  w_step_sequence_def wsd WHERE wsd.process_id = 1
+#	UNION SELECT DISTINCT id_dest_step FROM w_step_sequence_def WHERE process_id = 1  ) ;
 	
 # nes 20141027
 CREATE TABLE `bee_bpm_dev`.`w_process_step_def` (
@@ -264,3 +265,22 @@ CHANGE COLUMN `active` `active` BIT(1) NOT NULL DEFAULT b'1' ;
 ALTER TABLE `bee_bpm_dev`.`w_step_response_def` 
 CHANGE COLUMN `mod_user` `mod_user` INT(11) NULL ;
 
+## nes 20141215
+
+CREATE TABLE `bee_bpm_dev`.`w_user_role_work` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_user` int(11) NOT NULL COMMENT 'ID usuario asignado a un rol en tiempo de ejecución',
+  `id_role` int(11) NOT NULL,
+  `id_process_work` int(11) NOT NULL COMMENT 'ID del proceso en ejecución',
+  `insert_date` datetime DEFAULT NULL,
+  `insert_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `wurw_x_wru` (`id_process_work`,`id_role`,`id_user`),
+  KEY `wurw_x_ru` (`id_role`,`id_user`),
+  KEY `wurw_x_ur` (`id_user`,`id_role`),
+  CONSTRAINT `fk_wurw_user1` FOREIGN KEY (`id_user`) REFERENCES `w_user_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_wurw_role1` FOREIGN KEY (`id_role`) REFERENCES `w_role_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_wurw_work1` FOREIGN KEY (`id_process_work`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='para asignar usuarios a un rol en tiempo de ejecución';

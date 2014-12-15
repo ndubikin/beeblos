@@ -771,7 +771,7 @@ public class WProcessDefBL {
 	 * @return
 	 * @throws WProcessDefException 
 	 */
-	public List<Integer> getProcessRoles(Integer idProcess, Integer currentUserId) throws WProcessDefException {
+	public List<Integer> getProcessRuntimeRoleIds(Integer idProcess, Integer currentUserId) throws WProcessDefException {
 		
 		return new WProcessDefDao().getProcessRuntimeRoleIds(idProcess);
 	}
@@ -787,13 +787,13 @@ public class WProcessDefBL {
 	 * 
 	 * nes 20141206
 	 * 
-	 * @param idProcess
+	 * @param idProcessDef
 	 * @param currentUserId
 	 * @return
 	 * @throws WProcessDefException 
 	 */
-	public List<WRoleDef> getProcessRuntimeRoles(Integer idProcess) throws WProcessDefException {
-		return new WProcessDefDao().getProcessRuntimeRoles(idProcess);
+	public List<WRoleDef> getProcessRuntimeRoles(Integer idProcessDef, Integer currentUserId) throws WProcessDefException {
+		return new WProcessDefDao().getProcessRuntimeRoles(idProcessDef);
 	}
 	
 	public List<WProcessDef> finderWProcessDefLight(LocalDate initialInsertDateFilter, LocalDate finalInsertDateFilter, 

@@ -7,7 +7,8 @@ import static com.sp.common.util.Resourceutil.getStringProperty;
 public class Constants {
 	
 	/**
-	 * rol de sistema para indicar el usuario originador de una instancia de un proceso
+	 * Rol de sistema para indicar el usuario originador de una instancia de un proceso.
+	 * De otra forma: sería el usuario que inicia un workflow.
 	 * Se define como rol porque sería un rol dinámico que se asigna en tiempo de ejecución
 	 * para cada instancia.
 	 * nes 20141014

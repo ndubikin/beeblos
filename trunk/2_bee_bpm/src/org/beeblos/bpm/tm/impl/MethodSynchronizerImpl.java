@@ -23,7 +23,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 */
 
 	public void invokeExternalMethod(WExternalMethod method, Integer currentId) {
-		logger.debug(">>>invokeExternalMethod 1");
+		logger.debug(">>> invokeExternalMethod:"+(method!=null?method.toString():"null"));
 		
 		invokeExternalMethod(
 				method.getClassname(), 
@@ -33,12 +33,15 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 			);
 	}
 	
+
 	/**
 	 * Invokes a method(methodToInvoke) from a class (classToInvoke) with passed params
 	 */
 	public void invokeExternalMethod(
 			String classToInvoke, String methodToInvoke, Class[] paramTypes, Object[] paramData) {
-		logger.debug(">>>invokeExternalMethod 2");
+		logger.debug(">>>invokeExternalMethod classToInvoke:"
+							+(classToInvoke!=null?classToInvoke:"null  methodToInvoke:"
+							+(methodToInvoke!=null?methodToInvoke:"null")));
 		
 //		Object obj=null;
 

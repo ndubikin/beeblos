@@ -176,13 +176,13 @@ public class WStepDef implements java.io.Serializable {
 	
 	/**
 	 * indicates the instance (wStepWork) belongs this wStepDef must obtain allowed users
-	 * from an external source executing WExternalMethod indicated by this id at runtime
+	 * (workers) at runtime from an external source (executing WExternalMethod indicated 
+	 * by this id) 
 	 * 
-	 * To do this, current way is to execute an external method.
-	 * The exernal method must be defined or declared as WExternalMethod 
+	 * The external method must be defined or declared as WExternalMethod 
 	 * at WProcessDef/WProcessHead level.
-	 * About the meaning of this scenario, at runtime the external method must be 
-	 * performed next to the creation of the new wStepWork related with 
+	 * About the meaning of this scenario, at runtime, the external method must be 
+	 * executed next to the creation of the new wStepWork related with 
 	 * this wStepDef ...
 	 * 
 	 * required: external method must return an int[] with valid user ids 
@@ -824,7 +824,7 @@ public class WStepDef implements java.io.Serializable {
 		this.idUserAssignmentMethod = idUserAssignmentMethod;
 	}
 	/**
-	 * returns true users to work with this step must be assigned at runtime...
+	 * returns true if users to work with this step must be assigned at runtime...
 	 * nes 20140705
 	 * @return
 	 */

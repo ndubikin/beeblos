@@ -656,6 +656,52 @@
 		</set>
 -->
 	</class>
+	
+	<!-- para gestionar los usuarios de los runtime roles que se asignan siempre a un process work  -->
+	<class name="org.beeblos.bpm.core.model.WUserRoleWork" table="w_user_role_work">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<many-to-one class="org.beeblos.bpm.core.model.WRoleDef"
+			lazy="false" fetch="join" name="role">
+			<column name="" />
+		</many-to-one>
+
+		<property generated="never" lazy="false" name="idUser"	type="java.lang.Integer">
+			<column name="id_user">
+			</column>
+		</property>			
+
+		<property generated="never" lazy="false" name="idRole"	type="java.lang.Integer">
+			<column name="id_role">
+			</column>
+		</property>			
+
+		<property generated="never" lazy="false" name="idProcessWork"	type="java.lang.Integer">
+			<column name="id_process_work">
+			</column>
+		</property>			
+
+		<property generated="never" lazy="false" name="insertDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="insert_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property generated="never" lazy="false" name="modUser"
+			type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+	</class>		
 
 	<class name="org.beeblos.bpm.core.model.WStepDataField" table="w_step_data_field">
 
@@ -2235,7 +2281,7 @@
 		<![CDATA[select distinct wsr.id_role from w_step_role wsr 
 						left join w_process_step_def wpsd ON wsr.id_step=wpsd.id_step 
 						left join w_role_def wrd ON wrd.id=wsr.id_role 
-					WHERE wrd.runtime_role AND wpsd.id_process= :idProcess]]>
+					WHERE wrd.runtime_role AND wpsd.id_process= :idProcessdDef]]>
     </sql-query>
     
     <!-- returns a list of all runtime roles for given processId -->
@@ -2244,7 +2290,7 @@
 		<![CDATA[select distinct wrd.* from w_step_role wsr 
 						left join w_process_step_def wpsd ON wsr.id_step=wpsd.id_step 
 						left join w_role_def wrd ON wrd.id=wsr.id_role 
-					WHERE wrd.runtime_role AND wpsd.id_process= :idProcess]]>
+					WHERE wrd.runtime_role AND wpsd.id_process= :idProcessDef]]>
     </sql-query>
 
 	<filter-def name="byProcessHeadId">

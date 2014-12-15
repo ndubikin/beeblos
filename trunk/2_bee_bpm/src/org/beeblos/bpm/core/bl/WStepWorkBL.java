@@ -42,6 +42,7 @@ import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
+import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
@@ -52,6 +53,7 @@ import org.beeblos.bpm.core.model.WStepWorkAssignment;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRole;
+import org.beeblos.bpm.core.model.WUserRoleWork;
 import org.beeblos.bpm.core.model.enumerations.StepWorkStatus;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WProcessDefThin;
@@ -90,7 +92,7 @@ public class WStepWorkBL {
 	 * 
 	 * There is possible to insert or start a new process in any step of the process map..
 	 * 
-	 * @param work
+	 * @param processWork
 	 * @param swco
 	 * @param currentUserId
 	 * @return
@@ -98,66 +100,74 @@ public class WStepWorkBL {
 	 * @throws WProcessWorkException
 	 * @throws WStepWorkSequenceException
 	 */
-	public Integer start(WProcessWork work, WStepWork stepw, Integer currentUserId) 
+	public Integer start(WProcessWork processWork, WStepWork stepWork, Integer currentUserId) 
 			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
-		
-		logger.debug("start() WStepWork - work:"+work.getReference()+" CurrentStep: ["+stepw.getCurrentStep().getName()+"] ...");
+		logger.debug("start() WStepWork - processWork reference:"
+				+(processWork!=null && processWork.getReference()!=null?processWork.getReference():"null")
+				+" CurrentStep:"
+				+(stepWork!=null && stepWork.getCurrentStep()!=null?stepWork.getCurrentStep().getName():"null")
+				);
 		
 		Integer idWork;//nes 20141206 refactorized
 
-		if ( work.getId()!=null && work.getId()!=0 ) {
-			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+work.getId()+")");
+		if ( processWork.getId()!=null && processWork.getId()!=0 ) {
+			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+processWork.getId()+")");
 		}
 
 		// nes 20130912 - if process is not active throws exception
-		if (!work.getProcessDef().isActive()) {
-			logger.warn("Trying to start a new workflow referring an inactive process id:"+work.getProcessDef().getId());
+		if (!processWork.getProcessDef().isActive()) {
+			logger.warn("Trying to start a new workflow referring an inactive process id:"+processWork.getProcessDef().getId());
 			throw new WProcessWorkException("This process is inactive. Can't start a new workflow.");
 		}
 
-		if (work.getStatus() == null) {
-			work.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
+		if (processWork.getStatus() == null) {
+			processWork.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
 		}
 
-		// adds the new ProcessWork
+		// add the new ProcessWork
 		WProcessWorkBL wpbl = new WProcessWorkBL();
-		idWork = wpbl.add(work, currentUserId);
-		work = wpbl.getWProcessWorkByPK(idWork, currentUserId); // checks all properties was correctly stored in the object
+		idWork = wpbl.add(processWork, currentUserId);
+		processWork = wpbl.getWProcessWorkByPK(idWork, currentUserId); // checks all properties was correctly stored in the object
 		
-		// if exists managed data set with just created work id
-		if (stepw.getManagedData()!=null) {
-			stepw.getManagedData().setCurrentWorkId(work.getId()); // process-work id
+		// if exists managed data set it with just created workId
+		if (stepWork.getManagedData()!=null) {
+			stepWork.getManagedData().setCurrentWorkId(processWork.getId()); // process-work id
 			System.out.println("TESTEAR ESTO QUE ESTE CARGANDO BIEN EL PROCESS-HEAD-ID");
-			stepw.getManagedData().setProcessId(work.getProcessHeadId()); // process head id
-			stepw.getManagedData().setOperation(INSERT);
+			stepWork.getManagedData().setProcessId(processWork.getProcessHeadId()); // process head id
+			stepWork.getManagedData().setOperation(INSERT);
 //			swco.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
 		}
 
-		// if work was persisted ok thencontinue with step-work
-		stepw.setwProcessWork(work);
+		// if processWork was persisted ok then continue with step-work
+		stepWork.setwProcessWork(processWork);
 		// timestamp & trace info
-		stepw.setArrivingDate(new DateTime());
-		stepw.setInsertUser( new WUserDef(currentUserId) );
-		stepw.setModDate( DEFAULT_MOD_DATE_TIME);
+		stepWork.setArrivingDate(new DateTime());
+		stepWork.setInsertUser( new WUserDef(currentUserId) );
+		stepWork.setModDate( DEFAULT_MOD_DATE_TIME );
 		
-		// nes 20140707 - assign users at runtime if they're defined ...
-		if ( stepw.getCurrentStep().isRuntimeAssignedUsers()) {
+		// nes 20140707 - if they're defined assigns runtime users to stepWork...
+		if ( stepWork.getCurrentStep().isRuntimeAssignedUsers()) {
 			_assignRuntimeUsers(
-					stepw, currentUserId,
-					stepw.getCurrentStep().getIdUserAssignmentMethod(),
+					stepWork, currentUserId, // currentUserId is the originator as we are in 'start' method ...
+					stepWork.getCurrentStep().getIdUserAssignmentMethod(),
 					currentUserId);
 		}
 
-		// nes 20141206 - assign users to runtime roles if they're defined...
+		Integer idGeneratedStep= new WStepWorkDao().add(stepWork);
 		
+		/**
+		 * nes 20141206 - assign users to runtime roles if they're defined...
+		 * ( WUserRoleWork )
+		 */
+		_assignUsersToRuntimeRoles(processWork,currentUserId);
 		
-		Integer idGeneratedStep= new WStepWorkDao().add(stepw);
+
 		
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
-		this.createStepWorkSequenceLog(null, stepw, false, 
-				null, stepw.getCurrentStep(), currentUserId);
+		this.createStepWorkSequenceLog(null, stepWork, false, 
+				null, stepWork.getCurrentStep(), currentUserId);
 
-		_sendEmailNotification(stepw, currentUserId);
+		_sendEmailNotification(stepWork, currentUserId);
 
 		return idGeneratedStep;
 	}
@@ -1160,7 +1170,7 @@ public class WStepWorkBL {
 						
 						qty++;
 						
-						_setNewWorkingStepAndPersists(runtimeSettings,
+						_setNewStepWorkAndPersists(runtimeSettings,
 								currentUser, currentStepWork, isAdminProcess,
 								now, newStepWork, route);
 						
@@ -1306,7 +1316,7 @@ public class WStepWorkBL {
 	 * @throws WStepDefException
 	 * @throws WStepWorkException
 	 */
-	private void _setNewWorkingStepAndPersists(
+	private void _setNewStepWorkAndPersists(
 			WRuntimeSettings runtimeSettings, Integer currentUserId,
 			WStepWork currentStepWork, boolean isAdminProcess, DateTime now,
 			WStepWork newStepWork, WStepSequenceDef route)
@@ -1319,8 +1329,8 @@ public class WStepWorkBL {
 		 */
 		if ( newStepWork.getCurrentStep().isRuntimeAssignedUsers()) {
 			List<WStepWorkAssignment> swal = _assignRuntimeUsers(
-						newStepWork, currentStepWork.getwProcessWork().getInsertUser(), // nes 20141016
-						newStepWork.getCurrentStep().getIdUserAssignmentMethod(),
+						newStepWork, currentStepWork.getwProcessWork().getInsertUser(), // nes 20141016 - originator
+						newStepWork.getCurrentStep().getIdUserAssignmentMethod(), // external method to load runtime users...
 						currentUserId);
 			if (swal!=null && swal.size()>0) {
 				newStepWork.getAssignedTo().addAll(swal);
@@ -1335,7 +1345,136 @@ public class WStepWorkBL {
 	
 	}
 
+	
+	/**
+	 * Assign users to runtime roles if it has defined for this process...
+	 * nes 20141216
+	 * 
+	 * @param processWork
+	 * @param currentUserId
+	 */
+	public void _assignUsersToRuntimeRoles(WProcessWork processWork, Integer currentUserId){
+		logger.debug(">>> _assignUsersToRuntimeRoles ... idProcessDef:"
+					+(processWork!=null?processWork.getProcessDef().getId():"null"));
+		
+		try {
+			// get runtime role list
+			List<WRoleDef> runtimeRoleList = 
+					new WProcessDefBL().getProcessRuntimeRoles(processWork.getProcessDef().getId(), currentUserId);
+			//for each runtime role assign users
+			if(runtimeRoleList!=null && runtimeRoleList.size()>0) {
+				for (WRoleDef role: runtimeRoleList){
+					if (role.isRuntimeRole() 
+							&& role.getIdExternalMethod()!=null
+							&& role.getIdExternalMethod()!=0) {
+						_assignRuntimeUsersToRole(processWork, role, currentUserId);
+					} 
+				}
+			}
+		} catch (WProcessDefException e) {
+			/**
+			 * continues to finish start process with warnings!!
+			 */
+			String mess="WProcessDefException: error trying to get runtime roles for this process... MUST CHECK THIS INJECTED PROCESS!!"
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+		}
+		
+		
+	}
 
+	/**
+	 * Obtains runtime user list and load it for this instance (wProcessWork)
+	 * nes 20141215
+	 * 
+	 * @param processWork
+	 * @param role
+	 * @param currentUserId
+	 */
+	private void _assignRuntimeUsersToRole(WProcessWork processWork, WRoleDef role, Integer currentUserId){
+		logger.debug(">>> _assignRuntimeUsersToRole"+(role!=null?role.getId():"null")
+				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null"));
+		
+		/**
+		 * Obtains the user id list from external method
+		 */
+
+		try {
+			
+			/**
+			 * External method to obtain runtime user list to assign a role must return an Integer[] or List<Integer>
+			 */
+			Object objList = _executeExternalMethod(new Object[]{processWork}, role.getIdExternalMethod(), currentUserId);
+			
+			if (objList!=null) {
+				_addRuntimeUserToRole(objList, role, processWork.getId(), currentUserId);
+			}
+			
+		} catch (InstantiationException e) {
+			/**
+			 * continues to finish start process with warnings!!
+			 */
+			String mess="InstantiationException: error trying to execute WExternalMethod... runtime users must not be assigned!!! MUST CHECK THIS INJECTED PROCESS!!"
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+		} catch (IllegalAccessException e) {
+			/**
+			 * continues to finish start process with warnings!!
+			 */
+			String mess="InstantiationException: error trying to execute WExternalMethod... runtime users must not be assigned!!! MUST CHECK THIS INJECTED PROCESS!!"
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+		}
+			
+	
+		
+	}
+	
+	/**
+	 * La lista de id de usuarios devuelta por el external method como un objeto debo procesarla
+	 * y agregar la lista de id de usuarios a swaList para que se agreguen al step work como 
+	 * usuarios en runtime para ese step work...
+	 * 
+	 * TODO: ESTOY ASUMIENDO QUE ME DEVUELVEN LA LISTA DE USUARIOS DE W CUANDO LO MAS PROBABLE
+	 * ES QUE ME DEVUELVAN LA LISTA DE USUARIOS EXTERNOS, POR LO QUE HABRIA QUE CONVERTIR.
+	 * (QUEDA PENDIENTE... PORQUE AHORA SON IGUALES LOS ID-USUARIO EXTERNOS DE LOS INTERNOS)
+	 * 
+	 * @param objList
+	 * @param swaList
+	 */
+	private void _addRuntimeUserToRole(Object objList, WRoleDef role, Integer processWorkId, Integer currentUserId){
+		logger.debug(">>> processReturnedIdUser");
+		
+		List<WUserRoleWork> urwList = new ArrayList<WUserRoleWork>();
+		
+		if (objList instanceof ArrayList<?> ) {
+
+			ArrayList<?> al = (ArrayList<?>) objList;
+			if (al.size() > 0) {
+				// Iterate.
+				for (int i = 0; i < al.size(); i++) {
+					// Still not enough for a type.
+					Object o = al.get(0);
+					if (o instanceof Integer) {
+						urwList.add(new WUserRoleWork(null,(Integer)o,role.getId(),processWorkId) );
+					}
+				}
+			}
+			
+		} else if ( objList.getClass().equals(java.lang.Integer[].class) ) {
+			for ( Integer idUser: (Integer[]) objList){
+				urwList.add(new WUserRoleWork(null,idUser,role.getId(),processWorkId) );	
+			}
+		}
+		
+		if (urwList!=null && urwList.size()>0) {
+			new WUserRoleWorkBL().add(urwList, currentUserId);
+		}
+	}
+ 
 	/**
 	 * Runtime users must be defined by an external method, or because the step refers to the
 	 * system role 'originator' in which case we must assign the user at runtime...
@@ -1345,45 +1484,46 @@ public class WStepWorkBL {
 	 * 
 	 * If can't obtain almost 1 user to assign the step, then assigns it to administrator user (role ...)
 	 * 
-	 * lasmod: nes 20141016
-	 * 
-	 * @param newStepWork
-	 * @param externalMethodId >> external method id to obtain runtime users id to assign to the step
-	 * @param currentUser
+	 * lastmod: nes 20141016
+	 *
+	 * @param stepWork
+	 * @param idOriginatorUser
+	 * @param idExternalMethod
+	 * @param currentUserId
+	 * @return
 	 */
 	private List<WStepWorkAssignment> _assignRuntimeUsers(
-			WStepWork stepWork, Integer idOriginatorUser, Integer externalMethodId, Integer currentUserId) {
+			WStepWork stepWork, Integer idOriginatorUser, Integer idExternalMethod, Integer currentUserId) {
 		logger.debug("--->_assignRuntimeUsers");
 		
-		int[] idAssignedUsers;
 		List<WStepWorkAssignment> swaList = new ArrayList<WStepWorkAssignment>();
 		
 		/**
-		 * if wstepdef indicates originator must have access to this step...
+		 * if wstepdef indicates originator must have access to this step... then add
+		 * a WStepWorkAssignment with originator id as worker
 		 */
 		if (stepWork.isSysroleOriginator()) {
-			WStepWorkAssignment assignedPerson = 
-					new WStepWorkAssignment(W_SYSROLE_ORIGINATOR_ID
-								, idOriginatorUser
-								, true // active
-								, false // reassigned
-								, null, null
-								, false // from reassignment
-								, null, null);
-			swaList.add(assignedPerson);
+			swaList.add(createWStepWorkAssignmentObj(W_SYSROLE_ORIGINATOR_ID,idOriginatorUser));
 		}
 		
 		/**
 		 * executes external method ...
-		 * External method to assign users or roles at runtime must be return an object
+		 * External method to assign users or roles at runtime must return an object
 		 * containing a list of IntegerPair
+		 * 
+		 * nes 20141213 - a esto aún no lo estamos utilizando...
 		 */
 		try {
 			
-			Object objList = _executeExternalMethod(stepWork, externalMethodId, currentUserId);
+			Object objList = _executeExternalMethod(new Object[]{stepWork}, idExternalMethod, currentUserId);// nes 20141215 - generalizado
+			if (objList!=null) {
+				_addExternalMethodReturnedUsersToList(objList,swaList);
+			}
 			
 		} catch (Exception e) {
-			logger.error("Error trying execute external method ... "+e.getMessage()+" "+e.getCause());
+			logger.error("Error trying execute external method id:"
+					+ (idExternalMethod!=null?idExternalMethod:"null")
+					+" to assign RUNTIME USERS... "+e.getMessage()+" "+e.getCause());
 			
 		}
 
@@ -1393,6 +1533,65 @@ public class WStepWorkBL {
 		
 	}
 
+	/**
+	 * Crea un WStepWorkAssignment para el ID usuario indicado y para el 
+	 * Rol indicado (que puede ser null ...
+	 *
+	 * @param idRole 
+	 * @param idOriginatorUser
+	 * @return
+	 */
+	private WStepWorkAssignment createWStepWorkAssignmentObj(
+			Integer idRole,
+			Integer idOriginatorUser) {
+		WStepWorkAssignment assignedPerson = 
+				new WStepWorkAssignment(idRole
+							, idOriginatorUser
+							, true // active
+							, false // reassigned
+							, null, null
+							, false // from reassignment
+							, null, null);
+		return assignedPerson;
+	}
+
+	/**
+	 * La lista de id de usuarios devuelta por el external method como un objeto debo procesarla
+	 * y agregar la lista de id de usuarios a swaList para que se agreguen al step work como 
+	 * usuarios en runtime para ese step work...
+	 * 
+	 * TODO: ESTOY ASUMIENDO QUE ME DEVUELVEN LA LISTA DE USUARIOS DE W CUANDO LO MAS PROBABLE
+	 * ES QUE ME DEVUELVAN LA LISTA DE USUARIOS EXTERNOS, POR LO QUE HABRIA QUE CONVERTIR.
+	 * (QUEDA PENDIENTE... PORQUE AHORA SON IGUALES LOS ID-USUARIO EXTERNOS DE LOS INTERNOS)
+	 * 
+	 * @param objList
+	 * @param swaList
+	 */
+	private void _addExternalMethodReturnedUsersToList(Object objList, List<WStepWorkAssignment> swaList){
+		logger.debug(">>> processReturnedIdUser");
+		
+		if (objList instanceof ArrayList<?> ) {
+
+			ArrayList<?> al = (ArrayList<?>) objList;
+			if (al.size() > 0) {
+				// Iterate.
+				for (int i = 0; i < al.size(); i++) {
+					// Still not enough for a type.
+					Object o = al.get(0);
+					if (o instanceof Integer) {
+						swaList.add(createWStepWorkAssignmentObj(W_SYSROLE_ORIGINATOR_ID,(Integer)o ) );
+					}
+				}
+			}
+			
+		} else if ( objList.getClass().equals(java.lang.Integer[].class) ) {
+			for ( Integer i: (Integer[]) objList){
+				swaList.add(createWStepWorkAssignmentObj(W_SYSROLE_ORIGINATOR_ID,i ) );	
+			}
+		}
+		
+	}
+	
 	private void _sendEmailNotification(WStepWork newStep, Integer currentUserId) {
 		logger.debug(">>> _sendEmailNotification");
 		
@@ -1411,27 +1610,34 @@ public class WStepWorkBL {
 		
 	}
 	
+
 	/**
-	 * Execute external method 
+	 * Execute external GET external method
 	 * 
-	 * 
-	 * 
-	 * @param currentStepWork
-	 * @param currentUser
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * @param Object[] objList
+	 * @param methodId
+	 * @param currentUserId
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
 	 */
 	private Object _executeExternalMethod(
-			WStepWork currentStepWork, Integer methodId, Integer currentUserId) 
+			Object[] objList, Integer methodId, Integer currentUserId) // nes 20141215
 					throws InstantiationException, IllegalAccessException {
 		logger.debug(">>>_executeExternalMethod id:"+(methodId!=null?methodId:"null"));
+		
+		if (methodId==null || methodId==0){
+			logger.warn("_executeExternalMethod: no method id arrives!!!");
+			return null;
+		}
+		
 		Object result=null;
 		WExternalMethod method;
 		try {
 			method = new WExternalMethodBL().getExternalMethodByPK(methodId);
 			if (method!=null){
 				if (method.getParamlistName().length>0){
-					_setParamValues(method,currentStepWork, null, currentUserId);
+					_setParamValues(method, objList, currentUserId); // nes 20141215 - generalizado setParamValues
 				}
 				result = new MethodSynchronizerImpl().invokeExternalMethod(method, null,currentUserId);
 			}			
@@ -1456,13 +1662,15 @@ public class WStepWorkBL {
 	 * @throws InstantiationException 
 	 */
 	private void _executeRouteExternalMethod(
-			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) throws InstantiationException, IllegalAccessException {
+			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) 
+		throws InstantiationException, IllegalAccessException {
 		logger.debug(">>>_executeRouteExternalMethod check...");
+		
 		if (route.getExternalMethod()!=null && route.getExternalMethod().size()>0){
 			for (WExternalMethod method: route.getExternalMethod()) {
 				logger.debug(">>>_executeRouteExternalMethod:"+method.getClassname()+"."+method.getMethodname());
 				if (method.getParamlistName().length>0){
-					_setParamValues(method,currentStepWork, route, currentUserId);
+					_setParamValues(method,new Object[]{currentStepWork,route}, currentUserId); // nes 20141215 - generalizado setParamValues
 				}
 				new MethodSynchronizerImpl().invokeExternalMethod(method, currentUserId);
 			}
@@ -1471,19 +1679,29 @@ public class WStepWorkBL {
 	
 	/**
 	 * Load current value for each required parameter in method.paramlistName ...
-	 * The scope to search properties is for route, currentStepWork and currentUserId ...
+	 * ESTO HAY QUE REPENSARLO PORQUE PARTIMOS DE LA BASE QUE NO SABEMOS QUE PARAMETROS
+	 * SE INDICAN EN EL EXTERNAL METHOD DEFINICION (LO MAS NORMAL SERIA OBJECT ID Y COSAS ASI
+	 * QUE SON GENERICAS PERO NO ES OBLIGATORIO Y LUEGO EL TEMA ES COMO HACEMOS PARA PODER
+	 * DEFINIR DATOS A NIVEL DE EXTERNAL METHOD Y COMO HACEMOS PARA PASAR OBJETOS A CIEGAS
+	 * PARA BUSCAR ESOS DATOS...
 	 * 
 	 * @param method
-	 * @param route
-	 * @param currentStepWork
+	 * @param objList[] - list of objects to search paramName defined in externalMethod
 	 * @param currentUserId
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
 	private void _setParamValues(
-			WExternalMethod method, WStepWork currentStepWork, WStepSequenceDef route, 
+			WExternalMethod method, //WStepWork currentStepWork, WStepSequenceDef route,
+			Object[] objList, // nes 20141215 - generalizado
 			Integer currentUserId) throws InstantiationException, IllegalAccessException {
+		/**
+		 * set array limit at qty parameters defined for external method.
+		 */
 		int tope=method.getParamlistName().length;
+		/**
+		 * object[] to load paramlist
+		 */
 		Object[] paramValueObj = new Object[tope];
 		for (int i=0;i<tope;i++) {
 			String paramName=method.getParamlistName()[i];
@@ -1492,7 +1710,7 @@ public class WStepWorkBL {
 			if (paramName.equals("idCurrentUser")) {
 				paramValueObj[i]=currentUserId;
 			} else {
-				obj = _setPropertyValue(currentStepWork, route, paramName);
+				obj = _setPropertyValue(objList, paramName);
 				paramValueObj[i]=obj;
 			}
 		}
@@ -1502,47 +1720,56 @@ public class WStepWorkBL {
 	}
 
 	/**
-	 * @param currentStepWork
-	 * @param route
-	 * @param paramName
+	 * Set property value for for ....
+	 * search paramName in the current scoped objects: currentStepWork -> currentProcessWork -> route
+	 * and if exists load the value in paramlist as an Object
+	 * 
+	 * There will be interesting to generalize this method to work with introspection and annotations 
+	 * like the search for paramName will be in all the passed object and not in concrete stepWork or route....
+	 * 
+	 * @param mainObjList - object list to find/obtain paramName
+	 * @param paramName - the name of parameter must be passed to an exernal method
 	 */
-	private Object _setPropertyValue(WStepWork currentStepWork,
-			WStepSequenceDef route, String paramName) {
+	private Object _setPropertyValue(Object[] mainObjList, String paramName) {
 		Object obj=null;
-		// get field from their bean ...
+		// find field (paramName) in currentStepWork / currentProcessWork and route 
 		try {
-			if (PropertyUtils.isReadable(currentStepWork, paramName)) {
-					obj = PropertyUtils.getIndexedProperty(currentStepWork, paramName);
-			} else if (PropertyUtils.isReadable(currentStepWork.getwProcessWork(), paramName)) {
-				obj = PropertyUtils.getProperty(currentStepWork.getwProcessWork(), paramName);
-			} else if (PropertyUtils.isReadable(route, paramName)) {
-				obj = PropertyUtils.getIndexedProperty(route, paramName);
+			
+			for (Object o: mainObjList) {
+				if (PropertyUtils.isReadable(o, paramName)) {
+					obj = PropertyUtils.getIndexedProperty(o, paramName);
+				}
 			}
+
 		} catch (IllegalAccessException e) {
 			String mess = "WStepWorkBL:_setParamValues IllegalAccessException - error PropertyUtils getting property name:"
 					+paramName + " "
-					+e.getMessage()+" - "+e.getCause();
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():"null");
 			obj=null;
 			logger.error(mess);
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			String mess = "WStepWorkBL:_setParamValues InvocationTargetException - error PropertyUtils getting property name:"
 					+paramName + " "
-					+e.getMessage()+" - "+e.getCause();
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():"null");
 			obj=null;
 			logger.error(mess);
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
 			String mess = "WStepWorkBL:_setParamValues NoSuchMethodException - error PropertyUtils getting property name:"
 					+paramName + " "
-					+e.getMessage()+" - "+e.getCause();
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():"null");
 			obj=null;
 			logger.error(mess);
 			e.printStackTrace();
 		} catch (Exception e) {
 			String mess = "WStepWorkBL:_setParamValues Exception - error PropertyUtils getting property name:"
 					+paramName + " "
-					+e.getMessage()+" - "+e.getCause();
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():"null");
 			obj=null;
 			logger.error(mess);
 			e.printStackTrace();
