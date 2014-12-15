@@ -1737,7 +1737,17 @@ public class WStepWorkBL {
 			
 			for (Object o: mainObjList) {
 				if (PropertyUtils.isReadable(o, paramName)) {
-					obj = PropertyUtils.getIndexedProperty(o, paramName);
+					/**
+					 * try to get property in 2 ways: getNestedProperty and getIndexedProperty
+					 * if both two fails the catch error ... 
+					 * nes 20141215
+					 */
+					try {
+						obj = PropertyUtils.getNestedProperty(o, paramName);
+					} catch (Exception e) {
+						obj = PropertyUtils.getIndexedProperty(o, paramName);						
+					}
+					
 				}
 			}
 
