@@ -1059,7 +1059,7 @@ public class WStepWorkDao {
 			 * nes 20141206
 			 */			
 			reqFilter += " ( wsr.id_role in ";
-			reqFilter +=" 	 (select WURW.id_role from w_USER_ROLE_WORK WURW where WURW.id_user=:userId AND w.id_work=WURW.id_process_work ) ) OR  ";
+			reqFilter +=" 	 (select WURW.id_role from w_user_role_work WURW where WURW.id_user=:userId AND w.id_work=WURW.id_process_work ) ) OR  ";
 			
 			/**
 			 * role has permissions for this step ...  -  work time - explicit permissions for the role to
