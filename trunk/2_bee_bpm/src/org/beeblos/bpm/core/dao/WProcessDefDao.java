@@ -2,9 +2,11 @@ package org.beeblos.bpm.core.dao;
 
 import static com.sp.common.util.ConstantsCommon.DATE_FORMAT;
 import static com.sp.common.util.ConstantsCommon.DATE_HOUR_COMPLETE_FORMAT;
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.LAST_ADDED;
 import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE;
+import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.INACTIVE;
 
 import java.math.BigInteger;
@@ -14,7 +16,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -30,6 +34,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.Resourceutil;
 import com.sp.common.util.StringPair;
 
 
@@ -193,6 +198,30 @@ public class WProcessDefDao {
 			throw new WProcessDefException(mess);	
 
 		}
+		
+		/**
+		 * Load alive step sequence list for process...
+		 * nes 20141217 - pasado aquí que lo teníamos fuera ... 
+		 * 
+		 */
+		if (process!=null && process.getId()!=null) {
+			try {
+				process
+					.setStepSequenceList(
+							new WStepSequenceDefDao()
+								.getStepSequenceList(process.getId(), ALIVE) );
+				
+			} catch (WStepSequenceDefException ex) {
+				String mess = "WStepSequenceDefException: can't load process sequence list for wProcessDef id:"
+						+ process.getId()
+						+ " - "+ex.getMessage()+" "
+						+(ex.getCause()!=null?ex.getCause():" "); 
+				logger.error(mess);
+				throw new WProcessDefException(mess);	
+			}			
+		}
+
+
 
 		return process;
 	}
