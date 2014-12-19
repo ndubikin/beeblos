@@ -284,3 +284,7 @@ CREATE TABLE `bee_bpm_dev`.`w_user_role_work` (
   CONSTRAINT `fk_wurw_role1` FOREIGN KEY (`id_role`) REFERENCES `w_role_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_wurw_work1` FOREIGN KEY (`id_process_work`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='para asignar usuarios a un rol en tiempo de ejecución';
+
+-- dml 20141218 - nuevo campo de user
+ALTER TABLE `incidencias_sp`.`user` 
+ADD COLUMN `system_user` BIT(1) NULL DEFAULT b'0' AFTER `login_id`;
