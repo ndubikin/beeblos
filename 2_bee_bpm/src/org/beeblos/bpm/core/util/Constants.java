@@ -6,6 +6,8 @@ import static com.sp.common.util.Resourceutil.getStringProperty;
 
 public class Constants {
 	
+	public static final String DEFAULT_LAYER_XML = "<Layer description=\"\" id=\"1\" label=\"Default Layer\"><mxCell parent=\"0\" /></Layer>";
+	public static final String DEFAULT_MXCELL_XML = "<mxCell parent=\"1\" vertex=\"1\"> <mxGeometry as=\"geometry\" height=\"32\" width=\"72\" x=\"0\" y=\"0\" /> </mxCell>";
 	/**
 	 * Rol de sistema para indicar el usuario originador de una instancia de un proceso.
 	 * De otra forma: sería el usuario que inicia un workflow.

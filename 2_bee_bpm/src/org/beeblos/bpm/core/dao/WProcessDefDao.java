@@ -2,26 +2,41 @@ package org.beeblos.bpm.core.dao;
 
 import static com.sp.common.util.ConstantsCommon.DATE_FORMAT;
 import static com.sp.common.util.ConstantsCommon.DATE_HOUR_COMPLETE_FORMAT;
-import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static com.sp.common.util.ConstantsCommon.LAST_ADDED;
 import static com.sp.common.util.ConstantsCommon.LAST_MODIFIED;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.INACTIVE;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
+import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.graph.ElementWrapper;
+import org.beeblos.bpm.core.graph.Layer;
+import org.beeblos.bpm.core.graph.MxCell;
+import org.beeblos.bpm.core.graph.MxGraphModel;
+import org.beeblos.bpm.core.graph.Workflow;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WRoleDef;
+import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.core.util.Constants;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -34,7 +49,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.sp.common.util.HibernateUtil;
-import com.sp.common.util.Resourceutil;
 import com.sp.common.util.StringPair;
 
 
@@ -341,6 +355,94 @@ public class WProcessDefDao {
 		
 		return version;
 	}	
+	// pab 20141218
+	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
+		try {
+
+			WProcessDef pro = new WProcessDefBL().getWProcessDefByPK(processDefId, 1000);
+			pro.setWorkflowObj(new Workflow(
+										pro.getComments() == null ? "" : pro.getComments(),
+										pro.getXmlId() == null ? "0" : pro.getXmlId(),
+										pro.getId().toString(),
+										pro.getProcess().getName()));
+			
+			JAXBContext jaxbContext = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxGraphModel.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+			Iterator<WStepDef> i = pro.getSteps().iterator();
+			
+			while(i.hasNext()){
+				
+				WStepDef wsd = i.next();
+				
+				String xmlString = wsd.getMxCellString() != null && !wsd.getMxCellString().equals("") ? wsd.getMxCellString() : Constants.DEFAULT_MXCELL_XML;
+				
+				StringReader reader = new StringReader(xmlString);
+				MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader);
+				wsd.setMxCellObject(m);
+				
+			}
+
+			Iterator<WStepSequenceDef> i2 = pro.getStepSequenceList().iterator();
+			
+			while(i2.hasNext()){
+				
+				WStepSequenceDef ssd = i2.next();
+				
+				JAXBContext jc = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxCell.class);
+				Unmarshaller ju = jc.createUnmarshaller();
+
+				StringReader r = new StringReader(ssd.getXmlMxCellString() == null || ssd.getXmlMxCellString().equals("") ? 
+															Constants.DEFAULT_MXCELL_XML :
+															ssd.getXmlMxCellString() );
+				
+				MxCell m = (MxCell)ju.unmarshal(r);
+				
+				ssd.setMxCell(m);
+				
+			}
+			
+			JAXBContext jaxbContext2 = JAXBContext.newInstance(org.beeblos.bpm.core.graph.ElementWrapper.class);
+			Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
+	
+			StringReader sr = new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><ElementWrapper>"+pro.getXmlSymbolsString()+"</ElementWrapper>");
+			ElementWrapper sw = (ElementWrapper)jaxbUnmarshaller2.unmarshal(sr);
+
+			pro.setSymbolObjectList(sw.getsList());
+			
+			if(sw.getlList() != null &&
+					sw.getlList().size() > 0){
+				pro.setLayerObjectList(sw.getlList());
+			} else {
+				
+				Layer l = (Layer)JAXBContext.newInstance(org.beeblos.bpm.core.graph.Layer.class).createUnmarshaller().unmarshal(new StringReader(Constants.DEFAULT_LAYER_XML));
+				sw.setlList(new ArrayList<Layer>());
+				sw.getlList().add(l);
+				pro.setLayerObjectList(sw.getlList());
+			}
+			
+			MxGraphModel m = new MxGraphModel(pro);
+		
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			
+			StringWriter stringWriter = new StringWriter();
+			
+			jaxbMarshaller.marshal(m, stringWriter);
+			
+			return stringWriter.toString();
+
+			
+		} catch (WProcessDefException e) {
+
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
 	
 	// dml 20130710
 	public String getProcessDefXmlMap(Integer processDefId, Integer currentUserId) throws WProcessDefException {

@@ -7,9 +7,16 @@ import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.beeblos.bpm.core.graph.MxCell;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -19,15 +26,30 @@ import org.joda.time.LocalTime;
  * 
  * DEFINE EL PASO EN SI, LAS PÁGINAS RELACIONADAS, LAS RESPUESTAS POSIBLES
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class WStepDef implements java.io.Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
 	private Integer id;
 	
+	/**
+	 * This variables are used in the conversion from and to xml with jaxb
+	 * 
+	 * pab 04122014
+	 */
+	private String mxCellString;
+	private MxCell mxCellObject;
+	
+	private String xmlHref;
+	private String xmlId;
+	private String xmlLabel;
+	private String xmlRules;
+	
+	private String responsesString;
+		
 	/**
 	 * stepHead is intended to version control of a step definition
 	 * 
@@ -269,7 +291,7 @@ public class WStepDef implements java.io.Serializable {
 	}
 
 
-
+	@XmlAttribute(name="spId")
 	public Integer getId() {
 		return this.id;
 	}
@@ -310,6 +332,7 @@ public class WStepDef implements java.io.Serializable {
 		this.stepHead = stepHead;
 	}
 
+	@XmlAttribute(name="version")
 	public Integer getVersion() {
 		return version;
 	}
@@ -354,6 +377,7 @@ public class WStepDef implements java.io.Serializable {
 		this.idPhase = idPhase;
 	}
 
+	@XmlAttribute(name="description")
 	public String getStepComments() {
 		return this.stepComments;
 	}
@@ -436,6 +460,7 @@ public class WStepDef implements java.io.Serializable {
 	/**
 	 * @return the instructions
 	 */
+	@XmlAttribute(name="instructions")
 	public String getInstructions() {
 		return instructions;
 	}
@@ -1318,4 +1343,115 @@ public class WStepDef implements java.io.Serializable {
 				+ modDate + ", modUser=" + modUser + "]";
 	}
 
+	/**
+	 * @return the mxCellObject
+	 */
+	@XmlElement(name="mxCell")
+	public MxCell getMxCellObject() {
+		return mxCellObject;
+	}
+
+	/**
+	 * @param mxCellObject the mxCellObject to set
+	 */
+	public void setMxCellObject(MxCell mxCellObject) {
+		this.mxCellObject = mxCellObject;
+	}
+
+	/**
+	 * @return the mxCellString
+	 */
+	public String getMxCellString() {
+		return mxCellString;
+	}
+
+	/**
+	 * @param mxCellString the mxCellString to set
+	 */
+	public void setMxCellString(String mxCell) {
+		this.mxCellString = mxCell;
+	}
+
+	/**
+	 * @return the xmlHref
+	 */
+	@XmlAttribute(name="href")
+	public String getXmlHref() {
+		return xmlHref == null ? "" : xmlHref;
+	}
+
+	/**
+	 * @param xmlHref the xmlHref to set
+	 */
+	public void setXmlHref(String xmlHref) {
+		this.xmlHref = xmlHref;
+	}
+
+	/**
+	 * @return the xmlId
+	 */
+	@XmlAttribute(name="id")
+	public String getXmlId() {
+		return xmlId;
+	}
+
+	/**
+	 * @param xmlId the xmlId to set
+	 */
+	public void setXmlId(String xmlId) {
+		this.xmlId = xmlId;
+	}
+
+	/**
+	 * @return the xmlLabel
+	 */
+	@XmlAttribute(name="label")
+	public String getXmlLabel() {
+		xmlLabel = this.getStepHead().getName() != null ? this.getStepHead().getName() : "";
+		return xmlLabel;
+	}
+
+	/**
+	 * @param xmlLabel the xmlLabel to set
+	 */
+	public void setXmlLabel(String xmlLabel) {
+		this.xmlLabel = xmlLabel;
+	}
+
+	/**
+	 * @return the xmlRules
+	 */
+	@XmlAttribute(name="rules")
+	public String getXmlRules() {
+		return xmlRules == null ? "" : xmlRules;
+	}
+
+	/**
+	 * @param xmlRules the xmlRules to set
+	 */
+	public void setXmlRules(String xmlRules) {
+		this.xmlRules = xmlRules;
+	}
+
+	/**
+	 * @return the responsesString
+	 */
+	@XmlAttribute(name="responses")
+	public String getResponsesString() {
+//		return responsesString;
+		String out ="";
+		Iterator<WStepResponseDef> i = this.getResponseAsList().iterator();
+		while(i.hasNext()){
+			out += i.next().getName() + (i.hasNext()?"|":"") ;
+		}
+		responsesString = out;
+		return responsesString ;
+	}
+
+	/**
+	 * @param responsesString the responsesString to set
+	 */
+	public void setResponsesString(String responsesString) {
+		this.responsesString = responsesString;
+	}
 }

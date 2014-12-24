@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
 import org.joda.time.DateTime;
 
 public class WProcessHead implements java.io.Serializable {
@@ -17,8 +19,7 @@ public class WProcessHead implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	
-	private String name;	
+	private String name;
 	private String comments;
 	
 	/**
@@ -89,6 +90,7 @@ public class WProcessHead implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
+	@XmlAttribute(name="spId")
 	public Integer getId() {
 		return this.id;
 	}
@@ -97,6 +99,7 @@ public class WProcessHead implements java.io.Serializable {
 		this.id = id;
 	}
 
+	@XmlAttribute(name="label")
 	public String getName() {
 		return this.name;
 	}
@@ -105,6 +108,7 @@ public class WProcessHead implements java.io.Serializable {
 		this.name = name;
 	}
 
+	@XmlAttribute(name="description")
 	public String getComments() {
 		return this.comments;
 	}
