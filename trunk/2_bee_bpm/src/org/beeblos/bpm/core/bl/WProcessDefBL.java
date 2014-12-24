@@ -739,6 +739,12 @@ public class WProcessDefBL {
 	
 	}
 	
+	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
+
+		return new WProcessDefDao().getProcessDefXmlMap2(processDefId, currentUserId);
+	
+	}
+	
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion, Integer currentUserId )
 	throws WProcessDefException {
