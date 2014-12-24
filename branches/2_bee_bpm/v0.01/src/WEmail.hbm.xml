@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.beeblos.bpm.core.model.WEmailAccount" table="w_user_email_accounts">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="name" type="string">
+			<column name="name">
+				<comment>Reference name in the email direction</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="userDefaultAccount"
+			type="java.lang.Boolean">
+			<column name="user_default_account" sql-type="bit">
+				<comment>The default account, only one should be true</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="email" type="string">
+			<column length="150" name="email" not-null="true">
+				<comment>email</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="replyTo" type="string">
+			<column length="150" name="reply_to">
+				<comment>reply email direction / if empty take the email field</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="signatureText"
+			type="string">
+			<column name="signature_text" />
+		</property>
+		<property generated="never" lazy="false" name="signatureTxt"
+			type="text">
+			<column name="signature_txt" />
+		</property>
+		<property generated="never" lazy="false" name="signatureHtml"
+			type="text">
+			<column name="signature_html" />
+		</property>
+		<property generated="never" lazy="false" name="signatureFile"
+			type="string">
+			<column name="signature_file" />
+		</property>
+		<property generated="never" lazy="false" name="inputServerType"
+			type="string">
+			<column length="20" name="input_server_type">
+				<comment>default POP</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="inputServerName"
+			type="string">
+			<column length="100" name="input_server_name" />
+		</property>
+		<property generated="never" lazy="false" name="inputPort"
+			type="java.lang.Integer">
+			<column name="input_port" />
+		</property>
+		<property generated="never" lazy="false" name="connectionSecurity"
+			type="string">
+			<column length="20" name="connection_security" not-null="true">
+				<comment>None, SATRTTLS or SSL/TLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="identificationMethod"
+			type="string">
+			<column length="20" name="identification_method" not-null="true">
+				<comment>Insecure transmited password, encode password,
+					kergeros/GSSAPI, NTLM</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="format" type="string">
+			<column length="10" name="format">
+				<comment>Text, HTML</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outputServerName"
+			type="string">
+			<column name="output_server_name">
+				<comment>Output server name</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outputServer"
+			type="string">
+			<column name="output_server">
+				<comment>output server id . for example: smtp.softpoint.org</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outputPort"
+			type="java.lang.Integer">
+			<column name="output_port" not-null="true">
+				<comment>Default 25</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outputConnectionSecurity"
+			type="string">
+			<column length="10" name="output_connection_security">
+				<comment>None, STARTTLS, SSL/TLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outputIdentificationMethod"
+			type="string">
+			<column length="1" name="output_identification_method">
+				<comment>"S" without identification, "I" insercure transmision, "C"
+					encode password, "K"erteros /GSSAPI, "N"TLM</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outputUserName"
+			type="string">
+			<column length="40" name="output_user_name" />
+		</property>
+		<property generated="never" lazy="false" name="outputPassword"
+			type="string">
+			<column length="20" name="output_password">
+				<comment>no risky output accounts</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idExchange"
+			type="string">
+			<column length="50" name="id_exchange">
+				<comment>conection with exchange ...</comment>
+			</column>
+		</property>
+		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
+			lazy="false" fetch="join" name="wUserDef">
+			<column name="id_user" />
+		</many-to-one>
+	</class>
+
+</hibernate-mapping>

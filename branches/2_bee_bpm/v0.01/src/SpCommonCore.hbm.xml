@@ -1,0 +1,777 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 21, 2012 10:49:10 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+
+     <class name="com.sp.common.core.model.SystemObject" table="system_object">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+        <property name="name" type="string">
+            <column name="name"/>
+        </property>
+        <property name="objectClass" type="string">
+            <column name="object_class"/>
+        </property>
+        <property name="objectClassBL" type="string">
+            <column name="object_class_bl"/>
+        </property>
+        <property name="hierarchy" type="java.lang.Integer">
+            <column name="hierarchy"  />
+        </property>
+        <property name="comments" type="string">
+            <column name="comments"/>
+        </property>
+        <property name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="add_date" />
+        </property>
+        <property name="addUser" type="java.lang.Integer">
+            <column name="add_user" />
+        </property>
+        <property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="mod_date"/>
+        </property>
+        <property name="modUser" type="java.lang.Integer">
+            <column name="mod_user" />
+        </property>
+    </class>
+
+	<class name="com.sp.calendar.model.BusinessCalendar" table="business_calendar">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="fromDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="from_date" />
+		</property>
+		<property name="toDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="to_date" />
+		</property>
+	</class>
+
+	<!-- <class name="com.sp.common.core.model.Country" table="country" lazy="false"> -->
+	<!-- <id name="id" type="java.lang.String"> -->
+	<!-- <column name="id" /> -->
+	<!-- <generator class="assigned" /> -->
+	<!-- </id> -->
+	<!-- <property generated="never" lazy="false" name="name" -->
+	<!-- type="java.lang.String"> -->
+	<!-- <column length="50" name="name"> -->
+	<!-- <comment>Nombre del pais</comment> -->
+	<!-- </column> -->
+	<!-- </property> -->
+
+	<!-- <property generated="never" lazy="false" name="comment" -->
+	<!-- type="java.lang.String"> -->
+	<!-- <column name="comment"> -->
+	<!-- <comment>Otros datos del pais</comment> -->
+	<!-- </column> -->
+	<!-- </property> -->
+
+	<!-- </class> -->
+
+	<class name="com.sp.common.core.model.LoginControl" table="login_control">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="userId" type="int">
+			<column name="user_id" />
+		</property>
+		<property name="date"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="date" />
+		</property>
+		<property name="ipAddress" type="string">
+			<column name="ip_address" />
+		</property>
+		<property name="origen" type="string">
+			<column name="origen" />
+		</property>
+		<property name="correctLogin" type="java.lang.Boolean">
+			<column name="correct_login" sql-type="bit" />
+		</property>
+		<property name="loginName" type="string">
+			<column name="login_name" />
+		</property>
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<property name="browserLocale" type="string">
+			<column name="browser_locale" />
+		</property>
+		<property name="userTimeZone" type="string">
+			<column name="user_time_zone">
+				<comment>El timezone que se captura del browser del usuario ( y de
+					su sistema operativo ) </comment>
+			</column>
+		</property>
+		<property name="userAgent" type="string">
+			<column name="user_agent" />
+		</property>
+
+	</class>
+
+	<class name="com.sp.common.core.model.Role" table="role">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="description" type="string">
+			<column name="description" />
+		</property>
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<set cascade="all" name="usersRelated" sort="unsorted" table="user_role"
+			lazy="false" fetch="join">
+			<key column="role_id" />
+			<composite-element class="com.sp.common.core.model.UserRole">
+				<many-to-one name="user" class="com.sp.common.core.model.User"
+					column="user_id" cascade="none" lazy="false" fetch="join" />
+				<property name="active" type="java.lang.Boolean">
+					<column name="active" sql-type="bit" />
+				</property>
+				<property name="addDate"
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+					<column name="add_date" />
+				</property>
+				<property name="addUser" type="java.lang.Integer">
+					<column name="add_user" />
+				</property>
+				<property name="modDate"
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+					<column name="mod_date" />
+				</property>
+				<property name="modUser" type="java.lang.Integer">
+					<column name="mod_user" />
+				</property>
+			</composite-element>
+		</set>
+
+	</class>
+
+	<class name="com.sp.common.core.model.TimeUnit" table="time_unit">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="conversion" type="java.lang.Integer">
+			<column name="conversion" />
+		</property>
+	</class>
+
+	<class name="com.sp.common.core.model.UserPass" table="user">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="firstName" type="string">
+			<column name="first_name" />
+		</property>
+		<property name="lastName" type="string">
+			<column name="last_name" />
+		</property>
+		<property name="loginId" type="string">
+			<column name="login_id" />
+		</property>
+		<property name="password" type="string">
+			<column name="password" />
+		</property>
+	</class>
+
+	<class lazy="false" name="com.sp.common.core.model.PersonCore"
+		table="persona">
+		<id name="id" type="java.lang.Integer">
+			<column name="id_persona" />
+			<generator class="identity" />
+		</id>
+		<property name="nombre" type="java.lang.String">
+			<column name="persona_nombre">
+				<comment>Nombre de la persona</comment>
+			</column>
+		</property>
+		<property name="apellidos" type="java.lang.String">
+			<column name="persona_apellidos">
+				<comment>Apellidos de la persona</comment>
+			</column>
+		</property>
+		<property name="apellido1" type="java.lang.String">
+			<column name="persona_apellido1">
+				<comment>Apellidos 1</comment>
+			</column>
+		</property>
+		<property name="apellido2" type="java.lang.String">
+			<column name="persona_apellido2">
+				<comment>Apellidos 2</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="sexo"
+			type="java.lang.Boolean">
+			<column name="persona_sexo" sql-type="bit">
+				<comment>Sexo</comment>
+			</column>
+		</property>
+
+		<property name="fechaNacimiento"
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate">
+			<column name="persona_fecha_nacimiento">
+				<comment>Fecha de nacimiento</comment>
+			</column>
+		</property>
+		<property name="fechaFallecimiento"
+			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate">
+			<column name="persona_fecha_fallecimiento">
+				<comment>Fecha de fallecimiento</comment>
+			</column>
+		</property>
+
+	</class>
+
+	<class name="com.sp.common.core.model.User" table="user">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="firstName" type="string">
+			<column name="first_name" />
+		</property>
+		<property name="lastName" type="string">
+			<column name="last_name" />
+		</property>
+		<property name="email" type="string">
+			<column name="email" />
+		</property>
+		<property name="loginId" type="string">
+			<column name="login_id" />
+		</property>
+		<property name="gender" type="java.lang.Boolean">
+			<column name="gender" sql-type="bit" />
+		</property>
+		<property name="admon" type="string">
+			<column name="admon" length="1" />
+		</property>
+		<property name="suLectura" type="string">
+			<column name="su_lectura" length="1" />
+		</property>
+		<property name="systemUser" type="java.lang.Boolean">
+			<column name="system_user" sql-type="bit" />
+		</property>
+		<property name="lastLoginDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="last_login_date" length="0">
+				<comment>Fecha de ultimo login</comment>
+			</column>
+		</property>
+		<property name="enabled" type="string">
+			<column name="enabled" />
+		</property>
+		<property name="departmentChief" type="string">
+			<column name="department_chief">
+				<comment>Para determinar los permisos sobre un departamento en
+					particular</comment>
+			</column>
+		</property>
+		<property name="countryCode" type="string">
+			<column name="country_code" />
+		</property>
+		<property name="regionCode" type="string">
+			<column name="region_code" />
+		</property>
+		<property name="startupPage" type="string">
+			<column name="startup_page" />
+		</property>
+		<property name="timeZoneName" type="string">
+			<column name="time_zone_name" />
+		</property>
+
+		<property name="userPhoto">
+			<column name="user_photo" sql-type="BLOB" />
+		</property>
+
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<many-to-one name="personCore" class="com.sp.common.core.model.PersonCore"
+			column="id_persona" lazy="false" fetch="join" />
+
+		<many-to-one name="businessCalendar" class="com.sp.calendar.model.BusinessCalendar"
+			lazy="false" fetch="join">
+			<column name="calendar_id" />
+		</many-to-one>
+
+		<many-to-one name="organizationUnit"
+			class="com.sp.common.core.model.OrganizationUnit" column="id_depto"
+			lazy="false" fetch="join" />
+
+		<one-to-one name="userSettings" class="com.sp.common.core.model.UserSettings"
+			cascade="save-update,delete" />
+
+		<set cascade="all" name="rolesRelated" sort="unsorted" table="user_role"
+			lazy="false" fetch="join">
+			<key column="user_id" />
+			<composite-element class="com.sp.common.core.model.UserRole">
+				<many-to-one name="role" class="com.sp.common.core.model.Role"
+					column="role_id" cascade="none" lazy="false" fetch="join" />
+				<property name="active" type="java.lang.Boolean">
+					<column name="active" sql-type="bit" />
+				</property>
+				<property name="addDate"
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+					<column name="add_date" length="0" />
+				</property>
+				<property name="addUser" type="java.lang.Integer">
+					<column name="add_user" />
+				</property>
+				<property name="modDate"
+					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+					<column name="mod_date" length="0" />
+				</property>
+				<property name="modUser" type="java.lang.Integer">
+					<column name="mod_user" />
+				</property>
+			</composite-element>
+		</set>
+
+		<set name="notificationEvents" table="rel_user_notification_event"
+			lazy="false" fetch="join" cascade="delete-orphan">
+			<key column="user_id" />
+			<one-to-many class="com.sp.common.core.model.UserNotificationEvent" />
+		</set>
+
+	</class>
+
+	<class name="com.sp.common.core.model.UserEmailAccount" table="usuario_cuentas_email">
+		<id name="id" type="java.lang.Integer">
+			<column name="id_uce" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="userId"
+			type="java.lang.Integer">
+			<column name="id_usuario" not-null="true">
+				<comment>id usuario de la tabla de usuarios</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="preferred"
+			type="java.lang.Boolean">
+			<column name="preferida" sql-type="bit">
+				<comment>Si está en true indica que es la cuenta preferida de ese
+					usuario</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="name" type="string">
+			<column name="uce_nombre">
+				<comment>Nombre que debe aparecer en la referencia de la direcci</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="email" type="string">
+			<column length="150" name="uce_email" not-null="true">
+				<comment>email</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="replyTo" type="string">
+			<column length="150" name="uce_direccion_de_respuesta">
+				<comment>email de respuesta / si esta vacio deberia tomarse el de
+					arriba</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="uceTextoDeLaFirma"
+			type="string">
+			<column name="uce_texto_de_la_firma" />
+		</property>
+		<property generated="never" lazy="false" name="signatureText"
+			type="text">
+			<column name="uce_firma_adjunta_txt" />
+		</property>
+		<property generated="never" lazy="false" name="signatureHtml"
+			type="text">
+			<column name="uce_firma_adjunta_html" />
+		</property>
+		<property generated="never" lazy="false" name="ingoingServerType"
+			type="string">
+			<column length="20" name="tipo_servidor_entrada">
+				<comment>defecto POP</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="ingoingServerName"
+			type="string">
+			<column length="100" name="nombre_del_servidor_entrada" />
+		</property>
+		<property generated="never" lazy="false" name="ingoingServerPort"
+			type="java.lang.Integer">
+			<column name="puerto_entrada" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="ingoingConnectionSecurity"
+			type="string">
+			<column length="20" name="seguridad_conexion" not-null="true">
+				<comment>Ninguna, SATRTTLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false"
+			name="ingoingAuthenticationMethod" type="string">
+			<column length="20" name="metodo_identificacion" not-null="true">
+				<comment>Contrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="formato" type="string">
+			<column length="10" name="formato" not-null="true">
+				<comment>Texto, HTML</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingServerName"
+			type="string">
+			<column length="100" name="nombre_servidor_de_salida">
+				<comment>Nombre del servidor de salida</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingServer"
+			type="string">
+			<column length="100" name="servidor_de_salida">
+				<comment>id del servidor de salida . por ej: smtp.softpoint.org</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingServerPort"
+			type="java.lang.Integer">
+			<column name="puerto_salida" not-null="true">
+				<comment>Predeterminado 25</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingConnectionSecurity"
+			type="string">
+			<column length="10" name="seguridad_de_la_conexion_salida">
+				<comment>Ninguna, STARTTLS, SSL/TLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingConnectionMethod"
+			type="string">
+			<column length="1" name="metodo_identificacion_salida">
+				<comment>"S"in identificacion, "I"ontrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="user" type="string">
+			<column length="40" name="nombre_usuario_salida" />
+		</property>
+		<property generated="never" lazy="false" name="password"
+			type="string">
+			<column length="20" name="contrasenia_salida">
+				<comment>para las cuentas no riesgosas para poner la contrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idExchange"
+			type="string">
+			<column length="50" name="id_exchange">
+				<comment>por las dudas para conectarnos con exchange ...</comment>
+			</column>
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+	</class>
+
+	<class name="com.sp.common.core.model.OrganizationUnit" table="departamento">
+		<id name="id" type="java.lang.Integer">
+			<column name="id_departamento" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="abbreviation"
+			type="string">
+			<column length="5" name="departamento_abreviatura">
+				<comment>Abreviación del nombre del departamento</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="name" type="string">
+			<column length="50" name="departamento_nombre" />
+		</property>
+		<property generated="never" lazy="false" name="description"
+			type="string">
+			<column name="departamento_comentario" />
+		</property>
+		<property generated="never" lazy="false" name="title" type="string">
+			<column length="50" name="departamento_titulo" />
+		</property>
+	</class>
+
+	<class name="com.sp.common.core.model.noper.OrganizationUnitThin" table="departamento">
+	
+		<id name="id" type="java.lang.Integer">
+			<column name="id_departamento" />
+			<generator class="identity" />
+		</id>
+
+		<property generated="never" lazy="false" name="name"
+			type="string">
+			<column length="50" name="departamento_nombre" />
+		</property>
+	</class>
+
+	<class name="com.sp.common.core.model.UserDisplay" table="user">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="loginId" type="string">
+			<column name="login_id" />
+		</property>
+		<property name="firstName" type="string">
+			<column name="first_name" />
+		</property>
+		<property name="lastName" type="string">
+			<column name="last_name" />
+		</property>
+		<property name="email" type="string">
+			<column name="email" />
+		</property>
+		<property name="gender" type="java.lang.Boolean">
+			<column name="gender" sql-type="bit" />
+		</property>
+		<property name="suLectura" type="string">
+			<column name="su_lectura" length="1" />
+		</property>
+		<property name="idOrganizationUnit" type="java.lang.Integer">
+			<column name="id_depto" />
+		</property>
+		<property name="admon" type="string">
+			<column name="admon" length="1" />
+		</property>
+
+	</class>
+
+	<class name="com.sp.common.core.model.UserSettings" table="user_settings">
+		<id name="id" type="java.lang.Integer">
+			<generator class="foreign">
+				<param name="property">user</param>
+			</generator>
+		</id>
+		<property generated="never" lazy="false" name="notifyNewEmailReception"
+			type="java.lang.Boolean">
+			<column name="notify_new_email_reception" sql-type="bit" />
+		</property>
+		<property generated="never" lazy="false" name="notifyNewTicketAssignation"
+			type="java.lang.Boolean">
+			<column name="notify_new_ticket_assignation" sql-type="bit" />
+		</property>
+		<property generated="never" lazy="false"
+			name="notifyNewAssignmentAssignation" type="java.lang.Boolean">
+			<column name="notify_new_assignment_assignation" sql-type="bit" />
+		</property>
+		<property generated="never" lazy="false" name="forwardReceivedEmail"
+			type="java.lang.Boolean">
+			<column name="forward_received_email" sql-type="bit" />
+		</property>
+		<property generated="never" lazy="false"
+			name="forwardToPersonalEmailAccount" type="java.lang.Boolean">
+			<column name="forward_to_personal_email_account" sql-type="bit" />
+		</property>
+		<property generated="never" lazy="false" name="forwardAccount"
+			type="string">
+			<column name="forward_account" />
+		</property>
+		<one-to-one name="user" class="com.sp.common.core.model.User"
+			constrained="true" />
+	</class>
+
+	<class name="com.sp.common.core.model.noper.UserThin" table="user">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="firstName" type="string">
+			<column name="first_name" />
+		</property>
+		<property name="lastName" type="string">
+			<column name="last_name" />
+		</property>
+		<property name="email" type="string">
+			<column name="email" />
+		</property>
+		<property name="loginId" type="string">
+			<column name="login_id" />
+		</property>
+		<property name="systemUser" type="java.lang.Boolean">
+			<column name="system_user" sql-type="bit" />
+		</property>
+	</class>
+
+	<class name="com.sp.common.core.model.EmailTemplate" table="email_template">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="java.lang.String">
+			<column name="name" />
+		</property>
+		<property name="subject" type="java.lang.String">
+			<column name="subject" />
+		</property>
+		<property name="txtTemplate" type="text">
+			<column name="txt_template" />
+		</property>
+		<property name="htmlTemplate" type="text">
+			<column name="html_template" />
+		</property>
+		<property name="mobileTemplate" type="text">
+			<column name="mobile_template" />
+		</property>
+		<property name="templateFileName" type="java.lang.String">
+			<column name="template_file_name" />
+		</property>
+
+		<property name="to" type="java.lang.String">
+			<column name="to_" />
+		</property>
+		<property name="cc" type="java.lang.String">
+			<column name="cc" />
+		</property>
+		<property name="bcc" type="java.lang.String">
+			<column name="bcc" />
+		</property>
+
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+        <property name="automaticSend" type="java.lang.Boolean">
+            <column name="automatic_send" sql-type="bit"/>
+        </property>
+
+		<many-to-one class="com.sp.common.core.model.EmailTemplateTheme"
+			column="email_theme_id" lazy="false" fetch="join" name="emailTemplateTheme" />
+
+<!-- dml 20141126 descomentar para usar...(esto y el mapping de la clase)
+
+		<many-to-one class="com.sp.common.core.model.UserEmailAccount"
+			column="id_user_email_account" lazy="false" fetch="join" name="defaultEmailAccount" />
+
+       <set name="systemObjectMethodsRelated" table="email_template_system_object" 
+			lazy="false" fetch="join">
+            <key>
+                <column name="email_template_id" />
+            </key>
+            <one-to-many class="com.sp.common.core.model.rel.EmailTemplateSystemObject" />
+        </set>
+ -->
+	</class>
+
+<!-- dml 20141126 descomentar para usar...
+	<class name="com.sp.common.core.model.rel.EmailTemplateSystemObject"
+		table="email_template_system_object">
+		<id name="id" type="java.lang.Integer">
+			<column name="ettso_id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one name="emailTemplate" class="com.sp.common.core.model.EmailTemplate"
+			fetch="join" lazy="false">
+			<column name="email_template_id" />
+		</many-to-one>
+		<many-to-one name="systemObject" class="com.sp.common.core.model.SystemObject"
+			fetch="join" lazy="false">
+			<column name="system_object_id" />
+		</many-to-one>
+		<property name="method" type="java.lang.String">
+			<column name="method" />
+		</property>
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+	</class>
+-->
+
+	<class name="com.sp.common.core.model.EmailTemplateTheme" table="email_template_theme">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+
+		<property name="addDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+	</class>
+
+</hibernate-mapping>
