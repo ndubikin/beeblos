@@ -1,9 +1,0 @@
-<mxEditor>
-	<ui>
-		<add as="graph" element="graph"
-			style="left:70px;right:20px;top:20px;bottom:40px"/>
-	</ui>
-	<mxGraph as="graph">
-		<include name="config/wfgraph-commons.xml"/>
-	</mxGraph>
-</mxEditor>
