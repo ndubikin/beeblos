@@ -288,3 +288,19 @@ CREATE TABLE `bee_bpm_dev`.`w_user_role_work` (
 -- dml 20141218 - nuevo campo de user
 ALTER TABLE `incidencias_sp`.`user` 
 ADD COLUMN `system_user` BIT(1) NULL DEFAULT b'0' AFTER `login_id`;
+
+
+-- pab 20141213
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `xml_href` TEXT NULL AFTER `route_eval_order`,
+ADD COLUMN `xml_id` TEXT NULL AFTER `xml_href`,
+ADD COLUMN `xml_label` TEXT NULL AFTER `xml_id`,
+ADD COLUMN `xml_rules` TEXT NULL AFTER `xml_label`,
+ADD COLUMN `mxcell_string` TEXT NULL AFTER `xml_rules`;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_def` 
+ADD COLUMN `xml_only_objects_string` TEXT NULL AFTER `mod_user`;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_sequence_def` 
+ADD COLUMN `mxcell_string` TEXT NULL AFTER `mod_user`,
+ADD COLUMN `xml_id` TEXT NULL AFTER `mxcell_string`;
