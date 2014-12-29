@@ -279,12 +279,14 @@ public class WStepDefDao {
 		}
 
 		try {
+			// pab 29122014
+			if(step != null){
+				
+				List<WStepDataField> dataFields = 
+						new WStepDataFieldDao().getWStepDataFieldList(processHeadId,step.getStepHead().getId());
 
-			List<WStepDataField> dataFields = 
-					new WStepDataFieldDao().getWStepDataFieldList(processHeadId,step.getStepHead().getId());
-
-			step.setDataFieldDef(dataFields);
-
+				step.setDataFieldDef(dataFields);
+			}
 		} catch (WStepDataFieldException e) {
 			String mess = "WStepDefDao: getWStepDefByPK - WStepDataFieldException can't load related step data fields = "+
 								id + "] -  "+e.getMessage()+" "+e.getCause();
