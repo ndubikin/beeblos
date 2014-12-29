@@ -1,10 +1,15 @@
 package org.beeblos.bpm.core.dao;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WUserRoleWorkException;
+import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRoleWork;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 
 import com.sp.common.util.HibernateUtil;
 
@@ -193,6 +198,62 @@ public class WUserRoleWorkDao {
 	}
 
 
+	/**
+	 * returns a list of wUserDef related with a runtime role for an idRole and idProcessWork
+	 * nes 20141224
+	 * 
+	 * @param idRole
+	 * @param idProcessWork
+	 * @return
+	 * @throws WUserRoleWorkException 
+	 */
+	public List<WUserDef> getUserDefListByRole(Integer idRole, Integer idProcessWork) 
+			throws WUserRoleWorkException{
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WUserDef> retorno=null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			Query query = session.getNamedQuery("findUsersForRuntimeRole")
+					.setInteger("idRole", idRole)
+					.setInteger("idProcessWork", idProcessWork);
+			
+			retorno = query.list();
+
+			tx.commit();
+			
+
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: error recovering user def related with a runtime role and process work... " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: error recovering user def related with a runtime role and process work... " +
+					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );			
+
+		}
+		
+		return retorno;		
+
+	}
 
 }
 	
