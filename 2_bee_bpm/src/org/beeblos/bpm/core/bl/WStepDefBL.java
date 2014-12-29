@@ -791,18 +791,19 @@ public class WStepDefBL {
 			throws WStepDefException {
 
 		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id, processHeadId);
-		
-		try {
-			
-			List<WStepDataField> stepDataFieldList = new WStepDataFieldBL().getWStepDataFieldList(
-					null, stepDef.getStepHead().getId(), currentUserId);
-			
-			stepDef.setDataFieldDef(stepDataFieldList);
-			
-		} catch (WStepDataFieldException e) {
-			logger.error("Can't load manually the dataField set !!!");
-			e.printStackTrace();
-		}
+
+		// nes 20141229 - comentado porque está repetido en el dao ...
+//		try {
+//			
+//			List<WStepDataField> stepDataFieldList = new WStepDataFieldBL().getWStepDataFieldList(
+//					null, stepDef.getStepHead().getId(), currentUserId);
+//			
+//			stepDef.setDataFieldDef(stepDataFieldList);
+//			
+//		} catch (WStepDataFieldException e) {
+//			logger.error("Can't load manually the dataField set !!!");
+//			e.printStackTrace();
+//		}
 		
 		return stepDef;
 	}
