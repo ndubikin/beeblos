@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WUserRoleWorkDao;
 import org.beeblos.bpm.core.error.WUserRoleWorkException;
 import org.beeblos.bpm.core.model.WRoleDef;
+import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRoleWork;
 import org.joda.time.DateTime;
@@ -152,6 +153,20 @@ public class WUserRoleWorkBL {
 		WUserRoleWorkDao wUserRoleWorkDao = new WUserRoleWorkDao();
 		return wUserRoleWorkDao.getUserRoleWorkByPK(id);
 
+	}
+	
+	/**
+	 * Returns a list of users with permissions for given ProcessWork and Role
+	 * @param idRole
+	 * @param idProcessWork
+	 * @param currentUserId
+	 * @return
+	 * @throws WUserRoleWorkException 
+	 */
+	public List<WUserDef> getUserDefListByRole(Integer idRole, Integer idProcessWork, Integer currentUserId) 
+			throws WUserRoleWorkException{
+		WUserRoleWorkDao wUserRoleWorkDao = new WUserRoleWorkDao();
+		return wUserRoleWorkDao.getUserDefListByRole(idRole, idProcessWork);
 	}
 
 }
