@@ -792,7 +792,7 @@ public class WStepDefBL {
 
 		WStepDef stepDef =  new WStepDefDao().getStepDefByPK(id, processHeadId);
 
-		// nes 20141229 - comentado porque está repetido en el dao ...
+		// nes 20141229 - this code is commented because it has already been applied in WStepDefDao ...
 //		try {
 //			
 //			List<WStepDataField> stepDataFieldList = new WStepDataFieldBL().getWStepDataFieldList(
