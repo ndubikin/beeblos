@@ -37,6 +37,7 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.WUserRoleException;
+import org.beeblos.bpm.core.error.WUserRoleWorkException;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -1897,6 +1898,12 @@ public class WStepWorkBL {
 	}
 	
 
+	/**
+	 * send arriving step notifications to the given stepWork
+	 * @param stepWork
+	 * @param currentUserId
+	 * @throws SendEmailException
+	 */
 	private void _sendArrivingStepEmailNotifications( 
 			WStepWork stepWork, Integer currentUserId ) throws SendEmailException {
 		logger.debug(">>> _sendArrivingStepEmailNotifications init");
@@ -1920,7 +1927,7 @@ public class WStepWorkBL {
 		Email emailMessage = this._buildEmail(process.getSystemEmailAccount());
 		logger.debug(">> email account is loaded ...");
 		
-		// We create the list with the object that we will use to replace in the email subject and body
+		// creates the list with the object must use to replace the email subject and body
 		List<Object> stepWorkObjectAsList = new ArrayList<Object>();
 		stepWorkObjectAsList.add(stepWork);
 		
@@ -1971,7 +1978,7 @@ public class WStepWorkBL {
 			if (process != null 
 					&& process.getArrivingUserNoticeTemplate() != null) {
 			
-				logger.debug("_sendArrivingStepEmailNotifications: ArrivingUserNotiveTemplate ... "  ); // nes 20141127
+				logger.debug("_sendArrivingStepEmailNotifications: ArrivingUserNoticeTemplate ... "  ); // nes 20141127
 
 				// Personalizamos el "subject"
 				String subject = EmailPersonalizationUtilBL.personalizeEmailPart(
@@ -1998,7 +2005,8 @@ public class WStepWorkBL {
 			}
 
 		}
-		logger.debug(">>>> 6");
+		
+		logger.debug(">>> _sendArrivingStepEmailNotifications finished...");
 			
 	}
 	
@@ -2067,7 +2075,8 @@ public class WStepWorkBL {
 	}
 	
 	private void _sendEmail(Email email, Integer currentUserId) throws SendEmailException {
-
+		logger.debug(">>> _sendEmail - to:"+(email!=null?(email.getTo()!=null?email.getTo():"null"):"null"));
+		
 		try {
 			
 			if (email.getListaTo().size() > 0) {
@@ -2297,7 +2306,14 @@ public class WStepWorkBL {
 		
 	}
 	
-	private ArrayList<String> getEmailAccountList(WStepWork stepWork, boolean isAdmin){
+	/**
+	 * Return a string with email list of users related with given stepWork
+	 * 
+	 * @param stepWork
+	 * @param isAdmin
+	 * @return
+	 */
+	public ArrayList<String> getEmailAccountList(WStepWork stepWork, boolean isAdmin){
 		
 		ArrayList<String> emailList = new ArrayList<String>();
 		
@@ -2312,6 +2328,13 @@ public class WStepWorkBL {
 		
 	}
 
+	/**
+	 * Return an email list with users belonging roles assigned to a stepWork
+	 * 
+	 * @param stepWork
+	 * @param isAdmin
+	 * @param emailList
+	 */
 	private void getRoleRelatedEmailList(WStepWork stepWork, boolean isAdmin,
 			ArrayList<String> emailList) {
 		if (stepWork.getCurrentStep().getRolesRelated() != null
@@ -2323,18 +2346,39 @@ public class WStepWorkBL {
 					continue;
 				}
 				
-				for (WUserDef user : this._getRoleUsers(wsr)) {
+				// nes 20141224 - added email to runtime role users
+				if ( wsr.getRole().isRuntimeRole() ) {
 					
-					if (this._checkForRepeatedEmailAdress(user, emailList)){
+					for ( WUserDef user : this._getRuntimeRoleUsers(wsr, stepWork.getwProcessWork().getId()) ) {
+						
+						if (this._checkForRepeatedEmailAdress(user, emailList)){
 
-						emailList.add(user.getEmail());
-							
+							emailList.add(user.getEmail());
+								
+						}					
 					}					
+					
+				} else {
+					for (WUserDef user : this._getRoleUsers(wsr)) {
+						
+						if (this._checkForRepeatedEmailAdress(user, emailList)){
+
+							emailList.add(user.getEmail());
+								
+						}					
+					}
 				}
 			}
 		}
 	}
 
+	/**
+	 * Return an email list with users assigned to a stepWork
+	 * 
+	 * @param stepWork
+	 * @param isAdmin
+	 * @param emailList
+	 */
 	private void getUsersRelatedEmailList(WStepWork stepWork, boolean isAdmin,
 			ArrayList<String> emailList) {
 		if (stepWork.getCurrentStep().getUsersRelated() != null
@@ -2372,7 +2416,13 @@ public class WStepWorkBL {
 		
 	}
 	
-	// dml 20120307
+	/**
+	 * Returns a WUserDef list with users with permissions for given Role
+	 * dml 20120307
+	 * 
+	 * @param stepRole
+	 * @return
+	 */
 	private List<WUserDef> _getRoleUsers(WStepRole stepRole){
 		
 		List<WUserDef> roleUsers = new ArrayList<WUserDef>();
@@ -2386,14 +2436,48 @@ public class WStepWorkBL {
 				roleUsers = new WUserRoleBL().getUserDefListByRole(stepRole.getRole().getId(), null);
 				
 			} catch (WUserRoleException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				String mess = "WUserRoleException: Error retrieving user def list for a role: "
+						+e.getMessage()+" "
+						+(e.getCause()!=null?e.getCause():" ");
+				logger.error(mess);
 			}
 		}
 		
 		return roleUsers;
 		
 	}
+	
+	/**
+	 * Returns a WUserDef list with users with permissions for given RuntimeRole
+	 * dml 20120307
+	 * 
+	 * @param stepRole
+	 * @param idProcessWork - runtime roles has users assigned for each step work ...
+	 * @return
+	 */
+	private List<WUserDef> _getRuntimeRoleUsers(WStepRole stepRole, Integer idProcessWork){
+		
+		List<WUserDef> roleUsers = new ArrayList<WUserDef>();
+		
+		if (stepRole != null
+				&& stepRole.getRole() != null
+				&& stepRole.getRole().getId() != null) {
+			
+			try {
+				
+				roleUsers = new WUserRoleWorkBL().getUserDefListByRole(stepRole.getRole().getId(), idProcessWork, null);
+				
+			} catch (WUserRoleWorkException e) {
+				String mess = "WUserRoleWorkException: Error retrieving user def list for a runtime role: "
+						+e.getMessage()+" "
+						+(e.getCause()!=null?e.getCause():" ");
+				logger.error(mess);
+			}
+		}
+		
+		return roleUsers;
+		
+	}	
 	
 	// chequea que dentro si la ruta está dentro de las respuestas indicadas ...
 	private boolean _hasInValidResponseList (
