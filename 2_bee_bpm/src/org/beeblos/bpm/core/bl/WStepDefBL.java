@@ -51,6 +51,8 @@ public class WStepDefBL {
 		
 		DateTime now = new DateTime();
 		
+		_setDefaultValues(step);
+		
 		// dml 20130430 - si es un nuevo WStepHead se guarda antes de guardar el WStepDef y se rellena la informacion esencial
 		// nes 20141206 - if there is not a WStepHead then will be created with WStepDef data...
 		_setAndSaveStepHead(step, now, currentUserId);
@@ -63,6 +65,14 @@ public class WStepDefBL {
 		step.setModUser(currentUserId);
 		return new WStepDefDao().add(step);
 
+	}
+
+	private void _setDefaultValues(WStepDef step) {
+
+		if(step.getVersion() == null ||
+				step.getVersion() == 0){
+			step.setVersion(1);
+		}
 	}
 
 	/**
