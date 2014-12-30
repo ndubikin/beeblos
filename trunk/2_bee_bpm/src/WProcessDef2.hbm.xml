@@ -322,7 +322,7 @@
 			<column name="id_arriving_user_notice_template" />
 		</many-to-one>
 
-		<set name="steps" table="w_process_step_def" cascade="all" fetch="join" lazy="false">
+		<set name="steps" table="w_process_step_def" cascade="delete-orphan" fetch="join" lazy="false">
 			<key column="id_process" />
 			<many-to-many class="org.beeblos.bpm.core.model.WStepDef" column="id_step" 
 				unique="false" lazy="false" fetch="join"/>
