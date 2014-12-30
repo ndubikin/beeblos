@@ -607,6 +607,4 @@ public class WStepSequenceDef implements java.io.Serializable {
 	public void setMxCell(MxCell mxCell) {
 		this.mxCell = mxCell;
 	}
-	
-	
 }
