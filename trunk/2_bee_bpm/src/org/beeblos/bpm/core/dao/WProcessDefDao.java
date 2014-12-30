@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -30,6 +31,7 @@ import org.beeblos.bpm.core.graph.ElementWrapper;
 import org.beeblos.bpm.core.graph.Layer;
 import org.beeblos.bpm.core.graph.MxCell;
 import org.beeblos.bpm.core.graph.MxGraphModel;
+import org.beeblos.bpm.core.graph.Symbol;
 import org.beeblos.bpm.core.graph.Workflow;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WRoleDef;
@@ -366,42 +368,6 @@ public class WProcessDefDao {
 										pro.getId().toString(),
 										pro.getProcess().getName()));
 			
-			JAXBContext jaxbContext = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxGraphModel.class);
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-			Iterator<WStepDef> i = pro.getSteps().iterator();
-			
-			while(i.hasNext()){
-				
-				WStepDef wsd = i.next();
-				
-				String xmlString = wsd.getMxCellString() != null && !wsd.getMxCellString().equals("") ? wsd.getMxCellString() : Constants.DEFAULT_MXCELL_XML;
-				
-				StringReader reader = new StringReader(xmlString);
-				MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader);
-				wsd.setMxCellObject(m);
-				
-			}
-
-			Iterator<WStepSequenceDef> i2 = pro.getStepSequenceList().iterator();
-			
-			while(i2.hasNext()){
-				
-				WStepSequenceDef ssd = i2.next();
-				
-				JAXBContext jc = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxCell.class);
-				Unmarshaller ju = jc.createUnmarshaller();
-
-				StringReader r = new StringReader(ssd.getXmlMxCellString() == null || ssd.getXmlMxCellString().equals("") ? 
-															Constants.DEFAULT_MXCELL_XML :
-															ssd.getXmlMxCellString() );
-				
-				MxCell m = (MxCell)ju.unmarshal(r);
-				
-				ssd.setMxCell(m);
-				
-			}
-			
 			JAXBContext jaxbContext2 = JAXBContext.newInstance(org.beeblos.bpm.core.graph.ElementWrapper.class);
 			Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
 	
@@ -420,6 +386,44 @@ public class WProcessDefDao {
 				sw.getlList().add(l);
 				pro.setLayerObjectList(sw.getlList());
 			}
+			
+			JAXBContext jaxbContext = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxGraphModel.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+			Iterator<WStepDef> i = pro.getSteps().iterator();
+			
+			while(i.hasNext()){
+				
+				WStepDef wsd = i.next();
+				
+				String xmlString = wsd.getMxCellString() != null && !wsd.getMxCellString().equals("") ? wsd.getMxCellString() : Constants.DEFAULT_MXCELL_XML;
+				
+				StringReader reader = new StringReader(xmlString);
+				MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader);
+				wsd.setMxCellObject(m);
+			}
+
+			Iterator<WStepSequenceDef> i2 = pro.getStepSequenceList().iterator();
+			
+			while(i2.hasNext()){
+				
+				WStepSequenceDef ssd = i2.next();
+				
+				JAXBContext jc = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxCell.class);
+				Unmarshaller ju = jc.createUnmarshaller();
+
+				StringReader r = new StringReader(ssd.getXmlMxCellString() == null || ssd.getXmlMxCellString().equals("") ? 
+															Constants.DEFAULT_MXCELL_XML :
+															ssd.getXmlMxCellString() );
+				
+				MxCell m = (MxCell)ju.unmarshal(r);
+				
+				_correctMxCellObject(ssd, pro.getSteps(), pro.getSymbolObjectList());
+				ssd.setMxCell(m);
+				
+			}
+			
+			
 			
 			MxGraphModel m = new MxGraphModel(pro);
 		
@@ -444,6 +448,28 @@ public class WProcessDefDao {
 		return "";
 	}
 	
+	private void _correctMxCellObject(WStepSequenceDef ssd, Set<WStepDef> steps, List<Symbol> symbols) {
+
+		MxCell mxCell = ssd.getMxCell();
+		Integer stepFrom = ssd.getFromStep().getId();
+		Integer stepTo = ssd.getToStep() != null ? ssd.getToStep().getId() : null;
+		
+		Iterator<WStepDef> i = steps.iterator();
+		
+		while(i.hasNext()){
+			
+			WStepDef wsd = (WStepDef)i.next();
+			
+			if(stepFrom != null 
+					&& wsd.getXmlId().equals(stepFrom)){
+				mxCell.setSource(stepFrom.toString());
+			} else if (stepTo != null
+					&& wsd.getXmlId().equals(stepTo)){
+				mxCell.setTarget(stepTo.toString());
+			} 
+		}
+	}
+
 	// dml 20130710
 	public String getProcessDefXmlMap(Integer processDefId, Integer currentUserId) throws WProcessDefException {
 	

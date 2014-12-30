@@ -244,6 +244,8 @@ public class WStepDef implements java.io.Serializable {
 	private Integer modUser;
 
 	public WStepDef() {
+		// Default "version" value. If version is set to null or 0 hibernate will throw an exception
+		this.version = 1;
 	}
 
 	public WStepDef(boolean createEmtpyObjects ){
@@ -253,7 +255,13 @@ public class WStepDef implements java.io.Serializable {
 			this.timeUnit = new WTimeUnit( EMPTY_OBJECT );
 			this.reminderTimeUnit = new WTimeUnit( EMPTY_OBJECT );
 			
-		}	
+		}
+		
+		// Default "version" value. If version is set to null or 0 hibernate will throw an exception
+		if(this.version == null
+				|| this.version == 0){
+			this.version = 1;
+		}
 	}
 
 	public WStepDef(Integer id){
@@ -291,7 +299,7 @@ public class WStepDef implements java.io.Serializable {
 	}
 
 
-	@XmlAttribute(name="spId")
+	@XmlAttribute(name="spId")//,nillable=true
 	public Integer getId() {
 		return this.id;
 	}
@@ -1407,7 +1415,7 @@ public class WStepDef implements java.io.Serializable {
 	 */
 	@XmlAttribute(name="label")
 	public String getXmlLabel() {
-		xmlLabel = this.getStepHead().getName() != null ? this.getStepHead().getName() : "";
+		//xmlLabel = this.xmlLabel;
 		return xmlLabel;
 	}
 

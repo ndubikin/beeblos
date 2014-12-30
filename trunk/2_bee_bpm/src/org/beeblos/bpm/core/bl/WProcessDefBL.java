@@ -163,6 +163,9 @@ public class WProcessDefBL {
 							|| storedProcess.getProcess().getManagedTableConfiguration()==null
 							|| storedProcess.getProcess().getManagedTableConfiguration().getHeadId()==0) {
 						
+						// pab 29122014
+						process.nullateEmtpyObjects();
+						
 						try {
 							
 							// set pk (same id that process-head-id
