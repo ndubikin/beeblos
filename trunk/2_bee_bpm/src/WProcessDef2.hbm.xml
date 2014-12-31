@@ -401,14 +401,14 @@
 		</set>
 -->
 
-		<property generated="never" lazy="false" name="xml_symbols"
+		<property generated="never" lazy="false" name="xmlSymbolsString"
 			type="string">
-			<column name="xmlSymbolsString" />
+			<column name="xml_symbols" />
 		</property>
 
-		<property generated="never" lazy="false" name="xml_layers"
+		<property generated="never" lazy="false" name="xmlLayersString"
 			type="string">
-			<column name="xmlLayersString" />
+			<column name="xml_layers" />
 		</property>
 	</class>
 
@@ -1140,9 +1140,9 @@
 			<column name="xml_label" />
 		</property>
 		
-		<property generated="never" lazy="false" name="mxcell_string"
+		<property generated="never" lazy="false" name="mxCellString"
 			type="string">
-			<column name="mxCellString" />
+			<column name="mxcell_string" />
 		</property>
 
 	</class>
@@ -1335,14 +1335,14 @@
 			<column name="insert_date" length="0" not-null="true" /> </property> </composite-element> 
 			</set> -->
 		
-		<property generated="never" lazy="false" name="xml_id"
+		<property generated="never" lazy="false" name="xmlId"
 			type="string">
-			<column name="xmlId" />
+			<column name="xml_id" />
 		</property>
 		
-		<property generated="never" lazy="false" name="mxcell_string"
+		<property generated="never" lazy="false" name="xmlMxCellString"
 			type="string">
-			<column name="xmlMxCellString" />
+			<column name="mxcell_string" />
 		</property>
 	</class>
 
