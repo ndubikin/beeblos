@@ -400,6 +400,16 @@
 			</composite-element>
 		</set>
 -->
+
+		<property generated="never" lazy="false" name="xml_symbols"
+			type="string">
+			<column name="xmlSymbolsString" />
+		</property>
+
+		<property generated="never" lazy="false" name="xml_layers"
+			type="string">
+			<column name="xmlLayersString" />
+		</property>
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WProcessRole"
@@ -1115,6 +1125,25 @@
 			</composite-element>
 		</set>
 -->
+		<property generated="never" lazy="false" name="xmlId"
+			type="string">
+			<column name="xml_id" />
+		</property>
+		
+		<property generated="never" lazy="false" name="xmlHref"
+			type="string">
+			<column name="xml_href" />
+		</property>
+		
+		<property generated="never" lazy="false" name="xmlLabel"
+			type="string">
+			<column name="xml_label" />
+		</property>
+		
+		<property generated="never" lazy="false" name="mxcell_string"
+			type="string">
+			<column name="mxCellString" />
+		</property>
 
 	</class>
 
@@ -1305,6 +1334,16 @@
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"> 
 			<column name="insert_date" length="0" not-null="true" /> </property> </composite-element> 
 			</set> -->
+		
+		<property generated="never" lazy="false" name="xml_id"
+			type="string">
+			<column name="xmlId" />
+		</property>
+		
+		<property generated="never" lazy="false" name="mxcell_string"
+			type="string">
+			<column name="xmlMxCellString" />
+		</property>
 	</class>
 
 	<class name="org.beeblos.bpm.core.model.WStepWorkSequence" table="w_step_work_sequence">
