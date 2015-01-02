@@ -432,6 +432,9 @@ public class WProcessDefDao {
 				
 				WStepDef wsd = i.next();
 				
+				/**
+				 * si el step no tiene xmlId le seteo el próximo xmlid
+				 */
 				if(wsd.getXmlId() == null
 						|| wsd.getXmlId().equals("")){
 					
@@ -475,7 +478,7 @@ public class WProcessDefDao {
 						|| ssd.getXmlId().equals("")){
 					_putXmlIdToJavaStepSequence(ssd,pro);
 				}
-				_putXmlIdToStepsFromAndTo(ssd);
+				_putXmlIdToStepsFromAndTo(ssd,pro);
 				
 			}
 			
@@ -493,6 +496,8 @@ public class WProcessDefDao {
 			StringWriter stringWriter = new StringWriter();
 			
 			jaxbMarshaller.marshal(m, stringWriter);
+			
+			System.out.println("xml map:["+stringWriter.toString()+"]");
 			
 			/**
 			 * devuelve el xml con el proceso completo para mxGraph
@@ -588,9 +593,10 @@ public class WProcessDefDao {
 		wsd.setXmlId(String.valueOf(lastXmlId+1));
 	}
 	
-	private void _putXmlIdToStepsFromAndTo(WStepSequenceDef ssd) {
+	private void _putXmlIdToStepsFromAndTo(WStepSequenceDef ssd, WProcessDef pro) {
 
 		if(ssd.getFromStep() != null){
+			_setSequenceFromStep(ssd,pro);
 			ssd.getMxCell().setSource(ssd.getFromStep().getXmlId());
 		} else {
 			if(ssd.getProcess().getSymbolObjectList() != null){
@@ -614,6 +620,7 @@ public class WProcessDefDao {
 			}
 		}
 		if(ssd.getToStep() != null){
+			_setSequenceToStep(ssd,pro);
 			ssd.getMxCell().setTarget(ssd.getToStep().getXmlId());
 		} else {
 			if(ssd.getProcess().getSymbolObjectList() != null){
@@ -637,6 +644,39 @@ public class WProcessDefDao {
 			}
 		}
 	}
+	
+	/**
+	 * setea correctamente el fromStep a la sequence porque lo vamos modificando en 
+	 * el proceso de carga
+	 * @param sequence
+	 * @param processDef
+	 */
+	private void _setSequenceFromStep(WStepSequenceDef sequence, WProcessDef processDef){
+		
+		for (WStepDef currentStepDef: processDef.getSteps()) {
+			if (sequence.getFromStep().getId().equals(currentStepDef.getId())){
+				sequence.setFromStep(currentStepDef);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * setea correctamente el toStep a la sequence porque lo vamos modificando en 
+	 * el proceso de carga
+	 * @param sequence
+	 * @param processDef
+	 */
+	private void _setSequenceToStep(WStepSequenceDef sequence, WProcessDef processDef){
+		
+		for (WStepDef currentStepDef: processDef.getSteps()) {
+			if (sequence.getToStep().getId().equals(currentStepDef.getId())){
+				sequence.setToStep(currentStepDef);
+				break;
+			}
+		}
+	}
+
 
 	// dml 20130710
 	public String getProcessDefXmlMap(Integer processDefId, Integer currentUserId) throws WProcessDefException {
