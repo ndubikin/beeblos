@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Symbol {
 	
 	private String description;
-	private String id;
+	private String xmlId;
 	private String label;
-	private List<MxCell> mxCell;
+	private MxCell mxCell;
 	
 	public Symbol() {
 		super();
@@ -20,9 +20,9 @@ public class Symbol {
 	}
 
 	public Symbol(String description, String id, String label,
-			List<MxCell> mxCell) {
+			MxCell mxCell) {
 		this.description = description;
-		this.id = id;
+		this.xmlId = id;
 		this.label = label;
 		this.mxCell = mxCell;
 	}
@@ -41,17 +41,17 @@ public class Symbol {
 		this.description = description;
 	}
 	/**
-	 * @return the id
+	 * @return the xmlId
 	 */
-	@XmlAttribute(name="id")
-	public String getId() {
-		return id;
+	@XmlAttribute(name="xmlId")
+	public String getXmlId() {
+		return xmlId;
 	}
 	/**
-	 * @param id the id to set
+	 * @param xmlId the xmlId to set
 	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setXmlId(String id) {
+		this.xmlId = id;
 	}
 	/**
 	 * @return the label
@@ -70,30 +70,29 @@ public class Symbol {
 	 * @return the mxCell
 	 */
 	@XmlElement(name="mxCell")
-	public List<MxCell> getMxCell() {
+	public MxCell getMxCell() {
 		return mxCell;
 	}
+	
 	/**
 	 * @param mxCell the mxCell to set
 	 */
-	public void setMxCell(List<MxCell> mxCell) {
+	public void setMxCell(MxCell mxCell) {
 		this.mxCell = mxCell;
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		final int maxLen = 2;
 		return "Symbol ["
 				+ (description != null ? "description=" + description + ", "
-						: "")
-				+ (id != null ? "id=" + id + ", " : "")
+						: "") + (xmlId != null ? "xmlId=" + xmlId + ", " : "")
 				+ (label != null ? "label=" + label + ", " : "")
-				+ (mxCell != null ? "mxCell="
-						+ mxCell.subList(0, Math.min(mxCell.size(), maxLen))
-						: "") + "]";
+				+ (mxCell != null ? "mxCell=" + mxCell : "") + "]";
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -103,7 +102,7 @@ public class Symbol {
 		int result = 1;
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((xmlId == null) ? 0 : xmlId.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((mxCell == null) ? 0 : mxCell.hashCode());
 		return result;
@@ -125,10 +124,10 @@ public class Symbol {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (xmlId == null) {
+			if (other.xmlId != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!xmlId.equals(other.xmlId))
 			return false;
 		if (label == null) {
 			if (other.label != null)
