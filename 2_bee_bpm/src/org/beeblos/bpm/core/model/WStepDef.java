@@ -1411,12 +1411,17 @@ public class WStepDef implements java.io.Serializable {
 	}
 
 	/**
+	 * returns the name of the step (task)
 	 * @return the xmlLabel
 	 */
 	@XmlAttribute(name="label")
 	public String getXmlLabel() {
 		//xmlLabel = this.xmlLabel;
-		return getStepHead().getName();
+		if (stepHead!=null) {
+			return getStepHead().getName();	
+		} else {
+			return "";
+		}
 	}
 
 	/**
