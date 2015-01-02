@@ -457,7 +457,7 @@ public class WProcessDefDao {
 				 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
 				 */
 				StringReader r = new StringReader(ssd.getXmlMxCellString() == null || ssd.getXmlMxCellString().equals("") ? 
-															Constants.DEFAULT_MXCELL_XML :
+															Constants.DEFAULT_EDGE_MXCELL_XML :
 															ssd.getXmlMxCellString() );
 				
 				MxCell m = (MxCell)ju.unmarshal(r);
@@ -501,7 +501,7 @@ public class WProcessDefDao {
 	private void _correctMxCellObject(WStepSequenceDef ssd, Set<WStepDef> steps, List<Symbol> symbols) {
 
 		MxCell mxCell = ssd.getMxCell();
-		Integer stepFrom = ssd.getFromStep().getId();
+		Integer stepFrom = ssd.getFromStep() != null ? ssd.getFromStep().getId() : null;
 		Integer stepTo = ssd.getToStep() != null ? ssd.getToStep().getId() : null;
 		
 		Iterator<WStepDef> i = steps.iterator();
