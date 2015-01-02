@@ -390,7 +390,7 @@ public class WProcessDefDao {
 			 * Le pongo el encoding y le pongo el ElementWrapper dinamicamente porque no lo guardo en la bd
 			 */
 			StringReader sr = new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><ElementWrapper>"
-								+pro.getXmlSymbolsString()
+								+pro.getXmlSymbolsString() + pro.getXmlLayersString()
 								+"</ElementWrapper>");
 			ElementWrapper sw = (ElementWrapper)jaxbUnmarshaller2.unmarshal(sr);
 			
