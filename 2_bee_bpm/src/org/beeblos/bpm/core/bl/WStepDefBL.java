@@ -609,7 +609,8 @@ public class WStepDefBL {
 			if (clonePermissions) {
 				if ( currentStep.getRolesRelated().size()>0) {
 					for ( WStepRole stepRole: currentStep.getRolesRelated() ) {
-						tmpStepRole = wStepRoleBL.addNewStepRole(newStep.getId(), stepRole.getRole().getId(), stepRole.isAdmin(), userId);
+						tmpStepRole = 
+								wStepRoleBL.addNewStepRoleX(newStep.getId(), stepRole.getRole().getId(), stepRole.isAdmin(), userId);
 						newStep.getRolesRelated().add(tmpStepRole);
 					}
 				}
@@ -1037,8 +1038,7 @@ public class WStepDefBL {
 	}
 
 	/**
-	 * Adds the step related role to the step "rolesRelated" list and returns the same step
-	 * with the new value added.
+	 * Add a new StepRole relation row
 	 * 
 	 * @author dmuleiro 20141031
 	 *
@@ -1053,28 +1053,25 @@ public class WStepDefBL {
 	 * @throws WStepDefException
 	 *             the w step def exception
 	 */
-	public WStepDef addStepRelatedRole(WStepDef stepDef, Integer idRole, boolean isAdmin, Integer idCurrentUser) throws WStepDefException{
+	public Integer addRelatedRole(Integer idStepDef, Integer idRole, boolean isAdmin, Integer idCurrentUser) 
+			throws WStepDefException{
 		
-		if (stepDef == null || stepDef.getId() == null || stepDef.getId().equals(0)){
-			throw new WStepDefException("addStepRelatedRole(): The step is not valid!");
+		if (idStepDef == null || idStepDef.equals(0)){
+			throw new WStepDefException("addRelatedRole(): The step is not valid!");
 		}
 		
 		if (idRole == null || idRole.equals(0)){
-			throw new WStepDefException("addStepRelatedRole(): The role id is not valid!");
+			throw new WStepDefException("addRelatedRole(): The role id is not valid!");
 		}
 		
+		Integer idStepRole=null;
+		
 		try {
-			WStepRole stepRole = 
-					new WStepRoleBL().addNewStepRole(stepDef.getId(), idRole, isAdmin, idCurrentUser);
 			
-			if (stepRole != null){
-				
-				if (stepDef.getRolesRelated() == null){
-					stepDef.setRolesRelated(new HashSet<WStepRole>());
-				}
-				stepDef.getRolesRelated().add(stepRole);
-				
-			}
+			idStepRole = 
+					new WStepRoleBL().addNewStepRole(idStepDef, idRole, isAdmin, idCurrentUser);
+			
+
 			
 		} catch (WStepRoleException e) {
 			String mess = "addStepRelatedRole(): Error trying to create the step role. "
@@ -1083,7 +1080,7 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 		
-		return stepDef;
+		return idStepRole;
 		
 	}
 	

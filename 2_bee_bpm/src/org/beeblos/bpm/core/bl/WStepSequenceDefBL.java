@@ -98,6 +98,8 @@ public class WStepSequenceDefBL {
 	 * 
 	 * Deletes the route from the database if it has not related "w_step_work_sequences". In this case
 	 * it makes a "logic delete" putting the field "delete" as "true". 
+	 * 
+	 * nes: 20150102 - changed route for idRoute
 	 *
 	 * @param  WStepSequenceDef route
 	 * @param  Integer currentUserId
@@ -108,24 +110,58 @@ public class WStepSequenceDefBL {
 	 * @throws WStepWorkSequenceException 
 	 * 
 	 */
-	public void deleteRoute(WStepSequenceDef route, Integer currentUserId) throws WStepSequenceDefException, WStepWorkSequenceException {
+	public void deleteRoute(Integer idRoute, Integer currentUserId) 
+			throws WStepSequenceDefException, WStepWorkSequenceException {
 
-		logger.info("delete() WStepSequenceDef - VersionId: [" +
-					route.getProcess().getId()
-					+"-fromStepId:"
-					+((route!=null && route.getFromStep()!=null)?route.getFromStep().getId():"xx..xx")+"]");
+		logger.info("delete() WStepSequenceDef - routeId: [" +
+					(idRoute!=null?idRoute:"null")+"]");
 		
-		Integer workingRoutes = new WStepWorkSequenceBL().countRouteRelatedStepWorkSequences(route.getId(), currentUserId);
+		Integer workingRoutes = new WStepWorkSequenceBL()
+				.countRouteRelatedStepWorkSequences(idRoute, currentUserId);
 		
 		if (workingRoutes != null
 				&& workingRoutes > 0){
-			this._updateStepSequenceDeletedField(route.getId(), DELETED_BOOL, currentUserId);
+			this._updateStepSequenceDeletedField(idRoute, DELETED_BOOL, currentUserId);
 		} else {
-			new WStepSequenceDefDao().deleteRoute(route);
+			new WStepSequenceDefDao().deleteRoute(idRoute);
 		}
 		
 
 	}
+	
+	/**
+	 * @author dmuleiro - 20130829
+	 * 
+	 * Deletes the route from the database if it has not related "w_step_work_sequences". In this case
+	 * it makes a "logic delete" putting the field "delete" as "true". 
+	 *
+	 * @param  WStepSequenceDef route
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepSequenceDefException 
+	 * @throws WStepWorkSequenceException 
+	 * 
+	 */
+	public void delete(Integer idRoute, Integer currentUserId) 
+			throws WStepSequenceDefException, WStepWorkSequenceException {
+
+		logger.info("delete() WStepSequenceDef - VersionId: [" +
+					(idRoute!=null?idRoute:"null")+"]");
+		
+		Integer workingRoutes = new WStepWorkSequenceBL()
+				.countRouteRelatedStepWorkSequences(idRoute, currentUserId);
+		
+		if (workingRoutes != null
+				&& workingRoutes > 0){
+			this._updateStepSequenceDeletedField(idRoute, DELETED_BOOL, currentUserId);
+		} else {
+			new WStepSequenceDefDao().deleteRoute(idRoute);
+		}
+		
+
+	}	
 	
 	@Deprecated 
 	// DAVID - CAMBIAR Y SI TIENE WSTEPWORKSEQUENCES MARCARLAS COMO DELETED EN LUGAR DE BORRARLAS
@@ -244,7 +280,7 @@ public class WStepSequenceDefBL {
 	public List<StringPair> getComboList(
 			Integer idProcess, Integer version,
 			String firstLineText, String blank )
-	throws WProcessDefException {
+	throws WStepSequenceDefException {
 		
 		return new WStepSequenceDefDao().getComboList(idProcess, version, firstLineText, blank);
 		

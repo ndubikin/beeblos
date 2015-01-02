@@ -118,31 +118,29 @@ public class WStepSequenceDefDao {
 
 	}
 
-	public void deleteRoute(WStepSequenceDef stepSeq) throws WStepSequenceDefException {
+	public void deleteRoute(Integer idSequence) throws WStepSequenceDefException {
 
-		logger.debug("delete() WStepSequenceDef - Name: ["+stepSeq.getFromStep()+"/"+stepSeq.getToStep()+"]");
+		logger.debug("delete() WStepSequenceDef - Name: ["+(idSequence!=null?idSequence:"null")+"]");
 		
 		try {
 
-			stepSeq = getWStepSequenceDefByPK(stepSeq.getId());
+			WStepSequenceDef stepSeq = getWStepSequenceDefByPK(idSequence);
 
 			HibernateUtil.delete(stepSeq);
 
 		} catch (HibernateException ex) {
-			logger.error("WStepSequenceDefDao: delete - Can't delete proccess definition record "+ 
-					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
-					" <id = "+stepSeq.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao:  delete - Can't delete proccess definition record  "+
-					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
-					" <id = "+stepSeq.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause() );
+			String mess = "HibernateException: delete - Can't delete step sequence record with id:" 
+					+ (idSequence!=null?idSequence:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.error( mess );
+			throw new WStepSequenceDefException(mess);
 
-		} catch (WStepSequenceDefException e) {
-			logger.error("WStepSequenceDefDao: delete - Exception in deleting stepSeq rec "+ 
-					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
-					" <id = "+stepSeq.getId()+ "> no esta almacenada \n"+" - "+e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: delete - Exception in deleting stepSeq rec "+ 
-					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
-					" <id = "+stepSeq.getId()+ "> not stored \n"+" - "+e.getMessage()+"\n"+e.getCause() );
+		} catch (WStepSequenceDefException ex) {
+			String mess = "WStepSequenceDefException: delete - Can't delete step sequence record with id:" 
+					+ (idSequence!=null?idSequence:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.error( mess );
+			throw new WStepSequenceDefException(mess);
 
 		} 
 
@@ -158,33 +156,37 @@ public class WStepSequenceDefDao {
 	public void deleteProcessRoutes(WProcessDef process) 
 			throws WStepSequenceDefException {
 
-		logger.debug("delete() by process & version - processName: [" + process.getName() + "]");
-
-		org.hibernate.Session session = null;
-		org.hibernate.Transaction tx = null;
-
-		try {
-
-			session = HibernateUtil.obtenerSession();
-			tx = session.getTransaction();
-			tx.begin();
-
-			session.createQuery("delete from WStepSequenceDef where process=?")// AND version=?")
-					.setParameter(0, process)
-//					.setParameter(1, version)
-					.executeUpdate();
-
-			tx.commit();
-
-		} catch (HibernateException ex) {
-			if (tx != null)
-				tx.rollback();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefByPK - error while trying to delete process id = "+
-					process.getId() + "]  - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefByPK - error while trying to delete process id = : " + 
-					process.getId() + " - " + ex.getMessage()+"\n"+ex.getCause());
-
-		}
+		
+		// nes 20150102 - comenté porque era cualquier cosa este método ... hay que ver si es necesario ...
+//		logger.debug("delete() by process & version - processName: [" + process.getName() + "]");
+//
+//		org.hibernate.Session session = null;
+//		org.hibernate.Transaction tx = null;
+//
+//		try {
+//
+//			session = HibernateUtil.obtenerSession();
+//			tx = session.getTransaction();
+//			tx.begin();
+//
+//			session.createQuery("delete from WStepSequenceDef where process=?")// AND version=?")
+//					.setParameter(0, process)
+////					.setParameter(1, version)
+//					.executeUpdate();
+//
+//			tx.commit();
+//
+//		} catch (HibernateException ex) {
+//			if (tx != null)
+//				tx.rollback();
+//			String mess = "HibernateException: error deleting process routes with processId:" 
+//					+ (idSequence!=null?idSequence:"null") +" "
+//					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+//			logger.warn();
+//			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefByPK - error while trying to delete process id = : " + 
+//					process.getId() + " - " + ex.getMessage()+"\n"+ex.getCause());
+//
+//		}
 
 	}
 	
@@ -210,11 +212,21 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepSequenceDefDao: existsRoute - can't obtain route id = " +
-					routeId + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: existsRoute - can't obtain route id: " + 
-					routeId + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error checking existence of route with id:" 
+					+ (routeId!=null?routeId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: error checking existence of route with id:" 
+					+ (routeId!=null?routeId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		if (storedId == null){
@@ -241,20 +253,25 @@ public class WStepSequenceDefDao {
 
 			tx.commit();
 
+
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefByPK - can't obtain the required id = "+
-					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefByPK - we can't obtain the required id : " + 
-					id + " - " + ex.getMessage()+"\n"+ex.getCause());
-//		} catch (Exception ex) {
-//			if (tx != null)
-//				tx.rollback();
-//			logger.warn("WStepSequenceDefDao: getWStepSequenceDefByPK - can't obtain the required id = "+
-//					id + "]  almacenada - \n"+ex.getMessage()+"\n"+ex.getCause() );
-//			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefByPK - we can't obtain the required id : " + 
-//					id + " - " + ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error recovering route with id:" 
+					+ (id!=null?id:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: error recovering route with id:"
+					+ (id!=null?id:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
 		}
 
@@ -317,17 +334,27 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefs() - can't obtain stepSeq list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefs() - can't obtain stepSeq list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error recovering route list .." 
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception: error recovering route list .."
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
 		}
 
 		return stepSeqs;
 	}
 
-	// nes 20110216 - este método hay que estudiarlo para ver como podemos hacer para devolver la secuencia de pasos en el orden correcto ( o lo mas parecido al orden correcto )
+	// nes 20110216 - este método hay que estudiarlo para ver como podemos hacer para devolver 
+	// la secuencia de pasos en el orden correcto ( o lo mas parecido al orden correcto )
 	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getFullWStepSequenceDefs(
 			Integer idProcess, Integer version ) 
@@ -356,28 +383,34 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefs() - can't obtain stepSeq list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefs() - can't obtain stepSeq list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error recovering full route list .." 
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefs() - Ex - can't obtain stepSeq list - " +
-					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefs() - Ex - can't obtain stepSeq list: "
-					+ e.getMessage()+"\n"+e.getCause());
+			String mess = "Exception: error recovering full route list .."
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		return stepSeqs;
 	}
 	
+	/**
+	 * Return step sequence list for given process and from step
+	 * @param idProcess
+	 * @param idFromStep
+	 * @return
+	 * @throws WStepSequenceDefException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getStepSequenceList(
-			Integer processId, Integer idFromStep ) 
+			Integer idProcess, Integer idFromStep ) 
 	throws WStepSequenceDefException {
 
 		org.hibernate.Session session = null;
@@ -394,7 +427,7 @@ public class WStepSequenceDefDao {
 
 			stepSeqs = session
 							.createQuery("From WStepSequenceDef WHERE process.id=? and fromStep.id = ?  ")
-							.setParameter(0, processId)
+							.setParameter(0, idProcess)
 							.setParameter(1, idFromStep)
 							.list();
 
@@ -403,20 +436,23 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefs() - can't obtain stepSeq list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefs() - can't obtain stepSeq list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error recovering route for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" idFromStep:"
+					+ (idFromStep!=null?idFromStep:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefs() - Ex - can't obtain stepSeq list - " +
-					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefs() - Ex - can't obtain stepSeq list: "
-					+ e.getMessage()+"\n"+e.getCause());
+			String mess = "Exception: error recovering route for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" idFromStep:"
+					+ (idFromStep!=null?idFromStep:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		return stepSeqs;
@@ -438,7 +474,7 @@ public class WStepSequenceDefDao {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getStepSequenceList(
-			Integer processId, String deleted) 
+			Integer idProcess, String deleted) 
 	throws WStepSequenceDefException {
 
 		org.hibernate.Session session = null;
@@ -456,18 +492,18 @@ public class WStepSequenceDefDao {
 			if (deleted.equals(DELETED)){
 				stepSeqs = session
 						.createQuery("From WStepSequenceDef Where process.id=? And deleted IS TRUE Order By fromStep.id")
-						.setParameter(0, processId)
+						.setParameter(0, idProcess)
 						.list();				
 			} else if (deleted.equals(ALIVE)){
 				stepSeqs = session
 						.createQuery("From WStepSequenceDef Where process.id=? And deleted IS NOT TRUE Order By fromStep.id")
-						.setParameter(0, processId)
+						.setParameter(0, idProcess)
 						.list();				
 
 			} else { // ALL
 				stepSeqs = session
 						.createQuery("From WStepSequenceDef Where process.id=? Order By fromStep.id")
-						.setParameter(0, processId)
+						.setParameter(0, idProcess)
 						.list();				
 			}
 
@@ -476,20 +512,21 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefList() - can't obtain stepSeq list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefList() - can't obtain stepSeq list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error recovering route list for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefList() - Ex - can't obtain stepSeq list - " +
-					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefList() - Ex - can't obtain stepSeq list: "
-					+ e.getMessage()+"\n"+e.getCause());
+			String mess = "Exception: error recovering route for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		return stepSeqs;
@@ -498,7 +535,7 @@ public class WStepSequenceDefDao {
 	// dml 20120323
 	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getOutgoingRoutes(
-			Integer stepId, Boolean deleted, Integer processId ) 
+			Integer stepId, Boolean deleted, Integer idProcess ) 
 	throws WStepSequenceDefException {
 	
 		if (stepId==null || stepId.equals(0)) {
@@ -519,8 +556,8 @@ public class WStepSequenceDefDao {
 			tx.begin();
 			
 			String processWhereClause = "";
-			if (processId != null) {
-				processWhereClause = " AND process_id= " + processId;
+			if (idProcess != null) {
+				processWhereClause = " AND process_id= " + idProcess;
 			} 
 
 			String deletedWhereClause = "";
@@ -544,20 +581,23 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - can't obtain stepSeq list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - can't obtain stepSeq list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error recovering outgoing routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list - " +
-					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list: "
-					+ e.getMessage()+"\n"+e.getCause());
+			String mess = "Exception: error recovering outgoing routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		return stepSeqs;
@@ -565,11 +605,11 @@ public class WStepSequenceDefDao {
 	}
 	
 	public Integer countOutgoingRoutes(
-			Integer stepId, Integer processId ) 
+			Integer stepId, Integer idProcess ) 
 	throws WStepSequenceDefException {
 	
 		if (stepId==null || stepId.equals(0)) {
-			throw new WStepSequenceDefException("WStepSequenceDefDao: countOutgoingRoutes() - can't obtain stepSeq list (outgoing) for stepId ="
+			throw new WStepSequenceDefException("countOutgoingRoutes() - can't obtain stepSeq list (outgoing) for stepId ="
 					+(stepId==null?"null":"0"));
 		}
 		
@@ -585,11 +625,11 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
-			if (processId != null && !processId.equals(0)) {
+			if (idProcess != null && !idProcess.equals(0)) {
 				qtyOutgoingRoutes = (Long) session
 								.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE fromStep.id = ? and process.id=? ")
 								.setParameter(0, stepId)
-								.setParameter(1, processId)
+								.setParameter(1, idProcess)
 								.uniqueResult();
 			} else {
 				qtyOutgoingRoutes = (Long) session
@@ -603,20 +643,23 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: countOutgoingRoutes() - can't obtain stepSeq list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: countOutgoingRoutes() - can't obtain stepSeq list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error counting outgoing routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list - " +
-					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByFromStep() - Ex - can't obtain stepSeq list: "
-					+ e.getMessage()+"\n"+e.getCause());
+			String mess = "Exception: error counting outgoing routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		if (qtyOutgoingRoutes != null){
@@ -630,7 +673,7 @@ public class WStepSequenceDefDao {
 	// dml 20120323
 	@SuppressWarnings("unchecked")
 	public List<WStepSequenceDef> getIncomingRoutes(
-			Integer stepId, Boolean deleted, Integer processId) 
+			Integer stepId, Boolean deleted, Integer idProcess) 
 	throws WStepSequenceDefException {
 	
 		if (stepId==null || stepId.equals(0)) {
@@ -651,8 +694,8 @@ public class WStepSequenceDefDao {
 			tx.begin();
 			
 			String processWhereClause = "";
-			if (processId != null) {
-				processWhereClause = " AND process_id= " + processId;
+			if (idProcess != null) {
+				processWhereClause = " AND process_id= " + idProcess;
 			} 
 
 			String deletedWhereClause = "";
@@ -676,20 +719,23 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - can't obtain stepSeq list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - can't obtain stepSeq list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error incoming outgoing routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list - " +
-					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list: "
-					+ e.getMessage()+"\n"+e.getCause());
+			String mess = "Exception: error recovering incoming routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		return stepSeqs;
@@ -697,7 +743,7 @@ public class WStepSequenceDefDao {
 	}
 	
 	public Integer countIncomingRoutes(
-			Integer stepId, Integer processId) 
+			Integer stepId, Integer idProcess) 
 	throws WStepSequenceDefException {
 	
 		if (stepId==null || stepId.equals(0)) {
@@ -717,11 +763,11 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
-			if (processId != null) {
+			if (idProcess != null) {
 				qtyIncomingRoutes = (Long) session
 								.createQuery("SELECT COUNT (id) FROM WStepSequenceDef WHERE toStep.id = ? and process.id=? ")
 								.setParameter(0, stepId)
-								.setParameter(1, processId)
+								.setParameter(1, idProcess)
 								.uniqueResult();
 			} else {
 				qtyIncomingRoutes = (Long) session
@@ -735,20 +781,23 @@ public class WStepSequenceDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			ex.printStackTrace();
-			logger.warn("WStepSequenceDefDao: countIncomingRoutes() - error executing query - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: countIncomingRoutes() - error executing query - "
-					+ ex.getMessage()+"\n"+ex.getCause());
+			String mess = "HibernateException: error counting incoming routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			e.printStackTrace();
-			logger.warn("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list - " +
-					e.getMessage()+"\n"+e.getCause() );
-			throw new WStepSequenceDefException("WStepSequenceDefDao: getWStepSequenceDefListByToStep() - Ex - can't obtain stepSeq list: "
-					+ e.getMessage()+"\n"+e.getCause());
+			String mess = "Exception: error counting incoming routes for process id:" 
+					+ (idProcess!=null?idProcess:"null") +" stepId:"
+					+ (stepId!=null?stepId:"null") +" "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+					+" "+ex.getClass();
+			logger.warn(mess);
+			throw new WStepSequenceDefException(mess);
 		}
 
 		if (qtyIncomingRoutes != null){
@@ -766,7 +815,7 @@ public class WStepSequenceDefDao {
 	public List<StringPair> getComboList(
 			Integer idProcess, Integer version,
 			String firstLineText, String blank )
-	throws WProcessDefException {
+	throws WStepSequenceDefException {
 		 
 			List<Object> lwsd = null;
 			List<StringPair> retorno = new ArrayList<StringPair>(10);
@@ -826,10 +875,22 @@ public class WStepSequenceDefDao {
 			} catch (HibernateException ex) {
 				if (tx != null)
 					tx.rollback();
-				throw new WProcessDefException(
-						"Can't obtain WProcessDefs combo list "
-						+ex.getMessage()+"\n"+ex.getCause());
-			} catch (Exception e) {}
+				String mess = "HibernateException: error recovering routes for combo at process id:" 
+						+ (idProcess!=null?idProcess:"null") +" stepId:"
+						+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
+				logger.warn(mess);
+				throw new WStepSequenceDefException(mess);
+
+			} catch (Exception ex) {
+				if (tx != null)
+					tx.rollback();
+				String mess = "Exception: error recovering routes for combo at process id:" 
+						+ (idProcess!=null?idProcess:"null") +" stepId:"
+						+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ")
+						+" "+ex.getClass();
+				logger.warn(mess);
+				throw new WStepSequenceDefException(mess);
+			}
 
 			return retorno;
 

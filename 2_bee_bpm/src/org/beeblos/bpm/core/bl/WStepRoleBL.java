@@ -21,10 +21,9 @@ public class WStepRoleBL {
 	}
 
 	/**
-	 * Adds the new relation between the idStep and the role id and returns the
-	 * complete relation's object.
+	 * Add a new relation between the Step and the Role and returns added object
 	 * 
-	 * @author dmuleiro 20141031
+	 * @author nes 20141229
 	 *
 	 * @param idStep
 	 *            the step id
@@ -38,7 +37,37 @@ public class WStepRoleBL {
 	 * @throws WStepRoleException
 	 *             the w step role exception
 	 */
-	public WStepRole addNewStepRole(Integer idStep, Integer idRole, boolean isAdmin, Integer idCurrentUser)
+	public WStepRole addNewStepRoleX(Integer idStep, Integer idRole, boolean isAdmin, Integer idCurrentUser)
+			throws WStepRoleException {
+
+		logger.debug("WStepRoleBL:addNewStepRole() with idStep = " + idStep
+				+ " and idRole = " + idRole);
+
+		Integer idStepRole = this.addNewStepRole(idStep, idRole, isAdmin, idCurrentUser);
+		if (idStepRole!=null) {
+			return getStepRoleByPK(idStepRole);
+		}
+		return null;
+	}
+	
+	/**
+	 * Add a new relation between the Step and the Role and returns id of added object
+	 * 
+	 * @author dmuleiro 20141031 // nes 20141229
+	 *
+	 * @param idStep
+	 *            the step id
+	 * @param idRole
+	 *            the role id
+	 * @param isAdmin
+	 *            the is admin
+	 * @param idCurrentUser
+	 *            the id current user
+	 * @return the w step role
+	 * @throws WStepRoleException
+	 *             the w step role exception
+	 */
+	public Integer addNewStepRole(Integer idStep, Integer idRole, boolean isAdmin, Integer idCurrentUser)
 			throws WStepRoleException {
 
 		logger.debug("WStepRoleBL:addNewStepRole() with idStep = " + idStep
@@ -50,13 +79,14 @@ public class WStepRoleBL {
 		instance.setAdmin(isAdmin);
 		
 		Integer idStepRole = this.add(instance, idCurrentUser);
+		
 
-		if (idStepRole != null){
+/*		if (idStepRole != null){
 			return this.getStepRoleByPK(idStepRole);
 		}
 		
-		return null;
-		
+		return null;*/
+		return idStepRole;
 	}
 
 	public Integer add(WStepRole instance, Integer idCurrentUser)
