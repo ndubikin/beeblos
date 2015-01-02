@@ -45,7 +45,7 @@ public class WStepDef implements java.io.Serializable {
 	
 	private String xmlHref;
 	private String xmlId;
-	private String xmlLabel;
+//	private String xmlLabel;
 	private String xmlRules;
 	
 	private String responsesString;
@@ -1416,14 +1416,14 @@ public class WStepDef implements java.io.Serializable {
 	@XmlAttribute(name="label")
 	public String getXmlLabel() {
 		//xmlLabel = this.xmlLabel;
-		return xmlLabel;
+		return getStepHead().getName();
 	}
 
 	/**
 	 * @param xmlLabel the xmlLabel to set
 	 */
 	public void setXmlLabel(String xmlLabel) {
-		this.xmlLabel = xmlLabel;
+		getStepHead().setName(xmlLabel);
 	}
 
 	/**
