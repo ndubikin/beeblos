@@ -30,6 +30,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.graph.ElementWrapper;
 import org.beeblos.bpm.core.graph.Layer;
 import org.beeblos.bpm.core.graph.MxCell;
+import org.beeblos.bpm.core.graph.MxGeometry;
 import org.beeblos.bpm.core.graph.MxGraphModel;
 import org.beeblos.bpm.core.graph.Symbol;
 import org.beeblos.bpm.core.graph.Workflow;
@@ -431,6 +432,12 @@ public class WProcessDefDao {
 				
 				WStepDef wsd = i.next();
 				
+				if(wsd.getXmlId() == null
+						|| wsd.getXmlId().equals("")){
+					
+					_putXmlIdToJavaStep(wsd, pro);
+				}
+				
 				/**
 				 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
 				 */
@@ -463,7 +470,12 @@ public class WProcessDefDao {
 				MxCell m = (MxCell)ju.unmarshal(r);
 				
 				ssd.setMxCell(m);
-				_correctMxCellObject(ssd, pro.getSteps(), pro.getSymbolObjectList());
+				
+				if(ssd.getXmlId() == null
+						|| ssd.getXmlId().equals("")){
+					_putXmlIdToJavaStepSequence(ssd,pro);
+				}
+				_putXmlIdToStepsFromAndTo(ssd);
 				
 			}
 			
@@ -498,41 +510,130 @@ public class WProcessDefDao {
 		return "";
 	}
 	
-	private void _correctMxCellObject(WStepSequenceDef ssd, Set<WStepDef> steps, List<Symbol> symbols) {
+	private void _putXmlIdToJavaStep(WStepDef wsd, WProcessDef pro){
+		
+		Integer lastXmlId = 0;
+		
+		if(pro.getSteps() != null){
+		for(WStepDef w : pro.getSteps()){
+			if(w.getXmlId() != null
+					&& Integer.valueOf(w.getXmlId().trim()) > lastXmlId){
+				lastXmlId = Integer.valueOf(w.getXmlId().trim());
+			}
+		}
+		}
+		if(pro.getStepSequenceList() != null){
+		for(WStepSequenceDef wssd : pro.getStepSequenceList()){
+			if(wssd.getXmlId() != null
+					&& Integer.valueOf(wssd.getXmlId()) > lastXmlId){
+				lastXmlId = Integer.valueOf(wssd.getXmlId());
+			}
+		}
+		}
+		if(pro.getSymbolObjectList() != null){
+		for(Symbol s : pro.getSymbolObjectList()){
+			if(s.getXmlId() != null
+					&& Integer.valueOf(s.getXmlId()) > lastXmlId){
+				lastXmlId = Integer.valueOf(s.getXmlId());
+			}
+		}
+		}
+		// this list (layerobjectlist) cant be null at this point because at least one layer is obligatory. so either we already created it or the xml wont work
+		for(Layer l : pro.getLayerObjectList()){
+			if(l.getId() != null
+					&& Integer.valueOf(l.getId().trim()) > lastXmlId){
+				lastXmlId = Integer.valueOf(l.getId().trim());
+			}
+		}
+		
+		wsd.setXmlId(String.valueOf(lastXmlId+1));
+	}
+	
+	private void _putXmlIdToJavaStepSequence(WStepSequenceDef wsd, WProcessDef pro){
+		
+		Integer lastXmlId = 0;
+		
+		if(pro.getSteps() != null){
+		for(WStepDef w : pro.getSteps()){
+			if(w.getXmlId() != null
+					&& Integer.valueOf(w.getXmlId().trim()) > lastXmlId){
+				lastXmlId = Integer.valueOf(w.getXmlId().trim());
+			}
+		}
+		}
+		if(pro.getStepSequenceList() != null){
+		for(WStepSequenceDef wssd : pro.getStepSequenceList()){
+			if(wssd.getXmlId() != null
+					&& Integer.valueOf(wssd.getXmlId()) > lastXmlId){
+				lastXmlId = Integer.valueOf(wssd.getXmlId());
+			}
+		}
+		}
+		if(pro.getSymbolObjectList() != null){
+		for(Symbol s : pro.getSymbolObjectList()){
+			if(s.getXmlId() != null
+					&& Integer.valueOf(s.getXmlId()) > lastXmlId){
+				lastXmlId = Integer.valueOf(s.getXmlId());
+			}
+		}
+		}
+		// this list (layerobjectlist) cant be null at this point because at least one layer is obligatory. so either we already created it or the xml wont work
+		for(Layer l : pro.getLayerObjectList()){
+			if(l.getId() != null
+					&& Integer.valueOf(l.getId().trim()) > lastXmlId){
+				lastXmlId = Integer.valueOf(l.getId().trim());
+			}
+		}
+		
+		wsd.setXmlId(String.valueOf(lastXmlId+1));
+	}
+	
+	private void _putXmlIdToStepsFromAndTo(WStepSequenceDef ssd) {
 
-		MxCell mxCell = ssd.getMxCell();
-		Integer stepFrom = ssd.getFromStep() != null ? ssd.getFromStep().getId() : null;
-		Integer stepTo = ssd.getToStep() != null ? ssd.getToStep().getId() : null;
-		
-		Iterator<WStepDef> i = steps.iterator();
-		
-		while(i.hasNext()){
-			
-			WStepDef wsd = (WStepDef)i.next();
-			
-			if(stepFrom != null
-					&& wsd.getXmlId()!=null // nes 20150102
-					&& wsd.getXmlId().equals(stepFrom)){
-				mxCell.setSource(stepFrom.toString());
-			} else if (stepTo != null
-					&& wsd.getXmlId()!=null // nes 20150102
-					&& wsd.getXmlId().equals(stepTo)){
-				mxCell.setTarget(stepTo.toString());
-			} else if(stepFrom == null){
+		if(ssd.getFromStep() != null){
+			ssd.getMxCell().setSource(ssd.getFromStep().getXmlId());
+		} else {
+			if(ssd.getProcess().getSymbolObjectList() != null){
+				for(Symbol s : ssd.getProcess().getSymbolObjectList()){
+					if(s.getLabel() != null
+							&& s.getLabel().equalsIgnoreCase("begin")){
+						ssd.getMxCell().setSource(s.getXmlId());
+					}
+				}
+			} else {
 				
-				for(int h = 0; h < symbols.size(); h++){
-					Symbol s = symbols.get(h);
-					if(s.getLabel().equalsIgnoreCase("begin")){
-						mxCell.setSource(s.getXmlId());
+				ssd.getMxCell().setSource(null);
+				ssd.getMxCell().setMxGeometry(new MxGeometry(
+															null,
+															"1",
+															"geometry",
+															null,
+															null,
+															ssd.getMxCell().getMxGeometry().getX() + 0,
+															ssd.getMxCell().getMxGeometry().getY()+0));
+			}
+		}
+		if(ssd.getToStep() != null){
+			ssd.getMxCell().setTarget(ssd.getToStep().getXmlId());
+		} else {
+			if(ssd.getProcess().getSymbolObjectList() != null){
+				for(Symbol s : ssd.getProcess().getSymbolObjectList()){
+					if(s.getLabel() != null
+							&& s.getLabel().equalsIgnoreCase("end")){
+						ssd.getMxCell().setSource(s.getXmlId());
 					}
 				}
-			} else if(stepTo == null){
-				for(int h = 0; h < symbols.size(); h++){
-					Symbol s = symbols.get(h);
-					if(s.getLabel().equalsIgnoreCase("end")){
-						mxCell.setTarget(s.getXmlId());
-					}
-				}
+			} else {
+				
+				ssd.getMxCell().setTarget(null);
+				ssd.getMxCell().setMxGeometry(new MxGeometry(
+															null,
+															"1",
+															"geometry",
+															null,
+															null,
+															ssd.getMxCell().getMxGeometry().getX() + 0,
+															ssd.getMxCell().getMxGeometry().getY()+0));
 			}
 		}
 	}
