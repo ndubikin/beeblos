@@ -357,11 +357,24 @@ public class WProcessDefDao {
 		
 		return version;
 	}	
-	// pab 20141218
+	/**
+	 * Arma el objeto XML para editar el mapa con mxGraph
+	 * 
+	 * pab 20141218
+	 * 
+	 * @param processDefId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepSequenceDefException
+	 */
 	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
 		try {
 
 			WProcessDef pro = new WProcessDefBL().getWProcessDefByPK(processDefId, 1000);
+			/**
+			 * creo el obj workflow dinamicamente porque no necesito guardarlo en la base de datos
+			 */
 			pro.setWorkflowObj(new Workflow(
 										pro.getComments() == null ? "" : pro.getComments(),
 										pro.getXmlId() == null ? "0" : pro.getXmlId(),
@@ -371,31 +384,56 @@ public class WProcessDefDao {
 			JAXBContext jaxbContext2 = JAXBContext.newInstance(org.beeblos.bpm.core.graph.ElementWrapper.class);
 			Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
 	
-			StringReader sr = new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><ElementWrapper>"+pro.getXmlSymbolsString()+"</ElementWrapper>");
+			/**
+			 * Cojo todos los layer y todos los symbol que tengo guardado como string en la bd y los convierto a objeto java
+			 * para poder marshalizar y des-marshalizar
+			 * Le pongo el encoding y le pongo el ElementWrapper dinamicamente porque no lo guardo en la bd
+			 */
+			StringReader sr = new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><ElementWrapper>"
+								+pro.getXmlSymbolsString()
+								+"</ElementWrapper>");
 			ElementWrapper sw = (ElementWrapper)jaxbUnmarshaller2.unmarshal(sr);
-
+			
+			/**
+			 * le agrego el string convertido a objeto java al proceso
+			 */
 			pro.setSymbolObjectList(sw.getsList());
 			
+			/**
+			 * Cojo los layers (son obligatorios
+			 * Si no hay guardado ningun layer, como lo necesitamos, creo uno x default
+			 */
 			if(sw.getlList() != null &&
 					sw.getlList().size() > 0){
 				pro.setLayerObjectList(sw.getlList());
 			} else {
 				
-				Layer l = (Layer)JAXBContext.newInstance(org.beeblos.bpm.core.graph.Layer.class).createUnmarshaller().unmarshal(new StringReader(Constants.DEFAULT_LAYER_XML));
+				Layer l = (Layer)JAXBContext.newInstance(org.beeblos.bpm.core.graph.Layer.class)
+										.createUnmarshaller()
+										.unmarshal(new StringReader(Constants.DEFAULT_LAYER_XML));
 				sw.setlList(new ArrayList<Layer>());
 				sw.getlList().add(l);
 				pro.setLayerObjectList(sw.getlList());
 			}
 			
+			/**
+			 * Ahora vamos con los steps (task)
+			 */
 			JAXBContext jaxbContext = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxGraphModel.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
 			Iterator<WStepDef> i = pro.getSteps().iterator();
 			
+			/**
+			 * Este while le mete el mxcell a cada step (porque el wStepDef no tiene mxcell)
+			 */
 			while(i.hasNext()){
 				
 				WStepDef wsd = i.next();
 				
+				/**
+				 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
+				 */
 				String xmlString = wsd.getMxCellString() != null && !wsd.getMxCellString().equals("") ? wsd.getMxCellString() : Constants.DEFAULT_MXCELL_XML;
 				
 				StringReader reader = new StringReader(xmlString);
@@ -405,6 +443,9 @@ public class WProcessDefDao {
 
 			Iterator<WStepSequenceDef> i2 = pro.getStepSequenceList().iterator();
 			
+			/**
+			 * Este while le mete los mxcell a cada stepSequence
+			 */
 			while(i2.hasNext()){
 				
 				WStepSequenceDef ssd = i2.next();
@@ -412,6 +453,9 @@ public class WProcessDefDao {
 				JAXBContext jc = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxCell.class);
 				Unmarshaller ju = jc.createUnmarshaller();
 
+				/**
+				 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
+				 */
 				StringReader r = new StringReader(ssd.getXmlMxCellString() == null || ssd.getXmlMxCellString().equals("") ? 
 															Constants.DEFAULT_MXCELL_XML :
 															ssd.getXmlMxCellString() );
@@ -424,7 +468,10 @@ public class WProcessDefDao {
 			}
 			
 			
-			
+			/**
+			 * Una vez ajustados todos los detalles y convertidos los datos que tengo
+			 * en String a objeto, creo el xml completo para todo el proceso
+			 */
 			MxGraphModel m = new MxGraphModel(pro);
 		
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -435,6 +482,9 @@ public class WProcessDefDao {
 			
 			jaxbMarshaller.marshal(m, stringWriter);
 			
+			/**
+			 * devuelve el xml con el proceso completo para mxGraph
+			 */
 			return stringWriter.toString();
 
 			
