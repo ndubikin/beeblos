@@ -304,3 +304,7 @@ ADD COLUMN `xml_only_objects_string` TEXT NULL AFTER `mod_user`;
 ALTER TABLE `bee_bpm_dev`.`w_step_sequence_def` 
 ADD COLUMN `mxcell_string` TEXT NULL AFTER `mod_user`,
 ADD COLUMN `xml_id` TEXT NULL AFTER `mxcell_string`;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_def` 
+ADD COLUMN `xml_symbols` TEXT NULL AFTER `mod_user`,
+ADD COLUMN `xml_layers` TEXT NULL AFTER `xml_symbols`;
