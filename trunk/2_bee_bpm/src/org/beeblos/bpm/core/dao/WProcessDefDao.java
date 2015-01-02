@@ -460,10 +460,12 @@ public class WProcessDefDao {
 			
 			WStepDef wsd = (WStepDef)i.next();
 			
-			if(stepFrom != null 
+			if(stepFrom != null
+					&& wsd.getXmlId()!=null // nes 20150102
 					&& wsd.getXmlId().equals(stepFrom)){
 				mxCell.setSource(stepFrom.toString());
 			} else if (stepTo != null
+					&& wsd.getXmlId()!=null // nes 20150102
 					&& wsd.getXmlId().equals(stepTo)){
 				mxCell.setTarget(stepTo.toString());
 			} 
