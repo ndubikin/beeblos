@@ -462,8 +462,8 @@ public class WProcessDefDao {
 				
 				MxCell m = (MxCell)ju.unmarshal(r);
 				
-				_correctMxCellObject(ssd, pro.getSteps(), pro.getSymbolObjectList());
 				ssd.setMxCell(m);
+				_correctMxCellObject(ssd, pro.getSteps(), pro.getSymbolObjectList());
 				
 			}
 			
