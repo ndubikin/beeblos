@@ -518,7 +518,22 @@ public class WProcessDefDao {
 					&& wsd.getXmlId()!=null // nes 20150102
 					&& wsd.getXmlId().equals(stepTo)){
 				mxCell.setTarget(stepTo.toString());
-			} 
+			} else if(stepFrom == null){
+				
+				for(int h = 0; h < symbols.size(); h++){
+					Symbol s = symbols.get(h);
+					if(s.getLabel().equalsIgnoreCase("begin")){
+						mxCell.setSource(s.getXmlId());
+					}
+				}
+			} else if(stepTo == null){
+				for(int h = 0; h < symbols.size(); h++){
+					Symbol s = symbols.get(h);
+					if(s.getLabel().equalsIgnoreCase("end")){
+						mxCell.setTarget(s.getXmlId());
+					}
+				}
+			}
 		}
 	}
 
