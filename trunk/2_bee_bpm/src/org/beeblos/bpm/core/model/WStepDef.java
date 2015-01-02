@@ -1352,7 +1352,7 @@ public class WStepDef implements java.io.Serializable {
 	}
 
 	/**
-	 * @return the mxCellObject
+	 * @return the mxCellObject - MxCell
 	 */
 	@XmlElement(name="mxCell")
 	public MxCell getMxCellObject() {
@@ -1411,6 +1411,7 @@ public class WStepDef implements java.io.Serializable {
 	}
 
 	/**
+	 * mxGraph label mapped witn stepHead.name
 	 * returns the name of the step (task)
 	 * @return the xmlLabel
 	 */
@@ -1425,9 +1426,14 @@ public class WStepDef implements java.io.Serializable {
 	}
 
 	/**
+	 * mxGraph label mapped witn stepHead.name
+	 * Note: it's required create this object with all 
+	 * empty property objects to manage xml attributes...
 	 * @param xmlLabel the xmlLabel to set
 	 */
 	public void setXmlLabel(String xmlLabel) {
+//		this.xmlLabel=xmlLabel;
+		if (stepHead==null) this.setStepHead(new WStepHead());
 		getStepHead().setName(xmlLabel);
 	}
 

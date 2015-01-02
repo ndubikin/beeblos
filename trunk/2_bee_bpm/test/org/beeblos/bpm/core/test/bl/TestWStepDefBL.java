@@ -49,9 +49,11 @@ public class TestWStepDefBL extends TestCase{
 		@Test
 		public final void testCrudStepRelatedRole() throws Exception {
 
-			WStepDef step = new WStepDefBL().getWStepDefByPK(1, 1, 1000);
+			WStepDef step = stepBL.getWStepDefByPK(1, 1, 1000);
 			
-			WStepDef step2 = new WStepDefBL().addStepRelatedRole(step, 2, true, 1000);
+			Integer idStepRole = stepBL.addRelatedRole(step.getId(), 2, true, 1000);
+			
+			WStepDef step2 = stepBL.getWStepDefByPK(1, 1, 1000);
 			
 			if (step.getRolesRelated() != null){
 				for (WStepRole role : step.getRolesRelated()){

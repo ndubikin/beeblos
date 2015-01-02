@@ -344,7 +344,7 @@ public class WProcessDefBL {
 				
 				for (WStepSequenceDef wssd : wssdList){
 					
-					wssdBL.deleteRoute(wssd, currentUserId);
+					wssdBL.deleteRoute(wssd.getId(), currentUserId);// nes 20150102 - cambiado a id
 					
 				}
 				

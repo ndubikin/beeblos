@@ -100,7 +100,7 @@ public class TestWStepSequenceDefBL extends TestCase{
 
 			
 			
-			new WStepSequenceDefBL().deleteRoute(route,1000) ;
+			new WStepSequenceDefBL().deleteRoute(route.getId(),1000) ;
 			assertNull(routeBL.getWStepSequenceDefByPK(iroute,1002));
 			
 			// ahora borro el proceso

@@ -274,7 +274,7 @@ public class DevelopmentBL {
 		
 		if (stepSequenceDefList != null && !stepSequenceDefList.isEmpty()){
 			for (WStepSequenceDef stepSequenceDef : stepSequenceDefList){				
-				wpsdBL.deleteRoute(stepSequenceDef, currentUserId);				
+				wpsdBL.deleteRoute(stepSequenceDef.getId(), currentUserId);	// nes 20150102 - cambiado a id			
 			}
 		}
 		
