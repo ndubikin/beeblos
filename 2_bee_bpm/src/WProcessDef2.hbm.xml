@@ -2332,10 +2332,20 @@
 		<return alias="wUserDef" class="org.beeblos.bpm.core.model.WUserDef"/>
 		<![CDATA[SELECT DISTINCT wud.* from w_user_role_work wurw
 						LEFT JOIN w_user_def wud ON wud.id=wurw.id_user
-					WHERE wurw.id_process_work=:idRole AND wurw.id_role=:idProcessWork;
+					WHERE wurw.id_process_work=:idRole AND wurw.id_role=:idProcessWork
 					]]>
     </sql-query>
 
+    <!-- returns a list of all users for a given runtime role and processId -->
+    <sql-query name="countStepDefBelongingHead">
+		<return alias="wUserDef" class="org.beeblos.bpm.core.model.WUserDef"/>
+		<![CDATA["SELECT IF(wsd.head_id = :stepHeadId,true,false) " +
+					" FROM w_step_def wsd " +
+					" WHERE wsd.head_id = :stepHeadId " +
+					" GROUP BY wsd.head_id "
+					]]>
+    </sql-query>
+    
 	<filter-def name="byProcessHeadId">
 		<filter-param name="filterProcessHeadId" type="java.lang.Integer" />
 	</filter-def>
