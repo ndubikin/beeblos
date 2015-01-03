@@ -122,10 +122,19 @@ public class WStepHeadBL {
 
 	}
 
-	// dml 20130129
-	public boolean headStepHasWStepDef(Integer stepHeadId) throws WStepHeadException{
+
+	/**
+	 * Checks if given stepHead id has almost 1 wStepDef related.
+	 * This method will be used mainly to delete orphans purpose ...
+	 * dml 20130129
+	 * 
+	 * @param stepHeadId
+	 * @return
+	 * @throws WStepHeadException
+	 */
+	public boolean hasWStepDef(Integer stepHeadId) throws WStepHeadException{
 		
-		return new WStepHeadDao().headStepHasWStepDef(stepHeadId);
+		return new WStepHeadDao().hasWStepDef(stepHeadId);
 		
 	}
 

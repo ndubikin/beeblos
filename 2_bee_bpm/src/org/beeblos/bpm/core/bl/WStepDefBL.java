@@ -247,7 +247,7 @@ public class WStepDefBL {
 	/**
 	 * @author dmuleiro - 20130830
 	 * 
-	 * Updates the step's "logic delete" putting the field "delete" as the user wants. 
+	 * Updates the step's "logical delete" field  
 	 *
 	 * @param  Integer stepId
 	 * @param  boolean deleted
@@ -260,8 +260,7 @@ public class WStepDefBL {
 	 */
 	private void _updateStepDeletedField(Integer stepId, boolean deleted, Integer currentUserId)
 			throws WStepDefException {
-
-		logger.debug("updateStepDeletedField() WStepDef < id = " + stepId + ">");
+		logger.debug("updateStepDeletedField() WStepDef id:" + stepId);
 
 		if (stepId != null 
 				&& !stepId.equals(0)) {
@@ -281,24 +280,19 @@ public class WStepDefBL {
 	 *  
 	 *  NOTA: ESTE MÉTODO DEBERIA UTILIZARSE SOLO EN ENTORNOS DE DESARROLLO!!
 	 *  
-	 *  TODO: revisar si se puede utilizar en entornos de producción y si no se puede revisar que se puede hacer para tener esta
-	 *  funcionalidad para entornos de producción (si es que hay que tenerla ...)
+	 *  TODO: revisar si se puede utilizar en entornos de producción y si no se puede revisar que se 
+	 *  puede hacer para tener esta funcionalidad para entornos de producción (si es que hay que tenerla ...)
 	 * 
 	 * @param stepDefId
 	 * @param processHeadId
 	 * @param currentUserId
 	 * @throws WStepDefException
-	 * @throws WStepWorkException
-	 * @throws WProcessDefException
-	 * @throws WStepSequenceDefException
 	 * @throws WStepHeadException
-	 * @throws WStepWorkSequenceException
 	 */
 	public void delete(Integer stepDefId, Integer processHeadId, Integer currentUserId) 
-			throws WStepDefException, WStepWorkException, WProcessDefException, 
-			WStepSequenceDefException, WStepHeadException, WStepWorkSequenceException  {
-
-		logger.debug("delete(stepid) WProcessDef - Name: ["+stepDefId+"]");
+			throws WStepDefException, WStepHeadException  {
+		logger.debug("delete(stepid) WProcessDef - Name: ["
+						+(stepDefId!=null?stepDefId:"null")+"]");
 		
 		if (stepDefId==null || stepDefId==0) {
 			String mess = "Trying delete step with id null or 0 ...";
@@ -306,7 +300,11 @@ public class WStepDefBL {
 			throw new WStepDefException(mess);
 		}
 		
-		boolean deleteFromBD = true;
+		/**
+		 * flag to indicate the step may be deleted from DB
+		 * if not there will be checked as 'deleted' flag
+		 */
+		boolean allowDeleteFromBD = true;
 		
 		// dml 20130830 - si el step tiene rutas no se puede eliminar de la BD. Si todas las rutas estan deleted se podrá marcar
 		// como "deleted", de lo contrario devuelve exception.
@@ -316,10 +314,10 @@ public class WStepDefBL {
 			// tira exception porque no se puede "borrar" un step con rutas "activas" asociadas
 			if (!this._stepHasAliveRoutes(stepDefId, currentUserId)){
 				
-				deleteFromBD = false;
+				allowDeleteFromBD = false;
 				
 			} else {
-				String mess = "Delete step with related NOT DELETED step sequence is not allowed ...";
+				String mess = "Delete step id:"+stepDefId+" with related and NOT DELETED routes is not allowed ...";
 				logger.error(mess);
 				throw new WStepDefException(mess);
 			}
@@ -328,9 +326,10 @@ public class WStepDefBL {
 		
 		// dml 20130830 - si el step se esta usando en algun otro proceso no se puede ni borrar ni marcar como borrado (para PURGE)
 		if (this.isSharedStep(stepDefId, currentUserId)) {
-			String mess = "Delete shared step is not allowed because this step belongs few processes ...";
+			String mess = "Delete shared step is not allowed because this step belongs few processes ... id:"
+					+stepDefId;
 			logger.error(mess);
-			throw new WStepSequenceDefException(mess);
+			throw new WStepDefException(mess);
 		}
 
 		Integer qtyWorks;
@@ -339,7 +338,7 @@ public class WStepDefBL {
 			qtyWorks = new WStepWorkBL().getWorkCountByStep(stepDefId,ALL);
 		
 		} catch (WStepWorkException e) {
-			String mess = "Error verifiyng existence of works related with this step id:"+stepDefId
+			String mess = "Error WStepWorkException checking existing works related with this step id:"+stepDefId
 					+ " "+e.getMessage()+" - "+e.getCause();
 			logger.error(mess);
 			throw new WStepDefException(mess);
@@ -347,24 +346,31 @@ public class WStepDefBL {
 		
 		// dml 20130830 - si el step se usa en algun work no se puede borrar de la BD pero si marcar como borrado (para PURGE)
 		if (qtyWorks != null && qtyWorks > 0) {
-			deleteFromBD = false;
+			allowDeleteFromBD = false;
 		}
 
-		Integer workingRoutes = 
-				new WStepWorkSequenceBL().countSequenceWork(stepDefId, currentUserId);
-		
 		// dml 20130830 - si tiene rutas recorridas (work) no se puede borrar pero si marcar como borrado (para PURGE)
-		if (workingRoutes != null
-				&& workingRoutes > 0){
-			deleteFromBD = false;
-		} 
+		Integer workingRoutes;
+		try {
+			workingRoutes = new WStepWorkSequenceBL().countSequenceWork(stepDefId, currentUserId);
+			if (workingRoutes != null
+					&& workingRoutes > 0){
+				allowDeleteFromBD = false;
+			} 
+		} catch (WStepWorkSequenceException e) {
+			String mess = "Error WStepWorkSequenceException checking existing working routes related with this step id:"+stepDefId
+					+ " "+e.getMessage()+" - "+e.getCause();
+			logger.error(mess);
+			throw new WStepDefException(mess);
+		}
+		
 
 		WStepDef step = this.getWStepDefByPK(stepDefId, processHeadId, currentUserId);
 		Integer stepHeadId = step.getStepHead().getId();
 		
 		// dml 20130830 - si llega aqui (no sale por exception) pero no se puede borrar definitivamente de la BD 
 		// se marca como "deleted" (para que el PURGE luego limpie todo)
-		if (!deleteFromBD){
+		if (!allowDeleteFromBD){
 			this._updateStepDeletedField(stepDefId, DELETED_BOOL, currentUserId);
 		} else {
 			// se borrarán en cascada (por el mapping) los roles y users relacionados con el step
@@ -474,12 +480,19 @@ public class WStepDefBL {
 
 	}
 
-	// dml 20130507
+	/**
+	 * checks if wStepHead belongs a wStepDef. if not this will be deleted...
+	 * dml 20130507
+	 * 
+	 * @param stepHeadId
+	 * @param currentUserId
+	 * @throws WStepHeadException
+	 */
 	private void _checkAndDeleteStepHead(Integer stepHeadId, Integer currentUserId) throws WStepHeadException{
 		
 		WStepHeadBL wsBL = new WStepHeadBL();
 		
-		if (!wsBL.headStepHasWStepDef(stepHeadId)){
+		if (!wsBL.hasWStepDef(stepHeadId)){
 			
 			wsBL.delete(wsBL.getWStepHeadByPK(stepHeadId, currentUserId), currentUserId);
 			logger.info("The WStepHead " + stepHeadId + " has been correctly deleted by user " + currentUserId);
