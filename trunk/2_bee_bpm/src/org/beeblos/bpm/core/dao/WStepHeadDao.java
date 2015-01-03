@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.model.WStepHead;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 
 import com.sp.common.util.HibernateUtil;
@@ -364,8 +365,17 @@ public class WStepHeadDao {
 
 	}
 
-	// dml 20130507
-	public boolean headStepHasWStepDef(Integer stepHeadId)
+
+	/**
+	 * Checks if given stepHead id has almost 1 wStepDef related.
+	 * This method will be used mainly to delete orphans purpose ...
+	 * dml 20130129 / nes 20150102
+	 * 
+	 * @param stepHeadId
+	 * @return
+	 * @throws WStepHeadException
+	 */
+	public boolean hasWStepDef(Integer stepHeadId)
 			throws WStepHeadException {
 
 		org.hibernate.Session session = null;
@@ -380,27 +390,33 @@ public class WStepHeadDao {
 
 			tx.begin();
 
-			String query =  "SELECT IF(wsd.head_id = :stepHeadId,true,false) " +
-					" FROM w_step_def wsd " +
-					" WHERE wsd.head_id = :stepHeadId " +
-					" GROUP BY wsd.head_id ";
-
-			logger.debug("[QUERY]: "+query);
+			/**
+			 * pasado a namedQuery - nes 20150102
+			 */
+			Query query = session.getNamedQuery("countStepDefBelongingHead")
+									.setInteger("stepHeadId", stepHeadId);
 			
-			result = (BigInteger) session.createSQLQuery(query)
-					.setParameter("stepHeadId", stepHeadId)
-					.uniqueResult();
+			result = (BigInteger) query.uniqueResult();
 
 			tx.commit();
 
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			logger.warn("WStepHeadDao: headStepHasWStepDef() - can't obtain result: "
-					+ ex.getMessage() + "\n" + ex.getCause());
-			throw new WStepHeadException(
-					"WStepHeadDao: headStepHasWStepDef() - can't obtain result: "
-							+ ex.getMessage() + "\n" + ex.getCause());
+			String mess = "Error HibernateException - can't obtain unique result stepHeadId:"
+								+ (stepHeadId!=null?stepHeadId:"null ")
+								+ ex.getMessage() + " " + (ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepHeadException(mess);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Error Exception - can't obtain unique result stepHeadId:"
+								+ (stepHeadId!=null?stepHeadId:"null ")
+								+ ex.getMessage() + " " + (ex.getCause()!=null?ex.getCause():" ");
+			logger.warn(mess);
+			throw new WStepHeadException(mess);			
 
 		}
 

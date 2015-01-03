@@ -216,6 +216,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 
 	/**
+	 * ProcessDef (version) belonging this route
 	 * @return the process
 	 */
 	public WProcessDef getProcess() {
@@ -225,6 +226,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 
 
 	/**
+	 * ProcessDef (version) belonging this route
 	 * @param process the process to set
 	 */
 	public void setProcess(WProcessDef process) {

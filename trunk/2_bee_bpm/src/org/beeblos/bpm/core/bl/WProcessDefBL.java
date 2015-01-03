@@ -392,27 +392,17 @@ public class WProcessDefBL {
 					logger.info("The WStepDef " + stepDef.getName() + " has been correctly deleted by user " + currentUserId);
 					
 				} catch (WStepDefException e) {
-					String mess = "WStepDefException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
-					logger.error(mess);
-					throw new WProcessDefException(mess);
-				} catch (WProcessDefException e) {
-					String mess = "WProcessDefException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
-					logger.error(mess);
-					throw new WProcessDefException(mess);
-				} catch (WStepSequenceDefException e) {
-					String mess = "WStepSequenceDefException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
-					logger.error(mess);
-					throw new WProcessDefException(mess);
-				} catch (WStepWorkSequenceException e) {
-					String mess = "WStepWorkSequenceException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
-					logger.error(mess);
-					throw new WProcessDefException(mess);
-				} catch (WStepWorkException e) {
-					String mess = "WStepWorkException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					String mess = "Error WStepDefException: can't delete stepDef "
+										+ (stepDef.getId()!=null?stepDef.getId():"null ") 
+										+ " "+e.getMessage()+" "
+										+(e.getCause()!=null?e.getCause():" ");
 					logger.error(mess);
 					throw new WProcessDefException(mess);
 				} catch (WStepHeadException e) {
-					String mess = "WStepHeadException: there is not possible delete step def "+ stepDef.getName() + " Error:"+e.getMessage()+" - "+e.getCause();
+					String mess = "Error WStepHeadException: can't delete stepDef " 
+										+ (stepDef.getId()!=null?stepDef.getId():"null ") 
+										+ " "+e.getMessage()+" "
+										+(e.getCause()!=null?e.getCause():" ");
 					logger.error(mess);
 					throw new WProcessDefException(mess);
 				}

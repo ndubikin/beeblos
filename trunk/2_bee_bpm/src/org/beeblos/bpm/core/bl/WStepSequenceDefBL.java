@@ -28,11 +28,20 @@ public class WStepSequenceDefBL {
 		
 	}
 	
+	/**
+	 * Adds a new route for given processDef
+	 * 
+	 * @param route
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepSequenceDefException
+	 */
 	public Integer add(WStepSequenceDef route, Integer currentUserId) throws WStepSequenceDefException {
 		
-		logger.debug("add() WStepSequenceDef - Name: [Proc Version Id:"+
-				route.getProcess().getId()+"-fromStepId:"
-				+((route!=null && route.getFromStep()!=null)?route.getFromStep().getId():"xxxx")+"]");
+		logger.debug("add() WStepSequenceDef - Name: [Proc Version Id:["+
+				( route!=null && route.getProcess()!=null && route.getProcess().getId()!=null ? 
+						route.getProcess().getId():"null")
+						+"]");
 		
 		// timestamp & trace info
 		route.setInsertDate(new DateTime());
@@ -181,7 +190,8 @@ public class WStepSequenceDefBL {
 	
 	}
 	
-	public WStepSequenceDef getWStepSequenceDefByPK(Integer id, Integer currentUserId) throws WStepSequenceDefException {
+	public WStepSequenceDef getWStepSequenceDefByPK(Integer id, Integer currentUserId) 
+			throws WStepSequenceDefException {
 
 		return new WStepSequenceDefDao().getWStepSequenceDefByPK(id);
 	}
