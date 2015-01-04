@@ -2339,10 +2339,10 @@
     <!-- returns a list of all users for a given runtime role and processId -->
     <sql-query name="countStepDefBelongingHead">
 		<return alias="wUserDef" class="org.beeblos.bpm.core.model.WUserDef"/>
-		<![CDATA["SELECT IF(wsd.head_id = :stepHeadId,true,false) " +
-					" FROM w_step_def wsd " +
-					" WHERE wsd.head_id = :stepHeadId " +
-					" GROUP BY wsd.head_id "
+		<![CDATA[SELECT IF(wsd.head_id = :stepHeadId ,true,false) 
+					FROM w_step_def wsd 
+					WHERE wsd.head_id = :stepHeadId 
+					GROUP BY wsd.head_id
 					]]>
     </sql-query>
     
