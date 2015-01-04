@@ -308,3 +308,8 @@ ADD COLUMN `xml_id` TEXT NULL AFTER `mxcell_string`;
 ALTER TABLE `bee_bpm_dev`.`w_process_def` 
 ADD COLUMN `xml_symbols` TEXT NULL AFTER `mod_user`,
 ADD COLUMN `xml_layers` TEXT NULL AFTER `xml_symbols`;
+
+## nes 20150102 - porque definimos que el source que viene desde el begin puede venir con null.
+ALTER TABLE `bee_bpm_dev`.`w_step_sequence_def` 
+CHANGE COLUMN `id_origin_step` `id_origin_step` INT(11) NULL DEFAULT NULL ;
+
