@@ -36,7 +36,15 @@ public class WStepDef implements java.io.Serializable {
 	private Integer id;
 	
 	/**
+	 * indicates type of task/step, ie: begin, receipt, error, human task, etc...
+	 * refer to //w_step_type_def
+	 * nes 20150102
+	 */
+	private Integer idStepTypeDef; //w_step_type_def
+	
+	/**
 	 * This variables are used in the conversion from and to xml with jaxb
+	 * for mxGraph editor
 	 * 
 	 * pab 04122014
 	 */
@@ -306,6 +314,21 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the idStepTypeDef
+	 */
+	@XmlAttribute(name="idStepType")//,nillable=true
+	public Integer getIdStepTypeDef() {
+		return idStepTypeDef;
+	}
+
+	/**
+	 * @param idStepTypeDef the idStepTypeDef to set
+	 */
+	public void setIdStepTypeDef(Integer idStepTypeDef) {
+		this.idStepTypeDef = idStepTypeDef;
 	}
 
 	@Deprecated
