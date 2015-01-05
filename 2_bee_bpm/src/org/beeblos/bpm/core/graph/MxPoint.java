@@ -6,10 +6,18 @@ public class MxPoint {
 
 	private String x;
 	private String y;
+	private String as;
+	
 	public MxPoint(String x, String y) {
 		this.x = x;
 		this.y = y;
 	}
+	public MxPoint(String x, String y, String as) {
+		this.x = x;
+		this.y = y;
+		this.as = as;
+	}
+
 	public MxPoint() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -83,4 +91,18 @@ public class MxPoint {
 			return false;
 		return true;
 	}
+	/**
+	 * @return the as
+	 */
+	@XmlAttribute(name="as")
+	public String getAs() {
+		return as;
+	}
+	/**
+	 * @param as the as to set
+	 */
+	public void setAs(String as) {
+		this.as = as;
+	}
+	
 }
