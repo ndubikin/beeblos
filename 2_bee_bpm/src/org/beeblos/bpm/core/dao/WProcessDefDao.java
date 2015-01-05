@@ -31,6 +31,7 @@ import org.beeblos.bpm.core.graph.Layer;
 import org.beeblos.bpm.core.graph.MxCell;
 import org.beeblos.bpm.core.graph.MxGeometry;
 import org.beeblos.bpm.core.graph.MxGraphModel;
+import org.beeblos.bpm.core.graph.MxPoint;
 import org.beeblos.bpm.core.graph.Symbol;
 import org.beeblos.bpm.core.graph.Workflow;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -597,50 +598,18 @@ public class WProcessDefDao {
 		if(ssd.getFromStep() != null){
 			_setSequenceFromStep(ssd,pro);
 			ssd.getMxCell().setSource(ssd.getFromStep().getXmlId());
-		} else {
-			if(ssd.getProcess().getSymbolObjectList() != null){
-				for(Symbol s : ssd.getProcess().getSymbolObjectList()){
-					if(s.getLabel() != null
-							&& s.getLabel().equalsIgnoreCase("begin")){
-						ssd.getMxCell().setSource(s.getXmlId());
-					}
-				}
-			} else {
-				
-				ssd.getMxCell().setSource(null);
-				ssd.getMxCell().setMxGeometry(new MxGeometry(
-															null,
-															"1",
-															"geometry",
-															null,
-															null,
-															ssd.getMxCell().getMxGeometry().getX() + 0,
-															ssd.getMxCell().getMxGeometry().getY()+0));
-			}
 		}
 		if(ssd.getToStep() != null){
 			_setSequenceToStep(ssd,pro);
 			ssd.getMxCell().setTarget(ssd.getToStep().getXmlId());
 		} else {
-			if(ssd.getProcess().getSymbolObjectList() != null){
-				for(Symbol s : ssd.getProcess().getSymbolObjectList()){
-					if(s.getLabel() != null
-							&& s.getLabel().equalsIgnoreCase("end")){
-						ssd.getMxCell().setSource(s.getXmlId());
-					}
-				}
-			} else {
-				
-				ssd.getMxCell().setTarget(null);
-				ssd.getMxCell().setMxGeometry(new MxGeometry(
-															null,
-															"1",
-															"geometry",
-															null,
-															null,
-															ssd.getMxCell().getMxGeometry().getX() + 0,
-															ssd.getMxCell().getMxGeometry().getY()+0));
-			}
+			MxGeometry mxGeometry = new MxGeometry();
+			mxGeometry.setRelative("1");
+			mxGeometry.setAs("geometry");
+			List<MxPoint> pointList = new ArrayList<MxPoint>();
+			pointList.add(new MxPoint("200","200","targetPoint"));
+			mxGeometry.setMxPoint(pointList);
+			ssd.getMxCell().setMxGeometry(mxGeometry);
 		}
 	}
 	
