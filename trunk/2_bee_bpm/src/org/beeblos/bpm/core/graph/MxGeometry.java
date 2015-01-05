@@ -1,5 +1,7 @@
 package org.beeblos.bpm.core.graph;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -12,6 +14,7 @@ public class MxGeometry {
 	private String width;
 	private String x;
 	private String y;
+	private List<MxPoint> mxPoint;
 	
 	public MxGeometry() {
 		super();
@@ -33,19 +36,19 @@ public class MxGeometry {
 		this.x = x;
 		this.y = y;
 	}
-	/**
-	 * @return the array
-	 */
-	@XmlElement(name="Array")
-	public MxArray getMxArray() {
-		return array;
-	}
-	/**
-	 * @param array the array to set
-	 */
-	public void setMxArray(MxArray array) {
+	
+	public MxGeometry(MxArray array, String relative, String as, String height,
+			String width, String x, String y, List<MxPoint> mxPoint) {
 		this.array = array;
+		this.relative = relative;
+		this.as = as;
+		this.height = height;
+		this.width = width;
+		this.x = x;
+		this.y = y;
+		this.mxPoint = mxPoint;
 	}
+
 	/**
 	 * @return the relative
 	 */
@@ -137,7 +140,8 @@ public class MxGeometry {
 				+ (height != null ? "height=" + height + ", " : "")
 				+ (width != null ? "width=" + width + ", " : "")
 				+ (x != null ? "x=" + x + ", " : "")
-				+ (y != null ? "y=" + y : "") + "]";
+				+ (y != null ? "y=" + y + ", " : "")
+				+ (mxPoint != null ? "mxPoint=" + mxPoint : "") + "]";
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -204,5 +208,31 @@ public class MxGeometry {
 		} else if (!y.equals(other.y))
 			return false;
 		return true;
+	}
+	/**
+	 * @return the array
+	 */
+	@XmlElement(name="Array")
+	public MxArray getArray() {
+		return array;
+	}
+	/**
+	 * @param array the array to set
+	 */
+	public void setArray(MxArray array) {
+		this.array = array;
+	}
+	/**
+	 * @return the mxPoint
+	 */
+	@XmlElement(name="mxPoint")
+	public List<MxPoint> getMxPoint() {
+		return mxPoint;
+	}
+	/**
+	 * @param mxPoint the mxPoint to set
+	 */
+	public void setMxPoint(List<MxPoint> mxPoint) {
+		this.mxPoint = mxPoint;
 	}
 }
