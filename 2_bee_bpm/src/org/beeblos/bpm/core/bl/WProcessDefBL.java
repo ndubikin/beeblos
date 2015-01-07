@@ -25,6 +25,7 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepTypeDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WProcessDataField;
@@ -36,6 +37,7 @@ import org.beeblos.bpm.core.model.WProcessUser;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
+import org.beeblos.bpm.core.model.WStepTypeDef;
 import org.beeblos.bpm.core.model.enumerations.ProcessWorkStatus;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
@@ -71,7 +73,7 @@ public class WProcessDefBL {
 	}
 	
 	public Integer add(WProcessDef process, Integer currentUserId) 
-			throws WProcessDefException, WProcessHeadException, WStepSequenceDefException {
+			throws WProcessDefException, WProcessHeadException, WStepSequenceDefException, WStepDefException, WStepHeadException, WStepTypeDefException {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
 		
@@ -85,6 +87,10 @@ public class WProcessDefBL {
 			this._setFirstWProcessDefData(process, processHeadId, currentUserId);
 						
 		}
+		
+		// pab 07012015
+		// Creo el primer paso que ya lleva el type porque hay que elegirlo en la creación de un proceso
+		_setAndAddBeginStep(process, currentUserId);
 		
 		// timestamp & trace info
 		process.setInsertDate(new DateTime());
@@ -106,6 +112,26 @@ public class WProcessDefBL {
 
 	}
 	
+	private void _setAndAddBeginStep(WProcessDef process, Integer currentUserId) 
+			throws WStepTypeDefException, WStepDefException, WStepHeadException {
+		
+		if(process.getBeginStep() != null
+				&& process.getBeginStep().getId() == null){
+		
+			WStepDef stepAux = new WStepDef(true);
+			WStepTypeDef wstd = new WStepTypeDefBL().getWStepTypeDefByPK(process.getBeginStep().getStepTypeDef().getId(), currentUserId);
+			
+			stepAux.getStepHead().setName(wstd.getName());
+			stepAux.setStepTypeDef(wstd);
+			stepAux.nullateEmtpyObjects();
+			
+			Integer firstStepId = new WStepDefBL().add(stepAux, currentUserId);
+			
+			process.setBeginStep( 
+					new WStepDefBL().getWStepDefByPK(firstStepId, process.getProcess().getId(), currentUserId));
+		}
+	}
+
 	// dml 20130430
 	private void _setFirstWProcessDefData(WProcessDef process, Integer processHeadId, Integer currentUserId) 
 			throws WProcessHeadException {
@@ -127,7 +153,7 @@ public class WProcessDefBL {
 	
 	// dml 20130430
 	public void createFirstWProcessDef(Integer processHeadId, Integer currentUserId) 
-			throws WProcessDefException, WProcessHeadException, WStepSequenceDefException{
+			throws WProcessDefException, WProcessHeadException, WStepSequenceDefException, WStepDefException, WStepHeadException, WStepTypeDefException{
 
 		WProcessDef wpd = new WProcessDef(EMPTY_OBJECT);
 
@@ -907,13 +933,16 @@ public class WProcessDefBL {
 	 * @throws WProcessHeadException
 	 * @throws WStepSequenceDefException
 	 * @throws WProcessDefException
+	 * @throws WStepHeadException 
+	 * @throws WStepDefException 
+	 * @throws WStepTypeDefException 
 	 * 
 	 */
 	public Integer cloneWProcessDef(
 			String newProcessName,
 			Integer processDefId, Integer processHeadId, boolean startsNewVersionAtCurrent, boolean emptyRoleList, 
 			boolean emptyUserList, int createNewClonedSteps, boolean emptyWorkflowMap, Integer currentUserId ) 
-			throws  WProcessHeadException, WStepSequenceDefException, WProcessDefException  {
+			throws  WProcessHeadException, WStepSequenceDefException, WProcessDefException, WStepDefException, WStepHeadException, WStepTypeDefException  {
 		
 		Integer clonedId=null, newversion=1;
 		WProcessDef newprocver,procver;
@@ -1155,7 +1184,7 @@ public class WProcessDefBL {
 	private Integer addClonedProcessDef(Integer processDefId,
 			Integer currentUserId, Integer clonedId, WProcessDef newprocver)
 			throws WStepSequenceDefException, WProcessDefException,
-			WProcessHeadException {
+			WProcessHeadException, WStepDefException, WStepHeadException, WStepTypeDefException {
 		try {
 			
 			clonedId = this.add(newprocver, currentUserId);
@@ -1290,12 +1319,15 @@ public class WProcessDefBL {
 	 * @throws WProcessHeadException
 	 * @throws WStepSequenceDefException
 	 * @throws WProcessDefException
+	 * @throws WStepHeadException 
+	 * @throws WStepDefException 
+	 * @throws WStepTypeDefException 
 	 * 
 	 */	
 	public WProcessDef createNewVersion(
 			Integer processDefId, Integer processHeadId, Integer currentUserId,
 			boolean emptyRoleList, boolean emptyUserList, Integer createNewClonedSteps, boolean emptyWorkflowMap,
-			boolean persistNewVersion ) throws WProcessDefException {
+			boolean persistNewVersion ) throws WProcessDefException, WStepDefException, WStepHeadException, WStepTypeDefException {
 		
 		Integer newVersionId;
 		WProcessDef newprocver,procver;

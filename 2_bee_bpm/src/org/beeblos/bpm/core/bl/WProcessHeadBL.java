@@ -9,7 +9,10 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WProcessHeadDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessHeadException;
+import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
+import org.beeblos.bpm.core.error.WStepTypeDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessHead;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
@@ -45,7 +48,7 @@ public class WProcessHeadBL {
 	}
 		
 	// dml 20130506
-	public Integer addProcessAndFirstWProcessDef(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException, WProcessDefException, WStepSequenceDefException {
+	public Integer addProcessAndFirstWProcessDef(WProcessHead processHead, Integer currentUserId) throws WProcessHeadException, WProcessDefException, WStepSequenceDefException, WStepDefException, WStepHeadException, WStepTypeDefException {
 		
 		logger.debug("addProcessAndFirstWProcessDef() WProcessHead - Name: ["+processHead.getName()+"]");
 		
