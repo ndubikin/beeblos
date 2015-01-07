@@ -313,3 +313,15 @@ ADD COLUMN `xml_layers` TEXT NULL AFTER `xml_symbols`;
 ALTER TABLE `bee_bpm_dev`.`w_step_sequence_def` 
 CHANGE COLUMN `id_origin_step` `id_origin_step` INT(11) NULL DEFAULT NULL ;
 
+## pab 20150107 - esto es para cambiar el id de w_step_type_def de smallint a int. primero hay que borrar la foreign key de la tabla w_step_def,
+## luego cambiar las columnas en las dos tablas a int y luego volver a crear la foreignt key
+ALTER TABLE `bee_bpm_dev`.`w_step_def`  
+DROP FOREIGN KEY `fk_w_step_def_2`;
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
+CHANGE COLUMN `id` `id` INT NOT NULL;
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+CHANGE COLUMN `step_type_id` `step_type_id` INT NOT NULL;
+ALTER TABLE `bee_bpm_dev`.`w_step_def`  
+ADD CONSTRAINT `fk_w_step_def_2`  
+FOREIGN KEY (`step_type_id`)   
+REFERENCES `bee_bpm_dev`.`w_step_type_def` (`id`)   ON DELETE NO ACTION   ON UPDATE NO ACTION;

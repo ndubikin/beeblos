@@ -40,7 +40,7 @@ public class WStepDef implements java.io.Serializable {
 	 * refer to //w_step_type_def
 	 * nes 20150102
 	 */
-	private Integer idStepTypeDef; //w_step_type_def
+	private WStepTypeDef stepTypeDef; //w_step_type_def
 	
 	/**
 	 * This variables are used in the conversion from and to xml with jaxb
@@ -262,6 +262,7 @@ public class WStepDef implements java.io.Serializable {
 			this.stepHead = new WStepHead();
 			this.timeUnit = new WTimeUnit( EMPTY_OBJECT );
 			this.reminderTimeUnit = new WTimeUnit( EMPTY_OBJECT );
+			this.stepTypeDef = new WStepTypeDef();
 			
 		}
 		
@@ -317,18 +318,17 @@ public class WStepDef implements java.io.Serializable {
 	}
 
 	/**
-	 * @return the idStepTypeDef
+	 * @return the stepTypeDef
 	 */
-	@XmlAttribute(name="idStepType")//,nillable=true
-	public Integer getIdStepTypeDef() {
-		return idStepTypeDef;
+	public WStepTypeDef getStepTypeDef() {
+		return stepTypeDef;
 	}
 
 	/**
-	 * @param idStepTypeDef the idStepTypeDef to set
+	 * @param stepTypeDef the stepTypeDef to set
 	 */
-	public void setIdStepTypeDef(Integer idStepTypeDef) {
-		this.idStepTypeDef = idStepTypeDef;
+	public void setStepTypeDef(WStepTypeDef stepTypeDef) {
+		this.stepTypeDef = stepTypeDef;
 	}
 
 	@Deprecated

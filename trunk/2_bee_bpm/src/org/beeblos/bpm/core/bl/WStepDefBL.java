@@ -933,7 +933,7 @@ public class WStepDefBL {
 
 
 	}
-	
+		
 	public List<StringPair> getComboList(
 			Integer processId, String firstLineText, String blank )
 	throws WProcessDefException {
