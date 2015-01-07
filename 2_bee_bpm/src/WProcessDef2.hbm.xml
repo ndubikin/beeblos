@@ -583,6 +583,48 @@
 
 	</class>
 
+	<class name="org.beeblos.bpm.core.model.WStepTypeDef" table="w_step_type_def">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="name" type="string">
+			<column name="name" />
+		</property>
+		<property generated="never" lazy="false" name="type" type="string">
+			<column name="type" />
+		</property>
+		<property name="active" type="java.lang.Boolean">
+			<column name="active" sql-type="bit" />
+		</property>
+		<property name="engineReq" type="java.lang.Boolean">
+			<column name="engine_req" sql-type="bit" />
+		</property>
+		<property name="deleted" type="java.lang.Boolean">
+			<column name="deleted" sql-type="bit" />
+		</property>
+		<property generated="never" lazy="false" name="comments" type="string">
+			<column name="comments" />
+		</property>
+		
+		<property generated="never" lazy="false" name="insertDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="insert_date" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="insertUser"
+			type="java.lang.Integer">
+			<column name="insert_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property generated="never" lazy="false" name="modUser"
+			type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+	</class>
+
 	<!--  atencion hay named queries al final que afectan a roledef -->
 	<class name="org.beeblos.bpm.core.model.WRoleDef" table="w_role_def">
 		<id name="id" type="java.lang.Integer">
@@ -1033,6 +1075,11 @@
 			class="org.beeblos.bpm.core.model.WStepHead" column="head_id" name="stepHead"
 			fetch="join" lazy="false" />
 
+		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepTypeDef"
+			lazy="false" fetch="join" name="stepTypeDef">
+			<column name="step_type_id"/>
+		</many-to-one>
+		
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" fetch="join" name="timeUnit">
 			<column name="id_time_unit">
