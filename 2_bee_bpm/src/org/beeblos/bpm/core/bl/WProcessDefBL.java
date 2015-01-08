@@ -40,6 +40,7 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepTypeDef;
 import org.beeblos.bpm.core.model.enumerations.ProcessWorkStatus;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
+import org.beeblos.bpm.core.util.Constants;
 import org.beeblos.bpm.tm.exception.TableAlreadyExistsException;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.impl.TableManagerBLImpl;
@@ -90,7 +91,7 @@ public class WProcessDefBL {
 		
 		// pab 07012015
 		// Creo el primer paso que ya lleva el type porque hay que elegirlo en la creación de un proceso
-		_setAndAddBeginStep(process, currentUserId);
+		_addBeginStep(process, currentUserId);
 		
 		// timestamp & trace info
 		process.setInsertDate(new DateTime());
@@ -112,10 +113,18 @@ public class WProcessDefBL {
 
 	}
 	
-	private void _setAndAddBeginStep(WProcessDef process, Integer currentUserId) 
+	/**
+	 * Se crea un paso con el tipo de paso indicado en la lista, se guarda en la bbdd y luego se agrega al proceso
+	 * 
+	 * Nota: El tipo de paso debe venir cargado de el process.beginStep.stepType.id
+	 * 
+	 */
+	private void _addBeginStep(WProcessDef process, Integer currentUserId) 
 			throws WStepTypeDefException, WStepDefException, WStepHeadException {
 		
 		if(process.getBeginStep() != null
+				&& process.getBeginStep().getStepTypeDef() != null
+				&& process.getBeginStep().getStepTypeDef().getId() != null
 				&& process.getBeginStep().getId() == null){
 		
 			WStepDef stepAux = new WStepDef(true);
@@ -125,10 +134,31 @@ public class WProcessDefBL {
 			stepAux.setStepTypeDef(wstd);
 			stepAux.nullateEmtpyObjects();
 			
+			_setDefaultMxCell(stepAux);
+			
 			Integer firstStepId = new WStepDefBL().add(stepAux, currentUserId);
 			
 			process.setBeginStep( 
 					new WStepDefBL().getWStepDefByPK(firstStepId, process.getProcess().getId(), currentUserId));
+			
+		}
+	}
+
+	/**
+	 * @param stepAux
+	 */
+	private void _setDefaultMxCell(WStepDef stepAux) {
+		switch(stepAux.getStepTypeDef().getId()){
+		
+			case 20:
+				stepAux.setMxCellString(Constants.DEFAULT_MX_CELL_BEGIN_EVENT);
+				break;
+			case 21:
+				stepAux.setMxCellString(Constants.DEFAULT_MX_CELL_TIMER_BEGIN);
+				break;
+			case 22:
+				stepAux.setMxCellString(Constants.DEFAULT_MX_CELL_MESSAGE_BEGIN);
+				break;
 		}
 	}
 
@@ -758,7 +788,7 @@ public class WProcessDefBL {
 	
 	}
 	
-	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
+	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException, WStepDefException {
 
 		return new WProcessDefDao().getProcessDefXmlMap2(processDefId, currentUserId);
 	
