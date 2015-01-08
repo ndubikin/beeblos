@@ -1032,6 +1032,9 @@ public class WStepDef implements java.io.Serializable {
 		if (dataFieldDef==null) dataFieldDef = new ArrayList<WStepDataField>();
     }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -1092,6 +1095,10 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result
 				+ ((instructions == null) ? 0 : instructions.hashCode());
 		result = prime * result
+				+ ((mxCellObject == null) ? 0 : mxCellObject.hashCode());
+		result = prime * result
+				+ ((mxCellString == null) ? 0 : mxCellString.hashCode());
+		result = prime * result
 				+ ((postconditions == null) ? 0 : postconditions.hashCode());
 		result = prime * result
 				+ ((preconditions == null) ? 0 : preconditions.hashCode());
@@ -1104,6 +1111,8 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result + (reminderUserNotice ? 1231 : 1237);
 		result = prime * result
 				+ ((response == null) ? 0 : response.hashCode());
+		result = prime * result
+				+ ((responsesString == null) ? 0 : responsesString.hashCode());
 		result = prime * result
 				+ ((rolesRelated == null) ? 0 : rolesRelated.hashCode());
 		result = prime * result
@@ -1118,22 +1127,31 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result
 				+ ((stepHead == null) ? 0 : stepHead.hashCode());
 		result = prime * result
+				+ ((stepTypeDef == null) ? 0 : stepTypeDef.hashCode());
+		result = prime * result
 				+ ((submitForm == null) ? 0 : submitForm.hashCode());
 		result = prime * result
 				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
 		result = prime * result
 				+ ((usersRelated == null) ? 0 : usersRelated.hashCode());
 		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		result = prime * result + ((xmlHref == null) ? 0 : xmlHref.hashCode());
+		result = prime * result + ((xmlId == null) ? 0 : xmlId.hashCode());
+		result = prime * result
+				+ ((xmlRules == null) ? 0 : xmlRules.hashCode());
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WStepDef))
 			return false;
 		WStepDef other = (WStepDef) obj;
 		if (active != other.active)
@@ -1241,10 +1259,30 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!idWorkZone.equals(other.idWorkZone))
 			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
 		if (instructions == null) {
 			if (other.instructions != null)
 				return false;
 		} else if (!instructions.equals(other.instructions))
+			return false;
+		if (mxCellObject == null) {
+			if (other.mxCellObject != null)
+				return false;
+		} else if (!mxCellObject.equals(other.mxCellObject))
+			return false;
+		if (mxCellString == null) {
+			if (other.mxCellString != null)
+				return false;
+		} else if (!mxCellString.equals(other.mxCellString))
 			return false;
 		if (postconditions == null) {
 			if (other.postconditions != null)
@@ -1274,6 +1312,11 @@ public class WStepDef implements java.io.Serializable {
 			if (other.response != null)
 				return false;
 		} else if (!response.equals(other.response))
+			return false;
+		if (responsesString == null) {
+			if (other.responsesString != null)
+				return false;
+		} else if (!responsesString.equals(other.responsesString))
 			return false;
 		if (rolesRelated == null) {
 			if (other.rolesRelated != null)
@@ -1308,6 +1351,11 @@ public class WStepDef implements java.io.Serializable {
 				return false;
 		} else if (!stepHead.equals(other.stepHead))
 			return false;
+		if (stepTypeDef == null) {
+			if (other.stepTypeDef != null)
+				return false;
+		} else if (!stepTypeDef.equals(other.stepTypeDef))
+			return false;
 		if (submitForm == null) {
 			if (other.submitForm != null)
 				return false;
@@ -1327,6 +1375,21 @@ public class WStepDef implements java.io.Serializable {
 			if (other.version != null)
 				return false;
 		} else if (!version.equals(other.version))
+			return false;
+		if (xmlHref == null) {
+			if (other.xmlHref != null)
+				return false;
+		} else if (!xmlHref.equals(other.xmlHref))
+			return false;
+		if (xmlId == null) {
+			if (other.xmlId != null)
+				return false;
+		} else if (!xmlId.equals(other.xmlId))
+			return false;
+		if (xmlRules == null) {
+			if (other.xmlRules != null)
+				return false;
+		} else if (!xmlRules.equals(other.xmlRules))
 			return false;
 		return true;
 	}

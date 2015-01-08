@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,7 +25,9 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
+import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.graph.ElementWrapper;
 import org.beeblos.bpm.core.graph.Layer;
@@ -368,8 +371,9 @@ public class WProcessDefDao {
 	 * @return
 	 * @throws WProcessDefException
 	 * @throws WStepSequenceDefException
+	 * @throws WStepDefException 
 	 */
-	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException {
+	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException, WStepDefException {
 		try {
 
 			WProcessDef pro = new WProcessDefBL().getWProcessDefByPK(processDefId, 1000);
@@ -396,7 +400,7 @@ public class WProcessDefDao {
 			ElementWrapper sw = (ElementWrapper)jaxbUnmarshaller2.unmarshal(sr);
 			
 			/**
-			 * le agrego el string convertido a objeto java al proceso
+			 * le agrego el string convertido a objeto java al proceso para que 
 			 */
 			pro.setSymbolObjectList(sw.getsList());
 			
