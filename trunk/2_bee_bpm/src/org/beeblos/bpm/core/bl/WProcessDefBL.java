@@ -141,6 +141,9 @@ public class WProcessDefBL {
 			process.setBeginStep( 
 					new WStepDefBL().getWStepDefByPK(firstStepId, process.getProcess().getId(), currentUserId));
 			
+			if(process.getSteps() == null) process.setSteps(new HashSet<WStepDef>());
+			process.getSteps().add(process.getBeginStep());
+			
 		}
 	}
 
