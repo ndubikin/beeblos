@@ -6,7 +6,12 @@ import static com.sp.common.util.Resourceutil.getStringProperty;
 
 public class Constants {
 	
+	public static final String DEFAULT_MX_CELL_BEGIN_EVENT = "<mxCell parent=\"1\" vertex=\"1\" style=\"symbol;image=images/symbols/event.png\"><mxGeometry as=\"geometry\" width=\"32\" height=\"32\" x=\"10\" y=\"100\"/></mxCell>";
+	public static final String DEFAULT_MX_CELL_MESSAGE_BEGIN = "<mxCell parent=\"1\" vertex=\"1\" style=\"symbol;image=images/symbols/message.png\"><mxGeometry as=\"geometry\" width=\"32\" height=\"32\" x=\"10\" y=\"100\"/></mxCell>";
+	public static final String DEFAULT_MX_CELL_TIMER_BEGIN = "<mxCell parent=\"1\" vertex=\"1\" style=\"symbol;image=images/symbols/timer.png\"><mxGeometry as=\"geometry\" width=\"32\" height=\"32\" x=\"10\" y=\"100\"/></mxCell>";
+	
 	public static final String INIT_EV_STRING = "InitEv";
+	
 	public static final String DEFAULT_LAYER_XML = "<Layer description=\"\" id=\"1\" label=\"Default Layer\"><mxCell parent=\"0\" /></Layer>";
 	public static final String DEFAULT_MXCELL_XML = "<mxCell parent=\"1\" vertex=\"1\"> <mxGeometry as=\"geometry\" height=\"32\" width=\"72\" x=\"0\" y=\"0\" /> </mxCell>";
 	public static final String DEFAULT_EDGE_MXCELL_XML = "<mxCell edge=\"1\" parent=\"1\" source=\"\" style=\"straightEdge\" target=\"\"><mxGeometry as=\"geometry\" relative=\"1\" /></mxCell>";

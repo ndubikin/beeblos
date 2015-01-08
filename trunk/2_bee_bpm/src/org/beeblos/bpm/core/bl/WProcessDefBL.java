@@ -78,6 +78,10 @@ public class WProcessDefBL {
 		
 		logger.debug("add() WProcessDef - Name: ["+process.getName()+"]");
 		
+		// pab 07012015
+		// Creo el primer paso que ya lleva el type porque hay que elegirlo en la creación de un proceso
+		_addBeginStep(process, currentUserId);
+
 		// dml 20130430 - si es un nuevo WProcessHead se guarda antes de guardar el WProcessDef y se rellena la informacion esencial
 		if (process.getProcess() != null
 				&& (process.getProcess().getId() == null
@@ -88,11 +92,7 @@ public class WProcessDefBL {
 			this._setFirstWProcessDefData(process, processHeadId, currentUserId);
 						
 		}
-		
-		// pab 07012015
-		// Creo el primer paso que ya lleva el type porque hay que elegirlo en la creación de un proceso
-		_addBeginStep(process, currentUserId);
-		
+				
 		// timestamp & trace info
 		process.setInsertDate(new DateTime());
 		process.setModDate( DEFAULT_MOD_DATE_TIME );
@@ -139,7 +139,11 @@ public class WProcessDefBL {
 			Integer firstStepId = new WStepDefBL().add(stepAux, currentUserId);
 			
 			process.setBeginStep( 
-					new WStepDefBL().getWStepDefByPK(firstStepId, process.getProcess().getId(), currentUserId));
+					/**
+					 * Pongo el processHeadId en null porque sólo se usa para cargar campos agregados por los usuarios
+					 * pero este proceso no los tendrá para este paso ya que es nuevo. 
+					 */
+					new WStepDefBL().getWStepDefByPK(firstStepId, null, currentUserId));
 			
 			if(process.getSteps() == null) process.setSteps(new HashSet<WStepDef>());
 			process.getSteps().add(process.getBeginStep());
