@@ -317,6 +317,36 @@ public class WStepDef implements java.io.Serializable {
 		this.id = id;
 	}
 
+
+	/**
+	 * mxGraph idStepType mapped witn stepTypeDef.id
+	 * returns the id of the step type
+	 * @return the xmlIdStepType
+	 */
+	@XmlAttribute(name="xmlIdStepType")
+	public Integer getXmlIdStepType() {
+		//xmlLabel = this.xmlLabel;
+		if (stepTypeDef!=null) {
+			return getStepTypeDef().getId();	
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * mxGraph idStepType mapped witn stepTypeDef.id
+	 * Note: it's required to create this object with all 
+	 * empty property objects to manage xml attributes...
+	 * @param xmlIdStepType the xmlIdStepType to set
+	 */
+	public void setXmlIdStepType(Integer xmlIdStepType) {
+//		this.xmlLabel=xmlLabel;
+		if (stepTypeDef==null) this.setStepTypeDef(new WStepTypeDef());
+		getStepTypeDef().setId(xmlIdStepType);
+	}
+	
+	
+	
 	/**
 	 * @return the stepTypeDef
 	 */
