@@ -131,6 +131,45 @@
 
 	</class>
 
+	<class name="com.sp.common.core.model.noper.LoginControlFull"
+		table="login_control">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<property name="userLogin" type="java.lang.String"
+			formula="( SELECT u.login_id FROM user u WHERE u.id = user_id )" />
+
+		<property name="userName" type="java.lang.String"
+			formula="( SELECT u.first_name FROM user u WHERE u.id = user_id )" />
+
+		<property name="userSurname" type="java.lang.String"
+			formula="( SELECT u.last_name FROM user u WHERE u.id = user_id )" />
+
+		<property name="correctLogin" type="java.lang.Boolean">
+			<column name="correct_login" sql-type="bit" />
+		</property>
+
+		<property name="loginIp" type="string">
+			<column name="ip_address" />
+		</property>
+
+		<property name="loginName" type="string">
+			<column name="login_name" />
+		</property>
+
+		<property name="origen" type="string">
+			<column name="origen" />
+		</property>
+
+		<property name="date"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="date" />
+		</property>
+
+	</class>
+
 	<class name="com.sp.common.core.model.Role" table="role">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
