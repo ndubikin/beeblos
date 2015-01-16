@@ -1656,6 +1656,14 @@ public class WStepWorkBL {
 	 * Execute external method associated with a route ...
 	 * Route related methods will be executed when navigates the route ...
 	 * 
+	 * Nota respecto al its: 775 - nes 20150116: agregué el wProcessWork que está
+	 * adentro del wStepWork a la lista de objetos pues el problema era que no encontraba
+	 * este dato con arrayUtils ( PropertyUtils.isReadable(o, paramName) )
+	 * Lo que no entiendo es como en las pruebas funcionó y al principio funcionó correctamente.
+	 * Se me ocurren dos posibles alternativas: 
+	 * 1) pasaba el parámetro indicado y perdí la version...
+	 * 2) cambiamos la version de common-beanUtils
+	 * 
 	 * @param route
 	 * @param currentStepWork
 	 * @param currentUser
@@ -1671,7 +1679,12 @@ public class WStepWorkBL {
 			for (WExternalMethod method: route.getExternalMethod()) {
 				logger.debug(">>>_executeRouteExternalMethod:"+method.getClassname()+"."+method.getMethodname());
 				if (method.getParamlistName().length>0){
-					_setParamValues(method,new Object[]{currentStepWork,route}, currentUserId); // nes 20141215 - generalizado setParamValues
+					_setParamValues(
+							method,
+							new Object[]{
+										currentStepWork,
+										currentStepWork.getwProcessWork(), // nes 20150116 - its:775 - no encontraba idObject pues estaba en wProcessWork
+										route}, currentUserId); // nes 20141215 - generalizado setParamValues
 				}
 				new MethodSynchronizerImpl().invokeExternalMethod(method, currentUserId);
 			}
@@ -1736,7 +1749,7 @@ public class WStepWorkBL {
 		// find field (paramName) in currentStepWork / currentProcessWork and route 
 		try {
 			
-			for (Object o: mainObjList) {
+			for (Object o: mainObjList) {//o = ((WStepWork)o).getwProcessWork();
 				if (PropertyUtils.isReadable(o, paramName)) {
 					/**
 					 * try to get property in 2 ways: getNestedProperty and getIndexedProperty
