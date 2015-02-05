@@ -406,7 +406,7 @@ public class WStepWorkBL {
 			boolean isAdmin, Integer currentUserId) throws WStepWorkException  {
 		
 		// TODO: filtrar para el usuario que lo solicita		
-		List<WStepWork> stepList = new WStepWorkDao().getAliveSteps(idObject, idObjectType, currentUserId);
+		List<WStepWork> stepList = new WStepWorkDao().getAliveSteps(idObject, idObjectType);
 		
 		/**
 		 * Obtenemos de la lista de steps vivos los que tienen permiso para el "currentUserId"

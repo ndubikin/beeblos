@@ -1576,7 +1576,7 @@ public class WStepWorkDao {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<WStepWork> getAliveSteps (
-			Integer idObject, String idObjectType, Integer currentUser ) 
+			Integer idObject, String idObjectType) 
 	throws WStepWorkException {
 
 		org.hibernate.Session session = null;
