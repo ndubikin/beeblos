@@ -1,5 +1,9 @@
 package org.beeblos.bpm.core.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+
 import org.joda.time.DateTime;
 
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
@@ -9,7 +13,8 @@ import org.joda.time.DateTime;
  * 
  * RESPUESTA PARA EL PASO "STEP"
  */
-public class WStepResponseDef implements java.io.Serializable {
+@XmlAccessorType(XmlAccessType.NONE)
+public class WStepResponseDef implements java.io.Serializable, Comparable<WStepResponseDef> {
 
 	/**
 	 * 
@@ -44,6 +49,7 @@ public class WStepResponseDef implements java.io.Serializable {
 	/**
 	 * @return the id
 	 */
+	@XmlAttribute(name="id")
 	public Integer getId() {
 		return id;
 	}
@@ -58,6 +64,7 @@ public class WStepResponseDef implements java.io.Serializable {
 	/**
 	 * @return the respOrder
 	 */
+	@XmlAttribute(name="respOrder")
 	public Integer getRespOrder() {
 		return respOrder;
 	}
@@ -72,6 +79,7 @@ public class WStepResponseDef implements java.io.Serializable {
 	/**
 	 * @return the name
 	 */
+	@XmlAttribute(name="name")
 	public String getName() {
 		return name;
 	}
@@ -187,5 +195,8 @@ public class WStepResponseDef implements java.io.Serializable {
 	
 		return true;
 	}
-
+	@Override
+	public int compareTo(WStepResponseDef o) {
+		return(this.id.compareTo(((WStepResponseDef)o).getId()));
+	}
 }

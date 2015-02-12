@@ -134,14 +134,18 @@ public class MxGeometry {
 	 */
 	@Override
 	public String toString() {
-		return "MxGeometry [" + (array != null ? "array=" + array + ", " : "")
+		final int maxLen = 2;
+		return "MxGeometry ["
+				+ (array != null ? "array=" + array + ", " : "")
 				+ (relative != null ? "relative=" + relative + ", " : "")
 				+ (as != null ? "as=" + as + ", " : "")
 				+ (height != null ? "height=" + height + ", " : "")
 				+ (width != null ? "width=" + width + ", " : "")
 				+ (x != null ? "x=" + x + ", " : "")
 				+ (y != null ? "y=" + y + ", " : "")
-				+ (mxPoint != null ? "mxPoint=" + mxPoint : "") + "]";
+				+ (mxPoint != null ? "mxPoint="
+						+ mxPoint.subList(0, Math.min(mxPoint.size(), maxLen))
+						: "") + "]";
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -153,6 +157,7 @@ public class MxGeometry {
 		result = prime * result + ((array == null) ? 0 : array.hashCode());
 		result = prime * result + ((as == null) ? 0 : as.hashCode());
 		result = prime * result + ((height == null) ? 0 : height.hashCode());
+		result = prime * result + ((mxPoint == null) ? 0 : mxPoint.hashCode());
 		result = prime * result
 				+ ((relative == null) ? 0 : relative.hashCode());
 		result = prime * result + ((width == null) ? 0 : width.hashCode());
@@ -186,6 +191,11 @@ public class MxGeometry {
 			if (other.height != null)
 				return false;
 		} else if (!height.equals(other.height))
+			return false;
+		if (mxPoint == null) {
+			if (other.mxPoint != null)
+				return false;
+		} else if (!mxPoint.equals(other.mxPoint))
 			return false;
 		if (relative == null) {
 			if (other.relative != null)

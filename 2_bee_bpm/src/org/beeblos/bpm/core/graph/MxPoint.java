@@ -1,7 +1,9 @@
 package org.beeblos.bpm.core.graph;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlType(propOrder = { "as", "x", "y"})
 public class MxPoint {
 
 	private String x;
@@ -54,7 +56,8 @@ public class MxPoint {
 	@Override
 	public String toString() {
 		return "MxPoint [" + (x != null ? "x=" + x + ", " : "")
-				+ (y != null ? "y=" + y : "") + "]";
+				+ (y != null ? "y=" + y + ", " : "")
+				+ (as != null ? "as=" + as : "") + "]";
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -63,6 +66,7 @@ public class MxPoint {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((as == null) ? 0 : as.hashCode());
 		result = prime * result + ((x == null) ? 0 : x.hashCode());
 		result = prime * result + ((y == null) ? 0 : y.hashCode());
 		return result;
@@ -79,6 +83,11 @@ public class MxPoint {
 		if (!(obj instanceof MxPoint))
 			return false;
 		MxPoint other = (MxPoint) obj;
+		if (as == null) {
+			if (other.as != null)
+				return false;
+		} else if (!as.equals(other.as))
+			return false;
 		if (x == null) {
 			if (other.x != null)
 				return false;
