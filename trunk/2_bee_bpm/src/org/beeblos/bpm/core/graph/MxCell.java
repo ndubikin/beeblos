@@ -172,6 +172,7 @@ public class MxCell {
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		result = prime * result + ((style == null) ? 0 : style.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
 		result = prime * result + ((vertex == null) ? 0 : vertex.hashCode());
 		return result;
 	}
@@ -211,6 +212,11 @@ public class MxCell {
 			if (other.style != null)
 				return false;
 		} else if (!style.equals(other.style))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
 			return false;
 		if (vertex == null) {
 			if (other.vertex != null)

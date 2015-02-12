@@ -510,6 +510,7 @@ public class WStepDef implements java.io.Serializable {
 		return null;
 	}
 
+	@XmlElement(name="Response")
 	public Set<WStepResponseDef> getResponse() {
 		return response;
 	}

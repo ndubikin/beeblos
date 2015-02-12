@@ -1,9 +1,13 @@
 package org.beeblos.bpm.core.model;
 
+import java.io.Serializable;
+
 import org.joda.time.DateTime;
 
-public class WStepTypeDef {
+public class WStepTypeDef implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private String name;
 	private String type;

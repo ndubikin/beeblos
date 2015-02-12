@@ -25,7 +25,6 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
-import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
@@ -40,6 +39,7 @@ import org.beeblos.bpm.core.graph.Workflow;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.noper.WProcessDefLight;
 import org.beeblos.bpm.core.util.Constants;
@@ -453,6 +453,21 @@ public class WProcessDefDao {
 				StringReader reader = new StringReader(xmlString);
 				MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader);
 				wsd.setMxCellObject(m);
+				
+				/**
+				 * pab 11022015
+				 * aprovecho para meter las responses de control que son necesarias para el XML. No se van a mostrar ni guardar.
+				 * 
+				 */
+				if(wsd.getResponse() == null || wsd.getResponse().isEmpty()){
+					
+					WStepResponseDef wsrd = new WStepResponseDef();
+					wsrd.setId(null);
+					wsrd.setName("nouse");
+					wsd.setResponse(new HashSet<WStepResponseDef>());
+					wsd.addResponse(wsrd);
+					
+				}
 			}
 
 			Iterator<WStepSequenceDef> i2 = pro.getStepSequenceList().iterator();
@@ -599,6 +614,7 @@ public class WProcessDefDao {
 	
 	private void _putXmlIdToStepsFromAndTo(WStepSequenceDef ssd, WProcessDef pro) {
 
+		if(ssd.getId() != null && ssd.getId() == 13) System.out.println("hola");
 		if(ssd.getFromStep() != null){
 			_setSequenceFromStep(ssd,pro);
 			ssd.getMxCell().setSource(ssd.getFromStep().getXmlId());
@@ -607,16 +623,38 @@ public class WProcessDefDao {
 			_setSequenceToStep(ssd,pro);
 			ssd.getMxCell().setTarget(ssd.getToStep().getXmlId());
 		} else {
-			MxGeometry mxGeometry = new MxGeometry();
-			mxGeometry.setRelative("1");
-			mxGeometry.setAs("geometry");
-			List<MxPoint> pointList = new ArrayList<MxPoint>();
-			pointList.add(new MxPoint("200","200","targetPoint"));
-			mxGeometry.setMxPoint(pointList);
-			ssd.getMxCell().setMxGeometry(mxGeometry);
+
+			if(ssd.getMxCell().getMxGeometry() == null
+					|| ssd.getMxCell().getMxGeometry().getMxPoint() == null
+					|| ssd.getMxCell().getMxGeometry().getMxPoint().size() == 0
+					|| !_checkIfTargetPointExists(ssd.getMxCell().getMxGeometry().getMxPoint())){
+
+				MxGeometry mxGeometry = new MxGeometry();
+				mxGeometry.setRelative("1");
+				mxGeometry.setAs("geometry");
+				List<MxPoint> pointList = new ArrayList<MxPoint>();
+				pointList.add(new MxPoint("200","200","targetPoint"));
+				mxGeometry.setMxPoint(pointList);
+				ssd.getMxCell().setMxGeometry(mxGeometry);
+			}
 		}
 	}
 	
+	/**
+	 * Will return true if there is a point in the pointList that has the attribute "as" set with: targetPoint
+	 * @param pList
+	 * @return
+	 */
+	private boolean _checkIfTargetPointExists(List<MxPoint> pList) {
+		
+		for(MxPoint p : pList){
+			if(p.getAs().equalsIgnoreCase("targetPoint")){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * setea correctamente el fromStep a la sequence porque lo vamos modificando en 
 	 * el proceso de carga

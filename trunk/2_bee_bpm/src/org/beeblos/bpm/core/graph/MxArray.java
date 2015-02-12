@@ -9,6 +9,19 @@ public class MxArray {
 
 	private List<MxPoint> mxPoint;
 	private String as;
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final int maxLen = 2;
+		return "MxArray ["
+				+ (mxPoint != null ? "mxPoint="
+						+ mxPoint.subList(0, Math.min(mxPoint.size(), maxLen))
+						+ ", " : "") + (as != null ? "as=" + as : "") + "]";
+	}
+
 	
 
 	public MxArray(List<MxPoint> mxPoint, String as) {
@@ -62,6 +75,7 @@ public class MxArray {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((as == null) ? 0 : as.hashCode());
 		result = prime * result + ((mxPoint == null) ? 0 : mxPoint.hashCode());
 		return result;
 	}
@@ -78,6 +92,11 @@ public class MxArray {
 		if (!(obj instanceof MxArray))
 			return false;
 		MxArray other = (MxArray) obj;
+		if (as == null) {
+			if (other.as != null)
+				return false;
+		} else if (!as.equals(other.as))
+			return false;
 		if (mxPoint == null) {
 			if (other.mxPoint != null)
 				return false;

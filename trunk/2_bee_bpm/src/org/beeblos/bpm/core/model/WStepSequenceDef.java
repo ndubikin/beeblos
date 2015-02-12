@@ -425,7 +425,9 @@ public class WStepSequenceDef implements java.io.Serializable {
 		if (externalMethod==null) externalMethod = new HashSet<WExternalMethod>();
 	}
 
-    //TODO: rrl 20141106 No incluir colecciones Set/List en el hashCode/equals (no funciona y se queda colgado)
+    /* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -433,6 +435,8 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + (afterAll ? 1231 : 1237);
 		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (enabled ? 1231 : 1237);
+		result = prime * result
+				+ ((externalMethod == null) ? 0 : externalMethod.hashCode());
 		result = prime * result
 				+ ((fromStep == null) ? 0 : fromStep.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -442,6 +446,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 				+ ((insertUser == null) ? 0 : insertUser.hashCode());
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
+		result = prime * result + ((mxCell == null) ? 0 : mxCell.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime * result + ((process == null) ? 0 : process.hashCode());
@@ -449,17 +454,25 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + ((toStep == null) ? 0 : toStep.hashCode());
 		result = prime * result
 				+ ((validResponses == null) ? 0 : validResponses.hashCode());
+		result = prime * result
+				+ ((xmlDescription == null) ? 0 : xmlDescription.hashCode());
+		result = prime * result + ((xmlId == null) ? 0 : xmlId.hashCode());
+		result = prime * result
+				+ ((xmlMxCellString == null) ? 0 : xmlMxCellString.hashCode());
 		return result;
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof WStepSequenceDef))
 			return false;
 		WStepSequenceDef other = (WStepSequenceDef) obj;
 		if (afterAll != other.afterAll)
@@ -498,6 +511,11 @@ public class WStepSequenceDef implements java.io.Serializable {
 				return false;
 		} else if (!modUser.equals(other.modUser))
 			return false;
+		if (mxCell == null) {
+			if (other.mxCell != null)
+				return false;
+		} else if (!mxCell.equals(other.mxCell))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -527,6 +545,21 @@ public class WStepSequenceDef implements java.io.Serializable {
 			if (other.validResponses != null)
 				return false;
 		} else if (!validResponses.equals(other.validResponses))
+			return false;
+		if (xmlDescription == null) {
+			if (other.xmlDescription != null)
+				return false;
+		} else if (!xmlDescription.equals(other.xmlDescription))
+			return false;
+		if (xmlId == null) {
+			if (other.xmlId != null)
+				return false;
+		} else if (!xmlId.equals(other.xmlId))
+			return false;
+		if (xmlMxCellString == null) {
+			if (other.xmlMxCellString != null)
+				return false;
+		} else if (!xmlMxCellString.equals(other.xmlMxCellString))
 			return false;
 		return true;
 	}
