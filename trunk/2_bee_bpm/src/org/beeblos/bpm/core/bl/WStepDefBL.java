@@ -239,9 +239,6 @@ public class WStepDefBL {
 			
 			logger.debug("WStepDefBL.update - nothing to do ...");
 		}
-		
-
-					
 	}
 	
 	/**

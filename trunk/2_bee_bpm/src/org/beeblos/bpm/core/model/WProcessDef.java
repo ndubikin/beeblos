@@ -373,7 +373,6 @@ public class WProcessDef implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
-	@XmlAttribute(name="adminEmail")
 	public String getAdminEmail() {
 		return adminEmail;
 	}

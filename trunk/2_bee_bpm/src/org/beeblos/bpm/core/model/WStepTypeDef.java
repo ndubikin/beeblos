@@ -20,6 +20,8 @@ public class WStepTypeDef implements Serializable {
 	private DateTime modDate;
 	private Integer modUser;
 	
+	private Boolean hasResponses;
+	
 	public WStepTypeDef(Integer id, String name, String type, boolean active,
 			boolean engineReq, boolean deleted, String comments,
 			DateTime insertDate, Integer insertUser, DateTime modDate,
@@ -201,6 +203,20 @@ public class WStepTypeDef implements Serializable {
 		this.name = name;
 	}
 
+	/**
+	 * @return the hasResponses
+	 */
+	public Boolean getHasResponses() {
+		return hasResponses;
+	}
+
+	/**
+	 * @param hasResponses the hasResponses to set
+	 */
+	public void setHasResponses(Boolean hasResponses) {
+		this.hasResponses = hasResponses;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -215,7 +231,9 @@ public class WStepTypeDef implements Serializable {
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser : "") + "]";
+				+ (modUser != null ? "modUser=" + modUser + ", " : "")
+				+ (hasResponses != null ? "hasResponses=" + hasResponses : "")
+				+ "]";
 	}
 
 	/* (non-Javadoc)
@@ -230,6 +248,8 @@ public class WStepTypeDef implements Serializable {
 				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (engineReq ? 1231 : 1237);
+		result = prime * result
+				+ ((hasResponses == null) ? 0 : hasResponses.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
@@ -264,6 +284,11 @@ public class WStepTypeDef implements Serializable {
 		if (deleted != other.deleted)
 			return false;
 		if (engineReq != other.engineReq)
+			return false;
+		if (hasResponses == null) {
+			if (other.hasResponses != null)
+				return false;
+		} else if (!hasResponses.equals(other.hasResponses))
 			return false;
 		if (id == null) {
 			if (other.id != null)
