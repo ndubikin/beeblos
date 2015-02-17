@@ -1,16 +1,22 @@
 package org.beeblos.bpm.core.test.bl;
 
 
+import java.util.HashSet;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
+import org.beeblos.bpm.core.bl.WStepHeadBL;
+import org.beeblos.bpm.core.bl.WStepResponseDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.model.WRoleDef;
 import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.WStepHead;
 import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepUser;
@@ -203,6 +209,66 @@ public class TestWStepDefBL extends TestCase{
 //
 //				
 //		}		
+		
+		@Test
+		public void testWithAddResponses(){
+			
+			WStepHead head = new WStepHead("headprueba", "comentarioprueba", DateTime.now(), 1000, DateTime.now(), 1000);
+			WStepDef step = new WStepDef();
+			WStepResponseDef response = new WStepResponseDef();
+			WStepResponseDefBL resBL = new WStepResponseDefBL();
+			WStepDefBL stepBL = new WStepDefBL();
+			WStepHeadBL headBL = new WStepHeadBL();
+
+
+			try {
+				Integer headId = headBL.add(head, 1000);
+				head = headBL.getWStepHeadByPK(headId, 1000);
+				
+				step.setStepHead(head);
+				
+				Integer stepId;
+				stepId = stepBL.add(step, 1000);
+				
+				step = stepBL.getWStepDefByPK(stepId, headId, 1000);
+				
+				response.setInsertDate(DateTime.now());
+				response.setModDate(DateTime.now());
+				response.setInsertUser(1000);
+				response.setModUser(1000);
+				response.setName("responseprueba");
+				response.setRespOrder(1);
+				
+				step.setResponse(new HashSet<WStepResponseDef>());
+				step.getResponse().add(response);
+				
+				stepBL.update(step, headId, 1000);
+				
+				step = stepBL.getWStepDefByPK(stepId, headId, 1000);
+				
+				
+			} catch (WStepHeadException e) {
+				
+				e.printStackTrace();
+			} catch (WStepDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			response.setName("responseprueba");
+			response.setInsertDate(DateTime.now());
+			response.setModDate(DateTime.now());
+			response.setInsertUser(1000);
+			response.setModUser(1000);
+			
+			step.setInsertDate(DateTime.now());
+			step.setModDate(DateTime.now());
+			step.setInsertUser(1000);
+			step.setModUser(1000);
+			
+			
+			
+		}
 		
 		@Test
 		public void testSearchAdminProcessUserSteps() {

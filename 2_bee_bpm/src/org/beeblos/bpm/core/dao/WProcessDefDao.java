@@ -459,7 +459,8 @@ public class WProcessDefDao {
 				 * aprovecho para meter las responses de control que son necesarias para el XML. No se van a mostrar ni guardar.
 				 * 
 				 */
-				if(wsd.getResponse() == null || wsd.getResponse().isEmpty()){
+				if(wsd.getStepTypeDef() != null && wsd.getStepTypeDef().getHasResponses() 
+						&& (wsd.getResponse() == null || wsd.getResponse().isEmpty())){
 					
 					WStepResponseDef wsrd = new WStepResponseDef();
 					wsrd.setId(null);
@@ -520,8 +521,11 @@ public class WProcessDefDao {
 			
 			/**
 			 * devuelve el xml con el proceso completo para mxGraph
+			 * 
+			 * pab 17022015 le meto el .replace porque no funciona el mxgraph si no
 			 */
-			return stringWriter.toString();
+			return stringWriter.toString()
+					.replace("\n", "").replace("  ", "");
 
 			
 		} catch (WProcessDefException e) {
