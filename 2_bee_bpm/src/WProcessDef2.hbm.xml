@@ -623,6 +623,9 @@
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
+		<property name="hasResponses" type="java.lang.Boolean">
+			<column name="has_responses" sql-type="bit" />
+		</property>
 	</class>
 
 	<!--  atencion hay named queries al final que afectan a roledef -->
