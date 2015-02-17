@@ -328,3 +328,7 @@ ALTER TABLE `bee_bpm_dev`.`w_step_def`
 ADD CONSTRAINT `fk_w_step_def_2`  
 FOREIGN KEY (`step_type_id`)   
 REFERENCES `bee_bpm_dev`.`w_step_type_def` (`id`)   ON DELETE NO ACTION   ON UPDATE NO ACTION;
+
+##pab 20150216
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
+CHANGE COLUMN `has_responses` `has_responses` BIT NOT NULL DEFAULT 0 ;
