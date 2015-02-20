@@ -49,7 +49,7 @@ public class WStepResponseDef implements java.io.Serializable, Comparable<WStepR
 	/**
 	 * @return the id
 	 */
-	@XmlAttribute(name="id")
+	@XmlAttribute(name="spId")
 	public Integer getId() {
 		return id;
 	}
