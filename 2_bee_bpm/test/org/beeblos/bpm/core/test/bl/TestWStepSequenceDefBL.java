@@ -14,7 +14,15 @@ import org.junit.Test;
 
 
 
-
+/**
+ * test para WStepSequenceDef
+ * 
+ * stepSequenceDef is a route between two elements (i.e. tasks) of the process.
+ * Routes indicates the 
+ * 
+ * @author nes
+ *
+ */
 public class TestWStepSequenceDefBL extends TestCase{
 		
 		static WStepSequenceDef route;
