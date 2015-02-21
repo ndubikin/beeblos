@@ -1602,7 +1602,7 @@ public class WStepWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="WStepWorkDao: 007 getWStepWorks() - can't obtain active stepwork list - " +
+			String message="HibernateException 007 at getAliveSteps - can't obtain active stepwork list - " +
 							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
 			logger.error(message );
 			throw new WStepWorkException(message);
@@ -1610,7 +1610,7 @@ public class WStepWorkDao {
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String message="Exception: 007 getWStepWorks() - can't obtain active stepwork list - " +
+			String message="Exception 007 at getAliveSteps - can't obtain active stepwork list - " +
 							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
 							+ex.getClass();
 			logger.error(message );
@@ -1618,6 +1618,59 @@ public class WStepWorkDao {
 		}
 
 		return stepws;
+	}
+	
+	/**
+	 * returns the list of alive step names for given idObject...
+	 * 
+	 * @param idObject
+	 * @param idObjectType
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	public List<String> getAliveStepNameList (
+			Integer idObject, String idObjectType) 
+	throws WStepWorkException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<String> stepNameList = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			stepNameList = session
+				.createQuery("Select currentStep.stepHead.name  From WStepWork where wProcessWork.idObject= :idObject AND wProcessWork.idObjectType= :idObjectType AND decidedDate is NULL ")
+				.setParameter("idObject", idObject)
+				.setParameter("idObjectType", idObjectType)
+				.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="HibernateException at getAliveStepNameList - can't obtain active stepwork list - " +
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
+			logger.error(message );
+			throw new WStepWorkException(message);
+
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message="Exception at getAliveStepNameList - can't obtain active stepwork list - " +
+							ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+							+ex.getClass();
+			logger.error(message );
+			throw new WStepWorkException(message);
+		}
+
+		return stepNameList;
 	}
 	
 // dejo comentada nes 20140705	

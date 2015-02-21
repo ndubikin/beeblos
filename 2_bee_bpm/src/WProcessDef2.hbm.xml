@@ -623,8 +623,8 @@
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<property name="hasResponses" type="java.lang.Boolean">
-			<column name="has_responses" sql-type="bit" />
+		<property name="allowedResponses" type="java.lang.Boolean">
+			<column name="allowed_responses" sql-type="bit" />
 		</property>
 	</class>
 

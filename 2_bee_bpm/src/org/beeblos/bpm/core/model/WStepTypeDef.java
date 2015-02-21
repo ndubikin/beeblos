@@ -1,26 +1,68 @@
 package org.beeblos.bpm.core.model;
 
+import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.joda.time.DateTime;
 
+/**
+ * Defines the step type. IE: task, message, begin, end, etc
+ * Step types must match with valid objects of BPMN event, activity or gateway 
+ * 
+ * @author pab
+ *
+ */
 public class WStepTypeDef implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	
+	/**
+	 * name of step type
+	 */
 	private String name;
+	
+	/**
+	 * kind of step type
+	 */
 	private String type;
+	
+	/**
+	 * indicates there is an active or valid step type or an old or
+	 * inactive step type
+	 */
 	private boolean active;
+	/**
+	 * indicates this kind of step requires beeBPM workflow engine
+	 * to work / support
+	 */
 	private boolean engineReq;
+	
+	/**
+	 * Indicates a deleted step type (to database cross reference
+	 * support)
+	 */
 	private boolean deleted;
+	/**
+	 * comments related with this step type
+	 */
 	private String comments;
+	
+	/**
+	 * indicates this kind of step allows to define responses to use
+	 * defalut step processors
+	 */
+	private Boolean allowedResponses;
+
+	// timestamps
 	private DateTime insertDate;
 	private Integer insertUser;
 	private DateTime modDate;
 	private Integer modUser;
-	
-	private Boolean hasResponses;
 	
 	public WStepTypeDef(Integer id, String name, String type, boolean active,
 			boolean engineReq, boolean deleted, String comments,
@@ -203,18 +245,22 @@ public class WStepTypeDef implements Serializable {
 		this.name = name;
 	}
 
+
 	/**
-	 * @return the hasResponses
+	 * indicates this kind of step allows to define responses to use
+	 * defalut step processors
+	 * 
+	 * @return the allowedResponses
 	 */
-	public Boolean getHasResponses() {
-		return hasResponses;
+	public Boolean getAllowedResponses() {
+		return allowedResponses;
 	}
 
 	/**
-	 * @param hasResponses the hasResponses to set
+	 * @param allowedResponses the allowedResponses to set
 	 */
-	public void setHasResponses(Boolean hasResponses) {
-		this.hasResponses = hasResponses;
+	public void setAllowedResponses(Boolean allowedResponses) {
+		this.allowedResponses = allowedResponses;
 	}
 
 	/* (non-Javadoc)
@@ -232,7 +278,7 @@ public class WStepTypeDef implements Serializable {
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")
-				+ (hasResponses != null ? "hasResponses=" + hasResponses : "")
+				+ (allowedResponses != null ? "allowedResponses=" + allowedResponses : "")
 				+ "]";
 	}
 
@@ -249,7 +295,7 @@ public class WStepTypeDef implements Serializable {
 		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (engineReq ? 1231 : 1237);
 		result = prime * result
-				+ ((hasResponses == null) ? 0 : hasResponses.hashCode());
+				+ ((allowedResponses == null) ? 0 : allowedResponses.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((insertDate == null) ? 0 : insertDate.hashCode());
@@ -285,10 +331,10 @@ public class WStepTypeDef implements Serializable {
 			return false;
 		if (engineReq != other.engineReq)
 			return false;
-		if (hasResponses == null) {
-			if (other.hasResponses != null)
+		if (allowedResponses == null) {
+			if (other.allowedResponses != null)
 				return false;
-		} else if (!hasResponses.equals(other.hasResponses))
+		} else if (!allowedResponses.equals(other.allowedResponses))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -327,4 +373,33 @@ public class WStepTypeDef implements Serializable {
 			return false;
 		return true;
 	}
+
+	/**
+	 * returns true if current step type is an empty object...
+	 * @return
+	 */
+	public boolean empty() {
+
+		if (id!=null && id!=0) return false;
+		if (name!=null && !"".equals(name)) return false;
+		if (type!=null && !"".equals(type)) return false;
+		if (comments!=null && !"".equals(comments)) return false;
+		return true;
+	}
+	/**
+	 * 
+	 * nullates empty objects to persist
+	 */
+	public void nullateEmtpyObjects() {
+
+	}
+	
+    /**
+     * 
+     * recover empty objects to persist
+     */
+    public void recoverEmtpyObjects() {
+
+    	
+    }
 }

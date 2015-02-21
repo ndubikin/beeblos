@@ -668,7 +668,7 @@ public class WStepDef implements java.io.Serializable {
 		if (assignedTime!=null && ! assignedTime.equals(0)) return false;
 		if (reminderTime!=null && ! reminderTime.equals(0)) return false;
 	
-		if (version!=null && ! version.equals(0)) return false;
+//		if (version!=null && ! version.equals(0)) return false; nes 20150121 - quito version del emtpy porque estamos inicializando a 1 la version por defecto
 		if (stepHead!=null && ! stepHead.empty()) return false;
 		if (instructions!=null && ! "".equals(instructions)) return false;
 		if (stepComments!=null && ! "".equals(stepComments)) return false;
