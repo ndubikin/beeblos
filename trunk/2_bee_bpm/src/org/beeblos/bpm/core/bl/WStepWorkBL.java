@@ -419,6 +419,26 @@ public class WStepWorkBL {
 		return stepList;
 	}
 	
+	/**
+	 * Returns a string list with alive current steps for synchronization with external systems
+	 * (like show in a grid current status of process, etc)
+	 * 
+	 * @param idObject
+	 * @param idObjectType
+	 * @param isAdmin
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	public List<String> getAliveStepNameList(Integer idObject, String idObjectType, Integer currentUserId) 
+			throws WStepWorkException  {
+		
+		
+		List<String> stepList = new WStepWorkDao().getAliveStepNameList(idObject, idObjectType);
+		
+		return stepList;
+	}
+	
 	/** 
 	 * Recibe una lista de StepWork y devuelve la lista de los cuales el "currentUserId" tiene permisos
 	 * 

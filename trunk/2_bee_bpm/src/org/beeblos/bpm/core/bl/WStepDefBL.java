@@ -51,6 +51,8 @@ public class WStepDefBL {
 		
 		DateTime now = new DateTime();
 		
+		step.nullateEmtpyObjects(); // nes 20150212 - hay que anular porque ahora vienen por WS y demas las altas...
+		
 		_setDefaultValues(step);
 		
 		// dml 20130430 - si es un nuevo WStepHead se guarda antes de guardar el WStepDef y se rellena la informacion esencial

@@ -43,6 +43,8 @@ public class WStepSequenceDefBL {
 						route.getProcess().getId():"null")
 						+"]");
 		
+		route.nullateEmtpyObjects();// nes 20150121
+		
 		// timestamp & trace info
 		route.setInsertDate(new DateTime());
 		route.setModDate(DEFAULT_MOD_DATE_TIME);
@@ -55,10 +57,12 @@ public class WStepSequenceDefBL {
 	
 	public void update(WStepSequenceDef route, Integer currentUserId) throws WStepSequenceDefException {
 		
-		logger.debug("update() WStepSequenceDef < id = "+(route!=null?route.getId():"xx.xx")+">");
+		logger.debug("update() WStepSequenceDef id:"+(route!=null?route.getId():"null")+"");
 		
 		if (!route.equals(new WStepSequenceDefDao().getWStepSequenceDefByPK(route.getId())) ) {
 
+			route.nullateEmtpyObjects();// nes 20150121
+			
 			// timestamp & trace info
 			route.setModDate(new DateTime());
 			route.setModUser(currentUserId);

@@ -77,7 +77,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private boolean deleted; 
 	
 	/**
-	 * optionally indicates the list of idResponse comma separated
+	 * pipe delimited list of idResponse in a string field  (chapuza solution)
 	 */
 	private String validResponses; 
 	
