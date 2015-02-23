@@ -163,6 +163,10 @@
 			<column name="origen" />
 		</property>
 
+		<property name="userAgent" type="string">
+			<column name="user_agent" />
+		</property>
+
 		<property name="date"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="date" />
