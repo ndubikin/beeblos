@@ -317,7 +317,7 @@ CHANGE COLUMN `id_origin_step` `id_origin_step` INT(11) NULL DEFAULT NULL ;
 UPDATE bee_bpm_dev.w_step_type_def set mod_date='2013-09-15 11:05:52',insert_date='1970-01-01 01:00:00' where id>1;
 
 ## pab 20150107 - esto es para cambiar el id de w_step_type_def de smallint a int. primero hay que borrar la foreign key de la tabla w_step_def,
-## luego cambiar las columnas en las dos tablas a int y luego volver a crear la foreignt key
+## luego cambiar las columnas en las dos tablas a int y luego volver a crear la foreign key
 ALTER TABLE `bee_bpm_dev`.`w_step_def`  
 DROP FOREIGN KEY `fk_w_step_def_2`;
 ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
@@ -330,5 +330,6 @@ FOREIGN KEY (`step_type_id`)
 REFERENCES `bee_bpm_dev`.`w_step_type_def` (`id`)   ON DELETE NO ACTION   ON UPDATE NO ACTION;
 
 ##pab 20150216
-ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
-CHANGE COLUMN `has_responses` `has_responses` BIT NOT NULL DEFAULT 0 ;
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` ADD COLUMN `allowed_responses` BIT NOT NULL DEFAULT 0 AFTER `type`;
+## set allowed responses to true for task type
+UPDATE `bee_bpm_dev`.`w_step_type_def` SET allowed_responses=1 WHERE id=1; 
