@@ -333,3 +333,7 @@ REFERENCES `bee_bpm_dev`.`w_step_type_def` (`id`)   ON DELETE NO ACTION   ON UPD
 ALTER TABLE `bee_bpm_dev`.`w_step_type_def` ADD COLUMN `allowed_responses` BIT NOT NULL DEFAULT 0 AFTER `type`;
 ## set allowed responses to true for task type
 UPDATE `bee_bpm_dev`.`w_step_type_def` SET allowed_responses=1 WHERE id=1; 
+
+## nes 20150225
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+DROP COLUMN `xml_label`;
