@@ -53,7 +53,7 @@ public class WStepDef implements java.io.Serializable {
 	
 	private String xmlHref;
 	private String xmlId;
-//	private String xmlLabel;
+//	private String xmlLabel; eliminado nes 20150225 - usamos directamente stepHead.name
 	private String xmlRules;
 	
 	private String responsesString;
@@ -361,6 +361,7 @@ public class WStepDef implements java.io.Serializable {
 		this.stepTypeDef = stepTypeDef;
 	}
 
+	@XmlAttribute(name="label")
 	@Deprecated
 	public String getName(){
 		
@@ -375,9 +376,8 @@ public class WStepDef implements java.io.Serializable {
 	@Deprecated
 	public void setName(String name){
 		
-		if (this.stepHead != null){
-			 this.stepHead.setName(name);
-		}
+		if (stepHead==null) this.setStepHead(new WStepHead());
+		this.stepHead.setName(name);
 				
 	}
 
@@ -1532,15 +1532,15 @@ public class WStepDef implements java.io.Serializable {
 	 * returns the name of the step (task)
 	 * @return the xmlLabel
 	 */
-	@XmlAttribute(name="label")
-	public String getXmlLabel() {
-		//xmlLabel = this.xmlLabel;
-		if (stepHead!=null) {
-			return getStepHead().getName();	
-		} else {
-			return "";
-		}
-	}
+	
+//	public String getXmlLabel() {
+//		//xmlLabel = this.xmlLabel;
+//		if (stepHead!=null) {
+//			return getStepHead().getName();	
+//		} else {
+//			return "";
+//		}
+//	}
 
 	/**
 	 * mxGraph label mapped witn stepHead.name
@@ -1548,11 +1548,11 @@ public class WStepDef implements java.io.Serializable {
 	 * empty property objects to manage xml attributes...
 	 * @param xmlLabel the xmlLabel to set
 	 */
-	public void setXmlLabel(String xmlLabel) {
-//		this.xmlLabel=xmlLabel;
-		if (stepHead==null) this.setStepHead(new WStepHead());
-		getStepHead().setName(xmlLabel);
-	}
+//	public void setXmlLabel(String xmlLabel) {
+////		this.xmlLabel=xmlLabel;
+//		if (stepHead==null) this.setStepHead(new WStepHead());
+//		getStepHead().setName(xmlLabel);
+//	}
 
 	/**
 	 * @return the xmlRules

@@ -1185,11 +1185,6 @@
 			<column name="xml_href" sql-type="text" />
 		</property>
 		
-		<property generated="never" lazy="false" name="xmlLabel"
-			type="string">
-			<column name="xml_label" sql-type="text" />
-		</property>
-		
 		<property generated="never" lazy="false" name="mxCellString"
 			type="string">
 			<column name="mxcell_string" sql-type="text" />

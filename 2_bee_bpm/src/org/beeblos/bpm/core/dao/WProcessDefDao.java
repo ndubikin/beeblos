@@ -460,9 +460,6 @@ public class WProcessDefDao {
 				 * aprovecho para meter las responses de control que son necesarias para el XML. No se van a mostrar ni guardar.
 				 * 
 				 */
-				if(wsd.getId()==3){
-					System.out.println("ola");
-				}
 				if(wsd.getStepTypeDef() != null && wsd.getStepTypeDef().getAllowedResponses() // nes 20150221  
 						&& (wsd.getResponse() == null || wsd.getResponse().isEmpty())){
 					
