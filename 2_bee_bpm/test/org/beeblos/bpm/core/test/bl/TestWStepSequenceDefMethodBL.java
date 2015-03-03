@@ -3,11 +3,12 @@ package org.beeblos.bpm.core.test.bl;
 
 import junit.framework.TestCase;
 
+import org.beeblos.bpm.core.bl.WExternalMethodBL;
 import org.beeblos.bpm.core.bl.WProcessDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepSequenceDefBL;
+import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDef;
-import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.junit.Test;
 
@@ -64,9 +65,31 @@ public class TestWStepSequenceDefMethodBL extends TestCase{
 		public void testAgregarWStepSequenceDef() throws Exception {
 			
 			route = routeBL.getWStepSequenceDefByPK(7, 1000);
+			System.out.println("-------------------------Original--------------------------");
 			System.out.println("-----------------------------------------------------------");
 			System.out.println(route);
 			System.out.println("-----------------------------------------------------------");
+			
+			WExternalMethod newMethod = new WExternalMethodBL().getExternalMethodByPK(101);
+			System.out.println("-------------------------newMethod-------------------------");
+			System.out.println("-----------------------------------------------------------");
+			System.out.println(newMethod);
+			System.out.println("-----------------------------------------------------------");
+			
+			route.getExternalMethod().add(newMethod);
+			
+			routeBL.update(route, 1000);
+			System.out.println("-----------------------routeAfterUpdate--------------------");
+			System.out.println("-----------------------------------------------------------");
+			System.out.println(route);
+			System.out.println("-----------------------------------------------------------");
+			
+			route = routeBL.getWStepSequenceDefByPK(route.getId(), 1000);
+			System.out.println("-------------------------routeBBDD-------------------------");
+			System.out.println("-----------------------------------------------------------");
+			System.out.println(route);
+			System.out.println("-----------------------------------------------------------");
+			
 		}
 
 		
