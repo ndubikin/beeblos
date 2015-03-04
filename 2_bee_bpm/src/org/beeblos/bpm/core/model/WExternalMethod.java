@@ -4,6 +4,10 @@ package org.beeblos.bpm.core.model;
 
 import java.util.Arrays;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+
 import org.beeblos.bpm.core.model.noper.WProcessHeadLight;
 import org.joda.time.DateTime;
 
@@ -19,6 +23,7 @@ import org.joda.time.DateTime;
  * load step, after executing step), process (at start time or at end process time), etc.
  * 
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class WExternalMethod implements java.io.Serializable {
 
 	/**
@@ -136,6 +141,7 @@ public class WExternalMethod implements java.io.Serializable {
 		
 	}
 
+	@XmlAttribute(name="spId")
 	public Integer getId() {
 		return this.id;
 	}
@@ -160,6 +166,7 @@ public class WExternalMethod implements java.io.Serializable {
 		this.classname = classname;
 	}
 
+	@XmlAttribute(name="name")
 	public String getMethodname() {
 		return this.methodname;
 	}

@@ -183,7 +183,7 @@ public class WProcessHead implements java.io.Serializable {
 		this.processDataFieldDef = processDataFieldDef;
 	}
 
-
+ 
 	public Set<WExternalMethod> getExternalMethod() {
 		return externalMethod;
 	}
