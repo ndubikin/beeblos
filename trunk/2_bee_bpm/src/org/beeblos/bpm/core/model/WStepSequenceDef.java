@@ -338,7 +338,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 	}
 
 
-
+	@XmlElement(name="method")
 	public Set<WExternalMethod> getExternalMethod() {
 		return externalMethod;
 	}
