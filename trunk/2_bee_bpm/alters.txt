@@ -337,3 +337,6 @@ UPDATE `bee_bpm_dev`.`w_step_type_def` SET allowed_responses=1 WHERE id=1;
 ## nes 20150225
 ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 DROP COLUMN `xml_label`;
+
+ALTER TABLE `bee_bpm_dev`.`w_stepsequence_method` 
+CHANGE COLUMN `insert_user` `insert_user` INT(11) NULL;
