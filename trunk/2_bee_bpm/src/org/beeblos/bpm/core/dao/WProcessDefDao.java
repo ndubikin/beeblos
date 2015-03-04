@@ -385,7 +385,8 @@ public class WProcessDefDao {
 										pro.getComments() == null ? "" : pro.getComments(),
 										pro.getXmlId() == null ? "0" : pro.getXmlId(),
 										pro.getId().toString(),
-										pro.getProcess().getName()));
+										pro.getProcess().getName(),
+										pro.getProcess().getExternalMethod()));
 			
 			JAXBContext jaxbContext2 = JAXBContext.newInstance(org.beeblos.bpm.core.graph.ElementWrapper.class);
 			Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
@@ -452,7 +453,7 @@ public class WProcessDefDao {
 				String xmlString = wsd.getMxCellString() != null && !wsd.getMxCellString().equals("") ? wsd.getMxCellString() : Constants.DEFAULT_MXCELL_XML;
 				
 				StringReader reader = new StringReader(xmlString);
-				MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader);
+				MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader); 
 				wsd.setMxCellObject(m);
 				
 				/**
@@ -492,7 +493,9 @@ public class WProcessDefDao {
 															ssd.getXmlMxCellString() );
 				
 				MxCell m = (MxCell)ju.unmarshal(r);
-				
+				if(ssd.getId() == 17) {
+					System.out.println("jijiji");
+				}
 				ssd.setMxCell(m);
 				
 				if(ssd.getXmlId() == null
