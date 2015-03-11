@@ -20,6 +20,7 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.logging.Log;
@@ -391,37 +392,7 @@ public class WProcessDefDao {
 			JAXBContext jaxbContext2 = JAXBContext.newInstance(org.beeblos.bpm.core.graph.ElementWrapper.class);
 			Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
 	
-			/**
-			 * Cojo todos los layer y todos los symbol que tengo guardado como string en la bd y los convierto a objeto java
-			 * para poder marshalizar y des-marshalizar
-			 * Le pongo el encoding y le pongo el ElementWrapper dinamicamente porque no lo guardo en la bd
-			 */
-			StringReader sr = new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><ElementWrapper>"
-								+pro.getXmlSymbolsString() + pro.getXmlLayersString()
-								+"</ElementWrapper>");
-			ElementWrapper sw = (ElementWrapper)jaxbUnmarshaller2.unmarshal(sr);
-			
-			/**
-			 * le agrego el string convertido a objeto java al proceso para que 
-			 */
-			pro.setSymbolObjectList(sw.getsList());
-			
-			/**
-			 * Cojo los layers (son obligatorios
-			 * Si no hay guardado ningun layer, como lo necesitamos, creo uno x default
-			 */
-			if(sw.getlList() != null &&
-					sw.getlList().size() > 0){
-				pro.setLayerObjectList(sw.getlList());
-			} else {
-				
-				Layer l = (Layer)JAXBContext.newInstance(org.beeblos.bpm.core.graph.Layer.class)
-										.createUnmarshaller()
-										.unmarshal(new StringReader(Constants.DEFAULT_LAYER_XML));
-				sw.setlList(new ArrayList<Layer>());
-				sw.getlList().add(l);
-				pro.setLayerObjectList(sw.getlList());
-			}
+			_mergeSymbolsAndLayers(pro, jaxbUnmarshaller2);
 			
 			/**
 			 * Ahora vamos con los steps (task)
@@ -429,106 +400,21 @@ public class WProcessDefDao {
 			JAXBContext jaxbContext = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxGraphModel.class);
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-			Iterator<WStepDef> i = pro.getSteps().iterator();
-			
-			/**
-			 * Este while le mete el mxcell a cada step (porque el wStepDef no tiene mxcell)
-			 */
-			while(i.hasNext()){
-				
-				WStepDef wsd = i.next();
-				
-				/**
-				 * si el step no tiene xmlId le seteo el próximo xmlid
-				 */
-				if(wsd.getXmlId() == null
-						|| wsd.getXmlId().equals("")){
-					
-					_putXmlIdToJavaStep(wsd, pro);
-				}
-				
-				/**
-				 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
-				 */
-				String xmlString = wsd.getMxCellString() != null && !wsd.getMxCellString().equals("") ? wsd.getMxCellString() : Constants.DEFAULT_MXCELL_XML;
-				
-				StringReader reader = new StringReader(xmlString);
-				MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader); 
-				wsd.setMxCellObject(m);
-				
-				/**
-				 * pab 11022015
-				 * aprovecho para meter las responses de control que son necesarias para el XML. No se van a mostrar ni guardar.
-				 * 
-				 */
-				if(wsd.getStepTypeDef() != null && wsd.getStepTypeDef().getAllowedResponses() // nes 20150221  
-						&& (wsd.getResponse() == null || wsd.getResponse().isEmpty())){
-					
-					WStepResponseDef wsrd = new WStepResponseDef();
-					wsrd.setId(null);
-					wsrd.setName("nouse");
-					wsd.setResponse(new HashSet<WStepResponseDef>());
-					wsd.addResponse(wsrd);
-					
-				}
-			}
+			_mergeStepList(pro, jaxbUnmarshaller);
 
-			Iterator<WStepSequenceDef> i2 = pro.getStepSequenceList().iterator();
-			
-			/**
-			 * Este while le mete los mxcell a cada stepSequence
-			 */
-			while(i2.hasNext()){
-				
-				WStepSequenceDef ssd = i2.next();
-				
-				JAXBContext jc = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxCell.class);
-				Unmarshaller ju = jc.createUnmarshaller();
-
-				/**
-				 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
-				 */
-				StringReader r = new StringReader(ssd.getXmlMxCellString() == null || ssd.getXmlMxCellString().equals("") ? 
-															Constants.DEFAULT_EDGE_MXCELL_XML :
-															ssd.getXmlMxCellString() );
-				
-				MxCell m = (MxCell)ju.unmarshal(r);
-				if(ssd.getId() == 17) {
-					System.out.println("jijiji");
-				}
-				ssd.setMxCell(m);
-				
-				if(ssd.getXmlId() == null
-						|| ssd.getXmlId().equals("")){
-					_putXmlIdToJavaStepSequence(ssd,pro);
-				}
-				_putXmlIdToStepsFromAndTo(ssd,pro);
-				
-			}
+			_mergeSequenceList(pro);
 			
 			
-			/**
-			 * Una vez ajustados todos los detalles y convertidos los datos que tengo
-			 * en String a objeto, creo el xml completo para todo el proceso
-			 */
-			MxGraphModel m = new MxGraphModel(pro);
-		
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			String xmlProcessString = _marshalProcess(pro, jaxbContext);
 			
-			StringWriter stringWriter = new StringWriter();
-			
-			jaxbMarshaller.marshal(m, stringWriter);
-			
-			System.out.println("xml map:["+stringWriter.toString()+"]");
+			System.out.println("xml map:["+xmlProcessString+"]");
 			
 			/**
 			 * devuelve el xml con el proceso completo para mxGraph
 			 * 
 			 * pab 17022015 le meto el .replace porque no funciona el mxgraph si no
 			 */
-			return stringWriter.toString()
+			return xmlProcessString
 					.replace("\n", "").replace("  ", "");
 
 			
@@ -540,6 +426,160 @@ public class WProcessDefDao {
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	/**
+	 * @param pro
+	 * @param jaxbContext
+	 * @return
+	 * @throws JAXBException
+	 * @throws PropertyException
+	 */
+	private String _marshalProcess(WProcessDef pro,
+			JAXBContext jaxbContext) throws JAXBException, PropertyException {
+		/**
+		 * Una vez ajustados todos los detalles y convertidos los datos que tengo
+		 * en String a objeto, creo el xml completo para todo el proceso
+		 */
+		MxGraphModel m = new MxGraphModel(pro);
+
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		
+		StringWriter stringWriter = new StringWriter();
+		
+		jaxbMarshaller.marshal(m, stringWriter);
+		return stringWriter.toString();
+	}
+
+	/**
+	 * @param pro
+	 * @throws JAXBException
+	 */
+	private void _mergeSequenceList(WProcessDef pro) throws JAXBException {
+		Iterator<WStepSequenceDef> i2 = pro.getStepSequenceList().iterator();
+		
+		/**
+		 * Este while le mete los mxcell a cada stepSequence
+		 */
+		while(i2.hasNext()){
+			
+			WStepSequenceDef ssd = i2.next();
+			
+			JAXBContext jc = JAXBContext.newInstance(org.beeblos.bpm.core.graph.MxCell.class);
+			Unmarshaller ju = jc.createUnmarshaller();
+
+			/**
+			 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
+			 */
+			StringReader r = new StringReader(ssd.getXmlMxCellString() == null || ssd.getXmlMxCellString().equals("") ? 
+														Constants.DEFAULT_EDGE_MXCELL_XML :
+														ssd.getXmlMxCellString() );
+			
+			MxCell m = (MxCell)ju.unmarshal(r);
+
+			ssd.setMxCell(m);
+			
+			if(ssd.getXmlId() == null
+					|| ssd.getXmlId().equals("")){
+				_putXmlIdToJavaStepSequence(ssd,pro);
+			}
+			_putXmlIdToStepsFromAndTo(ssd,pro);
+			
+		}
+	}
+
+	/**
+	 * @param pro
+	 * @param jaxbUnmarshaller
+	 * @throws JAXBException
+	 */
+	private void _mergeStepList(WProcessDef pro, Unmarshaller jaxbUnmarshaller)
+			throws JAXBException {
+		Iterator<WStepDef> i = pro.getSteps().iterator();
+		
+		/**
+		 * Este while le mete el mxcell a cada step (porque el wStepDef no tiene mxcell)
+		 */
+		while(i.hasNext()){
+			
+			WStepDef wsd = i.next();
+			
+			/**
+			 * si el step no tiene xmlId le seteo el próximo xmlid
+			 */
+			if(wsd.getXmlId() == null
+					|| wsd.getXmlId().equals("")){
+				
+				_putXmlIdToJavaStep(wsd, pro);
+			}
+			
+			/**
+			 * si tenemos mxcell guardado como string en la bd usamos ese, si no usamos uno por defecto
+			 */
+			String xmlString = wsd.getMxCellString() != null && !wsd.getMxCellString().equals("") ? wsd.getMxCellString() : Constants.DEFAULT_MXCELL_XML;
+			
+			StringReader reader = new StringReader(xmlString);
+			MxCell m = (MxCell)jaxbUnmarshaller.unmarshal(reader); 
+			wsd.setMxCellObject(m);
+			
+			/**
+			 * pab 11022015
+			 * aprovecho para meter las responses de control que son necesarias para el XML. No se van a mostrar ni guardar.
+			 * 
+			 */
+			if(wsd.getStepTypeDef() != null && wsd.getStepTypeDef().getAllowedResponses() // nes 20150221  
+					&& (wsd.getResponse() == null || wsd.getResponse().isEmpty())){
+				
+				WStepResponseDef wsrd = new WStepResponseDef();
+				wsrd.setId(null);
+				wsrd.setName("nouse");
+				wsd.setResponse(new HashSet<WStepResponseDef>());
+				wsd.addResponse(wsrd);
+				
+			}
+		}
+	}
+
+	/**
+	 * @param pro
+	 * @param jaxbUnmarshaller2
+	 * @throws JAXBException
+	 */
+	private void _mergeSymbolsAndLayers(WProcessDef pro,
+			Unmarshaller jaxbUnmarshaller2) throws JAXBException {
+		/**
+		 * Cojo todos los layer y todos los symbol que tengo guardado como string en la bd y los convierto a objeto java
+		 * para poder marshalizar y des-marshalizar
+		 * Le pongo el encoding y le pongo el ElementWrapper dinamicamente porque no lo guardo en la bd
+		 */
+		StringReader sr = new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><ElementWrapper>"
+							+pro.getXmlSymbolsString() + pro.getXmlLayersString()
+							+"</ElementWrapper>");
+		ElementWrapper sw = (ElementWrapper)jaxbUnmarshaller2.unmarshal(sr);
+		
+		/**
+		 * le agrego el string convertido a objeto java al proceso para que 
+		 */
+		pro.setSymbolObjectList(sw.getsList());
+		
+		/**
+		 * Cojo los layers (son obligatorios
+		 * Si no hay guardado ningun layer, como lo necesitamos, creo uno x default
+		 */
+		if(sw.getlList() != null &&
+				sw.getlList().size() > 0){
+			pro.setLayerObjectList(sw.getlList());
+		} else {
+			
+			Layer l = (Layer)JAXBContext.newInstance(org.beeblos.bpm.core.graph.Layer.class)
+									.createUnmarshaller()
+									.unmarshal(new StringReader(Constants.DEFAULT_LAYER_XML));
+			sw.setlList(new ArrayList<Layer>());
+			sw.getlList().add(l);
+			pro.setLayerObjectList(sw.getlList());
+		}
 	}
 	
 	private void _putXmlIdToJavaStep(WStepDef wsd, WProcessDef pro){
