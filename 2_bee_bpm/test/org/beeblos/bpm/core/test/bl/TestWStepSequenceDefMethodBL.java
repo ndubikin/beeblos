@@ -66,29 +66,17 @@ public class TestWStepSequenceDefMethodBL extends TestCase{
 			
 			route = routeBL.getWStepSequenceDefByPK(7, 1000);
 			System.out.println("-------------------------Original--------------------------");
-			System.out.println("-----------------------------------------------------------");
-			System.out.println(route);
-			System.out.println("-----------------------------------------------------------");
 			
-			WExternalMethod newMethod = new WExternalMethodBL().getExternalMethodByPK(101);
+			WExternalMethod newMethod = new WExternalMethodBL().getExternalMethodByPK(103);
 			System.out.println("-------------------------newMethod-------------------------");
-			System.out.println("-----------------------------------------------------------");
-			System.out.println(newMethod);
-			System.out.println("-----------------------------------------------------------");
 			
 			route.getExternalMethod().add(newMethod);
 			
 			routeBL.update(route, 1000);
 			System.out.println("-----------------------routeAfterUpdate--------------------");
-			System.out.println("-----------------------------------------------------------");
-			System.out.println(route);
-			System.out.println("-----------------------------------------------------------");
 			
 			route = routeBL.getWStepSequenceDefByPK(route.getId(), 1000);
 			System.out.println("-------------------------routeBBDD-------------------------");
-			System.out.println("-----------------------------------------------------------");
-			System.out.println(route);
-			System.out.println("-----------------------------------------------------------");
 			
 		}
 
