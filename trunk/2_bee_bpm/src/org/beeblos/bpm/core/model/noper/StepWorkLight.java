@@ -79,6 +79,11 @@ public class StepWorkLight implements Serializable {
 	 */
 	private Integer idStepWork;
 	
+	//rrl 20150409 ITS: 917
+	/**
+	 * response to the stepWork
+	 */
+	private String response;
 
 	
 	public StepWorkLight() {
@@ -91,7 +96,7 @@ public class StepWorkLight implements Serializable {
 			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedBy,
 			Integer idStepWork, 
 			String openerUserLogin, String openerUserName,
-			String performerLogin, String performerName) {
+			String performerLogin, String performerName, String response) {
 		super();
 		this.idProcess = idProcess;
 		this.idStep = idStep;
@@ -112,6 +117,7 @@ public class StepWorkLight implements Serializable {
 		this.openerUserName = openerUserName;
 		this.performerLogin = performerLogin;
 		this.performerName = performerName;
+		this.response = response;
 	}
 
 	public Integer getIdProcess() {
@@ -241,6 +247,15 @@ public class StepWorkLight implements Serializable {
 	public void setIdStepWork(Integer idStepWork) {
 		this.idStepWork = idStepWork;
 	}
+	
+	//rrl 20150409 ITS: 917
+	public String getResponse() {
+		return response;
+	}
+
+	public void setResponse(String response) {
+		this.response = response;
+	}
 
 	public String getOpenerUserLogin() {
 		return openerUserLogin;
@@ -275,27 +290,13 @@ public class StepWorkLight implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep
-				+ ", stepName=" + stepName 
-				+ ", reference=" + reference
-				+ ", comments=" + comments
-				+ ", arrivingDate=" + arrivingDate + ", openedDate="
-				+ openedDate + ", openerUser=" + openerUser + ", decidedDate="
-				+ decidedDate + ", performer=" + performer + ", deadlineTime="
-				+ deadlineTime + ", deadlineDate=" + deadlineDate + ", locked="
-				+ locked + ", lockedBy=" + lockedBy + ", idStepWork="
-				+ idStepWork + ", openerUserLogin=" + openerUserLogin
-				+ ", openerUserName=" + openerUserName + ", performerLogin="
-				+ performerLogin + ", performerName=" + performerName + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((arrivingDate == null) ? 0 : arrivingDate.hashCode());
+		result = prime * result
+				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result
 				+ ((deadlineDate == null) ? 0 : deadlineDate.hashCode());
 		result = prime * result
@@ -327,7 +328,7 @@ public class StepWorkLight implements Serializable {
 		result = prime * result
 				+ ((reference == null) ? 0 : reference.hashCode());
 		result = prime * result
-				+ ((comments == null) ? 0 : comments.hashCode());		
+				+ ((response == null) ? 0 : response.hashCode());
 		result = prime * result
 				+ ((stepName == null) ? 0 : stepName.hashCode());
 		return result;
@@ -346,6 +347,11 @@ public class StepWorkLight implements Serializable {
 			if (other.arrivingDate != null)
 				return false;
 		} else if (!arrivingDate.equals(other.arrivingDate))
+			return false;
+		if (comments == null) {
+			if (other.comments != null)
+				return false;
+		} else if (!comments.equals(other.comments))
 			return false;
 		if (deadlineDate == null) {
 			if (other.deadlineDate != null)
@@ -424,19 +430,33 @@ public class StepWorkLight implements Serializable {
 				return false;
 		} else if (!reference.equals(other.reference))
 			return false;
-		
-		if (comments == null) {
-			if (other.comments != null)
+		if (response == null) {
+			if (other.response != null)
 				return false;
-		} else if (!comments.equals(other.comments))
+		} else if (!response.equals(other.response))
 			return false;
-		
 		if (stepName == null) {
 			if (other.stepName != null)
 				return false;
 		} else if (!stepName.equals(other.stepName))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep
+				+ ", stepName=" + stepName + ", reference=" + reference
+				+ ", comments=" + comments + ", arrivingDate=" + arrivingDate
+				+ ", openerUser=" + openerUser + ", openerUserLogin="
+				+ openerUserLogin + ", openerUserName=" + openerUserName
+				+ ", openedDate=" + openedDate + ", performer=" + performer
+				+ ", performerLogin=" + performerLogin + ", performerName="
+				+ performerName + ", decidedDate=" + decidedDate
+				+ ", deadlineTime=" + deadlineTime + ", deadlineDate="
+				+ deadlineDate + ", locked=" + locked + ", lockedBy="
+				+ lockedBy + ", idStepWork=" + idStepWork + ", response="
+				+ response + "]";
 	}
 	
 }

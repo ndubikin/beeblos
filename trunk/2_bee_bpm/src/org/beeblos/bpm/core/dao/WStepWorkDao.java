@@ -2562,7 +2562,8 @@ public class WStepWorkDao {
 		tmpQuery += " opener.name opener_name, "; //15
 		tmpQuery += " performer.login AS performer_login, ";//16
 		tmpQuery += " performer.name AS performer_name, ";//17
-		tmpQuery += " pw.comments "; //18
+		tmpQuery += " pw.comments, "; //18
+		tmpQuery += " sw.response "; //19 rrl 20150409 ITS: 917
 
 		tmpQuery += " FROM w_step_work sw ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
@@ -2600,6 +2601,7 @@ public class WStepWorkDao {
 		LocalTime deadlineTime;
 		String reference;
 		String comments;
+		String response;
 		
 		// dml 20120123
 		boolean locked;
@@ -2676,11 +2678,13 @@ public class WStepWorkDao {
 					performerLogin = (cols[16] != null ? cols[16].toString() : "");
 					performerName = (cols[17] != null ? cols[17].toString() : "");
 					comments = (cols[18] != null ? cols[18].toString() : "");
+					response = (cols[19] != null ? cols[19].toString() : "");  //rrl 20150409 ITS: 917
+					
 					
 					returnList.add(new StepWorkLight(idProcess, idStep, stepName, 
 							reference, comments, arrivingDate, openedDate, openerUser, decidedDate, 
 							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork, 
-							openerUserLogin, openerUserName, performerLogin, performerName));
+							openerUserLogin, openerUserName, performerLogin, performerName, response));
 				}
 
 			} else {
