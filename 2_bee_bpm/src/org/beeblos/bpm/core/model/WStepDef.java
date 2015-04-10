@@ -1025,6 +1025,17 @@ public class WStepDef implements java.io.Serializable {
 			dfl = new ArrayList<WStepDataField>(dataFieldDef);
 
 			return dfl;
+		} else {
+			/**
+			 * nes 20150410 - si tenemos el objeto dataFieldDef devuelvo
+			 * la lista creada y vacia.
+			 * Si el objeto es null devuelvo null
+			 * Esto lo ajusté asi porque si no desde la vista se complica para
+			 * pasar como parámetro este dato para el caso que la lista esté vacía...
+			 */
+			if (dataFieldDef!=null) {
+				return new ArrayList<WStepDataField>();
+			}
 		}
 
 		return null;
