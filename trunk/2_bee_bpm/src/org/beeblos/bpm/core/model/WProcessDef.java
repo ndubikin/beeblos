@@ -2,7 +2,10 @@ package org.beeblos.bpm.core.model;
 
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -490,10 +493,46 @@ public class WProcessDef implements java.io.Serializable {
 		return getWStepDefAsList();
 	}
 
+//	public List<WStepDef> getWStepDefAsList() {
+//		return new ArrayList<WStepDef>(steps);
+//	}
+
+	//rrl 20150410
 	public List<WStepDef> getWStepDefAsList() {
-		return new ArrayList<WStepDef>(steps);
+		
+		List<WStepDef> tmpStepList  = new ArrayList<WStepDef>(steps);
+		
+		// Sort the list using the Comparator
+		Collections.sort((List<WStepDef>) tmpStepList, this.getStepDefNameComparator());
+		
+		return tmpStepList;
 	}
 	
+	/**
+	 * sort the list using the Comparator
+	 * 
+	 * @author rrl 20150410
+	 * 
+	 * @return
+	 */
+	public Comparator<WStepDef> getStepDefNameComparator() {
+
+		return new Comparator<WStepDef>() {
+
+			public int compare(WStepDef o1, WStepDef o2) {
+
+				int result = 0;
+
+				// For all the letters are the same (‘A’, ‘a’ and ‘á’).
+				Collator collator = Collator.getInstance();
+				collator.setStrength(Collator.PRIMARY);
+				result = collator.compare(o1.getStepHead().getName(),
+						o2.getStepHead().getName());
+
+				return result;
+			}
+		};
+	}
 	
 	/**
 	 * pab 20141201
