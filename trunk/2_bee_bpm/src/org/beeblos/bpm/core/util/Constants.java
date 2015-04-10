@@ -6,6 +6,12 @@ import static com.sp.common.util.Resourceutil.getStringProperty;
 
 public class Constants {
 	
+	// dml 20150410 - Se usa para guardar temporalmente los adjuntos de los emails antes de guardarlos en BD
+	public static final String BEEBPM_TMP_FOLDER = getStringProperty("default.beebpm.tmp.folder","/tmp-beebpm"); // dml 20121008
+
+	// dml 20150410 - Esta navegación no la tenemos en el base-crud porque no tiene que existir para todos los proyectos
+	public static final String EMAIL_D_CONF_FORM_VIEW="/app/crud/emailDConf/emailDConfCrudWithTemplate.xhtml";
+
 	public static final String DEFAULT_MX_CELL_BEGIN_EVENT = "<mxCell parent=\"1\" vertex=\"1\" style=\"symbol;image=images/symbols/event.png\"><mxGeometry as=\"geometry\" width=\"32\" height=\"32\" x=\"10\" y=\"100\"/></mxCell>";
 	public static final String DEFAULT_MX_CELL_MESSAGE_BEGIN = "<mxCell parent=\"1\" vertex=\"1\" style=\"symbol;image=images/symbols/message.png\"><mxGeometry as=\"geometry\" width=\"32\" height=\"32\" x=\"10\" y=\"100\"/></mxCell>";
 	public static final String DEFAULT_MX_CELL_TIMER_BEGIN = "<mxCell parent=\"1\" vertex=\"1\" style=\"symbol;image=images/symbols/timer.png\"><mxGeometry as=\"geometry\" width=\"32\" height=\"32\" x=\"10\" y=\"100\"/></mxCell>";

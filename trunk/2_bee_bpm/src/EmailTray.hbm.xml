@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.email.tray.core.model.EmailTray" table="email_tray">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="to" type="string">
+			<column name="to_account" />
+		</property>
+		<property name="from" type="string">
+			<column name="from_account" />
+		</property>
+		<property name="cc" type="string">
+			<column name="cc" />
+		</property>
+		<property name="bcc" type="string">
+			<column name="bcc" />
+		</property>
+		<property name="subject" type="string">
+			<column name="subject" />
+		</property>
+		<property name="originalSubject" type="string">
+			<column name="original_subject" />
+		</property>
+		<property name="messageId" type="string">
+			<column name="message_id" />
+		</property>
+		<property name="encode" type="string">
+			<column name="encode" />
+		</property>
+        <property name="body" >
+            <column name="body" sql-type="LONGTEXT"/>
+        </property>
+		<property name="inputDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="input_date" />
+		</property>
+		<property name="objectId" type="java.lang.Integer">
+			<column name="object_id" />
+		</property>
+		<property name="objectClass" type="string">
+			<column name="object_class" />
+		</property>
+		<property name="readDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="read_date" />
+		</property>
+		<property name="repliedEmailTrayId" type="java.lang.Integer">
+			<column name="replied_email_tray_id" />
+		</property>
+        <property name="repliedDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="replied_Date"/>
+        </property>
+		<property name="forwardedEmailTrayId" type="java.lang.Integer">
+			<column name="forwarded_email_tray_id" />
+		</property>
+         <property name="forwardedDate"
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="forwarded_date"/>
+        </property>
+		<property name="type" type="string">
+			<column name="type" />
+		</property>
+		<property name="deleted" type="java.lang.Boolean">
+			<column name="deleted" sql-type="bit" />
+		</property>
+
+		<property name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<many-to-one class="com.email.tray.core.model.EmailTag"
+			column="email_tag_id" lazy="false" fetch="join" name="tag" />
+
+ 		<many-to-one class="com.sp.common.core.model.noper.UserThin" 
+ 			column="read_user_id" lazy="false" fetch="join" name="readUser" /> 
+
+ 		<many-to-one class="com.sp.common.core.model.noper.UserThin" 
+ 			column="user_id" lazy="false" fetch="join" name="user" /> 
+
+ 		<many-to-one class="com.sp.common.core.model.noper.UserThin" 
+ 			column="replied_user_id" lazy="false" fetch="join" name="repliedUser" /> 
+
+ 		<many-to-one class="com.sp.common.core.model.noper.UserThin" 
+ 			column="forwarded_user_id" lazy="false" fetch="join" name="forwardedUser" /> 
+
+	</class>
+	
+	<class name="com.email.tray.core.model.EmailTrayAttachment" table="email_tray_attachment">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="mime" type="string">
+			<column name="mime" />
+		</property>
+		<property name="attachmentLength" type="java.lang.Integer">
+			<column name="attachment_length" />
+		</property>
+		<property name="attachment" >
+			<column name="attachment" sql-type="LONGBLOB"/>
+		</property>
+
+		<property name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<many-to-one class="com.email.tray.core.model.EmailTray"
+			column="email_tray_id" lazy="false" fetch="join" name="emailTray" />
+
+	</class>
+	
+	<class name="com.email.tray.core.model.EmailTag" table="email_tag">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="string">
+			<column name="name" />
+		</property>
+		<property name="colorTag" type="string">
+			<column name="color_tag" />
+		</property>
+		<property name="description" type="string">
+			<column name="description" />
+		</property>
+
+	</class>
+			
+</hibernate-mapping>

@@ -9,9 +9,9 @@
 
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.password">msandbox</property>
-		<property name="hibernate.connection.url">jdbc:mysql://localhost:5621/gespro_anii_datos_21</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:5621/gespro_generic</property>
 		<property name="hibernate.connection.username">root</property>
-		<property name="hibernate.default_catalog">gespro_anii_datos_21</property>
+		<property name="hibernate.default_catalog">gespro_generic</property>
 
 		<property name="hibernate.connection.pool_size">10</property>
 
@@ -35,6 +35,7 @@
 		<mapping resource="WEmail.hbm.xml" />
 		<mapping resource="SpCommonCore.hbm.xml" />
 		<mapping resource="NotificationEvent.hbm.xml" />
+		<mapping resource="EmailTray.hbm.xml" />
 
 
 
