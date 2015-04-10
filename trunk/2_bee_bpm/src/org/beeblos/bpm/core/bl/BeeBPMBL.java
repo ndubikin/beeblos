@@ -47,7 +47,8 @@ public class BeeBPMBL {
 
 
 	/**
-	 * starts a workflow process for given idObject/idObjectType.
+	 * starts a workflow process for given idObject/idObjectType and inserts it in the
+	 * indicated idStep
 	 * 
 	 * si idStep viene vacio implica que hace un start por lo que hay que leer el WProcessDef y su beginStep
 	 * 
@@ -102,7 +103,8 @@ public class BeeBPMBL {
 		selectedStepDef = _loadStepDef(idStep, userId);
 		
 		// create processWork obj
-		WProcessWork processWork = _setProcessWork(idProcess,  idStep, idObject,  idObjectType, objReference,  objComments,  userId);
+		WProcessWork processWork = _setProcessWork(
+				idProcess,  idStep, idObject,  idObjectType, objReference,  objComments,  userId);
 		
 		// create stepWork obj
 		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
