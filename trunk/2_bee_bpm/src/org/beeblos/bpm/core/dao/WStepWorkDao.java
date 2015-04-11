@@ -430,7 +430,7 @@ public class WStepWorkDao {
 			if (stepw.getCurrentStep().getDataFieldDef()!=null
 				&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
 				logger.debug(">>> entrando en _loadStepWorkManagedData");
-				_loadStepWorkManagedData(stepw);
+				loadStepWorkManagedData(stepw);
 			
 			}
 		
@@ -533,7 +533,7 @@ public class WStepWorkDao {
 			if (stepw.getCurrentStep() != null
 					&& stepw.getCurrentStep().getDataFieldDef() != null
 					&& stepw.getCurrentStep().getDataFieldDef().size()>0) {
-				_loadStepWorkManagedData(stepw);
+				loadStepWorkManagedData(stepw);
 			}
 		}
 		
@@ -541,11 +541,11 @@ public class WStepWorkDao {
 	}
 	
 	
-	// load managed data for stepWork:
+	// loads the managedData for astepWork:
 	// >>ManagedTableConfiguration with managed table info 
 	// >>data field list (definition) for this step
 	// >>current data from managed table
-	private void _loadStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
+	public void loadStepWorkManagedData(WStepWork stepWork) throws WStepWorkException{
 		logger.debug(">>> _loadStepWorkManagedData");
 		
 		if (stepWork.getCurrentStep().getDataFieldDef()!=null 
@@ -588,7 +588,38 @@ public class WStepWorkDao {
 		} 
 	}
 
+	/**
+	 * Builds a wStepWork managedData structure.
+	 * It will be used i.e. when creates a new WStepWork for inject a new workflow
+	 * @param stepWork
+	 * @throws WStepWorkException
+	 */
+	public ManagedData buildStepWorkManagedDataObject(WStepWork stepWork) throws WStepWorkException{
+		logger.debug(">>> _loadStepWorkManagedData");
+		
+		if (stepWork.getCurrentStep().getDataFieldDef()!=null 
+				&& stepWork.getCurrentStep().getDataFieldDef().size()>0){
 
+			// if there is defined custom data fields for a step(def) && managed table is defined ...
+			// then load stepWorkManagedData
+			if ( stepWork.getwProcessWork().getManagedTableConfiguration()!=null
+					&& stepWork.getwProcessWork().getManagedTableConfiguration().getName()!=null
+					&& !"".equals(stepWork.getwProcessWork().getManagedTableConfiguration().getName()) ) {
+				
+				// when load a wStepWork we must load related managed data ...
+				ManagedData md = 
+						org.beeblos.bpm.tm.TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
+
+				return md;
+			}
+		} 
+		
+		logger.debug("WStepWork has not DataField defined data or no fields are exposed for this stepDef with id:"
+						+(stepWork!=null  && stepWork.getCurrentStep()!=null 
+							&& stepWork.getCurrentStep().getId()!=null
+								?stepWork.getCurrentStep().getId():"null"));
+		return null;
+	}
 	
 	// persists managed data for a stepWork
 	// TODO: ojo porque estoy persistiendo el managed data de un step work cuando le hago update.

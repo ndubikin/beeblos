@@ -9,10 +9,14 @@ import org.beeblos.bpm.core.error.InjectorException;
 import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.error.WStepAlreadyProcessedException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepLockedByAnotherUserException;
+import org.beeblos.bpm.core.error.WStepNotLockedException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -21,6 +25,8 @@ import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
+
+import com.sp.common.model.ManagedDataField;
 
 
 /*
@@ -80,7 +86,14 @@ public class BeeBPMBL {
 		Integer idStepWork=null;
 		
 		// load class property "selectedProcess" with the definition (WProcessDef) of process to launch...
-		selectedProcess = _loadProcessDef(idProcess, userId);
+		try {
+			selectedProcess = _loadProcessDef(idProcess, userId);
+		} catch (WProcessDefException e) {
+			String mess="Can't inject new process for id process def:"
+					+idProcess+" ....";
+			logger.error(mess);
+			throw new InjectorException(e);
+		}
 		
 		// if idStep comes null then start at process definition starting point ...
 		// at this time BeeBPM has restriction that have 1 and only 1 begin step ... (nes 20140707)
@@ -100,7 +113,14 @@ public class BeeBPMBL {
 							objReference, objComments, userId); // controla que no exista ya 1 workflow para el proceso indicado y el objeto indicado
 		
 		// load step definition (WStepDef) in class property selectedStepDef
-		selectedStepDef = _loadStepDef(idStep, userId);
+		try {
+			selectedStepDef = _loadStepDef(idStep, userId);
+		} catch (WStepDefException e) {
+			String mess="Can't inject new process for id beginstep def:"
+					+idStep+" ....";
+			logger.error(mess);
+			throw new InjectorException(e);
+		}
 		
 		// create processWork obj
 		WProcessWork processWork = _setProcessWork(
@@ -118,29 +138,288 @@ public class BeeBPMBL {
 		return idStepWork;
 		
 	}
+	
+	/**
+	 * Injects a new instance of process. This method is intended to launch starting
+	 * with a InitEvent (begin step)
+	 * 
+	 * The begin step will be loaded with all the parameters required by process definition,
+	 * like reference, related object, instructions to next step, custom data, etc.
+	 * 
+	 * stepWork must arrives without id (id-step-work must be null) and ManagedData stepWork id
+	 * will be null too (and it is mandatory to fill this fields at launch time ...)
+	 * 
+	 * Launch at the begin step implies the insert of wStepWork for begin step and move to the
+	 * next step(s)
+	 * 
+	 * Launch step has not be responses but may have logical rules to route the step ... (FALTA IMPLEMENTAR...)
+	 * 
+	 * @param stepWork
+	 * @param currentUserId
+	 * @throws InjectorException
+	 * @throws AlreadyExistsRunningProcessException
+	 * @throws WStepWorkException
+	 * @throws WProcessWorkException
+	 * @throws TableManagerException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessDataFieldException
+	 */
+	public Integer injector( WStepWork stepWork, boolean isAdminProcess, String typeOfProcess,
+			Integer currentUserId ) 
+					throws InjectorException, AlreadyExistsRunningProcessException, 
+							WStepWorkException, WProcessWorkException, TableManagerException, 
+							WStepWorkSequenceException, WProcessDataFieldException {
+		logger.debug(">>> injecting new stepwork ... (begin step ...");
+		
+		/**
+		 * Create wStepWork for begin step ...
+		 * Managed data will be persisted below in this method ...
+		 */
+		
+		Integer idStepWork = this.injector(
+				stepWork.getwProcessWork().getProcessDef().getId(), 
+				stepWork.getCurrentStep().getId(), 
+				stepWork.getwProcessWork().getIdObject(), 
+				stepWork.getwProcessWork().getIdObjectType(), 
+				stepWork.getwProcessWork().getReference(), 
+				stepWork.getwProcessWork().getComments(), 
+				currentUserId);
+		
+		logger.debug(">>> wStepWork was created ...");
+		
+		WStepWorkBL wswBL = new WStepWorkBL();
+		
+		WStepWork justCreatedStepWork = wswBL.getWStepWorkByPK(idStepWork, currentUserId);
+		
+		/**
+		 * update step work id and process work id at ManagedData and persist...
+		 */
+		stepWork.getManagedData().setCurrentStepWorkId(idStepWork);
+		stepWork.getManagedData().setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
+		
+		for (ManagedDataField mdf: stepWork.getManagedData().getDataField()) {
+			mdf.setCurrentStepWorkId(idStepWork);
+			mdf.setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
+		}
+		
+		logger.debug(">>> MD was updated with ids ...");
+		
+		justCreatedStepWork.setManagedData(stepWork.getManagedData());
+		
+		// updates managed data of created wstepWork...
+		wswBL.update(justCreatedStepWork, currentUserId);
+
+		logger.debug(">>> MD was persisted ...");
+		
+		/**
+		 * and now process step work ...
+		 */
+		Integer qtyNewRoutes = processCreatedStep(isAdminProcess, typeOfProcess, currentUserId,
+				idStepWork, wswBL);
+		
+		return qtyNewRoutes;
+		
+	}
 
 
 	/**
-	 * load process def to launch
+	 * Process just created begin step. 
+	 * As a begin step, there is not responses nor runtimeSettings
+	 * 
+	 * @param isAdminProcess
+	 * @param typeOfProcess
+	 * @param currentUserId
+	 * @param idStepWork
+	 * @param wswBL
+	 * @throws WStepWorkException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessWorkException
+	 */
+	private Integer processCreatedStep(boolean isAdminProcess,
+			String typeOfProcess, Integer currentUserId, Integer idStepWork,
+			WStepWorkBL wswBL) throws WStepWorkException,
+			WStepWorkSequenceException, WProcessWorkException {
+		logger.debug(">>> move from begin step to the next instance ...");
+		try {
+			Integer qtyCreatedRoutes = wswBL.processStep(idStepWork, null, null, currentUserId, isAdminProcess, typeOfProcess);
+			return qtyCreatedRoutes;
+		} catch (WProcessDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WStepDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WStepSequenceDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WStepLockedByAnotherUserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WStepNotLockedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WUserDefException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (WStepAlreadyProcessedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		logger.info(">>> No new routes were created...");
+		
+		return null;// null will be an error because if no new routes was created, the instance of the process will be suspended...
+	}
+	
+
+	/**
+	 * Creates an empty new wStepWork and returns it
+	 * 
+	 * @param idProcess
+	 * @param idBeginStep
+	 * @param idObject
+	 * @param idObjectType
+	 * @param objReference
+	 * @param objComments
+	 * @param userId
+	 * @return
+	 * @throws InjectorException
+	 * @throws AlreadyExistsRunningProcessException
+	 * @throws WStepWorkException
+	 * @throws WProcessWorkException
+	 * @throws TableManagerException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessDataFieldException
+	 */
+	public WStepWork createWStepWork(
+			Integer idProcess, Integer idBeginStep, 
+			Integer idObject, String idObjectType,
+			String objReference, String objComments, Integer userId ) 
+					throws 	WStepWorkException, WProcessWorkException, TableManagerException, 
+							WStepWorkSequenceException, WProcessDataFieldException {
+	
+		
+		
+		// load class property "selectedProcess" with the definition (WProcessDef) of process to launch...
+		try {
+			selectedProcess = _loadProcessDef(idProcess, userId);
+		} catch (WProcessDefException e) {
+			String mess="Can't create a wStepWork for id process:"
+					+idProcess+" ....";
+			logger.error(mess);
+			throw new WStepWorkException(e);
+		}
+		
+		// if idStep comes null then start at process definition starting point ...
+		// at this time BeeBPM has restriction that have 1 and only 1 begin step ... (nes 20140707)
+		// nes 20150410 - analizar esto porque ahora vamos a soportar 'n' begin step por lo que este puntero
+		// quedaría obsoleto ...
+		if (idBeginStep==null || idBeginStep==0) {
+			idBeginStep=selectedProcess.getBeginStep().getId();
+		}
+
+		// controla que los elementos necesarios vengan cargados y si no sale por InyectorException
+		_checkConsistencyBeforeStepLaunch(
+				idProcess, idBeginStep, idObject, idObjectType,
+				objReference, objComments, userId);
+		
+		
+		// load step definition (WStepDef) in class property selectedStepDef
+		try {
+			selectedStepDef = _loadStepDef(idBeginStep, userId);
+		} catch (WStepDefException e) {
+			String mess="Can't create a wStepWork for begin id step:"
+					+idBeginStep+" ....";
+			logger.error(mess);
+			throw new WStepWorkException(e);
+		}
+		
+		// create processWork obj
+		WProcessWork processWork = _setProcessWork(
+				idProcess,  idBeginStep, idObject,  idObjectType, objReference,  objComments,  userId);
+		
+		// create stepWork obj
+		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
+	
+		return stepWork;
+	}
+	
+	/**
+	 * Creates a wStepWork object for given process and beginStep.
+	 * Avoid to reload the objects from de database to speed it!
+	 * 
+	 * @param process
+	 * @param beginStep
+	 * @param idObject
+	 * @param idObjectType
+	 * @param objReference
+	 * @param objComments
+	 * @param userId
+	 * @return
+	 * @throws WStepWorkException
+	 * @throws WProcessWorkException
+	 * @throws TableManagerException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessDataFieldException
+	 */
+	public WStepWork createWStepWork(
+			WProcessDef process, WStepDef beginStep, 
+			Integer idObject, String idObjectType,
+			String objReference, String objComments, Integer userId ) 
+					throws 	WStepWorkException {
+		logger.debug(">>> creating a new createWStepWork... ");
+		
+		if (process==null || process.getId()==null || process.getId()==0){
+			String mess="given process is null! can't create a new WStepWork...";
+			logger.error(mess);
+			throw new WStepWorkException(mess);
+		}
+		
+		if (beginStep==null || beginStep.getId()==null || beginStep.getId()==0){
+			String mess="given step is null! can't create a new WStepWork...";
+			logger.error(mess);
+			throw new WStepWorkException(mess);
+		}		
+		
+		/**
+		 * Assign given process and step to class properties...
+		 */
+		selectedProcess = process;
+		selectedStepDef = beginStep;
+
+		// create processWork obj
+		WProcessWork processWork = _setProcessWork(
+				process.getId(),  beginStep.getId(), idObject,  idObjectType, objReference,  objComments,  userId);
+		
+		// create stepWork obj
+		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
+	
+		return stepWork;
+	}
+
+	
+	/**
+	 * load processDef to launch
 	 * 
 	 * @param idProcess
 	 * @param userId
 	 * @return
-	 * @throws InjectorException
+	 * @throws WProcessDefException
 	 */
-	private WProcessDef _loadProcessDef(Integer idProcess, Integer userId) throws InjectorException {
+	private WProcessDef _loadProcessDef(Integer idProcess, Integer userId) 
+			throws WProcessDefException {
 		try {
 			return new WProcessDefBL().getWProcessDefByPK(idProcess, userId);
 		} catch (WProcessDefException e) {
-			String mess="WProcessDefException: BeeBPMBL: inyecting work: can't load process def for id:"
-							+idProcess+" "+e.getMessage()+" - "+e.getCause();
+			String mess="WProcessDefException: can't load process def for id:"
+							+idProcess+" "+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ");
 			logger.error(mess);
-			throw new InjectorException(mess);
+			throw new WProcessDefException(mess);
 		} catch (WStepSequenceDefException e) {
-			String mess="WProcessDefException: BeeBPMBL: inyecting work: can't load process def for id:"
-							+idProcess+" "+e.getMessage()+" - "+e.getCause();
+			String mess="WProcessDefException: can't load process def for id:"
+							+idProcess+" "+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ");
 			logger.error(mess);
-			throw new InjectorException(mess);
+			throw new WProcessDefException(mess);
 		}
 	}
 	
@@ -149,23 +428,23 @@ public class BeeBPMBL {
 			Integer idProcess, Integer idStep, 
 			Integer idObject, String idObjectType,
 			String objReference, String objComments, Integer userId) 
-					throws InjectorException {
+					throws WStepWorkException {
 		
 		if (idProcess==null || idProcess==0) {
 			
-			String mensaje = "You must select a process ....\n";
-			mensaje +=" Id:"+idObject+" ref:"+objReference; // NOTA REVISAR ESTOS objIdUsuario PORQUE LOS ESTABA USANDO MAL ... NES 20111216
-			logger.info("inyectar:"+mensaje);
-			throw new InjectorException(mensaje);
+			String mess = "You must select a process ....";
+			mess +=" Id:"+idObject+" ref:"+objReference; // NOTA REVISAR ESTOS objIdUsuario PORQUE LOS ESTABA USANDO MAL ... NES 20111216
+			logger.info("inyectar:"+mess);
+			throw new WStepWorkException(mess);
 			
 		}
 		
 		if (idStep==null || idStep==0) {
 			
-			String mensaje = "You must select a step into process will be launched....\n";
+			String mensaje = "You must select a step into process will be launched....";
 			mensaje +=" Id:"+idObject+" ref:"+objReference;
 			logger.info("inyectar:"+mensaje);
-			throw new InjectorException(mensaje);
+			throw new WStepWorkException(mensaje);
 		}
 		// TODO NESTOR ARREGLAR ESTO LUEGO CUANDO TENGAMOS EL CONTROL DE OBJETOS EN EL WPROCESS-DEF	
 //		if (idObject==null || idObject==0 ||
@@ -222,8 +501,16 @@ public class BeeBPMBL {
 		
 	}
 	
+	/**
+	 * Loads indicated WStepDef to prepare wStepWork to launch ...
+	 * 
+	 * @param idStep
+	 * @param userId
+	 * @return
+	 * @throws WStepDefException
+	 */
 	private WStepDef _loadStepDef(
-			Integer idStep,	Integer userId) throws InjectorException {
+			Integer idStep,	Integer userId) throws WStepDefException {
 		
 		try {
 
@@ -233,10 +520,10 @@ public class BeeBPMBL {
 
 		} catch (WStepDefException e) {
 
-			String mensaje = "No se puede definir el paso indicado ....\n";
-			mensaje +="error:"+e.getMessage()+" - "+ e.getCause();
-			logger.info("inyectar: _definicionObjetosDelEntorno: "+mensaje);
-			throw new InjectorException( mensaje );
+			String mensaje = "No se puede cargar el paso indicado id:"+(idStep!=null?idStep:"null");
+			mensaje +=" error:"+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mensaje);
+			throw new WStepDefException( mensaje );
 		}
 		
 	}
@@ -269,8 +556,6 @@ public class BeeBPMBL {
 	private WStepWork _setStepWork(WProcessWork processWork, Integer userId) { // NES 20140707 ELIMINADO , ManagedData md QUE NO DEBE IR AQUI PIENSO...
 		
 		WStepWork stepToBeInjected = new WStepWork();
-		
-		stepToBeInjected.setManagedData(null); // NES 20140707 - NO VEO QUE HARIAMOS CON ESTO AQUI ... QUITO MD ...> md);// nes 20130830
 		
 		if (processWork!=null) {
 			stepToBeInjected.setwProcessWork(processWork);
@@ -325,6 +610,24 @@ public class BeeBPMBL {
 		stepToBeInjected.setInsertUser(new WUserDef(userId)); // nes 20121222
 		stepToBeInjected.setModDate(DEFAULT_MOD_DATE_TIME); // 1/1/1970 por default
 		stepToBeInjected.setModUser(null);
+
+		/**
+		 * ManagedData definition ...
+		 * 
+		 */
+		if (selectedStepDef.getDataFieldDef()!=null
+			&& selectedStepDef.getDataFieldDef().size() > 0	) {
+			try {
+				stepToBeInjected.setManagedData(
+						new WStepWorkBL().buildStepWorkManagedDataObject(
+								stepToBeInjected, userId)
+						);
+			} catch (WStepWorkException e) {
+				String mess="can't set managed data for new wStepWork object ... "
+						+e.getMessage()+" "+(e.getCause()!=null?e.getCause():"null");
+				logger.error(mess+" ... continues without managed data....");
+			}
+		}
 		
 		return stepToBeInjected;
 		

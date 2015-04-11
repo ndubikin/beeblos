@@ -23,9 +23,18 @@ public class ManagedData {
 
 	private Integer pk;
 	
-	private Integer currentWorkId; // used like as pk because 1 work must have only 1 managed-data-record
-	private Integer currentStepWorkId; // used for tracking purposes: stores las step-work-id update the managed-data-record 
-	private Integer processId; // version - for external access reference ...
+	/**
+	 * used like as pk because 1 work must have only 1 managed-data-record
+	 */
+	private Integer currentWorkId;
+	/**
+	 * used for tracking purposes: stores las step-work-id update the managed-data-record
+	 */
+	private Integer currentStepWorkId;
+	/**
+	 * version - for external access reference ...
+	 */
+	private Integer processId;
 	
 	private String operation;
 	

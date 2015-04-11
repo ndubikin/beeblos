@@ -38,6 +38,7 @@ import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.error.WUserRoleException;
 import org.beeblos.bpm.core.error.WUserRoleWorkException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -173,7 +174,27 @@ public class WStepWorkBL {
 		return idGeneratedStep;
 	}
 	
-	// procesa 1 paso - devuelve la cantidad de nuevas rutas lanzadas ... ( workitems generados ... )
+	/**
+	 * procesa 1 paso - devuelve la cantidad de nuevas rutas lanzadas ... ( workitems generados ... )
+	 * 
+	 * @param idStepWork
+	 * @param idResponse
+	 * @param runtimeSettings
+	 * @param currentUser
+	 * @param isAdminProcess
+	 * @param typeOfProcess
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 * @throws WStepSequenceDefException
+	 * @throws WStepLockedByAnotherUserException
+	 * @throws WStepNotLockedException
+	 * @throws WUserDefException
+	 * @throws WStepAlreadyProcessedException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessWorkException
+	 */
 	public Integer processStep (
 			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
 			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUser,
@@ -248,6 +269,30 @@ public class WStepWorkBL {
 
 	}
 
+	/**
+	 * Create wStepWork managed data for a wStepWork object...
+	 * @param stepWork
+	 * @param currentUserId
+	 * @throws WStepWorkException
+	 */
+	public void loadStepWorkManagedData(
+			WStepWork stepWork, Integer currentUserId) throws WStepWorkException{
+		new WStepWorkDao().loadStepWorkManagedData(stepWork);
+	}
+	
+	/**
+	 * Create wStepWork managed data for a wStepWork object...
+	 * @param stepWork
+	 * @param currentUserId
+	 * @throws WStepWorkException
+	 */
+	public ManagedData buildStepWorkManagedDataObject(
+			WStepWork stepWork, Integer currentUserId) throws WStepWorkException{
+		return new WStepWorkDao().buildStepWorkManagedDataObject(stepWork);
+	}
+	
+	
+	
 	// ######### TRANSACCION URGENTE METER TRANSACCION #####################
 	/**
 	 * updates a step work

@@ -4,6 +4,8 @@ import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.ALL_DATA_FIELDS;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -105,7 +107,32 @@ public class ListConverters {
 			}
 		}
 		
+		/**
+		 * sort field list by order...
+		 */
+		Collections.sort(mdfList, sortMDFByName());
+		
 		return mdfList;
+	}
+
+
+	/**
+	 * Sorts an mdf list by order
+	 * @return
+	 */
+	private static Comparator<ManagedDataField> sortMDFByName() {
+		return new java.util.Comparator<ManagedDataField>() {
+
+			public int compare(ManagedDataField mf1, ManagedDataField mf2) {
+
+				if (mf1.getOrder() != null && mf2.getOrder() != null ){
+					
+					return mf1.getOrder().compareTo(mf2.getOrder());
+				}
+				
+				return 999999;
+			}
+		};
 	}
 	
 }

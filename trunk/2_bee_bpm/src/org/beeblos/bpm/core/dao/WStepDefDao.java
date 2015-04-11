@@ -792,6 +792,123 @@ public class WStepDefDao {
 
 
 	}
+	
+	/**
+	 * returns the list of active steps for given processId and event type: ie: InitEv...
+	 * nes 20150410
+	 * 
+	 * @param processId
+	 * @param eventTypeId
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	public List<StringPair> getComboList(
+			Integer processDefId, String eventTypeId, String firstLineText, String blank )
+	throws WProcessDefException {
+		 
+			List<WStepDef> lwsd = null;
+			List<StringPair> retorno = new ArrayList<StringPair>(10);
+			
+			org.hibernate.Session session = null;
+			org.hibernate.Transaction tx = null;
+
+			try {
+
+				session = HibernateUtil.obtenerSession();
+				tx = session.getTransaction();
+				
+				tx.begin();
+//				
+//				Criteria crit = session.createCriteria(WStepDef.class, "wsd")
+//						.createAlias("wStepHead", "wsh", JoinType.LEFT_OUTER_JOIN)
+//						.createAlias("WStepSequenceDef", "wss", JoinType.LEFT_OUTER_JOIN);
+//						
+//						crit.setProjection(Projections.rowCount());
+//						if (idProcess!=null) crit.add( Restrictions.eq("processDef.id",idProcess));
+//						if (idObject!=null) crit.add( Restrictions.eq("wpw.idObject",idObject));
+//						if (idObjectType!=null) crit.add( Restrictions.eq("wpw.idObjectType",idObjectType.trim()));
+//						
+//						// como indica "activos", estarán activos o no resueltos los q no tengan fecha de resolución ...
+//						crit.add(Restrictions.eq("decidedDate", null));
+//
+//						lwsd = (List<WStepDef>) crit.list();
+//
+//						tx.commit();
+//				lwsd = (List<WStepDef>) session.createCriteria(WStepDef.class).add(
+//						Restrictions.naturalId().set("name", name))
+//						.uniqueResult();
+//
+//				tx.commit();
+
+				String hqlQuery = 
+						"Select Distinct w.id, w.stepHead.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws "
+								+ " WHERE ws.process.id= :processDefId "
+								+ " and w.stepTypeDef.type= :eventTypeId and w.id=ws.fromStep.id "
+								+ " order by w.stepHead.name";
+				
+				lwsd = session
+							.createQuery(hqlQuery)
+							.setInteger("processDefId", processDefId)
+							.setString("eventTypeId", eventTypeId)
+							.list();
+				
+				tx.commit();
+
+				if (lwsd!=null) {
+					
+					// inserta los extras
+					if ( firstLineText!=null && !"".equals(firstLineText) ) {
+						if ( !firstLineText.equals("WHITESPACE") ) {
+							retorno.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
+						} else {
+							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+						}
+					}
+					
+					if ( blank!=null && !"".equals(blank) ) {
+						if ( !blank.equals("WHITESPACE") ) {
+							retorno.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
+						} else {
+							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+						}
+					}
+					
+					String nombrePaso="";
+					for (Object wsd: lwsd) {
+						Object [] cols= (Object []) wsd;
+						
+						nombrePaso=(cols[1]!=null ? cols[1].toString().trim():"") +" "+(cols[2]!=null ? cols[2].toString().trim():""); 
+						
+						retorno.add(new StringPair(
+										(cols[0]!=null ? new Integer(cols[0].toString()):null),
+										nombrePaso ) );
+					}
+				} else {
+					// nes  - si el select devuelve null entonces devuelvo null
+					retorno=null;
+				}
+				
+				
+			} catch (HibernateException ex) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			}
+
+			return retorno;
+
+
+	}	
 
 	/**
 	 * Deprecated method. versionId does not applies for step-sequence. This param will be ignored
