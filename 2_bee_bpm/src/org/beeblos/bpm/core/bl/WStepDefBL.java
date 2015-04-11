@@ -932,7 +932,15 @@ public class WStepDefBL {
 
 
 	}
-		
+
+	/**
+	 * returns the list of active steps for given processId
+	 * @param processId
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WProcessDefException
+	 */
 	public List<StringPair> getComboList(
 			Integer processId, String firstLineText, String blank )
 	throws WProcessDefException {
@@ -940,6 +948,26 @@ public class WStepDefBL {
 		return new WStepDefDao().getComboList(processId, firstLineText, blank);
 		
 	}
+	
+	/**
+	 * returns the list of active steps for given processId and event type: ie: InitEv...
+	 * nes 20150410
+	 * 
+	 * @param processId
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	public List<StringPair> getComboList(
+			Integer processId, String eventTypeId, String firstLineText, String blank )
+	throws WProcessDefException {
+		
+		return new WStepDefDao().getComboList(processId, eventTypeId, firstLineText, blank);
+		
+	}
+	
+	
 
 	// dml 20130129 - new combo method with userId and allItems
 	@Deprecated
