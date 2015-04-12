@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -650,6 +651,24 @@ public class WStepWork implements java.io.Serializable {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Builds a WRuntimeSettings object from current wStepWork
+	 * nes 20150411
+	 * @return
+	 */
+	public WRuntimeSettings getRuntimeSettings() {
+		
+		WRuntimeSettings runtimeSettings = 
+				new WRuntimeSettings(this.getNextStepInstructions(), 
+						null, this.getManagedData(), 
+						this.getTimeUnit(), this.getAssignedTime(), 
+						this.getDeadlineDate(), this.getDeadlineTime(), 
+						this.getReminderTimeUnit(), this.getReminderTime());
+		
+		
+		return runtimeSettings;
 	}
 
 	@Override

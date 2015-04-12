@@ -68,6 +68,19 @@ public class WRuntimeSettings implements java.io.Serializable {
 	}
 
 
+	/**
+	 * WRuntimeSettings constructor with params...
+	 * 
+	 * @param instructions
+	 * @param stepComments
+	 * @param md
+	 * @param timeUnit
+	 * @param assignedTime
+	 * @param deadlineDate
+	 * @param deadlineTime
+	 * @param reminderTimeUnit
+	 * @param reminderTime
+	 */
 	public WRuntimeSettings(String instructions, String stepComments,
 			ManagedData md,
 			WTimeUnit timeUnit, Integer assignedTime, LocalDate deadlineDate,
