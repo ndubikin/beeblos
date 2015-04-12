@@ -175,14 +175,16 @@ public class WStepWorkBL {
 	}
 	
 	/**
-	 * procesa 1 paso - devuelve la cantidad de nuevas rutas lanzadas ... ( workitems generados ... )
+	 * process a step - returns qty new routes started ( new workitems generated if no end routes has)
+	 * 
+	 * precondition: wStepWork MUST BE LOCKED!!!
 	 * 
 	 * @param idStepWork
 	 * @param idResponse
 	 * @param runtimeSettings
 	 * @param currentUser
 	 * @param isAdminProcess
-	 * @param typeOfProcess
+	 * @param typeOfProcess: PROCESS_STEP or TURNBACK_STEP
 	 * @return
 	 * @throws WProcessDefException
 	 * @throws WStepDefException
@@ -207,6 +209,13 @@ public class WStepWorkBL {
 		DateTime now = new DateTime();
 		Integer qtyNewRoutes=0;
 
+		/**
+		 * convention overo configuration
+		 * nes 20150411
+		 */
+		if (typeOfProcess==null) {
+			typeOfProcess=PROCESS_STEP;
+		}
 		// verifies the user has the step locked before process it ...
 		// if not there may be possible an error in the process chain ...
 		if (!checkLock(idStepWork, currentUser, false)) {
@@ -220,7 +229,10 @@ public class WStepWorkBL {
 		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
 
 		// sets managed data 
-		currentStep.setManagedData(runtimeSettings.getManagedData());//NOTA NESTOR: VER BIEN QUE HACEMOS AQUÍ ...
+		currentStep.setManagedData( 
+					(runtimeSettings!=null && runtimeSettings.getManagedData()!=null //nes 20150411
+						?runtimeSettings.getManagedData():null)
+				);//NOTA NESTOR: VER BIEN QUE HACEMOS AQUÍ ...
 		
 		// set current workitem to processed status
 		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
@@ -921,7 +933,7 @@ public class WStepWorkBL {
 	 */
 	public WStepWork getStepWithLock (
 			Integer idStepWork, Integer currentUser ) 
-	throws WStepLockedByAnotherUserException,  CantLockTheStepException, WStepWorkException {
+	throws WStepLockedByAnotherUserException,  WStepNotLockedException, WStepWorkException {
 		logger.debug(">> getStepWithLock idStepWork:"+(idStepWork!=null?idStepWork:"null"));
 	
 		WStepWork storedStep;
@@ -963,7 +975,7 @@ public class WStepWorkBL {
 					+ swe.getCause();
 				logger.warn(message);
 				storedStep=null;
-				throw new CantLockTheStepException(message);
+				throw new WStepNotLockedException(message);
 		} catch (WUserDefException e) {
 			String message = "Current user indicated does not exist or have a problem ("
 					+ currentUser
@@ -972,7 +984,7 @@ public class WStepWorkBL {
 					+ e.getCause();
 				logger.warn(message);
 				storedStep=null;
-				throw new CantLockTheStepException(message);
+				throw new WStepNotLockedException(message);
 		} 
 		logger.debug(">> step was locked!! idStepWork:"+(idStepWork!=null?idStepWork:"null"));
 		return storedStep;
@@ -1223,9 +1235,11 @@ public class WStepWorkBL {
 				
 				/**
 				 *  if corresponds to get this route....
+				 *  Route may come with no parameters and no responses. In this scenario, the route
+				 *  will be processed....
+				 *  nes 20150411 - refactorized - created method _isEnabledRoute to clean the logic....
 				 */
-				if (route.isAfterAll() 
-						|| _routeBelongsValidResponseSelected(idResponse, route) ) {
+				if ( _isEnabledRoute(route, idResponse) ) {
 					logger.debug(">>> _executeProcessStep >> processing route to: "
 							+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
 
@@ -1307,6 +1321,23 @@ public class WStepWorkBL {
 		
 	}
 
+	/**
+	 * checks if the route is enabled or is selected...
+	 * nes 20150411
+	 * @return
+	 */
+	private boolean _isEnabledRoute(WStepSequenceDef route, Integer idResponse) {
+		if ( route.isAfterAll() 
+				|| route.isEnabled() 
+				&& ( route.getValidResponses()==null
+					|| route.getValidResponses().length()==0
+					|| _routeBelongsValidResponseSelected(idResponse, route) ) ) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 	/**
 	 * Checks if a step has first true condition for route evaluation order 
 	 * for outgoing routes ...
@@ -1940,7 +1971,7 @@ public class WStepWorkBL {
 
 		// put run time user instructions to next step
 		// dml 20120508
-		if ( runtimeSettings.getInstructions() != null ) {
+		if ( runtimeSettings!=null && runtimeSettings.getInstructions() != null ) {
 			newStepWork.setUserInstructions(runtimeSettings.getInstructions());
 		}
 		

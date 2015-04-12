@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +24,7 @@ import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
+import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
 
@@ -43,7 +45,15 @@ public class BeeBPMBL {
 
 	private static final Log logger = LogFactory.getLog(BeeBPMBL.class);
 	
+	/**
+	 * class properties will be used by mostly all methods ...
+	 * 
+	 * this is the selected processDef to build / inject stepWork
+	 */
 	WProcessDef selectedProcess;
+	/**
+	 * selected stepDef related with the injection of a wstepwork
+	 */
 	WStepDef selectedStepDef;
 
 
@@ -154,6 +164,8 @@ public class BeeBPMBL {
 	 * 
 	 * Launch step has not be responses but may have logical rules to route the step ... (FALTA IMPLEMENTAR...)
 	 * 
+	 * nes 20150411
+	 * 
 	 * @param stepWork
 	 * @param currentUserId
 	 * @throws InjectorException
@@ -170,6 +182,11 @@ public class BeeBPMBL {
 							WStepWorkException, WProcessWorkException, TableManagerException, 
 							WStepWorkSequenceException, WProcessDataFieldException {
 		logger.debug(">>> injecting new stepwork ... (begin step ...");
+		
+		/**
+		 * return info: qty new routes created
+		 */
+		Integer qtyNewRoutes=null;
 		
 		/**
 		 * Create wStepWork for begin step ...
@@ -189,33 +206,56 @@ public class BeeBPMBL {
 		
 		WStepWorkBL wswBL = new WStepWorkBL();
 		
-		WStepWork justCreatedStepWork = wswBL.getWStepWorkByPK(idStepWork, currentUserId);
+		WStepWork justCreatedStepWork;
 		
-		/**
-		 * update step work id and process work id at ManagedData and persist...
-		 */
-		stepWork.getManagedData().setCurrentStepWorkId(idStepWork);
-		stepWork.getManagedData().setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
-		
-		for (ManagedDataField mdf: stepWork.getManagedData().getDataField()) {
-			mdf.setCurrentStepWorkId(idStepWork);
-			mdf.setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
-		}
-		
-		logger.debug(">>> MD was updated with ids ...");
-		
-		justCreatedStepWork.setManagedData(stepWork.getManagedData());
-		
-		// updates managed data of created wstepWork...
-		wswBL.update(justCreatedStepWork, currentUserId);
+		try {
 
-		logger.debug(">>> MD was persisted ...");
+			justCreatedStepWork = wswBL.getStepWithLock(idStepWork, currentUserId);
+			
+			/**
+			 * update step work id and process work id at ManagedData and persist...
+			 */
+			stepWork.getManagedData().setCurrentStepWorkId(idStepWork);
+			stepWork.getManagedData().setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
+			
+			for (ManagedDataField mdf: stepWork.getManagedData().getDataField()) {
+				mdf.setCurrentStepWorkId(idStepWork);
+				mdf.setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
+			}
+			
+			logger.debug(">>> MD was updated with ids ...");
+			
+			justCreatedStepWork.setManagedData(stepWork.getManagedData());
+			
+			// updates managed data of created wstepWork...
+			wswBL.update(justCreatedStepWork, currentUserId);
+
+			logger.debug(">>> MD was persisted ...");
+			
+			wswBL.lockStep(idStepWork, currentUserId, currentUserId, isAdminProcess);
+			
+			/**
+			 * and now process step work ...
+			 */
+			qtyNewRoutes = processCreatedStep(idStepWork, stepWork.getRuntimeSettings(), wswBL,
+					isAdminProcess, PROCESS_STEP, currentUserId);
+			
+		} catch (WStepLockedByAnotherUserException e) {
+			String mess="WStepLockedByAnotherUserException - Can't update new instance just injected: "
+					+idStepWork+" ...."+ " "
+					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+			throw new InjectorException(e);
 		
-		/**
-		 * and now process step work ...
-		 */
-		Integer qtyNewRoutes = processCreatedStep(isAdminProcess, typeOfProcess, currentUserId,
-				idStepWork, wswBL);
+
+		} catch (WStepNotLockedException e) {
+			String mess="WStepNotLockedException - Can't update new instance just injected: "
+					+idStepWork+" ...."+ " "
+					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+			throw new InjectorException(e);
+
+		}
 		
 		return qtyNewRoutes;
 		
@@ -225,23 +265,27 @@ public class BeeBPMBL {
 	/**
 	 * Process just created begin step. 
 	 * As a begin step, there is not responses nor runtimeSettings
+	 * nes 20150411 
 	 * 
+	 * @param idStepWork
+	 * @param runtimeSettings
+	 * @param wswBL
 	 * @param isAdminProcess
 	 * @param typeOfProcess
 	 * @param currentUserId
-	 * @param idStepWork
-	 * @param wswBL
+	 * @return
 	 * @throws WStepWorkException
 	 * @throws WStepWorkSequenceException
 	 * @throws WProcessWorkException
 	 */
-	private Integer processCreatedStep(boolean isAdminProcess,
-			String typeOfProcess, Integer currentUserId, Integer idStepWork,
-			WStepWorkBL wswBL) throws WStepWorkException,
+	private Integer processCreatedStep(Integer idStepWork, WRuntimeSettings runtimeSettings,
+			WStepWorkBL wswBL, boolean isAdminProcess,
+			String typeOfProcess, Integer currentUserId) throws WStepWorkException,
 			WStepWorkSequenceException, WProcessWorkException {
 		logger.debug(">>> move from begin step to the next instance ...");
 		try {
-			Integer qtyCreatedRoutes = wswBL.processStep(idStepWork, null, null, currentUserId, isAdminProcess, typeOfProcess);
+			Integer qtyCreatedRoutes = 
+					wswBL.processStep(idStepWork, null, runtimeSettings, currentUserId, isAdminProcess, typeOfProcess);
 			return qtyCreatedRoutes;
 		} catch (WProcessDefException e) {
 			// TODO Auto-generated catch block
@@ -274,6 +318,7 @@ public class BeeBPMBL {
 
 	/**
 	 * Creates an empty new wStepWork and returns it
+	 * nes 20150411
 	 * 
 	 * @param idProcess
 	 * @param idBeginStep
@@ -340,13 +385,18 @@ public class BeeBPMBL {
 		
 		// create stepWork obj
 		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
-	
+
+		// set managed data object for stepWork
+		_setManagedData(userId, stepWork);
+		
 		return stepWork;
 	}
+
 	
 	/**
 	 * Creates a wStepWork object for given process and beginStep.
-	 * Avoid to reload the objects from de database to speed it!
+	 * it avoids to reload the objects from de database to speed it!
+	 * nes 20150411
 	 * 
 	 * @param process
 	 * @param beginStep
@@ -393,6 +443,9 @@ public class BeeBPMBL {
 		
 		// create stepWork obj
 		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
+		
+		// set managed data object for stepWork
+		_setManagedData(userId, stepWork);
 	
 		return stepWork;
 	}
@@ -611,6 +664,21 @@ public class BeeBPMBL {
 		stepToBeInjected.setModDate(DEFAULT_MOD_DATE_TIME); // 1/1/1970 por default
 		stepToBeInjected.setModUser(null);
 
+		return stepToBeInjected;
+		
+	}
+	
+	/**
+	 * set managed data to a given wStepWork
+	 * for a new wStepWork (not persisted yet...) the ManagedData has't the wStepWork id and the
+	 * processWorkId, then the persist process will consider this situation ...
+	 * Note: this methods works with class properties like selectedStepDef and selectedProcess
+	 * nes 20140411
+	 * 
+	 * @param userId
+	 * @param stepWork
+	 */
+	private void _setManagedData(Integer userId, WStepWork stepWork) {
 		/**
 		 * ManagedData definition ...
 		 * 
@@ -618,9 +686,9 @@ public class BeeBPMBL {
 		if (selectedStepDef.getDataFieldDef()!=null
 			&& selectedStepDef.getDataFieldDef().size() > 0	) {
 			try {
-				stepToBeInjected.setManagedData(
+				stepWork.setManagedData(
 						new WStepWorkBL().buildStepWorkManagedDataObject(
-								stepToBeInjected, userId)
+								stepWork, userId)
 						);
 			} catch (WStepWorkException e) {
 				String mess="can't set managed data for new wStepWork object ... "
@@ -628,9 +696,6 @@ public class BeeBPMBL {
 				logger.error(mess+" ... continues without managed data....");
 			}
 		}
-		
-		return stepToBeInjected;
-		
 	}
 	
 	public void _synchronizeManagedDataFields(WProcessWork processWork, WStepWork stepWork) 
