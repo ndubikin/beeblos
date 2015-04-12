@@ -172,8 +172,10 @@ public class Constants {
 	public static final String PROCESS_STEP = "PROCESS_STEP";
 	public static final String TURNBACK_STEP = "TURNBACK_STEP";
 	
-	public static final String PROCESADOR_PASO_DEFAULT = "/task/processWithForm.xhtml";
+	public static final String DEFAULT_STEP_PROCESSOR_URI = "/app/beebpmComponent/work/processWithForm.xhtml"; // nes 20150411
+	
 	public static final String PAGINA_PROCESO_DEFAULT = "/task/processor/tabs/defaultStepProcessor.xhtml";
+	
 	public static final String PAGINA_LISTA_DEFAULT ="/dap/procesarProyectoDAP/pestanias/listaProyectosPpDAP.xhtml";
 	public static final String PAGINA_ANEXA_DEFAULT ="/fichas/fichaPropuestaReducida.xhtml";
 	
