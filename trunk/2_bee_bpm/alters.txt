@@ -417,3 +417,7 @@ CREATE TABLE `bee_bpm_dev`.`email_d_poll` (
   CONSTRAINT `fk_email_d_poll_1` FOREIGN KEY (`email_d_conf_id`) REFERENCES `email_d_conf` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+### nes - dml - 20150413
+## demonio de test
+INSERT INTO `gespro_generic`.`email_d_conf`
+VALUES ('2', 1, '4', '1', '10', 'org.beeblos.bpm.email.impl.EmailDaemonPollerClassImpl', '614', 'eMail', NULL, 'Inbox', 0, 0, 'Read', 0, 'Revision', 0, 'Error', 0, NULL, NULL, 'INPUT', '2015-04-13 09:54:29', '1000', '2015-04-13 11:30:53', '1000');
