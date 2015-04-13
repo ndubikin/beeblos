@@ -340,3 +340,80 @@ DROP COLUMN `xml_label`;
 
 ALTER TABLE `bee_bpm_dev`.`w_stepsequence_method` 
 CHANGE COLUMN `insert_user` `insert_user` INT(11) NULL;
+
+-- dml 20150410 Tablas para la gestión de los demonios de las cuentas de email
+CREATE TABLE `bee_bpm_dev`.`email_d_conf` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `enabled` bit(1) NOT NULL DEFAULT b'1',
+  `user_email_account_id` int(11) DEFAULT NULL,
+  `email_template_id` int(11) DEFAULT NULL,
+  `polling_frequency` int(11) DEFAULT NULL,
+  `daemon_class_implementation_name` varchar(255) DEFAULT NULL,
+  `doc_class_id` int(11) DEFAULT NULL,
+  `doc_class_name` varchar(255) DEFAULT NULL,
+  `beeblos_server_id` int(11) DEFAULT NULL,
+  `input_folder` varchar(50) DEFAULT NULL,
+  `mark_as_read` bit(1) DEFAULT b'0',
+  `leave_on_input_folder` bit(1) DEFAULT b'0',
+  `valid_email_folder` varchar(50) DEFAULT NULL,
+  `move_to_valid_folder` bit(1) DEFAULT b'0',
+  `invalid_email_folder` varchar(50) DEFAULT NULL,
+  `move_to_invalid_folder` bit(1) DEFAULT b'0',
+  `error_email_folder` varchar(50) DEFAULT NULL,
+  `move_to_error_folder` bit(1) DEFAULT b'0',
+  `checking_field_name` varchar(50) DEFAULT NULL,
+  `checking_field_value` varchar(50) DEFAULT NULL,
+  `type` varchar(10) DEFAULT NULL,
+  `add_date` datetime NOT NULL DEFAULT '1970-01-01 01:01:00',
+  `add_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_email_d_conf_1_idx` (`user_email_account_id`),
+  KEY `fk_email_d_conf_2_idx` (`email_template_id`),
+  CONSTRAINT `fk_email_d_conf_1` FOREIGN KEY (`user_email_account_id`) REFERENCES `usuario_cuentas_email` (`id_uce`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_email_d_conf_2` FOREIGN KEY (`email_template_id`) REFERENCES `email_template` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `bee_bpm_dev`.`email_d_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email_d_conf_id` int(11) DEFAULT NULL,
+  `processed` bit(1) DEFAULT b'0',
+  `processed_date` datetime DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `object_id` int(11) DEFAULT NULL,
+  `object_class` varchar(255) DEFAULT NULL,
+  `from_account` varchar(255) DEFAULT NULL,
+  `message_id` varchar(255) DEFAULT NULL,
+  `store_folder` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_email_d_log_1_idx` (`email_d_conf_id`),
+  KEY `fk_email_d_log_2_idx` (`user_id`),
+  CONSTRAINT `fk_email_d_log_1` FOREIGN KEY (`email_d_conf_id`) REFERENCES `email_d_conf` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_email_d_log_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE `bee_bpm_dev`.`email_d_poll` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email_d_conf_id` int(11) DEFAULT NULL,
+  `begin_date` datetime DEFAULT NULL,
+  `end_date` datetime DEFAULT NULL,
+  `thread_name` varchar(100) DEFAULT NULL,
+  `qty_input_email` int(11) DEFAULT NULL,
+  `qty_valid_email` int(11) DEFAULT NULL,
+  `qty_invalid_email` int(11) DEFAULT NULL,
+  `qty_error_email` int(11) DEFAULT NULL,
+  `comment` varchar(255) DEFAULT NULL,
+  `comment_last_modified` datetime DEFAULT NULL,
+  `add_date` datetime NOT NULL DEFAULT '1970-01-01 01:01:00',
+  `add_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_email_d_poll_1_idx` (`email_d_conf_id`),
+  CONSTRAINT `fk_email_d_poll_1` FOREIGN KEY (`email_d_conf_id`) REFERENCES `email_d_conf` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

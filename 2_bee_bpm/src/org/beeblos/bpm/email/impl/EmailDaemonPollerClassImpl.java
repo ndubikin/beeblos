@@ -557,12 +557,10 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 			// CON ESTO GUARDARIAMOS EL CAMPO DE EMAIL_TRAY "original_subject" CORRECTAMENTE
 			String VALID_SUBJECT_STRING_IDENTIFIER = null;
 
-			// inserts email in email_tray table
-			emailTrayId = emailTrayBL
-				.createInputEmailTrayRegister(
-						message, objectId, className,
-						currentUserId, JAVA_IO_TEMPDIR, 
-						BEEBPM_TMP_FOLDER, VALID_SUBJECT_STRING_IDENTIFIER); 
+			// Inserts email message into email_tray table
+			emailTrayId = emailTrayBL.createInputEmailTrayRegister(
+						message, objectId, className, currentUserId, 
+						JAVA_IO_TEMPDIR, BEEBPM_TMP_FOLDER, VALID_SUBJECT_STRING_IDENTIFIER); 
 
 			this.notifyNewEmailReception(conf, emailTrayId, currentUserId);
 			
@@ -570,7 +568,8 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 		} else if (conf.getType().equals(OUTPUT)) {
 		
 			
-			// IMPLEMENTAR DE SER NECESARIO
+			// IMPLEMENTAR DE SER NECESARIO, DE MOMENTO SOLO VAMOS A USAR AQUÍ UNA CUENTA QUE
+			// RECIBA EMAILS Y LOS GESTIONE, NO QUEREMOS ENVIAR NADA...
 			
 
 		}
@@ -690,7 +689,7 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 						HashMap<String, String> properties = new HashMap<String, String>();
 
 						properties.put(bl.REPOSITORY_PROP_ID_TIPO_OBJETO, referenceTypeId);
-						properties.put(bl.REPOSITORY_PROP_ID_OBJETO, referenceId.toString());
+						properties.put(bl.REPOSITORY_PROP_ID_OBJETO, (referenceId!=null?referenceId.toString():""));
 						properties.put(bl.REPOSITORY_PROP_USUARIO, userLogin);
 						properties.put(bl.REPOSITORY_PROP_REFERENCIA, reference);
 
