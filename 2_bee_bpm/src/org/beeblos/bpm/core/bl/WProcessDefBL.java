@@ -204,6 +204,11 @@ public class WProcessDefBL {
 		
 		logger.debug("update() WProcessDef < id = "+process.getId()+">");
 
+		/**
+		 * nullates empty objects before update...
+		 * nes 20150413
+		 */
+		process.nullateEmtpyObjects();
 		
 		WProcessDef storedProcess = new WProcessDefDao().getWProcessDefByPK(process.getId(), currentUserId); 
 /* dml 20141029 COMENTADO POR ERRORES DE DUPLICIDAD
