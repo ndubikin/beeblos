@@ -34,6 +34,7 @@ public class WorkflowEditorMxBL {
 	
 	public static String BEGIN_SYMBOL_GREEN_STYLE = "images/symbols/event-green.png";
 	public static String END_SYMBOL_GREEN_STYLE = "images/symbols/event_end-green.png";
+	public static String BEGIN_SYMBOL_STYLE = "images/symbols/event.png";
 	public static String END_SYMBOL_STYLE = "images/symbols/event_end.png";
 
 	private final static String DEFAULT_ERROR = "ERROR";
@@ -112,6 +113,7 @@ public class WorkflowEditorMxBL {
 			
 			if (xmlMapVertex.isVertex()){
 				
+				//TODO DAVID MULEIRO: ELIMINAR ESTE IF PORQUE YA NO HABRÁ SYMBOL; SERÁN TODO TASK
 				if (xmlMapVertex.getValue().toString().indexOf(SYMBOL) >= 0){
 					
 					spName = xmlMapVertex.getAttribute(mxConstants.SHAPE_LABEL);
@@ -150,8 +152,20 @@ public class WorkflowEditorMxBL {
 									&& wsw.getCurrentStep().getId() != null
 									&& wsw.getCurrentStep().getId().equals(Integer.valueOf(spId))){
 								
+								if (xmlMapVertex.getStyle() != null){
+									
+									// si es begin cambiamos el que viene por uno en verde
+									if (xmlMapVertex.getStyle().contains(BEGIN_SYMBOL_STYLE)){
+										xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_IMAGE, BEGIN_SYMBOL_GREEN_STYLE));
+									} else if (xmlMapVertex.getStyle().contains(END_SYMBOL_STYLE)) {
+										// si es end lo metemos en la lista
+										endSymbolList.add(xmlMapVertex); // los guardamos en una lista para despues poder pintarlos de verde si el proceso por esa rama esta finalizado
+										
+									}
+		
+								
 								// si tiene decided date se pone como acabado
-								if (wsw.getDecidedDate() != null){
+								} else if (wsw.getDecidedDate() != null){
 									xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_STROKECOLOR, GREEN));
 								} else {
 									xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_STROKECOLOR, RED));
@@ -191,8 +205,13 @@ public class WorkflowEditorMxBL {
 					
 					spId = xmlMapEdge.getAttribute("spId");
 					
-					xmlFromStepId = xmlMapEdge.getSource().getId();
-					xmlToStepId = xmlMapEdge.getTarget().getId();
+					if (xmlMapEdge.getSource() == null || xmlMapEdge.getSource().getId() == null
+							|| xmlMapEdge.getTarget() == null || xmlMapEdge.getTarget().getId() == null){
+						continue;
+					}
+					
+					xmlFromStepId = xmlMapEdge.getSource()!=null?xmlMapEdge.getSource().getId():null;
+					xmlToStepId = xmlMapEdge.getTarget()!=null?xmlMapEdge.getTarget().getId():null;
 					
 					// si el "edge" sale del begin symbol lo pintamos
 					if (xmlFromStepId != null

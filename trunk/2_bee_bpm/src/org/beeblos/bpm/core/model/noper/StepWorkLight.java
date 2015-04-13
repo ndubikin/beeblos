@@ -14,6 +14,16 @@ public class StepWorkLight implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	/**
+	 * stepWork pk
+	 */
+	private Integer idStepWork;
+	
+	/**
+	 * WProcessWork id for this stepWork
+	 */
+	private Integer idProcessWork;
+	
+	/**
 	 * WProcessDef id for this stepWork
 	 */
 	private Integer idProcess;
@@ -74,11 +84,6 @@ public class StepWorkLight implements Serializable {
 	 */
 	private Integer lockedBy;
 	
-	/**
-	 * stepWork pk
-	 */
-	private Integer idStepWork;
-	
 	//rrl 20150409 ITS: 917
 	/**
 	 * response to the stepWork
@@ -90,7 +95,7 @@ public class StepWorkLight implements Serializable {
 		
 	}
 
-	public StepWorkLight(Integer idProcess, Integer idStep,
+	public StepWorkLight(Integer idProcessWork, Integer idProcess, Integer idStep,
 			String stepName, String reference, String comments, DateTime arrivingDate, DateTime openedDate,
 			Integer openerUser, DateTime decidedDate, Integer performer,
 			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedBy,
@@ -98,6 +103,7 @@ public class StepWorkLight implements Serializable {
 			String openerUserLogin, String openerUserName,
 			String performerLogin, String performerName, String response) {
 		super();
+		this.idProcessWork = idProcessWork;
 		this.idProcess = idProcess;
 		this.idStep = idStep;
 		this.stepName = stepName;
@@ -118,6 +124,20 @@ public class StepWorkLight implements Serializable {
 		this.performerLogin = performerLogin;
 		this.performerName = performerName;
 		this.response = response;
+	}
+
+	/**
+	 * @return the idProcessWork
+	 */
+	public Integer getIdProcessWork() {
+		return idProcessWork;
+	}
+
+	/**
+	 * @param idProcessWork the idProcessWork to set
+	 */
+	public void setIdProcessWork(Integer idProcessWork) {
+		this.idProcessWork = idProcessWork;
 	}
 
 	public Integer getIdProcess() {
@@ -308,6 +328,8 @@ public class StepWorkLight implements Serializable {
 		result = prime * result + ((idStep == null) ? 0 : idStep.hashCode());
 		result = prime * result
 				+ ((idStepWork == null) ? 0 : idStepWork.hashCode());
+		result = prime * result
+				+ ((idProcessWork == null) ? 0 : idProcessWork.hashCode());
 		result = prime * result + (locked ? 1231 : 1237);
 		result = prime * result
 				+ ((lockedBy == null) ? 0 : lockedBy.hashCode());
@@ -372,6 +394,11 @@ public class StepWorkLight implements Serializable {
 			if (other.idProcess != null)
 				return false;
 		} else if (!idProcess.equals(other.idProcess))
+			return false;
+		if (idProcessWork == null) {
+			if (other.idProcessWork != null)
+				return false;
+		} else if (!idProcessWork.equals(other.idProcessWork))
 			return false;
 		if (idStep == null) {
 			if (other.idStep != null)
@@ -445,7 +472,7 @@ public class StepWorkLight implements Serializable {
 
 	@Override
 	public String toString() {
-		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep
+		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep + ", idProcessWork=" + idProcessWork
 				+ ", stepName=" + stepName + ", reference=" + reference
 				+ ", comments=" + comments + ", arrivingDate=" + arrivingDate
 				+ ", openerUser=" + openerUser + ", openerUserLogin="
