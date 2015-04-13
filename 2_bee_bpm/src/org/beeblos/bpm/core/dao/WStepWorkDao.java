@@ -2594,7 +2594,8 @@ public class WStepWorkDao {
 		tmpQuery += " performer.login AS performer_login, ";//16
 		tmpQuery += " performer.name AS performer_name, ";//17
 		tmpQuery += " pw.comments, "; //18
-		tmpQuery += " sw.response "; //19 rrl 20150409 ITS: 917
+		tmpQuery += " sw.response, "; //19 rrl 20150409 ITS: 917
+		tmpQuery += " pw.id AS idProcessWork ";  //20 dml 20150413
 
 		tmpQuery += " FROM w_step_work sw ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
@@ -2620,6 +2621,7 @@ public class WStepWorkDao {
 	private List<StepWorkLight> getWorkingStepList(String query)
 			throws WStepWorkException {
 
+		Integer idProcessWork;
 		Integer idProcess;
 		Integer idStep;
 		String stepName;
@@ -2711,8 +2713,11 @@ public class WStepWorkDao {
 					comments = (cols[18] != null ? cols[18].toString() : "");
 					response = (cols[19] != null ? cols[19].toString() : "");  //rrl 20150409 ITS: 917
 					
+					// dml 20150413
+					idProcessWork = (cols[20] != null ? new Integer(
+							cols[20].toString()) : null);
 					
-					returnList.add(new StepWorkLight(idProcess, idStep, stepName, 
+					returnList.add(new StepWorkLight(idProcessWork, idProcess, idStep, stepName, 
 							reference, comments, arrivingDate, openedDate, openerUser, decidedDate, 
 							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork, 
 							openerUserLogin, openerUserName, performerLogin, performerName, response));

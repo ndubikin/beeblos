@@ -378,7 +378,12 @@ public class WProcessDefDao {
 			throws WProcessDefException, WStepSequenceDefException, WStepDefException {
 		try {
 
-			WProcessDef pro = new WProcessDefBL().getWProcessDefByPK(processDefId, 1000);
+			WProcessDef pro = new WProcessDefBL().getWProcessDefByPK(processDefId, currentUserId);
+			
+			if (pro == null){
+				throw new WProcessDefException("The process with id: " + processDefId + " does not exist!");
+			}
+			
 			/**
 			 * creo el obj workflow dinamicamente porque no necesito guardarlo en la base de datos
 			 */
@@ -419,7 +424,6 @@ public class WProcessDefDao {
 
 			
 		} catch (WProcessDefException e) {
-
 			e.printStackTrace();
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
