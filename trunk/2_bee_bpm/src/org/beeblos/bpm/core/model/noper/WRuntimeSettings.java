@@ -2,10 +2,14 @@ package org.beeblos.bpm.core.model.noper;
 
 // Generated Oct 30, 2010 12:25:05 AM by Hibernate Tools 3.3.0.GA
 
+import java.util.List;
+
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WTimeUnit;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+
+import com.sp.common.model.FileSP;
 
 
 /**
@@ -61,6 +65,13 @@ public class WRuntimeSettings implements java.io.Serializable {
 	private LocalTime deadlineTime;
 	private WTimeUnit reminderTimeUnit;
 	private Integer reminderTime; // en unidades de tiempo indicadas en reminderTimeUnit
+	
+	/**
+	 * New files to attach to the idProcessWork
+	 * 
+	 * @author dmuleiro 20150414
+	 */
+	private List<FileSP> fileSPList;
 	
 
 	public WRuntimeSettings() {
@@ -290,6 +301,22 @@ public class WRuntimeSettings implements java.io.Serializable {
 	 */
 	public void setUrlData(String urlData) {
 		this.urlData = urlData;
+	}
+
+
+	/**
+	 * @return the fileSPList
+	 */
+	public List<FileSP> getFileSPList() {
+		return fileSPList;
+	}
+
+
+	/**
+	 * @param fileSPList the fileSPList to set
+	 */
+	public void setFileSPList(List<FileSP> fileSPList) {
+		this.fileSPList = fileSPList;
 	}
 
 

@@ -245,6 +245,14 @@ public class WStepDef implements java.io.Serializable {
 	 * dml 20130821
 	 */
 	List<WStepDataField> dataFieldDef = new ArrayList<WStepDataField>();
+	
+	/**
+	 * Allows process user to render/insert attached documents
+	 * 
+	 * @author dmuleiro 20150414
+	 */
+	private boolean allowAttachDocuments;
+	private boolean renderAttachedDocuments;
 
 	// dml 20120113
 	private DateTime insertDate;
@@ -1085,6 +1093,8 @@ public class WStepDef implements java.io.Serializable {
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + (arrivingAdminNotice ? 1231 : 1237);
 		result = prime * result + (arrivingUserNotice ? 1231 : 1237);
+		result = prime * result + (allowAttachDocuments ? 1231 : 1237);
+		result = prime * result + (renderAttachedDocuments ? 1231 : 1237);
 		result = prime * result
 				+ ((assignedTime == null) ? 0 : assignedTime.hashCode());
 		result = prime * result + (backingBean ? 1231 : 1237);
@@ -1202,6 +1212,10 @@ public class WStepDef implements java.io.Serializable {
 		if (arrivingAdminNotice != other.arrivingAdminNotice)
 			return false;
 		if (arrivingUserNotice != other.arrivingUserNotice)
+			return false;
+		if (allowAttachDocuments != other.allowAttachDocuments)
+			return false;
+		if (renderAttachedDocuments != other.renderAttachedDocuments)
 			return false;
 		if (assignedTime == null) {
 			if (other.assignedTime != null)
@@ -1601,5 +1615,21 @@ public class WStepDef implements java.io.Serializable {
 	 */
 	public void setResponsesString(String responsesString) {
 		this.responsesString = responsesString;
+	}
+
+	public boolean isAllowAttachDocuments() {
+		return allowAttachDocuments;
+	}
+
+	public void setAllowAttachDocuments(boolean allowAttachDocuments) {
+		this.allowAttachDocuments = allowAttachDocuments;
+	}
+
+	public boolean isRenderAttachedDocuments() {
+		return renderAttachedDocuments;
+	}
+
+	public void setRenderAttachedDocuments(boolean renderAttachedDocuments) {
+		this.renderAttachedDocuments = renderAttachedDocuments;
 	}
 }

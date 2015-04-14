@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WStepTypeDefException;
-import org.beeblos.bpm.core.error.WUserDefException;
 import org.beeblos.bpm.core.model.WStepTypeDef;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
@@ -200,18 +199,25 @@ public class WStepTypeDefDao {
 
 			tx.begin();
 
-			lwStepTypeDef = session.createQuery("From WStepTypeDef order by name ").list();
+			lwStepTypeDef = session.createQuery("From WStepTypeDef").list();
 
 			tx.commit();
 
 		} catch (HibernateException ex) {
 			if (tx != null)
-				tx.rollback();
-			logger.warn("WStepTypeDefDao: getWStepTypeDefs() - can't obtain wStepTypeDef list - " +
-					ex.getMessage()+"\n"+ex.getCause() );
-			throw new WStepTypeDefException("WStepTypeDefDao: getWStepTypeDefs() - can't obtain wStepTypeDef list: "
-					+ ex.getMessage()+"\n"+ex.getCause());
-
+			    tx.rollback(); 
+			String mess = "HibernateException: getWStepTypeDefs - Can't get types "
+					+ ex.getMessage() + (ex.getCause()!=null?". " +ex.getCause():"");
+			logger.error(mess);
+			throw new WStepTypeDefException(mess);
+		} catch (Exception ex) {
+			if (tx != null)
+			    tx.rollback(); 
+			String mess = "Exception: getWStepTypeDefs - Can't get types "
+					+ ex.getMessage() + (ex.getCause()!=null?". " +ex.getCause():"")
+					+ (ex.getClass()!=null?". " +ex.getClass():"");
+			logger.error(mess);
+			throw new WStepTypeDefException(mess);
 		}
 
 		return lwStepTypeDef;
