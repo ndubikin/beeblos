@@ -483,12 +483,13 @@ SELECT id FROM bee_bpm_dev.w_step_type_def
 where id != 22;
 
 
-## pab 14042015
-ALTER TABLE `gespro_generic`.`w_step_def` 
+## pab 14042015 - hay que inicializar en '' el string instrucciones porque si no en el mapa da problemas el JS y es mas lioso de resolver a nivel de js
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 CHANGE COLUMN `instructions` `instructions` VARCHAR(255) DEFAULT '' ;
 
-update `gespro_generic`.`w_step_def`  set `instructions` = "" where `instructions` is null;
 
-ALTER TABLE `gespro_generic`.`w_step_def` 
+update `bee_bpm_dev`.`w_step_def`  set `instructions` = "" where `instructions` is null and id>0;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 ADD COLUMN `allow_attach_documents` BIT(1) NULL DEFAULT b'0' AFTER `mxcell_string`,
 ADD COLUMN `render_attached_documents` BIT(1) NULL DEFAULT b'0' AFTER `allow_attach_documents`;
