@@ -437,7 +437,7 @@ CREATE TABLE `bee_bpm_dev`.`w_step_type_def_mb` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='defines a message begin step type';
 
 -- dml 20150414 - Definición de la tabla de relacion entre MessageBegin e EmailDConf
-CREATE TABLE `gespro_generic`.`w_std_mb_edc` (
+CREATE TABLE `bee_bpm_dev`.`w_std_mb_edc` (
   `id` int(11) NOT NULL,
   `id_std_mb` int(11) NOT NULL,
   `id_email_d_conf` int(11) NOT NULL,
@@ -448,41 +448,43 @@ CREATE TABLE `gespro_generic`.`w_std_mb_edc` (
   INDEX `fk_w_std_mb_edc_2_idx` (`id_std_mb` ASC),
   CONSTRAINT `fk_w_std_mb_edc_1`
     FOREIGN KEY (`id_email_d_conf`)
-    REFERENCES `gespro_generic`.`email_d_conf` (`id`)
+    REFERENCES `bee_bpm_dev`.`email_d_conf` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_w_std_mb_edc_2`
     FOREIGN KEY (`id_std_mb`)
-    REFERENCES `gespro_generic`.`w_step_type_def_mb` (`id`)
+    REFERENCES `bee_bpm_dev`.`w_step_type_def_mb` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
     
 -- dml 20150414 - Definición de la nueva tabla de "GenericGroup"
-CREATE TABLE `w_step_type_def_gen_group` (
+CREATE TABLE `bee_bpm_dev`.`w_step_type_def_gen_group` (
   `id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     
 -- dml 20150414 - Definición de la nueva tabla de "GenericType"
-CREATE TABLE `w_step_type_def_gen_type` (
+CREATE TABLE `bee_bpm_dev`.`w_step_type_def_gen_type` (
   `id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- dml 20150414 - insertamos el MessageBegin que tenemos (que es el de id=22) dentro del grupo, del MB y la relacion con el EmailDConf
-INSERT INTO gespro_generic.w_step_type_def_ie
+INSERT INTO bee_bpm_dev.w_step_type_def_ie
 VALUES('22', 'PRUEBA');
-INSERT INTO gespro_generic.w_step_type_def_mb
+INSERT INTO bee_bpm_dev.w_step_type_def_mb
 VALUES('22');
-INSERT INTO gespro_generic.w_std.mb.edc
+INSERT INTO bee_bpm_dev.w_std_mb_edc
 VALUES('1', '22', '2', '2013-09-14 09:02:45', '1000');
 
 -- dml 20150414 - insertamos el resto en la tabla de "GenericGroup"
-INSERT INTO gespro_generic.w_step_type_def_gen_group
-SELECT id FROM gespro_generic.w_step_type_def
+INSERT INTO bee_bpm_dev.w_step_type_def_gen_group
+SELECT id FROM bee_bpm_dev.w_step_type_def
 where id != 22;
 
 -- dml 20150414 - insertamos el resto en la tabla de "GenericType"
-INSERT INTO gespro_generic.w_step_type_def_gen_type
-SELECT id FROM gespro_generic.w_step_type_def
-where id != 22;    
+INSERT INTO bee_bpm_dev.w_step_type_def_gen_type
+SELECT id FROM bee_bpm_dev.w_step_type_def
+where id != 22;
+
+
