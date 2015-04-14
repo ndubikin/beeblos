@@ -1,10 +1,6 @@
 package org.beeblos.bpm.core.model;
 
-import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.joda.time.DateTime;
 
@@ -15,54 +11,54 @@ import org.joda.time.DateTime;
  * @author pab
  *
  */
-public class WStepTypeDef implements Serializable {
+public abstract class WStepTypeDef implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 	
-	private Integer id;
+	protected Integer id;
 	
 	/**
 	 * name of step type
 	 */
-	private String name;
+	protected String name;
 	
 	/**
 	 * kind of step type
 	 */
-	private String type;
+	protected String type;
 	
 	/**
 	 * indicates there is an active or valid step type or an old or
 	 * inactive step type
 	 */
-	private boolean active;
+	protected boolean active;
 	/**
 	 * indicates this kind of step requires beeBPM workflow engine
 	 * to work / support
 	 */
-	private boolean engineReq;
+	protected boolean engineReq;
 	
 	/**
 	 * Indicates a deleted step type (to database cross reference
 	 * support)
 	 */
-	private boolean deleted;
+	protected boolean deleted;
 	/**
 	 * comments related with this step type
 	 */
-	private String comments;
+	protected String comments;
 	
 	/**
 	 * indicates this kind of step allows to define responses to use
 	 * defalut step processors
 	 */
-	private Boolean allowedResponses;
+	protected Boolean allowedResponses;
 
 	// timestamps
-	private DateTime insertDate;
-	private Integer insertUser;
-	private DateTime modDate;
-	private Integer modUser;
+	protected DateTime insertDate;
+	protected Integer insertUser;
+	protected DateTime modDate;
+	protected Integer modUser;
 	
 	public WStepTypeDef(Integer id, String name, String type, boolean active,
 			boolean engineReq, boolean deleted, String comments,
