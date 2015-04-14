@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 import org.beeblos.bpm.core.bl.WStepTypeDefBL;
 import org.beeblos.bpm.core.model.WStepTypeDef;
+import org.beeblos.bpm.core.model.bpmn.MessageBegin;
 import org.junit.Test;
 
 public class TestWStepTypeDef extends TestCase {
@@ -15,10 +16,12 @@ public class TestWStepTypeDef extends TestCase {
 	@Test
 	public final void test() throws Exception {
 		
-		WStepTypeDef step = new WStepTypeDefBL().getWStepTypeDefByPK(22, 1000);
+		WStepTypeDef stepType = new WStepTypeDefBL().getWStepTypeDefByPK(22, 1000);
 		
-		System.out.println(step.toString());
+		System.out.println(stepType.toString());
+		System.out.println("stepType instanceof MessageBegin:"+(stepType instanceof MessageBegin));
 		
+		System.out.println("as MessageBegin:"+((MessageBegin) stepType));
 			
 	}
 }
