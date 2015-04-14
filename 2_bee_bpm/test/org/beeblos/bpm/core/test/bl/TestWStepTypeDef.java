@@ -9,7 +9,7 @@ import org.beeblos.bpm.core.bl.WStepTypeDefBL;
 import org.beeblos.bpm.core.model.WStepTypeDef;
 import org.junit.Test;
 
-public class Test1 extends TestCase {
+public class TestWStepTypeDef extends TestCase {
 
 	
 	@Test
@@ -18,6 +18,7 @@ public class Test1 extends TestCase {
 		WStepTypeDef step = new WStepTypeDefBL().getWStepTypeDefByPK(22, 1000);
 		
 		System.out.println(step.toString());
+		
 			
 	}
 }
