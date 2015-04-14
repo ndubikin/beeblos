@@ -216,6 +216,9 @@ public class Constants {
 	
 	public static final Integer TERRITORIO_ID_ESTADO=0;
 	public static final Integer TERRITORIO_ID_LOCALIDAD=1;
+
+	//rrl 20150414 ITS: 925
+	public static final String ADMIN_TASK_LIST_URI = "/app/component-tab.jsf?element=search/task&tab=taskSearch";
 	
 	public static String ppxx(){
 		System.out.println(">>>>>>>>>< en Constants.2-bee-bpm");
