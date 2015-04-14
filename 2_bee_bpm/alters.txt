@@ -482,9 +482,9 @@ INSERT INTO bee_bpm_dev.w_step_type_def_gen_group
 SELECT id FROM bee_bpm_dev.w_step_type_def
 where id != 22;
 
--- dml 20150414 - insertamos el resto en la tabla de "GenericType"
-INSERT INTO bee_bpm_dev.w_step_type_def_gen_type
-SELECT id FROM bee_bpm_dev.w_step_type_def
-where id != 22;
 
+## pab 14042015
+ALTER TABLE `gespro_generic`.`w_step_def` 
+CHANGE COLUMN `instructions` `instructions` VARCHAR(255) DEFAULT '' ;
 
+update `gespro_generic`.`w_step_def`  set `instructions` = "" where `instructions` is null;
