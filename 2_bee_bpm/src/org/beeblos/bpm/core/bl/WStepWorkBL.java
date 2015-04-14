@@ -1,8 +1,10 @@
 package org.beeblos.bpm.core.bl;
 
+import static com.sp.common.core.util.ConstantsSPC.BEEBLOS_DEFAULT_REPOSITORY_ID;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
+import static org.beeblos.bpm.core.util.Constants.BEEBLOS_WPROCESSWORK_DOCCLASS_ID;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
 import static org.beeblos.bpm.core.util.Constants.OMNIADMIN;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
@@ -70,9 +72,11 @@ import com.email.core.bl.SendEmailBL;
 import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
 import com.email.tray.core.util.EmailPersonalizationUtilBL;
+import com.sp.common.core.bl.DocumentManagerBL;
 import com.sp.common.core.error.BeeblosBLException;
 import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.core.model.noper.ObjGeneralParams;
+import com.sp.common.model.FileSP;
 import com.sp.common.util.Resourceutil;
 
 public class WStepWorkBL {
@@ -92,7 +96,7 @@ public class WStepWorkBL {
 	 * Create a new instance of a process. This method requires ProcessWork and StepWork objects
 	 * correctly filled.
 	 * 
-	 * There is possible to insert or start a new process in any step of the process map..
+	 * It is possible to insert or start a new process in any step of the process map..
 	 * 
 	 * @param processWork
 	 * @param swco
@@ -162,7 +166,13 @@ public class WStepWorkBL {
 		 * ( WUserRoleWork )
 		 */
 		_assignUsersToRuntimeRoles(processWork,currentUserId);
-		
+
+		/**
+		 * @author dmuleiro 20150414 - uploads the new attached documents (if there are any)
+		 */
+		if (idWork != null){
+			//this._uploadFileInfoList(idWork, newAttachedDocuments, currentUserId);
+		}
 
 		
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
@@ -261,8 +271,55 @@ public class WStepWorkBL {
 			
 		}
 
+		/**
+		 * @author dmuleiro 20150414 - uploads the new attached documents (if there are any)
+		 */
+		if (currentStep != null && currentStep.getwProcessWork() != null
+				&& currentStep.getwProcessWork().getId() != null
+				&& runtimeSettings != null && runtimeSettings.getFileSPList() != null){
+			this._uploadFileInfoList(currentStep.getwProcessWork().getId(), 
+					runtimeSettings.getFileSPList(), currentUser);
+		}
+
 		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
 		
+	}
+
+	/**
+     * Upload new documents into Beeblos (if there are any)
+     * 
+     * @author dmuleiro 20150414
+     * 
+     * @return
+	 * @throws WStepWorkException 
+     */
+	private void _uploadFileInfoList(Integer idWProcessWork, List<FileSP> newAttachedDocuments, 
+			Integer currentUserId) {
+
+		logger.debug("uploadFileInfoList init");
+
+		if (newAttachedDocuments == null || newAttachedDocuments.isEmpty()){
+			return;
+		}
+		
+		try {
+
+			List<Long> returnedBeeblosId = 
+					new DocumentManagerBL().uploadFileSPListToBeeblos(
+					newAttachedDocuments, BEEBLOS_DEFAULT_REPOSITORY_ID,
+					BEEBLOS_WPROCESSWORK_DOCCLASS_ID, WProcessWork.class.getName(),
+					idWProcessWork.toString(), 
+					"WProcessWork id:" + idWProcessWork, 
+					null, currentUserId);
+
+			logger.debug("uploadFileInfoList. returnedBeeblosIds: " + returnedBeeblosId.toString());
+
+		} catch (Exception e) {
+			String mess="Error trying to upload beeblos files. " + e.getMessage()
+					+ (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+		}
+
 	}
 
 

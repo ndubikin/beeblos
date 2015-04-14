@@ -1146,6 +1146,14 @@
 			<column name="route_eval_order" />
 		</property>
 
+		<property name="allowAttachDocuments" type="java.lang.Boolean">
+			<column name="allow_attach_documents" sql-type="bit" />
+		</property>
+		<property name="renderAttachedDocuments" type="java.lang.Boolean">
+			<column name="render_attached_documents" sql-type="bit" />
+		</property>
+
+
 		<many-to-one cascade="save-update"
 			class="org.beeblos.bpm.core.model.WStepHead" column="head_id" name="stepHead"
 			fetch="join" lazy="false" />

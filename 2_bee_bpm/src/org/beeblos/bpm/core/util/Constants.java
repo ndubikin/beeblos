@@ -6,9 +6,12 @@ import static com.sp.common.util.Resourceutil.getStringProperty;
 
 public class Constants {
 	
+	public static final Integer BEEBLOS_WPROCESSWORK_DOCCLASS_ID = 
+			getIntegerProperty("beeblos.default.docclassid.wprocesswork"); // dml 20150414
+
 	// dml 20150410 - Se usa para guardar temporalmente los adjuntos de los emails antes de guardarlos en BD
 	public static final String BEEBPM_TMP_FOLDER = getStringProperty("default.beebpm.tmp.folder","/tmp-beebpm"); // dml 20121008
-
+	
 	// dml 20150410 - Esta navegación no la tenemos en el base-crud porque no tiene que existir para todos los proyectos
 	public static final String EMAIL_D_CONF_FORM_VIEW="/app/crud/emailDConf/emailDConfCrudWithTemplate.xhtml";
 
