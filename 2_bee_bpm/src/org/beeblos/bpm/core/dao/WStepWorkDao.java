@@ -648,8 +648,8 @@ public class WStepWorkDao {
 									?stepWork.getManagedData().getManagedTableConfiguration().getName()
 									:"null")
 								: "managed table data is null")
-						+ e.getMessage() + " - "
-						+ e.getCause();
+						+ e.getMessage() + " "
+						+ (e.getCause()!=null?e.getCause():" ");
 	
 				logger.warn(message);
 
@@ -688,8 +688,8 @@ public class WStepWorkDao {
 										?stepWork.getManagedData().getManagedTableConfiguration().getName()
 										:"null")
 									: "??? null")
-							+ e.getMessage() + " - "
-							+ e.getCause();
+							+ e.getMessage() + " "
+						+ (e.getCause()!=null?e.getCause():" ");
 					logger.error(message);
 				}
 				
