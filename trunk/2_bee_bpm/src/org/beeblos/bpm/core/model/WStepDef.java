@@ -247,11 +247,17 @@ public class WStepDef implements java.io.Serializable {
 	List<WStepDataField> dataFieldDef = new ArrayList<WStepDataField>();
 	
 	/**
-	 * Allows process user to render/insert attached documents
+	 * indicates this step will be able to upload (attach) documents 
 	 * 
 	 * @author dmuleiro 20150414
 	 */
 	private boolean allowAttachDocuments;
+
+	/**
+	 * indicates this step will show attached document list (if exists...) 
+	 * 
+	 * @author dmuleiro 20150414
+	 */
 	private boolean renderAttachedDocuments;
 
 	// dml 20120113
