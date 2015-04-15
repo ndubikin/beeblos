@@ -92,6 +92,7 @@ public class WStepWorkBL {
 	
 	// TODO: ES NECESARIO METER CONTROL TRANSACCIONAL AQUÍ PARA ASEGURAR QUE O SE GRABAN AMBOS REGISTROS O NINGUNO.
 	// AHORA MISMO SI EL INSERT DEL WORK NO DA ERROR Y POR ALGUN MOTIVO NO SE PUEDE INSERTAR EL STEP, QUEDA EL WORK AGREGADO PERO SIN STEP ...
+
 	/**
 	 * Create a new instance of a process. This method requires ProcessWork and StepWork objects
 	 * correctly filled.
@@ -105,6 +106,11 @@ public class WStepWorkBL {
 	 * @throws WStepWorkException
 	 * @throws WProcessWorkException
 	 * @throws WStepWorkSequenceException
+	 */
+	/*
+	 *  TODO start dml 20150415:
+	 *  OJO: AQUI NO ESTAMOS CONSIDERANDO SUBIR DOCUMENTOS ADJUNTOS
+	 *  PORQ NO RECIBIMOS EL RUNTIMESETTINGS
 	 */
 	public Integer start(WProcessWork processWork, WStepWork stepWork, Integer currentUserId) 
 			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
@@ -167,14 +173,6 @@ public class WStepWorkBL {
 		 */
 		_assignUsersToRuntimeRoles(processWork,currentUserId);
 
-		/**
-		 * @author dmuleiro 20150414 - uploads the new attached documents (if there are any)
-		 */
-		if (idWork != null){
-			//this._uploadFileInfoList(idWork, newAttachedDocuments, currentUserId);
-		}
-
-		
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
 		this.createStepWorkSequenceLog(null, stepWork, false, 
 				null, stepWork.getCurrentStep(), currentUserId);
@@ -277,7 +275,7 @@ public class WStepWorkBL {
 		if (currentStep != null && currentStep.getwProcessWork() != null
 				&& currentStep.getwProcessWork().getId() != null
 				&& runtimeSettings != null && runtimeSettings.getFileSPList() != null){
-			this._uploadFileInfoList(currentStep.getwProcessWork().getId(), 
+			this.uploadFileInfoList(currentStep.getwProcessWork().getId(), 
 					runtimeSettings.getFileSPList(), currentUser);
 		}
 
@@ -286,14 +284,14 @@ public class WStepWorkBL {
 	}
 
 	/**
-     * Upload new documents into Beeblos (if there are any)
+     * Upload new documents into Beeblos (if there are any) attached to the WProcessWork
      * 
      * @author dmuleiro 20150414
      * 
      * @return
 	 * @throws WStepWorkException 
      */
-	private void _uploadFileInfoList(Integer idWProcessWork, List<FileSP> newAttachedDocuments, 
+	public void uploadFileInfoList(Integer idWProcessWork, List<FileSP> newAttachedDocuments, 
 			Integer currentUserId) {
 
 		logger.debug("uploadFileInfoList init");
@@ -404,7 +402,11 @@ public class WStepWorkBL {
 		return new WStepWorkDao().getWStepWorkByPK(id);
 	}
 
-	
+	public Integer getIdProcessWorkFromWStepWork(Integer id, Integer currentUser) throws WStepWorkException {
+
+		return new WStepWorkDao().getIdProcessWorkFromWStepWork(id);
+	}
+
 	public List<WStepWork> getWStepWorks(Integer currentUser) throws WStepWorkException {
 
 		return new WStepWorkDao().getWStepWorks();
