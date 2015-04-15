@@ -440,6 +440,53 @@ public class WStepWorkDao {
 	}
 	
 	/**
+	 * returns a WStepWork
+	 * 
+	 * @param id
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	public Integer getIdProcessWorkFromWStepWork(Integer id) throws WStepWorkException {
+		logger.debug(">>> getIdProcessWorkFromWStepWork WStepWork  id:"+(id!=null?id:"null"));
+		
+		Integer idPW = null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			idPW = (Integer) session
+					.createQuery("Select wProcessWork.id From WStepWork Where id= :id ")
+					.setInteger("id", id)
+					.uniqueResult();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="HibernateException: getIdProcessWorkFromWStepWork - we can't obtain the required id = "+
+							id + "]: "+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():"");
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+		
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: getIdProcessWorkFromWStepWork - we can't obtain the required id = "+
+							id + "]: "+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():"");
+			logger.warn(mess);
+			throw new WStepWorkException(mess);
+		}
+		
+		return idPW;
+	}
+	
+	/**
 	 * returns a WStepWorkCheckObject
 	 * 
 	 * @param id

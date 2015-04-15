@@ -3,6 +3,8 @@ package org.beeblos.bpm.core.bl;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.AlreadyExistsRunningProcessException;
@@ -28,6 +30,7 @@ import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
 
+import com.sp.common.model.FileSP;
 import com.sp.common.model.ManagedDataField;
 
 
@@ -167,7 +170,11 @@ public class BeeBPMBL {
 	 * nes 20150411
 	 * 
 	 * @param stepWork
+	 * @param isAdminProcess
+	 * @param typeOfProcess
+	 * @param attachedDocuments - @author dmuleiro 20150415
 	 * @param currentUserId
+	 * 
 	 * @throws InjectorException
 	 * @throws AlreadyExistsRunningProcessException
 	 * @throws WStepWorkException
@@ -177,7 +184,7 @@ public class BeeBPMBL {
 	 * @throws WProcessDataFieldException
 	 */
 	public Integer injector( WStepWork stepWork, boolean isAdminProcess, String typeOfProcess,
-			Integer currentUserId ) 
+			List<FileSP> attachedDocuments, Integer currentUserId ) 
 					throws InjectorException, AlreadyExistsRunningProcessException, 
 							WStepWorkException, WProcessWorkException, TableManagerException, 
 							WStepWorkSequenceException, WProcessDataFieldException {
@@ -240,6 +247,18 @@ public class BeeBPMBL {
 			qtyNewRoutes = processCreatedStep(idStepWork, stepWork.getRuntimeSettings(), wswBL,
 					isAdminProcess, PROCESS_STEP, currentUserId);
 			
+			
+			/**
+			 * @author dmuleiro 20150415 - uploads the new attached documents (if there are any)
+			 * 
+			 * NOTA: THIS FUNCTIONALITY SHOULD BE DONE INSIDE "WStepWork.start" BUT WE
+			 * CANNOT IMPLEMENT THIS OPTION BECAUSE THE START METHOD DOES NOT RECEIVE 
+			 * A RuntimeSettings OBJECT WHEN IT MUST DO IT.
+			 */
+			if (justCreatedStepWork != null && justCreatedStepWork.getwProcessWork() != null){
+				new WStepWorkBL().uploadFileInfoList(justCreatedStepWork.getwProcessWork().getId(), attachedDocuments, currentUserId);
+			}
+
 		} catch (WStepLockedByAnotherUserException e) {
 			String mess="WStepLockedByAnotherUserException - Can't update new instance just injected: "
 					+idStepWork+" ...."+ " "
