@@ -848,7 +848,7 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 	 * @throws DaemonPollException 
 	 */
 	@Override
-	public Integer createProcessControlRecord(DaemonConf conf, Integer currentUserId) {
+	public Integer createProcessControlRecord(DaemonConf conf, String controllerName, Integer currentUserId) {
 		
 		try {
 			
@@ -856,7 +856,7 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 				
 				EmailDConf emailDConf = (EmailDConf) conf;
 
-				return this.addControlRecord(emailDConf, STARTING_NEW_POLL, currentUserId);
+				return this.addControlRecord(emailDConf, controllerName, STARTING_NEW_POLL, currentUserId);
 				
 			} else {
 				//NESTOR TODO: THROW EXCEPTION
@@ -872,7 +872,7 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 		
 	}
 
-	private Integer addControlRecord(EmailDConf conf, String status, Integer currentUserId) throws DaemonPollException {
+	private Integer addControlRecord(EmailDConf conf, String controllerName, String status, Integer currentUserId) throws DaemonPollException {
 		
 		EmailDPoll edp = new EmailDPoll();
 		
@@ -886,7 +886,8 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 		
 		edp.setComment(status);
 		
-		edp.setThreadName(Thread.currentThread().getName()); // dml 20120921
+		edp.setThreadName(controllerName!=null?
+				controllerName:Thread.currentThread().getName()); // dml 20120921
 
 		return new DaemonPollBL().add(edp, EmailDPoll.class, currentUserId);
 		
