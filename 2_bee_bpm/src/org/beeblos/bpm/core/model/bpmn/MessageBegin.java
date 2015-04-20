@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.model.bpmn;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class MessageBegin extends InitEvent {
 	/**
 	 * Cuentas del demonio
 	 */
-	public Set<MessageBeginEmailDConf> emailDConfs;
+	public Set<StepTypeDefEmailDConf> emailDConfs;
 	
 	public MessageBegin(){
 		
@@ -45,18 +46,21 @@ public class MessageBegin extends InitEvent {
 		this.modUser = modUser;
 	}
 
-	public Set<MessageBeginEmailDConf> getEmailDConfs() {
+	public Set<StepTypeDefEmailDConf> getEmailDConfs() {
+		if (emailDConfs == null){
+			return new HashSet<StepTypeDefEmailDConf>();
+		}
 		return emailDConfs;
 	}
 
-	public List<MessageBeginEmailDConf> getEmailDConfsAsList() {
+	public List<StepTypeDefEmailDConf> getEmailDConfsAsList() {
 		if (emailDConfs != null){
-			return new ArrayList<MessageBeginEmailDConf>(emailDConfs);
+			return new ArrayList<StepTypeDefEmailDConf>(emailDConfs);
 		}
 		return null;
 	}
 
-	public void setEmailDConfs(Set<MessageBeginEmailDConf> emailDConfs) {
+	public void setEmailDConfs(Set<StepTypeDefEmailDConf> emailDConfs) {
 		this.emailDConfs = emailDConfs;
 	}
 

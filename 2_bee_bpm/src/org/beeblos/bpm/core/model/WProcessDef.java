@@ -42,6 +42,10 @@ public class WProcessDef implements java.io.Serializable {
 	private WProcessHead process;
 	private Integer version;
 	
+	/**
+	 * TODO dml 20150420: revisar si esto lo podemos usar para poner un proceso en
+	 * modo ejecucion o si lo usamos para otra cosa
+	 */
 	private boolean active;
 	
 	/**

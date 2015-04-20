@@ -652,7 +652,7 @@
 					
 					<key column="id_std_mb" />
 					
-					<one-to-many class="org.beeblos.bpm.core.model.bpmn.MessageBeginEmailDConf" />
+					<one-to-many class="org.beeblos.bpm.core.model.bpmn.StepTypeDefEmailDConf" />
 				</set>
 		    </joined-subclass>
 		    
@@ -676,7 +676,7 @@
 	    
 	</class>
 
-    <class name="org.beeblos.bpm.core.model.bpmn.MessageBeginEmailDConf" 
+    <class name="org.beeblos.bpm.core.model.bpmn.StepTypeDefEmailDConf" 
     	table="w_std_mb_edc">
     	
 		<id name="id" type="java.lang.Integer">
@@ -684,11 +684,13 @@
 			<generator class="identity" />
 		</id>
 
-		<many-to-one name="messageBegin" class="org.beeblos.bpm.core.model.bpmn.MessageBegin"
-			column="id_std_mb" cascade="none"/>
+		<property generated="never" lazy="false" name="stepTypeDefId"
+			type="java.lang.Integer">
+			<column name="id_std_mb" />
+		</property>
 			
 		<many-to-one name="emailDConf" class="com.sp.daemon.email.EmailDConf"
-			column="id_email_d_conf" cascade="none"/>
+			column="id_email_d_conf" cascade="none" lazy="false" fetch="join"/>
 			
 		<property lazy="false" name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="add_date" />

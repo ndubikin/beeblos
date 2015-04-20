@@ -10,7 +10,7 @@ import com.sp.daemon.email.EmailDConf;
  * @author dml 20150413
  *
  */
-public class MessageBeginEmailDConf extends InitEvent {
+public class StepTypeDefEmailDConf extends InitEvent {
 
 	/**
 	 * 
@@ -19,7 +19,7 @@ public class MessageBeginEmailDConf extends InitEvent {
 
 	private Integer id;
 	
-	private MessageBegin messageBegin;
+	private Integer stepTypeDefId;
 	
 	private EmailDConf emailDConf;
 	
@@ -32,11 +32,11 @@ public class MessageBeginEmailDConf extends InitEvent {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public MessageBegin getMessageBegin() {
-		return messageBegin;
+	public Integer getStepTypeDefId() {
+		return stepTypeDefId;
 	}
-	public void setMessageBegin(MessageBegin messageBegin) {
-		this.messageBegin = messageBegin;
+	public void setStepTypeDefId(Integer stepTypeDefId) {
+		this.stepTypeDefId = stepTypeDefId;
 	}
 	public EmailDConf getEmailDConf() {
 		return emailDConf;
@@ -58,7 +58,7 @@ public class MessageBeginEmailDConf extends InitEvent {
 	}
 	@Override
 	public String toString() {
-		return "MessageBeginEmailDConf [id=" + id 
+		return "StepTypeDefEmailDConf [id=" + id 
 				+ ", addDate=" + addDate + ", addUser=" + addUser + "]";
 	}
 	@Override
@@ -78,7 +78,7 @@ public class MessageBeginEmailDConf extends InitEvent {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MessageBeginEmailDConf other = (MessageBeginEmailDConf) obj;
+		StepTypeDefEmailDConf other = (StepTypeDefEmailDConf) obj;
 		if (addDate == null) {
 			if (other.addDate != null)
 				return false;
