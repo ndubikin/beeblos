@@ -493,3 +493,7 @@ update `bee_bpm_dev`.`w_step_def`  set `instructions` = "" where `instructions` 
 ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 ADD COLUMN `allow_attach_documents` BIT(1) NULL DEFAULT b'0' AFTER `mxcell_string`,
 ADD COLUMN `render_attached_documents` BIT(1) NULL DEFAULT b'0' AFTER `allow_attach_documents`;
+
+-- dml 20150420 - faltaba el autoincrement a esta tabla
+ALTER TABLE `gespro_generic`.`w_std_mb_edc` 
+CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT ;
