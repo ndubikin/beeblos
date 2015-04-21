@@ -150,7 +150,7 @@ public class StepTypeDefEmailDConfBL {
 
 		if (existStepRole) {
 			throw new StepTypeDefEmailDConfException(
-					"The request type user profile you are trying to add EXISTS YET");
+					"The email daemon configuration you are trying to add ALREADY EXISTS");
 		}
 
 	}

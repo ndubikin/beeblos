@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepDefDao;
 import org.beeblos.bpm.core.error.WProcessDefException;
-import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepHeadException;
 import org.beeblos.bpm.core.error.WStepRoleException;
@@ -22,7 +21,6 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepUserException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
-import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepHead;
 import org.beeblos.bpm.core.model.WStepResponseDef;
@@ -31,6 +29,7 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRole;
+import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
@@ -1297,5 +1296,22 @@ public class WStepDefBL {
 		
 	}
 
+	/**
+	 * Gets all the EmailDConf related with any WStepDef (it could be filtered by 
+	 * processDefId and stepDefId)
+	 * 
+	 * @author dmuleiro 20150421
+	 * 
+	 * @param processDefId
+	 * @param stepDefId
+	 * @return
+	 * @throws WStepDefException
+	 */
+	public List<EmailDConfBeeBPM> getEmailDConfListByProcessAndStep(Integer processDefId, Integer stepDefId) 
+			throws WStepDefException {
+
+		return new WStepDefDao().getEmailDConfListByProcessAndStep(processDefId, stepDefId);
+
+	}
 }
 	
