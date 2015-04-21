@@ -21,6 +21,7 @@ import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -280,6 +281,22 @@ public class TestWStepDefBL extends TestCase{
 				System.out.println("CORRECT");
 			
 			} catch (WProcessDefException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}
+
+		@Test
+		public void testGetEmailDConfListByProcessAndStep() {
+			
+			try {
+				
+				List<EmailDConfBeeBPM> list = new WStepDefBL().getEmailDConfListByProcessAndStep(null, null);
+				
+				System.out.println(list!=null?"TAMAÑO: "+list.size():"NULL");
+			
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
