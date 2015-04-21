@@ -218,7 +218,7 @@ public class WStepWorkBL {
 		Integer qtyNewRoutes=0;
 
 		/**
-		 * convention overo configuration
+		 * convention over configuration
 		 * nes 20150411
 		 */
 		if (typeOfProcess==null) {
@@ -230,7 +230,7 @@ public class WStepWorkBL {
 			throw new WStepNotLockedException("Current step is not locked. Please try process again ...");
 		}
 
-		// checks the step was not processed ... 
+		// check the step is 'pending process' ... 
 		this.checkStatus(idStepWork, currentUser, false); 
 
 		// load current step from database
@@ -270,7 +270,10 @@ public class WStepWorkBL {
 		}
 
 		/**
-		 * @author dmuleiro 20150414 - uploads the new attached documents (if there are any)
+		 * @author dmuleiro 20150414 - new attached documents will be uploaded (if there are any)
+		 * attached documents will be related with a wProcessWork
+		 * at each wStepWork will be exposed or not (designer responability)
+		 * 
 		 */
 		if (currentStep != null && currentStep.getwProcessWork() != null
 				&& currentStep.getwProcessWork().getId() != null
@@ -284,7 +287,7 @@ public class WStepWorkBL {
 	}
 
 	/**
-     * Upload new documents into Beeblos (if there are any) attached to the WProcessWork
+     * Upload new documents to Beeblos (if there are any) and relates it with WProcessWork
      * 
      * @author dmuleiro 20150414
      * 
@@ -294,7 +297,7 @@ public class WStepWorkBL {
 	public void uploadFileInfoList(Integer idWProcessWork, List<FileSP> newAttachedDocuments, 
 			Integer currentUserId) {
 
-		logger.debug("uploadFileInfoList init");
+		logger.debug(">>> uploadFileInfoList init");
 
 		if (newAttachedDocuments == null || newAttachedDocuments.isEmpty()){
 			return;
@@ -310,7 +313,7 @@ public class WStepWorkBL {
 					"WProcessWork id:" + idWProcessWork, 
 					null, currentUserId);
 
-			logger.debug("uploadFileInfoList. returnedBeeblosIds: " + returnedBeeblosId.toString());
+			logger.debug("uploadFileInfoList. returnedBeeblos docids: " + returnedBeeblosId.toString());
 
 		} catch (Exception e) {
 			String mess="Error trying to upload beeblos files. " + e.getMessage()
@@ -1084,7 +1087,7 @@ public class WStepWorkBL {
 					new WStepWorkDao().getWStepWorkCheckObjectByPK(idStepWork);
 			
 			if ( swco.getDecidedDate()!=null || swco.getIdPerformer()!=null ) {
-				String message="This step already was processed ... id:"+idStepWork;
+				String message="This step was already processed... id:"+idStepWork;
 				throw new WStepAlreadyProcessedException(message);	
 			}
 			
@@ -2703,6 +2706,14 @@ public class WStepWorkBL {
 	}
 	
 
+	/**
+	 * set a stepWork to processed and persist it
+	 * @param currentStep
+	 * @param idResponse
+	 * @param now
+	 * @param currentUser
+	 * @throws WStepWorkException
+	 */
 	private void _setCurrentWorkitemToProcessed( WStepWork currentStep, Integer idResponse, 
 			DateTime now, Integer currentUser) throws WStepWorkException {
 		logger.debug(">>> _setCurrentWorkitemToProcessed currentStep id:"
