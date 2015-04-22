@@ -426,7 +426,6 @@ VALUES ('2', 1, '4', '1', '10', 'org.beeblos.bpm.email.impl.EmailDaemonPollerCla
 -- dml 20150414 - Definición de la nueva tabla de "InitEvent"
 CREATE TABLE `bee_bpm_dev`.`w_step_type_def_ie` (
   `id` int(11) NOT NULL,
-  `param_prueba` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -471,7 +470,7 @@ CREATE TABLE `bee_bpm_dev`.`w_step_type_def_gen_type` (
 
 -- dml 20150414 - insertamos el MessageBegin que tenemos (que es el de id=22) dentro del grupo, del MB y la relacion con el EmailDConf
 INSERT INTO bee_bpm_dev.w_step_type_def_ie
-VALUES('22', 'PRUEBA');
+VALUES('22');
 INSERT INTO bee_bpm_dev.w_step_type_def_mb
 VALUES('22');
 INSERT INTO bee_bpm_dev.w_std_mb_edc

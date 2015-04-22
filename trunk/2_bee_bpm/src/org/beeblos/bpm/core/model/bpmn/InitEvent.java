@@ -17,24 +17,8 @@ public abstract class InitEvent extends WStepTypeDef {
 	 */
 	private static final long serialVersionUID = -2271061877575979471L;
 	
-	private String paramPrueba;
-	
 	public InitEvent(){
 		
-	}
-
-	/**
-	 * @return the paramPrueba
-	 */
-	public String getParamPrueba() {
-		return paramPrueba;
-	}
-
-	/**
-	 * @param paramPrueba the paramPrueba to set
-	 */
-	public void setParamPrueba(String paramPrueba) {
-		this.paramPrueba = paramPrueba;
 	}
 
 }

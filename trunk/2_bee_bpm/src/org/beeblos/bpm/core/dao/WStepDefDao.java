@@ -16,9 +16,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
-import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.joda.time.DateTime;
 
 import com.sp.common.util.HibernateUtil;
@@ -1271,82 +1269,5 @@ public class WStepDefDao {
 
 	}
 	
-	/**
-	 * Gets all the EmailDConf related with any WStepDef (it could be filtered by 
-	 * processDefId and stepDefId)
-	 * 
-	 * @author dmuleiro 20150421
-	 * 
-	 * @param processDefId
-	 * @param stepDefId
-	 * @return
-	 * @throws WStepDefException
-	 */
-	@SuppressWarnings("unchecked")
-	public List<EmailDConfBeeBPM> getEmailDConfListByProcessAndStep(
-			Integer processDefId, Integer stepDefId) 
-			throws WStepDefException {
-	
-		org.hibernate.Session session = null;
-		org.hibernate.Transaction tx = null;
-
-		List<EmailDConfBeeBPM> list = null;
-
-		try {
-
-			session = HibernateUtil.obtenerSession();
-			tx = session.getTransaction();
-
-			tx.begin();
-			
-			String hqlQuery = " Select new org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM( ";
-			hqlQuery += " wpd.id, wpd.process.name, wsd.id, wsd.stepHead.name, edc) ";
-			hqlQuery += " From WProcessDef wpd ";
-			hqlQuery += " Left Outer Join wpd.steps As wsd ";
-			hqlQuery += " Left Outer Join wsd.stepTypeDef.emailDConfs As edcRel ";
-			hqlQuery += " Left Outer Join edcRel.emailDConf As edc ";
-			hqlQuery += " Where edc Is Not Null ";
-
-			if (stepDefId  != null && !stepDefId.equals(0)){
-				hqlQuery += " And wsd.id = :stepDefId ";
-			} else if (processDefId  != null && !processDefId.equals(0)){
-				hqlQuery += " And wpd.id = :processDefId ";
-			}
-			
-			Query query = session.createQuery(hqlQuery);
-			
-			/**
-			 * If "stepDef" is set we have not to put "processDef" because it is implicit
-			 */
-			if (stepDefId  != null && !stepDefId.equals(0)){
-				query.setParameter("stepDefId", stepDefId);
-			} else if (processDefId  != null && !processDefId.equals(0)){
-				query.setParameter("processDefId", processDefId);
-			}
-			
-			list = (ArrayList<EmailDConfBeeBPM>) query.list();
-			
-			tx.commit();
-
-		} catch (HibernateException ex) {
-			if (tx != null)
-				tx.rollback();
-			logger.warn("HibernateException: getEmailDConfListByProcessAndStep() - can't obtain EmailDConfBeeBPM list - " +
-					ex.getMessage()+" "+ex.getCause() );
-			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain EmailDConfBeeBPM list: "
-					+ ex.getMessage()+" "+ex.getCause());
-		} catch (Exception ex) {
-			if (tx != null)
-				tx.rollback();
-			logger.warn("Exception: getEmailDConfListByProcessAndStep() - can't obtain EmailDConfBeeBPM list - " +
-					ex.getMessage()+" "+ex.getCause() );
-			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain EmailDConfBeeBPM list: "
-					+ ex.getMessage()+" "+ex.getCause());
-		}
-
-		return list;
-	
-	}	
-
 }
 	

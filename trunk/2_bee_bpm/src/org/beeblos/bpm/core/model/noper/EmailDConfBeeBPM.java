@@ -12,7 +12,7 @@ import com.sp.daemon.email.EmailDConf;
  * 
  * @author dmuleiro 20150421
  */
-public class EmailDConfBeeBPM implements Serializable {
+public class EmailDConfBeeBPM extends EmailDConf implements Serializable {
 
 	/**
 	 * 
@@ -40,13 +40,22 @@ public class EmailDConfBeeBPM implements Serializable {
 	 */
 	private String processDefName;
 	
-	private EmailDConf emailDConf;
-
-	
 	public EmailDConfBeeBPM() {
 		
 	}
 	
+	/**
+	 * This constructor is built like this because the query which is related with
+	 * it is very easy ("WStepDefDao.getEmailDConfListByProcessAndStep")
+	 * 
+	 * @author dmuleiro 20150422
+	 * 
+	 * @param idProcessDef
+	 * @param processDefName
+	 * @param idStepDef
+	 * @param stepDefName
+	 * @param emailDConf
+	 */
 	public EmailDConfBeeBPM(Integer idProcessDef, String processDefName, Integer idStepDef, String stepDefName,
 			EmailDConf emailDConf) {
 		super();
@@ -54,7 +63,54 @@ public class EmailDConfBeeBPM implements Serializable {
 		this.stepDefName = stepDefName;
 		this.idProcessDef = idProcessDef;
 		this.processDefName = processDefName;
-		this.emailDConf = emailDConf;
+		
+		/**
+		 * If EmailDConf is not null, we get all the super() fields and fill them.
+		 * 
+		 * This constructor is built like this because the query which is related with
+		 * it is very easy ("WStepDefDao.getEmailDConfListByProcessAndStep")
+		 * 
+		 * @author dmuleiro 20150422
+		 */
+		super.setId(emailDConf!=null?emailDConf.getId():null);
+		
+		super.setEnabled(emailDConf!=null?emailDConf.isEnabled():null); 
+
+		super.setEmailAccount(emailDConf!=null?emailDConf.getEmailAccount():null);
+
+		super.setEmailTemplate(emailDConf!=null?emailDConf.getEmailTemplate():null);
+
+		super.setPollingFrequency(emailDConf!=null?emailDConf.getPollingFrequency():null);
+		
+		super.setDaemonClassImplementationName(emailDConf!=null?emailDConf.getDaemonClassImplementationName():null);
+
+		super.setDocClassId(emailDConf!=null?emailDConf.getDocClassId():null);
+		super.setDocClassName(emailDConf!=null?emailDConf.getDocClassName():null);
+		super.setBeeblosServerId(emailDConf!=null?emailDConf.getBeeblosServerId():null);
+		
+		super.setAddDate(emailDConf!=null?emailDConf.getAddDate():null);
+		super.setAddUser(emailDConf!=null?emailDConf.getAddUser():null);
+		super.setModDate(emailDConf!=null?emailDConf.getModDate():null);
+		super.setModUser(emailDConf!=null?emailDConf.getModUser():null);
+
+		super.setInputFolder(emailDConf!=null?emailDConf.getInputFolder():null);
+		super.setMarkAsRead(emailDConf!=null?emailDConf.isMarkAsRead():null);
+		super.setLeaveOnInputFolder(emailDConf!=null?emailDConf.isLeaveOnInputFolder():null);
+		
+		super.setValidEmailFolder(emailDConf!=null?emailDConf.getValidEmailFolder():null);
+		super.setMoveToValidFolder(emailDConf!=null?emailDConf.isMoveToValidFolder():null);
+		
+		super.setInvalidEmailFolder(emailDConf!=null?emailDConf.getInvalidEmailFolder():null);
+		super.setMoveToInvalidFolder(emailDConf!=null?emailDConf.isMoveToInvalidFolder():null);
+		
+		super.setErrorEmailFolder(emailDConf!=null?emailDConf.getErrorEmailFolder():null);
+		super.setMoveToErrorFolder(emailDConf!=null?emailDConf.isMoveToErrorFolder():null);
+
+		super.setCheckingFieldName(emailDConf!=null?emailDConf.getCheckingFieldName():null);
+		super.setCheckingFieldValue(emailDConf!=null?emailDConf.getCheckingFieldValue():null);
+		
+		super.setType(emailDConf!=null?emailDConf.getType():null);
+
 	}
 
 
@@ -97,25 +153,16 @@ public class EmailDConfBeeBPM implements Serializable {
 		this.stepDefName = stepDefName;
 	}
 
-	public EmailDConf getEmailDConf() {
-		return emailDConf;
-	}
-
-	public void setEmailDConf(EmailDConf emailDConf) {
-		this.emailDConf = emailDConf;
-	}
-
 	@Override
 	public String toString() {
 		return "EmailDConfBeeBPM [idStepDef=" + idStepDef + ", stepDefName=" + stepDefName + ", processDefName=" + processDefName
-				+ ", idProcessDef=" + idProcessDef + ", emailDConf=" + emailDConf + "]";
+				+ ", idProcessDef=" + idProcessDef + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((emailDConf == null) ? 0 : emailDConf.hashCode());
 		result = prime * result + ((idProcessDef == null) ? 0 : idProcessDef.hashCode());
 		result = prime * result + ((idStepDef == null) ? 0 : idStepDef.hashCode());
 		result = prime * result + ((processDefName == null) ? 0 : processDefName.hashCode());
@@ -132,11 +179,6 @@ public class EmailDConfBeeBPM implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		EmailDConfBeeBPM other = (EmailDConfBeeBPM) obj;
-		if (emailDConf == null) {
-			if (other.emailDConf != null)
-				return false;
-		} else if (!emailDConf.equals(other.emailDConf))
-			return false;
 		if (idProcessDef == null) {
 			if (other.idProcessDef != null)
 				return false;

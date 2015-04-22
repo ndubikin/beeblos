@@ -37,6 +37,7 @@ import javax.mail.Store;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.joda.time.DateTime;
 
 import com.beeblos.wsapi.model.BeeblosException;
@@ -62,16 +63,15 @@ import com.sp.common.util.Configuration;
 import com.sp.common.util.DesEncrypter;
 import com.sp.daemon.bl.DaemonLogBL;
 import com.sp.daemon.bl.DaemonPollBL;
-import com.sp.daemon.email.EmailDConf;
 import com.sp.daemon.email.EmailDLog;
 import com.sp.daemon.email.EmailDPoll;
 import com.sp.daemon.error.DaemonLogException;
 import com.sp.daemon.error.DaemonPollException;
 import com.sp.daemon.error.DaemonPollerException;
-import com.sp.daemon.exe.DaemonClassInterface;
+import com.sp.daemon.exe.DaemonExecutor;
 import com.sp.daemon.model.DaemonConf;
 
-public class MessageEventManagerImpl implements DaemonClassInterface {
+public class MessageEventManagerImpl implements DaemonExecutor {
 	
 	private static final Log logger = LogFactory.getLog(MessageEventManagerImpl.class.getName());
 
@@ -106,9 +106,9 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	@Override
 	public void initializeDaemonPoller(DaemonConf conf, Integer currentUserId) {
 
-		if (conf instanceof EmailDConf){
+		if (conf instanceof EmailDConfBeeBPM){
 			
-			EmailDConf emailDConf = (EmailDConf) conf;
+			EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
 			this.configureSessionAndVariables(emailDConf);
 			
@@ -123,7 +123,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	 *  
 	 * @param conf
 	 */
-	private void configureSessionAndVariables(EmailDConf conf) {
+	private void configureSessionAndVariables(EmailDConfBeeBPM conf) {
 		
 		try {
 
@@ -145,7 +145,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		} catch (Exception e) {
 			
 			String mess = e.getClass().getSimpleName() + " stopping email daemon for account :" 
-					+ conf.getEmailAccount().getEmail() + " EmailDConf id:("+conf.getId()+")"
+					+ conf.getEmailAccount().getEmail() + " EmailDConfBeeBPM id:("+conf.getId()+")"
 					+" can't create session for email server";
 			logger.error(mess);
 			System.out.println(mess);
@@ -160,7 +160,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	 * 
 	 * @param conf
 	 */
-	private void loadEmailServerWorkFolders(EmailDConf conf) {
+	private void loadEmailServerWorkFolders(EmailDConfBeeBPM conf) {
 		try {
 
 			this.inboxFolder = store.getFolder(conf.getInputFolder());
@@ -187,7 +187,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	 * 
 	 * @throws DaemonPollerException
 	 */
-	private void connectEmailServer(EmailDConf conf)
+	private void connectEmailServer(EmailDConfBeeBPM conf)
 			throws DaemonPollerException {
 
 		try {
@@ -260,9 +260,9 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	@Override
 	public void daemonAction(DaemonConf conf, Integer currentUserId) throws DaemonPollerException {
 
-		if (conf instanceof EmailDConf){
+		if (conf instanceof EmailDConfBeeBPM){
 			
-			EmailDConf emailDConf = (EmailDConf) conf;
+			EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
 			/**
 			 * Initialize email work folders
@@ -398,7 +398,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		
 	}	
 
-	private void processEmailInbox(EmailDConf conf, Integer currentUserId) throws DaemonPollerException {
+	private void processEmailInbox(EmailDConfBeeBPM conf, Integer currentUserId) throws DaemonPollerException {
 		
 		/**
 		 * Obtain inbox message list
@@ -455,7 +455,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		return true;
 	}
 
-	private void processInvalidEmail(EmailDConf conf, Message message, Integer currentUserId) {
+	private void processInvalidEmail(EmailDConfBeeBPM conf, Message message, Integer currentUserId) {
 		
 		String messageId[]={};
 		try {
@@ -514,7 +514,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		}
 	}
 
-	private void processErrorEmail(EmailDConf conf, Message message) {
+	private void processErrorEmail(EmailDConfBeeBPM conf, Message message) {
 		
 		try {
 
@@ -534,7 +534,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		}
 	}
 
-	private void processValidEmail(EmailDConf conf, Message message, Integer currentUserId) 
+	private void processValidEmail(EmailDConfBeeBPM conf, Message message, Integer currentUserId) 
 			throws MessagingException, EmailTrayException, IOException, NullEmailTrayException, 
 			UserEmailAccountException, EmailTrayAttachmentException {
 		
@@ -584,7 +584,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		
 	}
 
-	private void writeLogAndBeeblosBackup(EmailDConf conf, Message message,
+	private void writeLogAndBeeblosBackup(EmailDConfBeeBPM conf, Message message,
 			Integer emailTrayId) {
 		try {
 			
@@ -753,7 +753,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	 * 
 	 * @throws EmailTrayException
 	 */
-	private void notifyNewEmailReception(EmailDConf conf, Integer emailTrayId, Integer currentUserId)
+	private void notifyNewEmailReception(EmailDConfBeeBPM conf, Integer emailTrayId, Integer currentUserId)
 			throws EmailTrayException {
 
 		logger.debug("notifyNewEmailReception(): email reception will be notified");
@@ -852,9 +852,9 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		
 		try {
 			
-			if (conf instanceof EmailDConf){
+			if (conf instanceof EmailDConfBeeBPM){
 				
-				EmailDConf emailDConf = (EmailDConf) conf;
+				EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
 				return this.addControlRecord(emailDConf, controllerName, STARTING_NEW_POLL, currentUserId);
 				
@@ -872,7 +872,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 		
 	}
 
-	private Integer addControlRecord(EmailDConf conf, String controllerName, String status, Integer currentUserId) throws DaemonPollException {
+	private Integer addControlRecord(EmailDConfBeeBPM conf, String controllerName, String status, Integer currentUserId) throws DaemonPollException {
 		
 		EmailDPoll edp = new EmailDPoll();
 		
@@ -897,9 +897,9 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	public Integer updateControlRecord(Integer daemonPollId, DaemonConf conf, 
 			String status, Integer currentUserId) throws DaemonPollerException {
 
-		if (conf instanceof EmailDConf){
+		if (conf instanceof EmailDConfBeeBPM){
 			
-			EmailDConf emailDConf = (EmailDConf) conf;
+			EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
 			return this._updateControlRecord(daemonPollId, emailDConf, status, currentUserId);
 			
@@ -910,7 +910,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 
 	}
 	
-	private Integer _updateControlRecord(Integer daemonPollId, EmailDConf emailDConf, String status, Integer currentUserId){
+	private Integer _updateControlRecord(Integer daemonPollId, EmailDConfBeeBPM emailDConf, String status, Integer currentUserId){
 		
 		EmailDPoll edp = new EmailDPoll();
 		DaemonPollBL edpBL = new DaemonPollBL();
@@ -965,7 +965,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	 * @param edp
 	 * @return
 	 */
-	private Integer _checkDaemonStoppedByUser(EmailDConf emailDConf, EmailDPoll edp){
+	private Integer _checkDaemonStoppedByUser(EmailDConfBeeBPM emailDConf, EmailDPoll edp){
 		
 		if (edp != null && edp.getId() != null && !edp.getId().equals(0)){
 			
@@ -984,7 +984,7 @@ public class MessageEventManagerImpl implements DaemonClassInterface {
 	}
 
 	private void createEmailDLogRegister(
-			EmailDConf conf, Integer emailTrayId, Message message, String destinationFolder )
+			EmailDConfBeeBPM conf, Integer emailTrayId, Message message, String destinationFolder )
 			throws DaemonLogException{
 		
 		logger.debug("EmailDaemonPoller:createEmailDLogRegister ");
