@@ -5,17 +5,13 @@ import org.joda.time.DateTime;
 import com.sp.daemon.email.EmailDConf;
 
 /**
- * Defines the step type Begin Message
+ * Defines the relation between a WStepTypeDef and a EmailDConf
  * 
  * @author dml 20150413
  *
  */
-public class StepTypeDefEmailDConf extends InitEvent {
+public class StepTypeDefEmailDConf {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4915439836593940872L;
 
 	private Integer id;
 	
