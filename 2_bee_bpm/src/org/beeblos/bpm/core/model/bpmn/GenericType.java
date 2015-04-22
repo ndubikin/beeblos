@@ -38,7 +38,7 @@ public class GenericType extends InitEvent {
 
 	@Override
 	public String toString() {
-		return "GenericType [getParamPrueba()=" + getParamPrueba() + ", getType()=" + getType() + ", isActive()="
+		return "GenericType [getType()=" + getType() + ", isActive()="
 				+ isActive() + ", isEngineReq()=" + isEngineReq() + ", isDeleted()=" + isDeleted() + ", getComments()="
 				+ getComments() + ", getInsertDate()=" + getInsertDate() + ", getInsertUser()=" + getInsertUser()
 				+ ", getModDate()=" + getModDate() + ", getModUser()=" + getModUser() + ", getId()=" + getId()

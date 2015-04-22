@@ -1,12 +1,14 @@
 package org.beeblos.bpm.core.bl;
 
-import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.StepTypeDefEmailDConfDao;
 import org.beeblos.bpm.core.error.StepTypeDefEmailDConfException;
+import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.bpmn.StepTypeDefEmailDConf;
+import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.joda.time.DateTime;
 
 import com.sp.daemon.email.EmailDConf;
@@ -67,9 +69,6 @@ public class StepTypeDefEmailDConfBL {
 
 		instance.setAddDate(new DateTime());
 		instance.setAddUser(idCurrentUser);
-		instance.setModDate(DEFAULT_MOD_DATE_TIME);
-		instance.setModUser(idCurrentUser);
-
 
 		StepTypeDefEmailDConfDao rtupDao = new StepTypeDefEmailDConfDao();
 
@@ -155,4 +154,31 @@ public class StepTypeDefEmailDConfBL {
 
 	}
 
+	/**
+	 * Gets all the EmailDConfBeeBPM related with any WStepDef (it could be filtered by 
+	 * processDefId and stepDefId)
+	 * 
+	 * @author dmuleiro 20150421
+	 * 
+	 * @param processDefId
+	 * @param stepDefId
+	 * @return
+	 * @throws WStepDefException
+	 */
+	public List<EmailDConfBeeBPM> getEmailDConfListByProcessAndStep(
+			Integer processDefId, Integer stepDefId) 
+			throws WStepDefException {
+	
+		DateTime begin = new DateTime();
+		
+		List<EmailDConfBeeBPM> list =
+				new StepTypeDefEmailDConfDao().getEmailDConfListByProcessAndStep(processDefId, stepDefId);
+	
+		DateTime end = new DateTime();
+		
+		Double time = ((end.getMillis() - begin.getMillis())/(double) 1000);
+		logger.debug("Tiempo consulta (s) para StepTypeDefEmailDConfBL.getEmailDConfListByProcessAndStep: " + time);
+
+		return list;
+	}
 }

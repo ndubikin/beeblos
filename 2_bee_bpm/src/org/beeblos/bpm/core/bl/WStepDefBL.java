@@ -29,7 +29,6 @@ import org.beeblos.bpm.core.model.WStepSequenceDef;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRole;
-import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.joda.time.DateTime;
 
 import com.sp.common.util.StringPair;
@@ -1296,22 +1295,5 @@ public class WStepDefBL {
 		
 	}
 
-	/**
-	 * Gets all the EmailDConf related with any WStepDef (it could be filtered by 
-	 * processDefId and stepDefId)
-	 * 
-	 * @author dmuleiro 20150421
-	 * 
-	 * @param processDefId
-	 * @param stepDefId
-	 * @return
-	 * @throws WStepDefException
-	 */
-	public List<EmailDConfBeeBPM> getEmailDConfListByProcessAndStep(Integer processDefId, Integer stepDefId) 
-			throws WStepDefException {
-
-		return new WStepDefDao().getEmailDConfListByProcessAndStep(processDefId, stepDefId);
-
-	}
 }
 	

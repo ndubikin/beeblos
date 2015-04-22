@@ -6,6 +6,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.beeblos.bpm.core.bl.StepTypeDefEmailDConfBL;
 import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepHeadBL;
@@ -292,9 +293,14 @@ public class TestWStepDefBL extends TestCase{
 			
 			try {
 				
-				List<EmailDConfBeeBPM> list = new WStepDefBL().getEmailDConfListByProcessAndStep(null, null);
-				
-				System.out.println(list!=null?"TAMAÑO: "+list.size():"NULL");
+				for (int i = 0; i < 20; i++){
+					
+					List<EmailDConfBeeBPM> list = 
+							new StepTypeDefEmailDConfBL().getEmailDConfListByProcessAndStep(null, null);
+					
+					System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" 
+							+ list!=null?"TAMAÑO: "+list.size():"NULL");
+				}
 			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

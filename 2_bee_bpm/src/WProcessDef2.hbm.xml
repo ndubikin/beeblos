@@ -636,10 +636,6 @@
 	        table="w_step_type_def_ie">
 	        <key column="id" />
 	    
-			<property lazy="false" name="paramPrueba" type="string">
-				<column name="param_prueba" />
-			</property>
-	
 			<!-- dml 20150414 TABLA/CLASE CONCRETA DE NIVEL 3 MessageBegin -->
 		    <joined-subclass name="org.beeblos.bpm.core.model.bpmn.MessageBegin"
 		        extends="org.beeblos.bpm.core.model.bpmn.InitEvent" 
