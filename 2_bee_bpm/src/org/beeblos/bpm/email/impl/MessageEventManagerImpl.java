@@ -71,9 +71,9 @@ import com.sp.daemon.error.DaemonPollerException;
 import com.sp.daemon.exe.DaemonClassInterface;
 import com.sp.daemon.model.DaemonConf;
 
-public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
+public class MessageEventManagerImpl implements DaemonClassInterface {
 	
-	private static final Log logger = LogFactory.getLog(EmailDaemonPollerClassImpl.class.getName());
+	private static final Log logger = LogFactory.getLog(MessageEventManagerImpl.class.getName());
 
 	EmailTrayBL emailTrayBL = new EmailTrayBL();
 
@@ -93,7 +93,7 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 	private Integer qtyInvalidEmail = 0;
 	private Integer qtyErrorEmail = 0;
 	
-	public EmailDaemonPollerClassImpl() {
+	public MessageEventManagerImpl() {
 
 		logger.debug("PASA POR EL CONSTRUCTOR DE ProyectoActividadDaemonPollerClassImpl");
 		_init();
@@ -104,7 +104,7 @@ public class EmailDaemonPollerClassImpl implements DaemonClassInterface {
 	}
 
 	@Override
-	public void initialiceDaemonPoller(DaemonConf conf, Integer currentUserId) {
+	public void initializeDaemonPoller(DaemonConf conf, Integer currentUserId) {
 
 		if (conf instanceof EmailDConf){
 			
