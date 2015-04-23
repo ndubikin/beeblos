@@ -16,7 +16,6 @@ import static com.sp.common.util.ConstantsCommon.MESSAGE_ID;
 import static com.sp.common.util.ConstantsCommon.PASS_PHRASE;
 import static com.sp.common.util.ConstantsCommon.POINT_SYMBOL;
 import static com.sp.daemon.util.ConstantsED.STARTING_NEW_POLL;
-import static com.sp.daemon.util.ConstantsED.STOP_THREAD;
 import static com.sp.daemon.util.ConstantsED.THE_POLL_HAS_FINISHED_OK;
 import static org.beeblos.bpm.core.util.Constants.BEEBPM_TMP_FOLDER;
 
@@ -37,7 +36,16 @@ import javax.mail.Store;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.bl.BeeBPMBL;
+import org.beeblos.bpm.core.error.AlreadyExistsRunningProcessException;
+import org.beeblos.bpm.core.error.InjectorException;
+import org.beeblos.bpm.core.error.WProcessDataFieldException;
+import org.beeblos.bpm.core.error.WProcessWorkException;
+import org.beeblos.bpm.core.error.WStepWorkException;
+import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
+import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
 
 import com.beeblos.wsapi.model.BeeblosException;
@@ -47,9 +55,7 @@ import com.email.core.error.UserEmailAccountException;
 import com.email.core.model.Email;
 import com.email.tray.core.bl.EmailTrayBL;
 import com.email.tray.core.error.CreateEmailException;
-import com.email.tray.core.error.EmailTrayAttachmentException;
 import com.email.tray.core.error.EmailTrayException;
-import com.email.tray.core.error.NullEmailTrayException;
 import com.email.tray.core.model.EmailTray;
 import com.email.tray.core.util.EmailPersonalizationUtilBL;
 import com.email.tray.core.util.EmailUtilBL;
@@ -65,9 +71,9 @@ import com.sp.daemon.bl.DaemonLogBL;
 import com.sp.daemon.bl.DaemonPollBL;
 import com.sp.daemon.email.EmailDLog;
 import com.sp.daemon.email.EmailDPoll;
+import com.sp.daemon.error.DaemonJobRunningException;
 import com.sp.daemon.error.DaemonLogException;
 import com.sp.daemon.error.DaemonPollException;
-import com.sp.daemon.error.DaemonPollerException;
 import com.sp.daemon.exe.DaemonExecutor;
 import com.sp.daemon.model.DaemonConf;
 
@@ -104,16 +110,31 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	}
 
 	@Override
-	public void initializeDaemonPoller(DaemonConf conf, Integer currentUserId) {
+	public void initializeDaemonExecutorImpl(DaemonConf conf, Integer currentUserId) throws DaemonJobRunningException {
 
 		if (conf instanceof EmailDConfBeeBPM){
 			
-			EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
+			try {
 
-			this.configureSessionAndVariables(emailDConf);
+				EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
+
+				this.configureSessionAndVariables(emailDConf);
+				
+			} catch (Exception e) {
+				
+				String mess = e.getClass().getSimpleName() + " initializing dameon poller for account '" 
+						+ conf.getEmailAccount().getEmail() + "'. EmailDConfBeeBPM id:("+conf.getId()+")"
+						+" can't create session for email server. "
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+				throw new DaemonJobRunningException(mess);
+			}
 			
 		} else {
-			//TODO THROW EXCEPTION
+			String mess = "Error initializing dameon poller: DaemonConf is not an EmailDConfBeeBPM instance";
+			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		}
 		
 	}
@@ -122,37 +143,25 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	 *  If all is ok returns true. If there is any problem returns false
 	 *  
 	 * @param conf
+	 * @throws DaemonJobRunningException 
 	 */
-	private void configureSessionAndVariables(EmailDConfBeeBPM conf) {
+	private void configureSessionAndVariables(EmailDConfBeeBPM conf) throws DaemonJobRunningException {
 		
-		try {
-
-			/**
-			 * Set "session" Class property
-			 */
-			this.createEmailServerInstance(conf.getEmailAccount().getIngoingServerType()); 
-			
-			/**
-			 * Open email server and check work folder existence
-			 */
-			this.connectEmailServer(conf);
-			
-			/**
-			 * Load the folder names from the configuration
-			 */
-			this.loadEmailServerWorkFolders(conf);
-			
-		} catch (Exception e) {
-			
-			String mess = e.getClass().getSimpleName() + " stopping email daemon for account :" 
-					+ conf.getEmailAccount().getEmail() + " EmailDConfBeeBPM id:("+conf.getId()+")"
-					+" can't create session for email server";
-			logger.error(mess);
-			System.out.println(mess);
-			e.printStackTrace();
-
-		}
-
+		/**
+		 * Set "session" Class property
+		 */
+		this.createEmailServerInstance(conf.getEmailAccount().getIngoingServerType()); 
+		
+		/**
+		 * Open email server and check work folder existence
+		 */
+		this.connectEmailServer(conf);
+		
+		/**
+		 * Load the folder names from the configuration
+		 */
+		this.loadEmailServerWorkFolders(conf);
+		
 	}
 
 	/**
@@ -185,10 +194,10 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	 * 
 	 * @param conf
 	 * 
-	 * @throws DaemonPollerException
+	 * @throws DaemonJobRunningException
 	 */
 	private void connectEmailServer(EmailDConfBeeBPM conf)
-			throws DaemonPollerException {
+			throws DaemonJobRunningException {
 
 		try {
 			String protocol = this._setProtocol(conf.getEmailAccount().getIngoingServerType());
@@ -206,16 +215,12 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			String mess="[MessagingException: connectEmailServer] Error trying to connect with the server:"
 					+" - " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			System.out.println(mess);
-			e.printStackTrace();
-			throw new DaemonPollerException(e);
+			throw new DaemonJobRunningException(mess);
 		} catch (SendEmailException e) {
 			String mess="[MessagingException: connectEmailServer] Error trying to connect with the server:"
 					+" - " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			System.out.println(mess);
-			e.printStackTrace();
-			throw new DaemonPollerException(e);
+			throw new DaemonJobRunningException(mess);
 		}
 
 	}
@@ -244,7 +249,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 
 	}
 
-	private void createEmailServerInstance(String serverType) throws DaemonPollerException {
+	private void createEmailServerInstance(String serverType) throws DaemonJobRunningException {
 		
 		String protocol = this._setProtocol(serverType);
 		
@@ -258,41 +263,54 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 
 
 	@Override
-	public void daemonAction(DaemonConf conf, Integer currentUserId) throws DaemonPollerException {
+	public void daemonAction(DaemonConf conf, Integer currentUserId) {
 
 		if (conf instanceof EmailDConfBeeBPM){
-			
-			EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
-			/**
-			 * Initialize email work folders
-			 */
-			this.openEmailServerWorkFolders();
-			
-			/**
-			 * Check for new email in input folder and process it!
-			 */
-			this.processEmailInbox(emailDConf, currentUserId);
-			
-			this.closeEmailServerWorkFolders();
+			try {
+				
+				EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
+				/**
+				 * Initialize email work folders
+				 */
+				this.openEmailServerWorkFolders();
+				
+				/**
+				 * Check for new email in input folder and process it!
+				 */
+				this.processEmailInbox(emailDConf, currentUserId);
+				
+				this.closeEmailServerWorkFolders();
+
+			} catch (Exception e) {
+				
+				String mess = e.getClass().getSimpleName() + " executing daemon action for account '" 
+						+ conf.getEmailAccount().getEmail() + "'. EmailDConfBeeBPM id:("+conf.getId()+")"
+						+" can't create session for email server. "
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+
+			}
+			
 		} else {
-			//TODO THROW EXCEPTION
+			logger.error("Error executing daemon action: DaemonConf is not an EmailDConfBeeBPM instance");
 		}
 		
 	}
 	
-	private void openEmailServerWorkFolders() {
+	private void openEmailServerWorkFolders() throws DaemonJobRunningException {
 		
 		try {
 
 			this.inboxFolder.open(Folder.READ_WRITE);
 
 		} catch (MessagingException e) {
-			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server INPUT folder :"
+			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server INPUT folder: "
 					+ this.inboxFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}
 
 		try {
@@ -301,10 +319,10 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 
 		} catch (MessagingException e) {
-			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server VALID EMAILS folder :"
+			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server VALID EMAILS folder: "
 					+ this.validEmailFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}
 
 		try {
@@ -314,10 +332,10 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 
 		} catch (MessagingException e) {
-			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server INVALID EMAILS folder :"
+			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server INVALID EMAILS folder: "
 					+ this.invalidEmailFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}
 
 		try {
@@ -327,28 +345,26 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 
 		} catch (MessagingException e) {
-			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server ERROR EMAILS folder :"
+			String mess = "[MessagingException: openEmailServerWorkFolders] Can't open email server ERROR EMAILS folder: "
 					+ this.errorEmailFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}
 
 
 	}
 
-	private void closeEmailServerWorkFolders() {
+	private void closeEmailServerWorkFolders() throws DaemonJobRunningException {
 		
 		try {
 
 			this.inboxFolder.close(true);
 
 		} catch (MessagingException e) {
-			String mess ="[MessagingException: closeEmailServerWorkFolders] Can't close email server INPUT folder :"
-					+inboxFolder.getName()
-					+" - "+ e.getMessage()
-					+" - "+e.getCause();
+			String mess = "[MessagingException: closeEmailServerWorkFolders] Can't close email server INPUT folder: "
+					+ this.inboxFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}
 
 		try {
@@ -357,12 +373,10 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 			
 		} catch (MessagingException e) {
-			String mess ="[MessagingException: closeEmailServerWorkFolders] Can't close email server VALID EMAILS folder :"
-							+validEmailFolder.getName()
-							+" - "+ e.getMessage()
-							+" - "+e.getCause();
+			String mess = "[MessagingException: closeEmailServerWorkFolders] Can't close email server VALID EMAILS folder: "
+					+ this.validEmailFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}
 		
 		try {
@@ -372,12 +386,10 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 			
 		} catch (MessagingException e) {
-			String mess ="[MessagingException: closeEmailServerWorkFolders] Can't close email server INVALID EMAILS folder :"
-					+invalidEmailFolder.getName()
-					+" - "+ e.getMessage()
-					+" - "+e.getCause();
+			String mess = "[MessagingException: closeEmailServerWorkFolders] Can't close email server INVALID EMAILS folder: "
+					+ this.invalidEmailFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}		
 
 		try {
@@ -387,18 +399,16 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 			
 		} catch (MessagingException e) {
-			String mess ="[MessagingException: closeEmailServerWorkFolders] Can't close email server ERROR EMAILS folder :"
-					+invalidEmailFolder.getName()
-					+" - "+ e.getMessage()
-					+" - "+e.getCause();
+			String mess = "[MessagingException: closeEmailServerWorkFolders] Can't close email server ERROR folder: "
+					+ this.errorEmailFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}		
 
 		
 	}	
 
-	private void processEmailInbox(EmailDConfBeeBPM conf, Integer currentUserId) throws DaemonPollerException {
+	private void processEmailInbox(EmailDConfBeeBPM conf, Integer currentUserId) throws DaemonJobRunningException {
 		
 		/**
 		 * Obtain inbox message list
@@ -409,11 +419,10 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			messages = this.inboxFolder.getMessages();
 			
 		} catch (MessagingException e) {
-			String mess="MessagingException: can't obtain message list from inbox folder "
-					+" -- "+e.getMessage()+" "+e.getCause();
+			String mess = "[MessagingException: processEmailInbox] Can't obtain messages from INBOX folder: "
+					+ this.invalidEmailFolder.getName() + ". " + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			
-			throw new DaemonPollerException(mess);
+			throw new DaemonJobRunningException(mess);
 		} 
 		
 		qtyInputEmail += messages.length;
@@ -435,8 +444,9 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 				// captures MessagingException, IOException, NullEmailTrayException and EmailTrayException
 			} catch (Exception e) {
 
-				String mess="ERROR processing message - It will be move to revision folder: "
-						+e.getMessage()+" - "+e.getCause()+" - "+e.getClass();
+				String mess = "[MessagingException: processEmailInbox] Error processing message - It will be move to revision folder: "
+						+ this.errorEmailFolder.getName() + ". " + e.getMessage() 
+						+ (e.getCause()!=null?". "+e.getCause():"") + (e.getClass()!=null?". "+e.getClass():"");
 				logger.error(mess);
 				
 				qtyErrorEmail++;
@@ -498,14 +508,11 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			qtyInvalidEmail++;
 			
 		} catch (Exception e) {
-			String mess="ERROR processing message from inbox - trying move to revision folder: ["
-					+ conf.getInvalidEmailFolder()
-					+"] id:"
-					+messageId[0] + " - "
-					+message.getMessageNumber();
+			String mess = "[MessagingException: processEmailInbox] Error processing message - It will be move to revision folder: "
+					+ this.errorEmailFolder.getName() + ". MessageID: " + messageId
+					+ ". " + e.getMessage() 
+					+ (e.getCause()!=null?". "+e.getCause():"") + (e.getClass()!=null?". "+e.getClass():"");
 			logger.error(mess);
-			System.out.println(mess);
-			e.printStackTrace();
 			
 			qtyErrorEmail++;
 
@@ -528,100 +535,212 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 
 
 		} catch (MessagingException e) {
-			String mess="ERROR processing message from inbox - trying move to error folder: ["
-					+ e.getMessage()+" - "+e.getCause();
+			String mess = "[MessagingException: processEmailInbox] Error processing message - It will be move to revision folder: "
+					+ this.errorEmailFolder.getName() + ". " + e.getMessage() 
+					+ (e.getCause()!=null?". "+e.getCause():"") + (e.getClass()!=null?". "+e.getClass():"");
 			logger.error(mess);
 		}
 	}
 
-	private void processValidEmail(EmailDConfBeeBPM conf, Message message, Integer currentUserId) 
-			throws MessagingException, EmailTrayException, IOException, NullEmailTrayException, 
-			UserEmailAccountException, EmailTrayAttachmentException {
+	private void processValidEmail(EmailDConfBeeBPM conf, Message message, Integer currentUserId) throws DaemonJobRunningException  {
 		
-		message.setFlag(Flag.SEEN, true);
-
-		inboxFolder.copyMessages(
-				new Message[] { message }, validEmailFolder);
-
-		message.setFlag(Flag.DELETED, true);
-
-		Integer emailTrayId = null;
-		
-		// dml 20121025 - if it is an INPUT account we save the received email message
-		if (conf.getType().equals(INPUT)){
+		try {
 			
-			String className = null; // NESTOR: TODO OBJETO AL QUE VAMOS A ASOCIAR EL EMAILTRAY
-			Integer objectId = null; // NESTOR: TODO IDENTIFICADOR DEL OBJETO AL QUE VAMOS A ASOCIAR EL EMAIL
+			message.setFlag(Flag.SEEN, true);
+			
+			inboxFolder.copyMessages(
+					new Message[] { message }, validEmailFolder);
+	
+			message.setFlag(Flag.DELETED, true);
+	
+			Integer emailTrayId = null;
+			
+			/**
+			 *  dml 20121025 - if it is an INPUT account we manage the income email
+			 */
+			if (conf.getType().equals(INPUT)){
+				
+				/**
+				 * Creates the email tray to have this email message logged
+				 */
+				emailTrayId = this._createEmailTray(conf, message, currentUserId);
+	
+				this._injectEmailTrayAsProcess(conf, emailTrayId, currentUserId);
+				
+				/**
+				 * Notifies the email reception if it is indicated
+				 */
+				this.notifyNewEmailReception(conf, emailTrayId, currentUserId);
+				
+			/**
+			 *  If it is an output account...
+			 */
+			} else if (conf.getType().equals(OUTPUT)) {
+			
+				
+				// IMPLEMENTAR DE SER NECESARIO, DE MOMENTO SOLO VAMOS A USAR AQUÍ UNA CUENTA QUE
+				// RECIBA EMAILS Y LOS GESTIONE, NO QUEREMOS ENVIAR NADA...
+				
+	
+			}
+	
+			if (emailTrayId != null){
+				this.writeLogAndBeeblosBackup(conf, message, emailTrayId);
+			} else {
+				logger.error("Impossible to create email tray register and save a email copy in beeblos");
+			}
+	
+			qtyValidEmail++;
 
-			//NESTOR TODO: ESTO SE USARÍA SI POR EJEMPLO VAMOS A GUARDAR UNA TRAZA DE EMAILS DEL MISMO TEMA, 
-			// CON ESTO GUARDARIAMOS EL CAMPO DE EMAIL_TRAY "original_subject" CORRECTAMENTE
-			String VALID_SUBJECT_STRING_IDENTIFIER = null;
+		} catch (MessagingException e) {
+			String mess = "[MessagingException: processValidEmail] processing valid email: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
+		} catch (DaemonJobRunningException e){
+			throw e;
+		}
+		
+		
+	}
+	
+	/**
+	 * Creates the email tray in order to have the email message logged
+	 * 
+	 * @author dmuleiro 20150423
+	 * 
+	 * @param conf
+	 * @param message
+	 * @param currentUserId
+	 * @return
+	 * @throws DaemonJobRunningException 
+	 */
+	private Integer _createEmailTray(EmailDConfBeeBPM conf, Message message, 
+			Integer currentUserId) throws DaemonJobRunningException{
+		
+		String className = WProcessDef.class.getName();
+		Integer objectId = conf.getIdProcessDef();
 
-			// Inserts email message into email_tray table
-			emailTrayId = emailTrayBL.createInputEmailTrayRegister(
+		/**
+		 * NESTOR TODO: ESTO SE USARÍA SI POR EJEMPLO VAMOS A GUARDAR UNA TRAZA DE EMAILS DEL MISMO TEMA,
+		 * CON ESTO GUARDARIAMOS EL CAMPO DE EMAIL_TRAY "original_subject" CORRECTAMENTE, ELIMINANDO
+		 * LOS "Fwd:", "Re:", etc
+		 */
+		String VALID_SUBJECT_STRING_IDENTIFIER = null;
+
+		/**
+		 *  Inserts email message into email_tray table
+		 */
+		try {
+			
+			return emailTrayBL.createInputEmailTrayRegister(
 						message, objectId, className, currentUserId, 
-						JAVA_IO_TEMPDIR, BEEBPM_TMP_FOLDER, VALID_SUBJECT_STRING_IDENTIFIER); 
-
-			this.notifyNewEmailReception(conf, emailTrayId, currentUserId);
+						JAVA_IO_TEMPDIR, BEEBPM_TMP_FOLDER, VALID_SUBJECT_STRING_IDENTIFIER);
 			
-		// If it is an output account...
-		} else if (conf.getType().equals(OUTPUT)) {
+		} catch (EmailTrayException e) {
+			String mess = "[EmailTrayException: _createEmailTray] creating email tray: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new DaemonJobRunningException(mess, e);
+		} 
+
+	}
+	
+	/**
+	 * Injects the created EmailTray into the process workflow. This is the main action of the algorithm.
+	 * 
+	 * @author dmuleiro 20150423
+	 * 
+	 * @throws DaemonJobRunningException 
+	 */
+	private void _injectEmailTrayAsProcess(EmailDConfBeeBPM conf, Integer emailTrayId, Integer currentUserId) throws DaemonJobRunningException{
 		
+		if (emailTrayId != null && !emailTrayId.equals(0)){
 			
-			// IMPLEMENTAR DE SER NECESARIO, DE MOMENTO SOLO VAMOS A USAR AQUÍ UNA CUENTA QUE
-			// RECIBA EMAILS Y LOS GESTIONE, NO QUEREMOS ENVIAR NADA...
-			
+			EmailTray et = null;
+			try {
+				et = new EmailTrayBL().getEmailTrayByPK(emailTrayId);
+			} catch (EmailTrayException e) {
+				String mess = "[EmailTrayException: _injectEmailTrayProcess] getting email tray: "
+						+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+				throw new DaemonJobRunningException(mess, e);
+			}
 
+			if (et != null && et.getId() != null && !et.getId().equals(0)){
+				
+				String objComments = "Process injected by MessageBegin event with id '" + conf.getIdStepDef()
+						+ "' and MessageId= " + et.getMessageId();
+				
+				try {
+					
+					Integer idStepWork = new BeeBPMBL().injector(
+							conf.getIdProcessDef(), //idProcessDef
+							conf.getIdStepDef(), //idStepDef
+							et.getId(), //idObject
+							et.getClass().getName(), //idObjectType
+							et.getSubject(), // objReference
+							objComments, // Comentarios del objeto?
+							currentUserId);
+					
+				} catch (InjectorException e) {
+					String mess = "[InjectorException: _injectEmailTrayProcess] injecting email tray: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess, e);
+				} catch (AlreadyExistsRunningProcessException e) {
+					String mess = "[AlreadyExistsRunningProcessException: _injectEmailTrayProcess] injecting email tray: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess, e);
+				} catch (WStepWorkException e) {
+					String mess = "[WStepWorkException: _injectEmailTrayProcess] injecting email tray: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess, e);
+				} catch (WProcessWorkException e) {
+					String mess = "[WProcessWorkException: _injectEmailTrayProcess] injecting email tray: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess, e);
+				} catch (TableManagerException e) {
+					String mess = "[TableManagerException: _injectEmailTrayProcess] injecting email tray: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess, e);
+				} catch (WStepWorkSequenceException e) {
+					String mess = "[WStepWorkSequenceException: _injectEmailTrayProcess] injecting email tray: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess, e);
+				} catch (WProcessDataFieldException e) {
+					String mess = "[WProcessDataFieldException: _injectEmailTrayProcess] injecting email tray: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess, e);
+				}
+				
+			}
 		}
-
-		if (emailTrayId != null){
-			this.writeLogAndBeeblosBackup(conf, message, emailTrayId);
-		} else {
-			logger.error("Impossible to create email tray register and save a email copy in beeblos");
-		}
-
-		qtyValidEmail++;
 		
 	}
 
 	private void writeLogAndBeeblosBackup(EmailDConfBeeBPM conf, Message message,
-			Integer emailTrayId) {
+			Integer emailTrayId) throws DaemonJobRunningException {
 		try {
 			
 			
 			this.createEmailDLogRegister(conf, emailTrayId, message, conf.getValidEmailFolder());
 			
 		} catch (DaemonLogException e) {
-			String mess="error EmailDLogException trying to save emailDLog : ["
-			+ e.getMessage()+" - "+e.getCause()
-			+"] ";
+			String mess = "[BeeblosException: writeLogAndBeeblosBackup] creating daemon log: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.warn(mess);
 		}
 		
-		try {
+		this.saveValidEmailInBeeblosAndInFileSystem(message, emailTrayId,
+				BEEBLOS_DEFAULT_REPOSITORY_ID, conf.getEmailAccount().getName());
 
-			this.saveValidEmailInBeeblosAndInFileSystem(
-					message, emailTrayId,
-					BEEBLOS_DEFAULT_REPOSITORY_ID, 
-					conf.getEmailAccount().getName());
-
-
-		} catch (BeeblosException e) {
-			String mess="error BeeblosException trying to save message to beeblos/fs : ["
-			+ e.getMessage()+" - "+e.getCause()
-			+"] ";
-			logger.error(mess);
-		} catch (IOException e) {
-			String mess="error IOException trying to save message to beeblos/fs : ["
-			+ e.getMessage()+" - "+e.getCause()
-			+"] ";
-			logger.error(mess);				
-		} catch (MessagingException e) {
-			String mess="error MessagingException trying convert email message to save message to beeblos/fs : ["
-			+ e.getMessage()+" - "+e.getCause()
-			+"] ";
-			logger.error(mess);	
-		}
 	}
 
 	/**
@@ -634,13 +753,13 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	 * @param repositoryId
 	 * @param userLogin
 	 * @return
+	 * @throws DaemonJobRunningException 
 	 * @throws MessagingException
 	 * @throws BeeblosException
 	 * @throws IOException
 	 */
 	private Integer saveValidEmailInBeeblosAndInFileSystem(Message message, 
-			Integer emailTrayId, Integer repositoryId , String userLogin)
-			throws MessagingException, BeeblosException, IOException {
+			Integer emailTrayId, Integer repositoryId , String userLogin) throws DaemonJobRunningException {
 
 		Integer returnValue = null;
 
@@ -708,18 +827,24 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 						logger.debug("email was saved in repository(): docId created: "
 								+ ret);
 					} else {
-						throw new BeeblosException(
-								"No connnection established with Beeblos...");
+						throw new DaemonJobRunningException(
+								"[BeeblosBLException: saveValidEmailInBeeblosAndInFileSystem] No connnection established with Beeblos...");
 					}
 				} catch (BeeblosBLException e) {
-					String mensaje = "BeeblosBLException: Error, saveValidEmailInBeeblosAndInFileSystem(): "
+					String mess = "[BeeblosBLException: saveValidEmailInBeeblosAndInFileSystem] saving email in beeblos: "
 							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
-					logger.error(mensaje);
-					throw new BeeblosException(mensaje);
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess);
 				} catch (NumberFormatException e) {
-					String mensaje = "NumberFormatException: Error, saveValidEmailInBeeblosAndInFileSystem(): "
+					String mess = "[NumberFormatException: saveValidEmailInBeeblosAndInFileSystem] saving email in beeblos: "
 							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
-					throw new BeeblosException(mensaje);
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess);
+				} catch (MessagingException e) {
+					String mess = "[MessagingException: saveValidEmailInBeeblosAndInFileSystem] saving email in beeblos: "
+							+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+					logger.error(mess);
+					throw new DaemonJobRunningException(mess);
 				}
 			}
 
@@ -735,9 +860,15 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			out.flush();
 
 		} catch (IOException e) {
-			String mensaje = "IOException: Error, saveValidEmailInBeeblosAndInFileSystem(): " + e.getMessage();
-			e.printStackTrace();
-			throw new IOException(mensaje);
+			String mess = "[IOException: saveValidEmailInBeeblosAndInFileSystem] saving email in beeblos: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
+		} catch (MessagingException e) {
+			String mess = "[MessagingException: saveValidEmailInBeeblosAndInFileSystem] saving email in beeblos: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		}
 
 		return returnValue;
@@ -751,10 +882,10 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	 * @param emailTrayId
 	 * @param currentUserId
 	 * 
-	 * @throws EmailTrayException
+	 * @throws DaemonJobRunningException 
 	 */
 	private void notifyNewEmailReception(EmailDConfBeeBPM conf, Integer emailTrayId, Integer currentUserId)
-			throws EmailTrayException {
+			throws DaemonJobRunningException {
 
 		logger.debug("notifyNewEmailReception(): email reception will be notified");
 		
@@ -805,25 +936,35 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 		
 		} catch (UserException e) {
-			e.printStackTrace();
-			String mess="notifyNewEmailReception(): ERROR creating notification email: [" + e.getMessage()+" - "+e.getCause() + "]";
+			String mess = "[MessagingException: notifyNewEmailReception] creating notification: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		} catch (SendEmailException e) {
-			e.printStackTrace();
-			String mess="notifyNewEmailReception(): ERROR creating notification email: [" + e.getMessage()+" - "+e.getCause() + "]";
+			String mess = "[SendEmailException: notifyNewEmailReception] creating notification: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		} catch (UserEmailAccountException e) {
-			e.printStackTrace();
-			String mess="notifyNewEmailReception(): ERROR creating notification email: [" + e.getMessage()+" - "+e.getCause() + "]";
+			String mess = "[UserEmailAccountException: notifyNewEmailReception] creating notification: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		} catch (BeeblosBLException e) {
-			e.printStackTrace();
-			String mess="notifyNewEmailReception(): ERROR creating notification email: [" + e.getMessage()+" - "+e.getCause() + "]";
+			String mess = "[BeeblosBLException: notifyNewEmailReception] creating notification: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		} catch (CreateEmailException e) {
-			e.printStackTrace();
-			String mess="notifyNewEmailReception(): ERROR creating notification email: [" + e.getMessage()+" - "+e.getCause() + "]";
+			String mess = "[CreateEmailException: notifyNewEmailReception] creating notification: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
+		} catch (EmailTrayException e) {
+			String mess = "[EmailTrayException: notifyNewEmailReception] creating notification: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		}
 		
 	}
@@ -845,30 +986,36 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	/**
 	 *  Open a "session" control record in email_d_poll table to control
 	 *  status of thread polling for this account
+	 * @throws DaemonJobRunningException 
 	 * @throws DaemonPollException 
 	 */
 	@Override
-	public Integer createProcessControlRecord(DaemonConf conf, String controllerName, Integer currentUserId) {
+	public Integer createProcessControlRecord(DaemonConf conf, String controllerName, Integer currentUserId) throws DaemonJobRunningException {
 		
-		try {
+		if (conf instanceof EmailDConfBeeBPM){
 			
-			if (conf instanceof EmailDConfBeeBPM){
+			try {
 				
 				EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
 				return this.addControlRecord(emailDConf, controllerName, STARTING_NEW_POLL, currentUserId);
 				
-			} else {
-				//NESTOR TODO: THROW EXCEPTION
+			} catch (Exception e) {
+				
+				String mess = e.getClass().getSimpleName() + " creating process control record for account '" 
+						+ conf.getEmailAccount().getEmail() + "'. EmailDConfBeeBPM id:("+conf.getId()+")"
+						+" can't create session for email server. "
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+				throw new DaemonJobRunningException(mess);
 			}
 			
-		} catch (DaemonPollException e) {
-			e.printStackTrace();
-			String mess="ProyectoActividadDaemonPollerClassImpl.notificarProximaActividad(): ERROR al obtener el proyecto: [" + e.getMessage()+" - "+e.getCause() + "]";
+		} else {
+			String mess = "Error creating process control record: DaemonConf is not an EmailDConfBeeBPM instance";
 			logger.error(mess);
+			throw new DaemonJobRunningException(mess);
 		}
-		
-		return null;
 		
 	}
 
@@ -895,22 +1042,36 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 
 	@Override
 	public Integer updateControlRecord(Integer daemonPollId, DaemonConf conf, 
-			String status, Integer currentUserId) throws DaemonPollerException {
+			String status, Integer currentUserId) {
 
 		if (conf instanceof EmailDConfBeeBPM){
 			
-			EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
+			try {
+				
+				EmailDConfBeeBPM emailDConf = (EmailDConfBeeBPM) conf;
 
-			return this._updateControlRecord(daemonPollId, emailDConf, status, currentUserId);
-			
+				return this._updateControlRecord(daemonPollId, emailDConf, status, currentUserId);
+				
+			} catch (Exception e) {
+				
+				String mess = e.getClass().getSimpleName() + " updating control record for account '" 
+						+ conf.getEmailAccount().getEmail() + "'. EmailDConfBeeBPM id:("+conf.getId()+")"
+						+" can't create session for email server. "
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+
+			}
+
 		} else {
-			throw new DaemonPollerException("[EmailDaemonPollerClassImpl] Error actualizando el registro de poll");
+			logger.error("Error updating control record: DaemonConf is not an EmailDConfBeeBPM instance");
 		}
 		
+		return null;
 
 	}
 	
-	private Integer _updateControlRecord(Integer daemonPollId, EmailDConfBeeBPM emailDConf, String status, Integer currentUserId){
+	private Integer _updateControlRecord(Integer daemonPollId, EmailDConfBeeBPM emailDConf, String status, Integer currentUserId) throws DaemonJobRunningException{
 		
 		EmailDPoll edp = new EmailDPoll();
 		DaemonPollBL edpBL = new DaemonPollBL();
@@ -918,18 +1079,6 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 		try {
 			
 			edp = (EmailDPoll) edpBL.getDaemonPollSubObjectByPK(daemonPollId, EmailDPoll.class);
-			
-			/**
-			 * Si el status indica que ya esta finalizado OK entonces no comprobamos porque es que ya se esta parando
-			 * y no hace falta saber que dice el usuario...
-			 */
-			if (status != null && !status.equals(THE_POLL_HAS_FINISHED_OK)){
-				Integer killerUserId = this._checkDaemonStoppedByUser(emailDConf, edp);
-				
-				if (killerUserId != null){
-					return killerUserId;
-				}
-			}
 			
 			edp.setQtyInputEmail(this.qtyInputEmail);
 			edp.setQtyValidEmail(this.qtyValidEmail);
@@ -945,44 +1094,16 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			edpBL.update(edp, EmailDPoll.class, currentUserId);
 			
 		} catch (DaemonPollException e) {
-			String mess="[DaemonPollException: updateControlRecord] Error trying update control record in email_dpoll tabla control record id:"
+			String mess = "[DaemonPollException: _updateControlRecord] trying update control record in email_dpoll tabla control record id: "
 					+ daemonPollId + e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
-			System.out.println(mess);
-			e.printStackTrace();
+			throw new DaemonJobRunningException(mess);
 		}
 		
 		return null;
 
 	}
 	
-	/**
-	 * Checks if the daemon was stopped by the user (by the EmailDPoll) and if it is, returns the "killer user id"
-	 * 
-	 * @author dmuleiro 20140507
-	 * 
-	 * @param emailDConf
-	 * @param edp
-	 * @return
-	 */
-	private Integer _checkDaemonStoppedByUser(EmailDConfBeeBPM emailDConf, EmailDPoll edp){
-		
-		if (edp != null && edp.getId() != null && !edp.getId().equals(0)){
-			
-			if (edp.getComment() != null && edp.getComment().equals(STOP_THREAD)){
-				logger.debug("[DaemonPoller] The daemon thread with account '" 
-						+  emailDConf.getEmailAccount().getName() 
-						+ "' is been finished by user '" + edp.getModUser() + "'");
-				return edp.getModUser();
-				
-			}
-			
-		}
-		
-		return null;
-		
-	}
-
 	private void createEmailDLogRegister(
 			EmailDConfBeeBPM conf, Integer emailTrayId, Message message, String destinationFolder )
 			throws DaemonLogException{
@@ -1001,7 +1122,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 		try {
 			emailDLogRegister.setSubject(message.getSubject());
 		} catch (MessagingException e) {
-			emailDLogRegister.setSubject("error reading javax.mail.message subject");
+			emailDLogRegister.setSubject("Error reading javax.mail.message subject");
 		}
 
 		try {
@@ -1009,7 +1130,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 				.setMessageId( 
 						emailTrayBL.getMessageId(message.getHeader(MESSAGE_ID)) );
 		} catch (MessagingException e) {
-			emailDLogRegister.setMessageId("error reading javax.mail.message "+MESSAGE_ID);
+			emailDLogRegister.setMessageId("Error reading javax.mail.message "+MESSAGE_ID);
 		}
 		
 
@@ -1022,7 +1143,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 		} catch (EmailTrayException e) {
 			et=null;
-			emailDLogRegister.setMessageId("error reading email_tray while saving email_d_log");
+			emailDLogRegister.setMessageId("Error reading email_tray while saving email_d_log");
 		}
 		
 		if (et != null){
