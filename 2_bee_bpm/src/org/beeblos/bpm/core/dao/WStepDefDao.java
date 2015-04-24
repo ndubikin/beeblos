@@ -16,6 +16,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
+import org.beeblos.bpm.core.util.StepDefStepTypeConfigurationUtil;
 import org.hibernate.HibernateException;
 import org.joda.time.DateTime;
 
@@ -36,7 +37,14 @@ public class WStepDefDao {
 		logger.debug("add() WStepDef - Name: ["+
 						(step!=null && step.getStepHead()!=null&&step.getStepHead().getName()!=null?step.getStepHead().getName():"null")
 								+"]");
-		
+
+		/**
+		 * Updates the "stepTypeConfiguration" field before updating it into DB
+		 * 
+		 * @author dmuleiro 20150424
+		 */
+		StepDefStepTypeConfigurationUtil.updateStepTypeConfigurationXml(step);
+
 		try {
 
 			return Integer.valueOf(HibernateUtil.save(step));
@@ -68,8 +76,15 @@ public class WStepDefDao {
 		
 		logger.debug("update() WStepDef < id = "+step.getId()+">");
 		
-		try {
+		/**
+		 * Updates the "stepTypeConfiguration" field before updating it into DB
+		 * 
+		 * @author dmuleiro 20150424
+		 */
+		StepDefStepTypeConfigurationUtil.updateStepTypeConfigurationXml(step);
 
+		try {
+			
 			HibernateUtil.update(step);
 
 
@@ -93,7 +108,7 @@ public class WStepDefDao {
 		}
 					
 	}
-	
+		
 	/**
 	 * @author dmuleiro - 20130830
 	 * 
@@ -136,7 +151,7 @@ public class WStepDefDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String message = "HibernateException: update - Can't update deleted field for step " + stepId
+			String message = "HibernateException: updateStepDeletedField - Can't update deleted field for step " + stepId
 					+ " - and deleted = " + deleted + "  - " + ex.getMessage() + " "
 					+ ex.getCause();
 			logger.error(message);
@@ -144,8 +159,75 @@ public class WStepDefDao {
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String message = "Exception: update - Can't update deleted field for step " + stepId
+			String message = "Exception: updateStepDeletedField - Can't update deleted field for step " + stepId
 					+ " - and deleted = " + deleted + "  - " + ex.getMessage() + " "
+					+ ex.getCause();
+			logger.error(message);
+			throw new WStepDefException(message);
+		}
+
+	}
+	
+	/**
+	 * Updates the step type configuration xml field marshaling it WStepTypeDef object
+	 *
+	 * @author dmuleiro 20150424
+	 * 
+	 * @param  Integer wsd
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepDefException 
+	 * 
+	 */
+	public void updateStepTypeConfigurationField(WStepDef wsd, Integer modUserId,
+			DateTime modDate) throws WStepDefException {
+
+		logger.debug("updateStepTypeConfigurationField() WStepDef < id = " + wsd.getId() + ">");
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+		
+		/**
+		 * Updates the "stepTypeConfiguration" field before updating it into DB
+		 * 
+		 * @author dmuleiro 20150424
+		 */
+		StepDefStepTypeConfigurationUtil.updateStepTypeConfigurationXml(wsd);
+		
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			session.createQuery(
+					"UPDATE WStepDef SET stepTypeConfiguration = :stepTypeConfiguration, modUser = :modUserId, modDate = :modDate WHERE id = :stepId")
+					.setParameter("stepTypeConfiguration", wsd.getStepTypeConfiguration())
+					.setParameter("stepId", wsd.getId())
+					.setParameter("modUserId", modUserId)
+					.setParameter("modDate", modDate)
+					.executeUpdate();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String message = "HibernateException: updateStepTypeConfigurationField - Can't update stepTypeConfiguration field for step " + wsd.getId()
+					+ " - and stepTypeConfiguration = " + wsd.getStepTypeConfiguration() 
+					+ "  - " + ex.getMessage() + " "
+					+ ex.getCause();
+			logger.error(message);
+			throw new WStepDefException(message);
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String message = "Exception: updateStepTypeConfigurationField - Can't update stepTypeConfiguration field for step " + wsd.getId()
+					+ " - and stepTypeConfiguration = " + wsd.getStepTypeConfiguration() 
+					+ "  - " + ex.getMessage() + " "
 					+ ex.getCause();
 			logger.error(message);
 			throw new WStepDefException(message);
@@ -295,9 +377,17 @@ public class WStepDefDao {
 			logger.error( mess );
 			throw new WStepDefException( mess );
 		}
+		
+		/**
+		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+		 * 
+		 * @author dmuleiro 20150424
+		 */
+		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(step);
 
 		return step;
 	}
+
 
 //	private static <T> Set<T> filterCollection(Set<T> collection, Session s, Integer id) {
 //		Query filterQuery = s.createFilter(collection, "where processHeadId ="+id);
@@ -379,6 +469,13 @@ public class WStepDefDao {
 
 		// TODO HAY QUE CARGAR EL MANAGED DATA PARA CADA STEP-DEF
 		
+		/**
+		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+		 * 
+		 * @author dmuleiro 20150424
+		 */
+		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(steps);
+
 		return steps;
 	}
 	
@@ -560,6 +657,13 @@ public class WStepDefDao {
 			throw new WStepDefException("WStepDefDao: getWStepDefs() - can't obtain step list: "
 					+ ex.getMessage()+" "+ex.getCause());
 		}
+
+		/**
+		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+		 * 
+		 * @author dmuleiro 20150424
+		 */
+		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(steps);
 
 		return steps;
 	
@@ -1060,7 +1164,7 @@ public class WStepDefDao {
 		org.hibernate.Transaction tx = null;
 		org.hibernate.Query q = null;
 					
-		List<WStepDef> lprocess = null;
+		List<WStepDef> steps = null;
 		
 		// build filter from user params. String and Integer values will be added to
 		// the String directly in the string filter.
@@ -1107,7 +1211,7 @@ public class WStepDefDao {
 			//q.setInteger("userId",userId);
 			
 			// retrieve list
-			lprocess = q.list();
+			steps = q.list();
 			
 			tx.commit();
 
@@ -1128,7 +1232,14 @@ public class WStepDefDao {
 			throw new WStepDefException(message);
 		}
 		
-		return lprocess;
+		/**
+		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+		 * 
+		 * @author dmuleiro 20150424
+		 */
+		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(steps);
+
+		return steps;
 	}
 
 	private String getRequiredFilter ( Integer userId, boolean isAdmin ) {

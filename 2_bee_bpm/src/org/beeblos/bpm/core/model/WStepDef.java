@@ -260,6 +260,16 @@ public class WStepDef implements java.io.Serializable {
 	 */
 	private boolean renderAttachedDocuments;
 
+	/**
+	 * This field contains all the extra information that the step will have about its WStepTypeDef.
+	 * 
+	 * For example, if the Step is a MessageBegin, this xml will contain all the hierarchy of this
+	 * attributes. 
+	 * 
+	 * @author dmuleiro 20150424
+	 */
+	private String stepTypeConfiguration;
+	
 	// dml 20120113
 	private DateTime insertDate;
 	private Integer insertUser;
@@ -1637,5 +1647,13 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setRenderAttachedDocuments(boolean renderAttachedDocuments) {
 		this.renderAttachedDocuments = renderAttachedDocuments;
+	}
+
+	public String getStepTypeConfiguration() {
+		return stepTypeConfiguration;
+	}
+
+	public void setStepTypeConfiguration(String stepTypeConfiguration) {
+		this.stepTypeConfiguration = stepTypeConfiguration;
 	}
 }

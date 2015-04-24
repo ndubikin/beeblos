@@ -1,6 +1,14 @@
 package org.beeblos.bpm.core.model;
 
 import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.joda.time.DateTime;
 
@@ -11,6 +19,7 @@ import org.joda.time.DateTime;
  * @author pab
  *
  */
+@XmlRootElement
 public abstract class WStepTypeDef implements Serializable {
 
 	protected static final long serialVersionUID = 1L;
@@ -53,6 +62,11 @@ public abstract class WStepTypeDef implements Serializable {
 	 * defalut step processors
 	 */
 	protected Boolean allowedResponses;
+	
+	/**
+	 * This value will have the class type of the "WStepTypeDef" (e.g. MessageBegin, Timer, ...) 
+	 */
+	protected String relatedClass;
 
 	// timestamps
 	protected DateTime insertDate;
@@ -259,6 +273,14 @@ public abstract class WStepTypeDef implements Serializable {
 		this.allowedResponses = allowedResponses;
 	}
 
+	public String getRelatedClass() {
+		return relatedClass;
+	}
+
+	public void setRelatedClass(String relatedClass) {
+		this.relatedClass = relatedClass;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -275,6 +297,7 @@ public abstract class WStepTypeDef implements Serializable {
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")
 				+ (allowedResponses != null ? "allowedResponses=" + allowedResponses : "")
+				+ (relatedClass != null ? "relatedClass=" + relatedClass : "")
 				+ "]";
 	}
 
@@ -301,6 +324,7 @@ public abstract class WStepTypeDef implements Serializable {
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((relatedClass == null) ? 0 : relatedClass.hashCode());
 		return result;
 	}
 
@@ -367,6 +391,11 @@ public abstract class WStepTypeDef implements Serializable {
 				return false;
 		} else if (!type.equals(other.type))
 			return false;
+		if (relatedClass == null) {
+			if (other.relatedClass != null)
+				return false;
+		} else if (!relatedClass.equals(other.relatedClass))
+			return false;
 		return true;
 	}
 
@@ -398,4 +427,71 @@ public abstract class WStepTypeDef implements Serializable {
 
     	
     }
+
+	/**
+	 * Returns this object into XML format (into a String)
+	 * 
+	 * @return
+	 */
+	public String marshal()  {
+		JAXBContext context;
+		try {
+			context = JAXBContext.newInstance(WStepTypeDef.class);
+			Marshaller marshaller = context.createMarshaller();
+			StringWriter stringWriter = new StringWriter();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.marshal(this, stringWriter);
+			return stringWriter.toString();			
+		} catch (JAXBException e) {
+			String mess = "Error marshalling WStepTypeDef "
+					+e.getMessage()+(e.getCause()!=null?". "+e.getCause():" ");
+			System.out.println(mess);
+		}
+
+		return null;
+		
+	}
+
+	/**
+	 * Unmarshals an XML String and fills the WStepTypeDef hierarchy
+	 * 
+	 * @param str
+	 * 
+	 */
+	public void unmarshal(String str)  {
+		JAXBContext context;
+		try {
+			context = JAXBContext.newInstance(WStepTypeDef.class);
+			Unmarshaller unmarshaler = context.createUnmarshaller();
+			StringReader stringReader = new StringReader(str);
+			this.setObj((WStepTypeDef)unmarshaler.unmarshal(stringReader));			
+		} catch (JAXBException e) {
+			String mess = "Error unmarshalling WStepTypeDef "
+					+ e.getMessage()+(e.getCause()!=null?". "+e.getCause():" ");
+			System.out.println(mess);
+		}
+
+	}
+
+	/**
+	 * Constructor using object WStepTypeDef
+	 */
+	public void setObj(WStepTypeDef wstd) {
+
+		this.id = wstd.getId();
+		this.name = wstd.getName();
+		this.type = wstd.getType();
+		this.active = wstd.isActive();
+		this.engineReq = wstd.isEngineReq();
+		this.deleted = wstd.isDeleted();
+		this.comments = wstd.getComments();
+		this.allowedResponses = wstd.getAllowedResponses();
+		this.relatedClass = wstd.getRelatedClass();
+		this.insertDate = wstd.getInsertDate();
+		this.insertUser = wstd.getInsertUser();
+		this.modDate = wstd.getModDate();
+		this.modUser = wstd.getModUser();
+	
+	}
+
 }

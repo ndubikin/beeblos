@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.error.StepTypeDefEmailDConfException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.bpmn.MessageBegin;
 import org.beeblos.bpm.core.model.bpmn.StepTypeDefEmailDConf;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
+import org.beeblos.bpm.core.util.StepDefStepTypeConfigurationUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
@@ -27,7 +29,8 @@ public class StepTypeDefEmailDConfDao {
 	public StepTypeDefEmailDConfDao() {
 
 	}
-
+	
+/*
 	public Integer add(StepTypeDefEmailDConf instance) throws StepTypeDefEmailDConfException {
 
 		logger.debug("add() StepTypeDefEmailDConf - emailDConf/stepTypeDef: [" 
@@ -185,6 +188,7 @@ public class StepTypeDefEmailDConfDao {
 		}
 		return true;
 	}
+*/
 	
 	/**
 	 * Gets all the EmailDConfBeeBPM related with any WStepDef (it could be filtered by 
@@ -214,26 +218,17 @@ public class StepTypeDefEmailDConfDao {
 
 			tx.begin();
 			
-			String hqlQuery = " Select new org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM( ";
-			hqlQuery += " wpd.id, wpd.process.name, wsd.id, wsd.stepHead.name, edcRel.emailDConf) ";
+			String hqlQuery = " Select wpd.id, wpd.process.name, wsd ";
 			
-			hqlQuery += " From StepTypeDefEmailDConf edcRel, WStepDef wsd, WProcessDef wpd ";
+			hqlQuery += " From WStepDef wsd, WProcessDef wpd ";
 			hqlQuery += " Left Outer Join wpd.steps As step ";
 			
-			hqlQuery += " Where edcRel.stepTypeDefId = wsd.stepTypeDef.id ";
-			hqlQuery += " And wsd.id = step.id ";
-			hqlQuery += " And edcRel.emailDConf Is Not Null ";
+			hqlQuery += " Where wsd.id = step.id ";
 			
-			/* dml 20150422 - DESDE EL OTRO LADO DE LA RELACION TAMBIÉN SALE, PERO ESTUDIANDO LOS
-			 * TIEMPOS DE LA CONSULTA SON AMBOS PARECIDOS
-			String hqlQuery = " Select new org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM( ";
-			hqlQuery += " wpd.id, wpd.process.name, wsd.id, wsd.stepHead.name, edc) ";
-			hqlQuery += " From WProcessDef wpd ";
-			hqlQuery += " Left Outer Join wpd.steps As wsd ";
-			hqlQuery += " Left Outer Join wsd.stepTypeDef.emailDConfs As edcRel ";
-			hqlQuery += " Left Outer Join edcRel.emailDConf As edc ";
-			hqlQuery += " Where edc Is Not Null ";
+			/**
+			 * This filters only the wsd which contains any "emailDConf"
 			 */
+			hqlQuery += " And wsd.stepTypeConfiguration Like '%<emailDConfs>%' ";
 			
 			if (stepDefId  != null && !stepDefId.equals(0)){
 				hqlQuery += " And wsd.id = :stepDefId ";
@@ -252,10 +247,47 @@ public class StepTypeDefEmailDConfDao {
 				query.setParameter("processDefId", processDefId);
 			}
 			
-			list = (ArrayList<EmailDConfBeeBPM>) query.list();
+			List<Object[]> objectList = query.list();
 			
 			tx.commit();
 
+			if (objectList != null){
+				
+				list = new ArrayList<EmailDConfBeeBPM>();
+				
+				for (Object[] cols : objectList){
+					
+					if (cols[2] != null && cols[2] instanceof WStepDef){
+						
+						WStepDef wsd = (WStepDef) cols[2];
+						
+						StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(wsd);
+						
+						if (wsd.getStepTypeDef() != null && wsd.getStepTypeDef() instanceof MessageBegin){
+							
+							MessageBegin mb = (MessageBegin) wsd.getStepTypeDef();
+							
+							if (mb.getEmailDConfs() != null && !mb.getEmailDConfs().isEmpty()){
+								
+								for (StepTypeDefEmailDConf object : mb.getEmailDConfs()) {
+									
+									list.add(new EmailDConfBeeBPM(
+											(cols[0]!=null)?new Integer(cols[0].toString()):null, 
+											(cols[1]!=null)?cols[1].toString():null, 
+											wsd.getId(),
+											wsd.getName(),
+											object.getEmailDConf()));
+									
+								}
+								
+							}
+							
+						}
+					}
+					
+				}
+			}
+			
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();

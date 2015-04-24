@@ -10,6 +10,7 @@ import org.beeblos.bpm.core.model.WStepTypeDef;
  * @author nestor
  *
  */
+
 public abstract class InitEvent extends WStepTypeDef {
 
 	/**
@@ -19,6 +20,15 @@ public abstract class InitEvent extends WStepTypeDef {
 	
 	public InitEvent(){
 		
+	}
+
+	/**
+	 * Constructor using object InitEvent
+	 */
+	public void setObj(InitEvent ie) {
+
+		super.setObj(ie);
+
 	}
 
 }

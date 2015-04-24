@@ -242,6 +242,30 @@ public class WStepDefBL {
 	}
 	
 	/**
+	 * Updates the step type configuration xml field marshaling it WStepTypeDef object
+	 *
+	 * @author dmuleiro 20150424
+	 * 
+	 * @param  Integer wsd
+	 * @param  Integer currentUserId
+	 * 
+	 * @return void
+	 * 
+	 * @throws WStepDefException 
+	 * 
+	 */
+	public void updateStepTypeConfigurationField(WStepDef wsd, Integer currentUserId)
+			throws WStepDefException {
+		
+		if (wsd == null || wsd.getId() == null || wsd.getStepTypeDef() == null){
+			throw new WStepDefException("The step def is not valid!");
+		}
+
+		new WStepDefDao().updateStepTypeConfigurationField(wsd, currentUserId, new DateTime());
+
+	}
+
+	/**
 	 * @author dmuleiro - 20130830
 	 * 
 	 * Updates the step's "logical delete" field  
