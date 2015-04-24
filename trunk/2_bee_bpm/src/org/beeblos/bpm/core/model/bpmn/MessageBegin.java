@@ -1,9 +1,18 @@
 package org.beeblos.bpm.core.model.bpmn;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.joda.time.DateTime;
 
@@ -13,6 +22,7 @@ import org.joda.time.DateTime;
  * @author dml 20150413
  *
  */
+@XmlRootElement
 public class MessageBegin extends InitEvent {
 
 	/**
@@ -46,18 +56,19 @@ public class MessageBegin extends InitEvent {
 		this.modUser = modUser;
 	}
 
-	public Set<StepTypeDefEmailDConf> getEmailDConfs() {
-		if (emailDConfs == null){
-			return new HashSet<StepTypeDefEmailDConf>();
-		}
-		return emailDConfs;
-	}
-
 	public List<StepTypeDefEmailDConf> getEmailDConfsAsList() {
 		if (emailDConfs != null){
 			return new ArrayList<StepTypeDefEmailDConf>(emailDConfs);
 		}
 		return null;
+	}
+
+	@XmlTransient
+	public Set<StepTypeDefEmailDConf> getEmailDConfs() {
+		if (emailDConfs == null){
+			return new HashSet<StepTypeDefEmailDConf>();
+		}
+		return emailDConfs;
 	}
 
 	public void setEmailDConfs(Set<StepTypeDefEmailDConf> emailDConfs) {
@@ -200,4 +211,61 @@ public class MessageBegin extends InitEvent {
 
     	
     }
+    
+	/**
+	 * Returns this object into XML format (into a String)
+	 * 
+	 * @return
+	 */
+	public String marshal()  {
+		JAXBContext context;
+		try {
+			context = JAXBContext.newInstance(MessageBegin.class);
+			Marshaller marshaller = context.createMarshaller();
+			StringWriter stringWriter = new StringWriter();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.marshal(this, stringWriter);
+			return stringWriter.toString();			
+		} catch (JAXBException e) {
+			String mess = "Error marshalling MessageBegin "
+					+e.getMessage()+(e.getCause()!=null?". "+e.getCause():" ");
+			System.out.println(mess);
+		}
+
+		return null;
+		
+	}
+
+	/**
+	 * Unmarshals an XML String and fills the MessageBegin hierarchy
+	 * 
+	 * @param str
+	 * 
+	 */
+	public void unmarshal(String str)  {
+		JAXBContext context;
+		try {
+			context = JAXBContext.newInstance(MessageBegin.class);
+			Unmarshaller unmarshaler = context.createUnmarshaller();
+			StringReader stringReader = new StringReader(str);
+			this.setObj((MessageBegin)unmarshaler.unmarshal(stringReader));			
+		} catch (JAXBException e) {
+			String mess = "Error unmarshalling MessageBegin "
+					+ e.getMessage()+(e.getCause()!=null?". "+e.getCause():" ");
+			System.out.println(mess);
+		}
+
+	}
+
+	/**
+	 * Constructor using object MessageBegin
+	 */
+	public void setObj(MessageBegin mb) {
+
+		super.setObj(mb);
+		
+		this.setEmailDConfs(mb.getEmailDConfs());
+
+	}
+
 }

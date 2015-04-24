@@ -630,6 +630,10 @@
 			<column name="allowed_responses" sql-type="bit" />
 		</property>
 		
+		<property generated="never" lazy="false" name="relatedClass" type="string">
+			<column name="related_class" />
+		</property>
+
 		<!-- dml 20150414 TABLA/CLASE INTERMEDIA ABSTRACTA DE NIVEL 2 InitEvent -->
 	    <joined-subclass name="org.beeblos.bpm.core.model.bpmn.InitEvent"
 	        abstract="true" extends="org.beeblos.bpm.core.model.WStepTypeDef" 
@@ -1153,6 +1157,10 @@
 			<column name="render_attached_documents" sql-type="bit" />
 		</property>
 
+		<property generated="never" lazy="false" name="stepTypeConfiguration"
+			type="java.lang.String">
+			<column name="step_type_configuration" sql-type="LONGTEXT" />
+		</property>
 
 		<many-to-one cascade="save-update"
 			class="org.beeblos.bpm.core.model.WStepHead" column="head_id" name="stepHead"

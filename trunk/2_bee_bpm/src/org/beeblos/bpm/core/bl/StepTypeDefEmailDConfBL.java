@@ -7,11 +7,15 @@ import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.StepTypeDefEmailDConfDao;
 import org.beeblos.bpm.core.error.StepTypeDefEmailDConfException;
 import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.model.WStepDef;
+import org.beeblos.bpm.core.model.bpmn.MessageBegin;
 import org.beeblos.bpm.core.model.bpmn.StepTypeDefEmailDConf;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.joda.time.DateTime;
 
+import com.sp.daemon.bl.DaemonConfBL;
 import com.sp.daemon.email.EmailDConf;
+import com.sp.daemon.error.DaemonConfException;
 
 public class StepTypeDefEmailDConfBL {
 
@@ -23,137 +27,192 @@ public class StepTypeDefEmailDConfBL {
 	}
 
 	/**
-	 * Adds the new relation between the idStepTypeDef and the email daemon configuration id and returns the
-	 * complete relation's object.
+	 * Creates the StepTypeDefEmailDConf and saves it into the "stepTypeConfiguration" field from the WStepDef
 	 * 
-	 * @author dmuleiro 20141031
-	 *
-	 * @param idStepTypeDef
-	 *            the request type id
+	 * @author dmuleiro 20150424
+	 * 
+	 * @param idStepDef
 	 * @param idEmailDConf
-	 *            the user profile id
 	 * @param idCurrentUser
-	 *            the id current user
-	 * @return the request type user profile
 	 * @throws StepTypeDefEmailDConfException
-	 *             the request type user profile exception
 	 */
-	public StepTypeDefEmailDConf addNewRelation(
-			Integer idStepTypeDef, Integer idEmailDConf, Integer idCurrentUser)
+	public void addNewEmailDConfToStepDef(Integer idStepDef,
+			Integer idEmailDConf, Integer idCurrentUser)
 			throws StepTypeDefEmailDConfException {
 
-		logger.debug("StepTypeDefEmailDConfBL:addNewRelation() with idStepTypeDef = " + idStepTypeDef
-				+ " and idEmailDConf = " + idEmailDConf);
+		logger.debug("addNewEmailDConfToStepDef to stepdef = " + idStepDef 
+				+ " with idEmailDConf = " + idEmailDConf);
 
-		StepTypeDefEmailDConf instance = new StepTypeDefEmailDConf();
-		instance.setStepTypeDefId(idStepTypeDef);
-		instance.setEmailDConf(new EmailDConf(idEmailDConf));
-		
-		Integer idRelation = this.add(instance, idCurrentUser);
-
-		if (idRelation != null){
-			return this.getStepTypeDefEmailDConfByPK(idRelation);
+		/**
+		 * Loading step def to add the new relation
+		 */
+		WStepDef stepDef = null;
+		try {
+			stepDef = new WStepDefBL().getWStepDefByPK(idStepDef, null, idCurrentUser);
+		} catch (WStepDefException e) {
+			String mess = "Error trying to load step def with id: " + idStepDef
+					+ (e.getMessage()!=null?". "+e.getMessage():"")
+					+ (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new StepTypeDefEmailDConfException(mess, e);
 		}
 		
-		return null;
+		if (stepDef == null || stepDef.getId() == null || stepDef.getId().equals(0)){
+			throw new StepTypeDefEmailDConfException("Step def is not valid");
+		}
+
+		/**
+		 * Controlling if EmailDConf already exists into the WStepDef
+		 */
+		this._existsRelation(stepDef, idEmailDConf);
+
+		/**
+		 * Creating new relation
+		 */
+		StepTypeDefEmailDConf instance = new StepTypeDefEmailDConf();
+		
+		instance.setStepTypeDefId(stepDef.getStepTypeDef().getId());
+		
+		try {
+		
+			instance.setEmailDConf((EmailDConf) 
+					new DaemonConfBL().getDaemonConfSubObjectByPK(idEmailDConf, EmailDConf.class));
+		
+		} catch (DaemonConfException e) {
+			String mess = "Error trying to load email daemon configuration with id: " + idEmailDConf
+					+ (e.getMessage()!=null?". "+e.getMessage():"")
+					+ (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new StepTypeDefEmailDConfException(mess, e);
+		}
+		
+		instance.setAddDate(new DateTime());
+		instance.setAddUser(idCurrentUser);
+		
+		/**
+		 * Adding relation to step def depending on the step type
+		 */
+		if (stepDef.getStepTypeDef() instanceof MessageBegin){
+			((MessageBegin) stepDef.getStepTypeDef()).getEmailDConfs().add(instance);
+		}
+
+		/**
+		 * Updating the step def...
+		 */
+		try {
+			new WStepDefBL().updateStepTypeConfigurationField(stepDef, idCurrentUser);
+		} catch (WStepDefException e) {
+			String mess = "Error trying to update stepTypeConfiguration field of step def: " + idStepDef
+					+ (e.getMessage()!=null?". "+e.getMessage():"")
+					+ (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new StepTypeDefEmailDConfException(mess, e);
+		}
 		
 	}
 
-	public Integer add(StepTypeDefEmailDConf instance, Integer idCurrentUser)
+	/**
+	 * Deletes the StepTypeDefEmailDConf and saves the deletion into the "stepTypeConfiguration" 
+	 * field from the WStepDef
+	 * 
+	 * @author dmuleiro 20150424
+	 * 
+	 * @param stepDef
+	 * @param instance
+	 * @param idCurrentUser
+	 * @throws StepTypeDefEmailDConfException
+	 */
+	public void removeEmailDConfFromStepDef(
+			WStepDef stepDef, Integer idEmailDConf, Integer idCurrentUser)
 			throws StepTypeDefEmailDConfException {
 
-		logger.debug("StepTypeDefEmailDConfBL:add()");
+		logger.debug("removeEmailDConfFromStepDef()");
 
-		_consistencyDataControl(instance);
-		_redundancyDataControl(instance);
+		if (stepDef == null || stepDef.getId() == null || stepDef.getId().equals(0)){
+			throw new StepTypeDefEmailDConfException("Step def is not valid");
+		}
 
-		instance.setAddDate(new DateTime());
-		instance.setAddUser(idCurrentUser);
+		if (idEmailDConf == null || idEmailDConf.equals(0)){
+			throw new StepTypeDefEmailDConfException("Email daemon configuration id is not valid");
+		}
 
-		StepTypeDefEmailDConfDao rtupDao = new StepTypeDefEmailDConfDao();
+		if (stepDef.getStepTypeDef() instanceof MessageBegin){
+			
+			MessageBegin mb = (MessageBegin) stepDef.getStepTypeDef();
+			
+			if (mb.getEmailDConfs() != null && !mb.getEmailDConfs().isEmpty()){
+				
+				for (StepTypeDefEmailDConf stdedc : mb.getEmailDConfs()){
+					
+					if (stdedc.getEmailDConf() != null && stdedc.getEmailDConf().getId() != null
+							&& stdedc.getEmailDConf().getId().equals(idEmailDConf)){
 
-		return rtupDao.add(instance);
+						mb.getEmailDConfs().remove(stdedc);
+
+						/**
+						 * Updating the step def...
+						 */
+						try {
+							new WStepDefBL().updateStepTypeConfigurationField(stepDef, idCurrentUser);
+						} catch (WStepDefException e) {
+							String mess = "Error trying to update stepTypeConfiguration field of step def: "
+									+ stepDef.getId()
+									+ (e.getMessage()!=null?". "+e.getMessage():"")
+									+ (e.getCause()!=null?". "+e.getCause():"");
+							logger.error(mess);
+							throw new StepTypeDefEmailDConfException(mess, e);
+						}
+
+						return;
+						
+					}
+				}
+
+				String mess = "The email daemon configuration with id: " + idEmailDConf
+						+ " was not find in the step def";
+				logger.error(mess);
+				throw new StepTypeDefEmailDConfException(mess);
+
+			}
+		}
 
 	}
 
 	/**
-	 * Deletes the StepTypeDefEmailDConf.
+	 * If relation exists throws an exception
 	 * 
-	 * IMPORTANT: This should only be called from the method "deleteStepRelatedRole"
-	 * of WStepDefBL because it is the correct way of deleting relations between email daemon configuration
-	 * and step type defs
+	 * @author dmuleiro 20150424
 	 * 
-	 * @author dmuleiro 20141031
-	 *
-	 * @param instance
-	 *            the instance
-	 * @param idCurrentUser
-	 *            the id current user
+	 * @param stepDef
+	 * @param idEmailDConf
 	 * @throws StepTypeDefEmailDConfException
-	 *             the request type user profile exception
 	 */
-	public void delete(StepTypeDefEmailDConf instance, Integer idCurrentUser)
+	private void _existsRelation(WStepDef stepDef, Integer idEmailDConf)
 			throws StepTypeDefEmailDConfException {
-
-		logger.debug("StepTypeDefEmailDConfBL:delete()");
-
-		StepTypeDefEmailDConfDao rtupDao = new StepTypeDefEmailDConfDao();
-		rtupDao.delete(instance);
-
-	}
-
-	public StepTypeDefEmailDConf getStepTypeDefEmailDConfByPK(Integer id)
-			throws StepTypeDefEmailDConfException {
-
-		StepTypeDefEmailDConfDao rtupDao = new StepTypeDefEmailDConfDao();
-		return rtupDao.getStepTypeDefEmailDConfByPK(id);
-
-	}
-
-    private void _consistencyDataControl(StepTypeDefEmailDConf instance)
-			throws StepTypeDefEmailDConfException {
-
-		Integer idStepTypeDefTmp = instance.getStepTypeDefId();
-		Integer idEmailDConfTmp = instance.getEmailDConf().getId();
-
-		if (idStepTypeDefTmp == null || idStepTypeDefTmp.equals(0)) {
-			throw new StepTypeDefEmailDConfException(
-					"The email daemon configuration you are trying to add HAS NOT A VALID step type def id.");
+		
+		if (stepDef != null){
+			
+			if (stepDef.getStepTypeDef() instanceof MessageBegin){
+				
+				MessageBegin mb = (MessageBegin) stepDef.getStepTypeDef();
+				
+				if (mb.getEmailDConfs() != null && !mb.getEmailDConfs().isEmpty()){
+					
+					for (StepTypeDefEmailDConf stdedc : mb.getEmailDConfs()){
+						
+						if (stdedc.getEmailDConf() != null && stdedc.getEmailDConf().getId() != null
+								&& stdedc.getEmailDConf().getId().equals(idEmailDConf)){
+							
+							throw new StepTypeDefEmailDConfException(
+									"Relation with emaildconf with id: " + idEmailDConf + " already exist in this step def");
+							
+						}
+					}
+				}
+			}
 		}
-
-		if (idEmailDConfTmp == null || idEmailDConfTmp.equals(0)) {
-			throw new StepTypeDefEmailDConfException(
-					"The email daemon configuration you are trying to add HAS NOT A VALID email d conf id.");
-		}
-
-	}
-
-	public boolean existsRelation(StepTypeDefEmailDConf instance)throws StepTypeDefEmailDConfException {
-
-		if (instance == null 
-				|| instance.getStepTypeDefId() == null || instance.getStepTypeDefId().equals(0)
-				|| instance.getEmailDConf() == null || instance.getEmailDConf().getId() == null || instance.getEmailDConf().getId().equals(0)) {
-			throw new StepTypeDefEmailDConfException(
-					"The request type user profile is not valid!");
-		}
-
-		StepTypeDefEmailDConfDao rtupDao = new StepTypeDefEmailDConfDao();
-		return rtupDao.existsRelation(instance.getStepTypeDefId(), instance.getEmailDConf().getId());
-
 	}
 	
-	private void _redundancyDataControl(StepTypeDefEmailDConf instance)
-			throws StepTypeDefEmailDConfException {
-
-		boolean existStepRole = this.existsRelation(instance);
-
-		if (existStepRole) {
-			throw new StepTypeDefEmailDConfException(
-					"The email daemon configuration you are trying to add ALREADY EXISTS");
-		}
-
-	}
-
 	/**
 	 * Gets all the EmailDConfBeeBPM related with any WStepDef (it could be filtered by 
 	 * processDefId and stepDefId)

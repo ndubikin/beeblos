@@ -20,4 +20,12 @@ public abstract class GenericGroup extends WStepTypeDef {
 		
 	}
 
+	/**
+	 * Constructor using object GenericGroup
+	 */
+	public void setObj(GenericGroup gg) {
+
+		super.setObj(gg);
+
+	}
 }

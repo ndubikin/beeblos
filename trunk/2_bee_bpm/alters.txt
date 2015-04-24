@@ -178,7 +178,7 @@ WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  `bee_bpm_dev`.`w_step_s
 	UNION SELECT DISTINCT id_dest_step FROM `bee_bpm_dev`.`w_step_sequence_def` WHERE process_id = 1  ) ;
 	
 
--- dml 20141031 - Cambios tablas de relacion process-role
+## dml 20141031 - Cambios tablas de relacion process-role
 ALTER TABLE `bee_bpm_dev`.`w_process_role` 
 DROP PRIMARY KEY;
 
@@ -186,7 +186,7 @@ ALTER TABLE `bee_bpm_dev`.`w_process_role`
 ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
 ADD PRIMARY KEY (`id`);
 
--- dml 20141031 - Cambios tablas de relacion process-user
+## dml 20141031 - Cambios tablas de relacion process-user
 ALTER TABLE `bee_bpm_dev`.`w_process_user` 
 DROP PRIMARY KEY;
 
@@ -195,7 +195,7 @@ ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
 ADD PRIMARY KEY (`id`);
 
 
--- dml 20141031 - Cambios tablas de relacion step-role
+## dml 20141031 - Cambios tablas de relacion step-role
 ALTER TABLE `bee_bpm_dev`.`w_step_role`
 DROP FOREIGN KEY `fk_rol`,
 DROP FOREIGN KEY `fk_step`;
@@ -213,7 +213,7 @@ ALTER TABLE `bee_bpm_dev`.`w_step_role`
 ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
 ADD PRIMARY KEY (`id`);
 
--- dml 20141031 - Cambios tablas de relacion step-user
+## dml 20141031 - Cambios tablas de relacion step-user
 ALTER TABLE `bee_bpm_dev`.`w_step_user` 
 DROP PRIMARY KEY;
 
@@ -221,13 +221,13 @@ ALTER TABLE `bee_bpm_dev`.`w_step_user`
 ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
 ADD PRIMARY KEY (`id`);
 
--- dml 20141104 - Cambios tablas de relacion w_user_def-w_role_def
+## dml 20141104 - Cambios tablas de relacion w_user_def-w_role_def
 ALTER TABLE `bee_bpm_dev`.`w_user_role` 
 ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (`id`);
 
--- dml 20141128
+## dml 20141128
 ALTER TABLE `bee_bpm_dev`.`w_step_work` 
 CHANGE COLUMN `mod_date` `mod_date` DATETIME NOT NULL DEFAULT '0001-01-01 00:00:01' ;
 ALTER TABLE `bee_bpm_dev`.`w_step_work` 
@@ -285,12 +285,12 @@ CREATE TABLE `bee_bpm_dev`.`w_user_role_work` (
   CONSTRAINT `fk_wurw_work1` FOREIGN KEY (`id_process_work`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='para asignar usuarios a un rol en tiempo de ejecución';
 
--- dml 20141218 - nuevo campo de user
+## dml 20141218 - nuevo campo de user
 ALTER TABLE `incidencias_sp`.`user` 
 ADD COLUMN `system_user` BIT(1) NULL DEFAULT b'0' AFTER `login_id`;
 
 
--- pab 20141213
+## pab 20141213
 ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 ADD COLUMN `xml_href` TEXT NULL AFTER `route_eval_order`,
 ADD COLUMN `xml_id` TEXT NULL AFTER `xml_href`,
@@ -341,7 +341,7 @@ DROP COLUMN `xml_label`;
 ALTER TABLE `bee_bpm_dev`.`w_stepsequence_method` 
 CHANGE COLUMN `insert_user` `insert_user` INT(11) NULL;
 
--- dml 20150410 Tablas para la gestión de los demonios de las cuentas de email
+## dml 20150410 Tablas para la gestión de los demonios de las cuentas de email
 CREATE TABLE `bee_bpm_dev`.`email_d_conf` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `enabled` bit(1) NOT NULL DEFAULT b'1',
@@ -419,23 +419,23 @@ CREATE TABLE `bee_bpm_dev`.`email_d_poll` (
 
 ### nes - dml - 20150413
 ## demonio de test
-INSERT INTO `gespro_generic`.`email_d_conf`
+INSERT INTO `bee_bpm_dev`.`email_d_conf`
 VALUES ('2', 1, '4', '1', '10', 'org.beeblos.bpm.email.impl.EmailDaemonPollerClassImpl', '614', 'eMail', NULL, 'Inbox', 0, 0, 'Read', 0, 'Revision', 0, 'Error', 0, NULL, NULL, 'INPUT', '2015-04-13 09:54:29', '1000', '2015-04-13 11:30:53', '1000');
 
 
--- dml 20150414 - Definición de la nueva tabla de "InitEvent"
+## dml 20150414 - Definición de la nueva tabla de "InitEvent"
 CREATE TABLE `bee_bpm_dev`.`w_step_type_def_ie` (
   `id_step_type_def` int(11) NOT NULL,
   PRIMARY KEY (`id_step_type_def`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- dml 20150414 - Definición de la nueva tabla de "MessageBegin"
+## dml 20150414 - Definición de la nueva tabla de "MessageBegin"
 CREATE TABLE `bee_bpm_dev`.`w_step_type_def_mb` (
   `id_step_type_def` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id_step_type_def`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='defines a message begin step type';
 
--- dml 20150414 - Definición de la tabla de relacion entre MessageBegin e EmailDConf
+## dml 20150414 - Definición de la tabla de relacion entre MessageBegin e EmailDConf
 CREATE TABLE `bee_bpm_dev`.`w_step_type_def_email_d_conf` (
   `id` int(11) NOT NULL,
   `id_step_type_def` int(11) NOT NULL,
@@ -456,19 +456,19 @@ CREATE TABLE `bee_bpm_dev`.`w_step_type_def_email_d_conf` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
     
--- dml 20150414 - Definición de la nueva tabla de "GenericGroup"
+## dml 20150414 - Definición de la nueva tabla de "GenericGroup"
 CREATE TABLE `bee_bpm_dev`.`w_step_type_def_gen_group` (
   `id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     
--- dml 20150414 - Definición de la nueva tabla de "GenericType"
+## dml 20150414 - Definición de la nueva tabla de "GenericType"
 CREATE TABLE `bee_bpm_dev`.`w_step_type_def_gen_type` (
   `id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- dml 20150414 - insertamos el MessageBegin que tenemos (que es el de id=22) dentro del grupo, del MB y la relacion con el EmailDConf
+## dml 20150414 - insertamos el MessageBegin que tenemos (que es el de id=22) dentro del grupo, del MB y la relacion con el EmailDConf
 INSERT INTO bee_bpm_dev.w_step_type_def_ie
 VALUES('22');
 INSERT INTO bee_bpm_dev.w_step_type_def_mb
@@ -476,7 +476,7 @@ VALUES('22');
 INSERT INTO bee_bpm_dev.w_std_mb_edc
 VALUES('1', '22', '2', '2013-09-14 09:02:45', '1000');
 
--- dml 20150414 - insertamos el resto en la tabla de "GenericGroup"
+## dml 20150414 - insertamos el resto en la tabla de "GenericGroup"
 INSERT INTO bee_bpm_dev.w_step_type_def_gen_group
 SELECT id FROM bee_bpm_dev.w_step_type_def
 where id != 22;
@@ -493,6 +493,23 @@ ALTER TABLE `bee_bpm_dev`.`w_step_def`
 ADD COLUMN `allow_attach_documents` BIT(1) NULL DEFAULT b'0' AFTER `mxcell_string`,
 ADD COLUMN `render_attached_documents` BIT(1) NULL DEFAULT b'0' AFTER `allow_attach_documents`;
 
--- dml 20150420 - faltaba el autoincrement a esta tabla
-ALTER TABLE `gespro_generic`.`w_step_type_def_email_d_conf` 
+## dml 20150420 - faltaba el autoincrement a esta tabla
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def_email_d_conf` 
 CHANGE COLUMN `id_step_type_def` `id_step_type_def` INT(11) NOT NULL AUTO_INCREMENT ;
+
+## dml 20150424 - faltaba el autoincrement a esta tabla
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `step_type_configuration` LONGTEXT NULL DEFAULT NULL AFTER `render_attached_documents`;
+
+## dml 20150424 - campo donde se guardará el paquete.objeto al que se mapeará cada steptype
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
+ADD COLUMN `related_class` VARCHAR(255) NULL DEFAULT NULL AFTER `allowed_responses`;
+
+## dml 20150424 - metemos los valores default para el campo insertado arriba
+UPDATE `bee_bpm_dev`.`w_step_type_def` 
+SET `related_class`='org.beeblos.bpm.core.model.bpmn.MessageBegin' 
+WHERE `id`='22';
+UPDATE `bee_bpm_dev`.`w_step_type_def` 
+SET `related_class`='org.beeblos.bpm.core.model.bpmn.GenericType' 
+WHERE `id`!='22';
+where id != 22;
