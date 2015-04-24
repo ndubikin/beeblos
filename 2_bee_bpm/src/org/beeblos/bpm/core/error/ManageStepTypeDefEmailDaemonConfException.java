@@ -7,7 +7,7 @@ package org.beeblos.bpm.core.error;
  * @author Roger
  *
  */
-public class StepTypeDefEmailDConfException extends Exception {
+public class ManageStepTypeDefEmailDaemonConfException extends Exception {
 
 	/**
 	 * 
@@ -17,14 +17,14 @@ public class StepTypeDefEmailDConfException extends Exception {
 	/**
 	 * 
 	 */
-	public StepTypeDefEmailDConfException() {
+	public ManageStepTypeDefEmailDaemonConfException() {
 		
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public StepTypeDefEmailDConfException(String arg0) {
+	public ManageStepTypeDefEmailDaemonConfException(String arg0) {
 		super(arg0);
 		
 	}
@@ -32,7 +32,7 @@ public class StepTypeDefEmailDConfException extends Exception {
 	/**
 	 * @param arg0
 	 */
-	public StepTypeDefEmailDConfException(Throwable arg0) {
+	public ManageStepTypeDefEmailDaemonConfException(Throwable arg0) {
 		super(arg0);
 		
 	}
@@ -41,7 +41,7 @@ public class StepTypeDefEmailDConfException extends Exception {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public StepTypeDefEmailDConfException(String arg0, Throwable arg1) {
+	public ManageStepTypeDefEmailDaemonConfException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 		
 	}

@@ -9,6 +9,15 @@ import org.beeblos.bpm.core.error.WStepTypeDefException;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepTypeDef;
 
+/**
+ * This class contains the methods in order to manage the "stepTypeConfiguration" XML string.
+ * 
+ * It loads the information from the XML into the object class hierarchy when we get a WStepDef from
+ * the DataBase and saves the information into the XML when the WStepDef is persisted
+ * 
+ * @author dmuleiro 20150424
+ *
+ */
 public class StepDefStepTypeConfigurationUtil {
 
 	private static final Log logger = LogFactory.getLog(StepDefStepTypeConfigurationUtil.class.getName());
