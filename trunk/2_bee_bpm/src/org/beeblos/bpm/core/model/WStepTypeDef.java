@@ -20,7 +20,7 @@ import org.joda.time.DateTime;
  *
  */
 @XmlRootElement
-public abstract class WStepTypeDef implements Serializable {
+public class WStepTypeDef implements Serializable {
 
 	protected static final long serialVersionUID = 1L;
 	

@@ -16,6 +16,9 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.joda.time.DateTime;
 
+import com.sp.daemon.email.EmailDConf;
+import com.sp.daemon.util.EmailDaemonConfigurationList;
+
 /**
  * Defines the step type Begin Message
  * 
@@ -23,7 +26,7 @@ import org.joda.time.DateTime;
  *
  */
 @XmlRootElement
-public class MessageBegin extends InitEvent {
+public class MessageBegin extends InitEvent implements EmailDaemonConfigurationList {
 
 	/**
 	 * 
@@ -33,7 +36,7 @@ public class MessageBegin extends InitEvent {
 	/**
 	 * Cuentas del demonio
 	 */
-	public Set<StepTypeDefEmailDConf> emailDConfs;
+	public Set<EmailDConf> emailDConfs;
 	
 	public MessageBegin(){
 		
@@ -56,22 +59,22 @@ public class MessageBegin extends InitEvent {
 		this.modUser = modUser;
 	}
 
-	public List<StepTypeDefEmailDConf> getEmailDConfsAsList() {
+	public List<EmailDConf> getEmailDConfsAsList() {
 		if (emailDConfs != null){
-			return new ArrayList<StepTypeDefEmailDConf>(emailDConfs);
+			return new ArrayList<EmailDConf>(emailDConfs);
 		}
 		return null;
 	}
 
 	@XmlTransient
-	public Set<StepTypeDefEmailDConf> getEmailDConfs() {
+	public Set<EmailDConf> getEmailDConfs() {
 		if (emailDConfs == null){
-			return new HashSet<StepTypeDefEmailDConf>();
+			return new HashSet<EmailDConf>();
 		}
 		return emailDConfs;
 	}
 
-	public void setEmailDConfs(Set<StepTypeDefEmailDConf> emailDConfs) {
+	public void setEmailDConfs(Set<EmailDConf> emailDConfs) {
 		this.emailDConfs = emailDConfs;
 	}
 

@@ -633,76 +633,8 @@
 		<property generated="never" lazy="false" name="relatedClass" type="string">
 			<column name="related_class" />
 		</property>
-
-		<!-- dml 20150414 TABLA/CLASE INTERMEDIA ABSTRACTA DE NIVEL 2 InitEvent -->
-	    <joined-subclass name="org.beeblos.bpm.core.model.bpmn.InitEvent"
-	        abstract="true" extends="org.beeblos.bpm.core.model.WStepTypeDef" 
-	        table="w_step_type_def_ie">
-	        
-	        <key column="id_step_type_def" />
-	    
-			<!-- dml 20150414 TABLA/CLASE CONCRETA DE NIVEL 3 MessageBegin -->
-		    <joined-subclass name="org.beeblos.bpm.core.model.bpmn.MessageBegin"
-		        extends="org.beeblos.bpm.core.model.bpmn.InitEvent" 
-		        table="w_step_type_def_mb">
-		        
-		        <key column="id_step_type_def" />
-		        
-		        <!-- w_std_mb_edc = w_step_type_def_message_begin_email_daemon_conf -->
-				<set name="emailDConfs" table="w_step_type_def_email_d_conf" cascade="none"
-					lazy="false" fetch="join" >
-					
-					<key column="id_step_type_def" />
-					
-					<one-to-many class="org.beeblos.bpm.core.model.bpmn.StepTypeDefEmailDConf" />
-				</set>
-		    </joined-subclass>
-		    
-	    </joined-subclass>
-	    
-		<!-- dml 20150414 TABLA/CLASE INTERMEDIA ABSTRACTA DE NIVEL 2 GenericGroup -->
-	    <joined-subclass name="org.beeblos.bpm.core.model.bpmn.GenericGroup"
-	        abstract="true" extends="org.beeblos.bpm.core.model.WStepTypeDef" 
-	        table="w_step_type_def_gen_group">
-	        <key column="id" />
-	    
-			<!-- dml 20150414 TABLA/CLASE CONCRETA DE NIVEL 3 GenericType -->
-		    <joined-subclass name="org.beeblos.bpm.core.model.bpmn.GenericType"
-		        extends="org.beeblos.bpm.core.model.bpmn.GenericGroup" 
-		        table="w_step_type_def_gen_type">
-		        <key column="id" />
-		        
-		    </joined-subclass>
-		    
-	    </joined-subclass>
 	    
 	</class>
-
-    <class name="org.beeblos.bpm.core.model.bpmn.StepTypeDefEmailDConf" 
-    	table="w_step_type_def_email_d_conf">
-    	
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-
-		<property generated="never" lazy="false" name="stepTypeDefId"
-			type="java.lang.Integer">
-			<column name="id_step_type_def" />
-		</property>
-			
-		<many-to-one name="emailDConf" class="com.sp.daemon.email.EmailDConf"
-			column="id_email_d_conf" cascade="none" lazy="false" fetch="join"/>
-			
-		<property lazy="false" name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
-			<column name="add_date" />
-		</property>
-		<property lazy="false" name="addUser" type="java.lang.Integer">
-			<column name="add_user" />
-		</property>
-
-    </class>
-    
 
 	<!--  atencion hay named queries al final que afectan a roledef -->
 	<class name="org.beeblos.bpm.core.model.WRoleDef" table="w_role_def">
