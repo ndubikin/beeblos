@@ -98,7 +98,7 @@ public class WProcessWorkDao {
 
 					// retrieves data from external sources and update fields in managed table
 					pwSynchronizer.synchronizeProcessWorkManagedData(processWork, md, STARTUP, externalUserId);
-					logger.debug(">> managed data has been syncrhonized ...");
+					logger.debug(">> managed data has been synchronized ...");
 					
 				}
 			} catch (Exception e) {

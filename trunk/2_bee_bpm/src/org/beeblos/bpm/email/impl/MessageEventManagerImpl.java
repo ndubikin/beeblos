@@ -669,8 +669,13 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 
 			if (et != null && et.getId() != null && !et.getId().equals(0)){
 				
-				String objComments = "Process injected by MessageBegin event with id '" + conf.getIdStepDef()
-						+ "' and MessageId= " + et.getMessageId();
+				// Creating object reference...
+				String objReference = "Email Subject: '" 
+						+ et.getSubject();
+				
+				// Creating object comments...
+				String objComments = "Process injected by MessageBegin event with id '" 
+						+ conf.getIdStepDef();
 				
 				try {
 					
@@ -679,7 +684,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 							conf.getIdStepDef(), //idStepDef
 							et.getId(), //idObject
 							et.getClass().getName(), //idObjectType
-							et.getSubject(), // objReference
+							objReference, // objReference
 							objComments, // Comentarios del objeto?
 							currentUserId);
 					
