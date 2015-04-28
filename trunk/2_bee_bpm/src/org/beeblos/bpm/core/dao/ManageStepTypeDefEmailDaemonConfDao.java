@@ -70,7 +70,7 @@ public class ManageStepTypeDefEmailDaemonConfDao {
 			/**
 			 * This filters only the wsd which contains any "emailDConf"
 			 */
-			hqlQuery += " And wsd.stepTypeConfiguration Like '%<emailDConfs>%' ";
+			hqlQuery += " And wsd.stepTypeConfiguration Like '%<emailDaemonConfigurationIdList>%' ";
 			
 			if (stepDefId  != null && !stepDefId.equals(0)){
 				hqlQuery += " And wsd.id = :stepDefId ";
@@ -111,9 +111,9 @@ public class ManageStepTypeDefEmailDaemonConfDao {
 							EmailDaemonConfigurationList edcl = 
 									(EmailDaemonConfigurationList) wsd.getStepTypeDef();
 							
-							if (edcl.getEmailDConfs() != null && !edcl.getEmailDConfs().isEmpty()){
+							if (edcl.getEmailDaemonConfiguration() != null && !edcl.getEmailDaemonConfiguration().isEmpty()){
 								
-								for (EmailDConf edc : edcl.getEmailDConfs()) {
+								for (EmailDConf edc : edcl.getEmailDaemonConfiguration()) {
 									
 									list.add(new EmailDConfBeeBPM(
 											(cols[0]!=null)?new Integer(cols[0].toString()):null, 

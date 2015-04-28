@@ -74,6 +74,17 @@ public class WStepTypeDef implements Serializable {
 	protected DateTime modDate;
 	protected Integer modUser;
 	
+
+	public WStepTypeDef() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public WStepTypeDef(Integer id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+	
 	public WStepTypeDef(Integer id, String name, String type, boolean active,
 			boolean engineReq, boolean deleted, String comments,
 			DateTime insertDate, Integer insertUser, DateTime modDate,
@@ -217,15 +228,6 @@ public class WStepTypeDef implements Serializable {
 		this.modUser = modUser;
 	}
 
-	public WStepTypeDef() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public WStepTypeDef(Integer id, String name) {
-		this.id = id;
-		this.name = name;
-	}
 
 	/**
 	 * @return the id
