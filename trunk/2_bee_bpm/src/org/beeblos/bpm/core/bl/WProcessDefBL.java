@@ -943,7 +943,7 @@ public class WProcessDefBL {
 	}
 	*/
 	public String getProcessNameByVersionId(Integer id, Integer currentUserId) 
-			throws WProcessDefException, WStepSequenceDefException {
+			throws WProcessDefException {
 
 		return new WProcessDefDao().getProcessNameByVersionId(id, currentUserId);
 	
