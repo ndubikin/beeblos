@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.sp.common.util.StringPair;
+import com.sp.daemon.util.EmailDaemonConfigurationList;
 
 
 
@@ -316,7 +317,18 @@ public class TestWStepDefBL extends TestCase{
 				
 				WStepDef step = new WStepDefBL().getWStepDefByPK(19, null, null);
 			
-				System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+				if (step != null && step.getStepTypeDef() != null
+						&& step.getStepTypeDef() instanceof EmailDaemonConfigurationList){
+					
+					EmailDaemonConfigurationList edcl = 
+							(EmailDaemonConfigurationList) step.getStepTypeDef();
+					
+					System.out.println("Tiene configuraciones de email?");
+					if (edcl!=null && edcl.getEmailDConfs()!=null
+							&& edcl.getEmailDConfs().isEmpty()){
+						System.out.println("Si, tiene: " + edcl.getEmailDConfs().size());
+					}
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
