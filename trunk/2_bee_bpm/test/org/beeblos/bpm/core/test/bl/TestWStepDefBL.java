@@ -23,6 +23,7 @@ import org.beeblos.bpm.core.model.WStepResponseDef;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.beeblos.bpm.core.model.WStepUser;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.bpmn.MessageBegin;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -128,7 +129,7 @@ public class TestWStepDefBL extends TestCase{
 			
 
 			step = new WStepDef(null,1,2,3,"ejecute este paso plis","sincomentarios ...",
-						null,null,null, new WStepTypeDefBL().getWStepTypeDefByPK(22, 1000));
+						null,null,null, new MessageBegin(new WStepTypeDefBL().getWStepTypeDefByPK(22, 1000)));
 
 			step.setResponse(null);
 //			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));
