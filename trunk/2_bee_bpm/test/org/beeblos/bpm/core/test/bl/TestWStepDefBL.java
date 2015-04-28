@@ -325,7 +325,7 @@ public class TestWStepDefBL extends TestCase{
 					
 					System.out.println("Tiene configuraciones de email?");
 					if (edcl!=null && edcl.getEmailDConfs()!=null
-							&& edcl.getEmailDConfs().isEmpty()){
+							&& !edcl.getEmailDConfs().isEmpty()){
 						System.out.println("Si, tiene: " + edcl.getEmailDConfs().size());
 					}
 				}
