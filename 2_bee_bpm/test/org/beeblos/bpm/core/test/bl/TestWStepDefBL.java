@@ -11,6 +11,7 @@ import org.beeblos.bpm.core.bl.WRoleDefBL;
 import org.beeblos.bpm.core.bl.WStepDefBL;
 import org.beeblos.bpm.core.bl.WStepHeadBL;
 import org.beeblos.bpm.core.bl.WStepResponseDefBL;
+import org.beeblos.bpm.core.bl.WStepTypeDefBL;
 import org.beeblos.bpm.core.bl.WUserDefBL;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
@@ -126,9 +127,11 @@ public class TestWStepDefBL extends TestCase{
 			Integer idUser2 = userBl.add(new WUserDef( "maria ss", "mr", true, 1000, new DateTime()), 1000);
 			
 
-			step = new WStepDef(null,1,2,3,"ejecute este paso plis","sincomentarios ...",null,null,null);
+			step = new WStepDef(null,1,2,3,"ejecute este paso plis","sincomentarios ...",
+						null,null,null, new WStepTypeDefBL().getWStepTypeDefByPK(22, 1000));
 
-			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));
+			step.setResponse(null);
+//			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));
 //			step.getAssigned().add(new WStepAssignedDef("pepe","user"));
 			
 //			step.addRole( roleBl.getWRoleDefByPK(idRol1, 1000), false, 55, "tipo-objeto", 1000);
@@ -324,10 +327,13 @@ public class TestWStepDefBL extends TestCase{
 							(EmailDaemonConfigurationList) step.getStepTypeDef();
 					
 					System.out.println("Tiene configuraciones de email?");
-					if (edcl!=null && edcl.getEmailDConfs()!=null
-							&& !edcl.getEmailDConfs().isEmpty()){
-						System.out.println("Si, tiene: " + edcl.getEmailDConfs().size());
+					
+					if (edcl!=null && edcl.getEmailDaemonConfiguration()!=null
+							&& !edcl.getEmailDaemonConfiguration().isEmpty()){
+						System.out.println("Si, tiene: " + edcl.getEmailDaemonConfiguration().size());
 					}
+					System.out.println("---------------------------------------------------------------------------");
+					System.out.println(step.toString());
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

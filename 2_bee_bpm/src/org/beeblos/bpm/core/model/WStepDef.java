@@ -6,6 +6,7 @@ import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -318,7 +319,8 @@ public class WStepDef implements java.io.Serializable {
 	public WStepDef(Integer id, Integer version, Integer idDept, Integer idPhase,
 			String instructions, String stepComments, String idListZone,
 			String idWorkZone, String idAdditionalZone/*,
-			Set<WStepResponseDef> response*/) {
+			Set<WStepResponseDef> response*/
+			, WStepTypeDef stepTypeDef) {
 		super();
 		this.id = id;
 		this.version=version;
@@ -330,6 +332,7 @@ public class WStepDef implements java.io.Serializable {
 		this.idWorkZone = idWorkZone;
 		this.idAdditionalZone = idAdditionalZone;
 //		this.response = response;
+		this.stepTypeDef=stepTypeDef;
 	}
 
 
@@ -1467,6 +1470,9 @@ public class WStepDef implements java.io.Serializable {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "WStepDef [id=" + id + ", stepHead=" + stepHead + ", version="
@@ -1508,6 +1514,20 @@ public class WStepDef implements java.io.Serializable {
 				+ ", dataFieldDef=" + dataFieldDef + ", insertDate="
 				+ insertDate + ", insertUser=" + insertUser + ", modDate="
 				+ modDate + ", modUser=" + modUser + "]";
+	}
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

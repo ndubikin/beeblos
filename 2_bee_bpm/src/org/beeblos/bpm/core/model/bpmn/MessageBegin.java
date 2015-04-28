@@ -37,7 +37,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	/**
 	 * Cuentas del demonio
 	 */
-	private Set<EmailDConf> emailDConfs;
+	private Set<EmailDConf> emailDaemonConfiguration;
 	
 	public MessageBegin(){
 		
@@ -61,7 +61,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	}
 
 	/**
-	 * Tanto el getEmailDConfIds como el setEmailDConfIds se usan para guardar en el mapa XML
+	 * Tanto el getEmailDaemonConfigurationIdList como el setEmailDaemonConfigurationIdList se usan para guardar en el mapa XML
 	 * solamente el "idEmailDConf" y posteriormente cargarlo.
 	 * 
 	 * Por lo tanto, con esto evitamos guardar el objeto EmailDConf entero en el mapa XML y podemos
@@ -71,27 +71,27 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	 * 
 	 * @return
 	 */
-	@XmlElement
-	public List<Integer> getEmailDConfIds() {
+	@XmlElement(name="emailDaemonConfigurationIdList")
+	public List<Integer> getEmailDaemonConfigurationIdList() {
 		
-		if (emailDConfs == null){
+		if (emailDaemonConfiguration == null){
 			return new ArrayList<Integer>();
 		}
 		
 		List<Integer> returnValue = new ArrayList<Integer>();
-		for (EmailDConf edc : emailDConfs){
+		for (EmailDConf edc : emailDaemonConfiguration){
 			returnValue.add(edc.getId());
 		}
 		return returnValue;
 	}
 
-	public void setEmailDConfIds(List<Integer> emailDConfIds) {
+	public void setEmailDaemonConfigurationIdList(List<Integer> idList) {
 		
-		this.emailDConfs = new HashSet<EmailDConf>();
+		this.emailDaemonConfiguration = new HashSet<EmailDConf>();
 		
-		if (emailDConfIds != null){
-			for (Integer idEmailDConf : emailDConfIds){
-				this.emailDConfs.add(new EmailDConf(idEmailDConf));
+		if (idList != null){
+			for (Integer id : idList){
+				this.emailDaemonConfiguration.add(new EmailDConf(id));
 			}
 		}
 		
@@ -101,9 +101,9 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	 * No se guardará en el mapa XML este valor
 	 */
     @XmlTransient
-	public List<EmailDConf> getEmailDConfsAsList() {
-		if (emailDConfs != null){
-			return new ArrayList<EmailDConf>(emailDConfs);
+	public List<EmailDConf> getEmailDaemonConfigurationAsList() {
+		if (emailDaemonConfiguration != null){
+			return new ArrayList<EmailDConf>(emailDaemonConfiguration);
 		}
 		return null;
 	}
@@ -112,21 +112,21 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	 * No se guardará en el mapa XML este valor
 	 */
     @XmlTransient
-	public Set<EmailDConf> getEmailDConfs() {
-		if (emailDConfs == null){
+	public Set<EmailDConf> getEmailDaemonConfiguration() {
+		if (emailDaemonConfiguration == null){
 			return new HashSet<EmailDConf>();
 		}
-		return emailDConfs;
+		return emailDaemonConfiguration;
 	}
 
-	public void setEmailDConfs(Set<EmailDConf> emailDConfs) {
-		this.emailDConfs = emailDConfs;
+	public void setEmailDaemonConfiguration(Set<EmailDConf> emailDConfs) {
+		this.emailDaemonConfiguration = emailDConfs;
 	}
 
 
 	@Override
 	public String toString() {
-		return "MessageBegin [emailDConfs=" + emailDConfs + ", id=" + id + ", name=" + name + ", type="
+		return "MessageBegin [emailDaemonConfiguration=" + emailDaemonConfiguration + ", id=" + id + ", name=" + name + ", type="
 				+ type + ", active=" + active + ", engineReq=" + engineReq + ", deleted=" + deleted + ", comments="
 				+ comments + ", allowedResponses=" + allowedResponses + ", insertDate=" + insertDate + ", insertUser="
 				+ insertUser + ", modDate=" + modDate + ", modUser=" + modUser + "]";
@@ -141,7 +141,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result
-				+ ((emailDConfs == null) ? 0 : emailDConfs.hashCode());
+				+ ((emailDaemonConfiguration == null) ? 0 : emailDaemonConfiguration.hashCode());
 		result = prime * result
 				+ ((comments == null) ? 0 : comments.hashCode());
 		result = prime * result + (deleted ? 1231 : 1237);
@@ -179,10 +179,10 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 				return false;
 		} else if (!comments.equals(other.comments))
 			return false;
-		if (emailDConfs == null) {
-			if (other.emailDConfs != null)
+		if (emailDaemonConfiguration == null) {
+			if (other.emailDaemonConfiguration != null)
 				return false;
-		} else if (!emailDConfs.equals(other.emailDConfs))
+		} else if (!emailDaemonConfiguration.equals(other.emailDaemonConfiguration))
 			return false;
 		if (deleted != other.deleted)
 			return false;
@@ -312,7 +312,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 
 		super.setObj(mb);
 		
-		this.setEmailDConfIds(mb.getEmailDConfIds());
+		this.setEmailDaemonConfigurationIdList(mb.getEmailDaemonConfigurationIdList());
 
 	}
 

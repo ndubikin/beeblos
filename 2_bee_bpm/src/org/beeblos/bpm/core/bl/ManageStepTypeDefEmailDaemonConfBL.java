@@ -77,7 +77,7 @@ public class ManageStepTypeDefEmailDaemonConfBL {
 			 */
 			if (edc != null 
 					&& stepDef.getStepTypeDef() instanceof EmailDaemonConfigurationList){
-				((EmailDaemonConfigurationList) stepDef.getStepTypeDef()).getEmailDConfs().add(edc);
+				((EmailDaemonConfigurationList) stepDef.getStepTypeDef()).getEmailDaemonConfiguration().add(edc);
 			}
 
 		} catch (DaemonConfException e) {
@@ -132,14 +132,14 @@ public class ManageStepTypeDefEmailDaemonConfBL {
 			
 			EmailDaemonConfigurationList edcl = (EmailDaemonConfigurationList) stepDef.getStepTypeDef();
 			
-			if (edcl.getEmailDConfs() != null && !edcl.getEmailDConfs().isEmpty()){
+			if (edcl.getEmailDaemonConfiguration() != null && !edcl.getEmailDaemonConfiguration().isEmpty()){
 				
-				for (EmailDConf edc : edcl.getEmailDConfs()){
+				for (EmailDConf edc : edcl.getEmailDaemonConfiguration()){
 					
 					if (edc != null && edc.getId() != null
 							&& edc.getId().equals(idEmailDConf)){
 
-						edcl.getEmailDConfs().remove(edc);
+						edcl.getEmailDaemonConfiguration().remove(edc);
 
 						/**
 						 * Updating the step def...
@@ -188,9 +188,9 @@ public class ManageStepTypeDefEmailDaemonConfBL {
 				
 				MessageBegin mb = (MessageBegin) stepDef.getStepTypeDef();
 				
-				if (mb.getEmailDConfs() != null && !mb.getEmailDConfs().isEmpty()){
+				if (mb.getEmailDaemonConfiguration() != null && !mb.getEmailDaemonConfiguration().isEmpty()){
 					
-					for (EmailDConf edc : mb.getEmailDConfs()){
+					for (EmailDConf edc : mb.getEmailDaemonConfiguration()){
 						
 						if (edc != null && edc.getId() != null
 								&& edc.getId().equals(idEmailDConf)){

@@ -168,10 +168,10 @@ public class StepDefStepTypeConfigurationUtil {
 		
 		if (wsd.getStepTypeDef() instanceof EmailDaemonConfigurationList){
 			
-			if (((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDConfs() != null){
+			if (((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDaemonConfiguration() != null){
 				
 				Set<EmailDConf> auxList = new HashSet<EmailDConf>();
-				for (EmailDConf edc : ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDConfs()) {
+				for (EmailDConf edc : ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDaemonConfiguration()) {
 					
 					try {
 						
@@ -179,7 +179,7 @@ public class StepDefStepTypeConfigurationUtil {
 							.getDaemonConfSubObjectByPK(edc.getId(), EmailDConf.class));
 					
 					} catch (DaemonConfException e) {
-						String mess = "Error trying to get EmailDConf by id when filling class hierarchy by StepTypeConfiguration Xml map"
+						String mess = "Error trying to get EmailDaemonConfiguration by id when filling class hierarchy by StepTypeConfiguration Xml map"
 								+ (e.getMessage()!=null?"."+e.getMessage():"")
 								+ (e.getCause()!=null?"."+e.getCause():"");
 						logger.error(mess);
@@ -188,7 +188,7 @@ public class StepDefStepTypeConfigurationUtil {
 					
 				}
 				
-				((EmailDaemonConfigurationList) wsd.getStepTypeDef()).setEmailDConfs(auxList);
+				((EmailDaemonConfigurationList) wsd.getStepTypeDef()).setEmailDaemonConfiguration(auxList);
 				
 			}
 			
