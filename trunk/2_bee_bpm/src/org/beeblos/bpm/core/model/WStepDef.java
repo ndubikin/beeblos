@@ -267,6 +267,9 @@ public class WStepDef implements java.io.Serializable {
 	 * For example, if the Step is a MessageBegin, this xml will contain all the hierarchy of this
 	 * attributes. 
 	 * 
+	 * NOTA IMPORTANTE: este campo es únicamente para el manejo de hibernate. No se puede modificar 
+	 * ni utilizar por programa
+	 * 
 	 * @author dmuleiro 20150424
 	 */
 	private String stepTypeConfiguration;
