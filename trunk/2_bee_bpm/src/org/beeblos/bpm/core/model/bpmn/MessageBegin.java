@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.beeblos.bpm.core.model.WStepTypeDef;
 import org.joda.time.DateTime;
 
 import com.sp.daemon.email.EmailDConf;
@@ -43,6 +44,20 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		
 	}
 	
+	public MessageBegin(WStepTypeDef wstd) {
+		this.id = wstd.getId();
+		this.name = wstd.getName();
+		this.type = wstd.getType();
+		this.active = wstd.isActive();
+		this.engineReq = wstd.isEngineReq();
+		this.deleted = wstd.isDeleted();
+		this.comments = wstd.getComments();
+		this.insertDate = wstd.getInsertDate();
+		this.insertUser = wstd.getInsertUser();
+		this.modDate = wstd.getModDate();
+		this.modUser = wstd.getModUser();
+	}
+
 	public MessageBegin(Integer id, String name, String type, boolean active,
 			boolean engineReq, boolean deleted, String comments,
 			DateTime insertDate, Integer insertUser, DateTime modDate,
