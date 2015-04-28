@@ -3,6 +3,7 @@ package org.beeblos.bpm.core.test.bl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -29,6 +30,8 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.sp.common.util.StringPair;
+import com.sp.daemon.bl.DaemonConfBL;
+import com.sp.daemon.email.EmailDConf;
 import com.sp.daemon.util.EmailDaemonConfigurationList;
 
 
@@ -131,6 +134,22 @@ public class TestWStepDefBL extends TestCase{
 			step = new WStepDef(null,1,2,3,"ejecute este paso plis","sincomentarios ...",
 						null,null,null, new MessageBegin(new WStepTypeDefBL().getWStepTypeDefByPK(22, 1000)));
 
+			/**
+			 * Traigo el EmailDConf
+			 */
+			EmailDConf edc = (EmailDConf) new DaemonConfBL().getDaemonConfSubObjectByPK(2, EmailDConf.class);
+			
+			/**
+			 * Creo el set y lo agrego
+			 */
+			Set<EmailDConf> setEdc = new HashSet<EmailDConf>();
+			setEdc.add(edc);
+			
+			/**
+			 * Se lo pongo al step
+			 */
+			((EmailDaemonConfigurationList) step.getStepTypeDef()).setEmailDaemonConfiguration(setEdc);
+			
 			step.setResponse(null);
 //			step.getResponse().add(new WStepResponseDef(null,"Respuesta1"));
 //			step.getAssigned().add(new WStepAssignedDef("pepe","user"));
@@ -149,6 +168,8 @@ public class TestWStepDefBL extends TestCase{
 			System.out.println("---------------- ----------------------------- -------------------------------------");
 			
 			assertEquals(iproc, stepBL.getWStepDefByPK(iproc, null, 1000).getId());
+			
+			new WStepDefBL().delete(iproc, null, 1000);
 			
 			} catch (Exception e) {
 				e.printStackTrace();
