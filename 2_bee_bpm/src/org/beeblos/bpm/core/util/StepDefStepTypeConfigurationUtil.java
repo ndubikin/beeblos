@@ -142,6 +142,12 @@ public class StepDefStepTypeConfigurationUtil {
 				 */ 
 				_getEmailDConfListById(wsd);
 				
+				/**
+				 * Borramos el valor del stepTypeConfiguration porque en la carga debe estar en null
+				 * (solo lo debemos tener en la jerarquia de clases correspondientes)
+				 */
+				wsd.setStepTypeConfiguration(null);
+				
 			} catch (Exception e){
 				String mess = "Error trying to unmarshal StepTypeDef. "
 						+ (e.getMessage()!=null?". "+e.getMessage():"")
