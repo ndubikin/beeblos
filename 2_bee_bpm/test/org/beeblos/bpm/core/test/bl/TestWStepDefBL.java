@@ -309,5 +309,20 @@ public class TestWStepDefBL extends TestCase{
 				
 		}
 
+		@Test
+		public void testGetStep() {
+			
+			try {
+				
+				WStepDef step = new WStepDefBL().getWStepDefByPK(19, null, null);
+			
+				System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}
+
 		
 }

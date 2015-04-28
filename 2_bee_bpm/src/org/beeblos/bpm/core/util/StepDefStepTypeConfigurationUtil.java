@@ -1,6 +1,8 @@
 package org.beeblos.bpm.core.util;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,6 +10,11 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepTypeDefException;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepTypeDef;
+
+import com.sp.daemon.bl.DaemonConfBL;
+import com.sp.daemon.email.EmailDConf;
+import com.sp.daemon.error.DaemonConfException;
+import com.sp.daemon.util.EmailDaemonConfigurationList;
 
 /**
  * This class contains the methods in order to manage the "stepTypeConfiguration" XML string.
@@ -36,7 +43,9 @@ public class StepDefStepTypeConfigurationUtil {
 		
 			String newStepTypeConfiguration = null;
 			try {
+
 				newStepTypeConfiguration = wsd.getStepTypeDef().marshal();
+				
 			} catch (Exception e){
 				String mess = "Error trying to marshal StepTypeDef. "
 						+ (e.getMessage()!=null?". "+e.getMessage():"")
@@ -50,7 +59,7 @@ public class StepDefStepTypeConfigurationUtil {
 		}
 		
 	}
-	
+		
 	/**
 	 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
 	 * 
@@ -125,12 +134,62 @@ public class StepDefStepTypeConfigurationUtil {
 				relatedStepType.unmarshal(wsd.getStepTypeConfiguration());
 				
 				wsd.setStepTypeDef(relatedStepType);
+				
+				/**
+				 * Si el "StepType" es de un tipo que tiene un set de "EmailDConf", tras cargar el XML dentro de
+				 * la jerarquía de clases, como del XML solo vendrán los "ids" tenemos que recuperar el objeto
+				 * entero
+				 */ 
+				_getEmailDConfListById(wsd);
+				
 			} catch (Exception e){
-				String mess = "Error trying to marshal StepTypeDef. "
+				String mess = "Error trying to unmarshal StepTypeDef. "
 						+ (e.getMessage()!=null?". "+e.getMessage():"")
 						+ (e.getCause()!=null?". "+e.getCause():"");
 				logger.error(mess);
 				throw new WStepDefException(mess);
+			}
+			
+		}
+		
+	}
+	
+	/**
+	 * Si el "StepType" es de un tipo que tiene un set de "EmailDConf", tras cargar el XML dentro de
+	 * la jerarquía de clases, como del XML solo vendrán los "ids" tenemos que recuperar el objeto
+	 * entero
+	 * 
+	 * @author dmuleiro 20150428
+	 * 
+	 * @param wsd
+	 * @throws DaemonConfException 
+	 */
+	private static void _getEmailDConfListById(WStepDef wsd) throws DaemonConfException{
+		
+		if (wsd.getStepTypeDef() instanceof EmailDaemonConfigurationList){
+			
+			if (((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDConfs() != null){
+				
+				Set<EmailDConf> auxList = new HashSet<EmailDConf>();
+				for (EmailDConf edc : ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDConfs()) {
+					
+					try {
+						
+						auxList.add((EmailDConf) new DaemonConfBL()
+							.getDaemonConfSubObjectByPK(edc.getId(), EmailDConf.class));
+					
+					} catch (DaemonConfException e) {
+						String mess = "Error trying to get EmailDConf by id when filling class hierarchy by StepTypeConfiguration Xml map"
+								+ (e.getMessage()!=null?"."+e.getMessage():"")
+								+ (e.getCause()!=null?"."+e.getCause():"");
+						logger.error(mess);
+						throw new DaemonConfException(mess);
+					}
+					
+				}
+				
+				((EmailDaemonConfigurationList) wsd.getStepTypeDef()).setEmailDConfs(auxList);
+				
 			}
 			
 		}

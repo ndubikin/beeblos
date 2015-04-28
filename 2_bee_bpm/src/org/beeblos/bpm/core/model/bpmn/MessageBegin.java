@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -36,7 +37,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	/**
 	 * Cuentas del demonio
 	 */
-	public Set<EmailDConf> emailDConfs;
+	private Set<EmailDConf> emailDConfs;
 	
 	public MessageBegin(){
 		
@@ -59,6 +60,47 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		this.modUser = modUser;
 	}
 
+	/**
+	 * Tanto el getEmailDConfIds como el setEmailDConfIds se usan para guardar en el mapa XML
+	 * solamente el "idEmailDConf" y posteriormente cargarlo.
+	 * 
+	 * Por lo tanto, con esto evitamos guardar el objeto EmailDConf entero en el mapa XML y podemos
+	 * cargarlo de su correspondiente tabla una vez cargado el "id"
+	 * 
+	 * @author dmuleiro 20150428
+	 * 
+	 * @return
+	 */
+	@XmlElement
+	public List<Integer> getEmailDConfIds() {
+		
+		if (emailDConfs == null){
+			return new ArrayList<Integer>();
+		}
+		
+		List<Integer> returnValue = new ArrayList<Integer>();
+		for (EmailDConf edc : emailDConfs){
+			returnValue.add(edc.getId());
+		}
+		return returnValue;
+	}
+
+	public void setEmailDConfIds(List<Integer> emailDConfIds) {
+		
+		this.emailDConfs = new HashSet<EmailDConf>();
+		
+		if (emailDConfIds != null){
+			for (Integer idEmailDConf : emailDConfIds){
+				this.emailDConfs.add(new EmailDConf(idEmailDConf));
+			}
+		}
+		
+	}
+
+	/**
+	 * No se guardará en el mapa XML este valor
+	 */
+    @XmlTransient
 	public List<EmailDConf> getEmailDConfsAsList() {
 		if (emailDConfs != null){
 			return new ArrayList<EmailDConf>(emailDConfs);
@@ -66,7 +108,10 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		return null;
 	}
 
-	@XmlTransient
+	/**
+	 * No se guardará en el mapa XML este valor
+	 */
+    @XmlTransient
 	public Set<EmailDConf> getEmailDConfs() {
 		if (emailDConfs == null){
 			return new HashSet<EmailDConf>();
@@ -251,7 +296,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 			context = JAXBContext.newInstance(MessageBegin.class);
 			Unmarshaller unmarshaler = context.createUnmarshaller();
 			StringReader stringReader = new StringReader(str);
-			this.setObj((MessageBegin)unmarshaler.unmarshal(stringReader));			
+			this.setObj((MessageBegin)unmarshaler.unmarshal(stringReader));	
 		} catch (JAXBException e) {
 			String mess = "Error unmarshalling MessageBegin "
 					+ e.getMessage()+(e.getCause()!=null?". "+e.getCause():" ");
@@ -267,7 +312,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 
 		super.setObj(mb);
 		
-		this.setEmailDConfs(mb.getEmailDConfs());
+		this.setEmailDConfIds(mb.getEmailDConfIds());
 
 	}
 
