@@ -12,24 +12,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.joda.time.DateTime;
 
 /**
- * Defines the Generic Type
+ * Defines the Generic Step Type
  * 
  * @author dml 20150414
  *
  */
 @XmlRootElement
-public class GenericType extends InitEvent {
+public class GenericStepType extends GenericStepTypeGroup {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4915439836593940872L;
 	
-	public GenericType(){
+	public GenericStepType(){
 		
 	}
 	
-	public GenericType(Integer id, String name, String type, boolean active,
+	public GenericStepType(Integer id, String name, String type, boolean active,
 			boolean engineReq, boolean deleted, String comments,
 			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser) {
@@ -48,7 +48,7 @@ public class GenericType extends InitEvent {
 
 	@Override
 	public String toString() {
-		return "GenericType [getType()=" + getType() + ", isActive()="
+		return "GenericStepType [getType()=" + getType() + ", isActive()="
 				+ isActive() + ", isEngineReq()=" + isEngineReq() + ", isDeleted()=" + isDeleted() + ", getComments()="
 				+ getComments() + ", getInsertDate()=" + getInsertDate() + ", getInsertUser()=" + getInsertUser()
 				+ ", getModDate()=" + getModDate() + ", getModUser()=" + getModUser() + ", getId()=" + getId()
@@ -64,14 +64,14 @@ public class GenericType extends InitEvent {
 	public String marshal()  {
 		JAXBContext context;
 		try {
-			context = JAXBContext.newInstance(GenericType.class);
+			context = JAXBContext.newInstance(GenericStepType.class);
 			Marshaller marshaller = context.createMarshaller();
 			StringWriter stringWriter = new StringWriter();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			marshaller.marshal(this, stringWriter);
 			return stringWriter.toString();			
 		} catch (JAXBException e) {
-			String mess = "Error marshalling GenericType "
+			String mess = "Error marshalling GenericStepType "
 					+e.getMessage()+(e.getCause()!=null?". "+e.getCause():" ");
 			System.out.println(mess);
 		}
@@ -81,7 +81,7 @@ public class GenericType extends InitEvent {
 	}
 
 	/**
-	 * Unmarshals an XML String and fills the GenericType hierarchy
+	 * Unmarshals an XML String and fills the GenericStepType hierarchy
 	 * 
 	 * @param str
 	 * 
@@ -89,12 +89,12 @@ public class GenericType extends InitEvent {
 	public void unmarshal(String str)  {
 		JAXBContext context;
 		try {
-			context = JAXBContext.newInstance(GenericType.class);
+			context = JAXBContext.newInstance(GenericStepType.class);
 			Unmarshaller unmarshaler = context.createUnmarshaller();
 			StringReader stringReader = new StringReader(str);
-			this.setObj((GenericType)unmarshaler.unmarshal(stringReader));			
+			this.setObj((GenericStepType)unmarshaler.unmarshal(stringReader));			
 		} catch (JAXBException e) {
-			String mess = "Error unmarshalling GenericType "
+			String mess = "Error unmarshalling GenericStepType "
 					+ e.getMessage()+(e.getCause()!=null?". "+e.getCause():" ");
 			System.out.println(mess);
 		}
@@ -102,9 +102,9 @@ public class GenericType extends InitEvent {
 	}
 
 	/**
-	 * Constructor using object GenericType
+	 * Constructor using object GenericStepType
 	 */
-	public void setObj(GenericType mb) {
+	public void setObj(GenericStepType mb) {
 
 		super.setObj(mb);
 

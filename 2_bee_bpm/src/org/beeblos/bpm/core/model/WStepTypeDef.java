@@ -16,6 +16,12 @@ import org.joda.time.DateTime;
  * Defines the step type. IE: task, message, begin, end, etc
  * Step types must match with valid objects of BPMN event, activity or gateway 
  * 
+ * NOTE dmuleiro 20150429: This MUST BE an abstract class because we cannot have instances
+ * of this class. If we want to assign an WStepTypeDef we have to assign the correct implementation 
+ * of this class. It is not an abstract class because we have to get it with the
+ * WStepTypeDefDao().getWStepTypeDefByPK() to know which type will be the StepType.
+ * It could be MessageBegin, GenericStepType, ...
+ * 
  * @author pab
  *
  */
