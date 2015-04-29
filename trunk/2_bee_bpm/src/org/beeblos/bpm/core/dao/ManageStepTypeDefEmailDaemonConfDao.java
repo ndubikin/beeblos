@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.dao.util.StepDefStepTypeConfigurationDaoUtil;
 import org.beeblos.bpm.core.error.ManageStepTypeDefEmailDaemonConfException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
-import org.beeblos.bpm.core.util.StepDefStepTypeConfigurationUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
@@ -103,7 +103,7 @@ public class ManageStepTypeDefEmailDaemonConfDao {
 						
 						WStepDef wsd = (WStepDef) cols[2];
 						
-						StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(wsd);
+						StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(wsd);
 						
 						if (wsd.getStepTypeDef() != null 
 								&& wsd.getStepTypeDef() instanceof EmailDaemonConfigurationList){

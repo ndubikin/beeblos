@@ -38,6 +38,11 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	/**
 	 * Cuentas del demonio
 	 */
+	private List<Integer> emailDaemonConfigurationIdList;
+	
+	/**
+	 * Cuentas del demonio
+	 */
 	private Set<EmailDConf> emailDaemonConfiguration;
 	
 	public MessageBegin(){
@@ -52,6 +57,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		this.engineReq = wstd.isEngineReq();
 		this.deleted = wstd.isDeleted();
 		this.comments = wstd.getComments();
+		this.relatedClass = wstd.getRelatedClass();
 		this.insertDate = wstd.getInsertDate();
 		this.insertUser = wstd.getInsertUser();
 		this.modDate = wstd.getModDate();
@@ -59,7 +65,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	}
 
 	public MessageBegin(Integer id, String name, String type, boolean active,
-			boolean engineReq, boolean deleted, String comments,
+			boolean engineReq, boolean deleted, String comments, String relatedClass, 
 			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser) {
 		this.id = id;
@@ -69,6 +75,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		this.engineReq = engineReq;
 		this.deleted = deleted;
 		this.comments = comments;
+		this.relatedClass = relatedClass;
 		this.insertDate = insertDate;
 		this.insertUser = insertUser;
 		this.modDate = modDate;
@@ -88,28 +95,11 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	 */
 	@XmlElement(name="emailDaemonConfigurationIdList")
 	public List<Integer> getEmailDaemonConfigurationIdList() {
-		
-		if (emailDaemonConfiguration == null){
-			return new ArrayList<Integer>();
-		}
-		
-		List<Integer> returnValue = new ArrayList<Integer>();
-		for (EmailDConf edc : emailDaemonConfiguration){
-			returnValue.add(edc.getId());
-		}
-		return returnValue;
+		return this.emailDaemonConfigurationIdList;
 	}
 
-	public void setEmailDaemonConfigurationIdList(List<Integer> idList) {
-		
-		this.emailDaemonConfiguration = new HashSet<EmailDConf>();
-		
-		if (idList != null){
-			for (Integer id : idList){
-				this.emailDaemonConfiguration.add(new EmailDConf(id));
-			}
-		}
-		
+	public void setEmailDaemonConfigurationIdList(List<Integer> emailDaemonConfigurationIdList) {
+		this.emailDaemonConfigurationIdList = emailDaemonConfigurationIdList;
 	}
 
 	/**

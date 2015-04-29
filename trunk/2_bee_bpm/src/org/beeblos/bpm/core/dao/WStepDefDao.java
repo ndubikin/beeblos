@@ -10,13 +10,13 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.dao.util.StepDefStepTypeConfigurationDaoUtil;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
-import org.beeblos.bpm.core.util.StepDefStepTypeConfigurationUtil;
 import org.hibernate.HibernateException;
 import org.joda.time.DateTime;
 
@@ -39,11 +39,14 @@ public class WStepDefDao {
 								+"]");
 
 		/**
-		 * Updates the "stepTypeConfiguration" field before updating it into DB
+		 * Here comes the WStepDef with a "GenericStepType" and we have to decide if it is correct 
+		 * or if it has another type.
+		 * After this, we have to fill the CORRECT "StepType" with all its "default" param values
+		 * to persist this information.
 		 * 
 		 * @author dmuleiro 20150424
 		 */
-		StepDefStepTypeConfigurationUtil.updateStepTypeConfigurationXml(step);
+		StepDefStepTypeConfigurationDaoUtil.createAndFillStepTypeConfigurationXml(step);
 
 		try {
 
@@ -81,7 +84,7 @@ public class WStepDefDao {
 		 * 
 		 * @author dmuleiro 20150424
 		 */
-		StepDefStepTypeConfigurationUtil.updateStepTypeConfigurationXml(step);
+		StepDefStepTypeConfigurationDaoUtil.updateStepTypeConfigurationXml(step);
 
 		try {
 			
@@ -194,7 +197,7 @@ public class WStepDefDao {
 		 * 
 		 * @author dmuleiro 20150424
 		 */
-		StepDefStepTypeConfigurationUtil.updateStepTypeConfigurationXml(wsd);
+		StepDefStepTypeConfigurationDaoUtil.updateStepTypeConfigurationXml(wsd);
 		
 		try {
 
@@ -383,7 +386,7 @@ public class WStepDefDao {
 		 * 
 		 * @author dmuleiro 20150424
 		 */
-		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(step);
+		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(step);
 
 		return step;
 	}
@@ -474,7 +477,7 @@ public class WStepDefDao {
 		 * 
 		 * @author dmuleiro 20150424
 		 */
-		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(steps);
+		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
 
 		return steps;
 	}
@@ -663,7 +666,7 @@ public class WStepDefDao {
 		 * 
 		 * @author dmuleiro 20150424
 		 */
-		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(steps);
+		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
 
 		return steps;
 	
@@ -1237,7 +1240,7 @@ public class WStepDefDao {
 		 * 
 		 * @author dmuleiro 20150424
 		 */
-		StepDefStepTypeConfigurationUtil.recoverStepTypeConfigurationFromXml(steps);
+		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
 
 		return steps;
 	}

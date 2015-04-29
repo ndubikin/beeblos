@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.beeblos.bpm.core.graph.MxCell;
-import org.beeblos.bpm.core.model.bpmn.GenericType;
+import org.beeblos.bpm.core.model.bpmn.GenericStepType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -291,7 +291,7 @@ public class WStepDef implements java.io.Serializable {
 			this.stepHead = new WStepHead();
 			this.timeUnit = new WTimeUnit( EMPTY_OBJECT );
 			this.reminderTimeUnit = new WTimeUnit( EMPTY_OBJECT );
-			this.stepTypeDef = new GenericType();
+			this.stepTypeDef = new GenericStepType();
 			
 		}
 		
@@ -372,7 +372,7 @@ public class WStepDef implements java.io.Serializable {
 	 */
 	public void setXmlIdStepType(Integer xmlIdStepType) {
 //		this.xmlLabel=xmlLabel;
-		if (stepTypeDef==null) this.setStepTypeDef(new GenericType());
+		if (stepTypeDef==null) this.setStepTypeDef(new GenericStepType());
 		getStepTypeDef().setId(xmlIdStepType);
 	}
 	

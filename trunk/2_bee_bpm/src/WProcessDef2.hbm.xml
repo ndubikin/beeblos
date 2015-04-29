@@ -1098,11 +1098,6 @@
 			class="org.beeblos.bpm.core.model.WStepHead" column="head_id" name="stepHead"
 			fetch="join" lazy="false" />
 
-		<many-to-one cascade="none" class="org.beeblos.bpm.core.model.WStepTypeDef"
-			lazy="false" fetch="join" name="stepTypeDef">
-			<column name="step_type_id"/>
-		</many-to-one>
-		
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" fetch="join" name="timeUnit">
 			<column name="id_time_unit">

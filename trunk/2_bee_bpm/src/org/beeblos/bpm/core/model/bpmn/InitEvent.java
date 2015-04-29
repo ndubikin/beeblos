@@ -7,6 +7,9 @@ import org.beeblos.bpm.core.model.WStepTypeDef;
  * BPMN2 init event
  * may be a Begin, Message begin or Timer Begin.
  * 
+ * NOTE dmuleiro 20150429: This is an abstract class. If we want to assign an 
+ * InitEvent we have to assign the correct implementation of this class. 
+ * 
  * @author nestor
  *
  */

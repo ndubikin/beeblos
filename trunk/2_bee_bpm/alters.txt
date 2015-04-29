@@ -502,7 +502,7 @@ ALTER TABLE `bee_bpm_dev`.`w_step_def`
 ADD COLUMN `step_type_configuration` LONGTEXT NULL DEFAULT NULL AFTER `render_attached_documents`;
 
 ## dml 20150424 - como he borrado los mappings, para que sepa que los "MessageBegin" son de ese tipo tengo que poner unos datos básicos en el XML de los WStepDef con step_type_id = 22 (que es el de MessageBegin)
-UPDATE gespro_generic.w_step_def
+UPDATE bee_bpm_dev.w_step_def
 SET step_type_configuration = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><messageBegin><active>false</active><deleted>false</deleted><engineReq>false</engineReq></messageBegin>'
 WHERE step_type_id = 22;
 
@@ -515,6 +515,6 @@ UPDATE `bee_bpm_dev`.`w_step_type_def`
 SET `related_class`='org.beeblos.bpm.core.model.bpmn.MessageBegin' 
 WHERE `id`='22';
 UPDATE `bee_bpm_dev`.`w_step_type_def` 
-SET `related_class`='org.beeblos.bpm.core.model.bpmn.GenericType' 
+SET `related_class`='org.beeblos.bpm.core.model.bpmn.GenericStepType' 
 WHERE `id`!='22';
-where id != 22;
+
