@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WUserRoleWorkException;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRoleWork;
@@ -110,6 +109,11 @@ public class WUserRoleWorkDao {
 
 	}
 
+	/**
+	 * delete a given runtime wUserRoleWork
+	 * @param userRoleWork
+	 * @throws WUserRoleWorkException
+	 */
 	public void delete(WUserRoleWork userRoleWork) throws WUserRoleWorkException {
 
 		logger.debug("delete() WUserRoleWork - user/role/processWork: [" 
@@ -149,6 +153,67 @@ public class WUserRoleWorkDao {
 		}
 
 	}
+	
+	/**
+	 * delete runtime WUserRoleWork related with given idProcessWork
+	 * nes 20150430
+	 * 
+	 * @param idProcessWork
+	 * @return qtyDeletedItems
+	 * @throws WUserRoleWorkException 
+	 */
+	public Integer deleteByProcessWork(Integer idProcessWork) 
+			throws WUserRoleWorkException{
+		logger.debug(">>>getRuntimeUserRoleByProcessWork...");
+		
+		if (idProcessWork==null) throw new WUserRoleWorkException("deleteRuntimeUserRoleByProcessWork: id process work arrives with null value ..."); 
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		Integer qtyDeletedItems=null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			qtyDeletedItems = (Integer) session
+					.createQuery("Delete WUserRoleWork where idProcessWork= :idProcessWork")
+					.setParameter("idProcessWork", idProcessWork)
+					.uniqueResult();
+
+
+			tx.commit();
+			
+
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
+					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():""); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
+					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():"")
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );			
+
+		}
+		
+		return qtyDeletedItems;		
+
+	}	
 
 	/**
 	 * returns a w-user-role-processWork
@@ -199,7 +264,7 @@ public class WUserRoleWorkDao {
 
 
 	/**
-	 * returns a list of wUserDef related with a runtime role for an idRole and idProcessWork
+	 * returns a list of wUserDef related with a runtime role for given idRole and idProcessWork
 	 * nes 20141224
 	 * 
 	 * @param idRole
@@ -236,7 +301,7 @@ public class WUserRoleWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "HibernateException: error recovering user def related with a runtime role and process work... " +
-					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():""); 
+					ex.getMessage()+" "+(ex.getCause()!=null?"."+ex.getCause():""); 
 			logger.error( mess );
 			throw new WUserRoleWorkException( mess );
 			
@@ -244,7 +309,66 @@ public class WUserRoleWorkDao {
 			if (tx != null)
 				tx.rollback();
 			String mess = "Exception: error recovering user def related with a runtime role and process work... " +
-					ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")+" "
+					ex.getMessage()+" "+(ex.getCause()!=null?"."+ex.getCause():"")+" "
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );			
+
+		}
+		
+		return retorno;		
+
+	}
+	
+	/**
+	 * returns a list of WUserRoleWork related with given idProcessWork
+	 * nes 20150430
+	 * 
+	 * @param idProcessWork
+	 * @return
+	 * @throws WUserRoleWorkException 
+	 */
+	public List<WUserRoleWork> getByProcessWork(Integer idProcessWork) 
+			throws WUserRoleWorkException{
+		logger.debug(">>>getRuntimeUserRoleByProcessWork...");
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WUserRoleWork> retorno=null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			retorno = session
+					.createQuery("From WUserRoleWork where idProcessWork= :idProcessWork")
+					.setParameter("idProcessWork", idProcessWork)
+					.list();
+
+
+			tx.commit();
+			
+
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
+					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():""); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
+					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():"")
 					+ex.getClass(); 
 			logger.error( mess );
 			throw new WUserRoleWorkException( mess );			
