@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,7 +78,10 @@ public class ManageStepTypeDefEmailDaemonConfBL {
 			 */
 			if (edc != null 
 					&& stepDef.getStepTypeDef() instanceof EmailDaemonConfigurationList){
-				((EmailDaemonConfigurationList) stepDef.getStepTypeDef()).getEmailDaemonConfiguration().add(edc);
+				
+				Set<EmailDConf> list = ((EmailDaemonConfigurationList) stepDef.getStepTypeDef()).getEmailDaemonConfiguration();
+				list.add(edc);
+				((EmailDaemonConfigurationList) stepDef.getStepTypeDef()).setEmailDaemonConfiguration(list);
 			}
 
 		} catch (DaemonConfException e) {

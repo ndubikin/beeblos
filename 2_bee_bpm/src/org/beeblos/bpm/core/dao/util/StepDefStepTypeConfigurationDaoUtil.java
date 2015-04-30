@@ -2,6 +2,7 @@ package org.beeblos.bpm.core.dao.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -136,6 +137,8 @@ public class StepDefStepTypeConfigurationDaoUtil {
 		
 			String newStepTypeConfiguration = null;
 			try {
+				
+				_setEmailDaemonConfListIdFromCompleteList(wsd);
 
 				newStepTypeConfiguration = wsd.getStepTypeDef().marshal();
 				
@@ -153,6 +156,37 @@ public class StepDefStepTypeConfigurationDaoUtil {
 		
 	}
 		
+	/**
+	 * Loads the emailDaemonConfigurationIdList from the emailDaemonConfiguration object list
+	 * because we have to marshal only the ids
+	 * 
+	 * @author dmuleiro 20150430
+	 * 
+	 * @param wsd
+	 */
+	private static void _setEmailDaemonConfListIdFromCompleteList(WStepDef wsd){
+		
+		/**
+		 * if we have EmailDConfs we have to add it to the "idList" in order to marshal them
+		 * 
+		 * @author dmuleiro 20150430
+		 */
+		List<Integer> idEdcList = null;
+		if (wsd.getStepTypeDef() instanceof EmailDaemonConfigurationList
+				&& ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDaemonConfiguration() != null){
+			
+			Set<EmailDConf> edcList = ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDaemonConfiguration();
+		
+			idEdcList = new ArrayList<Integer>();
+			for (EmailDConf completeEdc : edcList){
+				idEdcList.add(completeEdc.getId());
+			}
+			
+		}
+		((EmailDaemonConfigurationList) wsd.getStepTypeDef()).setEmailDaemonConfigurationIdList(idEdcList);
+		
+	}
+	
 	/**
 	 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
 	 * 
@@ -338,8 +372,8 @@ public class StepDefStepTypeConfigurationDaoUtil {
 			
 			EmailDaemonConfigurationList edcl = (EmailDaemonConfigurationList) wsd.getStepTypeDef();
 			
-			if (edcl != null && edcl.getEmailDaemonConfiguration() != null
-					&& !edcl.getEmailDaemonConfiguration().isEmpty()){
+			if (edcl != null && edcl.getEmailDaemonConfigurationIdList() != null
+					&& !edcl.getEmailDaemonConfigurationIdList().isEmpty()){
 				
 				Set<EmailDConf> auxList = new HashSet<EmailDConf>();
 				for (Integer idEmailDConf : ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDaemonConfigurationIdList()) {
