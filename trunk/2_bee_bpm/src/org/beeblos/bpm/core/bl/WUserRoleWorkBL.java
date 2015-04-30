@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.dao.WUserRoleDao;
 import org.beeblos.bpm.core.dao.WUserRoleWorkDao;
 import org.beeblos.bpm.core.error.WUserRoleWorkException;
 import org.beeblos.bpm.core.model.WRoleDef;
@@ -147,6 +148,19 @@ public class WUserRoleWorkBL {
 
 	}
 
+	/**
+	 * delete runtime WUserRoleWork related with given idProcessWork
+	 * nes 20150430
+	 * 
+	 * @param idProcessWork
+	 * @return qtyDeletedItems
+	 * @throws WUserRoleWorkException 
+	 */
+	public Integer deleteByProcessWork(Integer idProcessWork, Integer currentUserId) 
+			throws WUserRoleWorkException{
+		return new WUserRoleWorkDao().deleteByProcessWork(idProcessWork);
+	}
+	
 	public WUserRoleWork getUserRoleWorkByPK(Integer id)
 			throws WUserRoleWorkException {
 
@@ -166,7 +180,41 @@ public class WUserRoleWorkBL {
 	public List<WUserDef> getUserDefListByRole(Integer idRole, Integer idProcessWork, Integer currentUserId) 
 			throws WUserRoleWorkException{
 		WUserRoleWorkDao wUserRoleWorkDao = new WUserRoleWorkDao();
+		// TDOO: faltaría implementar el tema de la seguridad para determinar quien puede
+		// borrar y quien no los runtime users para un proceso / paso
+		// Ejemplo: un administrador del proceso o de la instalación podría borrarlos, el usuario
+		// que creó el processwork por ahí también ... pero claro depende ... quizás en este ultimo caso
+		// hay que pensar a ver si el creador puede eliminar un proceso recién insertado por ejemplo...
+		// nes 20150430
 		return wUserRoleWorkDao.getUserDefListByRole(idRole, idProcessWork);
 	}
 
+	/**
+	 * returns a list of WUserRoleWork related with given idProcessWork
+	 * nes 20150430
+	 * 
+	 * @param idProcessWork
+	 * @param currentUserid
+	 * @return
+	 * @throws WUserRoleWorkException 
+	 */
+	public List<WUserRoleWork> getByProcessWork(Integer idProcessWork, Integer currentUserid) 
+			throws WUserRoleWorkException{
+		logger.debug(">>>getRuntimeUserRoleByProcessWork...");
+		
+		return new WUserRoleWorkDao().getByProcessWork(idProcessWork);
+	}
+	
+	/**
+	 * returns yes or not if given process work has defined runtime users...
+	 * nes 20150430
+	 * 
+	 * @param idProcessWork
+	 * @return
+	 * @throws WUserRoleWorkException 
+	 */
+	public boolean hasRuntimeUsers(Integer idProcessWork) 
+			throws WUserRoleWorkException{
+		return new WUserRoleWorkDao().hasRuntimeUsers(idProcessWork);
+	}
 }
