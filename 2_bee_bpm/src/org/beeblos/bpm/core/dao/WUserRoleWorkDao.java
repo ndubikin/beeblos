@@ -16,6 +16,8 @@ import com.sp.common.util.HibernateUtil;
 /**
  * DAO for runtime roles mgmt
  * 
+ * Nota: esta clase utiliza Named Queries ...
+ * 
  * 
  * @author nes 20141215
  *
@@ -378,6 +380,65 @@ public class WUserRoleWorkDao {
 		return retorno;		
 
 	}
+	
+	/**
+	 * returns yes or not if given process work has defined runtime users...
+	 * nes 20150430
+	 * 
+	 * @param idProcessWork
+	 * @return
+	 * @throws WUserRoleWorkException 
+	 */
+	public boolean hasRuntimeUsers(Integer idProcessWork) 
+			throws WUserRoleWorkException{
+		logger.debug(">>> hasRuntimeUsers...");
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		Integer retorno=null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			retorno = (Integer) session
+					.createQuery("select count() From WUserRoleWork where idProcessWork= :idProcessWork")
+					.setParameter("idProcessWork", idProcessWork)
+					.uniqueResult();
+
+
+			tx.commit();
+			
+
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
+					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():""); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
+					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():"")
+					+ex.getClass(); 
+			logger.error( mess );
+			throw new WUserRoleWorkException( mess );			
+
+		}
+		
+		return (retorno!=null && retorno>0?true:false);		
+
+	}	
 
 }
 	
