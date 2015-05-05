@@ -215,6 +215,7 @@ public class WStepSequenceDefBL {
 	
 
 	/**
+	 * WORK METHOD
 	 * Returns all outgoing routes from referred step  ( enabled and disabled )
 	 *  
 	 * @param processId
@@ -232,6 +233,7 @@ public class WStepSequenceDefBL {
 	}	
 
 	/**
+	 * ADMIN METHOD!!
 	 * @author dmuleiro 20130829
 	 * 
 	 * Returns the List<WStepSequenceDef> related with a WProcessDef.
