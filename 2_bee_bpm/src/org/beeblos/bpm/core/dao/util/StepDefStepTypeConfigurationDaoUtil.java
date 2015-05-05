@@ -171,10 +171,10 @@ public class StepDefStepTypeConfigurationDaoUtil {
 		 * 
 		 * @author dmuleiro 20150430
 		 */
-		List<Integer> idEdcList = null;
 		if (wsd.getStepTypeDef() instanceof EmailDaemonConfigurationList
 				&& ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDaemonConfiguration() != null){
 			
+			List<Integer> idEdcList = null;
 			Set<EmailDConf> edcList = ((EmailDaemonConfigurationList) wsd.getStepTypeDef()).getEmailDaemonConfiguration();
 		
 			idEdcList = new ArrayList<Integer>();
@@ -182,8 +182,8 @@ public class StepDefStepTypeConfigurationDaoUtil {
 				idEdcList.add(completeEdc.getId());
 			}
 			
+			((EmailDaemonConfigurationList) wsd.getStepTypeDef()).setEmailDaemonConfigurationIdList(idEdcList);
 		}
-		((EmailDaemonConfigurationList) wsd.getStepTypeDef()).setEmailDaemonConfigurationIdList(idEdcList);
 		
 	}
 	
