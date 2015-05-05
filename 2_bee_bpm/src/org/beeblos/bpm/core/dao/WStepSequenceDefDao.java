@@ -402,7 +402,8 @@ public class WStepSequenceDefDao {
 	}
 	
 	/**
-	 * Return step sequence list for given process and from step
+	 * WORK METHOD
+	 * Return step sequence list for given process and fromStep
 	 * @param idProcess
 	 * @param idFromStep
 	 * @return
@@ -460,9 +461,11 @@ public class WStepSequenceDefDao {
 	}
 
 	/**
+	 * ADMIN METHOD!!
+	 * 
 	 * @author dmuleiro 20130125 (dml 20130829 - added deleted where clause)
 	 * 
-	 * Returns the List<WStepSequenceDef> related with a concrete WProcessDef.
+	 * Returns the List<WStepSequenceDef> related with a given WProcessDef.
 	 *
 	 * @param Integer processId
 	 * @param String deleted: null or "ALL": returns all routes, "DELETED": returns deleted routes, "ALIVE": returns alive routes
