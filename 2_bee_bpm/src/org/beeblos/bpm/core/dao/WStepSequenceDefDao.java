@@ -425,8 +425,9 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
+			// nes 20150505 - its: 967 nos estaba faltando el filtro deleted=true para evitar traer rutas obsoletas...
 			stepSeqs = session
-							.createQuery("From WStepSequenceDef WHERE process.id=? and fromStep.id = ?  ")
+							.createQuery("From WStepSequenceDef WHERE process.id=? and fromStep.id = ? and deleted = false ") // nes 20150505 - its: 
 							.setParameter(0, idProcess)
 							.setParameter(1, idFromStep)
 							.list();

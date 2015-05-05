@@ -1272,6 +1272,7 @@ public class WStepWorkBL {
 		System.out.println("VERIFICAR QUE CARGUE CORRECTAMENTE LAS RUTAS PARA EL RUTEO DEL STEP ...");
 		/**
 		 * load outgoing routes from current step
+		 * nes:20150505 - its: 967 - arreglado el método getStepSequenceList para evitar que traiga rutas deleted
 		 */
 		List<WStepSequenceDef> routes = new WStepSequenceDefBL()
 												.getStepSequenceList(
