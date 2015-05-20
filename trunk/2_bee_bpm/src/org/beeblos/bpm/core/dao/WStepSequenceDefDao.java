@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WStepSequenceDef;
@@ -426,7 +425,7 @@ public class WStepSequenceDefDao {
 
 			tx.begin();
 
-			// nes 20150505 - its: 967 nos estaba faltando el filtro deleted=true para evitar traer rutas obsoletas...
+			// nes 20150505 - its: 967 nos estaba faltando el filtro deleted=false para evitar traer rutas obsoletas...
 			stepSeqs = session
 							.createQuery("From WStepSequenceDef WHERE process.id=? and fromStep.id = ? and deleted = false ") // nes 20150505 - its: 
 							.setParameter(0, idProcess)
