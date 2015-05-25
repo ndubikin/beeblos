@@ -3,7 +3,7 @@
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated May 21, 2012 10:49:10 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-	<class name="com.sp.common.core.model.NotificationEvent" table="notification_event">
+	<class name="com.sp.notification.core.model.NotificationEvent" table="notification_event">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -55,8 +55,8 @@
 			table="rel_channel_notification_event" lazy="false" fetch="join">
 			<key column="notification_event_id" />
 			<composite-element
-				class="com.sp.common.core.model.ChannelNotificationEvent">
-				<many-to-one name="channel" class="com.sp.common.core.model.Channel"
+				class="com.sp.notification.core.model.ChannelNotificationEvent">
+				<many-to-one name="channel" class="com.sp.notification.core.model.Channel"
 					column="channel_id" cascade="none" lazy="false" fetch="join" />
 				<property name="addDate"
 					type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
@@ -78,12 +78,12 @@
 		<set name="subscribers" table="rel_user_notification_event" lazy="false"
 			fetch="join" cascade="delete-orphan">
 			<key column="notification_event_id" />
-			<one-to-many class="com.sp.common.core.model.UserNotificationEvent" />
+			<one-to-many class="com.sp.notification.core.model.UserNotificationEvent" />
 		</set>
 
 	</class>
 
-	<class name="com.sp.common.core.model.Channel" table="channel">
+	<class name="com.sp.notification.core.model.Channel" table="channel">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
 			<generator class="identity" />
@@ -114,7 +114,7 @@
 
 	</class>
 
-	<class name="com.sp.common.core.model.UserNotificationEvent"
+	<class name="com.sp.notification.core.model.UserNotificationEvent"
 		table="rel_user_notification_event">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -142,13 +142,13 @@
 			column="user_id" cascade="none" lazy="false" fetch="join" />
 
 		<many-to-one name="notificationEvent"
-			class="com.sp.common.core.model.NotificationEvent" column="notification_event_id"
+			class="com.sp.notification.core.model.NotificationEvent" column="notification_event_id"
 			cascade="none" lazy="false" fetch="join" />
 
 		<set name="channels" table="rel_channel_r_u_n_e" cascade="none"
 			fetch="join" lazy="false">
 			<key column="user_notification_event_id" />
-			<many-to-many class="com.sp.common.core.model.Channel"
+			<many-to-many class="com.sp.notification.core.model.Channel"
 				column="channel_id" unique="false" lazy="false" fetch="join" />
 
 		</set>
