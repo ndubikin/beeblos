@@ -518,3 +518,6 @@ UPDATE `bee_bpm_dev`.`w_step_type_def`
 SET `related_class`='org.beeblos.bpm.core.model.bpmn.GenericStepType' 
 WHERE `id`!='22';
 
+##dml 20150528
+ALTER TABLE `bee_bpm_dev`.`user_settings` 
+ADD COLUMN `only_my_app_info` BIT(1) NULL DEFAULT b'0' AFTER `auto_bind_filter`;
