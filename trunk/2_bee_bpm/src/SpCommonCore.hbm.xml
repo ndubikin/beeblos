@@ -258,6 +258,19 @@
 		<property name="password" type="string">
 			<column name="password" />
 		</property>
+
+		<property name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date"  />
+		</property>
+		<property name="addUser" type="java.lang.Integer">
+			<column name="add_user"  />
+		</property>
+		<property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date"  />
+		</property>
+		<property name="modUser" type="java.lang.Integer">
+			<column name="mod_user"  />
+		</property>
 	</class>
 
 	<class lazy="false" name="com.sp.common.core.model.PersonCore"
@@ -653,6 +666,11 @@
 			type="string">
 			<column name="forward_account" />
 		</property>
+		<property generated="never" lazy="false" name="onlyMyAppInfo"
+			type="java.lang.Boolean">
+			<column name="only_my_app_info" sql-type="bit" />
+		</property>
+
 		<one-to-one name="user" class="com.sp.common.core.model.User"
 			constrained="true" />
 	</class>
