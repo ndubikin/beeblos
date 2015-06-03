@@ -30,9 +30,9 @@
 	<!-- dml 20140124 - con este 'target' copiamos el jar generado a todos los proyectos que lo van a usar  -->
 	<target name="copyToOtherProjs" depends="jar" description="OJO USAR CON CUIDADO!!">
 
-		<copy file="${distFolder}/${jarName}" todir="../2_bdc_core/lib" />
-		<copy file="${distFolder}/${jarName}" todir="../2_fbbva_common_user/lib" />
-		<copy file="${distFolder}/${jarName}" todir="../2_fbbva_dap/src/main/webapp/WEB-INF/lib" />
+		<copy file="${distFolder}/${jarName}" todir="../../2_bdc_core/lib" />
+		<copy file="${distFolder}/${jarName}" todir="../../2_fbbva_common_user/lib" />
+		<copy file="${distFolder}/${jarName}" todir="../../2_fbbva_dap/src/main/webapp/WEB-INF/lib" />
 
 	</target>	
 
