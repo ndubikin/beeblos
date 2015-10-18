@@ -98,11 +98,11 @@ public class WProcessWorkDao {
 
 					// retrieves data from external sources and update fields in managed table
 					pwSynchronizer.synchronizeProcessWorkManagedData(processWork, md, STARTUP, externalUserId);
-					logger.debug(">> managed data has been synchronized ...");
+					logger.debug(">> (add) managed data has been synchronized ...");
 					
 				}
 			} catch (Exception e) {
-				logger.error("Error sincronizando managed table desde el add WProcessWork id:"+(id!=null?id:"null") );
+				logger.error("Error (add) sincronizando managed table desde el add WProcessWork id:"+(id!=null?id:"null") );
 				// dejo seguir para que termine de insertar el proceso pero quedará inconsistente la información sincronizada...
 			}
 		} catch (HibernateException ex) {

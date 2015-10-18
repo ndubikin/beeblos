@@ -77,7 +77,10 @@ public class WStepWork implements java.io.Serializable {
 	private DateTime decidedDate;
 	private WUserDef performer;
 	
-	private String response;
+	/**
+	 * refactorizado nes 20151018 - pasado de String a Integer
+	 */
+	private WStepResponseDef response;
 	private String nextStepInstructions;
 	
 	private WTimeUnit timeUnit;
@@ -143,6 +146,7 @@ public class WStepWork implements java.io.Serializable {
 			this.reminderTimeUnit=new WTimeUnit( EMPTY_OBJECT );
 			this.lockedBy=new WUserDef( EMPTY_OBJECT );
 			this.insertUser=new WUserDef( EMPTY_OBJECT );
+			this.response=new WStepResponseDef();
 			
 		}	
 	}
@@ -186,7 +190,7 @@ public class WStepWork implements java.io.Serializable {
 	public WStepWork(Integer id,/* WProcessDef process, Integer version,*/
 			WStepDef previousStep, WStepDef currentStep, String reference, String comments,
 			DateTime arrivingDate, DateTime openedDate, WUserDef openerUser,
-			DateTime decidedDate, WUserDef performer, String response,
+			DateTime decidedDate, WUserDef performer, WStepResponseDef response, // nes 20151018
 			String nextStepInstructions, WTimeUnit timeUnit,
 			Integer assignedTime, LocalDate deadlineDate, LocalTime deadlineTime,
 			WTimeUnit reminderTimeUnit, Integer reminderTime,
@@ -221,6 +225,19 @@ public class WStepWork implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
+	/**
+	 * Flag indicating step work was already processed
+	 * nes 20151018
+	 * @return
+	 */
+	public boolean isProcessed() {
+		if (this.decidedDate!=null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * @return the timeUnit
 	 */
@@ -551,11 +568,21 @@ public class WStepWork implements java.io.Serializable {
 	}
 
 
-	public String getResponse() {
+	/**
+	 * refactorizado de String a WStepResponseDef
+	 * nes 20151018
+	 * @return
+	 */
+	public WStepResponseDef getResponse() {
 		return response;
 	}
 
-	public void setResponse(String response) {
+	/**
+	 * refactorizado de String a WStepResponseDef
+	 * nes 20151018
+	 * @return
+	 */
+	public void setResponse(WStepResponseDef response) {
 		this.response = response;
 	}
 
@@ -946,7 +973,42 @@ public class WStepWork implements java.io.Serializable {
 		return true;
 	}
 
+	// nes 20151018
+	public boolean empty() {
 
+		if (id!=null && ! id.equals(0)) return false;
+
+		if (this.wProcessWork!=null && !this.wProcessWork.empty()) return false;
+		if (this.managedData !=null && !this.managedData.empty()) return false;
+		if (this.previousStep !=null && !this.previousStep.empty()) return false;
+		if (this.currentStep !=null && !this.currentStep.empty()) return false;
+		if (this.openerUser !=null && !this.openerUser.empty()) return false;
+		if (this.performer !=null && !this.performer.empty()) return false;
+		if (this.timeUnit !=null && !this.timeUnit.empty()) return false;
+		if (this.reminderTimeUnit!=null && !this.reminderTimeUnit.empty()) return false;
+		if (this.lockedBy !=null && !this.lockedBy.empty()) return false;
+		if (this.insertUser !=null && !this.insertUser.empty()) return false;
+		if (this.response !=null && !this.response.empty()) return false; 
+
+		
+		if (this.userInstructions  != null && !"".equals(userInstructions)) return false;
+		if (this.userNotes  != null && !"".equals(userNotes)) return false;
+		if (this.urlData  != null && !"".equals(urlData)) return false;
+		if (this.nextStepInstructions  != null && !"".equals(nextStepInstructions)) return false;
+		
+		if (this.arrivingDate  != null ) return false;
+		if (this.openedDate  != null ) return false;
+		if (this.decidedDate  != null ) return false;
+		if (this.lockedSince  != null ) return false;
+
+		if (this.deadlineDate  != null ) return false;
+		if (this.deadlineTime  != null ) return false;
+
+		if (assignedTime!=null && !assignedTime.equals(0)) return false;
+		if (reminderTime!=null && !reminderTime.equals(0)) return false;
+
+		return true;
+	}
 
 
 }

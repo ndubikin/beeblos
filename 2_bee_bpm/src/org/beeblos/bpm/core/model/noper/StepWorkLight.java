@@ -89,7 +89,11 @@ public class StepWorkLight implements Serializable {
 	 * response to the stepWork
 	 */
 	private String response;
-
+	/**
+	 * nes 20151018
+	 */
+	private Integer idResponse;
+	
 	
 	public StepWorkLight() {
 		
@@ -101,7 +105,7 @@ public class StepWorkLight implements Serializable {
 			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedBy,
 			Integer idStepWork, 
 			String openerUserLogin, String openerUserName,
-			String performerLogin, String performerName, String response) {
+			String performerLogin, String performerName, String response, Integer idResponse) { // nes 20151018
 		super();
 		this.idProcessWork = idProcessWork;
 		this.idProcess = idProcess;
@@ -124,6 +128,7 @@ public class StepWorkLight implements Serializable {
 		this.performerLogin = performerLogin;
 		this.performerName = performerName;
 		this.response = response;
+		this.idResponse = idResponse;
 	}
 
 	/**
@@ -275,6 +280,20 @@ public class StepWorkLight implements Serializable {
 
 	public void setResponse(String response) {
 		this.response = response;
+	}
+
+	/**
+	 * @return the idResponse nes 20151018
+	 */
+	public Integer getIdResponse() {
+		return idResponse;
+	}
+
+	/**
+	 * @param idResponse the idResponse to set
+	 */
+	public void setIdResponse(Integer idResponse) {
+		this.idResponse = idResponse;
 	}
 
 	public String getOpenerUserLogin() {

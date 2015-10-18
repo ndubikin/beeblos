@@ -2641,16 +2641,18 @@ public class WStepWorkDao {
 		tmpQuery += " performer.login AS performer_login, ";//16
 		tmpQuery += " performer.name AS performer_name, ";//17
 		tmpQuery += " pw.comments, "; //18
-		tmpQuery += " sw.response, "; //19 rrl 20150409 ITS: 917
-		tmpQuery += " pw.id AS idProcessWork ";  //20 dml 20150413
-
+		tmpQuery += " wsrd.name AS responseName, ";  //19 nes 20151018
+		tmpQuery += " pw.id AS idProcessWork, ";  //20 dml 20150413
+		tmpQuery += " sw.response "; //21 rrl 20150409 ITS: 917 - nes 20151018 - pase a Integer id
+		
 		tmpQuery += " FROM w_step_work sw ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
 		tmpQuery += " LEFT OUTER JOIN w_step_head sh  ON step.head_id = sh.id ";
 		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = sw.id_work ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
 		tmpQuery += " LEFT OUTER JOIN w_user_def opener ON opener.id = sw.opener_user "; 
-		tmpQuery += " LEFT OUTER JOIN w_user_def performer ON performer.id = sw.performer_user_id "; 
+		tmpQuery += " LEFT OUTER JOIN w_user_def performer ON performer.id = sw.performer_user_id ";
+		tmpQuery += " LEFT OUTER JOIN w_step_response_def wsrd ON wsrd.id = sw.response "; // nes 20151018 
 
 		tmpQuery += filter;
 
@@ -2681,7 +2683,8 @@ public class WStepWorkDao {
 		LocalTime deadlineTime;
 		String reference;
 		String comments;
-		String response;
+		String response; // nes 20151018 - queda el nombre de la response
+		Integer idResponse; // nes 20151018 - el id
 		
 		// dml 20120123
 		boolean locked;
@@ -2758,7 +2761,8 @@ public class WStepWorkDao {
 					performerLogin = (cols[16] != null ? cols[16].toString() : "");
 					performerName = (cols[17] != null ? cols[17].toString() : "");
 					comments = (cols[18] != null ? cols[18].toString() : "");
-					response = (cols[19] != null ? cols[19].toString() : "");  //rrl 20150409 ITS: 917
+					response = (cols[19] != null ? cols[19].toString() : "");  //rrl 20150409 ITS: 917 // nes 20151018 - pasa a ser Integer
+					idResponse = (cols[21] != null ? new Integer(cols[21].toString()) : null); // nes 20151018
 					
 					// dml 20150413
 					idProcessWork = (cols[20] != null ? new Integer(
@@ -2767,7 +2771,7 @@ public class WStepWorkDao {
 					returnList.add(new StepWorkLight(idProcessWork, idProcess, idStep, stepName, 
 							reference, comments, arrivingDate, openedDate, openerUser, decidedDate, 
 							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork, 
-							openerUserLogin, openerUserName, performerLogin, performerName, response));
+							openerUserLogin, openerUserName, performerLogin, performerName, response, idResponse));
 				}
 
 			} else {

@@ -67,6 +67,30 @@ public class WStepSequenceDefDao {
 					
 	}
 	
+	public void merge(WStepSequenceDef stepSeq) throws WStepSequenceDefException {
+		
+		logger.debug("update() WStepSequenceDef < id = "+stepSeq.getId()+">");
+		
+		try {
+
+			HibernateUtil.merge(stepSeq);
+
+
+		} catch (HibernateException ex) {
+			String mess = "WStepSequenceDefDao: update - Can't merge stepSeq definition record "+ 
+					stepSeq.getFromStep()+"/"+stepSeq.getToStep() +
+					" - id:"+(stepSeq!=null&&stepSeq.getId()!=null?stepSeq.getId():"null")
+					+" - "+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():"null");
+			logger.error(mess);
+			throw new WStepSequenceDefException("WStepSequenceDefDao: merge - Can't update stepSeq definition record "+ 
+					stepSeq.getFromStep()+"/"+stepSeq.getToStep()  +
+					" - id = "+stepSeq.getId()+"\n - "+ex.getMessage()+"\n"+ex.getCause());
+
+		}
+					
+	}
+	
 	/**
 	 * @author dmuleiro - 20130830
 	 * 

@@ -33,6 +33,13 @@ public class WStepResponseDef implements java.io.Serializable, Comparable<WStepR
 		super();
 	}
 
+	/*
+	 * nes 20151018
+	 */
+	public WStepResponseDef(Integer id) {
+		this.id = id;
+	}
+
 	public WStepResponseDef(Integer respOrder, String name) {
 		super();
 		this.respOrder = respOrder;

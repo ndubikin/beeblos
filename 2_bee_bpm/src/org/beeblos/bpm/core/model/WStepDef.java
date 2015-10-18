@@ -170,7 +170,7 @@ public class WStepDef implements java.io.Serializable {
 	private boolean expiredUserNotice;
 	
 	/**
-	 * 
+	 * ANOTAR USO DE ESTE CAMPO
 	 */
 	private boolean emailNotification;
 	/**

@@ -153,16 +153,27 @@ public class BeeBPMBL {
 	}
 	
 	/**
-	 * Injects a new instance of process. This method is intended to launch starting
-	 * with a InitEvent (begin step)
 	 * 
-	 * The begin step will be loaded with all the parameters required by process definition,
-	 * like reference, related object, instructions to next step, custom data, etc.
+	 * NOTA IMPORTANTE: EL UNICO SENTIDO QUE TIENE (QUE SE ME OCURRE AHORA) de hacer un inject de un 
+	 * wStepWork sería que reinsertemos un wStepWork existente en un nuevo paso que salte la secuencia
+	 * lógica de pasos.
 	 * 
-	 * stepWork must arrives without id (id-step-work must be null) and ManagedData stepWork id
-	 * will be null too (and it is mandatory to fill this fields at launch time ...)
+	 * Esto es: tengo 1 ProcessWork y éste tiene un StepWork dado y quiero reactivarlo y meterlo en algun 
+	 * sitio. Con un método así podría hacerlo.
 	 * 
-	 * Launch at the begin step implies the insert of wStepWork for begin step and move to the
+	 * NO SE ME OCURRE otra utilidad para pasar un wStepWork a un metodo 'inject' ...
+	 * 
+	 * 
+	 * Injects (start) a new process instance. This method is intended to launch starting
+	 * with an InitEvent (begin step)
+	 * 
+	 * Mandatory: The begin step will be loaded with all the parameters required by process definition,
+	 * like reference, related object, instructions to next step, custom data (if exists), etc.
+	 * 
+	 * stepWork MUST arrives without id (id-step-work must be null) and ManagedData stepWork id
+	 * MUST be null too (and the start algorithm will fill this fields at launch time ...)
+	 * 
+	 * Launch at the begin step implies the table insert of the wStepWork for begin step and move to the
 	 * next step(s)
 	 * 
 	 * Launch step has not be responses but may have logical rules to route the step ... (FALTA IMPLEMENTAR...)
@@ -219,25 +230,13 @@ public class BeeBPMBL {
 
 			justCreatedStepWork = wswBL.getStepWithLock(idStepWork, currentUserId);
 			
-			/**
-			 * update step work id and process work id at ManagedData and persist...
-			 */
-			stepWork.getManagedData().setCurrentStepWorkId(idStepWork);
-			stepWork.getManagedData().setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
-			
-			for (ManagedDataField mdf: stepWork.getManagedData().getDataField()) {
-				mdf.setCurrentStepWorkId(idStepWork);
-				mdf.setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
+			if (stepWork.getManagedData()!=null) {
+				
+				_updateStepWorkManagedData(stepWork, currentUserId, idStepWork,
+						wswBL, justCreatedStepWork);
+				
 			}
-			
-			logger.debug(">>> MD was updated with ids ...");
-			
-			justCreatedStepWork.setManagedData(stepWork.getManagedData());
-			
-			// updates managed data of created wstepWork...
-			wswBL.update(justCreatedStepWork, currentUserId);
 
-			logger.debug(">>> MD was persisted ...");
 			
 			wswBL.lockStep(idStepWork, currentUserId, currentUserId, isAdminProcess);
 			
@@ -278,6 +277,42 @@ public class BeeBPMBL {
 		
 		return qtyNewRoutes;
 		
+	}
+
+
+	/**
+	 * refactorizado nes 20151018 - se utiliza en el injector con wStepWork para definir el 
+	 * managed data del stepWork (en caso que tenga claro está ... )
+	 * 
+	 * @param stepWork
+	 * @param currentUserId
+	 * @param idStepWork
+	 * @param wswBL
+	 * @param justCreatedStepWork
+	 * @throws WStepWorkException
+	 */
+	private void _updateStepWorkManagedData(WStepWork stepWork,
+			Integer currentUserId, Integer idStepWork, WStepWorkBL wswBL,
+			WStepWork justCreatedStepWork) throws WStepWorkException {
+		/**
+		 * update step work id and process work id at ManagedData and persist...
+		 */
+		stepWork.getManagedData().setCurrentStepWorkId(idStepWork);
+		stepWork.getManagedData().setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
+		
+		for (ManagedDataField mdf: stepWork.getManagedData().getDataField()) {
+			mdf.setCurrentStepWorkId(idStepWork);
+			mdf.setCurrentWorkId(justCreatedStepWork.getwProcessWork().getId());
+		}
+		
+		logger.debug(">>> MD was updated with ids ...");
+		
+		justCreatedStepWork.setManagedData(stepWork.getManagedData());
+		
+		// updates managed data of created wstepWork...
+		wswBL.update(justCreatedStepWork, currentUserId);
+
+		logger.debug(">>> MD was persisted ...");
 	}
 
 
