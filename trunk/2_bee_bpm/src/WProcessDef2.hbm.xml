@@ -1371,15 +1371,15 @@
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
+		<many-to-one class="org.beeblos.bpm.core.model.WStepDef" 
 			column="id_origin_step" lazy="false" fetch="join" name="fromStep" />
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
 			column="id_dest_step" lazy="false" fetch="join" name="toStep" />
 		<many-to-one class="org.beeblos.bpm.core.model.WProcessDef"
 			column="process_id" lazy="false" fetch="join" name="process" />
 
-		<set name="externalMethod" table="w_stepsequence_method" 
-			lazy="false" fetch="join" cascade="save-update">
+		<set name="externalMethod" table="w_stepsequence_method"
+			lazy="false" fetch="join" cascade="none">
 			<key>
 				<column name="id_step_sequence"/>
 			</key>
@@ -1563,48 +1563,43 @@
 		<!-- <column name="version" /> -->
 		<!-- </property> -->
 
-		<property generated="never" lazy="false" name="arrivingDate"
+		<property name="arrivingDate" generated="never" lazy="false" 
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="arriving_date">
 				<comment>fecha/hora a la que llego</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="openedDate"
+		<property name="openedDate" generated="never" lazy="false" 
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="opened_date" not-null="false">
 				<comment>fecha hora a la que se abrio</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="decidedDate"
+		<property name="decidedDate" generated="never" lazy="false" 
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="decided_date" not-null="false">
 				<comment>fecha/hora a la que se resolvio</comment>
 			</column>
 		</property>
 
-		<property generated="never" lazy="false" name="response"
-			type="string">
-			<column name="response" />
-		</property>
-
-		<property generated="never" lazy="false" name="nextStepInstructions"
+		<property name="nextStepInstructions" generated="never" lazy="false"
 			type="string">
 			<column name="instructions" />
 		</property>
 
-		<property generated="never" lazy="false" name="assignedTime"
+		<property name="assignedTime" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="assigned_time">
 				<comment>CANTIDAD DE TIEMPO ASIGNADA PARA SU RESOLUCION</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="deadlineDate"
+		<property name="deadlineDate" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate">
 			<column name="deadline_date">
 				<comment>Si tiene una fecha limite</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="deadlineTime"
+		<property name="deadlineTime" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentLocalTime">
 			<column name="deadline_time">
 				<comment>Si tiene una hora de resolucion limite (en la fecha
@@ -1692,6 +1687,9 @@
 			</column>
 		</property>
 
+		<many-to-one class="org.beeblos.bpm.core.model.WStepResponseDef"
+			column="response" lazy="false" name="response" fetch="join" />
+		
 		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"
 			column="insert_user" lazy="false" name="insertUser" fetch="join" />
 		<many-to-one class="org.beeblos.bpm.core.model.WUserDef"

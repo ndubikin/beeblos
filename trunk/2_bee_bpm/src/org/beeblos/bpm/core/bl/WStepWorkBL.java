@@ -99,6 +99,8 @@ public class WStepWorkBL {
 	 * 
 	 * It is possible to insert or start a new process in any step of the process map..
 	 * 
+	 * If the process start at 'begin' step then a 'processStep' is executed automatically...
+	 * 
 	 * @param processWork
 	 * @param swco
 	 * @param currentUserId
@@ -1335,7 +1337,7 @@ public class WStepWorkBL {
 						}
 						
 						/**
-						 *  checks for notifications subscribers for the new step and send the emails
+						 *  checks for notification subscribers for the new step and send emails
 						 */
 						_sendEmailNotification(newStepWork, currentUser);
 						
@@ -1752,6 +1754,12 @@ public class WStepWorkBL {
 		
 	}
 	
+	/**
+	 * generates email notification for step with isEmailNotification enabled
+	 * 
+	 * @param newStep
+	 * @param currentUserId
+	 */
 	private void _sendEmailNotification(WStepWork newStep, Integer currentUserId) {
 		logger.debug(">>> _sendEmailNotification");
 		
@@ -1772,7 +1780,7 @@ public class WStepWorkBL {
 	
 
 	/**
-	 * Execute external GET external method
+	 * Execute external GET  methods...
 	 * 
 	 * @param Object[] objList
 	 * @param methodId
@@ -2728,10 +2736,11 @@ public class WStepWorkBL {
 		
 		logger.debug(">>> _setCurrentWorkitemToProcessed 1...");
 		
+		// nes 20151018 - refactorizada response de String a WStepResponseDef
 		if ( idResponse != null && idResponse != 0 ) { // nes 20121222
-			currentStep.setResponse(idResponse.toString());
-		} else {
-			currentStep.setResponse("no responses list");
+			currentStep.setResponse(new WStepResponseDef(idResponse));
+//		} else {
+//			currentStep.setResponse("no responses list");
 		}
 		
 		logger.debug(">>> _setCurrentWorkitemToProcessed 2...");

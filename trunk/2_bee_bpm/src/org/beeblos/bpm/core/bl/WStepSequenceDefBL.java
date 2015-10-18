@@ -73,8 +73,36 @@ public class WStepSequenceDefBL {
 			logger.debug("WStepSequenceDefBL.update - nothing to do ...");
 		}
 		
+	}
 
-					
+	/**
+	 * merge avoid brute force delete and update related collections....
+	 * http://stackoverflow.com/questions/4725785/stop-hibernate-from-updating-collections-when-they-have-not-changed
+	 * https://www.manning.com/books/java-persistence-with-hibernate
+	 * ...por mas explicaciones preguntarle a Gavin King ;)
+	 * 
+	 * @param route
+	 * @param currentUserId
+	 * @throws WStepSequenceDefException
+	 */
+	public void merge(WStepSequenceDef route, Integer currentUserId) throws WStepSequenceDefException {
+		
+		logger.debug("update() WStepSequenceDef id:"+(route!=null?route.getId():"null")+"");
+		
+		if (!route.equals(new WStepSequenceDefDao().getWStepSequenceDefByPK(route.getId())) ) {
+
+			route.nullateEmtpyObjects();// nes 20150121
+			
+			// timestamp & trace info
+			route.setModDate(new DateTime());
+			route.setModUser(currentUserId);
+			new WStepSequenceDefDao().merge(route);
+			
+		} else {
+			
+			logger.debug("WStepSequenceDefBL.merge... - nothing to do ...");
+		}
+		
 	}
 	
 	/**

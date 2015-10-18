@@ -952,13 +952,14 @@ public class WStepDefDao {
 				String hqlQuery = 
 						"Select Distinct w.id, w.stepHead.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws "
 								+ " WHERE ws.process.id= :processDefId "
-								+ " and w.stepTypeDef.type= :eventTypeId and w.id=ws.fromStep.id "
+								//+ " and w.stepTypeDef.type= :eventTypeId and w.id=ws.fromStep.id "
+								+ " and w.id=ws.fromStep.id "
 								+ " order by w.stepHead.name";
 				
 				lwsd = session
 							.createQuery(hqlQuery)
 							.setInteger("processDefId", processDefId)
-							.setString("eventTypeId", eventTypeId)
+//							.setString("eventTypeId", eventTypeId)
 							.list();
 				
 				tx.commit();

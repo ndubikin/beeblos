@@ -253,5 +253,27 @@ public class ManagedData {
 				+ (idWork != null ? "idWork=" + idWork : "") + "]";
 	}
 	
+	/**
+	 * nes 20151018
+	 * @return
+	 */
+	public boolean empty() {
+
+		if (pk!=null && !pk.equals(0)) return false;
+
+		if (currentWorkId!=null && !currentWorkId.equals(0)) return false;
+		if (currentStepWorkId!=null && !currentStepWorkId.equals(0)) return false;
+		if (processId!=null && !processId.equals(0)) return false;
+		if (reccount!=null && !reccount.equals(0)) return false;
+		if (idWork!=null && !idWork.equals(0)) return false;
+		
+
+		if (this.operation != null && !"".equals(operation)) return false;
+
+		if (this.managedTableConfiguration!=null && !this.managedTableConfiguration.empty()) return false;
+		if (this.dataField !=null && this.dataField.size()>0) return false;
+
+		return true;
+	}
 	
 }
