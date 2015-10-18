@@ -289,7 +289,7 @@ CREATE TABLE `bee_bpm_dev`.`w_user_role_work` (
 ALTER TABLE `incidencias_sp`.`user` 
 ADD COLUMN `system_user` BIT(1) NULL DEFAULT b'0' AFTER `login_id`;
 
-
+##--
 ## pab 20141213
 ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 ADD COLUMN `xml_href` TEXT NULL AFTER `route_eval_order`,
@@ -301,10 +301,11 @@ ADD COLUMN `mxcell_string` TEXT NULL AFTER `xml_rules`;
 ALTER TABLE `bee_bpm_dev`.`w_process_def` 
 ADD COLUMN `xml_only_objects_string` TEXT NULL AFTER `mod_user`;
 
+##--
 ALTER TABLE `bee_bpm_dev`.`w_step_sequence_def` 
 ADD COLUMN `mxcell_string` TEXT NULL AFTER `mod_user`,
 ADD COLUMN `xml_id` TEXT NULL AFTER `mxcell_string`;
-
+##--
 ALTER TABLE `bee_bpm_dev`.`w_process_def` 
 ADD COLUMN `xml_symbols` TEXT NULL AFTER `mod_user`,
 ADD COLUMN `xml_layers` TEXT NULL AFTER `xml_symbols`;
@@ -329,6 +330,7 @@ ADD CONSTRAINT `fk_w_step_def_2`
 FOREIGN KEY (`step_type_id`)   
 REFERENCES `bee_bpm_dev`.`w_step_type_def` (`id`)   ON DELETE NO ACTION   ON UPDATE NO ACTION;
 
+##--
 ##pab 20150216
 ALTER TABLE `bee_bpm_dev`.`w_step_type_def` ADD COLUMN `allowed_responses` BIT NOT NULL DEFAULT 0 AFTER `type`;
 ## set allowed responses to true for task type
@@ -489,6 +491,7 @@ CHANGE COLUMN `instructions` `instructions` VARCHAR(255) DEFAULT '' ;
 
 update `bee_bpm_dev`.`w_step_def`  set `instructions` = "" where `instructions` is null and id>0;
 
+##--
 ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 ADD COLUMN `allow_attach_documents` BIT(1) NULL DEFAULT b'0' AFTER `mxcell_string`,
 ADD COLUMN `render_attached_documents` BIT(1) NULL DEFAULT b'0' AFTER `allow_attach_documents`;
@@ -497,6 +500,7 @@ ADD COLUMN `render_attached_documents` BIT(1) NULL DEFAULT b'0' AFTER `allow_att
 ALTER TABLE `bee_bpm_dev`.`w_step_type_def_email_d_conf` 
 CHANGE COLUMN `id_step_type_def` `id_step_type_def` INT(11) NOT NULL AUTO_INCREMENT ;
 
+##--
 ## dml 20150424 - faltaba el autoincrement a esta tabla
 ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 ADD COLUMN `step_type_configuration` LONGTEXT NULL DEFAULT NULL AFTER `render_attached_documents`;
@@ -506,6 +510,7 @@ UPDATE bee_bpm_dev.w_step_def
 SET step_type_configuration = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><messageBegin><active>false</active><deleted>false</deleted><engineReq>false</engineReq></messageBegin>'
 WHERE step_type_id = 22;
 
+##--
 ## dml 20150424 - campo donde se guardará el paquete.objeto al que se mapeará cada steptype
 ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
 ADD COLUMN `related_class` VARCHAR(255) NULL DEFAULT NULL AFTER `allowed_responses`;
@@ -518,6 +523,13 @@ UPDATE `bee_bpm_dev`.`w_step_type_def`
 SET `related_class`='org.beeblos.bpm.core.model.bpmn.GenericStepType' 
 WHERE `id`!='22';
 
+
 ##dml 20150528
 ALTER TABLE `bee_bpm_dev`.`user_settings` 
 ADD COLUMN `only_my_app_info` BIT(1) NULL DEFAULT b'0' AFTER `auto_bind_filter`;
+
+## nes 20151018
+ALTER TABLE `bee_bpm_dev`.`w_step_work` 
+CHANGE COLUMN `response` `response` INT(11) NULL DEFAULT NULL COMMENT 'El id de la respuesta elegida ( o aclaracion si no habian opciones / rutas )' ;
+
+UPDATE `bee_bpm_dev`.`w_step_work` set response=null WHERE response=0;
