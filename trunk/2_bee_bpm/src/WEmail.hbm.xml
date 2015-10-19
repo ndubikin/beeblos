@@ -128,5 +128,151 @@
 			<column name="id_user" />
 		</many-to-one>
 	</class>
+	
+	<class name="com.sp.common.core.model.UserEmailAccount" table="usuario_cuentas_email">
+		<id name="id" type="java.lang.Integer">
+			<column name="id_uce" />
+			<generator class="identity" />
+		</id>
+		<property generated="never" lazy="false" name="userId"
+			type="java.lang.Integer">
+			<column name="id_usuario" not-null="true">
+				<comment>id usuario de la tabla de usuarios</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="preferred"
+			type="java.lang.Boolean">
+			<column name="preferida" sql-type="bit">
+				<comment>Si está en true indica que es la cuenta preferida de ese
+					usuario</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="name"
+			type="string">
+			<column name="uce_nombre">
+				<comment>Nombre que debe aparecer en la referencia de la direcci</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="email"
+			type="string">
+			<column   name="uce_email" not-null="true">
+				<comment>email</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="replyTo"
+			type="string">
+			<column   name="uce_direccion_de_respuesta">
+				<comment>email de respuesta / si esta vacio deberia tomarse el de
+					arriba</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="uceTextoDeLaFirma"
+			type="string">
+			<column name="uce_texto_de_la_firma" />
+		</property>
+		<property generated="never" lazy="false" name="signatureText"
+			type="text">
+			<column name="uce_firma_adjunta_txt" />
+		</property>
+		<property generated="never" lazy="false" name="signatureHtml"
+			type="text">
+			<column name="uce_firma_adjunta_html" />
+		</property>
+		<property generated="never" lazy="false" name="ingoingServerType"
+			type="string">
+			<column   name="tipo_servidor_entrada">
+				<comment>defecto POP</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="ingoingServerName"
+			type="string">
+			<column   name="nombre_del_servidor_entrada" />
+		</property>
+		<property generated="never" lazy="false" name="ingoingServerPort"
+			type="java.lang.Integer">
+			<column name="puerto_entrada" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="ingoingConnectionSecurity"
+			type="string">
+			<column   name="seguridad_conexion" not-null="true">
+				<comment>Ninguna, SATRTTLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="ingoingAuthenticationMethod"
+			type="string">
+			<column   name="metodo_identificacion" not-null="true">
+				<comment>Contrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="formato" type="string">
+			<column   name="formato" not-null="true">
+				<comment>Texto, HTML</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingServerName"
+			type="string">
+			<column   name="nombre_servidor_de_salida">
+				<comment>Nombre del servidor de salida</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingServer"
+			type="string">
+			<column   name="servidor_de_salida">
+				<comment>id del servidor de salida . por ej: smtp.softpoint.org</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingServerPort"
+			type="java.lang.Integer">
+			<column name="puerto_salida" not-null="true">
+				<comment>Predeterminado 25</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false"
+			name="outgoingConnectionSecurity" type="string">
+			<column   name="seguridad_de_la_conexion_salida">
+				<comment>Ninguna, STARTTLS, SSL/TLS</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="outgoingConnectionMethod"
+			type="string">
+			<column   name="metodo_identificacion_salida">
+				<comment>"S"in identificacion, "I"ontrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="user"
+			type="string">
+			<column   name="nombre_usuario_salida" />
+		</property>
+		<property generated="never" lazy="false" name="password"
+			type="string">
+			<column   name="contrasenia_salida">
+				<comment>para las cuentas no riesgosas para poner la contrase</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="accountWithoutValidation"
+			type="java.lang.Boolean">
+			<column name="cuenta_sin_validacion" sql-type="bit">
+				<comment>indica si el correo saliente no precisa de password y no hace falta para enviar emails</comment>
+			</column>
+		</property>
+		<property generated="never" lazy="false" name="idExchange"
+			type="string">
+			<column  name="id_exchange">
+				<comment>por las dudas para conectarnos con exchange ...</comment>
+			</column>
+		</property>
+        <property name="addDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="add_date"/>
+        </property>
+        <property name="addUser" type="java.lang.Integer">
+            <column name="add_user" />
+        </property>
+        <property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+            <column name="mod_date"/>
+        </property>
+        <property name="modUser" type="java.lang.Integer">
+            <column name="mod_user" />
+        </property>
+	</class>	
 
 </hibernate-mapping>
