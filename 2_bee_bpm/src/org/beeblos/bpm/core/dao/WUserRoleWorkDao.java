@@ -182,10 +182,11 @@ public class WUserRoleWorkDao {
 
 			tx.begin();
 			
-			qtyDeletedItems = (Integer) session
+			Query query = session
 					.createQuery("Delete WUserRoleWork where idProcessWork= :idProcessWork")
-					.setParameter("idProcessWork", idProcessWork)
-					.uniqueResult();
+					.setParameter("idProcessWork", idProcessWork);
+
+			qtyDeletedItems = (Integer) query.executeUpdate();
 
 
 			tx.commit();
@@ -195,7 +196,7 @@ public class WUserRoleWorkDao {
 		} catch (HibernateException ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+			String mess = "HibernateException: error removing WUserRoleWork related with given process work id: "
 					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
 					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():""); 
 			logger.error( mess );
@@ -204,7 +205,7 @@ public class WUserRoleWorkDao {
 		} catch (Exception ex) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "HibernateException: error recovering WUserRoleWork related with given process work id: "
+			String mess = "HibernateException: error removing WUserRoleWork related with given process work id: "
 					+" "+(idProcessWork!=null?idProcessWork:"null")+" "
 					+ex.getMessage()+(ex.getCause()!=null?". "+ex.getCause():"")
 					+ex.getClass(); 
