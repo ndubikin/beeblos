@@ -17,6 +17,7 @@ import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
+import org.beeblos.bpm.core.model.WStepTypeDef;
 import org.hibernate.HibernateException;
 import org.joda.time.DateTime;
 
@@ -38,15 +39,15 @@ public class WStepDefDao {
 						(step!=null && step.getStepHead()!=null&&step.getStepHead().getName()!=null?step.getStepHead().getName():"null")
 								+"]");
 
-		/**
-		 * Here comes the WStepDef with a "GenericStepType" and we have to decide if it is correct 
-		 * or if it has another type.
-		 * After this, we have to fill the CORRECT "StepType" with all its "default" param values
-		 * to persist this information.
-		 * 
-		 * @author dmuleiro 20150424
-		 */
-		StepDefStepTypeConfigurationDaoUtil.createAndFillStepTypeConfigurationXml(step);
+//		/**
+//		 * Here comes the WStepDef with a "GenericStepType" and we have to decide if it is correct 
+//		 * or if it has another type.
+//		 * After this, we have to fill the CORRECT "StepType" with all its "default" param values
+//		 * to persist this information.
+//		 * 
+//		 * @author dmuleiro 20150424
+//		 */
+//		StepDefStepTypeConfigurationDaoUtil.createAndFillStepTypeConfigurationXml(step);
 
 		try {
 
@@ -79,12 +80,12 @@ public class WStepDefDao {
 		
 		logger.debug("update() WStepDef < id = "+step.getId()+">");
 		
-		/**
-		 * Updates the "stepTypeConfiguration" field before updating it into DB
-		 * 
-		 * @author dmuleiro 20150424
-		 */
-		StepDefStepTypeConfigurationDaoUtil.updateStepTypeConfigurationXml(step);
+//		/**
+//		 * Updates the "stepTypeConfiguration" field before updating it into DB
+//		 * 
+//		 * @author dmuleiro 20150424
+//		 */
+//		StepDefStepTypeConfigurationDaoUtil.updateStepTypeConfigurationXml(step);
 
 		try {
 			
@@ -192,12 +193,12 @@ public class WStepDefDao {
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 		
-		/**
-		 * Updates the "stepTypeConfiguration" field before updating it into DB
-		 * 
-		 * @author dmuleiro 20150424
-		 */
-		StepDefStepTypeConfigurationDaoUtil.updateStepTypeConfigurationXml(wsd);
+//		/**
+//		 * Updates the "stepTypeConfiguration" field before updating it into DB
+//		 * 
+//		 * @author dmuleiro 20150424
+//		 */
+//		StepDefStepTypeConfigurationDaoUtil.updateStepTypeConfigurationXml(wsd);
 		
 		try {
 
@@ -337,7 +338,7 @@ public class WStepDefDao {
 //			}
 			
 			step = (WStepDef) session.get(WStepDef.class, id);
-
+			
 			tx.commit();
 
 		} catch (HibernateException ex) {
@@ -381,12 +382,12 @@ public class WStepDefDao {
 			throw new WStepDefException( mess );
 		}
 		
-		/**
-		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
-		 * 
-		 * @author dmuleiro 20150424
-		 */
-		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(step);
+//		/**
+//		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+//		 * 
+//		 * @author dmuleiro 20150424
+//		 */
+//		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(step);
 
 		return step;
 	}
@@ -472,12 +473,12 @@ public class WStepDefDao {
 
 		// TODO HAY QUE CARGAR EL MANAGED DATA PARA CADA STEP-DEF
 		
-		/**
-		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
-		 * 
-		 * @author dmuleiro 20150424
-		 */
-		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
+//		/**
+//		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+//		 * 
+//		 * @author dmuleiro 20150424
+//		 */
+//		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
 
 		return steps;
 	}
@@ -661,12 +662,12 @@ public class WStepDefDao {
 					+ ex.getMessage()+" "+ex.getCause());
 		}
 
-		/**
-		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
-		 * 
-		 * @author dmuleiro 20150424
-		 */
-		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
+//		/**
+//		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+//		 * 
+//		 * @author dmuleiro 20150424
+//		 */
+//		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
 
 		return steps;
 	
@@ -1236,12 +1237,12 @@ public class WStepDefDao {
 			throw new WStepDefException(message);
 		}
 		
-		/**
-		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
-		 * 
-		 * @author dmuleiro 20150424
-		 */
-		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
+//		/**
+//		 * Recovers the WStepTypeDef field from the xml "stepTypeConfiguration" 
+//		 * 
+//		 * @author dmuleiro 20150424
+//		 */
+//		StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(steps);
 
 		return steps;
 	}

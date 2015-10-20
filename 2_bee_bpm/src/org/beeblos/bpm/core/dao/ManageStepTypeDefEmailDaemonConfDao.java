@@ -103,7 +103,7 @@ public class ManageStepTypeDefEmailDaemonConfDao {
 						
 						WStepDef wsd = (WStepDef) cols[2];
 						
-						StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(wsd);
+						//StepDefStepTypeConfigurationDaoUtil.recoverStepTypeConfigurationFromXml(wsd);
 						
 						if (wsd.getStepTypeDef() != null 
 								&& wsd.getStepTypeDef() instanceof EmailDaemonConfigurationList){

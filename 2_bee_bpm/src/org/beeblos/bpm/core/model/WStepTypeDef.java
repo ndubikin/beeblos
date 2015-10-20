@@ -10,16 +10,17 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.beeblos.bpm.core.model.enumerations.EventType;
 import org.joda.time.DateTime;
 
 /**
- * Defines the step type. IE: task, message, begin, end, etc
- * Step types must match with valid objects of BPMN event, activity or gateway 
+ * Defines the step eventType. IE: task, message, begin, end, etc
+ * Step eventTypes must match with valid objects of BPMN event, activity or gateway 
  * 
  * NOTE dmuleiro 20150429: This MUST BE an abstract class because we cannot have instances
  * of this class. If we want to assign an WStepTypeDef we have to assign the correct implementation 
  * of this class. It is not an abstract class because we have to get it with the
- * WStepTypeDefDao().getWStepTypeDefByPK() to know which type will be the StepType.
+ * WStepTypeDefDao().getWStepTypeDefByPK() to know which eventType will be the StepType.
  * It could be MessageBegin, GenericStepType, ...
  * 
  * @author pab
@@ -33,17 +34,17 @@ public class WStepTypeDef implements Serializable {
 	protected Integer id;
 	
 	/**
-	 * name of step type
+	 * name of steptype
 	 */
 	protected String name;
 	
 	/**
-	 * kind of step type
+	 * kind of step type (BPMN activity)
 	 */
-	protected String type;
+	protected EventType eventType; // nes 20151020 - refactorized
 	
 	/**
-	 * indicates there is an active or valid step type or an old or
+	 * indicates there is an active or valid steptype or an old or
 	 * inactive step type
 	 */
 	protected boolean active;
@@ -54,12 +55,23 @@ public class WStepTypeDef implements Serializable {
 	protected boolean engineReq;
 	
 	/**
-	 * Indicates a deleted step type (to database cross reference
+	 * indicates this kind of step must be processed automatically by the engine (or the core)
+	 * as soon as it is created...
+	 * Ej: end step only finiches the route, no human intervention is required, Milestone only anotates
+	 * the event in the database: no human access is requierd. This kind of stepWork will be processed
+	 * automatically and ASAP it's creation moment
+	 * 
+	 * nes 20151020
+	 */
+	protected boolean automaticProcess;
+	
+	/**
+	 * Indicates a deleted steptype (to database cross reference
 	 * support)
 	 */
 	protected boolean deleted;
 	/**
-	 * comments related with this step type
+	 * comments related with this steptype
 	 */
 	protected String comments;
 	
@@ -91,15 +103,16 @@ public class WStepTypeDef implements Serializable {
 		this.name = name;
 	}
 	
-	public WStepTypeDef(Integer id, String name, String type, boolean active,
-			boolean engineReq, boolean deleted, String comments,
+	public WStepTypeDef(Integer id, String name, EventType eventType, boolean active,
+			boolean engineReq, boolean automaticProcess, boolean deleted, String comments,
 			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser) {
 		this.id = id;
 		this.name = name;
-		this.type = type;
+		this.eventType = eventType;
 		this.active = active;
 		this.engineReq = engineReq;
+		this.automaticProcess=automaticProcess;// nes 20151020
 		this.deleted = deleted;
 		this.comments = comments;
 		this.insertDate = insertDate;
@@ -109,17 +122,17 @@ public class WStepTypeDef implements Serializable {
 	}
 
 	/**
-	 * @return the type
+	 * @return the eventType
 	 */
-	public String getType() {
-		return type;
+	public EventType getEventType() {
+		return eventType;
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param eventType the eventType to set
 	 */
-	public void setType(String type) {
-		this.type = type;
+	public void setEventType(EventType eventType) {
+		this.eventType = eventType;
 	}
 
 	/**
@@ -148,6 +161,20 @@ public class WStepTypeDef implements Serializable {
 	 */
 	public void setEngineReq(boolean engineReq) {
 		this.engineReq = engineReq;
+	}
+
+	/**
+	 * @return the automaticProcess
+	 */
+	public boolean isAutomaticProcess() {
+		return automaticProcess;
+	}
+
+	/**
+	 * @param automaticProcess the automaticProcess to set
+	 */
+	public void setAutomaticProcess(boolean automaticProcess) {
+		this.automaticProcess = automaticProcess;
 	}
 
 	/**
@@ -296,7 +323,7 @@ public class WStepTypeDef implements Serializable {
 	public String toString() {
 		return "WStepTypeDef [" + (id != null ? "id=" + id + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
-				+ (type != null ? "type=" + type + ", " : "") + "active="
+				+ (eventType != null ? "eventType=" + eventType + ", " : "") + "active="
 				+ active + ", engineReq=" + engineReq + ", deleted=" + deleted
 				+ ", "
 				+ (comments != null ? "comments=" + comments + ", " : "")
@@ -331,7 +358,7 @@ public class WStepTypeDef implements Serializable {
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((eventType == null) ? 0 : eventType.hashCode());
 		result = prime * result + ((relatedClass == null) ? 0 : relatedClass.hashCode());
 		return result;
 	}
@@ -394,10 +421,10 @@ public class WStepTypeDef implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (type == null) {
-			if (other.type != null)
+		if (eventType == null) {
+			if (other.eventType != null)
 				return false;
-		} else if (!type.equals(other.type))
+		} else if (!eventType.equals(other.eventType))
 			return false;
 		if (relatedClass == null) {
 			if (other.relatedClass != null)
@@ -408,14 +435,14 @@ public class WStepTypeDef implements Serializable {
 	}
 
 	/**
-	 * returns true if current step type is an empty object...
+	 * returns true if current step eventType is an empty object...
 	 * @return
 	 */
 	public boolean empty() {
 
 		if (id!=null && id!=0) return false;
 		if (name!=null && !"".equals(name)) return false;
-		if (type!=null && !"".equals(type)) return false;
+		if (eventType!=null && !"".equals(eventType)) return false;
 		if (comments!=null && !"".equals(comments)) return false;
 		return true;
 	}
@@ -488,7 +515,7 @@ public class WStepTypeDef implements Serializable {
 
 		this.id = wstd.getId();
 		this.name = wstd.getName();
-		this.type = wstd.getType();
+		this.eventType = wstd.getEventType();
 		this.active = wstd.isActive();
 		this.engineReq = wstd.isEngineReq();
 		this.deleted = wstd.isDeleted();

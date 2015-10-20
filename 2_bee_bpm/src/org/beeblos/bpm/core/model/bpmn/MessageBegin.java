@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.beeblos.bpm.core.model.WStepTypeDef;
+import org.beeblos.bpm.core.model.enumerations.EventType;
 import org.joda.time.DateTime;
 
 import com.sp.daemon.email.EmailDConf;
@@ -52,7 +53,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 	public MessageBegin(WStepTypeDef wstd) {
 		this.id = wstd.getId();
 		this.name = wstd.getName();
-		this.type = wstd.getType();
+		this.eventType = wstd.getEventType();
 		this.active = wstd.isActive();
 		this.engineReq = wstd.isEngineReq();
 		this.deleted = wstd.isDeleted();
@@ -64,13 +65,13 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		this.modUser = wstd.getModUser();
 	}
 
-	public MessageBegin(Integer id, String name, String type, boolean active,
+	public MessageBegin(Integer id, String name, EventType eventType, boolean active,
 			boolean engineReq, boolean deleted, String comments, String relatedClass, 
 			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser) {
 		this.id = id;
 		this.name = name;
-		this.type = type;
+		this.eventType = eventType;
 		this.active = active;
 		this.engineReq = engineReq;
 		this.deleted = deleted;
@@ -131,8 +132,8 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 
 	@Override
 	public String toString() {
-		return "MessageBegin [emailDaemonConfiguration=" + emailDaemonConfiguration + ", id=" + id + ", name=" + name + ", type="
-				+ type + ", active=" + active + ", engineReq=" + engineReq + ", deleted=" + deleted + ", comments="
+		return "MessageBegin [emailDaemonConfiguration=" + emailDaemonConfiguration + ", id=" + id + ", name=" + name + ", ventType="
+				+ eventType + ", active=" + active + ", engineReq=" + engineReq + ", deleted=" + deleted + ", comments="
 				+ comments + ", allowedResponses=" + allowedResponses + ", insertDate=" + insertDate + ", insertUser="
 				+ insertUser + ", modDate=" + modDate + ", modUser=" + modUser + "]";
 	}
@@ -161,7 +162,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((eventType == null) ? 0 : eventType.hashCode());
 		return result;
 	}
 
@@ -228,10 +229,10 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (type == null) {
-			if (other.type != null)
+		if (eventType == null) {
+			if (other.eventType != null)
 				return false;
-		} else if (!type.equals(other.type))
+		} else if (!eventType.equals(other.eventType))
 			return false;
 		return true;
 	}
@@ -244,7 +245,7 @@ public class MessageBegin extends InitEvent implements EmailDaemonConfigurationL
 
 		if (id!=null && id!=0) return false;
 		if (name!=null && !"".equals(name)) return false;
-		if (type!=null && !"".equals(type)) return false;
+		if (eventType!=null && !"".equals(eventType)) return false;
 		if (comments!=null && !"".equals(comments)) return false;
 		return true;
 	}

@@ -412,9 +412,9 @@ public class StepDefStepTypeConfigurationDaoUtil {
 	public static void recoverStepTypeConfigurationFromXml(List<WStepDef> wsdList) throws WStepDefException{
 		
 		if (wsdList != null && !wsdList.isEmpty()){
-			for (WStepDef wStepDef : wsdList) {
-				recoverStepTypeConfigurationFromXml(wStepDef);
-			}
+//			for (WStepDef wStepDef : wsdList) {
+//				recoverStepTypeConfigurationFromXml(wStepDef);
+//			}
 		}
 		
 	}
