@@ -594,14 +594,17 @@
 		<property generated="never" lazy="false" name="name" type="string">
 			<column name="name" />
 		</property>
-		<property generated="never" lazy="false" name="type" type="string">
-			<column name="type" />
+		<property name="eventType"  type="org.beeblos.bpm.core.model.userType.EventTypeUserType">
+			<column name="event_type" />
 		</property>
 		<property name="active" type="java.lang.Boolean">
 			<column name="active" sql-type="bit" />
 		</property>
 		<property name="engineReq" type="java.lang.Boolean">
 			<column name="engine_req" sql-type="bit" />
+		</property>
+		<property name="automaticProcess" type="java.lang.Boolean">
+			<column name="automatic_process" sql-type="bit" />
 		</property>
 		<property name="deleted" type="java.lang.Boolean">
 			<column name="deleted" sql-type="bit" />
@@ -1098,12 +1101,22 @@
 			class="org.beeblos.bpm.core.model.WStepHead" column="head_id" name="stepHead"
 			fetch="join" lazy="false" />
 
+
+		<many-to-one name="stepTypeDef" class="org.beeblos.bpm.core.model.WStepTypeDef"
+			lazy="false" fetch="join" >
+			<column name="step_type_id">
+				<comment>tipo de evento/actividad (BPMN)</comment>
+			</column>
+		</many-to-one>
+
+
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" fetch="join" name="timeUnit">
 			<column name="id_time_unit">
 				<comment>UNIDAD DE MEDIDA DE TIEMPO</comment>
 			</column>
 		</many-to-one>
+		
 		<many-to-one class="org.beeblos.bpm.core.model.WTimeUnit"
 			lazy="false" fetch="join" name="reminderTimeUnit">
 			<column name="reminder_id_time_unit">
@@ -1716,15 +1729,15 @@
 		<!-- column="id_process" lazy="false" name="process" fetch="join"/> -->
 
 
-		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			lazy="false" name="previousStep" fetch="join">
+		<many-to-one name="previousStep" class="org.beeblos.bpm.core.model.WStepDef"
+			lazy="false" fetch="join">
 			<column name="id_previous_step" not-null="false">
 				<comment>PASO QUE LO ENVIO AQUI // si está en null quiere decir que
 					es el de inicio o que fué inyectado aquí ...</comment>
 			</column>
 		</many-to-one>
-		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
-			lazy="false" name="currentStep" fetch="join">
+		<many-to-one name="currentStep" class="org.beeblos.bpm.core.model.WStepDef"
+			lazy="false" fetch="join">
 			<column name="id_current_step">
 				<comment>PASO ACTUAL DEL OBJETO</comment>
 			</column>
