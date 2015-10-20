@@ -533,3 +533,8 @@ ALTER TABLE `bee_bpm_dev`.`w_step_work`
 CHANGE COLUMN `response` `response` INT(11) NULL DEFAULT NULL COMMENT 'El id de la respuesta elegida ( o aclaracion si no habian opciones / rutas )' ;
 
 UPDATE `bee_bpm_dev`.`w_step_work` set response=null WHERE response=0;
+
+## nes 20151020
+ALTER TABLE `gespro_generic_prod`.`w_step_type_def` 
+CHANGE COLUMN `type` `event_type` VARCHAR(15) NOT NULL ,
+CHANGE COLUMN `active` `active` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'event type: begin event, end, event, gateway, etc' ;

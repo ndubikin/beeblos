@@ -9,6 +9,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.beeblos.bpm.core.model.enumerations.EventType;
 import org.joda.time.DateTime;
 
 /**
@@ -29,13 +30,13 @@ public class GenericStepType extends GenericStepTypeGroup {
 		
 	}
 	
-	public GenericStepType(Integer id, String name, String type, boolean active,
+	public GenericStepType(Integer id, String name, EventType eventType, boolean active,
 			boolean engineReq, boolean deleted, String comments,
 			DateTime insertDate, Integer insertUser, DateTime modDate,
 			Integer modUser) {
 		this.id = id;
 		this.name = name;
-		this.type = type;
+		this.eventType = eventType; // nes 20151020
 		this.active = active;
 		this.engineReq = engineReq;
 		this.deleted = deleted;
@@ -48,7 +49,7 @@ public class GenericStepType extends GenericStepTypeGroup {
 
 	@Override
 	public String toString() {
-		return "GenericStepType [getType()=" + getType() + ", isActive()="
+		return "GenericStepType [getEventType()=" + getEventType() + ", isActive()="
 				+ isActive() + ", isEngineReq()=" + isEngineReq() + ", isDeleted()=" + isDeleted() + ", getComments()="
 				+ getComments() + ", getInsertDate()=" + getInsertDate() + ", getInsertUser()=" + getInsertUser()
 				+ ", getModDate()=" + getModDate() + ", getModUser()=" + getModUser() + ", getId()=" + getId()

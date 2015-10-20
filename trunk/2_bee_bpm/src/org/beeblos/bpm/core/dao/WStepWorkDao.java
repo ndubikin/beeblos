@@ -2735,8 +2735,7 @@ public class WStepWorkDao {
 					//openedDate = (cols[4] != null ? (Date) cols[4] : null);
 					openedDate = (cols[4] != null ? new TimestampColumnDateTimeMapper().fromNonNullValue((Timestamp) cols[4]) : null);
 
-					openerUser = (cols[5] != null ? new Integer(
-							cols[5].toString()) : null);
+					openerUser = (cols[5] != null ? new Integer(cols[5].toString()) : null);
 					
 					//decidedDate = (cols[6] != null ? (Date) cols[6] : null);
 					decidedDate = (cols[6] != null ? new TimestampColumnDateTimeMapper().fromNonNullValue((Timestamp) cols[6]) : null);
