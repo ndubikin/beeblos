@@ -284,6 +284,8 @@ public class WStepWorkBL {
 					runtimeSettings.getFileSPList(), currentUser);
 		}
 
+		logger.debug(">>> finished processStep qtyNewRoutes:"+(qtyNewRoutes!=null?qtyNewRoutes:"null")); // nes 20151020
+		
 		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
 		
 	}
