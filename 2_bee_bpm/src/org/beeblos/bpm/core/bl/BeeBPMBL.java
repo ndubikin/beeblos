@@ -47,6 +47,8 @@ import com.sp.common.model.ManagedDataField;
 public class BeeBPMBL { 
 
 	private static final Log logger = LogFactory.getLog(BeeBPMBL.class);
+
+	private static final boolean AUTO_LOCK=true;// nes 20151021
 	
 	/**
 	 * class properties will be used by mostly all methods ...
@@ -339,7 +341,7 @@ public class BeeBPMBL {
 		logger.debug(">>> move from begin step to the next instance ...");
 		try {
 			Integer qtyCreatedRoutes = 
-					wswBL.processStep(idStepWork, null, runtimeSettings, currentUserId, isAdminProcess, typeOfProcess);
+					wswBL.processStep(idStepWork, null, runtimeSettings, currentUserId, isAdminProcess, typeOfProcess, AUTO_LOCK);
 			return qtyCreatedRoutes;
 		} catch (WProcessDefException e) {
 			// TODO Auto-generated catch block
