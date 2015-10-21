@@ -99,7 +99,10 @@ public class WStepWorkBL {
 	 * 
 	 * It is possible to insert or start a new process in any step of the process map..
 	 * 
-	 * If the process start at 'begin' step then a 'processStep' is executed automatically...
+	 * If the process start at 'begin' step then will be necesary execution of a 'processStep' because "begin step" is
+	 * has no user assigned to process it. CALLER OF THIS METHOD must execute the processStep. 
+	 * This behavior is intentionally defined to permit the developer different choices...
+	 * (please see BeeBPMBL.injector ...)
 	 * 
 	 * @param processWork
 	 * @param swco
@@ -192,9 +195,10 @@ public class WStepWorkBL {
 	 * @param idStepWork
 	 * @param idResponse
 	 * @param runtimeSettings
-	 * @param currentUser
-	 * @param isAdminProcess
+	 * @param currentUserId
+	 * @param isAdminProcess - indicates the process will be realized as admin condition instead of assigned user task condition...
 	 * @param typeOfProcess: PROCESS_STEP or TURNBACK_STEP
+	 * @param autoLock - if true then this method will try to lock the step... (default:false)
 	 * @return
 	 * @throws WProcessDefException
 	 * @throws WStepDefException
@@ -209,8 +213,8 @@ public class WStepWorkBL {
 	 */
 	public Integer processStep (
 			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
-			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUser,
-			boolean isAdminProcess, String typeOfProcess) 
+			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUserId,
+			boolean isAdminProcess, String typeOfProcess, boolean autoLock) 
 	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
 			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
 			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
@@ -218,6 +222,9 @@ public class WStepWorkBL {
 		
 		DateTime now = new DateTime();
 		Integer qtyNewRoutes=0;
+
+		// nes 20151020 - store the list of generated wStepWorks
+		List<WStepWork> generatedStepWorkList = new ArrayList<WStepWork>();
 
 		/**
 		 * convention over configuration
@@ -228,15 +235,22 @@ public class WStepWorkBL {
 		}
 		// verifies the user has the step locked before process it ...
 		// if not there may be possible an error in the process chain ...
-		if (!checkLock(idStepWork, currentUser, false)) {
-			throw new WStepNotLockedException("Current step is not locked. Please try process again ...");
+		if (!checkLock(idStepWork, currentUserId, false)) {
+			if (autoLock) {
+				this.lockStep(idStepWork, currentUserId, currentUserId, isAdminProcess); // if can't lock the step throw exception...
+			} else {
+				throw new WStepNotLockedException("Current step is not locked. Please try process again ...");
+			}
 		}
 
 		// check the step is 'pending process' ... 
-		this.checkStatus(idStepWork, currentUser, false); 
+		this.checkStatus(idStepWork, currentUserId, false); 
 
 		// load current step from database
-		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+		WStepWork currentStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUserId);
+		
+		// if there are attached documents, then uploads to Beeblos and relate it with the wProcessWork
+		_uploadRelatedDocumentsToProcessWork(runtimeSettings, currentUserId, currentStep);
 
 		// sets managed data 
 		currentStep.setManagedData( 
@@ -245,13 +259,14 @@ public class WStepWorkBL {
 				);//NOTA NESTOR: VER BIEN QUE HACEMOS AQUÍ ...
 		
 		// set current workitem to processed status
-		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUser );
+		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUserId );
 
 		// insert new steps 
 		if ( typeOfProcess.equals(PROCESS_STEP) ) {
 			logger.debug(">>> PROCESS_STEP");
 			
-			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
+			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUserId, currentStep, idResponse, 
+												isAdminProcess, now, generatedStepWorkList);
 			logger.debug(">>> qty routes:"+qtyNewRoutes); 
 			
 			// if no new routes nor alive tasks then the process work is finished ...
@@ -259,18 +274,85 @@ public class WStepWorkBL {
 				&& getStepWorkCountByProcess(
 						currentStep.getwProcessWork().getProcessDef().getId(),ALIVE).equals(0)  ){
 
-					new WProcessWorkBL().finalize(currentStep.getwProcessWork(), currentUser);
+					new WProcessWorkBL().finalize(currentStep.getwProcessWork(), currentUserId);
 
 			}
 
 			
 		} else if ( typeOfProcess.equals(TURNBACK_STEP) ) {
 
-			_executeTurnBack(runtimeSettings, currentUser, currentStep, idResponse, isAdminProcess, now);
+			_executeTurnBack(runtimeSettings, currentUserId, currentStep, idResponse, isAdminProcess, now);
 			qtyNewRoutes=1;
 			
 		}
+		
+		/**
+		 * if automatic steps will be created then try to processs it
+		 * nes 20151020
+		 */
+		if (generatedStepWorkList.size()>0) {
+			_processJustGeneratedAutomaticSteps(runtimeSettings, currentUserId,
+					isAdminProcess, typeOfProcess, generatedStepWorkList);
+		}
 
+		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
+		
+	}
+
+	/**
+	 * if automatic steps will be created then try to processs it
+	 * nes 20151020
+	 *  
+	 * @param runtimeSettings
+	 * @param currentUserId
+	 * @param isAdminProcess
+	 * @param typeOfProcess
+	 * @param generatedStepWorkList
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 * @throws WStepSequenceDefException
+	 * @throws WStepLockedByAnotherUserException
+	 * @throws WStepNotLockedException
+	 * @throws WUserDefException
+	 * @throws WStepAlreadyProcessedException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessWorkException
+	 */
+	private void _processJustGeneratedAutomaticSteps(
+			WRuntimeSettings runtimeSettings, Integer currentUserId,
+			boolean isAdminProcess, String typeOfProcess,
+			List<WStepWork> generatedStepWorkList) {
+		/**
+		 * for each end event it must be processed because end-event has no human interfase to resolve
+		 * the task...
+		 */
+		for (WStepWork wsw: generatedStepWorkList) {
+			Integer NULL_RESPONSE=null;
+			boolean AUTO_LOCK=true;
+			if (wsw.getCurrentStep().getStepTypeDef().isAutomaticProcess()){
+				try {
+					this.processStep (
+							wsw.getId(), NULL_RESPONSE, runtimeSettings,
+							currentUserId, isAdminProcess, typeOfProcess,AUTO_LOCK);
+				}  catch (Exception e) { // NOTA NES 20151020 - ESTO HABRIA QUE LOGUEARLO EN UNA TABLA PARA VER LUEGO QUE HACER CON EL ERROR!!
+					logger.error("ERROR!!!: _processJustGeneratedAutomaticSteps class:"
+							+e.getClass()+" "
+							+" wswId:"+(wsw!=null&&wsw.getId()!=null?wsw.getId():"null")+"  "
+							+e.getMessage()+" "
+							+(e.getCause()!=null?e.getCause():" "));
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param runtimeSettings
+	 * @param currentUser
+	 * @param currentStep
+	 */
+	private void _uploadRelatedDocumentsToProcessWork(WRuntimeSettings runtimeSettings,
+			Integer currentUser, WStepWork currentStep) {
 		/**
 		 * @author dmuleiro 20150414 - new attached documents will be uploaded (if there are any)
 		 * attached documents will be related with a wProcessWork
@@ -283,11 +365,6 @@ public class WStepWorkBL {
 			this.uploadFileInfoList(currentStep.getwProcessWork().getId(), 
 					runtimeSettings.getFileSPList(), currentUser);
 		}
-
-		logger.debug(">>> finished processStep qtyNewRoutes:"+(qtyNewRoutes!=null?qtyNewRoutes:"null")); // nes 20151020
-		
-		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
-		
 	}
 
 	/**
@@ -1057,6 +1134,14 @@ public class WStepWorkBL {
 
 	}
 
+	/**
+	 * confirms a wStepWork is locked (required condition to process it...)
+	 * @param idStepWork
+	 * @param currentUser
+	 * @param isAdminUser
+	 * @return
+	 * @throws WStepLockedByAnotherUserException
+	 */
 	public boolean checkLock( 
 			Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
 					throws WStepLockedByAnotherUserException {
@@ -1142,13 +1227,23 @@ public class WStepWorkBL {
 	// IMPLEMENTAR CORRECTAMENTE EL LOCK Y EL UNLOCK!!!!!!!!!!!!!!!!!
 	// Y VER BIEN COMO DEFINIR SI ES ADMIN USER O SI ES USUARIO NORMAL EN USO DE SUS FACULTADES (PERMISOS)
 	// DEFINIDOS ...
-	
-	// lock given step
-	// isAdmin 
+
+	/**
+	 * lock given step
+	 * 
+	 * @param idStepWork - step work to lock
+	 * @param lockUserId - user will be lock the step
+	 * @param currentUserId - current user sending the request
+	 * @param isAdminUser - current user work as an admin instead of as assigned user/group for the task: ATENCION!!: NO ESTAMOS CONTROLANDO QUE EL USUARIO CURRENT SEA UN ADMIN...
+	 * @return
+	 * @throws WStepNotLockedException
+	 * @throws WStepLockedByAnotherUserException
+	 * @throws WStepWorkException
+	 */
 	public Boolean lockStep (
-			Integer idStepWork, Integer lockUserId, Integer currentUser, boolean isAdminUser ) 
+			Integer idStepWork, Integer lockUserId, Integer currentUserId, boolean isAdminUser ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
-		logger.debug(">> unlockStep idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">> lockStep idStepWork:"+(idStepWork!=null?idStepWork:"null"));
 		
 		// get the step
 //		WStepWork stepToLock = 
@@ -1157,7 +1252,7 @@ public class WStepWorkBL {
 		// 1st check user permissions
 		
 
-		_lockStep(idStepWork, currentUser, isAdminUser);
+		_lockStep(idStepWork, currentUserId, isAdminUser);
 		
 		return true;
 
@@ -1179,12 +1274,12 @@ public class WStepWorkBL {
 	 * locks a step. If the step is locked by same user nothing to do but doesn't return exception ...
 	 * 
 	 * @param idStepWork
-	 * @param currentUser
-	 * @param isAdmin
+	 * @param currentUserId
+	 * @param isAdmin - trying lock the step as admin condition...
 	 * @throws WStepWorkException
 	 * @throws WStepLockedByAnotherUserException
 	 */
-	private void _lockStep( Integer idStepWork, Integer currentUser, boolean isAdmin )
+	private void _lockStep( Integer idStepWork, Integer currentUserId, boolean isAdmin )
 			throws WStepWorkException, WStepLockedByAnotherUserException {
 		logger.debug(">> _lockStep 2 idStepWork:"+(idStepWork!=null?idStepWork:"null"));
 		
@@ -1196,7 +1291,7 @@ public class WStepWorkBL {
 			DateTime now = new DateTime();
 
 			new WStepWorkDao()
-						.lockStepWork( idStepWork, now, currentUser, isAdmin );
+						.lockStepWork( idStepWork, now, currentUserId, isAdmin );
 			
 			
 		} else {
@@ -1209,7 +1304,7 @@ public class WStepWorkBL {
 	}
 	
 	// unlocks a step. 
-	private void _unlockStep( WStepWork stepToUnlock, Integer currentUser, boolean isAdmin ) 
+	private void _unlockStep( WStepWork stepToUnlock, Integer currentUserId, boolean isAdmin ) 
 			throws WStepWorkException, WStepLockedByAnotherUserException {
 		
 		// if step is not locked then locks it !
@@ -1225,14 +1320,14 @@ public class WStepWorkBL {
 			
 			// timestamp & trace info
 			stepToUnlock.setModDate(new DateTime());
-			stepToUnlock.setModUser(currentUser);
+			stepToUnlock.setModUser(currentUserId);
 			
 			new WStepWorkDao().unlockStepWork(
 									  stepToUnlock.getId(),stepToUnlock.getModDate(),
 									  stepToUnlock.getModUser(), isAdmin);
 						
 			if ( isAdmin ) {
-				logger.info("Step: "+stepToUnlock.getId()+" was unlocked by admin:"+currentUser);
+				logger.info("Step: "+stepToUnlock.getId()+" was unlocked by admin:"+currentUserId);
 			}
 		} 
 	}
@@ -1245,7 +1340,7 @@ public class WStepWorkBL {
 	 * we have only 1 set of managedData ...
 	 * 
 	 * @param runtimeSettings
-	 * @param currentUser
+	 * @param currentUserId
 	 * @param currentStepWork
 	 * @param idResponse
 	 * @param isAdminProcess
@@ -1258,8 +1353,9 @@ public class WStepWorkBL {
 	 * @throws WStepWorkSequenceException
 	 */
 	private Integer _executeProcessStep(
-			WRuntimeSettings runtimeSettings, Integer currentUser,  WStepWork currentStepWork, 
-			Integer idResponse, boolean isAdminProcess, DateTime now ) 
+			WRuntimeSettings runtimeSettings, Integer currentUserId,  WStepWork currentStepWork, 
+			Integer idResponse, boolean isAdminProcess, DateTime now,
+			List<WStepWork> generatedStepWorkList ) 
 	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
 		if (logger.isDebugEnabled()){
 			logger.debug(">>> _executeProcessStep >> idStepWork"+currentStepWork.getId()
@@ -1268,7 +1364,7 @@ public class WStepWorkBL {
 		}
 		
 		Integer qty=0;
-
+		
 		// create an empty object to build new steps
 		WStepWork newStepWork = new WStepWork();
 		
@@ -1282,7 +1378,7 @@ public class WStepWorkBL {
 												.getStepSequenceList(
 														currentStepWork.getwProcessWork().getProcessDef().getId(), 
 														currentStepWork.getCurrentStep().getId(),
-														currentUser);
+														currentUserId);
 		
 
 		logger.debug(">>> _executeProcessStep >> qty routes:"+routes.size());
@@ -1318,30 +1414,24 @@ public class WStepWorkBL {
 						qty++;
 						
 						_setNewStepWorkAndPersists(runtimeSettings,
-								currentUser, currentStepWork, isAdminProcess,
+								currentUserId, currentStepWork, isAdminProcess,
 								now, newStepWork, route);
 						
 						// dml 20130827 - si vamos hacia adelante (procesamos) el beginStep y el endStep los marca la ruta
 						this.createStepWorkSequenceLog(route, newStepWork, false, 
-								route.getFromStep(), route.getToStep(), currentUser);
+								route.getFromStep(), route.getToStep(), currentUserId);
 
+						// nes 20151020 - devuelvo ahora la lista de pasos para post-procesar
+						generatedStepWorkList.add(newStepWork); 
 						/**
 						 *  if route has external method execution related then execute it!
 						 */
-						try {
-							_executeRouteExternalMethod(route, currentStepWork, currentUser);
-						} catch (InstantiationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						_executeRouteExternalMethodSafe(route, currentStepWork, currentUserId);
 						
 						/**
 						 *  checks for notification subscribers for the new step and send emails
 						 */
-						_sendEmailNotification(newStepWork, currentUser);
+						_sendEmailNotification(newStepWork, currentUserId);
 						
 						// nes 20130913
 						// if route evaluation order is first true condition then breaks for loop and return
@@ -1351,28 +1441,22 @@ public class WStepWorkBL {
 					}
 					else {  // ending routes ( not destiny step ...)
 						
+						logger.debug(">>> _executeProcessStep ending routes ( not destiny step ...)");// nes 20151020
+						
 						// write step-work-sequence log file 
 						this.createStepWorkSequenceLog(route, currentStepWork, false, 
-								route.getFromStep(), null, currentUser);
+								route.getFromStep(), null, currentUserId);
 
 						// if route has external method execution then execute it!
-						try {
-							_executeRouteExternalMethod(route, currentStepWork, currentUser);
-						} catch (InstantiationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						_executeRouteExternalMethodSafe(route, currentStepWork, currentUserId);
 						
 						// this route points to end tree - no other action required ...
 						// if ret arrives here with false, all ok; 
 						// if ret arrives here with true it indicates there are another valid routes for this step
 						// but no action is required
 					}
-				} // go to next route ... (endfor)
-			}
+				} // end if _isEnabledRoute
+			} // go to next route ... (endfor)
 			
 		} else { // no next steps - this tree finishes here ...
 			
@@ -1839,25 +1923,33 @@ public class WStepWorkBL {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	private void _executeRouteExternalMethod(
-			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) 
-		throws InstantiationException, IllegalAccessException {
+	private void _executeRouteExternalMethodSafe(
+			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) {
 		logger.debug(">>>_executeRouteExternalMethod check...");
-		
-		if (route.getExternalMethod()!=null && route.getExternalMethod().size()>0){
-			for (WExternalMethod method: route.getExternalMethod()) {
-				logger.debug(">>>_executeRouteExternalMethod:"+method.getClassname()+"."+method.getMethodname());
-				if (method.getParamlistName().length>0){
-					_setParamValues(
-							method,
-							new Object[]{
-										currentStepWork,
-										currentStepWork.getwProcessWork(), // nes 20150116 - its:775 - no encontraba idObject pues estaba en wProcessWork
-										route}, currentUserId); // nes 20141215 - generalizado setParamValues
+
+		try {
+			if (route.getExternalMethod()!=null && route.getExternalMethod().size()>0){
+				for (WExternalMethod method: route.getExternalMethod()) {
+					logger.debug(">>>_executeRouteExternalMethod:"+method.getClassname()+"."+method.getMethodname());
+					if (method.getParamlistName().length>0){
+						_setParamValues(
+								method,
+								new Object[]{
+											currentStepWork,
+											currentStepWork.getwProcessWork(), // nes 20150116 - its:775 - no encontraba idObject pues estaba en wProcessWork
+											route}, currentUserId);
+					}
+					new MethodSynchronizerImpl().invokeExternalMethod(method, currentUserId);
 				}
-				new MethodSynchronizerImpl().invokeExternalMethod(method, currentUserId);
 			}
-		}
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // nes 20141215 - generalizado setParamValues
+
 	}
 	
 	/**
@@ -2937,4 +3029,3 @@ public class WStepWorkBL {
 	}
 
 }
-	
