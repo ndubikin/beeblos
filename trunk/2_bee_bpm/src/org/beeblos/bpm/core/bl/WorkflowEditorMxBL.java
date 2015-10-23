@@ -152,23 +152,31 @@ public class WorkflowEditorMxBL {
 									&& wsw.getCurrentStep().getId() != null
 									&& wsw.getCurrentStep().getId().equals(Integer.valueOf(spId))){
 								
-								if (xmlMapVertex.getStyle() != null){
-									
-									// si es begin cambiamos el que viene por uno en verde
-									if (xmlMapVertex.getStyle().contains(BEGIN_SYMBOL_STYLE)){
-										xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_IMAGE, BEGIN_SYMBOL_GREEN_STYLE));
-									} else if (xmlMapVertex.getStyle().contains(END_SYMBOL_STYLE)) {
-										// si es end lo metemos en la lista
-										endSymbolList.add(xmlMapVertex); // los guardamos en una lista para despues poder pintarlos de verde si el proceso por esa rama esta finalizado
-										
-									}
-		
+								/**
+								 * Puede tener estilo porque ya se lo hemos dado nosotros, no solo porque sea un SYMBOL, asi que
+								 * cambiamos el algoritmo para que contemple todas las posibilidades poniendo el != null solo
+								 * en los ifs de los SYMBOL - dml 20151023 - ITS: 1348
+								 */
+								if (xmlMapVertex.getStyle() != null && xmlMapVertex.getStyle().contains(BEGIN_SYMBOL_STYLE)){
+
+									// si tiene estilo != null && si es begin cambiamos el que viene por uno en verde
+									xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_IMAGE, BEGIN_SYMBOL_GREEN_STYLE));
 								
-								// si tiene decided date se pone como acabado
+								} else if (xmlMapVertex.getStyle() != null && xmlMapVertex.getStyle().contains(END_SYMBOL_STYLE)) {
+									
+									// si es end lo metemos en la lista
+									endSymbolList.add(xmlMapVertex); // los guardamos en una lista para despues poder pintarlos de verde si el proceso por esa rama esta finalizado
+								
 								} else if (wsw.getDecidedDate() != null){
+									
+									// si tiene decided date se pone como acabado
 									xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_STROKECOLOR, GREEN));
+							
 								} else {
+
+									// si NO tiene decided date quiere decir que es el actual, por lo que lo marcamos en ROJO
 									xmlMapVertex.setStyle(mxStyleUtils.setStyle(xmlMapVertex.getStyle(), mxConstants.STYLE_STROKECOLOR, RED));
+							
 								}									
 							}
 						}							
@@ -300,7 +308,13 @@ public class WorkflowEditorMxBL {
 												// vemos si la response coincide con la del "edge" del mapa
 												for (WStepWorkSequence wsws : wswsList){
 													
-													// si coincide alguna
+													// si la ruta no viene del step con el que estamos ni la consideramos, 
+													// porque quiere decir que la "response" es de otro step distinto - dml 20151023 - ITS: 1348
+													if (wsws.getBeginStep() == null || wsws.getBeginStep().getId() == null
+															|| !wsws.getBeginStep().getId().equals(Integer.valueOf(spFromStepId))){
+														continue;
+													}
+													// si la "stepSequence" name coincide con una de la respuesta
 													if (wsws.getStepSequence() != null 
 															&& xmlEdgeResponses != null 
 															&& xmlEdgeResponses.contains(wsws.getStepSequence().getName())){
