@@ -80,7 +80,7 @@ public class BeeBPMBL {
 	 * @param objReference - reference or title for this new instance of a process
 	 * @param objComments - optional
 	 * @param managedData - ¿optional???? ELIMINADO NES 20140707
-	 * @param userId - external user id that starts the process... Note: BeeBPM has WUserIdMapper to map external users with internal (bpm) users...
+	 * @param userId - external user id who starts the process... Note: BeeBPM has WUserIdMapper to map external users with internal (bpm) users...
 	 * @return
 	 * @throws InjectorException
 	 * @throws AlreadyExistsRunningProcessException
