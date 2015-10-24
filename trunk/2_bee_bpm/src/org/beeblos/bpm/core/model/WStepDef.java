@@ -84,6 +84,13 @@ public class WStepDef implements java.io.Serializable {
 	private boolean deleted; // dml 20130830
 	
 	/**
+	 * Enables/disable turn back option for the step
+	 * (defalut: false - disabled)
+	 * 
+	 */
+	private boolean turnBackEnabled; // nes 20151023
+	
+	/**
 	 * obsolete field
 	 */
 	@Deprecated
@@ -455,6 +462,20 @@ public class WStepDef implements java.io.Serializable {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	/**
+	 * @return the turnBackEnabled
+	 */
+	public boolean isTurnBackEnabled() {
+		return turnBackEnabled;
+	}
+
+	/**
+	 * @param turnBackEnabled the turnBackEnabled to set
+	 */
+	public void setTurnBackEnabled(boolean turnBackEnabled) {
+		this.turnBackEnabled = turnBackEnabled;
 	}
 
 	public void setIdDept(Integer idDept) {
@@ -1145,6 +1166,7 @@ public class WStepDef implements java.io.Serializable {
 				+ ((deadlineTime == null) ? 0 : deadlineTime.hashCode());
 		result = prime * result + (deadlineUserNotice ? 1231 : 1237);
 		result = prime * result + (deleted ? 1231 : 1237);
+		result = prime * result + (turnBackEnabled ? 1231 : 1237);
 		result = prime * result + (emailNotification ? 1231 : 1237);
 		result = prime * result + (engineNotification ? 1231 : 1237);
 		result = prime * result + (expiredAdminNotice ? 1231 : 1237);
@@ -1289,6 +1311,8 @@ public class WStepDef implements java.io.Serializable {
 		if (deadlineUserNotice != other.deadlineUserNotice)
 			return false;
 		if (deleted != other.deleted)
+			return false;
+		if (turnBackEnabled != other.turnBackEnabled)
 			return false;
 		if (emailNotification != other.emailNotification)
 			return false;
@@ -1480,7 +1504,9 @@ public class WStepDef implements java.io.Serializable {
 	public String toString() {
 		return "WStepDef [id=" + id + ", stepHead=" + stepHead + ", version="
 				+ version + ", active=" + active + ", shared=" + shared
-				+ ", deleted=" + deleted + ", idDept=" + idDept + ", idPhase="
+				+ ", deleted=" + deleted
+				+ ", turnBackEnabled=" + turnBackEnabled 
+				+ ", idDept=" + idDept + ", idPhase="
 				+ idPhase + ", instructions=" + instructions
 				+ ", stepComments=" + stepComments + ", idListZone="
 				+ idListZone + ", idWorkZone=" + idWorkZone
