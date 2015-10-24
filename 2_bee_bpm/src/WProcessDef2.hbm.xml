@@ -893,7 +893,11 @@
 		<property name="deleted" type="java.lang.Boolean">
 			<column name="deleted" sql-type="bit" />
 		</property>
-
+		
+		<property name="turnBackEnabled" type="java.lang.Boolean">
+			<column name="turn_back_enabled" sql-type="bit" />
+		</property>
+		
 		<property generated="never" lazy="false" name="rules" type="string">
 			<column name="rules" />
 		</property>
