@@ -2414,7 +2414,7 @@ public class WStepWorkBL {
 					senderEmailAccount.getInputServerType(), senderEmailAccount.getInputServerName(), 
 					senderEmailAccount.getInputPort(), 
 					senderEmailAccount.getConnectionSecurity(), senderEmailAccount.getIdentificationMethod(), 
-					senderEmailAccount.getFormat(), 
+					//senderEmailAccount.getFormat(), 
 					senderEmailAccount.getOutputServerName(), senderEmailAccount.getOutputServer(), 
 					senderEmailAccount.getOutputPort(), 
 					senderEmailAccount.getOutputConnectionSecurity(), senderEmailAccount.getOutputIdentificationMethod(), 
