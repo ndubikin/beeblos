@@ -204,11 +204,11 @@
 				<comment>Contrase</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="formato" type="string">
-			<column   name="formato" not-null="true">
-				<comment>Texto, HTML</comment>
-			</column>
-		</property>
+<!-- 		<property generated="never" lazy="false" name="formato" type="string"> -->
+<!-- 			<column   name="formato" not-null="true"> -->
+<!-- 				<comment>Texto, HTML</comment> -->
+<!-- 			</column> -->
+<!-- 		</property> -->
 		<property generated="never" lazy="false" name="outgoingServerName"
 			type="string">
 			<column   name="nombre_servidor_de_salida">
