@@ -1,5 +1,10 @@
 package org.beeblos.bpm.core.model.enumerations;
 
+/**
+ * For ManagedDataSynchronizer use ...
+ * @author nestor
+ *
+ */
 public enum ProcessStage {
 	
 	 STARTUP(1,"startup"), 

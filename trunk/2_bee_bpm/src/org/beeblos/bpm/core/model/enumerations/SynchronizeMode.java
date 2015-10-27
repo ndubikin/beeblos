@@ -1,5 +1,10 @@
 package org.beeblos.bpm.core.model.enumerations;
 
+/**
+ * external data synchronization mode availables
+ * @author nestor
+ *
+ */
 	public enum SynchronizeMode {
 		
 		 J(1,"JDBC"), 

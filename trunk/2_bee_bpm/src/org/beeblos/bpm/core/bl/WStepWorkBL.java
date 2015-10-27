@@ -58,10 +58,12 @@ import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRole;
 import org.beeblos.bpm.core.model.WUserRoleWork;
+import org.beeblos.bpm.core.model.enumerations.StartProcessResult;
 import org.beeblos.bpm.core.model.enumerations.StepWorkStatus;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WProcessDefThin;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
+import org.beeblos.bpm.core.model.noper.WStartProcessResult;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.tm.impl.MethodSynchronizerImpl;
@@ -187,18 +189,22 @@ public class WStepWorkBL {
 		return idGeneratedStep;
 	}
 	
+	
 	/**
 	 * process a step - returns qty new routes started ( new workitems generated if no end routes has)
 	 * 
 	 * precondition: wStepWork MUST BE LOCKED!!!
 	 * 
+	 * 	 
+	 *  
 	 * @param idStepWork
 	 * @param idResponse
 	 * @param runtimeSettings
-	 * @param currentUserId
 	 * @param isAdminProcess - indicates the process will be realized as admin condition instead of assigned user task condition...
 	 * @param typeOfProcess: PROCESS_STEP or TURNBACK_STEP
 	 * @param autoLock - if true then this method will try to lock the step... (default:false)
+	 * @param startProcessResult -> to return processing results (status, routes created, wStepWork created, errorList, etc)  // nes 20151026
+	 * @param currentUserId
 	 * @return
 	 * @throws WProcessDefException
 	 * @throws WStepDefException
@@ -213,15 +219,18 @@ public class WStepWorkBL {
 	 */
 	public Integer processStep (
 			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
-			/*Integer idProcess, Integer idObject, String idObjectType, */Integer currentUserId,
-			boolean isAdminProcess, String typeOfProcess, boolean autoLock) 
-	throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
-			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
-			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
+			/*Integer idProcess, Integer idObject, String idObjectType, */
+			boolean isAdminProcess, String processingDirection, boolean autoLock, 
+			WStartProcessResult startProcessResult, Integer currentUserId ) 
+	
+					throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
+							WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
+							WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
 		logger.debug(">>> processStep >> id:"+( idStepWork!=null?idStepWork:"null") );
 		
 		DateTime now = new DateTime();
 		Integer qtyNewRoutes=0;
+		startProcessResult.setStartProcessResult(StartProcessResult.FAIL); // nes 20151026 - comienzo poniendo a fail por si sale por throws...
 
 		// nes 20151020 - store the list of generated wStepWorks
 		List<WStepWork> generatedStepWorkList = new ArrayList<WStepWork>();
@@ -230,8 +239,8 @@ public class WStepWorkBL {
 		 * convention over configuration
 		 * nes 20150411
 		 */
-		if (typeOfProcess==null) {
-			typeOfProcess=PROCESS_STEP;
+		if (processingDirection==null) {
+			processingDirection=PROCESS_STEP;
 		}
 		// verifies the user has the step locked before process it ...
 		// if not there may be possible an error in the process chain ...
@@ -262,11 +271,13 @@ public class WStepWorkBL {
 		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUserId );
 
 		// insert new steps 
-		if ( typeOfProcess.equals(PROCESS_STEP) ) {
+		if ( processingDirection.equals(PROCESS_STEP) ) {
 			logger.debug(">>> PROCESS_STEP");
 			
-			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentUserId, currentStep, idResponse, 
-												isAdminProcess, now, generatedStepWorkList);
+			qtyNewRoutes = _executeProcessStep(runtimeSettings, currentStep, idResponse, 
+												isAdminProcess, now, startProcessResult, // nes 20151026 
+												generatedStepWorkList, currentUserId);
+			
 			logger.debug(">>> qty routes:"+qtyNewRoutes); 
 			
 			// if no new routes nor alive tasks then the process work is finished ...
@@ -279,22 +290,33 @@ public class WStepWorkBL {
 			}
 
 			
-		} else if ( typeOfProcess.equals(TURNBACK_STEP) ) {
+		} else if ( processingDirection.equals(TURNBACK_STEP) ) {
 
 			_executeTurnBack(runtimeSettings, currentUserId, currentStep, idResponse, isAdminProcess, now);
 			qtyNewRoutes=1;
 			
 		}
 		
+		// nes 20151026 - agrego las rutas recorridas a la lista ... (antes de que se llame a si mismo y recorra nuevas ...)
+		startProcessResult.setQtyStepWorkCreated(startProcessResult.getQtyStepWorkCreated()+qtyNewRoutes);
+		
 		/**
-		 * if automatic steps will be created then try to processs it
+		 * if automatic steps will be created then try to processs it ( RECURSIVE )
 		 * nes 20151020
 		 */
 		if (generatedStepWorkList.size()>0) {
-			_processJustGeneratedAutomaticSteps(runtimeSettings, currentUserId,
-					isAdminProcess, typeOfProcess, generatedStepWorkList);
+			_processJustGeneratedAutomaticSteps(runtimeSettings, isAdminProcess, 
+					processingDirection,
+					startProcessResult, // nes 20151026
+					generatedStepWorkList, currentUserId);
 		}
 
+		/**
+		 * tanto si va por la ruta normal o marcha atrás, si ejecuta es que el proceso 
+		 * termina bien, si saliese por error seria StartProcessResult.FAIL...
+		 */
+		startProcessResult.setStartProcessResult(StartProcessResult.SUCCESS);
+		
 		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
 		
 	}
@@ -320,9 +342,10 @@ public class WStepWorkBL {
 	 * @throws WProcessWorkException
 	 */
 	private void _processJustGeneratedAutomaticSteps(
-			WRuntimeSettings runtimeSettings, Integer currentUserId,
+			WRuntimeSettings runtimeSettings, 
 			boolean isAdminProcess, String typeOfProcess,
-			List<WStepWork> generatedStepWorkList) {
+			WStartProcessResult startProcessResult, // nes 20151026
+			List<WStepWork> generatedStepWorkList, Integer currentUserId ) {
 		/**
 		 * for each end event it must be processed because end-event has no human interfase to resolve
 		 * the task...
@@ -334,7 +357,7 @@ public class WStepWorkBL {
 				try {
 					this.processStep (
 							wsw.getId(), NULL_RESPONSE, runtimeSettings,
-							currentUserId, isAdminProcess, typeOfProcess,AUTO_LOCK);
+							isAdminProcess, typeOfProcess, AUTO_LOCK, startProcessResult, currentUserId );
 				}  catch (Exception e) { // NOTA NES 20151020 - ESTO HABRIA QUE LOGUEARLO EN UNA TABLA PARA VER LUEGO QUE HACER CON EL ERROR!!
 					logger.error("ERROR!!!: _processJustGeneratedAutomaticSteps class:"
 							+e.getClass()+" "
@@ -1337,14 +1360,16 @@ public class WStepWorkBL {
 	 * A route generates a new stepWork or nothing if the route goes to end ...
 	 * Managed data is set to null in stepWork and is persisted only 1 time because
 	 * the managedData is managed at "work" level, and for the instance of a process (work)
-	 * we have only 1 set of managedData ...
+	 * we have only 1 set of managedData ... 
 	 * 
 	 * @param runtimeSettings
-	 * @param currentUserId
 	 * @param currentStepWork
 	 * @param idResponse
 	 * @param isAdminProcess
 	 * @param now
+	 * @param startProcessResult - resultado del procesamiento (lista de step work ids, lista de errores o warnings..)  // nes 20151026
+	 * @param generatedStepWorkList - lista de stepWorks generados... para luego ver si procesa esas rutas...
+	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
 	 * @throws WStepSequenceDefException
@@ -1353,9 +1378,10 @@ public class WStepWorkBL {
 	 * @throws WStepWorkSequenceException
 	 */
 	private Integer _executeProcessStep(
-			WRuntimeSettings runtimeSettings, Integer currentUserId,  WStepWork currentStepWork, 
-			Integer idResponse, boolean isAdminProcess, DateTime now,
-			List<WStepWork> generatedStepWorkList ) 
+			WRuntimeSettings runtimeSettings, WStepWork currentStepWork, 
+			Integer idResponse, boolean isAdminProcess, DateTime now, 
+			WStartProcessResult startProcessResult,  // nes 20151026
+			List<WStepWork> generatedStepWorkList,  Integer currentUserId ) 
 	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
 		if (logger.isDebugEnabled()){
 			logger.debug(">>> _executeProcessStep >> idStepWork"+currentStepWork.getId()
@@ -1422,7 +1448,10 @@ public class WStepWorkBL {
 								route.getFromStep(), route.getToStep(), currentUserId);
 
 						// nes 20151020 - devuelvo ahora la lista de pasos para post-procesar
-						generatedStepWorkList.add(newStepWork); 
+						generatedStepWorkList.add(newStepWork);
+						
+						startProcessResult.getStepWorkIdList().add(newStepWork.getId()); // nes 20151026
+						
 						/**
 						 *  if route has external method execution related then execute it!
 						 */
@@ -1467,7 +1496,7 @@ public class WStepWorkBL {
 		if (qty==0) {
 			logger.warn(">>> no outgoing routes were generated ... this process finishes here ... ");
 		}
-		
+
 		return qty;
 		
 	}
