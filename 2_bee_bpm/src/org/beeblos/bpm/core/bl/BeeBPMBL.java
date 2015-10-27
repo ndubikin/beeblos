@@ -25,8 +25,11 @@ import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepWork;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.enumerations.EventType;
 import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
+import org.beeblos.bpm.core.model.enumerations.StartProcessResult;
 import org.beeblos.bpm.core.model.noper.WRuntimeSettings;
+import org.beeblos.bpm.core.model.noper.WStartProcessResult;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
 
@@ -66,12 +69,244 @@ public class BeeBPMBL {
 		super();
 	}
 
+	/**
+	 * Default injector...
+	 * 
+	 * @param idProcess
+	 * @param idStep
+	 * @param idObject
+	 * @param idObjectType
+	 * @param objReference
+	 * @param objComments
+	 * @param attachedDocuments - documentos adjuntos a asociar al process-work creado...
+	 * @param isAdminProcess - indica que el proceso está siendo lanzado por un administrador en su calidad de administrador...
+	 * @param currentUserId
+	 * @return
+	 * @throws InjectorException
+	 * @throws AlreadyExistsRunningProcessException
+	 * @throws WStepWorkException
+	 * @throws WProcessWorkException
+	 * @throws TableManagerException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessDataFieldException
+	 */
+	public WStartProcessResult injector(
+			Integer idProcess, Integer idStep, 
+			Integer idObject, String idObjectType,
+			String objReference, String objComments,
+			List<FileSP> attachedDocuments, // nes 20151026 - lista de documentos a adjuntar al proceso lanzado...
+			boolean isAdminProcess, // nes 20151026
+			Integer currentUserId ) 
+					throws InjectorException, AlreadyExistsRunningProcessException, 
+							WStepWorkException, WProcessWorkException, TableManagerException, 
+							WStepWorkSequenceException, WProcessDataFieldException {
 
+		Integer idStepWork=null;
+		WStartProcessResult startProcessResult = new WStartProcessResult();
+		startProcessResult.setStartProcessResult(StartProcessResult.FAIL); // nes 20151026
+		
+		idStepWork =
+				this._injector(
+						idProcess, 
+						idStep, 
+						idObject, 
+						idObjectType, 
+						objReference, 
+						objComments,
+						startProcessResult, // nes 20151026
+						currentUserId) ;
+
+		// if just created stepWork belongs an INITEV with no engine required, the BeeBPM must
+		// process de BeginStep ....
+		_processInitEventAndSetWStartProcessResult(idStepWork, isAdminProcess,
+				attachedDocuments, 1, startProcessResult, currentUserId);
+		
+		startProcessResult.setStartProcessResult(StartProcessResult.SUCCESS); // nes 20151026
+		
+		return startProcessResult;
+		
+	}
+	
+
+	/**
+	 * 
+	 * NOTA IMPORTANTE: EL UNICO SENTIDO QUE TIENE (QUE SE ME OCURRE AHORA) de hacer un inject de un 
+	 * wStepWork sería que reinsertemos un wStepWork existente en un nuevo paso que salte la secuencia
+	 * lógica de pasos.
+	 * 
+	 * Esto es: tengo 1 ProcessWork y éste tiene un StepWork dado y quiero reactivarlo y meterlo en algun 
+	 * sitio. Con un método así podría hacerlo.
+	 * 
+	 * NO SE ME OCURRE otra utilidad para pasar un wStepWork a un metodo 'inject' ...
+	 * 
+	 * 
+	 * Injects (start) a new process instance. This method is intended to launch starting
+	 * with an InitEvent (begin step)
+	 * 
+	 * Mandatory: The begin step will be loaded with all the parameters required by process definition,
+	 * like reference, related object, instructions to next step, custom data (if exists), etc.
+	 * 
+	 * stepWork MUST arrives without id (id-step-work must be null) and ManagedData stepWork id
+	 * MUST be null too (and the start algorithm will fill this fields at launch time ...)
+	 * 
+	 * Launch at the begin step implies the table insert of the wStepWork for begin step and move to the
+	 * next step(s)
+	 * 
+	 * Launch step has not be responses but may have logical rules to route the step ... (FALTA IMPLEMENTAR...)
+	 * 
+	 * nes 20150411
+	 * 
+	 * @param stepWork
+	 * @param isAdminProcess
+	 * @param attachedDocuments - @author dmuleiro 20150415
+	 * @param currentUserId
+	 * 
+	 * @throws InjectorException
+	 * @throws AlreadyExistsRunningProcessException
+	 * @throws WStepWorkException
+	 * @throws WProcessWorkException
+	 * @throws TableManagerException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessDataFieldException
+	 */
+	public WStartProcessResult injector( WStepWork stepWork, boolean isAdminProcess, //String typeOfProcess, nes 20151026 - no tiene sentido, el inyector siempre va hacia adelante, no pude ir hacia atrás
+			List<FileSP> attachedDocuments, Integer currentUserId ) 
+					throws InjectorException, AlreadyExistsRunningProcessException, 
+							WStepWorkException, WProcessWorkException, TableManagerException, 
+							WStepWorkSequenceException, WProcessDataFieldException {
+		logger.debug(">>> injecting new stepwork ... (begin step ...");
+		
+		/**
+		 * return info: qty new routes created
+		 */
+		Integer qtyNewRoutes=null;
+		WStartProcessResult startProcessResult = new WStartProcessResult();
+		
+		/**
+		 * Create wStepWork for begin step ...
+		 * Managed data will be persisted below in this method ...
+		 */
+		Integer idStepWork =
+				this._injector(
+						stepWork.getwProcessWork().getProcessDef().getId(), 
+						stepWork.getCurrentStep().getId(), 
+						stepWork.getwProcessWork().getIdObject(), 
+						stepWork.getwProcessWork().getIdObjectType(), 
+						stepWork.getwProcessWork().getReference(), 
+						stepWork.getwProcessWork().getComments(),
+						startProcessResult, // nes 20151026
+						currentUserId) ;
+		
+		logger.debug(">>> wStepWork was created ...");
+		
+		// if just created stepWork belongs an INITEV with no engine required, the BeeBPM must
+		// process de BeginStep ....
+		_processInitEventAndSetWStartProcessResult(idStepWork, isAdminProcess,
+				attachedDocuments, qtyNewRoutes, startProcessResult, currentUserId);
+		
+		return startProcessResult;
+		
+	}
+
+	/**
+	 * Procesa el stepWork recién creado. Se utiliza desde el inyector: en caso que cree un "beginStep" (INITEV) que no 
+	 * sea procesado por el engine (si crea un MessageBegin debe ser procesado por el engine asi que no pasaría por aquí...)
+	 * sea creado e inmediatamente necesita ser procesado para llevar el proceso a un nuevo paso que pueda ser atendido por 
+	 * un usuario o por el engine... (timer, message, etc)
+	 * 
+	 * nes 20151026 - refactorizado desde el injector pues todos lo deben utilizar (todos
+	 * los inyectores ...)
+	 * 
+	 * @param idStepWork
+	 * @param isAdminProcess
+	 * @param attachedDocuments
+	 * @param currentUserId
+	 * @param qtyNewRoutes
+	 * @param startProcessResult - idStepWork, etc...
+	 * @return
+	 * @throws WStepWorkException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessWorkException
+	 * @throws InjectorException
+	 */
+	private void _processInitEventAndSetWStartProcessResult(Integer idStepWork,
+			boolean isAdminProcess, List<FileSP> attachedDocuments,
+			Integer qtyNewRoutes, WStartProcessResult startProcessResult, Integer currentUserId ) 
+		throws WStepWorkException, WStepWorkSequenceException, WProcessWorkException, InjectorException {
+		WStepWork justCreatedStepWork;
+		
+		try {
+			
+			// recupero el stepWork creado...
+			WStepWorkBL wswBL = new WStepWorkBL();
+			justCreatedStepWork = wswBL.getStepWithLock(idStepWork, currentUserId);
+			
+			// if the step is NOT an INITEV or if it's but Engine is required, then return as is...
+			// completing given WStartProcessResult 
+			// nes 20151026
+			if ( !justCreatedStepWork.getCurrentStep().getStepTypeDef().getEventType().equals(EventType.INITEV) 
+					&& !justCreatedStepWork.getCurrentStep().getStepTypeDef().isEngineReq() ) {
+				startProcessResult.setQtyStepWorkCreated(1); // 1 route created at start ... 
+				startProcessResult.getStepWorkIdList().add(idStepWork); // created wStepWork id
+				return;
+			}
+			
+			// if it's an INITEV and not engine process it, then we will continue with process the begin step...
+			
+			if (justCreatedStepWork.getManagedData()!=null) {
+				
+				_updateStepWorkManagedData(justCreatedStepWork, currentUserId, idStepWork,
+						wswBL, justCreatedStepWork);
+				
+			}
+
+			
+			wswBL.lockStep(idStepWork, currentUserId, currentUserId, isAdminProcess);
+			
+			/**
+			 * and now process step work ...
+			 */
+			qtyNewRoutes = processCreatedStep(idStepWork, justCreatedStepWork.getRuntimeSettings(), wswBL,
+					isAdminProcess, PROCESS_STEP, startProcessResult, currentUserId);
+			
+			
+			/**
+			 * @author dmuleiro 20150415 - uploads the new attached documents (if there are any)
+			 * 
+			 * NOTA: THIS FUNCTIONALITY SHOULD BE DONE INSIDE "WStepWork.start" BUT WE
+			 * CANNOT IMPLEMENT THIS OPTION BECAUSE THE START METHOD DOES NOT RECEIVE 
+			 * A RuntimeSettings OBJECT WHEN IT MUST DO IT.
+			 */
+			if (justCreatedStepWork != null && justCreatedStepWork.getwProcessWork() != null){
+				new WStepWorkBL().uploadFileInfoList(justCreatedStepWork.getwProcessWork().getId(), attachedDocuments, currentUserId);
+			}
+
+		} catch (WStepLockedByAnotherUserException e) {
+			String mess="WStepLockedByAnotherUserException - Can't update new instance just injected: "
+					+idStepWork+" ...."+ " "
+					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+			throw new InjectorException(e);
+		
+
+		} catch (WStepNotLockedException e) {
+			String mess="WStepNotLockedException - Can't update new instance just injected: "
+					+idStepWork+" ...."+ " "
+					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+			throw new InjectorException(e);
+
+		}
+		//return qtyNewRoutes; nes 20151026
+	}
+	
 	/**
 	 * starts a workflow process for given idObject/idObjectType and inserts it in the
 	 * indicated idStep
 	 * 
 	 * si idStep viene vacio implica que hace un start por lo que hay que leer el WProcessDef y su beginStep
+	 * 
+	 * nes 20151026 - paso a privado (_injector) y creo llamada publica que asegure ejecutar el INIEV 
 	 * 
 	 * @param idProcess - required
 	 * @param idStep - optional
@@ -80,6 +315,7 @@ public class BeeBPMBL {
 	 * @param objReference - reference or title for this new instance of a process
 	 * @param objComments - optional
 	 * @param managedData - ¿optional???? ELIMINADO NES 20140707
+	 * @param startProcessResult - para devolver los resultados del inject... // nes 20151026
 	 * @param userId - external user id who starts the process... Note: BeeBPM has WUserIdMapper to map external users with internal (bpm) users...
 	 * @return
 	 * @throws InjectorException
@@ -90,15 +326,17 @@ public class BeeBPMBL {
 	 * @throws WStepWorkSequenceException
 	 * @throws WProcessDataFieldException 
 	 */
-	public Integer injector(
+	private Integer _injector(
 			Integer idProcess, Integer idStep, 
 			Integer idObject, String idObjectType,
-			String objReference, String objComments, Integer userId ) 
+			String objReference, String objComments, WStartProcessResult startProcessResult, 
+			Integer userId ) 
 					throws InjectorException, AlreadyExistsRunningProcessException, 
 							WStepWorkException, WProcessWorkException, TableManagerException, 
 							WStepWorkSequenceException, WProcessDataFieldException {
 		
 		Integer idStepWork=null;
+		startProcessResult.setStartProcessResult(StartProcessResult.FAIL); // nes 20151026
 		
 		// load class property "selectedProcess" with the definition (WProcessDef) of process to launch...
 		try {
@@ -110,10 +348,13 @@ public class BeeBPMBL {
 			throw new InjectorException(e);
 		}
 		
+
 		// if idStep comes null then start at process definition starting point ...
 		// at this time BeeBPM has restriction that have 1 and only 1 begin step ... (nes 20140707)
 		if (idStep==null || idStep==0) {
-			idStep=selectedProcess.getBeginStep().getId();
+			if (selectedProcess!=null && selectedProcess.getBeginStep()!=null && selectedProcess.getBeginStep().getId()!=null) { // nes 20151026
+				idStep=selectedProcess.getBeginStep().getId();
+			}
 		}
 
 		// controla que los elementos necesarios vengan cargados y si no sale por InyectorException
@@ -149,135 +390,10 @@ public class BeeBPMBL {
 		//idStepWork = new WStepWorkBL().add(_setStepWork(), usuarioLogueado) ;
 		idStepWork = new WStepWorkBL()
 							.start( processWork, stepWork, userId) ;
-
+		
+		startProcessResult.setStartProcessResult(StartProcessResult.SUCCESS); // nes 20151026
+		
 		return idStepWork;
-		
-	}
-	
-	/**
-	 * 
-	 * NOTA IMPORTANTE: EL UNICO SENTIDO QUE TIENE (QUE SE ME OCURRE AHORA) de hacer un inject de un 
-	 * wStepWork sería que reinsertemos un wStepWork existente en un nuevo paso que salte la secuencia
-	 * lógica de pasos.
-	 * 
-	 * Esto es: tengo 1 ProcessWork y éste tiene un StepWork dado y quiero reactivarlo y meterlo en algun 
-	 * sitio. Con un método así podría hacerlo.
-	 * 
-	 * NO SE ME OCURRE otra utilidad para pasar un wStepWork a un metodo 'inject' ...
-	 * 
-	 * 
-	 * Injects (start) a new process instance. This method is intended to launch starting
-	 * with an InitEvent (begin step)
-	 * 
-	 * Mandatory: The begin step will be loaded with all the parameters required by process definition,
-	 * like reference, related object, instructions to next step, custom data (if exists), etc.
-	 * 
-	 * stepWork MUST arrives without id (id-step-work must be null) and ManagedData stepWork id
-	 * MUST be null too (and the start algorithm will fill this fields at launch time ...)
-	 * 
-	 * Launch at the begin step implies the table insert of the wStepWork for begin step and move to the
-	 * next step(s)
-	 * 
-	 * Launch step has not be responses but may have logical rules to route the step ... (FALTA IMPLEMENTAR...)
-	 * 
-	 * nes 20150411
-	 * 
-	 * @param stepWork
-	 * @param isAdminProcess
-	 * @param typeOfProcess
-	 * @param attachedDocuments - @author dmuleiro 20150415
-	 * @param currentUserId
-	 * 
-	 * @throws InjectorException
-	 * @throws AlreadyExistsRunningProcessException
-	 * @throws WStepWorkException
-	 * @throws WProcessWorkException
-	 * @throws TableManagerException
-	 * @throws WStepWorkSequenceException
-	 * @throws WProcessDataFieldException
-	 */
-	public Integer injector( WStepWork stepWork, boolean isAdminProcess, String typeOfProcess,
-			List<FileSP> attachedDocuments, Integer currentUserId ) 
-					throws InjectorException, AlreadyExistsRunningProcessException, 
-							WStepWorkException, WProcessWorkException, TableManagerException, 
-							WStepWorkSequenceException, WProcessDataFieldException {
-		logger.debug(">>> injecting new stepwork ... (begin step ...");
-		
-		/**
-		 * return info: qty new routes created
-		 */
-		Integer qtyNewRoutes=null;
-		
-		/**
-		 * Create wStepWork for begin step ...
-		 * Managed data will be persisted below in this method ...
-		 */
-		
-		Integer idStepWork = this.injector(
-				stepWork.getwProcessWork().getProcessDef().getId(), 
-				stepWork.getCurrentStep().getId(), 
-				stepWork.getwProcessWork().getIdObject(), 
-				stepWork.getwProcessWork().getIdObjectType(), 
-				stepWork.getwProcessWork().getReference(), 
-				stepWork.getwProcessWork().getComments(), 
-				currentUserId);
-		
-		logger.debug(">>> wStepWork was created ...");
-		
-		WStepWorkBL wswBL = new WStepWorkBL();
-		
-		WStepWork justCreatedStepWork;
-		
-		try {
-
-			justCreatedStepWork = wswBL.getStepWithLock(idStepWork, currentUserId);
-			
-			if (stepWork.getManagedData()!=null) {
-				
-				_updateStepWorkManagedData(stepWork, currentUserId, idStepWork,
-						wswBL, justCreatedStepWork);
-				
-			}
-
-			
-			wswBL.lockStep(idStepWork, currentUserId, currentUserId, isAdminProcess);
-			
-			/**
-			 * and now process step work ...
-			 */
-			qtyNewRoutes = processCreatedStep(idStepWork, stepWork.getRuntimeSettings(), wswBL,
-					isAdminProcess, PROCESS_STEP, currentUserId);
-			
-			
-			/**
-			 * @author dmuleiro 20150415 - uploads the new attached documents (if there are any)
-			 * 
-			 * NOTA: THIS FUNCTIONALITY SHOULD BE DONE INSIDE "WStepWork.start" BUT WE
-			 * CANNOT IMPLEMENT THIS OPTION BECAUSE THE START METHOD DOES NOT RECEIVE 
-			 * A RuntimeSettings OBJECT WHEN IT MUST DO IT.
-			 */
-			if (justCreatedStepWork != null && justCreatedStepWork.getwProcessWork() != null){
-				new WStepWorkBL().uploadFileInfoList(justCreatedStepWork.getwProcessWork().getId(), attachedDocuments, currentUserId);
-			}
-
-		} catch (WStepLockedByAnotherUserException e) {
-			String mess="WStepLockedByAnotherUserException - Can't update new instance just injected: "
-					+idStepWork+" ...."+ " "
-					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
-			logger.error(mess);
-			throw new InjectorException(e);
-		
-
-		} catch (WStepNotLockedException e) {
-			String mess="WStepNotLockedException - Can't update new instance just injected: "
-					+idStepWork+" ...."+ " "
-					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
-			logger.error(mess);
-			throw new InjectorException(e);
-
-		}
-		
-		return qtyNewRoutes;
 		
 	}
 
@@ -327,7 +443,8 @@ public class BeeBPMBL {
 	 * @param runtimeSettings
 	 * @param wswBL
 	 * @param isAdminProcess
-	 * @param typeOfProcess
+	 * @param processingDirection -> go ahead or turn back...
+	 * @pram startProcessResult - object to retunrn processing results...  // nes 20151026
 	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
@@ -335,13 +452,15 @@ public class BeeBPMBL {
 	 * @throws WProcessWorkException
 	 */
 	private Integer processCreatedStep(Integer idStepWork, WRuntimeSettings runtimeSettings,
-			WStepWorkBL wswBL, boolean isAdminProcess,
-			String typeOfProcess, Integer currentUserId) throws WStepWorkException,
+			WStepWorkBL wswBL, boolean isAdminProcess, String processingDirection, 
+			 WStartProcessResult startProcessResult, Integer currentUserId ) throws WStepWorkException,
 			WStepWorkSequenceException, WProcessWorkException {
 		logger.debug(">>> move from begin step to the next instance ...");
 		try {
 			Integer qtyCreatedRoutes = 
-					wswBL.processStep(idStepWork, null, runtimeSettings, currentUserId, isAdminProcess, typeOfProcess, AUTO_LOCK);
+					wswBL.processStep(idStepWork, null, runtimeSettings, isAdminProcess, processingDirection, 
+							AUTO_LOCK, startProcessResult, // nes 20151026 
+							currentUserId);
 			return qtyCreatedRoutes;
 		} catch (WProcessDefException e) {
 			// TODO Auto-generated catch block
@@ -775,6 +894,19 @@ public class BeeBPMBL {
 			// 2a: checks if any mdf has synchro configurations at create work process level and if they are then synchronize
 			// 2b: checks if any mdf has synchro configurations at create step work level and if they are then synchronize
 		//  
+		
+	}
+	
+	public WStartProcessResult processStep (
+			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
+			/*Integer idProcess, Integer idObject, String idObjectType, */
+			boolean isAdminProcess, String processingDirection, boolean autoLock, Integer currentUserId ) 
+	
+					throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
+							WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
+							WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
+	
+		return null;
 		
 	}
 }

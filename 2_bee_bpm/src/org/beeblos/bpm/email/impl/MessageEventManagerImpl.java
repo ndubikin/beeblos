@@ -45,6 +45,7 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
+import org.beeblos.bpm.core.model.noper.WStartProcessResult;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
 
@@ -675,18 +676,21 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 				
 				// Creating object comments...
 				String objComments = "Process injected by MessageBegin event with id '" 
-						+ conf.getIdStepDef();
+						+ conf.getIdStepDef();	
 				
 				try {
 					
-					Integer idStepWork = new BeeBPMBL().injector(
-							conf.getIdProcessDef(), //idProcessDef
-							conf.getIdStepDef(), //idStepDef
-							et.getId(), //idObject
-							et.getClass().getName(), //idObjectType
-							objReference, // objReference
-							objComments, // Comentarios del objeto?
-							currentUserId);
+					WStartProcessResult startProcessResult = 
+							new BeeBPMBL().injector(
+									conf.getIdProcessDef(), //idProcessDef
+									conf.getIdStepDef(), //idStepDef
+									et.getId(), //idObject
+									et.getClass().getName(), //idObjectType
+									objReference, // objReference
+									objComments, // Comentarios del objeto?
+									null, // nes 20151026 - no attachments send...
+									false, // nes 20151026 - no admin star process...
+									currentUserId);
 					
 				} catch (InjectorException e) {
 					String mess = "[InjectorException: _injectEmailTrayProcess] injecting email tray: "

@@ -4,6 +4,11 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * to group status of process work for search elements...
+ * @author nestor
+ *
+ */
 public enum ProcessWorkStatus {
 
 	ALL(0, "All process works"), ALIVE(1,
