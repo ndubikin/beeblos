@@ -3,6 +3,7 @@ package org.beeblos.bpm.core.bl;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -247,6 +248,9 @@ public class BeeBPMBL {
 			if ( !justCreatedStepWork.getCurrentStep().getStepTypeDef().getEventType().equals(EventType.INITEV) 
 					&& !justCreatedStepWork.getCurrentStep().getStepTypeDef().isEngineReq() ) {
 				startProcessResult.setQtyStepWorkCreated(1); // 1 route created at start ... 
+				if (startProcessResult.getStepWorkIdList()==null) {
+					startProcessResult.setStepWorkIdList(new ArrayList<Integer>());
+				}
 				startProcessResult.getStepWorkIdList().add(idStepWork); // created wStepWork id
 				return;
 			}
@@ -295,7 +299,15 @@ public class BeeBPMBL {
 					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
 			logger.error(mess);
 			throw new InjectorException(e);
-
+		
+		} catch (Exception e) {
+			String mess="Exception - Can't update new instance just injected: "
+					+idStepWork+" ...."+ " "
+					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ")+". "
+					+e.getClass();
+			logger.error(mess);
+			throw new InjectorException(e);
+			
 		}
 		//return qtyNewRoutes; nes 20151026
 	}

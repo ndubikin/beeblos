@@ -1,7 +1,9 @@
 package org.beeblos.bpm.core.model.noper;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.beeblos.bpm.core.model.enumerations.StartProcessResult;
 import org.joda.time.DateTime;
 
@@ -50,6 +52,16 @@ public class WStartProcessResult {
 	public WStartProcessResult() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	
+	/**
+	 * create element with empty arrays already created...
+	 * @param vacio
+	 */
+	public WStartProcessResult(boolean vacio) {
+		super();
+		this.errorList=new ArrayList<StringPair>();
+		this.stepWorkIdList= new ArrayList<Integer>();
 	}
 
 	public WStartProcessResult(StartProcessResult startProcessResult,
