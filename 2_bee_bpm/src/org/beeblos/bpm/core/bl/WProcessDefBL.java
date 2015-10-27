@@ -793,13 +793,37 @@ public class WProcessDefBL {
 	
 	}
 	
-	// dml 20130710
+	/**
+	 * Cargaba el mapa en modo xml.
+	 * 
+	 * NOTA: ahora hay que usar la nueva carga hechar por pablo "getProcessDefXmlMap2"
+	 * 
+	 * @author dmuleiro 20130710
+	 * 
+	 * @param processDefId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 */
+	@Deprecated
 	public String getProcessDefXmlMap(Integer processDefId, Integer currentUserId) throws WProcessDefException {
 
 		return new WProcessDefDao().getProcessDefXmlMap(processDefId, currentUserId);
 	
 	}
 	
+	/**
+	 * Arma el objeto XML para editar el mapa con mxGraph
+	 * 
+	 * @author pab 20141218
+	 * 
+	 * @param processDefId
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepSequenceDefException
+	 * @throws WStepDefException
+	 */
 	public String getProcessDefXmlMap2(Integer processDefId, Integer currentUserId) throws WProcessDefException, WStepSequenceDefException, WStepDefException {
 
 		return new WProcessDefDao().getProcessDefXmlMap2(processDefId, currentUserId);
@@ -1093,7 +1117,10 @@ public class WProcessDefBL {
 		// load xml map and for each sequence update edge's spIds
 		if (relClonedSequences != null) {
 			
-			String oldXmlMap = this.getProcessDefXmlMap(processDefId, currentUserId);
+			/**
+			 * Nueva llamada metodo de pablo - dml 20151026 - ITS: 1358
+			 */
+			String oldXmlMap = this.getProcessDefXmlMap2(processDefId, currentUserId);
 			
 			String newXmlMap = this.reloadXmlMapSpIds(oldXmlMap, clonedId, 
 					relClonedSteps, relClonedSequences, currentUserId);
