@@ -62,6 +62,7 @@ public class WStartProcessResult {
 		super();
 		this.errorList=new ArrayList<StringPair>();
 		this.stepWorkIdList= new ArrayList<Integer>();
+		this.qtyStepWorkCreated=0; 
 	}
 
 	public WStartProcessResult(StartProcessResult startProcessResult,
