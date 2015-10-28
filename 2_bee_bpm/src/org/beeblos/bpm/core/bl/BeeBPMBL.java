@@ -910,15 +910,44 @@ public class BeeBPMBL {
 		
 	}
 	
+	/**
+	 * Process a step
+	 * 
+	 * nes 20151028 - creado porque antes habia que llamar directamente a WStepWorkBL y no es lo mas elegante...
+	 * 
+	 * @param idStepWork
+	 * @param idResponse
+	 * @param runtimeSettings
+	 * @param isAdminProcess
+	 * @param processingDirection
+	 * @param autoLock
+	 * @param currentUserId
+	 * @return
+	 * @throws WProcessDefException
+	 * @throws WStepDefException
+	 * @throws WStepWorkException
+	 * @throws WStepSequenceDefException
+	 * @throws WStepLockedByAnotherUserException
+	 * @throws WStepNotLockedException
+	 * @throws WUserDefException
+	 * @throws WStepAlreadyProcessedException
+	 * @throws WStepWorkSequenceException
+	 * @throws WProcessWorkException
+	 */
 	public WStartProcessResult processStep (
-			Integer idStepWork, Integer idResponse, /*String comments,*/ WRuntimeSettings runtimeSettings,
-			/*Integer idProcess, Integer idObject, String idObjectType, */
+			Integer idStepWork, Integer idResponse, WRuntimeSettings runtimeSettings,
 			boolean isAdminProcess, String processingDirection, boolean autoLock, Integer currentUserId ) 
 	
 					throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
 							WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
 							WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
 	
+		WStartProcessResult startProcessResult = new WStartProcessResult(VACIO);
+		
+		new WStepWorkBL().processStep(idStepWork, idResponse, runtimeSettings, isAdminProcess,
+				processingDirection, autoLock, startProcessResult, currentUserId);
+		
+		
 		return null;
 		
 	}
