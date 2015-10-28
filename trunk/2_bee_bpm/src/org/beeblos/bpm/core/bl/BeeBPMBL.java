@@ -1,6 +1,7 @@
 package org.beeblos.bpm.core.bl;
 
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+import static com.sp.common.util.ConstantsCommon.VACIO;
 import static org.beeblos.bpm.core.util.Constants.PROCESS_STEP;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class BeeBPMBL {
 							WStepWorkSequenceException, WProcessDataFieldException {
 
 		Integer idStepWork=null;
-		WStartProcessResult startProcessResult = new WStartProcessResult();
+		WStartProcessResult startProcessResult = new WStartProcessResult(VACIO);
 		startProcessResult.setStartProcessResult(StartProcessResult.FAIL); // nes 20151026
 		
 		idStepWork =
