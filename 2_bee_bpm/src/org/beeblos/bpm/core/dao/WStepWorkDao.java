@@ -2395,16 +2395,16 @@ public class WStepWorkDao {
 	 * @param idWorkFilter
 	 * @param initialArrivingDateFilter
 	 * @param finalArrivingDateFilter
-	 * @param estrictArrivingDateFilter
+	 * @param arrivingDateStrictFilter
 	 * @param initialOpenedDateFilter
 	 * @param finalOpenedDateFilter
-	 * @param estrictOpenedDateFilter
+	 * @param openDateStrictFilter
 	 * @param initialDeadlineDateFilter
 	 * @param finalDeadlineDateFilter
-	 * @param estrictDeadlineDateFilter
+	 * @param deadlineDateStrictFilter
 	 * @param initialDecidedDateFilter
 	 * @param finalDecidedDateFilter
-	 * @param estrictDecidedDateFilter
+	 * @param decidedDateStrictFilter
 	 * @param action
 	 * @param onlyActiveProcessDefFilter
 	 * @return
@@ -2412,10 +2412,10 @@ public class WStepWorkDao {
 	 */
 	public List<StepWorkLight> finderStepWork(Integer processIdFilter, 
 			Integer stepIdFilter, StepWorkStatus stepWorkProcessingStatusFilter, String referenceFilter, Integer idWorkFilter, 
-			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,  		
-			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
-			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
-			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
+			LocalDate initialArrivingDateFilter, LocalDate finalArrivingDateFilter, boolean arrivingDateStrictFilter,  		
+			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean openDateStrictFilter, 		
+			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean deadlineDateStrictFilter, 		
+			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean decidedDateStrictFilter, 		
 			String action, boolean onlyActiveProcessDefFilter) 
 					throws WStepWorkException {
 		
@@ -2423,12 +2423,12 @@ public class WStepWorkDao {
 
 		filter = buildWorkingStepFilter(processIdFilter, stepIdFilter,
 				stepWorkProcessingStatusFilter, referenceFilter, idWorkFilter, initialArrivingDateFilter,
-				finalArrivingDateFilter, estrictArrivingDateFilter,
+				finalArrivingDateFilter, arrivingDateStrictFilter,
 				initialOpenedDateFilter, finalOpenedDateFilter,
-				estrictOpenedDateFilter, initialDeadlineDateFilter,
-				finalDeadlineDateFilter, estrictDeadlineDateFilter,
+				openDateStrictFilter, initialDeadlineDateFilter,
+				finalDeadlineDateFilter, deadlineDateStrictFilter,
 				initialDecidedDateFilter, finalDecidedDateFilter,
-				estrictDecidedDateFilter, onlyActiveProcessDefFilter, filter);
+				decidedDateStrictFilter, onlyActiveProcessDefFilter, filter);
 
 		if (filter != null && !"".equals(filter)){
 			filter = "WHERE " + filter;
@@ -2446,12 +2446,12 @@ public class WStepWorkDao {
 	private String buildWorkingStepFilter(Integer processIdFilter,
 			Integer stepIdFilter, StepWorkStatus stepWorkProcessingStatusFilter,
 			String referenceFilter, Integer idWorkFilter, LocalDate initialArrivingDateFilter,
-			LocalDate finalArrivingDateFilter, boolean estrictArrivingDateFilter,
+			LocalDate finalArrivingDateFilter, boolean arrivingDateStrictFilter,
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter,
-			boolean estrictOpenedDateFilter, LocalDate initialDeadlineDateFilter,
-			LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter,
+			boolean openDateStrictFilter, LocalDate initialDeadlineDateFilter,
+			LocalDate finalDeadlineDateFilter, boolean deadlineDateStrictFilter,
 			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter,
-			boolean estrictDecidedDateFilter, boolean onlyActiveProcessDefFilter, 
+			boolean decidedDateStrictFilter, boolean onlyActiveProcessDefFilter, 
 			String filter) {
 		
 		if (onlyActiveProcessDefFilter) {
@@ -2515,7 +2515,7 @@ public class WStepWorkDao {
 		DateTime to = null;
 
 		if (initialArrivingDateFilter != null) {
-			if (estrictArrivingDateFilter) {
+			if (arrivingDateStrictFilter) {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
@@ -2541,7 +2541,7 @@ public class WStepWorkDao {
 		}
 
 		if (initialOpenedDateFilter != null) {
-			if (estrictOpenedDateFilter) {
+			if (openDateStrictFilter) {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
@@ -2567,7 +2567,7 @@ public class WStepWorkDao {
 		}
 
 		if (initialDeadlineDateFilter != null) {
-			if (estrictDeadlineDateFilter) {
+			if (deadlineDateStrictFilter) {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
@@ -2589,7 +2589,7 @@ public class WStepWorkDao {
 		}
 
 		if (initialDecidedDateFilter != null) {
-			if (estrictDecidedDateFilter) {
+			if (decidedDateStrictFilter) {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
