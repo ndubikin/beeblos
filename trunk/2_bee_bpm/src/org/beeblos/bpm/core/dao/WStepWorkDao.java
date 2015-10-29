@@ -1044,22 +1044,22 @@ public class WStepWorkDao {
 				if (arrivingDate!=null) {
 	                from = fmtLongDate.parseDateTime(fmtShortDate.print(arrivingDate)+" 00:00:00");                
 	                to = fmtLongDate.parseDateTime(fmtShortDate.print(arrivingDate)+" 23:59:59");                
-					q.setParameter("arrivingdateFrom", from);
-					q.setParameter("arrivingdateTo", to);
+					q.setParameter("arrivingdateFrom", from.toString()); //rrl 20151029 ITS:1331
+					q.setParameter("arrivingdateTo", to.toString());
 				}
 				
 				if (openDate!=null) {
 	                from = fmtLongDate.parseDateTime(fmtShortDate.print(openDate)+" 00:00:00");                
 	                to = fmtLongDate.parseDateTime(fmtShortDate.print(openDate)+" 23:59:59");                
-					q.setParameter("openeddateFrom", from);
-					q.setParameter("openeddateTo", to);
+					q.setParameter("openeddateFrom", from.toString()); //rrl 20151029 ITS:1331
+					q.setParameter("openeddateTo", to.toString());
 				}
 				
 				if (deadlineDate!=null) {
 	                from = fmtLongDate.parseDateTime(fmtShortDate.print(deadlineDate)+" 00:00:00");                
 	                to = fmtLongDate.parseDateTime(fmtShortDate.print(deadlineDate)+" 23:59:59");                
-					q.setParameter("deadlinedateFrom", from);
-					q.setParameter("deadlinedateTo", to);
+					q.setParameter("deadlinedateFrom", from.toString()); //rrl 20151029 ITS:1331
+					q.setParameter("deadlinedateTo", to.toString());
 				}
 			
 			} catch (Exception e) {
@@ -2643,15 +2643,24 @@ public class WStepWorkDao {
 		tmpQuery += " pw.comments, "; //18
 		tmpQuery += " wsrd.name AS responseName, ";  //19 nes 20151018
 		tmpQuery += " pw.id AS idProcessWork, ";  //20 dml 20150413
-		tmpQuery += " sw.response "; //21 rrl 20150409 ITS: 917 - nes 20151018 - pase a Integer id
+		tmpQuery += " sw.response, "; //21 rrl 20150409 ITS: 917 - nes 20151018 - pase a Integer id
+		tmpQuery += " pw.id_object, "; //22 rrl 20151029 ITS:1331
+		tmpQuery += " pw.id_object_type, "; //23
+		tmpQuery += " wpd.id AS idProcessDef, "; //24
+		tmpQuery += " lockedby.name AS locked_by_name, "; //25
+		tmpQuery += " sw.locked_since, "; //26
+		tmpQuery += " ph.name AS process_work_name, "; //27
+		tmpQuery += " sw.sent_back "; //28
 		
 		tmpQuery += " FROM w_step_work sw ";
 		tmpQuery += " LEFT OUTER JOIN w_step_def step ON step.id = sw.id_current_step ";
 		tmpQuery += " LEFT OUTER JOIN w_step_head sh  ON step.head_id = sh.id ";
 		tmpQuery += " LEFT OUTER JOIN w_process_work pw ON pw.id = sw.id_work ";
 		tmpQuery += " LEFT OUTER JOIN w_process_def wpd ON wpd.id = pw.id_process ";
+		tmpQuery += " LEFT OUTER JOIN w_process_head ph  ON wpd.head_id = ph.id "; // rrl 20151029 ITS:1331
 		tmpQuery += " LEFT OUTER JOIN w_user_def opener ON opener.id = sw.opener_user "; 
 		tmpQuery += " LEFT OUTER JOIN w_user_def performer ON performer.id = sw.performer_user_id ";
+		tmpQuery += " LEFT OUTER JOIN w_user_def lockedby ON lockedby.id = sw.locked_by "; // rrl 20151029 ITS:1331
 		tmpQuery += " LEFT OUTER JOIN w_step_response_def wsrd ON wsrd.id = sw.response "; // nes 20151018 
 
 		tmpQuery += filter;
@@ -2697,6 +2706,15 @@ public class WStepWorkDao {
 		String performerLogin;
 		String performerName;
 		
+		//rrl 20151029 ITS:1331
+		Integer idObject;
+		String idObjectType;
+		Integer idProcessDef;
+		String lockedByName;
+		DateTime lockedSince;		
+		String processWorkName;
+		boolean sentBack;
+
 		
 		Session session = null;
 		Transaction tx = null;
@@ -2767,10 +2785,20 @@ public class WStepWorkDao {
 					idProcessWork = (cols[20] != null ? new Integer(
 							cols[20].toString()) : null);
 					
+					//rrl 20151029 ITS:1331
+					idObject = (cols[22] != null ? new Integer(cols[22].toString()) : null);
+					idObjectType = (cols[23] != null ? cols[23].toString() : "");
+					idProcessDef = (cols[24] != null ? new Integer(cols[24].toString()) : null);
+					lockedByName = (cols[25] != null ? cols[25].toString() : "");
+					lockedSince = (cols[26] != null ? new TimestampColumnDateTimeMapper().fromNonNullValue((Timestamp) cols[26]) : null);
+					processWorkName = (cols[27] != null ? cols[27].toString() : "");
+					sentBack = (cols[28] != null ? (Boolean) cols[28] : false);
+					
 					returnList.add(new StepWorkLight(idProcessWork, idProcess, idStep, stepName, 
 							reference, comments, arrivingDate, openedDate, openerUser, decidedDate, 
 							performer, deadlineDate, deadlineTime, locked, lockedBy, idStepWork, 
-							openerUserLogin, openerUserName, performerLogin, performerName, response, idResponse));
+							openerUserLogin, openerUserName, performerLogin, performerName, response, idResponse,
+							idObject, idObjectType, idProcessDef, lockedByName, lockedSince, processWorkName, sentBack));
 				}
 
 			} else {

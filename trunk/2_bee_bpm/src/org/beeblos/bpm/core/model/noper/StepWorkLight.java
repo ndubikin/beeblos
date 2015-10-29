@@ -94,7 +94,32 @@ public class StepWorkLight implements Serializable {
 	 */
 	private Integer idResponse;
 	
+	//rrl 20151028 ITS:1331
+	/**
+	 * related object referred by this instance
+	 */
+	private Integer idObject;
+	/**
+	 * related object type (java class) referred by this instance
+	 */
+	private String idObjectType;
+	/**
+	 * WProcessDef id for this stepWork
+	 */
+	private Integer idProcessDef;
+	/**
+	 * Indicates this task is locked
+	 */
+	private String lockedByName;
+	private DateTime lockedSince;
 	
+	/**
+	 * WProcessWork name for this stepWork
+	 */
+	private String processWorkName;
+	
+	private boolean sentBack;
+
 	public StepWorkLight() {
 		
 	}
@@ -105,7 +130,8 @@ public class StepWorkLight implements Serializable {
 			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedBy,
 			Integer idStepWork, 
 			String openerUserLogin, String openerUserName,
-			String performerLogin, String performerName, String response, Integer idResponse) { // nes 20151018
+			String performerLogin, String performerName, String response, Integer idResponse, // nes 20151018
+			Integer idObject, String idObjectType, Integer idProcessDef, String lockedByName, DateTime lockedSince, String processWorkName, boolean sentBack) { //rrl 20151029 ITS:1331
 		super();
 		this.idProcessWork = idProcessWork;
 		this.idProcess = idProcess;
@@ -129,6 +155,13 @@ public class StepWorkLight implements Serializable {
 		this.performerName = performerName;
 		this.response = response;
 		this.idResponse = idResponse;
+		this.idObject = idObject;
+		this.idObjectType = idObjectType;
+		this.idProcessDef = idProcessDef;
+		this.lockedByName = lockedByName;
+		this.lockedSince = lockedSince;
+		this.processWorkName = processWorkName;
+		this.sentBack = sentBack;
 	}
 
 	/**
@@ -328,6 +361,63 @@ public class StepWorkLight implements Serializable {
 		this.performerName = performerName;
 	}
 
+	//rrl 20151029 ITS:1331
+	public Integer getIdObject() {
+		return idObject;
+	}
+
+	public void setIdObject(Integer idObject) {
+		this.idObject = idObject;
+	}
+
+	public String getIdObjectType() {
+		return idObjectType;
+	}
+
+	public void setIdObjectType(String idObjectType) {
+		this.idObjectType = idObjectType;
+	}
+	
+	public Integer getIdProcessDef() {
+		return idProcessDef;
+	}
+
+	public void setIdProcessDef(Integer idProcessDef) {
+		this.idProcessDef = idProcessDef;
+	}
+	
+	public String getLockedByName() {
+		return lockedByName;
+	}
+
+	public void setLockedByName(String lockedByName) {
+		this.lockedByName = lockedByName;
+	}
+	
+	public DateTime getLockedSince() {
+		return lockedSince;
+	}
+
+	public void setLockedSince(DateTime lockedSince) {
+		this.lockedSince = lockedSince;
+	}
+	
+	public String getProcessWorkName() {
+		return processWorkName;
+	}
+
+	public void setProcessWorkName(String processWorkName) {
+		this.processWorkName = processWorkName;
+	}
+	
+	public boolean isSentBack() {
+		return sentBack;
+	}
+
+	public void setSentBack(boolean sentBack) {
+		this.sentBack = sentBack;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -343,15 +433,27 @@ public class StepWorkLight implements Serializable {
 		result = prime * result
 				+ ((decidedDate == null) ? 0 : decidedDate.hashCode());
 		result = prime * result
+				+ ((idObject == null) ? 0 : idObject.hashCode());
+		result = prime * result
+				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
+		result = prime * result
 				+ ((idProcess == null) ? 0 : idProcess.hashCode());
+		result = prime * result
+				+ ((idProcessDef == null) ? 0 : idProcessDef.hashCode());
+		result = prime * result
+				+ ((idProcessWork == null) ? 0 : idProcessWork.hashCode());
+		result = prime * result
+				+ ((idResponse == null) ? 0 : idResponse.hashCode());
 		result = prime * result + ((idStep == null) ? 0 : idStep.hashCode());
 		result = prime * result
 				+ ((idStepWork == null) ? 0 : idStepWork.hashCode());
-		result = prime * result
-				+ ((idProcessWork == null) ? 0 : idProcessWork.hashCode());
 		result = prime * result + (locked ? 1231 : 1237);
 		result = prime * result
 				+ ((lockedBy == null) ? 0 : lockedBy.hashCode());
+		result = prime * result
+				+ ((lockedByName == null) ? 0 : lockedByName.hashCode());
+		result = prime * result
+				+ ((lockedSince == null) ? 0 : lockedSince.hashCode());
 		result = prime * result
 				+ ((openedDate == null) ? 0 : openedDate.hashCode());
 		result = prime * result
@@ -367,9 +469,12 @@ public class StepWorkLight implements Serializable {
 		result = prime * result
 				+ ((performerName == null) ? 0 : performerName.hashCode());
 		result = prime * result
+				+ ((processWorkName == null) ? 0 : processWorkName.hashCode());
+		result = prime * result
 				+ ((reference == null) ? 0 : reference.hashCode());
 		result = prime * result
 				+ ((response == null) ? 0 : response.hashCode());
+		result = prime * result + (sentBack ? 1231 : 1237);
 		result = prime * result
 				+ ((stepName == null) ? 0 : stepName.hashCode());
 		return result;
@@ -409,15 +514,35 @@ public class StepWorkLight implements Serializable {
 				return false;
 		} else if (!decidedDate.equals(other.decidedDate))
 			return false;
+		if (idObject == null) {
+			if (other.idObject != null)
+				return false;
+		} else if (!idObject.equals(other.idObject))
+			return false;
+		if (idObjectType == null) {
+			if (other.idObjectType != null)
+				return false;
+		} else if (!idObjectType.equals(other.idObjectType))
+			return false;
 		if (idProcess == null) {
 			if (other.idProcess != null)
 				return false;
 		} else if (!idProcess.equals(other.idProcess))
 			return false;
+		if (idProcessDef == null) {
+			if (other.idProcessDef != null)
+				return false;
+		} else if (!idProcessDef.equals(other.idProcessDef))
+			return false;
 		if (idProcessWork == null) {
 			if (other.idProcessWork != null)
 				return false;
 		} else if (!idProcessWork.equals(other.idProcessWork))
+			return false;
+		if (idResponse == null) {
+			if (other.idResponse != null)
+				return false;
+		} else if (!idResponse.equals(other.idResponse))
 			return false;
 		if (idStep == null) {
 			if (other.idStep != null)
@@ -435,6 +560,16 @@ public class StepWorkLight implements Serializable {
 			if (other.lockedBy != null)
 				return false;
 		} else if (!lockedBy.equals(other.lockedBy))
+			return false;
+		if (lockedByName == null) {
+			if (other.lockedByName != null)
+				return false;
+		} else if (!lockedByName.equals(other.lockedByName))
+			return false;
+		if (lockedSince == null) {
+			if (other.lockedSince != null)
+				return false;
+		} else if (!lockedSince.equals(other.lockedSince))
 			return false;
 		if (openedDate == null) {
 			if (other.openedDate != null)
@@ -471,6 +606,11 @@ public class StepWorkLight implements Serializable {
 				return false;
 		} else if (!performerName.equals(other.performerName))
 			return false;
+		if (processWorkName == null) {
+			if (other.processWorkName != null)
+				return false;
+		} else if (!processWorkName.equals(other.processWorkName))
+			return false;
 		if (reference == null) {
 			if (other.reference != null)
 				return false;
@@ -480,6 +620,8 @@ public class StepWorkLight implements Serializable {
 			if (other.response != null)
 				return false;
 		} else if (!response.equals(other.response))
+			return false;
+		if (sentBack != other.sentBack)
 			return false;
 		if (stepName == null) {
 			if (other.stepName != null)
@@ -491,18 +633,23 @@ public class StepWorkLight implements Serializable {
 
 	@Override
 	public String toString() {
-		return "StepWorkLight [idProcess=" + idProcess + ", idStep=" + idStep + ", idProcessWork=" + idProcessWork
-				+ ", stepName=" + stepName + ", reference=" + reference
-				+ ", comments=" + comments + ", arrivingDate=" + arrivingDate
-				+ ", openerUser=" + openerUser + ", openerUserLogin="
-				+ openerUserLogin + ", openerUserName=" + openerUserName
-				+ ", openedDate=" + openedDate + ", performer=" + performer
-				+ ", performerLogin=" + performerLogin + ", performerName="
-				+ performerName + ", decidedDate=" + decidedDate
-				+ ", deadlineTime=" + deadlineTime + ", deadlineDate="
-				+ deadlineDate + ", locked=" + locked + ", lockedBy="
-				+ lockedBy + ", idStepWork=" + idStepWork + ", response="
-				+ response + "]";
+		return "StepWorkLight [idStepWork=" + idStepWork + ", idProcessWork="
+				+ idProcessWork + ", idProcess=" + idProcess + ", idStep="
+				+ idStep + ", stepName=" + stepName + ", reference="
+				+ reference + ", comments=" + comments + ", arrivingDate="
+				+ arrivingDate + ", openerUser=" + openerUser
+				+ ", openerUserLogin=" + openerUserLogin + ", openerUserName="
+				+ openerUserName + ", openedDate=" + openedDate
+				+ ", performer=" + performer + ", performerLogin="
+				+ performerLogin + ", performerName=" + performerName
+				+ ", decidedDate=" + decidedDate + ", deadlineTime="
+				+ deadlineTime + ", deadlineDate=" + deadlineDate + ", locked="
+				+ locked + ", lockedBy=" + lockedBy + ", response=" + response
+				+ ", idResponse=" + idResponse + ", idObject=" + idObject
+				+ ", idObjectType=" + idObjectType + ", idProcessDef="
+				+ idProcessDef + ", lockedByName=" + lockedByName
+				+ ", lockedSince=" + lockedSince + ", processWorkName="
+				+ processWorkName + ", sentBack=" + sentBack + "]";
 	}
 	
 }
