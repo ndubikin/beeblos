@@ -2673,7 +2673,7 @@ public class WStepWorkDao {
 		tmpQuery += filter;
 
 		if (action == null || action.equals("")) {
-			tmpQuery += " ORDER by sw.arriving_date DESC ";  //rrl 20151102 ITS:1334
+			tmpQuery += " ORDER by sw.arriving_date DESC ";  
 		} 
 
 		logger.debug("------>> finderStepWork -> query:" + tmpQuery
