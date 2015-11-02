@@ -2390,7 +2390,7 @@ public class WStepWorkDao {
 	 * 
 	 * @param processIdFilter
 	 * @param stepIdFilter
-	 * @param stepWorkProcessingStatusFilter - StepWorkStatus enum
+	 * @param stepWorkProcessingStatusFilter
 	 * @param referenceFilter
 	 * @param idWorkFilter
 	 * @param initialArrivingDateFilter
@@ -2407,6 +2407,7 @@ public class WStepWorkDao {
 	 * @param decidedDateStrictFilter
 	 * @param action
 	 * @param onlyActiveProcessDefFilter
+	 * @param maxResults
 	 * @return
 	 * @throws WStepWorkException
 	 */
@@ -2416,7 +2417,8 @@ public class WStepWorkDao {
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean openDateStrictFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean deadlineDateStrictFilter, 		
 			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean decidedDateStrictFilter, 		
-			String action, boolean onlyActiveProcessDefFilter) 
+			String action, boolean onlyActiveProcessDefFilter,
+			Integer maxResults) //rrl 20151102 ITS:1334 
 					throws WStepWorkException {
 		
 		String filter = "";
@@ -2435,6 +2437,11 @@ public class WStepWorkDao {
 		}
 
 		String query = buildWorkingStepQuery(filter, action);
+		
+		//rrl 20151102 ITS:1334
+		if (maxResults!=null && !maxResults.equals(0)) {
+			query += " Limit " + maxResults;
+		}
 		
 		logger.debug("------>> finderStepWork -> query:" + query
 				+ "<<-------");
@@ -2666,7 +2673,7 @@ public class WStepWorkDao {
 		tmpQuery += filter;
 
 		if (action == null || action.equals("")) {
-			tmpQuery += " ORDER by sw.arriving_date DESC; ";
+			tmpQuery += " ORDER by sw.arriving_date DESC ";  //rrl 20151102 ITS:1334
 		} 
 
 		logger.debug("------>> finderStepWork -> query:" + tmpQuery

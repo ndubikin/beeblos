@@ -2890,9 +2890,10 @@ public class WStepWorkBL {
 	
 	/**
 	 * Finder for stepWork 
+	 * 
 	 * @param processIdFilter
 	 * @param stepIdFilter
-	 * @param stepWorkProcessingStatusFilter - StepWorkStatus
+	 * @param stepWorkProcessingStatusFilter
 	 * @param referenceFilter
 	 * @param idWorkFilter
 	 * @param initialArrivingDateFilter
@@ -2909,6 +2910,7 @@ public class WStepWorkBL {
 	 * @param estrictDecidedDateFilter
 	 * @param action
 	 * @param onlyActiveProcessDefFilter
+	 * @param maxResults
 	 * @return
 	 * @throws WStepWorkException
 	 */
@@ -2918,7 +2920,8 @@ public class WStepWorkBL {
 			LocalDate initialOpenedDateFilter, LocalDate finalOpenedDateFilter, boolean estrictOpenedDateFilter, 		
 			LocalDate initialDeadlineDateFilter, LocalDate finalDeadlineDateFilter, boolean estrictDeadlineDateFilter, 		
 			LocalDate initialDecidedDateFilter, LocalDate finalDecidedDateFilter, boolean estrictDecidedDateFilter, 		
-			String action, boolean onlyActiveProcessDefFilter)
+			String action, boolean onlyActiveProcessDefFilter,
+			Integer maxResults) //rrl 20151102 ITS:1334
 	throws WStepWorkException {
 
 		return new WStepWorkDao().finderStepWork(processIdFilter, stepIdFilter, 
@@ -2927,7 +2930,7 @@ public class WStepWorkBL {
 				initialOpenedDateFilter, finalOpenedDateFilter, estrictOpenedDateFilter,
 				initialDeadlineDateFilter, finalDeadlineDateFilter, estrictDeadlineDateFilter, 
 				initialDecidedDateFilter, finalDecidedDateFilter, estrictDecidedDateFilter, 
-				action, onlyActiveProcessDefFilter);
+				action, onlyActiveProcessDefFilter, maxResults);
 		
 	}
 	
