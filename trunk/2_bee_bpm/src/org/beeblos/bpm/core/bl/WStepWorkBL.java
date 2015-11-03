@@ -2891,8 +2891,8 @@ public class WStepWorkBL {
 	/**
 	 * Finder for stepWork 
 	 * 
-	 * @param processIdFilter
-	 * @param stepIdFilter
+	 * @param processIdFilter - process def id
+	 * @param stepIdFilter - step def id
 	 * @param stepWorkProcessingStatusFilter
 	 * @param referenceFilter
 	 * @param idWorkFilter
