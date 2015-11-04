@@ -26,8 +26,16 @@ public class WRuntimeSettings implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * instructions to next step...
+	 */
 	private String instructions;
-	private String stepComments;
+	
+	/**
+	 * My notes...
+	 * refactirized nes 20151104
+	 */
+	private String stepNotes;
 
 	/**
 	 * To update or synchronize managed data at step...
@@ -86,7 +94,7 @@ public class WRuntimeSettings implements java.io.Serializable {
 	 * WRuntimeSettings constructor with params...
 	 * 
 	 * @param instructions
-	 * @param stepComments
+	 * @param stepNotes
 	 * @param md
 	 * @param timeUnit
 	 * @param assignedTime
@@ -95,13 +103,13 @@ public class WRuntimeSettings implements java.io.Serializable {
 	 * @param reminderTimeUnit
 	 * @param reminderTime
 	 */
-	public WRuntimeSettings(String instructions, String stepComments,
+	public WRuntimeSettings(String instructions, String stepNotes,
 			ManagedData md,
 			WTimeUnit timeUnit, Integer assignedTime, LocalDate deadlineDate,
 			LocalTime deadlineTime, WTimeUnit reminderTimeUnit, Integer reminderTime) {
 		super();
 		this.instructions = instructions;
-		this.stepComments = stepComments;
+		this.stepNotes = stepNotes;
 		this.managedData = md;
 		this.timeUnit = timeUnit;
 		this.assignedTime = assignedTime;
@@ -115,12 +123,12 @@ public class WRuntimeSettings implements java.io.Serializable {
 
 
 
-	public String getStepComments() {
-		return this.stepComments;
+	public String getStepNotes() {
+		return this.stepNotes;
 	}
 
-	public void setStepComments(String stepComments) {
-		this.stepComments = stepComments;
+	public void setStepNotes(String stepNotes) {
+		this.stepNotes = stepNotes;
 	}
 
 	/**
@@ -344,7 +352,7 @@ public class WRuntimeSettings implements java.io.Serializable {
 				* result
 				+ ((reminderTimeUnit == null) ? 0 : reminderTimeUnit.hashCode());
 		result = prime * result
-				+ ((stepComments == null) ? 0 : stepComments.hashCode());
+				+ ((stepNotes == null) ? 0 : stepNotes.hashCode());
 		result = prime * result
 				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
 		return result;
@@ -396,10 +404,10 @@ public class WRuntimeSettings implements java.io.Serializable {
 				return false;
 		} else if (!reminderTimeUnit.equals(other.reminderTimeUnit))
 			return false;
-		if (stepComments == null) {
-			if (other.stepComments != null)
+		if (stepNotes == null) {
+			if (other.stepNotes != null)
 				return false;
-		} else if (!stepComments.equals(other.stepComments))
+		} else if (!stepNotes.equals(other.stepNotes))
 			return false;
 		if (timeUnit == null) {
 			if (other.timeUnit != null)
@@ -422,7 +430,7 @@ public class WRuntimeSettings implements java.io.Serializable {
 				+ ", deadlineDate=" + deadlineDate + ", deadlineTime="
 				+ deadlineTime + ", instructions=" + instructions
 				+ ", reminderTime=" + reminderTime + ", reminderTimeUnit="
-				+ reminderTimeUnit + ", stepComments=" + stepComments
+				+ reminderTimeUnit + ", stepNotes=" + stepNotes
 				+ ", timeUnit=" + timeUnit + "]";
 	}
 

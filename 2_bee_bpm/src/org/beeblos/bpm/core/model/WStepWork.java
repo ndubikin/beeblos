@@ -58,7 +58,8 @@ public class WStepWork implements java.io.Serializable {
 	private String userNotes;
 	
 	/**
-	 * Indicates user notes must be stored with this step
+	 * Indicates the user set some user notes to himself
+	 * and must be stored with this step
 	 */
 	private boolean myNotes;
 	/**
