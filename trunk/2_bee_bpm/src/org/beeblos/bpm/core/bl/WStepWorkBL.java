@@ -268,7 +268,7 @@ public class WStepWorkBL {
 				);//NOTA NESTOR: VER BIEN QUE HACEMOS AQUÍ ...
 		
 		// set current workitem to processed status
-		_setCurrentWorkitemToProcessed( currentStep, idResponse, now, currentUserId );
+		_setCurrentWorkitemToProcessed( currentStep, runtimeSettings, idResponse, now, currentUserId ); // NES 20151104 - added runtimeSettings 
 
 		// insert new steps 
 		if ( processingDirection.equals(PROCESS_STEP) ) {
@@ -2843,19 +2843,24 @@ public class WStepWorkBL {
 	 * @param currentStep
 	 * @param idResponse
 	 * @param now
-	 * @param currentUser
+	 * @param currentUserId
 	 * @throws WStepWorkException
 	 */
-	private void _setCurrentWorkitemToProcessed( WStepWork currentStep, Integer idResponse, 
-			DateTime now, Integer currentUser) throws WStepWorkException {
+	private void _setCurrentWorkitemToProcessed( WStepWork currentStep, WRuntimeSettings runtimeSettings,
+			Integer idResponse,	DateTime now, Integer currentUserId) throws WStepWorkException {
 		logger.debug(">>> _setCurrentWorkitemToProcessed currentStep id:"
 			+(currentStep!=null && currentStep.getId()!=null?currentStep.getId():"null")); // nes 20141125
 		
 		currentStep.setDecidedDate( now );
-		currentStep.setPerformer(new WUserDef(currentUser));// nes 20120126
+		currentStep.setPerformer(new WUserDef(currentUserId));// nes 20120126
 		currentStep.setLocked(false);
 		currentStep.setLockedBy(null);
 		currentStep.setLockedSince(null);
+		// nes 20151104 - set my notes on current step to persist...
+		if (runtimeSettings.getStepNotes()!=null && !"".equals(runtimeSettings.getStepNotes())){
+			currentStep.setMyNotes(true);
+			currentStep.setUserNotes(runtimeSettings.getStepNotes());
+		}
 		
 		logger.debug(">>> _setCurrentWorkitemToProcessed 1...");
 		
@@ -2868,7 +2873,7 @@ public class WStepWorkBL {
 		
 		logger.debug(">>> _setCurrentWorkitemToProcessed 2...");
 		
-		new WStepWorkBL().update(currentStep, currentUser); // actualiza el paso actual a "ejecutado" y lo desbloquea
+		new WStepWorkBL().update(currentStep, currentUserId); // actualiza el paso actual a "ejecutado" y lo desbloquea
 		logger.debug(">>> wStepWork updated...");
 		
 	}
