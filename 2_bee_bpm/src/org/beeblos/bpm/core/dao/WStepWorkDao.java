@@ -2578,7 +2578,7 @@ public class WStepWorkDao {
 				if (!"".equals(filter)) {
 					filter += " AND ";
 				}
-				filter += " sw.deadline_date = '" + initialDeadlineDateFilter;
+				filter += " sw.deadline_date = '" + initialDeadlineDateFilter + "' ";
 			} else {
 				if (finalDeadlineDateFilter != null) {
 					if (!"".equals(filter)) {
