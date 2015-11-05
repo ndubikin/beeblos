@@ -82,7 +82,7 @@ public class StepWorkLight implements Serializable {
 	/**
 	 * Userid who locks the task/step
 	 */
-	private Integer lockedBy;
+	private Integer lockedById;
 	
 	//rrl 20150409 ITS: 917
 	/**
@@ -127,7 +127,7 @@ public class StepWorkLight implements Serializable {
 	public StepWorkLight(Integer idProcessWork, Integer idProcess, Integer idStep,
 			String stepName, String reference, String comments, DateTime arrivingDate, DateTime openedDate,
 			Integer openerUser, DateTime decidedDate, Integer performer,
-			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedBy,
+			LocalDate deadlineDate, LocalTime deadlineTime, boolean locked, Integer lockedById,
 			Integer idStepWork, 
 			String openerUserLogin, String openerUserName,
 			String performerLogin, String performerName, String response, Integer idResponse, // nes 20151018
@@ -147,7 +147,7 @@ public class StepWorkLight implements Serializable {
 		this.deadlineDate = deadlineDate;
 		this.deadlineTime = deadlineTime;
 		this.locked = locked;
-		this.lockedBy = lockedBy;
+		this.lockedById = lockedById;
 		this.idStepWork = idStepWork;
 		this.openerUserLogin = openerUserLogin;
 		this.openerUserName = openerUserName;
@@ -290,12 +290,12 @@ public class StepWorkLight implements Serializable {
 		this.locked = locked;
 	}
 
-	public Integer getLockedBy() {
-		return lockedBy;
+	public Integer getLockedById() {
+		return lockedById;
 	}
 
-	public void setLockedBy(Integer lockedBy) {
-		this.lockedBy = lockedBy;
+	public void setLockedById(Integer lockedById) {
+		this.lockedById = lockedById;
 	}
 
 	public Integer getIdStepWork() {
@@ -449,7 +449,7 @@ public class StepWorkLight implements Serializable {
 				+ ((idStepWork == null) ? 0 : idStepWork.hashCode());
 		result = prime * result + (locked ? 1231 : 1237);
 		result = prime * result
-				+ ((lockedBy == null) ? 0 : lockedBy.hashCode());
+				+ ((lockedById == null) ? 0 : lockedById.hashCode());
 		result = prime * result
 				+ ((lockedByName == null) ? 0 : lockedByName.hashCode());
 		result = prime * result
@@ -556,10 +556,10 @@ public class StepWorkLight implements Serializable {
 			return false;
 		if (locked != other.locked)
 			return false;
-		if (lockedBy == null) {
-			if (other.lockedBy != null)
+		if (lockedById == null) {
+			if (other.lockedById != null)
 				return false;
-		} else if (!lockedBy.equals(other.lockedBy))
+		} else if (!lockedById.equals(other.lockedById))
 			return false;
 		if (lockedByName == null) {
 			if (other.lockedByName != null)
@@ -644,7 +644,7 @@ public class StepWorkLight implements Serializable {
 				+ performerLogin + ", performerName=" + performerName
 				+ ", decidedDate=" + decidedDate + ", deadlineTime="
 				+ deadlineTime + ", deadlineDate=" + deadlineDate + ", locked="
-				+ locked + ", lockedBy=" + lockedBy + ", response=" + response
+				+ locked + ", lockedById=" + lockedById + ", response=" + response
 				+ ", idResponse=" + idResponse + ", idObject=" + idObject
 				+ ", idObjectType=" + idObjectType + ", idProcessDef="
 				+ idProcessDef + ", lockedByName=" + lockedByName
