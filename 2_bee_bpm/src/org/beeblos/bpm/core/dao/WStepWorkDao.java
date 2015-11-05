@@ -2676,6 +2676,15 @@ public class WStepWorkDao {
 			tmpQuery += " ORDER by sw.arriving_date DESC ";  
 		} 
 
+		/**
+		 * si es processed ordenarlo por sw.decided_date DESC
+		 * 
+		 * @author rrl 20151105 ITS 1331
+		 */
+		if (action != null && action.equals(StepWorkStatus.PROCESSED.toString())) {
+			tmpQuery += " ORDER by sw.decided_date DESC ";  
+		}
+		
 		logger.debug("------>> finderStepWork -> query:" + tmpQuery
 				+ "<<-------");
 
