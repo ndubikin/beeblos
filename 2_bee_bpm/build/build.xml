@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- @author: sgurin  -->
-<project name="2_bee_bpm_core" default="jar">
+<project name="2_bee_bpm" default="jar">
 
 	<property file="build.properties"/>
 	<description>
