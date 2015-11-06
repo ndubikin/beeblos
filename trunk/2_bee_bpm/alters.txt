@@ -541,3 +541,17 @@ CHANGE COLUMN `active` `active` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'event type
 
 ALTER TABLE `bee_bpm_dev`.`w_step_def` 
 ADD COLUMN `turn_back_enabled` BIT(1) NULL DEFAULT b'0' AFTER `deleted`;
+
+## dml 20151105 - borramos las dos columnas su_lectura y admon que estaran obsoletas
+ALTER TABLE `bee_bpm_dev`.`user` 
+DROP COLUMN `su_lectura`,
+DROP COLUMN `admon`;
+
+## dml 20151105 - cambiamos el enabled a bit y la inicializacion de la addDate que estaba en '0000-...
+ALTER TABLE `bee_bpm_dev`.`user` 
+CHANGE COLUMN `enabled` `enabled` BIT(1) NULL DEFAULT b'1' ,
+CHANGE COLUMN `add_date` `add_date` TIMESTAMP NOT NULL DEFAULT '1970-01-01 01:01:00' ;
+
+## dml 20151105 - updateamos para que todos los user que existian esten enabled
+UPDATE `bee_bpm_dev`.`user` SET enabled = true;
+

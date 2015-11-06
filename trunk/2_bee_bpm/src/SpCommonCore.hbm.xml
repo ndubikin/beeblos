@@ -334,12 +334,12 @@
 		<property name="gender" type="java.lang.Boolean">
 			<column name="gender" sql-type="bit" />
 		</property>
-		<property name="admon" type="string">
-			<column name="admon" length="1"   />
-		</property>
-		<property name="suLectura" type="string">
-			<column name="su_lectura" length="1"   />
-		</property>
+<!-- 		<property name="admon" type="string"> -->
+<!-- 			<column name="admon" length="1"   /> -->
+<!-- 		</property> -->
+<!-- 		<property name="suLectura" type="string"> -->
+<!-- 			<column name="su_lectura" length="1"   /> -->
+<!-- 		</property> -->
 		<property name="systemUser" type="java.lang.Boolean">
 			<column name="system_user" sql-type="bit" />
 		</property>
@@ -348,8 +348,8 @@
 				<comment>Fecha de ultimo login</comment>
 			</column>
 		</property>
-		<property name="enabled" type="string">
-			<column name="enabled"  />
+		<property name="enabled" type="java.lang.Boolean">
+			<column name="enabled" sql-type="bit" />
 		</property>
 		<property name="departmentChief" type="string">
 			<column name="department_chief" >
@@ -448,15 +448,15 @@
 		<property name="gender" type="java.lang.Boolean">
 			<column name="gender" sql-type="bit" />
 		</property>
-		<property name="suLectura" type="string">
-			<column name="su_lectura" length="1"   />
-		</property>
+<!-- 		<property name="suLectura" type="string"> -->
+<!-- 			<column name="su_lectura" length="1"   /> -->
+<!-- 		</property> -->
 		<property name="idOrganizationUnit" type="java.lang.Integer">
 			<column name="id_depto" />
 		</property>
-		<property name="admon" type="string">
-			<column name="admon" length="1"   />
-		</property>		
+<!-- 		<property name="admon" type="string"> -->
+<!-- 			<column name="admon" length="1"   /> -->
+<!-- 		</property>		 -->
 
 	</class>	
 
