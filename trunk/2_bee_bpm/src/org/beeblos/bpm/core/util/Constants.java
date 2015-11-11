@@ -83,7 +83,7 @@ public class Constants {
 	public static String HIBERNATE_CONFIGURATION_LIST_XML = ppxx();
 
 	// dml 20130510
-	public static String APP_NAME = getStringProperty("beeblos.nombre.aplicacion","XXXX"); // LO CORTO A 4 PORQ DEJARON EL CAMPO DE USUARIOLOGIN DE ESE LARGO, LUEGO VER BIEN DE EMPROLIJAR ESTO ...
+//	public static String APP_NAME = getStringProperty("beeblos.nombre.aplicacion","XXXX"); // LO CORTO A 4 PORQ DEJARON EL CAMPO DE USUARIOLOGIN DE ESE LARGO, LUEGO VER BIEN DE EMPROLIJAR ESTO ...
 
 	public static final String ACTIVE = "Active"; // dml 20130508
 	public static final String INACTIVE = "Inactive"; // dml 20130508
@@ -122,8 +122,6 @@ public class Constants {
 	public static final String WORKINGWORKS_QUERY = "WORKINGWORKS_QUERY";
 	public static final String WORKINGSTEPS_QUERY = "WORKINGSTEPS_QUERY";
 
-	//public static final Integer VENCIMIENTO_FACTURA_PROVEEDOR_DEFAULT  = getIntegerProperty("dfag.vencimiento.factura.default.en.dias",60);
-
 	public static final String TEXT_XML="text/xml";
 	
 	/** PARÁMETROS PARA EL SISTEMA DE WORKFLOW */
@@ -132,9 +130,6 @@ public class Constants {
 	public static final Integer TURNBACK =-1; // PAR INDICAR QUE EL PASO VUELVE ATRÁS ...
 
 	public static final String OMNIADMIN = "OMNIADMIN";
-	
-	public static final Integer ID_ROLE_DEF_DIRECTORES_DEPTO = getIntegerProperty("directoresdepto.role_def.id");
-	public static final Integer ID_ROLE_DEF_SUBDIRECTORES = getIntegerProperty("subdirectores.role_def.id");
 	
 	public static final String FICHERO_BDC_MENSAJES_ERROR = "org.beeblos.bpm.wc.taglib.util.error_messages";
 	public static final String FICHERO_BDC_MENSAJES	      = "org.beeblos.bpm.wc.taglib.util.messages";
