@@ -8,10 +8,10 @@
 		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
 
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.password">root</property>
-		<property name="hibernate.connection.url">jdbc:mysql://localhost/gespro_generic_prod</property>
+		<property name="hibernate.connection.password">msandbox</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:5621/gespro_generic</property>
 		<property name="hibernate.connection.username">root</property>
-		<property name="hibernate.default_catalog">gespro_generic_prod</property>
+		<property name="hibernate.default_catalog">gespro_generic</property>
 
 		<property name="hibernate.connection.pool_size">10</property>
 
