@@ -548,6 +548,10 @@
 			<column name="template_file_name" />
 		</property>
 
+        <property name="bodyCharset" type="java.lang.String">
+            <column name="body_charset" />
+        </property>
+
 		<property name="to" type="java.lang.String">
 			<column name="to_" />
 		</property>
