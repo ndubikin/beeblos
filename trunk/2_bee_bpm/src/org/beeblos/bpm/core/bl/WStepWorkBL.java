@@ -2301,6 +2301,8 @@ public class WStepWorkBL {
 				//IGUAL QUE CON LOS ADMINISTRADORES PERO CON EL INDICADOR A FALSE 
 				emailMessage.setListaTo(this.getEmailAccountList(stepWork, false));
 				
+				logger.debug("email to list:"+(emailMessage!=null && emailMessage.getListaTo()!=null?emailMessage.getListaTo().toString():"VACIO")); // nes 20151124
+				
 				this._sendEmail(emailMessage, currentUserId);
 
 			} else {
@@ -2377,8 +2379,17 @@ public class WStepWorkBL {
 			
 	}
 	
+	/**
+	 * Este método envia el email o lo escribe en filesystem según tenga el parámetro WRITE_EMAIL_TO_FILESYSTEM
+	 * cargado (PARA TESTING)
+	 * 
+	 * @param email
+	 * @param currentUserId
+	 * @throws SendEmailException
+	 */
 	private void _sendEmail(Email email, Integer currentUserId) throws SendEmailException {
-		logger.debug(">>> _sendEmail - to:"+(email!=null?(email.getTo()!=null?email.getTo():"null"):"null"));
+		logger.debug(">>> _sendEmail email:"+(email!=null?email:"null")
+				+" currentUserId:"+(currentUserId!=null?currentUserId:"null"));
 		
 		try {
 			
