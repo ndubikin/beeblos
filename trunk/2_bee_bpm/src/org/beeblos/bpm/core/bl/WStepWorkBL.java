@@ -2234,7 +2234,7 @@ public class WStepWorkBL {
 		List<Object> stepWorkObjectAsList = new ArrayList<Object>();
 		stepWorkObjectAsList.add(stepWork);
 		
-		ApplicationURLUtil objParams = this._buildStepWorkProcessorUrl(stepWork);
+		ApplicationURLUtil objParams = this._buildStepWorkProcessorUrl(stepWork); // dml 20151124 - refactorizado...
 		if (objParams != null){
 			stepWorkObjectAsList.add(objParams);
 		}
@@ -2321,7 +2321,7 @@ public class WStepWorkBL {
 	 * @param stepWork
 	 * @return
 	 */
-	private ApplicationURLUtil _buildStepWorkProcessorUrl(WStepWork stepWork){
+	private ApplicationURLUtil _buildStepWorkProcessorUrl(WStepWork stepWork){ // dml 20151124 - refactorizado...
 		
 		try {
 		
@@ -2367,7 +2367,7 @@ public class WStepWorkBL {
 			/**
 			 *  Fourth step: We build the final URL with the "process step id" and the "step work url data"
 			 */
-			return new ApplicationURLUtil(stepWorkUrl);
+			return new ApplicationURLUtil(stepWorkUrl); // dml 20151124 - refactorizado...
 
 		} catch (Exception e){
 			logger.info("The step's work (with id: " + stepWork.getId()
