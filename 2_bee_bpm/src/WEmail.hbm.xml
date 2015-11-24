@@ -166,6 +166,10 @@
 					arriba</comment>
 			</column>
 		</property>
+        <property name="bodyCharset" type="java.lang.String">
+            <column name="body_charset" />
+        </property>
+
 		<property generated="never" lazy="false" name="uceTextoDeLaFirma"
 			type="string">
 			<column name="uce_texto_de_la_firma" />
