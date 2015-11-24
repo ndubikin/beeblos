@@ -77,7 +77,7 @@ import com.email.tray.core.util.EmailPersonalizationUtilBL;
 import com.sp.common.core.bl.DocumentManagerBL;
 import com.sp.common.core.error.BeeblosBLException;
 import com.sp.common.core.model.UserEmailAccount;
-import com.sp.common.core.model.noper.ObjGeneralParams;
+import com.sp.common.core.util.ApplicationURLUtil;
 import com.sp.common.model.FileSP;
 import com.sp.common.util.Resourceutil;
 
@@ -2234,7 +2234,7 @@ public class WStepWorkBL {
 		List<Object> stepWorkObjectAsList = new ArrayList<Object>();
 		stepWorkObjectAsList.add(stepWork);
 		
-		ObjGeneralParams objParams = this._buildStepWorkProcessorUrl(stepWork);
+		ApplicationURLUtil objParams = this._buildStepWorkProcessorUrl(stepWork);
 		if (objParams != null){
 			stepWorkObjectAsList.add(objParams);
 		}
@@ -2314,14 +2314,14 @@ public class WStepWorkBL {
 	}
 	
 	/**
-	 * Algorithm that builds the WorkStep URL (inside the ObjGeneralParams) in order to process itself
+	 * Algorithm that builds the WorkStep URL (inside the ApplicationURLUtil) in order to process itself
 	 * 
 	 * @author dmuleiro 20141128
 	 * 
 	 * @param stepWork
 	 * @return
 	 */
-	private ObjGeneralParams _buildStepWorkProcessorUrl(WStepWork stepWork){
+	private ApplicationURLUtil _buildStepWorkProcessorUrl(WStepWork stepWork){
 		
 		try {
 		
@@ -2367,7 +2367,7 @@ public class WStepWorkBL {
 			/**
 			 *  Fourth step: We build the final URL with the "process step id" and the "step work url data"
 			 */
-			return new ObjGeneralParams(stepWorkUrl);
+			return new ApplicationURLUtil(stepWorkUrl);
 
 		} catch (Exception e){
 			logger.info("The step's work (with id: " + stepWork.getId()
