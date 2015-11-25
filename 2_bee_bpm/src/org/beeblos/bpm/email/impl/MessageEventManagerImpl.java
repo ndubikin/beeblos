@@ -43,6 +43,7 @@ import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.beeblos.bpm.core.model.noper.WStartProcessResult;
@@ -648,13 +649,21 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	}
 	
 	/**
-	 * Injects the created EmailTray into the process workflow. This is the main action of the algorithm.
+	 * Injects an EmailTray into the process workflow. This is the main action of the algorithm.
 	 * 
 	 * @author dmuleiro 20150423
-	 * 
-	 * @throws DaemonJobRunningException 
+	 *  
+	 * @param conf
+	 * @param emailTrayId
+	 * @param currentUserId
+	 * @throws DaemonJobRunningException
 	 */
-	private void _injectEmailTrayAsProcess(EmailDConfBeeBPM conf, Integer emailTrayId, Integer currentUserId) throws DaemonJobRunningException{
+	private void _injectEmailTrayAsProcess(EmailDConfBeeBPM conf, Integer emailTrayId, Integer currentUserId) 
+			throws DaemonJobRunningException{
+		logger.debug(">>> _injectEmailTrayAsProcess... ");
+		
+		ManagedData _NULL_MANAGED_DATA = null; // nes 20151109
+
 		
 		if (emailTrayId != null && !emailTrayId.equals(0)){
 			
@@ -688,6 +697,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 									et.getClass().getName(), //idObjectType
 									objReference, // objReference
 									objComments, // Comentarios del objeto?
+									_NULL_MANAGED_DATA, // nes 20151109
 									null, // nes 20151026 - no attachments send...
 									false, // nes 20151026 - no admin star process...
 									currentUserId);
