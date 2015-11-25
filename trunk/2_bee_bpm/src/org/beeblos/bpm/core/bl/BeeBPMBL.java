@@ -22,6 +22,7 @@ import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.WStepDef;
@@ -72,7 +73,7 @@ public class BeeBPMBL {
 	}
 
 	/**
-	 * Default injector...
+	 * default injector...
 	 * 
 	 * @param idProcess
 	 * @param idStep
@@ -80,7 +81,8 @@ public class BeeBPMBL {
 	 * @param idObjectType
 	 * @param objReference
 	 * @param objComments
-	 * @param attachedDocuments - documentos adjuntos a asociar al process-work creado...
+	 * @param managedData - 20151109
+	 * @param attachedDocuments
 	 * @param isAdminProcess - indica que el proceso está siendo lanzado por un administrador en su calidad de administrador...
 	 * @param currentUserId
 	 * @return
@@ -96,6 +98,7 @@ public class BeeBPMBL {
 			Integer idProcess, Integer idStep, 
 			Integer idObject, String idObjectType,
 			String objReference, String objComments,
+			ManagedData managedData, // nes 20151109
 			List<FileSP> attachedDocuments, // nes 20151026 - lista de documentos a adjuntar al proceso lanzado...
 			boolean isAdminProcess, // nes 20151026
 			Integer currentUserId ) 
@@ -115,6 +118,7 @@ public class BeeBPMBL {
 						idObjectType, 
 						objReference, 
 						objComments,
+						managedData,
 						startProcessResult, // nes 20151026
 						currentUserId) ;
 
@@ -171,9 +175,10 @@ public class BeeBPMBL {
 	 * @throws WStepWorkSequenceException
 	 * @throws WProcessDataFieldException
 	 */
-	public WStartProcessResult injector( WStepWork stepWork, boolean isAdminProcess, //String typeOfProcess, nes 20151026 - no tiene sentido, el inyector siempre va hacia adelante, no pude ir hacia atrás
-			List<FileSP> attachedDocuments, Integer currentUserId ) 
-					throws InjectorException, AlreadyExistsRunningProcessException, 
+	public WStartProcessResult injector( 
+				WStepWork stepWork, boolean isAdminProcess, //String typeOfProcess, nes 20151026 - no tiene sentido, el inyector siempre va hacia adelante, no pude ir hacia atrás
+				List<FileSP> attachedDocuments, Integer currentUserId ) 
+	throws InjectorException, AlreadyExistsRunningProcessException, 
 							WStepWorkException, WProcessWorkException, TableManagerException, 
 							WStepWorkSequenceException, WProcessDataFieldException {
 		logger.debug(">>> injecting new stepwork ... (begin step ...");
@@ -182,7 +187,7 @@ public class BeeBPMBL {
 		 * return info: qty new routes created
 		 */
 		Integer qtyNewRoutes=null;
-		WStartProcessResult startProcessResult = new WStartProcessResult();
+		WStartProcessResult startProcessResult = new WStartProcessResult(VACIO); // nes 20151108
 		
 		/**
 		 * Create wStepWork for begin step ...
@@ -196,6 +201,7 @@ public class BeeBPMBL {
 						stepWork.getwProcessWork().getIdObjectType(), 
 						stepWork.getwProcessWork().getReference(), 
 						stepWork.getwProcessWork().getComments(),
+						stepWork.getManagedData(), // nes 20151109
 						startProcessResult, // nes 20151026
 						currentUserId) ;
 		
@@ -296,12 +302,12 @@ public class BeeBPMBL {
 
 		} catch (WStepNotLockedException e) {
 			String mess="WStepNotLockedException - Can't update new instance just injected: "
-					+idStepWork+" ...."+ " "
+					+idStepWork+" ...."+ " "   
 					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ");
 			logger.error(mess);
-			throw new InjectorException(e);
+			throw new InjectorException(e); 
 		
-		} catch (Exception e) {
+ 		} catch (Exception e) {
 			String mess="Exception - Can't update new instance just injected: "
 					+idStepWork+" ...."+ " "
 					+e.getMessage()+"  "+(e.getCause()!=null?e.getCause():" ")+". "
@@ -327,7 +333,7 @@ public class BeeBPMBL {
 	 * @param idObjectType  - wProcessDef must indicate if this value is optional or required
 	 * @param objReference - reference or title for this new instance of a process
 	 * @param objComments - optional
-	 * @param managedData - ¿optional???? ELIMINADO NES 20140707
+	 * @param managedData - optional - nes 20151109
 	 * @param startProcessResult - para devolver los resultados del inject... // nes 20151026
 	 * @param userId - external user id who starts the process... Note: BeeBPM has WUserIdMapper to map external users with internal (bpm) users...
 	 * @return
@@ -342,7 +348,9 @@ public class BeeBPMBL {
 	private Integer _injector(
 			Integer idProcess, Integer idStep, 
 			Integer idObject, String idObjectType,
-			String objReference, String objComments, WStartProcessResult startProcessResult, 
+			String objReference, String objComments,  
+			ManagedData managedData, // nes 20151109
+			WStartProcessResult startProcessResult, 
 			Integer userId ) 
 					throws InjectorException, AlreadyExistsRunningProcessException, 
 							WStepWorkException, WProcessWorkException, TableManagerException, 
@@ -396,7 +404,7 @@ public class BeeBPMBL {
 				idProcess,  idStep, idObject,  idObjectType, objReference,  objComments,  userId);
 		
 		// create stepWork obj
-		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
+		WStepWork stepWork = _setStepWork(processWork, managedData, userId);
 		
 //		_synchronizeManagedDataFields(processWork,stepWork);
 
@@ -505,7 +513,7 @@ public class BeeBPMBL {
 	
 
 	/**
-	 * Creates an empty new wStepWork and returns it
+	 * utility method for clean wStepWork creation
 	 * nes 20150411
 	 * 
 	 * @param idProcess
@@ -514,7 +522,7 @@ public class BeeBPMBL {
 	 * @param idObjectType
 	 * @param objReference
 	 * @param objComments
-	 * @param userId
+	 * @param currentUserId
 	 * @return
 	 * @throws InjectorException
 	 * @throws AlreadyExistsRunningProcessException
@@ -527,15 +535,16 @@ public class BeeBPMBL {
 	public WStepWork createWStepWork(
 			Integer idProcess, Integer idBeginStep, 
 			Integer idObject, String idObjectType,
-			String objReference, String objComments, Integer userId ) 
+			String objReference, String objComments, Integer currentUserId ) 
 					throws 	WStepWorkException, WProcessWorkException, TableManagerException, 
 							WStepWorkSequenceException, WProcessDataFieldException {
-	
+		logger.debug(">>> createWStepWork... ");
 		
+		ManagedData _NULL_MANAGED_DATA = null; // nes 20151109
 		
 		// load class property "selectedProcess" with the definition (WProcessDef) of process to launch...
 		try {
-			selectedProcess = _loadProcessDef(idProcess, userId);
+			selectedProcess = _loadProcessDef(idProcess, currentUserId);
 		} catch (WProcessDefException e) {
 			String mess="Can't create a wStepWork for id process:"
 					+idProcess+" ....";
@@ -554,12 +563,12 @@ public class BeeBPMBL {
 		// controla que los elementos necesarios vengan cargados y si no sale por InyectorException
 		_checkConsistencyBeforeStepLaunch(
 				idProcess, idBeginStep, idObject, idObjectType,
-				objReference, objComments, userId);
+				objReference, objComments, currentUserId);
 		
 		
 		// load step definition (WStepDef) in class property selectedStepDef
 		try {
-			selectedStepDef = _loadStepDef(idBeginStep, userId);
+			selectedStepDef = _loadStepDef(idBeginStep, currentUserId);
 		} catch (WStepDefException e) {
 			String mess="Can't create a wStepWork for begin id step:"
 					+idBeginStep+" ....";
@@ -569,21 +578,21 @@ public class BeeBPMBL {
 		
 		// create processWork obj
 		WProcessWork processWork = _setProcessWork(
-				idProcess,  idBeginStep, idObject,  idObjectType, objReference,  objComments,  userId);
+				idProcess,  idBeginStep, idObject,  idObjectType, objReference,  objComments,  currentUserId);
 		
 		// create stepWork obj
-		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
+		WStepWork stepWork = _setStepWork(processWork,_NULL_MANAGED_DATA, currentUserId); // nes 20140707 quito managed data de aqui... , managedData);
 
 		// set managed data object for stepWork
-		_setManagedData(userId, stepWork);
+		_setManagedData(currentUserId, stepWork);
 		
 		return stepWork;
 	}
 
 	
 	/**
-	 * Creates a wStepWork object for given process and beginStep.
-	 * it avoids to reload the objects from de database to speed it!
+	 * Utility method for clean wStepWork creation
+	 * creates the wStepWork from given pre-loaded process and beginStep
 	 * nes 20150411
 	 * 
 	 * @param process
@@ -592,7 +601,7 @@ public class BeeBPMBL {
 	 * @param idObjectType
 	 * @param objReference
 	 * @param objComments
-	 * @param userId
+	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
 	 * @throws WProcessWorkException
@@ -603,9 +612,12 @@ public class BeeBPMBL {
 	public WStepWork createWStepWork(
 			WProcessDef process, WStepDef beginStep, 
 			Integer idObject, String idObjectType,
-			String objReference, String objComments, Integer userId ) 
+			String objReference, String objComments,
+			Integer currentUserId ) 
 					throws 	WStepWorkException {
 		logger.debug(">>> creating a new createWStepWork... ");
+		
+		ManagedData _NULL_MANAGED_DATA = null; // nes 20151109
 		
 		if (process==null || process.getId()==null || process.getId()==0){
 			String mess="given process is null! can't create a new WStepWork...";
@@ -627,13 +639,13 @@ public class BeeBPMBL {
 
 		// create processWork obj
 		WProcessWork processWork = _setProcessWork(
-				process.getId(),  beginStep.getId(), idObject,  idObjectType, objReference,  objComments,  userId);
+				process.getId(),  beginStep.getId(), idObject,  idObjectType, objReference,  objComments,  currentUserId);
 		
 		// create stepWork obj
-		WStepWork stepWork = _setStepWork(processWork,userId); // nes 20140707 quito managed data de aqui... , managedData);
+		WStepWork stepWork = _setStepWork(processWork, _NULL_MANAGED_DATA, currentUserId);
 		
 		// set managed data object for stepWork
-		_setManagedData(userId, stepWork);
+		_setManagedData(currentUserId, stepWork);
 	
 		return stepWork;
 	}
@@ -794,7 +806,17 @@ public class BeeBPMBL {
 		
 	}
 	
-	private WStepWork _setStepWork(WProcessWork processWork, Integer userId) { // NES 20140707 ELIMINADO , ManagedData md QUE NO DEBE IR AQUI PIENSO...
+	/**
+	 * crea un wStepWork...
+	 * 
+	 * nes 20151109 - agregué el managedData...
+	 * 
+	 * @param processWork
+	 * @param managedData - nes 20151109 - set managedData if it's not null...
+	 * @param userId
+	 * @return
+	 */
+	private WStepWork _setStepWork(WProcessWork processWork, ManagedData managedData, Integer userId) { 
 		
 		WStepWork stepToBeInjected = new WStepWork();
 		
@@ -820,6 +842,11 @@ public class BeeBPMBL {
 		// nes 20110106 - asocio los identificadores conocidos por el usuario al paso ...
 //		pasoAInyectar.setReference(objReference);
 //		pasoAInyectar.setComments(objComments);
+		
+		// nes 20151109 si el managedData es diferente de null lo cargo
+		if (managedData!=null) {
+			stepToBeInjected.setManagedData(managedData); 
+		}
 		
 		stepToBeInjected.setArrivingDate(new DateTime());
 		

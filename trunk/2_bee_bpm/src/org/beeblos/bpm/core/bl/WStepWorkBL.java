@@ -1382,7 +1382,7 @@ public class WStepWorkBL {
 			Integer idResponse, boolean isAdminProcess, DateTime now, 
 			WStartProcessResult startProcessResult,  // nes 20151026
 			List<WStepWork> generatedStepWorkList,  Integer currentUserId ) 
-	throws WStepWorkException, WStepSequenceDefException, WUserDefException, WStepDefException, WStepWorkSequenceException {
+	throws WStepWorkException, WStepSequenceDefException, WStepDefException, WStepWorkSequenceException {
 		if (logger.isDebugEnabled()){
 			logger.debug(">>> _executeProcessStep >> idStepWork"+currentStepWork.getId()
 					+" isAdminProcess:"+isAdminProcess
@@ -1396,101 +1396,143 @@ public class WStepWorkBL {
 		
 		
 		System.out.println("VERIFICAR QUE CARGUE CORRECTAMENTE LAS RUTAS PARA EL RUTEO DEL STEP ...");
-		/**
-		 * load outgoing routes from current step
-		 * nes:20150505 - its: 967 - arreglado el método getStepSequenceList para evitar que traiga rutas deleted
-		 */
-		List<WStepSequenceDef> routes = new WStepSequenceDefBL()
-												.getStepSequenceList(
-														currentStepWork.getwProcessWork().getProcessDef().getId(), 
-														currentStepWork.getCurrentStep().getId(),
-														currentUserId);
 		
-
-		logger.debug(">>> _executeProcessStep >> qty routes:"+routes.size());
-		// TODO: urgentemente definir transaccion aquí ...
-		
-		/**
-		 * if there is outgoing routes defined then generates new wStepWork that correspond as
-		 * bussiness logic defined...
-		 */
-		if ( routes.size() > 0 ) { // generates next steps / routes
+		try {
 		
 			/**
-			 *  process each route ( generates a new step for each new valid route )
+			 * load outgoing routes from current step
+			 * nes:20150505 - its: 967 - arreglado el método getStepSequenceList para evitar que traiga rutas deleted
 			 */
-			for (WStepSequenceDef route: routes ) {
-				logger.debug(">>> _executeProcessStep >> "+route.getId()+"/"+route.getName());
-				
+			List<WStepSequenceDef> routes = new WStepSequenceDefBL()
+													.getStepSequenceList(
+															currentStepWork.getwProcessWork().getProcessDef().getId(), 
+															currentStepWork.getCurrentStep().getId(),
+															currentUserId);
+			
+	
+			logger.debug(">>> _executeProcessStep >> qty routes:"+routes.size());
+			// TODO: urgentemente definir transaccion aquí ...
+			
+			/**
+			 * if there is outgoing routes defined then generates new wStepWork that correspond as
+			 * bussiness logic defined...
+			 */
+			if ( routes.size() > 0 ) { // generates next steps / routes
+			
 				/**
-				 *  if corresponds to get this route....
-				 *  Route may come with no parameters and no responses. In this scenario, the route
-				 *  will be processed....
-				 *  nes 20150411 - refactorized - created method _isEnabledRoute to clean the logic....
+				 *  process each route ( generates a new step for each new valid route )
 				 */
-				if ( _isEnabledRoute(route, idResponse) ) {
-					logger.debug(">>> _executeProcessStep >> processing route to: "
-							+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
-
+				for (WStepSequenceDef route: routes ) {
+					logger.debug(">>> _executeProcessStep >> "+route.getId()+"/"+route.getName());
+					
 					/**
-					 * obtains destiny step of this route ...
+					 *  if corresponds to get this route....
+					 *  Route may come with no parameters and no responses. In this scenario, the route
+					 *  will be processed....
+					 *  nes 20150411 - refactorized - created method _isEnabledRoute to clean the logic....
 					 */
-					if ( route.getToStep()!=null ) {
-						
-						qty++;
-						
-						_setNewStepWorkAndPersists(runtimeSettings,
-								currentUserId, currentStepWork, isAdminProcess,
-								now, newStepWork, route);
-						
-						// dml 20130827 - si vamos hacia adelante (procesamos) el beginStep y el endStep los marca la ruta
-						this.createStepWorkSequenceLog(route, newStepWork, false, 
-								route.getFromStep(), route.getToStep(), currentUserId);
-
-						// nes 20151020 - devuelvo ahora la lista de pasos para post-procesar
-						generatedStepWorkList.add(newStepWork);
-						
-						startProcessResult.getStepWorkIdList().add(newStepWork.getId()); // nes 20151026
-						
+					if ( _isEnabledRoute(route, idResponse) ) {
+						logger.debug(">>> _executeProcessStep >> processing route to: "
+								+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
+	
 						/**
-						 *  if route has external method execution related then execute it!
+						 * obtains destiny step of this route ...
 						 */
-						_executeRouteExternalMethodSafe(route, currentStepWork, currentUserId);
-						
-						/**
-						 *  checks for notification subscribers for the new step and send emails
-						 */
-						_sendEmailNotification(newStepWork, currentUserId);
-						
-						// nes 20130913
-						// if route evaluation order is first true condition then breaks for loop and return
-						if ( routeEvaluationOrderHasFirstTrueCondition(currentStepWork) ) {
-							break;
+						if ( route.getToStep()!=null ) {
+							
+							qty++;
+							
+							_setNewStepWorkAndPersists(runtimeSettings,
+									currentUserId, currentStepWork, isAdminProcess,
+									now, newStepWork, route);
+							
+							// dml 20130827 - si vamos hacia adelante (procesamos) el beginStep y el endStep los marca la ruta
+							this.createStepWorkSequenceLog(route, newStepWork, false, 
+									route.getFromStep(), route.getToStep(), currentUserId);
+	
+							// nes 20151020 - devuelvo ahora la lista de pasos para post-procesar
+							generatedStepWorkList.add(newStepWork);
+							
+							startProcessResult.getStepWorkIdList().add(newStepWork.getId()); // nes 20151026
+							
+							/**
+							 *  if route has external method execution related then execute it!
+							 */
+							_executeRouteExternalMethodSafe(route, currentStepWork, currentUserId);
+							
+							/**
+							 *  checks for notification subscribers for the new step and send emails
+							 */
+							_sendEmailNotification(newStepWork, currentUserId);
+							
+							// nes 20130913
+							// if route evaluation order is first true condition then breaks for loop and return
+							if ( routeEvaluationOrderHasFirstTrueCondition(currentStepWork) ) {
+								break;
+							}
 						}
-					}
-					else {  // ending routes ( not destiny step ...)
-						
-						logger.debug(">>> _executeProcessStep ending routes ( not destiny step ...)");// nes 20151020
-						
-						// write step-work-sequence log file 
-						this.createStepWorkSequenceLog(route, currentStepWork, false, 
-								route.getFromStep(), null, currentUserId);
+						else {  // ending routes ( not destiny step ...)
+							
+							logger.debug(">>> _executeProcessStep ending routes ( not destiny step ...)");// nes 20151020
+							
+							// write step-work-sequence log file 
+							this.createStepWorkSequenceLog(route, currentStepWork, false, 
+									route.getFromStep(), null, currentUserId);
+	
+							// if route has external method execution then execute it!
+							_executeRouteExternalMethodSafe(route, currentStepWork, currentUserId);
+							
+							// this route points to end tree - no other action required ...
+							// if ret arrives here with false, all ok; 
+							// if ret arrives here with true it indicates there are another valid routes for this step
+							// but no action is required
+						}
+					} // end if _isEnabledRoute
+				} // go to next route ... (endfor)
+				
+			} else { // no next steps - this tree finishes here ...
+				
+				qty = 0; // no new routes ...
+			
+			}
 
-						// if route has external method execution then execute it!
-						_executeRouteExternalMethodSafe(route, currentStepWork, currentUserId);
-						
-						// this route points to end tree - no other action required ...
-						// if ret arrives here with false, all ok; 
-						// if ret arrives here with true it indicates there are another valid routes for this step
-						// but no action is required
-					}
-				} // end if _isEnabledRoute
-			} // go to next route ... (endfor)
+			// nes  - agregado para que anote en el log una exception aqui ya que estamos en niveles muy internos
+			// 			del proceso y luego es dificil detectar el error real...
+		} catch (WStepWorkException e) {
+			String mess = "Exception ERROR WStepWorkException _executeProcessStep >>> "+ e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ")+" "
+					+ e.getClass();
+			logger.error(mess);
+			throw e;
+		} catch (WStepSequenceDefException e) {
+			String mess = "Exception ERROR WStepSequenceDefException _executeProcessStep >>> "+ e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ")+" "
+					+ e.getClass();
+			logger.error(mess);
+			throw e;
 			
-		} else { // no next steps - this tree finishes here ...
-			
-			qty = 0; // no new routes ...
+
+		} catch (WStepDefException e) {
+			String mess = "Exception ERROR WStepDefException _executeProcessStep >>> "+ e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ")+" "
+					+ e.getClass();
+			logger.error(mess);
+			throw e;
+		} catch (WStepWorkSequenceException e) {
+			String mess = "Exception ERROR WStepWorkSequenceException _executeProcessStep >>> "+ e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ")+" "
+					+ e.getClass();
+			logger.error(mess);
+			throw e;
+
 		
+		
+		} catch (Exception e) {
+			String mess = "Exception ERROR _executeProcessStep >>> "+ e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ")+" "
+					+ e.getClass();
+			logger.error(mess);
+			throw new WStepWorkException(mess);
 		}
 		
 		if (qty==0) {
@@ -2807,6 +2849,18 @@ public class WStepWorkBL {
 	}
 
 
+	/**
+	 * revisar que el paso no esté ya resuelto y que si trae un objeto relacionado
+	 * es diferene de null, que sea el mismo que el que está persistido (revisar bien esto - nes 20151108)
+	 * 
+	 * @param idStepWork
+	 * @param currentUser
+	 * @param idObject
+	 * @param idObjectType
+	 * @param storedStep
+	 * @throws WStepWorkException
+	 * @throws WStepLockedByAnotherUserException
+	 */
 	private void _checkPreLockStepWork(
 			Integer idStepWork, Integer currentUser, Integer idObject, String idObjectType, WStepWork storedStep ) 
 	throws WStepWorkException, WStepLockedByAnotherUserException {
@@ -2816,23 +2870,30 @@ public class WStepWorkBL {
 		// como para que no la lie y mande otra cosa y piense que procesó algo que en
 		// realidad no era ...
 		
-		// Si el objeto que me indican es nulo devuelvo
-		if ( idObject== null || idObject==0 || idObjectType==null ) {
-			String message = "The indicated object is null or 0 (idObject:["
-								+ idObject  +"] - type:[" + idObjectType
-								+ "])";
-
-			logger.debug(message);
-			throw new WStepWorkException(message);
-		}
+		// nota nes 20151108 - aquí puede venir tanto un workitem que tenga un objeto/clase referenciado
+		// como uno que no lo tenga, por lo que no debería ser obligatorio que venga objectId  objectClassId
 		
-		// Si no pertenecen al mismo objeto me vuelvo ...
-		if ( storedStep.getwProcessWork().getIdObject()!=idObject ) {
-			String message = "The indicated step have a diferent object than indicated ("
-								+ idObject  +" - " + idObjectType
-								+ ")";
-			logger.debug(message);
-			throw new WStepWorkException(message);
+//		// Si el objeto que me indican es nulo devuelvo
+//		if ( idObject== null || idObject==0 || idObjectType==null ) {
+//			String message = "The indicated object is null or 0 (idObject:["
+//								+ idObject  +"] - type:[" + idObjectType
+//								+ "])";
+//
+//			logger.debug(message);
+//			throw new WStepWorkException(message);
+//		}
+		
+		if ( idObject != null && idObject==0 && idObjectType != null ) {
+
+			// Si no pertenecen al mismo objeto me vuelvo ...
+			if ( storedStep.getwProcessWork().getIdObject()!=idObject ) {
+				String message = "The indicated step have a diferent object than indicated ("
+									+ idObject  +" - " + idObjectType
+									+ ")";
+				logger.debug(message);
+				throw new WStepWorkException(message);
+			}
+			
 		}
 		
 		// Si ya está resuelto aviso y me vuelvo ...
