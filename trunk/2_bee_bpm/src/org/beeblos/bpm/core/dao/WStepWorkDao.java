@@ -49,6 +49,11 @@ import com.sp.common.util.HibernateUtil;
 
 public class WStepWorkDao {
 	
+	private static final String OBJECT_TYPE_ID = "objectTypeId";
+	private static final String OBJECT_ID = "objectId";
+	private static final String _COLON_OBJECT_TYPE_ID = ":objectTypeId";
+	private static final String _COLON_OBJECT_ID = ":objectId";
+	
 	private static final Log logger = LogFactory.getLog(WStepWorkDao.class.getName());
 	
 	public WStepWorkDao (){
@@ -2845,7 +2850,74 @@ public class WStepWorkDao {
 
 		return returnList;
 	}
+
+	/**
+	 * returns a list of userId to associate with a runtime role
+	 * 
+	 * namedQuery must be responsible to return a list of Integer with valid UserIds
+	 * 
+	 * @author nes 20160311
+	 * 
+	 * @param namedQueryName - name of the named query to execute ...
+	 * @param objectId - related object id with the workitem
+	 * @param objectTypeId - related object type id with the workitem
+	 * @return
+
+	 */
 	
+	public Object runtimeRoleUserIdListByNamedQuery( String namedQueryName,
+			Integer objectId, String objectTypeId) throws WStepWorkException {
+
+		Object userIdObjList=null;
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+			
+			System.out.print("");
+			
+			Query query = session
+					.getNamedQuery(namedQueryName);
+			
+			if ( query.getQueryString().indexOf(_COLON_OBJECT_ID) > 0 ) {
+				query.setParameter(_COLON_OBJECT_ID, objectId);
+			}
+			if ( query.getQueryString().indexOf(_COLON_OBJECT_TYPE_ID) > 0 ) {
+				query.setParameter(_COLON_OBJECT_TYPE_ID, objectId);
+			}
+
+			/**
+			 * resuelto con named query
+			 */
+			userIdObjList = (Object) query.list();
+
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="HibernateException: runtimeRoleUserIdListByNamedQuery -  can't execute named query:"
+					+(namedQueryName!=null?namedQueryName:"null")+" - "
+					+ ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"");
+			logger.error(mess);
+			throw new WStepWorkException(mess);
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess="Exception: runtimeRoleUserIdListByNamedQuery -  can't execute named query:"
+					+(namedQueryName!=null?namedQueryName:"null")+" - "
+					+ ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():"")
+					+ ex.getClass();
+			logger.error(mess);
+			throw new WStepWorkException(mess);
+		} 
+
+		return userIdObjList;
+	}	
 	
 }
-	
