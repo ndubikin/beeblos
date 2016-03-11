@@ -555,3 +555,9 @@ CHANGE COLUMN `add_date` `add_date` TIMESTAMP NOT NULL DEFAULT '1970-01-01 01:01
 ## dml 20151105 - updateamos para que todos los user que existian esten enabled
 UPDATE `bee_bpm_dev`.`user` SET enabled = true;
 
+## nes 20160311 - campos para anotar la query de runtime roles
+ALTER TABLE `gespro_generic_prod`.`w_role_def` 
+ADD COLUMN `rtr_named_query` VARCHAR(100) NULL COMMENT 'Nombre de la named query que devuelve la lista de ids que tienen permisos sobre el paso. Se le pasará el id del objeto relacionado' AFTER `runtime_role`;
+
+ALTER TABLE `gespro_generic_prod`.`w_role_def` 
+CHANGE COLUMN `rtr_query` `rtr_query` VARCHAR(1200) NULL DEFAULT NULL COMMENT 'query que debe devolver la lista de id-usuario (w_useridmapper) que pertenecen al rol' ;

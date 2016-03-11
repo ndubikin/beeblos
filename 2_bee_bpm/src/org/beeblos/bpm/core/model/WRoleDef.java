@@ -72,6 +72,27 @@ public class WRoleDef implements java.io.Serializable {
 	 * 
 	 */
 	private Integer idExternalMethod;
+
+	/**
+	 * named query (hibernate) to execute and which must return user-id-list with users belonging to this
+	 * runtime role form this instance
+	 * If this field have valid date implies query and idExternalMethod must be null.
+	 * Evaluation order: 1) idExternalMethod / 2) namedQuery / 3) query
+	 * First not null implies ignoring others
+	 * nes 20160311
+	 */
+	private String namedQuery; 
+
+	/**
+	 * query (select) which must return user-id-list with users belonging to this
+	 * runtime role form this instance
+	 * If this field have valid date implies namedQuery and idExternalMethod must be null.
+	 * Evaluation order: 1) idExternalMethod / 2) namedQuery / 3) query
+	 * First not null implies ignoring others
+	 * nes 20160311
+	 */
+	private String query;
+
 	
 	/**
 	 * Users belonging this role
@@ -232,6 +253,34 @@ public class WRoleDef implements java.io.Serializable {
 		this.idExternalMethod = idExternalMethod;
 	}
 
+	/**
+	 * @return the namedQuery
+	 */
+	public String getNamedQuery() {
+		return namedQuery;
+	}
+
+	/**
+	 * @param namedQuery the namedQuery to set
+	 */
+	public void setNamedQuery(String namedQuery) {
+		this.namedQuery = namedQuery;
+	}
+
+	/**
+	 * @return the query
+	 */
+	public String getQuery() {
+		return query;
+	}
+
+	/**
+	 * @param query the query to set
+	 */
+	public void setQuery(String query) {
+		this.query = query;
+	}
+
 	public Set<WUserRole> getUsersRelated() {
 		return usersRelated;
 	}
@@ -301,6 +350,9 @@ public class WRoleDef implements java.io.Serializable {
 		result = prime * result
 				+ ((idObjectType == null) ? 0 : idObjectType.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((namedQuery == null) ? 0 : namedQuery.hashCode());
+		result = prime * result + ((query == null) ? 0 : query.hashCode());		
 		result = prime * result + (runtimeRole ? 1231 : 1237);
 		result = prime * result + (systemRole ? 1231 : 1237);
 
@@ -397,6 +449,16 @@ public class WRoleDef implements java.io.Serializable {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (namedQuery == null) {
+			if (other.namedQuery != null)
+				return false;
+		} else if (!namedQuery.equals(other.namedQuery))
+			return false;
+		if (query == null) {
+			if (other.query != null)
+				return false;
+		} else if (!query.equals(other.query))
 			return false;
 		if (runtimeRole != other.runtimeRole)
 			return false;

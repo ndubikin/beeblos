@@ -651,18 +651,31 @@
 		<property name="systemRole" type="java.lang.Boolean">
 			<column name="system_role" sql-type="bit" />
 		</property>
+		
 		<property name="runtimeRole" type="java.lang.Boolean">
 			<column name="runtime_role" sql-type="bit" >
 				<comment>indicate the role will be associated with users at runtime / related at wProcessWork level</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="idExternalMethod"
+		<property name="idExternalMethod" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="id_external_method">
-				<comment>metodo que debe devovler la lista de user id para cargar el runtime role array[int]</comment>
+				<comment>metodo que debe devolver la lista de user id para cargar el runtime role array[int] (incompatible con rtr_query y rtr_named_query que deben estar en null)</comment>
 			</column>
-		</property>	
-		<property generated="never" lazy="false" name="description"
+		</property>
+		<property name="namedQuery" generated="never" lazy="false" 
+			type="string">
+			<column name="rtr_named_query" >
+				<comment>nombre de la named query a ejecutar (debe devolver array[int]) (incompatible con id_external_method y rtr_query que deben estar en null) </comment>
+			</column>
+		</property>
+		<property name="query" generated="never" lazy="false" type="string">
+			<column name="rtr_query">
+				<comment>query a ejecutar tal cual se indique aqui (debe devolver array[int]) (incompatible con id_external_method y rtr_named_query que deben estar en null) </comment> 
+			</column>
+		</property>
+		
+		<property name="description" generated="never" lazy="false"
 			type="string">
 			<column name="description" />
 		</property>

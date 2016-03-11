@@ -1683,11 +1683,32 @@ public class WStepWorkBL {
 			//for each runtime role assign users
 			if(runtimeRoleList!=null && runtimeRoleList.size()>0) {
 				for (WRoleDef role: runtimeRoleList){
-					if (role.isRuntimeRole() 
-							&& role.getIdExternalMethod()!=null
+					/**
+					 * evaluates RTR configuration and executes it
+					 */
+					if (role.isRuntimeRole() ) {
+						
+						Object objList=null;
+						
+						if	( role.getIdExternalMethod()!=null
 							&& role.getIdExternalMethod()!=0) {
-						_assignRuntimeUsersToRole(processWork, role, currentUserId);
-					} 
+							
+							objList=_loadRuntimeUserListFromExternalMethod(processWork, role, currentUserId);
+							
+						} else if ( role.getNamedQuery()!=null && !"".equals(role.getNamedQuery())) {
+							
+							objList=_loadRuntimeUserListFromNamedQuery(processWork, role, currentUserId);
+							
+						} else if ( role.getQuery()!=null && !"".equals(role.getQuery())) {
+							// PENDIENTE DE DESARROLLAR NES 20160311
+							//objList=_loadRuntimeUserListFromQuery(processWork, role, currentUserId);
+						}
+						
+						if (objList!=null) {
+							_assignRuntimeUsersToRole(processWork, objList, role, currentUserId);
+							
+						}
+					} // end if (role.isRuntimeRole()
 				}
 			}
 		} catch (WProcessDefException e) {
@@ -1704,15 +1725,47 @@ public class WStepWorkBL {
 	}
 
 	/**
-	 * Obtains runtime user list and load it for this instance (wProcessWork)
+	 * load runtime user list for this instance (wProcessWork)
+	 * SAFE method
 	 * nes 20141215
+	 * nes 20160311
 	 * 
 	 * @param processWork
 	 * @param role
 	 * @param currentUserId
 	 */
-	private void _assignRuntimeUsersToRole(WProcessWork processWork, WRoleDef role, Integer currentUserId){
-		logger.debug(">>> _assignRuntimeUsersToRole"+(role!=null?role.getId():"null")
+	private void _assignRuntimeUsersToRole(WProcessWork processWork, 
+			Object objList, // nes 20160311 - generalized for 3 situations... 
+			WRoleDef role, Integer currentUserId) {
+		logger.debug(">>> _assignRuntimeUsersToRole:"+(role!=null?role.getId():"null")
+				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null"));
+
+		try {
+			if (objList!=null) {
+				_addRuntimeUserToRole(objList, role, processWork.getId(), currentUserId);
+			}
+		} catch (Exception e) {
+			String mess="ERROR assigning users to runtime role!!!"
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ")
+					+e.getClass();
+			logger.error(mess);
+
+		}
+	}
+	
+	/**
+	 * load runtime user list from external method for this instance (wProcessWork)
+	 * refactorized from _assignRuntimeUsersToRole
+	 * nes 20160311
+	 * 
+	 * @param processWork
+	 * @param role
+	 * @param currentUserId
+	 */
+	private Object _loadRuntimeUserListFromExternalMethod(WProcessWork processWork, 
+			WRoleDef role, Integer currentUserId){
+		logger.debug(">>> _loadRuntimeUserListFromExternalMethod:"+(role!=null?role.getId():"null")
 				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null"));
 		
 		/**
@@ -1725,10 +1778,8 @@ public class WStepWorkBL {
 			 * External method to obtain runtime user list to assign a role must return an Integer[] or List<Integer>
 			 */
 			Object objList = _executeExternalMethod(new Object[]{processWork}, role.getIdExternalMethod(), currentUserId);
-			
-			if (objList!=null) {
-				_addRuntimeUserToRole(objList, role, processWork.getId(), currentUserId);
-			}
+
+			return objList;
 			
 		} catch (InstantiationException e) {
 			/**
@@ -1748,8 +1799,52 @@ public class WStepWorkBL {
 			logger.error(mess);
 		}
 			
-	
+		return null;
 		
+	}
+	
+	
+	/**
+	 * load runtime user list from external method for this instance (wProcessWork)
+	 * refactorized from _assignRuntimeUsersToRole
+	 * (safe method)
+	 * nes 20160311
+	 * 
+	 * @param processWork
+	 * @param role
+	 * @param currentUserId
+	 */
+	private Object _loadRuntimeUserListFromNamedQuery(WProcessWork processWork, 
+			WRoleDef role, Integer currentUserId){
+		logger.debug(">>> _loadRuntimeUserListFromNamedQuery:"+(role!=null?role.getId():"null")
+				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null"));
+		
+		if (role==null || role.getId()==null || role.getId()==0) {
+			logger.error("ERROR _loadRuntimeUserListFromNamedQuery - role is NULL!!!");
+			return null;
+		}
+		
+		if (role.getNamedQuery()==null) {
+			logger.error("ERROR _loadRuntimeUserListFromNamedQuery - role.namedQuery is NULL!!! - nothing to execute!!!");
+			return null;
+		}
+		
+		try {
+			return _executeRuntimeRoleNamedQuery(
+					role.getNamedQuery(), 
+					processWork.getIdObject(), 
+					processWork.getIdObjectType(), 
+					currentUserId);
+			
+		} catch (WStepWorkException e) {
+			String mess="ERROR named query "+role.getNamedQuery()+" execution has failed!!!"
+					+" Process continues with empty runtimeRole:"+(role.getId())+" "
+					+ (role.getName()!=null?role.getName():" ")
+					+e.getMessage()+" "
+					+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+		}
+		return null;
 	}
 	
 	/**
@@ -1974,6 +2069,27 @@ public class WStepWorkBL {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Executes named query to load userId list for a Runtime Role
+	 * @param namedQueryName
+	 * @param objectId
+	 * @param objectTypeId
+	 * @param userId
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	private Object _executeRuntimeRoleNamedQuery(String namedQueryName, 
+			Integer objectId, String objectTypeId, Integer userId) throws WStepWorkException {
+		
+		try {
+			return new WStepWorkDao().runtimeRoleUserIdListByNamedQuery(namedQueryName, objectId, objectTypeId);
+		} catch (WStepWorkException e) {
+			logger.error("ERROR executeRuntimeRoleNamedQuery: "+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" "));
+			throw e;
+		}
+		
 	}
 	
 	/**
