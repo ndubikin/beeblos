@@ -2,6 +2,11 @@ package org.beeblos.bpm.core.model;
 
 // Generated Jan 20, 2012 7:08:40 PM by Hibernate Tools 3.4.0.CR1
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.beeblos.bpm.core.model.noper.WProcessDefThin;
 import org.joda.time.DateTime;
 
@@ -77,6 +82,12 @@ public class WProcessWork implements java.io.Serializable {
 	 * related object type (java class) referred by this instance
 	 */
 	private String idObjectType;
+	
+	/**
+	 * instance users belonging to runtime roles defined for this process
+	 * nes 20160317
+	 */
+	private Set<WUserRoleWork> rtrUser = new HashSet<WUserRoleWork>();
 
 	public WProcessWork() {
 		super();
@@ -258,8 +269,26 @@ public class WProcessWork implements java.io.Serializable {
 		this.idObjectType = idObjectType;
 	}
 
+	/**
+	 * @return the rtrUser
+	 */
+	public Set<WUserRoleWork> getRtrUser() {
+		return rtrUser;
+	}
+
+	/**
+	 * @param rtrUser the rtrUser to set
+	 */
+	public void setRtrUser(Set<WUserRoleWork> rtrUser) {
+		this.rtrUser = rtrUser;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
+		final int maxLen = 2;
 		return "WProcessWork ["
 				+ (id != null ? "id=" + id + ", " : "")
 				+ (status != null ? "status=" + status + ", " : "")
@@ -276,10 +305,29 @@ public class WProcessWork implements java.io.Serializable {
 				+ (modUser != null ? "modUser=" + modUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ (idObject != null ? "idObject=" + idObject + ", " : "")
-				+ (idObjectType != null ? "idObjectType=" + idObjectType : "")
-				+ "]";
+				+ (idObjectType != null ? "idObjectType=" + idObjectType + ", "
+						: "")
+				+ (rtrUser != null ? "rtrUser=" + toString(rtrUser, maxLen)
+						: "") + "]";
 	}
 
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -302,6 +350,7 @@ public class WProcessWork implements java.io.Serializable {
 				+ ((processDef == null) ? 0 : processDef.hashCode());
 		result = prime * result
 				+ ((reference == null) ? 0 : reference.hashCode());
+		result = prime * result + ((rtrUser == null) ? 0 : rtrUser.hashCode());
 		result = prime * result
 				+ ((startingTime == null) ? 0 : startingTime.hashCode());
 		result = prime * result
@@ -310,6 +359,9 @@ public class WProcessWork implements java.io.Serializable {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -373,6 +425,11 @@ public class WProcessWork implements java.io.Serializable {
 			if (other.reference != null)
 				return false;
 		} else if (!reference.equals(other.reference))
+			return false;
+		if (rtrUser == null) {
+			if (other.rtrUser != null)
+				return false;
+		} else if (!rtrUser.equals(other.rtrUser))
 			return false;
 		if (startingTime == null) {
 			if (other.startingTime != null)

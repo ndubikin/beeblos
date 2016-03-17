@@ -118,7 +118,8 @@ public class WStepWork implements java.io.Serializable {
 	private String urlData;
 	
 	/**
-	 * a list of persons or roles have assigned this task
+	 * a list of persons or roles who have assigned this task
+	 * For runtime discrete assignment of a task: ie: I will assign this task to Mr.John Smith 
 	 * This list is only valid for a specific (or an instance) task
 	 * This list must be created between task creation time and task performed
 	 * time. No modifications has accepted after the task is realized.

@@ -26,6 +26,11 @@ public class WStepWorkAssignment implements java.io.Serializable {
 
 	private Integer id;
 
+	/**
+	 * related step work
+	 */
+	private Integer idStepWork; // nes 20160316
+	
 	private Integer idAssignedRole;
 	private Integer idAssignedUser; // userId
 	private boolean active;
@@ -102,6 +107,22 @@ public class WStepWorkAssignment implements java.io.Serializable {
 	public boolean isFromReassignment() {
 		return fromReassignment;
 	}
+
+	/**
+	 * @return the idStepWork
+	 */
+	public Integer getIdStepWork() {
+		return idStepWork;
+	}
+
+
+	/**
+	 * @param idStepWork the idStepWork to set
+	 */
+	public void setIdStepWork(Integer idStepWork) {
+		this.idStepWork = idStepWork;
+	}
+
 
 	public void setFromReassignment(boolean fromReassignment) {
 		this.fromReassignment = fromReassignment;
@@ -220,6 +241,9 @@ public class WStepWorkAssignment implements java.io.Serializable {
 		this.modUser = modUser;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -234,10 +258,19 @@ public class WStepWorkAssignment implements java.io.Serializable {
 				* result
 				+ ((fromReassignmentDate == null) ? 0 : fromReassignmentDate
 						.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((idAssignedRole == null) ? 0 : idAssignedRole.hashCode());
 		result = prime * result
 				+ ((idAssignedUser == null) ? 0 : idAssignedUser.hashCode());
+		result = prime * result
+				+ ((idStepWork == null) ? 0 : idStepWork.hashCode());
+		result = prime * result
+				+ ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result
+				+ ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
+		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + (reassigned ? 1231 : 1237);
 		result = prime * result
 				+ ((reassignedBy == null) ? 0 : reassignedBy.hashCode());
@@ -246,6 +279,9 @@ public class WStepWorkAssignment implements java.io.Serializable {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -269,6 +305,11 @@ public class WStepWorkAssignment implements java.io.Serializable {
 				return false;
 		} else if (!fromReassignmentDate.equals(other.fromReassignmentDate))
 			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
 		if (idAssignedRole == null) {
 			if (other.idAssignedRole != null)
 				return false;
@@ -278,6 +319,31 @@ public class WStepWorkAssignment implements java.io.Serializable {
 			if (other.idAssignedUser != null)
 				return false;
 		} else if (!idAssignedUser.equals(other.idAssignedUser))
+			return false;
+		if (idStepWork == null) {
+			if (other.idStepWork != null)
+				return false;
+		} else if (!idStepWork.equals(other.idStepWork))
+			return false;
+		if (insertDate == null) {
+			if (other.insertDate != null)
+				return false;
+		} else if (!insertDate.equals(other.insertDate))
+			return false;
+		if (insertUser == null) {
+			if (other.insertUser != null)
+				return false;
+		} else if (!insertUser.equals(other.insertUser))
+			return false;
+		if (modDate == null) {
+			if (other.modDate != null)
+				return false;
+		} else if (!modDate.equals(other.modDate))
+			return false;
+		if (modUser == null) {
+			if (other.modUser != null)
+				return false;
+		} else if (!modUser.equals(other.modUser))
 			return false;
 		if (reassigned != other.reassigned)
 			return false;
@@ -294,10 +360,14 @@ public class WStepWorkAssignment implements java.io.Serializable {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "WStepWorkAssignment ["
 				+ (id != null ? "id=" + id + ", " : "")
+				+ (idStepWork != null ? "idStepWork=" + idStepWork + ", " : "")
 				+ (idAssignedRole != null ? "idAssignedRole=" + idAssignedRole
 						+ ", " : "")
 				+ (idAssignedUser != null ? "idAssignedUser=" + idAssignedUser
