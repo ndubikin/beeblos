@@ -664,44 +664,44 @@
 			</column>
 		</property>
 		<property name="namedQuery" generated="never" lazy="false" 
-			type="string">
+			type="java.lang.String">
 			<column name="rtr_named_query" >
 				<comment>nombre de la named query a ejecutar (debe devolver array[int]) (incompatible con id_external_method y rtr_query que deben estar en null) </comment>
 			</column>
 		</property>
-		<property name="query" generated="never" lazy="false" type="string">
-			<column name="rtr_query">
+		<property name="query" generated="never" lazy="false" 
+			type="java.lang.String">
+			<column name="rtr_query"  >
 				<comment>query a ejecutar tal cual se indique aqui (debe devolver array[int]) (incompatible con id_external_method y rtr_named_query que deben estar en null) </comment> 
 			</column>
 		</property>
-		
 		<property name="description" generated="never" lazy="false"
 			type="string">
 			<column name="description" />
 		</property>
-		<property generated="never" lazy="false" name="idObject"
+		<property name="idObject" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="id_object">
 				<comment>Deje por las dudas para relacionar roles con objetos</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="idObjectType"
+		<property name="idObjectType" generated="never" lazy="false"
 			type="string">
 			<column name="id_object_type" />
 		</property>
-		<property generated="never" lazy="false" name="insertDate"
+		<property name="insertDate" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
-		<property generated="never" lazy="false" name="insertUser"
+		<property name="insertUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" 
+		<property name="modDate" generated="never" lazy="false" 
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
-		<property generated="never" lazy="false" name="modUser"
+		<property name="modUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
@@ -1511,6 +1511,7 @@
 		</property>
 	</class>
 
+	<!-- the instance of a process at work time - a wProcessWork has 1..n wStepWork -->
 	<class name="org.beeblos.bpm.core.model.WProcessWork" table="w_process_work">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -1558,13 +1559,13 @@
 		<property name="modDate" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
-		<property generated="never" lazy="false" name="idObject"
+		<property name="idObject" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="id_object">
 				<comment>ID DEL OBJETO QUE ESTA EN ESTE PASO</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="idObjectType"
+		<property name="idObjectType" generated="never" lazy="false"
 			type="string">
 			<column name="id_object_type">
 				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
@@ -1581,8 +1582,14 @@
 					5 - others ( ver tabla w_status_type)</comment>
 			</column>
 		</many-to-one>
+		<!-- list of runtime role users assigned to this instance -->
+		<set name="rtrUser" cascade="all" lazy="false" fetch="join" sort="unsorted">
+			<key column="id_process_work" />
+			<one-to-many class="org.beeblos.bpm.core.model.WUserRoleWork" />
+		</set>		
 	</class>
 
+	<!-- the instance of a task at work time - related with wProcessWork  -->
 	<class name="org.beeblos.bpm.core.model.WStepWork" table="w_step_work">
 		<id name="id" type="java.lang.Integer">
 			<column name="id" />
@@ -1636,19 +1643,19 @@
 					indicada arriba)</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="reminderTime"
+		<property name="reminderTime" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="reminder_time">
 				<comment>CANTIDAD DE TIEMPO ASIGNADA PARA SU RESOLUCION</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="adminProcess"
+		<property name="adminProcess" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="admin_process" sql-type="bit">
 				<comment>si lo procesa el administrador se prende a true</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="locked"
+		<property name="locked" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="locked" sql-type="bit">
 				<comment>INDICA SI EL PASO ESTA BLOQUEADO ( ALGUIEN LO ESTÁ
@@ -1656,7 +1663,7 @@
 			</column>
 		</property>
 
-		<property generated="never" lazy="false" name="lockedSince"
+		<property name="lockedSince" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="locked_since" />
 		</property>
@@ -1665,15 +1672,15 @@
 			arriving_date <property generated="never" lazy="false" name="insertDate" 
 			type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate" > 
 			<column name="insert_date" /> </property> -->
-		<property generated="never" lazy="false" name="modUser"
+		<property name="modUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" 
+		<property name="modDate" generated="never" lazy="false" 
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
-		<property generated="never" lazy="false" name="sentBack"
+		<property name="sentBack" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="sent_back" sql-type="bit">
 				<comment>indica que el paso corriente es un paso que ha sido
@@ -1681,12 +1688,12 @@
 			</column>
 		</property>
 
-		<property generated="never" lazy="false" name="urlData"
+		<property name="urlData" generated="never" lazy="false"
 			type="string">
 			<column name="url_data" />
 		</property>
 
-		<property generated="never" lazy="false" name="myNotes"
+		<property name="myNotes" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="my_notes" sql-type="bit">
 				<comment>indica que las notas guardadas en userNotes son personales
@@ -1694,7 +1701,7 @@
 			</column>
 		</property>
 
-		<property generated="never" lazy="false" name="sendUserNotesToNextStep"
+		<property name="sendUserNotesToNextStep" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="send_user_notes_to_next_step" sql-type="bit">
 				<comment>indica que va mandar las user notes como instrucciones al
@@ -1702,14 +1709,14 @@
 			</column>
 		</property>
 
-		<property generated="never" lazy="false" name="userInstructions"
+		<property name="userInstructions" generated="never" lazy="false"
 			type="string">
 			<column name="user_instructions" sql-type="longtext">
 				<comment>Instrucciones que envio el usuario del paso anterior para
 					el paso corriente (runtime)</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="userNotes"
+		<property name="userNotes" generated="never" lazy="false"
 			type="string">
 			<column name="user_notes" sql-type="longtext">
 				<comment>Notas del usuario que ejecuta el paso corriente o
@@ -1737,7 +1744,9 @@
 			</column>
 		</many-to-one>
 
-		<set cascade="all" lazy="false" fetch="join" name="assignedTo" sort="unsorted">
+		<!-- personas o roles asignados explícitamente para esta intancia por el administrador o en un paso anterior
+			 NO CONFUNDIR CON LOS RUNTIME ROLE -->
+		<set name="assignedTo" cascade="all" lazy="false" fetch="join" sort="unsorted">
 			<key column="id_step_work" />
 			<one-to-many class="org.beeblos.bpm.core.model.WStepWorkAssignment" />
 		</set>
@@ -1772,7 +1781,6 @@
 			</column>
 		</many-to-one>
 	</class>
-
 
 
 	<!-- thin object for control purposes ... -->
@@ -1900,19 +1908,25 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
-		<property generated="never" lazy="false" name="idAssignedRole"
+		<property name="idStepWork" generated="never" lazy="false"
+			type="java.lang.Integer">
+			<column name="id_step_work">
+				<comment>step work al que está asignado este paso</comment>
+			</column>
+		</property>
+		<property name="idAssignedRole" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="id_role">
 				<comment>ROL AL QUE ESTA ASIGNADO EL STEP</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="idAssignedUser"
+		<property name="idAssignedUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="id_user">
 				<comment>USUARIO AL QUE ESTA ASIGNADO EL STEP</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="active"
+		<property name="active" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="active" sql-type="bit">
 				<comment>SI ESTA ACTIVA ESTA REGLA (PUEDE ESTAR ACTIVA EN UN MOMENTO
@@ -1920,55 +1934,55 @@
 					APLICAR ...)</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="reassigned"
+		<property name="reassigned" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="reassigned" sql-type="bit">
 				<comment>SI LO REASIGNAN SE PRENDE ESTE FLAG QUE INDICARA ESO</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="reassignedBy"
+		<property name="reassignedBy" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="reassigned_by">
 				<comment>USUARIO QUE REASIGNO ESTE STEP</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="reassignedDate"
+		<property name="reassignedDate" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="reassigned_date">
 				<comment>TIMESTAMP CON LA REASIGNACION</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="fromReassignment"
+		<property name="fromReassignment" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="from_reassignment" sql-type="bit">
 				<comment>SI VIENE DE UN PASO REASIGNADO SE INDICA AQUI.</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="fromReassignmentBy"
+		<property name="fromReassignmentBy" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="from_reassignment_by">
 				<comment>USUARIO QUE REASIGNO ESTE STEP</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="fromReassignmentDate"
+		<property name="fromReassignmentDate" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="from_reassignment_date">
 				<comment>TIMESTAMP CON LA REASIGNACION</comment>
 			</column>
 		</property>
-		<property generated="never" lazy="false" name="insertUser"
+		<property name="insertUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="insertDate"
+		<property name="insertDate" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" />
 		</property>
-		<property generated="never" lazy="false" name="modUser"
+		<property name="modUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" 
+		<property name="modDate" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>

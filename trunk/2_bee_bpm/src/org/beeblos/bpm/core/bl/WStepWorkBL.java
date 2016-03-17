@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -741,6 +742,26 @@ public class WStepWorkBL {
 	 * 
 	 * @author dmuleiro 20140529
 	 * 
+	 * Nota: razonando la cosa pienso que es asi:
+	 * 
+	 * 1) en tiempo de diseño puedo asignar roles y usuarios
+	 * 2) en tiempo de diseño también puedo asignar RTR (runtime role) que se cargan específicamente para
+	 *    una instancia pero igualmente son permisos concedidos en tiempo de diseño
+	 * 3) en runtime cada instancia (wStepWork) puede ser asignado específicamente a 1 persona o rol, lo que
+	 *    de alguna forma invalida o sobreescribe los permisos configurados en tiempo de diseño, porque seria
+	 *    como decir: esta tarea se la asigno a 'fulano'.
+	 *    
+	 * Por ese motivo cambio este algoritmo de la siguiente forma:
+	 * 
+	 * 1) controlo si hay una asignación específica en tiempo de ejecución step.getAssignedTo()
+	 *    1.1) Si lo hay prevalece por lo que ya ignoro los permisos definidos en tiempo de diseño
+	 *    1.2) Si no hay entonces valen los permisos asignados en tiempo de diseño
+	 * 2) los permisos en tiempo de diseño son de dos tipos:
+	 *    2.1) los asociados a roles "fijos" definidos en tiempo de diseño
+	 *    2.2) los asociados en runtime como runtime role (rtr) que son propios de la instancia (wProcessWork/wStepWork)
+	 *    
+	 * nes 20160317
+	 * 
 	 * @param user
 	 * @param step
 	 * @param hasAdminRights
@@ -753,16 +774,14 @@ public class WStepWorkBL {
 		if (step != null){
 			
 			/**
-			 * Si el WStepDef definido asociado a este WStepWork tiene permisos devuelve "true"
-			 */
-			if (new WStepDefBL().userHasStepDefPermission(user, step.getCurrentStep())){
-				return true;
-			}
-			
-			/**
 			 * Comprobamos el idAssignedUser/idAssignedRole de los WStepWorkAssignments
+			 * usuarios o roles asignados a este paso explícitamente
+			 * ***********************************************************************************************
+			 * Nota nes 20160317 - deberían sobreescribir los permisos a roles o usuarios en tiempo de diseño
+			 * incluso a los runtime roles. Analizar en algún momento de tranquilidad...
+			 * *********************************************************************************************** 
 			 */
-			if (step.getAssignedTo() != null){
+			if (step.getAssignedTo() != null && step.getAssignedTo().size()>1 ){
 				for (WStepWorkAssignment stepWorkAssignment : step.getAssignedTo()){
 					
 					if (stepWorkAssignment.getIdAssignedUser() != null
@@ -783,12 +802,83 @@ public class WStepWorkBL {
 						}
 					}
 				}
+			} else {
+			
+				/**
+				 * Si el WStepDef definido asociado a este WStepWork tiene permisos devuelve "true"
+				 */
+				if (new WStepDefBL().userHasStepDefPermission(user, step.getCurrentStep())){
+					return true;
+				}
+				
+				/**
+				 * si no revisa los RTR por si tiene permisos para esta instancia...
+				 * 
+				 */
+				if ( step.getwProcessWork().getRtrUser()!=null 
+						&& step.getwProcessWork().getRtrUser().size()>0 
+						&& this.userHasRuntimeRolePermission(user,step,currentUserId)) {
+					return true;
+					
+				}
 			}
+
 		}
 		
 		return false;
 	}
 
+	/**
+	 * check if user has runtime role permission for this step instance
+	 * RTR users has loaded at wProcessWork object as rtrUser list.
+	 * and the runtime role must be associated to wStepDef for current stepDef
+	 * 
+	 * nes 20160317
+	 * 
+	 * @param user
+	 * @param step
+	 * @param currentUserId
+	 * @return
+	 */
+	public boolean userHasRuntimeRolePermission(WUserDef user, WStepWork step, Integer currentUserId) {
+		
+		/**
+		 * 1st check if this wStepDef has runtime roles associated.
+		 * 
+		 */
+		for (WStepRole stepRole: step.getCurrentStep().getRolesRelatedAsList()) {
+			if (stepRole!=null && stepRole.getRole()!=null) {
+				if (stepRole.getRole().isRuntimeRole()
+						&& userBelongsRuntimeRole(
+								user.getId(), stepRole.getRole().getId(), step.getwProcessWork().getRtrUser()) ) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * checks if a user id belongs to a runtime role
+	 * WARNING: wProcessWork.rtrUser contains all user/role list. to confirm must check
+	 * userId and roleId matches with rtr
+	 * 
+	 * @param userId
+	 * @param roleId
+	 * @param userRoleWork
+	 * @return
+	 */
+	private boolean userBelongsRuntimeRole(Integer userId, Integer roleId, Set<WUserRoleWork> userRoleWork) {
+		
+		for (WUserRoleWork urw: userRoleWork) {
+			if (urw.getIdUser().equals(userId) && urw.getIdRole().equals(roleId)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	/**
 	 *
@@ -1871,7 +1961,7 @@ public class WStepWorkBL {
 				// Iterate.
 				for (int i = 0; i < al.size(); i++) {
 					// Still not enough for a type.
-					Object o = al.get(0);
+					Object o = al.get(i);
 					if (o instanceof Integer) {
 						urwList.add(new WUserRoleWork(null,(Integer)o,role.getId(),processWorkId) );
 					}

@@ -2885,10 +2885,10 @@ public class WStepWorkDao {
 					.getNamedQuery(namedQueryName);
 			
 			if ( query.getQueryString().indexOf(_COLON_OBJECT_ID) > 0 ) {
-				query.setParameter(_COLON_OBJECT_ID, objectId);
+				query.setParameter(OBJECT_ID, objectId);
 			}
 			if ( query.getQueryString().indexOf(_COLON_OBJECT_TYPE_ID) > 0 ) {
-				query.setParameter(_COLON_OBJECT_TYPE_ID, objectId);
+				query.setParameter(OBJECT_TYPE_ID, objectId);
 			}
 
 			/**
