@@ -13,13 +13,12 @@ import org.hibernate.Transaction;
 
 import com.sp.common.util.HibernateUtil;
 
-
+/**
+ * Lo hice pero por ahora no le doy uso
+ * @author nestor 20160315
+ *
+ */
 public class WStepWorkAssignmentDao {
-	
-	private static final String OBJECT_TYPE_ID = "objectTypeId";
-	private static final String OBJECT_ID = "objectId";
-	private static final String _COLON_OBJECT_TYPE_ID = ":objectTypeId";
-	private static final String _COLON_OBJECT_ID = ":objectId";
 	
 	private static final Log logger = LogFactory.getLog(WStepWorkAssignmentDao.class.getName());
 	
