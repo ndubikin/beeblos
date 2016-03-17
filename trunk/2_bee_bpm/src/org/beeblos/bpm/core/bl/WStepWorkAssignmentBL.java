@@ -12,6 +12,11 @@ import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.model.WStepWorkAssignment;
 import org.joda.time.DateTime;
 
+/**
+ * Lo hice pero por ahora no le doy uso
+ * @author nestor 20160315
+ *
+ */
 public class WStepWorkAssignmentBL {
 	
 	private static final String INSERT = "INSERT";
