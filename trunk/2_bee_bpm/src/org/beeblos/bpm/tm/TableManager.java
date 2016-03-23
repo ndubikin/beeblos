@@ -54,8 +54,8 @@ public class TableManager {
 	 */
 	private static ResourceBundle _loadResourceBundle() {
 		logger.debug(">>> loading resource bundle ...");
-		ResourceBundle rb = com.sp.common.util.Configuration.getConfigurationRepositoryResourceBundle();
-		logger.debug(">>> resource bundle was loaded ...."+rb.toString());
+		ResourceBundle rb = com.sp.common.util.Configuration.getConfigurationResourceBundle();
+		logger.debug(">>> resource bundle was loaded ...."+ (rb!=null?rb.toString():"null"));
 		
 		return rb;
 	}

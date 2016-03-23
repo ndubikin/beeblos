@@ -834,7 +834,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 						ret = bl.addFile(
 								Long.valueOf(repositoryId), 
 								fileName, message.getContentType(), description,
-								Configuration.getConfigurationRepositoryResourceBundle()
+								Configuration.getConfigurationResourceBundle()
 										.getString("beeblos.default.docclassid.email"),
 								properties, out.toByteArray());
 
