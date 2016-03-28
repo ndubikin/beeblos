@@ -13,8 +13,8 @@ import org.joda.time.DateTime;
 
 /**
  * WProcessWork will represent an instance of a process.
- * Each process work will be many WStepWork (tasks)
- * A process work refers to a WProcessDef wich defines the 
+ * Each processWork joins many wStepWork (tasks)
+ * A process work refers to a WProcessDef which defines the 
  * process, their steps (or tasks) routes, timers, users,
  * roles, etc.
  * 
