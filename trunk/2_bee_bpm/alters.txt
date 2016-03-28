@@ -561,3 +561,8 @@ ADD COLUMN `rtr_named_query` VARCHAR(100) NULL COMMENT 'Nombre de la named query
 
 ALTER TABLE `gespro_generic_prod`.`w_role_def` 
 CHANGE COLUMN `rtr_query` `rtr_query` VARCHAR(1200) NULL DEFAULT NULL COMMENT 'query que debe devolver la lista de id-usuario (w_useridmapper) que pertenecen al rol' ;
+
+
+## nes - agregada prioridad en las tareas del beebpm
+ALTER TABLE `gespro_generic_prod`.`w_step_work` 
+ADD COLUMN `priority` INT NOT NULL DEFAULT 0 AFTER `arriving_date`;
