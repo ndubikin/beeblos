@@ -1624,6 +1624,14 @@
 			<column name="instructions" />
 		</property>
 
+		<!-- nes 20160318 -->
+		<property name="priority" generated="never" lazy="false"
+			type="java.lang.Integer">
+			<column name="priority">
+				<comment>0-default-normal/1-high/9-highest</comment>
+			</column>
+		</property>
+		
 		<property name="assignedTime" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="assigned_time">
