@@ -6,7 +6,9 @@ import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
 import static org.beeblos.bpm.core.util.Constants.W_SYSROLE_ORIGINATOR_ID;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +20,10 @@ import org.joda.time.LocalTime;
 
 /**
  * WStepWork - represents a task or item instance
+ * 
+ * a task instance (wStepWork) must integrate a process instance (wProcessWork - the glue joining a set of tasks...) 
+ * a task instance (wStepWork) belongs a step definition indicated at design stage (wProcessDef)
+ *   
  */
 public class WStepWork implements java.io.Serializable {
 
@@ -67,6 +73,15 @@ public class WStepWork implements java.io.Serializable {
 	 * instructions (load nextStepInstructions field)
 	 */
 	private boolean sendUserNotesToNextStep;
+	
+	/**
+	 * integer to priorize a task: 
+	 * 0/null - normal priority
+	 * 1 - high priority
+	 * 9 - highest priory
+	 * nes 20160318
+	 */
+	private Integer priority;
 	
 	private DateTime arrivingDate;
 	private DateTime openedDate;
@@ -636,8 +651,20 @@ public class WStepWork implements java.io.Serializable {
 		this.sentBack = sentBack;
 	}
 	
-	
-	
+	/**
+	 * @return the priority
+	 */
+	public Integer getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+
 	/**
 	 * @return the urlData
 	 * 
@@ -700,15 +727,18 @@ public class WStepWork implements java.io.Serializable {
 		return runtimeSettings;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
+		final int maxLen = 2;
 		return "WStepWork ["
 				+ (id != null ? "id=" + id + ", " : "")
 				+ (wProcessWork != null ? "wProcessWork=" + wProcessWork + ", "
 						: "")
-				+ (managedData != null ? "managedData="
-						+ managedData + ", " : "")
-//				+ (process != null ? "process=" + process + ", " : "")
+				+ (managedData != null ? "managedData=" + managedData + ", "
+						: "")
 				+ (previousStep != null ? "previousStep=" + previousStep + ", "
 						: "")
 				+ (currentStep != null ? "currentStep=" + currentStep + ", "
@@ -721,6 +751,7 @@ public class WStepWork implements java.io.Serializable {
 				+ ", sendUserNotesToNextStep="
 				+ sendUserNotesToNextStep
 				+ ", "
+				+ (priority != null ? "priority=" + priority + ", " : "")
 				+ (arrivingDate != null ? "arrivingDate=" + arrivingDate + ", "
 						: "")
 				+ (openedDate != null ? "openedDate=" + openedDate + ", " : "")
@@ -749,15 +780,36 @@ public class WStepWork implements java.io.Serializable {
 				+ ", "
 				+ (lockedBy != null ? "lockedBy=" + lockedBy + ", " : "")
 				+ (lockedSince != null ? "lockedSince=" + lockedSince + ", "
-						: "") + "sentBack=" + sentBack + ", "
-				+ (assignedTo != null ? "assignedTo=" + assignedTo + ", " : "")
+						: "")
+				+ "sentBack="
+				+ sentBack
+				+ ", "
+				+ (urlData != null ? "urlData=" + urlData + ", " : "")
+				+ (assignedTo != null ? "assignedTo="
+						+ toString(assignedTo, maxLen) + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
 				+ (modDate != null ? "modDate=" + modDate + ", " : "")
 				+ (modUser != null ? "modUser=" + modUser : "") + "]";
 	}
 
 	
-	
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -785,6 +837,8 @@ public class WStepWork implements java.io.Serializable {
 				+ ((lockedBy == null) ? 0 : lockedBy.hashCode());
 		result = prime * result
 				+ ((lockedSince == null) ? 0 : lockedSince.hashCode());
+		result = prime * result
+				+ ((managedData == null) ? 0 : managedData.hashCode());
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + (myNotes ? 1231 : 1237);
@@ -800,7 +854,8 @@ public class WStepWork implements java.io.Serializable {
 				+ ((performer == null) ? 0 : performer.hashCode());
 		result = prime * result
 				+ ((previousStep == null) ? 0 : previousStep.hashCode());
-//		result = prime * result + ((process == null) ? 0 : process.hashCode());
+		result = prime * result
+				+ ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result
 				+ ((reminderTime == null) ? 0 : reminderTime.hashCode());
 		result = prime
@@ -812,6 +867,7 @@ public class WStepWork implements java.io.Serializable {
 		result = prime * result + (sentBack ? 1231 : 1237);
 		result = prime * result
 				+ ((timeUnit == null) ? 0 : timeUnit.hashCode());
+		result = prime * result + ((urlData == null) ? 0 : urlData.hashCode());
 		result = prime
 				* result
 				+ ((userInstructions == null) ? 0 : userInstructions.hashCode());
@@ -823,6 +879,9 @@ public class WStepWork implements java.io.Serializable {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -891,6 +950,11 @@ public class WStepWork implements java.io.Serializable {
 				return false;
 		} else if (!lockedSince.equals(other.lockedSince))
 			return false;
+		if (managedData == null) {
+			if (other.managedData != null)
+				return false;
+		} else if (!managedData.equals(other.managedData))
+			return false;
 		if (modDate == null) {
 			if (other.modDate != null)
 				return false;
@@ -928,11 +992,11 @@ public class WStepWork implements java.io.Serializable {
 				return false;
 		} else if (!previousStep.equals(other.previousStep))
 			return false;
-//		if (process == null) {
-//			if (other.process != null)
-//				return false;
-//		} else if (!process.equals(other.process))
-//			return false;
+		if (priority == null) {
+			if (other.priority != null)
+				return false;
+		} else if (!priority.equals(other.priority))
+			return false;
 		if (reminderTime == null) {
 			if (other.reminderTime != null)
 				return false;
@@ -956,6 +1020,11 @@ public class WStepWork implements java.io.Serializable {
 			if (other.timeUnit != null)
 				return false;
 		} else if (!timeUnit.equals(other.timeUnit))
+			return false;
+		if (urlData == null) {
+			if (other.urlData != null)
+				return false;
+		} else if (!urlData.equals(other.urlData))
 			return false;
 		if (userInstructions == null) {
 			if (other.userInstructions != null)
