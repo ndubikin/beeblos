@@ -84,6 +84,7 @@ import com.sp.common.util.Resourceutil;
 
 public class WStepWorkBL {
 	
+	private static final int DEFAULT_PRIORITY_ZERO = 0; // NES 20160329 - wStepWork priority default value...
 	private static final String INSERT = "INSERT";
 	private static final Log logger = LogFactory.getLog(WStepWorkBL.class.getName());
 	
@@ -2440,6 +2441,9 @@ public class WStepWorkBL {
 		newStepWork.setOpenerUser(null);
 		newStepWork.setDecidedDate(null);
 		newStepWork.setPerformer(null);
+		
+		// nes 20160329
+		newStepWork.setPriority(DEFAULT_PRIORITY_ZERO);
 		
 		// timestamp
 		newStepWork.setInsertUser( new WUserDef(currentUser) );
