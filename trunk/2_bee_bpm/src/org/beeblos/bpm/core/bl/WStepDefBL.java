@@ -7,6 +7,7 @@ import static org.beeblos.bpm.core.util.Constants.FIRST_WPROCESSDEF_VERSION;
 import static org.beeblos.bpm.core.util.Constants.NOT_DELETED_BOOL;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -946,6 +947,13 @@ public class WStepDefBL {
 	
 	}	
 	
+	/**
+	 * Returns all wStepDef list
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WStepDefException
+	 */
 	public List<StringPair> getComboList(
 			String firstLineText, String blank )
 	throws WStepDefException {
@@ -989,7 +997,60 @@ public class WStepDefBL {
 		
 	}
 	
-	
+	/**
+	 * returns a list with stepDef wich refers stepDefIdList passed as parameter
+	 * Normally stepDefIdList will be obtained from current wStepWork for a user
+	 * To resolve runtime users stepDef with permissions
+	 * nes 20160331
+	 * 
+	 * @param stepDefIdList
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WStepDefException
+	 */
+	public List<StringPair> getComboList(
+			List<Integer> stepDefIdList, String firstLineText, String blank )
+	throws WStepDefException {
+
+		if (stepDefIdList==null || stepDefIdList.size()==0){
+			return null;
+		}
+		
+		List<StringPair> listRet = new ArrayList<StringPair>();
+
+		// inserta los extras
+		if ( firstLineText!=null && !"".equals(firstLineText) ) {
+			if ( !firstLineText.equals("WHITESPACE") ) {
+				listRet.add(new StringPair(null,firstLineText));  // deja la primera línea con lo q venga
+			} else {
+				listRet.add(new StringPair(null," ")); // deja la primera línea en blanco ...
+			}
+		}
+		
+		if ( blank!=null && !"".equals(blank) ) {
+			if ( !blank.equals("WHITESPACE") ) {
+				listRet.add(new StringPair(null,blank));  // deja la separación línea con lo q venga
+			} else {
+				listRet.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+			}
+		}
+		
+		WStepDefDao wsdDao = new WStepDefDao();
+		List<StringPair> unsortedList = new ArrayList<StringPair>();
+		for (Integer idStepDef: stepDefIdList) {
+			unsortedList.add(wsdDao.getStepDefByPKAsStringPair(idStepDef));
+		}
+
+		//java 8 lambda expression with type information removed.
+		Collections.sort(unsortedList, (wsd1, wsd2) -> wsd1.getString2().compareTo(wsd2.getString2()));
+		
+		listRet.addAll(unsortedList);
+		
+		return listRet;
+
+
+	}
 
 	// dml 20130129 - new combo method with userId and allItems
 	@Deprecated

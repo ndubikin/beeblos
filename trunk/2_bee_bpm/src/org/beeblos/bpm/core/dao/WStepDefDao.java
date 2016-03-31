@@ -10,14 +10,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.beeblos.bpm.core.dao.util.StepDefStepTypeConfigurationDaoUtil;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WStepDataFieldException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.model.WStepDataField;
 import org.beeblos.bpm.core.model.WStepDef;
 import org.beeblos.bpm.core.model.WStepRole;
-import org.beeblos.bpm.core.model.WStepTypeDef;
 import org.hibernate.HibernateException;
 import org.joda.time.DateTime;
 
@@ -313,6 +311,14 @@ public class WStepDefDao {
 
 	}
 
+	/**
+	 * returns wStepDef for pk
+	 * 
+	 * @param id
+	 * @param processHeadId
+	 * @return
+	 * @throws WStepDefException
+	 */
 	public WStepDef getStepDefByPK(Integer id, Integer processHeadId) throws WStepDefException {
 
 		WStepDef step = null;
@@ -392,6 +398,63 @@ public class WStepDefDao {
 		return step;
 	}
 
+	/**
+	 * Returns a wStepDef as StringPair (id,name)
+	 * nes 20160331
+	 * 
+	 * @param pk
+	 * @return
+	 * @throws WStepDefException
+	 */
+	public StringPair getStepDefByPKAsStringPair(Integer pk) 
+			throws WStepDefException {
+
+		StringPair stepAsStringPair = null;
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			
+			tx = session.getTransaction();
+			tx.begin();
+			
+			 Object[] o = (Object[]) session
+									.createQuery("Select w.id, w.stepHead.name FROM WStepDef w WHERE w.id= :id")
+									.setInteger("id", pk)
+									.uniqueResult();
+			 
+			 stepAsStringPair = new StringPair(o);
+			 
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: getStepDefByPKAsStringPair - can't obtain WStepDef with id:"+
+					(pk!=null?pk:"null") + " " 
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():" "); 
+			logger.error(mess);
+			throw new WStepDefException(mess);
+			
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException: getStepDefByPKAsStringPair - can't obtain WStepDef with id:"+
+					(pk!=null?pk:"null") + " " 
+					+ex.getMessage()+" "
+					+(ex.getCause()!=null?ex.getCause():" ")+" "
+					+ex.getClass(); 
+			logger.error(mess);
+			throw new WStepDefException(mess);
+
+		}
+
+		return stepAsStringPair;
+	}
 
 //	private static <T> Set<T> filterCollection(Set<T> collection, Session s, Integer id) {
 //		Query filterQuery = s.createFilter(collection, "where processHeadId ="+id);
@@ -728,6 +791,14 @@ public class WStepDefDao {
 	
 	}	
 	
+	/**
+	 * Returns all wStepDef list
+	 * 
+	 * @param textoPrimeraLinea
+	 * @param separacion
+	 * @return
+	 * @throws WStepDefException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			String textoPrimeraLinea, String separacion )
@@ -785,14 +856,15 @@ public class WStepDefDao {
 				if (tx != null)
 					tx.rollback();
 				throw new WStepDefException(
-						"Can't obtain WStepDefs combo list "
-						+ex.getMessage()+" "+ex.getCause());
+						"Can't obtain WStepDef combo list "
+						+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ") );
 			} catch (Exception e) {
 				if (tx != null)
 					tx.rollback();
 				throw new WStepDefException(
-						"Can't obtain WStepDefs combo list "
-						+e.getMessage()+" "+e.getCause());				
+						"Can't obtain WStepDef combo list "
+						+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ")
+						+" "+e.getClass());				
 			}
 
 			return retorno;

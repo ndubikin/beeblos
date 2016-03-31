@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -81,6 +80,7 @@ import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.core.util.ApplicationURLUtil;
 import com.sp.common.model.FileSP;
 import com.sp.common.util.Resourceutil;
+import com.sp.common.util.StringPair;
 
 public class WStepWorkBL {
 	
@@ -960,6 +960,70 @@ public class WStepWorkBL {
 		
 	}
 
+	// para devolver la lista de wstepdef para un usuario corriente
+	/**
+	 * Returns a stepDef list (or task type) for alive wStepWorks for a user.
+	 * Created to obtain stepDef list for Runtime Roles que no hay forma de saber
+	 * que tipos de tareas tienen pendientes por ejemplo para las consultas...
+	 * nes 20160330
+	 * 
+	 * @param idProcess
+	 * @param idCurrentStep
+	 * @param status
+	 * @param userId
+	 * @param isAdmin
+	 * @param arrivingDate
+	 * @param openDate
+	 * @param deadlineDate
+	 * @param filtroComentariosYReferencia
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	public List<StringPair> getStepDefListFromCurrentWorkByProcess (
+			Integer idProcess, String status,
+			Integer userId, boolean isAdmin, 
+			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
+			String filtroComentariosYReferencia, Integer currentUserId) 
+	throws WStepWorkException {
+		
+		/**
+		 * checks if currentUserId is admin ...
+		 *  if not then forces it to off  
+		 */
+		
+		boolean userHasAdminRights = false;
+		userHasAdminRights = hasAdminRights(idProcess, userId, currentUserId);
+		
+		if (!userHasAdminRights) {
+			isAdmin=false;
+		}
+		
+		/**
+		 * 1ero recupera la lista de wStepDef-id con los diferentes tipos de stepDef
+		 * que tiene y luego cargará los nombres de estos para devolver el stringpair
+		 */
+		@SuppressWarnings("unchecked")
+		List<Integer> idStepDefList =  (List<Integer>) new WStepWorkDao()
+						.getStepDefListFromCurrentWorkByProcess(
+								idProcess, status, userId, isAdmin, arrivingDate, openDate, 
+								deadlineDate, filtroComentariosYReferencia,
+								currentUserId);
+		
+		try {
+			
+			return new WStepDefBL().getComboList(idStepDefList,null,null);
+			
+		} catch (WStepDefException e) {
+			String mess = "ERROR: can't create step def list from current alive tasks..."
+					+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ");
+			logger.error(mess);
+		}
+		
+		return null;
+		
+	}
+	
 	/**
 	 * Returns step work list for a process and a user
 	 * If isAdmin comes with true then must assume this is an "administrator" query

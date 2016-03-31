@@ -47,12 +47,16 @@ import org.joda.time.format.DateTimeFormatter;
 import com.sp.common.util.HibernateUtil;
 
 
-public class WStepWorkDao {
+public class WStepWorkDao<T extends Serializable> {
 	
 	private static final String OBJECT_TYPE_ID = "objectTypeId";
 	private static final String OBJECT_ID = "objectId";
 	private static final String _COLON_OBJECT_TYPE_ID = ":objectTypeId";
 	private static final String _COLON_OBJECT_ID = ":objectId";
+	
+	private static final boolean _RECOVER_ID_STEP_DEF = false;
+	private static final boolean _RECOVER_WSTEPWORK_LIST = true;
+	private static final Integer _ID_CURRENT_STEP_NULL = null;
 	
 	private static final Log logger = LogFactory.getLog(WStepWorkDao.class.getName());
 	
@@ -981,13 +985,99 @@ public class WStepWorkDao {
 			String commentsAndReferenceFilter,
 			Integer currentUserId) 
 	throws WStepWorkException {
+		logger.debug(">>> getWorkListByProcess... idProcess:"+(idProcess!=null?idProcess:"null"));
+		
+		List<WStepWork> stepws = (List<WStepWork>) getWorkListByProcessExecute(_RECOVER_WSTEPWORK_LIST, 
+				idProcess, idCurrentStep, status, userId, isAdmin, arrivingDate, openDate, deadlineDate, 
+				commentsAndReferenceFilter, currentUserId);
+		
+		
+		return stepws;
+	}
+
+	/**
+	 * Devuelve la lista con idStepDef para los wStepWork que tiene vigentes el usuario.
+	 * Utilizamos la misma query que se arma en getWorkListByProcessExecute para obtener la lista de
+	 * wStepWork pero haciendo un select distinct.id_step_def porque seria la lista de ids de step def
+	 * para esa lista de wStepWork encontrada.
+	 * Necesario para ofrecer opciones de gestión al usuario o jefe que administra los procesos de un 
+	 * usuario sobre todo porque los runtimeUsers no tienen permisos sobre pasos determinados si no que
+	 * pueden actuar sobre pasos pero dependiendo de las condiciones por lo que solo se sabe si tienen
+	 * o no dependiendo de las instancias (wStepWork) que existan creadas a cada momento.
+	 * nes 20160330
+	 * 
+	 * @param idProcess
+	 * @param status
+	 * @param userId
+	 * @param isAdmin
+	 * @param arrivingDate
+	 * @param openDate
+	 * @param deadlineDate
+	 * @param commentsAndReferenceFilter
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	public List<Integer> getStepDefListFromCurrentWorkByProcess (
+			Integer idProcess, String status,
+			Integer userId, boolean isAdmin, 
+			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
+			String commentsAndReferenceFilter,
+			Integer currentUserId) 
+	throws WStepWorkException {
+		logger.debug(">>> getWorkListByProcess... idProcess:"+(idProcess!=null?idProcess:"null"));
+		
+		@SuppressWarnings("unchecked")
+		List<Integer> stepws = (List<Integer>) getWorkListByProcessExecute(_RECOVER_ID_STEP_DEF, 
+				idProcess, _ID_CURRENT_STEP_NULL, status, userId, isAdmin, arrivingDate, openDate, deadlineDate, 
+				commentsAndReferenceFilter, currentUserId);
+		
+		
+		return stepws;
+	}
+
+	
+	/**
+	 * if returnWStepWork=true returns list of step work for a given processId
+	 * and if no return a list of distinct.wStepDefId for all stepWork in the 
+	 * same query.
+	 * userId (optional if currentUserId is a  Admin)
+	 * 
+	 * Creado para obtener la lista unica de pasos en los que el usuario indicado
+	 * tiene tareas pendiente: del conjunto de wStepWork que devuelve la query
+	 * identifica los idStepDef y devuelve esa lista de Integer
+	 * Agregado nes 20160330
+	 * 
+	 * METODO UTILIZADO POR BL PARA TRABAJAR - RECUPERAR TAREAS DE LOS USUARIOS
+	 * 
+	 * @param idProcess
+	 * @param idCurrentStep
+	 * @param status
+	 * @param userId
+	 * @param isAdmin
+	 * @param arrivingDate
+	 * @param openDate
+	 * @param deadlineDate
+	 * @param commentsAndReferenceFilter
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepWorkException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<T> getWorkListByProcessExecute ( boolean returnWStepWork,
+			Integer idProcess, Integer idCurrentStep, String status,
+			Integer userId, boolean isAdmin, 
+			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
+			String commentsAndReferenceFilter,
+			Integer currentUserId) 
+	throws WStepWorkException {
 
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
 		org.hibernate.Query q = null;
 		
 		
-		List<WStepWork> stepws = null;
+		List<T> retList = null;
 		
 		// build filter from user params. String and Integer values will be added to
 		// the String directly in the string filter.
@@ -1005,11 +1095,16 @@ public class WStepWorkDao {
 		filter = (( filter != null && !"".equals(filter)) ? " WHERE ":"") + filter;
 		
 		logger.debug(" ---->>>>>>>>>> userFilter:["+userFilter+"]"
-				+"\n ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]"
-				+"\n ---->>>>>>>>>> filter:["+filter+"]");
+				+" ---->>>>>>>>>> requiredFilter:["+requiredFilter+"]"
+				+" ---->>>>>>>>>> filter:["+filter+"]");
 	
 		// load base query phrase
-		String query = getBaseQuery( isAdmin, userId );
+		String query;
+		if (returnWStepWork) {
+			query = getBaseQuery( isAdmin, userId );
+		} else {
+			query = getQueryForWStepDefList( isAdmin, userId );
+		}
 		
 		logger.debug(" ---->>>>>>>>>> base query:["+query+"]");
 
@@ -1023,7 +1118,7 @@ public class WStepWorkDao {
 		query += getSQLOrder();
 
 		logger.debug(" ---->>>>>>>>>> FULL query:["+query+"]"
-					+"\n ---->>>>>>>>>> userId: "+userId);
+					+" ---->>>>>>>>>> userId: "+userId);
 
 		
 		try {
@@ -1033,10 +1128,14 @@ public class WStepWorkDao {
 
 			tx.begin();
 			
-			q = session
-					.createSQLQuery(query)
-					.addEntity("WStepWork", WStepWork.class);
-
+			if (returnWStepWork) {
+				q = session
+						.createSQLQuery(query)
+						.addEntity("WStepWork", WStepWork.class);
+			} else {
+				q = session
+						.createSQLQuery(query);
+			}
 			// setting date parameters
 			try {
 			
@@ -1082,7 +1181,7 @@ public class WStepWorkDao {
 ///			}
 			
 			// retrieve list
-			stepws = q.list();
+			retList = q.list();
 			
 			tx.commit();
 
@@ -1103,9 +1202,8 @@ public class WStepWorkDao {
 			throw new WStepWorkException(message);
 		}
 		
-		return stepws;
+		return retList;
 	}
-
 
 	/**
 	 * required filter is set the conditions to recover only steps the given user can be process/view
@@ -1187,6 +1285,30 @@ public class WStepWorkDao {
 	private String getBaseQuery(boolean isAdmin, Integer userId) {
 		
 		String baseQueryTmp="SELECT * FROM w_step_work w ";
+		baseQueryTmp +="left join w_process_work wpw on w.id_work=wpw.id "; // dml 20130321 - para filtro por instructions (nextStepInstructions en el objeto asociado wProcessWork) y reference
+		baseQueryTmp +="left join w_step_def wsd on w.id_current_step=wsd.id ";
+		baseQueryTmp +="left join w_step_role wsr on wsd.id=wsr.id_step ";
+		baseQueryTmp +="left join w_step_user wsu on wsd.id=wsu.id_step AND wsu.id_user = " + userId + " ";
+		baseQueryTmp +="left join w_step_work_assignment wswa on w.id=wswa.id_step_work ";	
+		
+		return baseQueryTmp;
+	
+	}
+	
+	/**
+	 * arma query para devolver la lista de id de stepDef diferentes que tiene el usuario
+	 * indicado dentro del trabajo que tiene asignado.
+	 * (utilizado para los runtime roles donde no podemos armar un desplegable con pasos donde 
+	 * tengan permisos pues no tienen paso asociado si no que se cargan en runtime ...)
+	 * nes 20160330
+	 * 
+	 * @param isAdmin
+	 * @param userId
+	 * @return
+	 */
+	private String getQueryForWStepDefList(boolean isAdmin, Integer userId) {
+		
+		String baseQueryTmp="SELECT distinct w.id_current_step  FROM w_step_work w ";
 		baseQueryTmp +="left join w_process_work wpw on w.id_work=wpw.id "; // dml 20130321 - para filtro por instructions (nextStepInstructions en el objeto asociado wProcessWork) y reference
 		baseQueryTmp +="left join w_step_def wsd on w.id_current_step=wsd.id ";
 		baseQueryTmp +="left join w_step_role wsr on wsd.id=wsr.id_step ";
