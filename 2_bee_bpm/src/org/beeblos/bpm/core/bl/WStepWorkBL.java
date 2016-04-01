@@ -229,6 +229,9 @@ public class WStepWorkBL {
 							WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
 							WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
 		logger.debug(">>> processStep >> id:"+( idStepWork!=null?idStepWork:"null") );
+
+		// NOTA NESTOR: VER POR QUE NO ESTOY CONTROLANDO QUE MANDEN LAS COSAS EN NULL: idStepWork, idResponse, runtimeSettings
+		// processingDirection no deberian ser null...
 		
 		DateTime now = new DateTime();
 		Integer qtyNewRoutes=0;
@@ -3203,7 +3206,7 @@ public class WStepWorkBL {
 		currentStep.setLockedBy(null);
 		currentStep.setLockedSince(null);
 		// nes 20151104 - set my notes on current step to persist...
-		if (runtimeSettings.getStepNotes()!=null && !"".equals(runtimeSettings.getStepNotes())){
+		if (runtimeSettings!=null && runtimeSettings.getStepNotes()!=null && !"".equals(runtimeSettings.getStepNotes())){
 			currentStep.setMyNotes(true);
 			currentStep.setUserNotes(runtimeSettings.getStepNotes());
 		}
