@@ -1,3 +1,4 @@
+
 package org.beeblos.bpm.core.model;
 
 // Generated Nov 9, 2011 1:15:47 PM by Hibernate Tools 3.4.0.CR1
