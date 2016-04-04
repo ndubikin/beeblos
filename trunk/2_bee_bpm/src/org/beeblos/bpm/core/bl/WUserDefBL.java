@@ -9,8 +9,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WUserDefDao;
 import org.beeblos.bpm.core.error.WUserDefException;
+import org.beeblos.bpm.core.error.WUserDeviceException;
 import org.beeblos.bpm.core.error.WUserRoleException;
 import org.beeblos.bpm.core.model.WUserDef;
+import org.beeblos.bpm.core.model.WUserDevice;
 import org.beeblos.bpm.core.model.WUserRole;
 import org.joda.time.DateTime;
 
@@ -256,8 +258,20 @@ public class WUserDefBL {
 	throws WUserDefException {
 		 
 		return new WUserDefDao().getComboList(textoPrimeraLinea, separacion);
-
-
+	}
+	
+	/**
+	 * Get all the devices for the user id.
+	 * 
+	 * pab 20160322
+	 * 
+	 * @param userId
+	 * @return
+	 * @throws WUserDeviceException
+	 */
+	public List<WUserDevice> getUserDevicesList(String userId)
+		throws WUserDeviceException {
+		return new WUserDeviceBL().getUserDeviceListByUserId(userId); 
 	}
 
 }
