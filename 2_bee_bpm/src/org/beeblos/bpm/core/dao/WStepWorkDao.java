@@ -973,6 +973,7 @@ public class WStepWorkDao<T extends Serializable> {
 	 * @param openDate
 	 * @param deadlineDate
 	 * @param commentsAndReferenceFilter
+	 * @param maxResults  - dml 20160418 - ITS: 1695
 	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
@@ -983,13 +984,14 @@ public class WStepWorkDao<T extends Serializable> {
 			Integer userId, boolean isAdmin, 
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
 			String commentsAndReferenceFilter,
+			Integer maxResults,  // dml 20160418 - ITS: 1695
 			Integer currentUserId) 
 	throws WStepWorkException {
 		logger.debug(">>> getWorkListByProcess... idProcess:"+(idProcess!=null?idProcess:"null"));
 		
 		List<WStepWork> stepws = (List<WStepWork>) getWorkListByProcessExecute(_RECOVER_WSTEPWORK_LIST, 
 				idProcess, idCurrentStep, status, userId, isAdmin, arrivingDate, openDate, deadlineDate, 
-				commentsAndReferenceFilter, currentUserId);
+				commentsAndReferenceFilter, maxResults, currentUserId);
 		
 		
 		return stepws;
@@ -1023,6 +1025,7 @@ public class WStepWorkDao<T extends Serializable> {
 			Integer userId, boolean isAdmin, 
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
 			String commentsAndReferenceFilter,
+			Integer maxResults, 
 			Integer currentUserId) 
 	throws WStepWorkException {
 		logger.debug(">>> getWorkListByProcess... idProcess:"+(idProcess!=null?idProcess:"null"));
@@ -1030,7 +1033,7 @@ public class WStepWorkDao<T extends Serializable> {
 		@SuppressWarnings("unchecked")
 		List<Integer> stepws = (List<Integer>) getWorkListByProcessExecute(_RECOVER_ID_STEP_DEF, 
 				idProcess, _ID_CURRENT_STEP_NULL, status, userId, isAdmin, arrivingDate, openDate, deadlineDate, 
-				commentsAndReferenceFilter, currentUserId);
+				commentsAndReferenceFilter, maxResults, currentUserId);
 		
 		
 		return stepws;
@@ -1059,6 +1062,7 @@ public class WStepWorkDao<T extends Serializable> {
 	 * @param openDate
 	 * @param deadlineDate
 	 * @param commentsAndReferenceFilter
+	 * @param maxResults - dml 20160418 - ITS: 1695
 	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
@@ -1069,6 +1073,7 @@ public class WStepWorkDao<T extends Serializable> {
 			Integer userId, boolean isAdmin, 
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
 			String commentsAndReferenceFilter,
+			Integer maxResults, 
 			Integer currentUserId) 
 	throws WStepWorkException {
 
@@ -1116,6 +1121,15 @@ public class WStepWorkDao<T extends Serializable> {
 		// builds full query phrase
 //		query += filter+getSQLOrder();
 		query += getSQLOrder();
+
+		/**
+		 * Si viene el límite de maxResults se lo ponemos a la consulta, de lo contrario no limitamos nada
+		 */
+//		String limit = "";
+//		if ( maxResults !=null ) {
+//			query+= " Limit 0, " + maxResults;
+//		}
+//		query += limit;
 
 		logger.debug(" ---->>>>>>>>>> FULL query:["+query+"]"
 					+" ---->>>>>>>>>> userId: "+userId);
@@ -1179,6 +1193,13 @@ public class WStepWorkDao<T extends Serializable> {
 //			if (!isAdmin) { // nes 20140204 - al agregarle reqFilter si es admin, siempre hay que setear userId ...
 				q.setInteger("userId",userId);
 ///			}
+			
+			/**
+			 * Si viene el maxResults se lo ponemos a la consulta, de lo contrario no limitamos nada
+			 */
+			if (maxResults != null && !maxResults.equals(0)){
+				q.setMaxResults(maxResults);
+			}
 			
 			// retrieve list
 			retList = q.list();
