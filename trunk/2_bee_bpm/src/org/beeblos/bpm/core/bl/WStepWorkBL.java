@@ -979,6 +979,7 @@ public class WStepWorkBL {
 	 * @param openDate
 	 * @param deadlineDate
 	 * @param filtroComentariosYReferencia
+	 * @param maxResults - dml 20160418 - ITS: 1695
 	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
@@ -987,7 +988,9 @@ public class WStepWorkBL {
 			Integer idProcess, String status,
 			Integer userId, boolean isAdmin, 
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
-			String filtroComentariosYReferencia, Integer currentUserId) 
+			String filtroComentariosYReferencia, 
+			Integer maxResults,  // dml 20160418 - ITS: 1695
+			Integer currentUserId) 
 	throws WStepWorkException {
 		
 		/**
@@ -1011,7 +1014,7 @@ public class WStepWorkBL {
 						.getStepDefListFromCurrentWorkByProcess(
 								idProcess, status, userId, isAdmin, arrivingDate, openDate, 
 								deadlineDate, filtroComentariosYReferencia,
-								currentUserId);
+								maxResults, currentUserId);
 		
 		try {
 			
@@ -1040,14 +1043,19 @@ public class WStepWorkBL {
 	 * @param openDate
 	 * @param deadlineDate
 	 * @param filtroComentariosYReferencia
+	 * @param maxResults - dml 20160418 - ITS: 1695
+	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
+	 *
 	 */
 	public List<WStepWork> getWorkListByProcess (
 			Integer idProcess, Integer idCurrentStep, String status,
-			Integer userId, boolean isAdmin, 
+			Integer userId, boolean isAdmin,
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
-			String filtroComentariosYReferencia, Integer currentUserId) 
+			String filtroComentariosYReferencia, 
+			Integer maxResults, 
+			Integer currentUserId) 
 	throws WStepWorkException {
 		
 		/**
@@ -1067,7 +1075,7 @@ public class WStepWorkBL {
 								idProcess, idCurrentStep, status,
 								userId, isAdmin, arrivingDate, openDate, 
 								deadlineDate, filtroComentariosYReferencia,
-								currentUserId);
+								maxResults, currentUserId);
 		
 	}
 
