@@ -89,6 +89,22 @@ public class WRoleDefBL {
 	}
 
 	
+	/**
+	 * Gets the WRoleDef list where its ids are into pkList
+	 * 
+	 * @author dmuleiro 20160523
+	 * 
+	 * @param pkList
+	 * @return
+	 * @throws WRoleDefException
+	 *
+	 */
+	public List<WRoleDef> getWRoleDefByPkList(List<String> pkList) throws WRoleDefException {
+
+		return new WRoleDefDao().getWRoleDefByPkList(pkList);
+
+	}
+	
 	public List<WRoleDef> getWRoleDefs(Integer user) throws WRoleDefException {
 
 		return new WRoleDefDao().getWRoleDefs();

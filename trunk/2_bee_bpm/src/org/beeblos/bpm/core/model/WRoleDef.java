@@ -292,6 +292,56 @@ public class WRoleDef implements java.io.Serializable {
 		return null;
 	}
 	
+	/**
+	 * Returns the role's user email list as string (it does not repeats the emails)
+	 * 
+	 * @author dmuleiro 20160523
+	 * 
+	 * @return
+	 *
+	 */
+	public String getUsersRelatedEmailsAsString() {
+		
+		if (usersRelated != null && !usersRelated.isEmpty()){
+			String returnValue = "";
+			for (WUserRole ur : usersRelated) {
+				if (ur.getUser() != null && ur.getUser().getEmail() != null
+						&& !returnValue.contains(ur.getUser().getEmail())){
+					returnValue += ur.getUser().getEmail() + ", ";
+				}
+			}
+			if (returnValue != null && returnValue.length() >= 2){
+				returnValue = returnValue.substring(0, returnValue.lastIndexOf(","));
+			}
+			return returnValue;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the userList as a "name (email)" string list
+	 * 
+	 * @author dmuleiro 20160523
+	 * 
+	 * @return
+	 *
+	 */
+	public String getUsersRelatedWithEmailsAsString() {
+		if (usersRelated != null && !usersRelated.isEmpty()){
+			String returnValue = "";
+			for (WUserRole ur : usersRelated) {
+				if (ur.getUser() != null){
+					returnValue += ur.getUser().getName() + " (" + ur.getUser().getEmail() + "), ";
+				}
+			}
+			if (returnValue != null && returnValue.length() >= 2){
+				returnValue = returnValue.substring(0, returnValue.lastIndexOf(","));
+			}
+			return returnValue;
+		}
+		return null;
+	}
+	
 	public void setUsersRelated(Set<WUserRole> usersRelated) {
 		this.usersRelated = usersRelated;
 	}
