@@ -35,7 +35,8 @@ public class TestBeeBPMBL extends TestCase {
 
 		// nota: debemos conocer el id del wProcessDef a lanzar ...
 
-		WStartProcessResult startProcessResult = beeBPMBL.injector(1, // idProcess,
+		WStartProcessResult startProcessResult = beeBPMBL.injector(
+				1, // idProcess,
 				null, // idStep,
 				19, // idObject,
 				"com.softpoint.bdc.model.OrdenPago", // idObjectType,

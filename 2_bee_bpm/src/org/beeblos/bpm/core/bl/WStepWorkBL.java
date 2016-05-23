@@ -43,6 +43,7 @@ import org.beeblos.bpm.core.error.WUserRoleWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WEmailAccount;
 import org.beeblos.bpm.core.model.WExternalMethod;
+import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.WProcessStatus;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -67,6 +68,8 @@ import org.beeblos.bpm.core.model.noper.WStartProcessResult;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.tm.impl.MethodSynchronizerImpl;
+import org.beeblos.rule.engine.BasicProcessor;
+import org.beeblos.rule.engine.Rule;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -110,6 +113,8 @@ public class WStepWorkBL {
 	 * 
 	 * @param processWork
 	 * @param swco
+	 * @param managedDataStrList List<StringPair>  - nes 20160521 - pasamos una lista de propiedades de usuario para que se carguen una vez credo el begin step...
+	 * @param isAdminProcess - nes 20160521
 	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
@@ -121,9 +126,11 @@ public class WStepWorkBL {
 	 *  OJO: AQUI NO ESTAMOS CONSIDERANDO SUBIR DOCUMENTOS ADJUNTOS
 	 *  PORQ NO RECIBIMOS EL RUNTIMESETTINGS
 	 */
-	public Integer start(WProcessWork processWork, WStepWork stepWork, Integer currentUserId) 
+	public Integer start(WProcessWork processWork, WStepWork stepWork, 
+			List<StringPair> managedDataStrList, boolean isAdminProcess, Integer currentUserId) 
 			throws WStepWorkException, WProcessWorkException, WStepWorkSequenceException {
-		logger.debug("start() WStepWork - processWork reference:"
+		logger.debug(">>> start() user:"+(currentUserId!=null?currentUserId:"null ")+" "
+				+ "WStepWork - processWork reference:"
 				+(processWork!=null && processWork.getReference()!=null?processWork.getReference():"null")
 				+" CurrentStep:"
 				+(stepWork!=null && stepWork.getCurrentStep()!=null?stepWork.getCurrentStep().getName():"null")
@@ -132,12 +139,12 @@ public class WStepWorkBL {
 		Integer idWork;//nes 20141206 refactorized
 
 		if ( processWork.getId()!=null && processWork.getId()!=0 ) {
-			throw new WStepWorkException("Can't start new workflow with an existing work (work id:"+processWork.getId()+")");
+			throw new WStepWorkException("Can't start new process instance with an existing work (work id:"+processWork.getId()+")");
 		}
 
 		// nes 20130912 - if process is not active throws exception
 		if (!processWork.getProcessDef().isActive()) {
-			logger.warn("Trying to start a new workflow referring an inactive process id:"+processWork.getProcessDef().getId());
+			logger.warn("Trying to start a new process referring an inactive process id:"+processWork.getProcessDef().getId());
 			throw new WProcessWorkException("This process is inactive. Can't start a new workflow.");
 		}
 
@@ -145,19 +152,29 @@ public class WStepWorkBL {
 			processWork.setStatus(new WProcessStatus(DEFAULT_PROCESS_STATUS));
 		}
 
+		/**
+		 * nes 20160518 - si la priority viene en null la pongo a cero...
+		 */
+		if (stepWork.getPriority()==null){
+			stepWork.setPriority(DEFAULT_PRIORITY_ZERO);	
+		}
+		
 		// add the new ProcessWork
 		WProcessWorkBL wpbl = new WProcessWorkBL();
 		idWork = wpbl.add(processWork, currentUserId);
 		processWork = wpbl.getWProcessWorkByPK(idWork, currentUserId); // checks all properties was correctly stored in the object
-		
-		// if exists managed data set it with just created workId
-		if (stepWork.getManagedData()!=null) {
-			stepWork.getManagedData().setCurrentWorkId(processWork.getId()); // process-work id
-			System.out.println("TESTEAR ESTO QUE ESTE CARGANDO BIEN EL PROCESS-HEAD-ID");
-			stepWork.getManagedData().setProcessId(processWork.getProcessHeadId()); // process head id
-			stepWork.getManagedData().setOperation(INSERT);
-//			swco.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
-		}
+
+		// nes 20160521 - el managedData lo vamos a incorporar una vez creado el wStepWork. Ahi lo leemos, viene cargada la 
+		// estructura del managedData y lo cargamos a partir de la lista de StringPair. Dejo esto comentado temporalmente
+		// hasta que se asiente el nuevo cambio y luego quitarlo de aqui...
+//		// if exists managed data set it with just created workId
+//		if (stepWork.getManagedData()!=null) {
+//			stepWork.getManagedData().setCurrentWorkId(processWork.getId()); // process-work id
+//			System.out.println("TESTEAR ESTO QUE ESTE CARGANDO BIEN EL PROCESS-HEAD-ID");
+//			stepWork.getManagedData().setProcessId(processWork.getProcessHeadId()); // process head id
+//			stepWork.getManagedData().setOperation(INSERT);
+////			swco.setManagedData(managedData);  // delegamos en el dao para que inserte el managed data
+//		}
 
 		// if processWork was persisted ok then continue with step-work
 		stepWork.setwProcessWork(processWork);
@@ -174,6 +191,9 @@ public class WStepWorkBL {
 					currentUserId);
 		}
 
+		/**
+		 * add new instance (wStepWork)
+		 */
 		Integer idGeneratedStep= new WStepWorkDao().add(stepWork);
 		
 		/**
@@ -181,6 +201,13 @@ public class WStepWorkBL {
 		 * ( WUserRoleWork )
 		 */
 		_assignUsersToRuntimeRoles(processWork,currentUserId);
+		
+		/**
+		 * if exists managed data parameters will add it in an wStepWork update...
+		 */
+		if (managedDataStrList!=null && managedDataStrList.size()>0) {
+			_addManagedDataParameteres(idGeneratedStep, managedDataStrList, isAdminProcess, currentUserId);
+		}
 
 		// dml 20130827 - al inyectar insertamos un primer "log" con el primer step
 		this.createStepWorkSequenceLog(null, stepWork, false, 
@@ -191,6 +218,166 @@ public class WStepWorkBL {
 		return idGeneratedStep;
 	}
 	
+	/**
+	 * checks received managed data list against process defined managed data inserting the values
+	 * fulfill conditions: 1) field is required, 2) field is "Given"
+	 *  
+	 * @param idGeneratedStep
+	 * @param managedDataStrList
+	 * @param isAdminProcess
+	 * @param currentUserId
+	 */
+	private void _addManagedDataParameteres(Integer idGeneratedStep, List<StringPair> managedDataStrList, 
+			boolean isAdminProcess, Integer currentUserId){
+		
+		/**
+		 * Debo ir contra el DAO porque estoy en el "START" y necesito recuperar el paso insertado para cargarle
+		 * las managed properties. Si fuera por la BL restringiría al usuario corriente cosa que no es correcta
+		 * para este CU.
+		 */
+		try {
+			
+			WStepWork insertedStepWork = new WStepWorkDao().getWStepWorkByPK(idGeneratedStep);
+			
+			/**
+			 * reviso la definicion del managed data para verificar si existen campos expuestos y requeridos
+			 * para cargar en el startup con modalidad "Given".
+			 * Los campos de tipo JDBC o Method se cargan por su cuenta por esa forma...
+			 */
+			if (insertedStepWork!=null && insertedStepWork.getManagedData()!=null) {
+				
+				ManagedData md = insertedStepWork.getManagedData();
+				/**
+				 * CU1: no managed data exposed to synchronize at startup
+				 */
+				if (md.empty() || md.getDataField()==null || md.getDataField().size()<1){
+					logger.info("Start - _addManagedDataParameteres: no managed data exposed to load at startup... idStepWork:"
+							+idGeneratedStep+"  idpw:"+insertedStepWork.getwProcessWork().getIdObjectType()
+							+" user:"+(currentUserId!=null?currentUserId:"null") );
+					return;
+				} 
+				
+				List<WProcessDataField> dftoload = _existsDataFieldsToLoad(insertedStepWork);
+				if (dftoload==null || dftoload.size()<1) {
+					logger.info("Start - _addManagedDataParameteres: no datafields defined to load at startup... idStepWork:"
+							+idGeneratedStep+"  idpw:"+insertedStepWork.getwProcessWork().getIdObjectType()
+							+" user:"+(currentUserId!=null?currentUserId:"null") );
+					return;
+				}
+
+				/**
+				 * Loads managed data fields and update wStepWork .... 
+				 */
+				_loadWStepWorkMDF( insertedStepWork, dftoload, managedDataStrList, isAdminProcess, currentUserId );
+				
+			}
+			
+		} catch (WStepWorkException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Load managedDataFields at wStepWork and persist
+	 * Preconditions:
+	 * insertedStepWork, dftoload and managedDataStrList must not be null (checked previously)
+	 * nes 20160521
+	 * 
+	 * @param insertedStepWork
+	 * @param dftoload
+	 * @param managedDataStrList
+	 * @param isAdminProcess
+	 * @param currentUserId
+	 */
+	private void _loadWStepWorkMDF(WStepWork insertedStepWork, List<WProcessDataField> dftoload, List<StringPair> managedDataStrList, 
+			boolean isAdminProcess, Integer currentUserId ){
+		
+		/**
+		 * only for clarify coding purposes
+		 */
+		int topeIdx = insertedStepWork.getManagedData().getDataField().size();
+		
+		/**
+		 * flag to indicate at least 1 field was changed to persist only in this case...
+		 */
+		boolean changed=false;
+		
+		/**
+		 * para cada uno de los data fields definidos como loadAtStartup && Given ..
+		 */
+		for (WProcessDataField wpdf: dftoload) {
+			
+			/**
+			 * reviso si la columnName existe  en la lista de managedData pasada desde afuera como StringPair
+			 *
+			 */
+			for ( StringPair mdfStr: managedDataStrList) {
+			
+				/**
+				 *  y si existe entonces ...
+				 */
+				if ( mdfStr.getString1()!=null && wpdf.getColumnName().equals(mdfStr.getString1()) ) {
+				
+					/**
+					 * lo busco en la lista de managedData del wStepWork y cargo el valor que viene
+					 * previo control que el tipo de dato que viene es aceptado por ese managedDataField...
+					 * (para evitar que de error en un futuro...)
+					 */
+					for (int i=0; i<topeIdx;i++ ) {
+						if (wpdf.getColumnName()
+									.equals(insertedStepWork
+										.getManagedData()
+										.getDataField()
+										.get(i).getColumnName())) {
+	
+							insertedStepWork
+								.getManagedData()
+								.getDataField()
+								.get(i)
+								.setValueSafe(mdfStr.getString2());
+							
+							changed=true;
+							
+						}
+					}
+				}
+			}
+		}
+		
+		if (changed) {
+			try {
+				new WStepWorkDao().update(insertedStepWork, currentUserId);
+			} catch (WStepWorkException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	/**
+	 * check for mdf that must be loaded at startup and indicated as "given" returning a List<WProcessDataField>
+	 * with this fields...
+	 * 
+	 * @param insertedStepWork
+	 * @return
+	 */
+	private List<WProcessDataField> _existsDataFieldsToLoad(WStepWork insertedStepWork) {
+		
+		List<WProcessDataField> dataFieldToLoad = new ArrayList<WProcessDataField>();
+		List<WProcessDataField> wpdf = new ArrayList<WProcessDataField>();
+		if (insertedStepWork.getwProcessWork().getProcessDef().getProcessHead().getProcessDataFieldDefAsList()!=null) {
+			for (WProcessDataField pdf: insertedStepWork.getwProcessWork().getProcessDef().getProcessHead().getProcessDataFieldDefAsList()){
+				if (pdf.isActive() && pdf.isAtProcessStartup() && "G".equals(pdf.getSynchroWith()) ) {
+					dataFieldToLoad.add(pdf);
+				}
+			}
+		}
+		
+		return (dataFieldToLoad.size()>0?dataFieldToLoad:null);
+	}
 	
 	/**
 	 * process a step - returns qty new routes started ( new workitems generated if no end routes has)
@@ -257,7 +444,7 @@ public class WStepWorkBL {
 			}
 		}
 
-		// check the step is 'pending process' ... 
+		// check the step is 'process pending' ... 
 		this.checkStatus(idStepWork, currentUserId, false); 
 
 		// load current step from database
@@ -275,7 +462,7 @@ public class WStepWorkBL {
 		// set current workitem to processed status
 		_setCurrentWorkitemToProcessed( currentStep, runtimeSettings, idResponse, now, currentUserId ); // NES 20151104 - added runtimeSettings 
 
-		// insert new steps 
+		// insert new steps (one of each valid route...)
 		if ( processingDirection.equals(PROCESS_STEP) ) {
 			logger.debug(">>> PROCESS_STEP");
 			
@@ -1593,11 +1780,11 @@ public class WStepWorkBL {
 					
 					/**
 					 *  if corresponds to get this route....
-					 *  Route may come with no parameters and no responses. In this scenario, the route
+					 *  Route may arrive with no parameters and no responses. In this scenario, the route
 					 *  will be processed....
 					 *  nes 20150411 - refactorized - created method _isEnabledRoute to clean the logic....
 					 */
-					if ( _isEnabledRoute(route, idResponse) ) {
+					if ( _isEnabledRoute( currentStepWork, route, idResponse) ) {
 						logger.debug(">>> _executeProcessStep >> processing route to: "
 								+(route.getToStep()!=null?route.getToStep().getName():"end this route..."));
 	
@@ -1711,21 +1898,56 @@ public class WStepWorkBL {
 
 	/**
 	 * checks if the route is enabled or is selected...
+	 * replanteado x nes 20160521 - agregado además el evauador de expresiones lógicas...
 	 * nes 20150411
 	 * @return
 	 */
-	private boolean _isEnabledRoute(WStepSequenceDef route, Integer idResponse) {
-		if ( route.isAfterAll() 
-				|| route.isEnabled() 
-				&& ( route.getValidResponses()==null
-					|| route.getValidResponses().length()==0
-					|| _routeBelongsValidResponseSelected(idResponse, route) ) ) {
-			return true;
+	private boolean _isEnabledRoute(WStepWork currentStepWork, WStepSequenceDef route, Integer idResponse) {
+
+		if ( route.isEnabled() ) {
+			if ( route.isAfterAll() 
+					|| ( ( route.getValidResponses()==null
+						|| route.getValidResponses().length()==0
+						|| _routeBelongsValidResponseSelected(idResponse, route) )
+						/**
+						 * si tiene una regla y la regla es válida, se debe procesar la ruta...
+						 */
+						&& ( route.getRules()!=null 
+								&& !"".equals(route.getRules())
+								&& _checkRule( currentStepWork, route, idResponse) ) ) )   {
+				return true;
+			}
 		}
 		return false;
 	}
 	
-	
+	/**
+	 * evauates the rule in the route and returne boolean result of validation...
+	 * nes 20160521
+	 * 
+	 * @param currentStepWork
+	 * @param route
+	 * @param idResponse
+	 * @return
+	 */
+	private boolean _checkRule(WStepWork currentStepWork, WStepSequenceDef route, Integer idResponse) {
+		
+		BasicProcessor basicProcessor = new BasicProcessor();
+		
+		Rule rule1 = new Rule.Builder()
+				.withName("rule"+(route.getName()!=null?route.getName():"nonamedRoute"))
+				.withExpression(route.getRules())
+				.build();
+		
+		basicProcessor.setEngineEnvironmentVariables( currentStepWork.getRuleEvalList() );
+		basicProcessor.setRule(rule1);
+		
+//		basicProcessor.setRule("defineTipoOportunidad", "TipoOportunidad = 'SC'", actionDispatcherTest1);
+		
+		boolean triggered = basicProcessor.processRule();
+		
+		return triggered;
+	}
 	/**
 	 * Checks if a step has first true condition for route evaluation order 
 	 * for outgoing routes ...

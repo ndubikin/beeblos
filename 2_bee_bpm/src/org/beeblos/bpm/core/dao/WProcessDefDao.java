@@ -418,9 +418,13 @@ public class WProcessDefDao {
 			 * devuelve el xml con el proceso completo para mxGraph
 			 * 
 			 * pab 17022015 le meto el .replace porque no funciona el mxgraph si no
+			 * nes 20160521 - coloqué el &#xd; en vez del blanco que tenía pablo, no obstante 
+			 * falta ajustar el js del mxclient porque en el html no escribe el br/
 			 */
 			return xmlProcessString
-					.replace("\n", "").replace("  ", "");
+					.replace("\n", "&#xd;")
+					.replace("'", "&#x27;") // nes 20160521 - comillas simples usamos en las reglas de negocio
+					.replace("  ", "");
 
 			
 		} catch (WProcessDefException e) {
@@ -449,7 +453,7 @@ public class WProcessDefDao {
 
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		
 		StringWriter stringWriter = new StringWriter();
 		
