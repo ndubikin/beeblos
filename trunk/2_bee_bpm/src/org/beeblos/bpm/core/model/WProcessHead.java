@@ -11,6 +11,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import org.joda.time.DateTime;
 
+/**
+ * Fase: definicion
+ * Cabecera o agrupador de un proceso. Cada wProcessHead puede tener "n" versiones del proceso (wProcessDef)
+ * 
+ * @author nestor
+ *
+ */
 public class WProcessHead implements java.io.Serializable {
 
 	/**

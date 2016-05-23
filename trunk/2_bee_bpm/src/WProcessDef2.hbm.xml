@@ -1370,11 +1370,11 @@
 		<property generated="never" lazy="false" name="validResponses"
 			type="string">
 			<column name="valid_responses">
-				<comment>CLASE A LA QUE PERTENECE EL OBJETO</comment>
+				<comment>lista de respuestas que permiten coger esta ruta</comment>
 			</column>
 		</property>
 
-		<property generated="never" lazy="false" name="rules" type="string">
+		<property name="rules" generated="never" lazy="false" type="string">
 			<column name="rules" />
 		</property>
 
@@ -2272,10 +2272,10 @@
 			<column name="process_head_id" />
 		</property>
 
-		<many-to-one name="dataType" class="com.sp.common.model.WDataType"
-			fetch="join" lazy="false">
+		<property  name="dataType" generated="never" lazy="false"
+			type="com.sp.common.core.model.enums.usertype.WDataTypeUserType">
 			<column name="data_type_id" not-null="true" />
-		</many-to-one>
+		</property>
 
 		<property name="name" type="string">
 			<column name="name" />
@@ -2360,45 +2360,46 @@
 		</property>
 	</class>
 
-	<class name="com.sp.common.model.WDataType" table="w_data_type">
-		<id name="id" type="java.lang.Integer">
-			<column name="id" />
-			<generator class="identity" />
-		</id>
-		<property name="name" type="string">
-			<column name="name" />
-		</property>
-		<property name="maxLength" type="java.lang.Integer">
-			<column name="max_length" />
-		</property>
-		<property name="defaultLength" type="java.lang.Integer">
-			<column name="default_length" />
-		</property>
-		<property name="showName" type="string">
-			<column name="show_name" />
-		</property>
-		<property name="sqlType" type="java.lang.Integer">
-			<column name="sql_type" not-null="true" />
-		</property>
-		<property name="sqlTypeName" type="string">
-			<column name="sql_type_name" not-null="true" />
-		</property>
-		<property name="insertDate" 
-			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
-			<column name="insert_date" not-null="true" />
-		</property>
-		<property name="insertUser" type="java.lang.Integer">
-			<column name="insert_user" not-null="true" />
-		</property>
-		<property name="modDate" 
-			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
-			<column name="mod_date" not-null="true" />
-		</property>
-		<property name="modUser" type="java.lang.Integer">
-			<column name="mod_user" not-null="true" />
-		</property>
+<!-- PASADO A ENUM por nes 20160521 -->
+<!-- 	<class name="com.sp.common.model.WDataType" table="w_data_type"> -->
+<!-- 		<id name="id" type="java.lang.Integer"> -->
+<!-- 			<column name="id" /> -->
+<!-- 			<generator class="identity" /> -->
+<!-- 		</id> -->
+<!-- 		<property name="name" type="string"> -->
+<!-- 			<column name="name" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="maxLength" type="java.lang.Integer"> -->
+<!-- 			<column name="max_length" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="defaultLength" type="java.lang.Integer"> -->
+<!-- 			<column name="default_length" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="showName" type="string"> -->
+<!-- 			<column name="show_name" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="sqlType" type="java.lang.Integer"> -->
+<!-- 			<column name="sql_type" not-null="true" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="sqlTypeName" type="string"> -->
+<!-- 			<column name="sql_type_name" not-null="true" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="insertDate"  -->
+<!-- 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"> -->
+<!-- 			<column name="insert_date" not-null="true" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="insertUser" type="java.lang.Integer"> -->
+<!-- 			<column name="insert_user" not-null="true" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="modDate"  -->
+<!-- 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"> -->
+<!-- 			<column name="mod_date" not-null="true" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="modUser" type="java.lang.Integer"> -->
+<!-- 			<column name="mod_user" not-null="true" /> -->
+<!-- 		</property> -->
 
-	</class>
+<!-- 	</class> -->
 
 	<class name="org.beeblos.bpm.core.model.WTaskType" table="w_task_type">
 		<id name="id" type="java.lang.Integer">

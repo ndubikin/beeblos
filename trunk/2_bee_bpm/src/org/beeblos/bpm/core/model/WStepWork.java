@@ -17,6 +17,10 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import com.sp.common.model.ManagedDataField;
+import com.sp.common.model.en.WDataType;
+import com.sp.common.util.ObjectPair;
+
 
 /**
  * WStepWork - represents a task or item instance
@@ -1081,5 +1085,171 @@ public class WStepWork implements java.io.Serializable {
 		return true;
 	}
 
+	/**
+	 * build a object pair list with main elements of a stepWork to pass as parameter
+	 * to the RuleEngine
+	 * @return
+	 */
+	public List<ObjectPair> getRuleEvalList() {
+		List<ObjectPair> bindingsList = new ArrayList<ObjectPair>();
+		
+		if (this.wProcessWork!=null && !this.wProcessWork.empty()) {
+			bindingsList.add(new ObjectPair("processVersion",this.wProcessWork.getProcessDef().getVersion()));
+		} else {
+			bindingsList.add( new ObjectPair("processVersion","'EMTPY'") );
+		}
+		
+		if (this.managedData !=null && !this.managedData.empty()
+				&& this.managedData.getDataField()!=null && this.managedData.getDataField().size()>0 ) {
+			for ( ManagedDataField mdf: this.managedData.getDataField()) {
+				
+				/**
+				 * solo identifico el numerico (que nosotros por ahora solo soportamos integer) y si lo es lo anoto como numero...
+				 */
+				if (mdf.getDataType().equals(WDataType.NUMBER)) {
+					bindingsList.add( new ObjectPair(mdf.getName(),(mdf.getValue()==null || "".equals(mdf.getValue()) ? 0 : 
+								Integer.parseInt(mdf.getValue().trim() ) )) );
+					
+				} else {
+					bindingsList.add( new ObjectPair(mdf.getName(),"'"
+							+(mdf.getValue()==null || "".equals(mdf.getValue()) ? "EMPTY" : mdf.getValue().trim() )+"'") );
+					
+				}
+				
+			}
+			
+		} else {
+			bindingsList.add( new ObjectPair("managedData","'EMTPY'") );
+		}
+		
+		if (this.previousStep !=null && !this.previousStep.empty() ) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("previousStep","'EMTPY'") );
+		}
+		
+		if (this.currentStep !=null && !this.currentStep.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("currentStep","'EMTPY'") );
+		}
+		
+		if (this.openerUser !=null && !this.openerUser.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("openerUser","'EMTPY'") );
+		}
+		
+		if (this.performer !=null && !this.performer.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("performer","'EMTPY'") );
+		}
+		
+		if (this.timeUnit !=null && !this.timeUnit.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("timeUnit","'EMTPY'") );
+		}
+		
+		if (this.reminderTimeUnit!=null && !this.reminderTimeUnit.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("reminderTimeUnit","'EMTPY'") );
+		}
+		
+		if (this.lockedBy !=null && !this.lockedBy.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("lockedBy","'EMTPY'") );
+		}
+		
+		if (this.insertUser !=null && !this.insertUser.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("insertUser","'EMTPY'") );
+		}
+		
+		if (this.response !=null && !this.response.empty()) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("response","'EMTPY'") );
+		} 
+
+		
+		if (this.userInstructions  != null && !"".equals(userInstructions)) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("userInstructions","'EMTPY'") );
+		}
+		
+		if (this.userNotes  != null && !"".equals(userNotes)){
+			
+		} else {
+			bindingsList.add( new ObjectPair("userNotes","'EMTPY'") );
+		}
+		
+		if (this.urlData  != null && !"".equals(urlData)) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("urlData","'EMTPY'") );
+		}
+		
+		if (this.nextStepInstructions  != null && !"".equals(nextStepInstructions)) {
+			
+		} else {
+			bindingsList.add( new ObjectPair("nextStepInstructions","'EMTPY'") );
+		}
+		
+		if (this.arrivingDate  != null )  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("arrivingDate","'EMTPY'") );
+		}
+		
+		if (this.openedDate  != null )  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("openedDate","'EMTPY'") );
+		}
+		
+		if (this.decidedDate  != null )  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("decidedDate","'EMTPY'") );
+		}
+		
+		if (this.lockedSince  != null )  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("lockedSince","'EMTPY'") );
+		}
+
+		if (this.deadlineDate  != null )  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("deadlineDate","'EMTPY'") );
+		}
+		if (this.deadlineTime  != null )  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("deadlineTime","'EMTPY'") );
+		}
+
+		if (assignedTime!=null && !assignedTime.equals(0))  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("assignedTime","'EMTPY'") );
+		}
+		
+		if (reminderTime!=null && !reminderTime.equals(0))  {
+			
+		} else {
+			bindingsList.add( new ObjectPair("reminderTime","'EMTPY'") );
+		}
+		
+		
+		return bindingsList;
+	}
 
 }

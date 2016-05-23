@@ -2,7 +2,7 @@ package org.beeblos.bpm.core.bl;
 
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_VARCHAR_LENGHT;
-import static org.beeblos.bpm.core.util.Constants.TEXT_DATA_TYPE;
+
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import org.beeblos.bpm.tm.TableManagerUtil;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.joda.time.DateTime;
 
-import com.sp.common.model.WDataType;
+import com.sp.common.model.en.WDataType;
 import com.sp.common.util.StringPair;
 
 
@@ -111,8 +111,7 @@ public class WProcessDataFieldBL {
 			if (processDataField.getDataType() == null
 					|| processDataField.getDataType().getName() == null){
 				
-				WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
-						TEXT_DATA_TYPE, currentUserId);
+				WDataType currentDataType = WDataType.TEXT; // nes 20160521 - cambiado WDataType a Enum...
 				
 				processDataField.setDataType(currentDataType);
 				
@@ -124,8 +123,7 @@ public class WProcessDataFieldBL {
 			// dml 20130822 - si tiene nombre y el lenght es null o "0" le ponemos el defaultLength del dato
 			} else{
 				
-				WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
-						processDataField.getDataType().getId(), currentUserId);
+				WDataType currentDataType = WDataType.findByKey(processDataField.getDataType().getId()); // nes 20160521 - cambiado WDataType a Enum...
 				
 				// si en la tabla datatype está en null el defaultLength considero que no debe ir asi que lo anulo
 				if (currentDataType.getDefaultLength() == null ) {
@@ -202,8 +200,8 @@ public class WProcessDataFieldBL {
 			throw new WProcessDataFieldException("Process data field has not a valid name!! Not permitted operation ... ");
 		}
 		
-		WDataType currentDataType = new WDataTypeBL().getWDataTypeByPK(
-				processDataField.getDataType().getId(), currentUserId);
+		WDataType currentDataType = WDataType.findByKey(
+						processDataField.getDataType().getId());// nes 20160521 - cambiado WDataType a Enum...
 
 		// checks if datatype must have length or not (HAY QUE ARREGLALO QUEDA INCOMPLETO)
 		// NESTOR: yo lo que hacia aquí es comprobar si se le mete un valor en el campo

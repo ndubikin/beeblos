@@ -43,7 +43,6 @@ import org.beeblos.bpm.core.error.WProcessDataFieldException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.error.WStepWorkException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
-import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDef;
 import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.beeblos.bpm.core.model.noper.WStartProcessResult;
@@ -69,6 +68,7 @@ import com.sp.common.core.error.UserException;
 import com.sp.common.core.model.User;
 import com.sp.common.util.Configuration;
 import com.sp.common.util.DesEncrypter;
+import com.sp.common.util.StringPair;
 import com.sp.daemon.bl.DaemonLogBL;
 import com.sp.daemon.bl.DaemonPollBL;
 import com.sp.daemon.email.EmailDLog;
@@ -266,7 +266,8 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 
 	@Override
 	public void daemonAction(DaemonConf conf, Integer currentUserId) {
-
+		logger.debug(">>> daemonAction... userId:"+(currentUserId!=null?currentUserId:"null"));
+		
 		if (conf instanceof EmailDConfBeeBPM){
 
 			try {
@@ -291,7 +292,8 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 						+ conf.getEmailAccount().getEmail() + "'. EmailDConfBeeBPM id:("+conf.getId()+")"
 						+" can't create session for email server. "
 						+ (e.getMessage()!=null?". "+e.getMessage():"")
-						+ (e.getCause()!=null?". "+e.getCause():"");
+						+ (e.getCause()!=null?". "+e.getCause():"")+" "
+						+ e.getClass();
 				logger.error(mess);
 
 			}
@@ -660,9 +662,9 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	 */
 	private void _injectEmailTrayAsProcess(EmailDConfBeeBPM conf, Integer emailTrayId, Integer currentUserId) 
 			throws DaemonJobRunningException{
-		logger.debug(">>> _injectEmailTrayAsProcess... ");
+		logger.debug(">>> _injectEmailTrayAsProcess... userId:"+(currentUserId!=null?currentUserId:"null"));
 		
-		ManagedData _NULL_MANAGED_DATA = null; // nes 20151109
+		List<StringPair> _NULL_MANAGED_DATA = null; // nes 20151109/ 20160521
 
 		
 		if (emailTrayId != null && !emailTrayId.equals(0)){
@@ -699,7 +701,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 									objComments, // Comentarios del objeto?
 									_NULL_MANAGED_DATA, // nes 20151109
 									null, // nes 20151026 - no attachments send...
-									false, // nes 20151026 - no admin star process...
+									false, // nes 20151026 - no admin start process...
 									currentUserId);
 					
 				} catch (InjectorException e) {
