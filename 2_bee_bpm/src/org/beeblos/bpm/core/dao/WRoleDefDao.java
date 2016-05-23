@@ -7,13 +7,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.WRoleDefException;
 import org.beeblos.bpm.core.error.WUserDefException;
-import org.beeblos.bpm.core.error.WUserRoleException;
 import org.beeblos.bpm.core.model.WRoleDef;
-import org.beeblos.bpm.core.model.WUserDef;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
 import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.ListUtils;
 import com.sp.common.util.StringPair;
 
 
@@ -221,6 +220,63 @@ public class WRoleDefDao {
 		return lrole;
 	}
 	
+	/**
+	 * Gets the WRoleDef list where its ids are into pkList
+	 * 
+	 * @author dmuleiro 20160523
+	 * 
+	 * @param pkList
+	 * @return
+	 * @throws WRoleDefException
+	 *
+	 */
+	@SuppressWarnings("unchecked")
+	public List<WRoleDef> getWRoleDefByPkList(List<String> pkList) throws WRoleDefException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WRoleDef> lrole = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			if (pkList != null && !pkList.isEmpty()){
+				
+				String pkListParam = ListUtils.getStringListAsString(pkList, ",", true);
+				
+				lrole = session.createQuery("From WRoleDef Where id In (" + pkListParam + ") Order By Name ")
+						.list();
+
+			}
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException - getWRoleDefByPkList() - can't obtain role list"
+					+ (ex.getMessage()!=null?". "+ex.getMessage():"")
+					+ (ex.getCause()!=null?". "+ex.getCause():"") ;
+			logger.error(mess);
+			throw new WRoleDefException(mess);
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException - getWRoleDefByPkList() - can't obtain role list"
+					+ (ex.getMessage()!=null?". "+ex.getMessage():"")
+					+ (ex.getCause()!=null?". "+ex.getCause():"")
+					+ (ex.getClass()!=null?". "+ex.getClass():"") ;
+			logger.error(mess);
+			throw new WRoleDefException(mess);
+		}
+
+		return lrole;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
