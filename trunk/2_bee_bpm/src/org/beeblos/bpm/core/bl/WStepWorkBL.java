@@ -1898,26 +1898,76 @@ public class WStepWorkBL {
 
 	/**
 	 * checks if the route is enabled or is selected...
-	 * replanteado x nes 20160521 - agregado además el evauador de expresiones lógicas...
+	 * replanteado x nes 20160524 - agregado además el evauador de expresiones lógicas...
 	 * nes 20150411
 	 * @return
 	 */
 	private boolean _isEnabledRoute(WStepWork currentStepWork, WStepSequenceDef route, Integer idResponse) {
 
 		if ( route.isEnabled() ) {
-			if ( route.isAfterAll() 
-					|| ( ( route.getValidResponses()==null
-						|| route.getValidResponses().length()==0
-						|| _routeBelongsValidResponseSelected(idResponse, route) )
-						/**
-						 * si tiene una regla y la regla es válida, se debe procesar la ruta...
-						 */
-						&& ( route.getRules()!=null 
-								&& !"".equals(route.getRules())
-								&& _checkRule( currentStepWork, route, idResponse) ) ) )   {
+			/**
+			 *  after all implies this route must be walked ...
+			 */
+			if ( route.isAfterAll() ) { 
 				return true;
+			} else 
+				
+				/**
+				 * if no routes nor responses and route is enabled then walk this route...
+				 */
+				if ( ( route.getValidResponses()==null
+						|| route.getValidResponses().length()==0 )
+					&& ( route.getRules()==null 
+							|| "".equals(route.getRules()) ) )   {
+				return true;
+			} else 
+				/**
+				 * no rules but has a valid response, go ahead
+				 */
+				if ( ( route.getRules()==null 
+						|| "".equals(route.getRules()) )
+					&& route.getValidResponses()!=null
+					&&  _routeBelongsValidResponseSelected(idResponse, route) ) {
+				return true;
+			} else 
+				/**
+				 * no responses but has a valid rule, go ahead...
+				 */
+				if ( (route.getValidResponses()==null
+						|| route.getValidResponses().length()==0 ) 
+					&& route.getRules()!=null 
+					&& !"".equals(route.getRules())
+					&& _checkRule( currentStepWork, route, idResponse)
+						) {
+					return true;
+				
+			} else 
+				/**
+				 * if exists rule and response, then AND must be applied...
+				 */
+				if ( route.getValidResponses()!=null
+					&& route.getRules()!=null 
+					&&  _routeBelongsValidResponseSelected(idResponse, route)
+					&& _checkRule( currentStepWork, route, idResponse)
+					) {
+					return true;
+				
 			}
 		}
+				
+//				if ( ( ( route.getValidResponses()==null
+//						|| route.getValidResponses().length()==0
+//						|| _routeBelongsValidResponseSelected(idResponse, route) )
+//						/**
+//						 * si tiene una regla y la regla es válida, se debe procesar la ruta...
+//						 */
+//						&& ( route.getRules()!=null 
+//								&& !"".equals(route.getRules())
+//								&& _checkRule( currentStepWork, route, idResponse) ) ) )   {				
+		
+		/**
+		 * if route is not enabled then can't transit it!
+		 */
 		return false;
 	}
 	
