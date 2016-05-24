@@ -2,6 +2,7 @@ package org.beeblos.bpm.core.bl;
 
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -95,13 +96,40 @@ public class WRoleDefBL {
 	 * @author dmuleiro 20160523
 	 * 
 	 * @param pkList
+	 * @param currentUserId
 	 * @return
 	 * @throws WRoleDefException
 	 *
 	 */
-	public List<WRoleDef> getWRoleDefByPkList(List<String> pkList) throws WRoleDefException {
+	public List<WRoleDef> getWRoleDefByPkList(List<String> pkList, Integer currentUserId) throws WRoleDefException {
 
 		return new WRoleDefDao().getWRoleDefByPkList(pkList);
+
+	}
+	
+	/**
+	 * Gets the WRoleDef list where its ids are into pkArray
+	 * 
+	 * @author dmuleiro 20160524
+	 * 
+	 * @param pkList
+	 * @param currentUserId
+	 * @return
+	 * @throws WRoleDefException
+	 *
+	 */
+	public List<WRoleDef> getWRoleDefByPkArray(Integer[] pkArray, Integer currentUserId) throws WRoleDefException {
+
+		if (pkArray == null){
+			return null;
+		}
+		
+		List<String> idList = new ArrayList<String>();
+		for (Integer id: pkArray) {
+			idList.add(id.toString());
+		}
+		
+		return new WRoleDefDao().getWRoleDefByPkList(idList);
 
 	}
 	
