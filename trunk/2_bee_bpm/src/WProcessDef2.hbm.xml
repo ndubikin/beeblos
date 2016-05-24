@@ -1351,23 +1351,23 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
-		<property generated="never" lazy="false" name="order"
+		<property name="order" generated="never" lazy="false"
 			type="java.lang.Short">
 			<column name="order_" />
 		</property>
-		<property generated="never" lazy="false" name="enabled"
+		<property name="enabled" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="enabled" sql-type="bit" />
 		</property>
-		<property generated="never" lazy="false" name="afterAll"
+		<property name="afterAll" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="after_all" sql-type="bit" />
 		</property>
-		<property generated="never" lazy="false" name="deleted"
+		<property name="deleted" generated="never" lazy="false"
 			type="java.lang.Boolean">
 			<column name="deleted" sql-type="bit" />
 		</property>
-		<property generated="never" lazy="false" name="validResponses"
+		<property name="validResponses" generated="never" lazy="false"
 			type="string">
 			<column name="valid_responses">
 				<comment>lista de respuestas que permiten coger esta ruta</comment>
@@ -1382,22 +1382,22 @@
 		<!-- type="java.lang.Integer"> -->
 		<!-- <column name="version" /> -->
 		<!-- </property> -->
-		<property generated="never" lazy="false" name="name" type="string">
+		<property name="name" generated="never" lazy="false" type="string">
 			<column name="name" />
 		</property>
-		<property generated="never" lazy="false" name="insertDate"
+		<property name="insertDate" generated="never" lazy="false"
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="insert_date" not-null="true" />
 		</property>
-		<property generated="never" lazy="false" name="insertUser"
+		<property name="insertUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="insert_user" />
 		</property>
-		<property generated="never" lazy="false" name="modDate" 
+		<property name="modDate" generated="never" lazy="false" 
 			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
 			<column name="mod_date" />
 		</property>
-		<property generated="never" lazy="false" name="modUser"
+		<property name="modUser" generated="never" lazy="false"
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
