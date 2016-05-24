@@ -34,6 +34,8 @@
 		<copy file="${distFolder}/${jarName}" todir="../../2_fbbva_common_user/lib" />
 		<copy file="${distFolder}/${jarName}" todir="../../2_fbbva_dap/src/main/webapp/WEB-INF/lib" />
 
+		<copy file="${distFolder}/${jarName}" todir="../../itc_gespro_web/src/main/webapp/WEB-INF/lib" />
+
 	</target>	
 
 </project>
