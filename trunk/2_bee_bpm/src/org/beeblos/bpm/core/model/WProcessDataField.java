@@ -165,6 +165,33 @@ public class WProcessDataField implements java.io.Serializable {
 	public void setDataType(WDataType dataType) {
 		this.dataType = dataType;
 	}
+	
+	/**
+	 * utilityp method to work with Enum WDataType by ID
+	 * nes 20160524
+	 * @return
+	 */
+	public Integer getDataTypeCode() {
+
+		if (this.dataType == null){
+			return null;
+		}
+		return this.dataType.getId();
+	}
+
+	/**
+	 * utilityp method to work with Enum WDataType by ID
+	 * nes 20160524
+	 * @param code
+	 */
+	public void setDataTypeCode(Integer code) {
+
+		if (code == null){
+			this.dataType = null;
+			return;
+		}
+		this.dataType = WDataType.findByKey(code);
+	}
 
 	public String getName() {
 		return this.name;
