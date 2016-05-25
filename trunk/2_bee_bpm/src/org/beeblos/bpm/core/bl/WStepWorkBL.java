@@ -1809,6 +1809,12 @@ public class WStepWorkBL {
 							startProcessResult.getStepWorkIdList().add(newStepWork.getId()); // nes 20151026
 							
 							/**
+							 * if route has sendEmail associated action the executes it!
+							 * dml today
+							 */
+							_executeSendRelatedEmail();
+							
+							/**
 							 *  if route has external method execution related then execute it!
 							 */
 							_executeRouteExternalMethodSafe(route, currentStepWork, currentUserId);
