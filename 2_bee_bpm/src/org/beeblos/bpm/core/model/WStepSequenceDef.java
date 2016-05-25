@@ -106,6 +106,14 @@ public class WStepSequenceDef implements java.io.Serializable {
 	private Set<WExternalMethod> externalMethod = new HashSet<WExternalMethod>(0);
 	
 	/**
+	 * If it has a correct value and it is marked as "sendEmailIsActive", it will
+	 * send an email to the roles/users related while the route is being process
+	 * 
+	 * @author dmuleiro 20160524
+	 */
+	private WEmailDef emailDef;
+	
+	/**
 	 * Xml variables
 	 * pab 04122014
 	 */
@@ -135,6 +143,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 			this.process = new WProcessDef( EMPTY_OBJECT );
 			this.fromStep = new WStepDef( EMPTY_OBJECT );
 			this.toStep = new WStepDef( EMPTY_OBJECT );
+			this.emailDef = new WEmailDef(EMPTY_OBJECT);
 			
 		}	
 	}
@@ -436,6 +445,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 		if (fromStep!=null && fromStep.empty()) fromStep=null;
 		if (toStep!=null && toStep.empty()) toStep=null;
 		if (externalMethod!=null && externalMethod.isEmpty()) externalMethod=null;
+		
+		if (emailDef!=null && emailDef.empty()) {
+			emailDef=null; // dml 20160524
+		} else if (emailDef!=null && !emailDef.empty()) {
+			emailDef.nullateEmtpyObjects(); // dml 20160525
+		}
 	}
 	
 	/**
@@ -449,6 +464,12 @@ public class WStepSequenceDef implements java.io.Serializable {
 		if (fromStep==null) fromStep = new WStepDef();
 		if (toStep==null) toStep = new WStepDef();
 		if (externalMethod==null) externalMethod = new HashSet<WExternalMethod>();
+		
+		if (emailDef==null) {
+			emailDef = new WEmailDef(EMPTY_OBJECT);
+		} else {
+			emailDef.recoverEmtpyObjects();
+		}
 	}
 
     /* (non-Javadoc)
@@ -461,6 +482,8 @@ public class WStepSequenceDef implements java.io.Serializable {
 		result = prime * result + (afterAll ? 1231 : 1237);
 		result = prime * result + (deleted ? 1231 : 1237);
 		result = prime * result + (disabled ? 1231 : 1237);
+		result = prime * result
+				+ ((emailDef == null) ? 0 : emailDef.hashCode());
 		result = prime * result
 				+ ((externalMethod == null) ? 0 : externalMethod.hashCode());
 		result = prime * result
@@ -511,6 +534,11 @@ public class WStepSequenceDef implements java.io.Serializable {
 			if (other.fromStep != null)
 				return false;
 		} else if (!fromStep.equals(other.fromStep))
+			return false;
+		if (emailDef == null) {
+			if (other.emailDef != null)
+				return false;
+		} else if (!emailDef.equals(other.emailDef))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -599,7 +627,7 @@ public class WStepSequenceDef implements java.io.Serializable {
 				+ ", validResponses=" + validResponses + ", rules=" + rules
 				+ ", externalMethod=" + externalMethod + ", insertUser="
 				+ insertUser + ", insertDate=" + insertDate + ", modUser="
-				+ modUser + ", modDate=" + modDate + "]";
+				+ modUser + ", modDate=" + modDate + ", emailDef=" + emailDef + "]";
 	}
 
 
@@ -667,5 +695,15 @@ public class WStepSequenceDef implements java.io.Serializable {
 	 */
 	public void setMxCell(MxCell mxCell) {
 		this.mxCell = mxCell;
+	}
+
+
+	public WEmailDef getEmailDef() {
+		return emailDef;
+	}
+
+
+	public void setEmailDef(WEmailDef emailDef) {
+		this.emailDef = emailDef;
 	}
 }

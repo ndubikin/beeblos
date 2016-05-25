@@ -584,3 +584,42 @@ CREATE TABLE `w_user_device` (
   `mod_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+## dml 20160524 - nueva tabla para el envio de email en rutas, pasos y procesos
+CREATE TABLE `w_email_def` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `send_email_is_active` BIT(1) NOT NULL DEFAULT b'0',
+  `id_object` INT(11) NOT NULL,
+  `id_object_type` VARCHAR(255) NOT NULL,
+  `email_destination_field_bcc` BIT(1) NOT NULL DEFAULT b'0',
+  `id_roles_related` VARCHAR(255) NULL,
+  `id_users_related` VARCHAR(255) NULL,
+  `other_emails` VARCHAR(255) NULL,
+  `id_email_template` INT(11) NULL,
+  `add_date` DATETIME NOT NULL,
+  `add_user` INT(11) NOT NULL,
+  `mod_date` DATETIME NULL DEFAULT NULL,
+  `mod_user` INT(11) NULL DEFAULT NULL,
+  `fh_ts` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'campo automatico para TS de base de datos' ,
+  PRIMARY KEY (`id`),
+  INDEX `fk_wed_1_idx` (`id_email_template` ASC),
+  CONSTRAINT `fk_wed_1`
+    FOREIGN KEY (`id_email_template`)
+    REFERENCES `email_template` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+## dml 20160525 - relacion con la w_step_sequence_def del w_email_def
+ALTER TABLE `w_step_sequence_def` 
+ADD COLUMN `id_email_def` INT(11) NULL DEFAULT NULL AFTER `xml_id`,
+ADD INDEX `fk_email_def_step_seq_idx` (`id_email_def` ASC);
+ALTER TABLE `w_step_sequence_def` 
+ADD CONSTRAINT `fk_email_def_step_seq`
+  FOREIGN KEY (`id_email_def`)
+  REFERENCES `w_email_def` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+    
+## dml 20160525 - nuevo email template grupo para las plantillas "Managed" por objetos del workflow
+INSERT INTO `email_template_theme` (`id`, `name`) VALUES ('12', 'Managed');
+    

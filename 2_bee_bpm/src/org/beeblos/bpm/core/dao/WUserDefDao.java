@@ -14,6 +14,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import com.sp.common.util.HibernateUtil;
+import com.sp.common.util.ListUtils;
 import com.sp.common.util.StringPair;
 
 
@@ -222,6 +223,64 @@ public class WUserDefDao {
 		String query = _buildQuery(filter);
 
 		return getWUserDefList(query);
+	}
+
+	/**
+	 * Gets the WUserDef list where its ids are into pkList
+	 * 
+	 * @author dmuleiro 20160525
+	 * 
+	 * @param pkList
+	 * @return
+	 * @throws WUserDefException
+	 *
+	 */
+	@SuppressWarnings("unchecked")
+	public List<WUserDef> getWUserDefByPkList(List<String> pkList) throws WUserDefException {
+
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<WUserDef> luser = null;
+
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			if (pkList != null && !pkList.isEmpty()){
+				
+				String pkListParam = ListUtils.getStringListAsString(pkList, ",", true);
+				
+				luser = session.createQuery("From WUserDef Where id In (" + pkListParam + ") Order By Name ")
+						.list();
+
+			}
+			
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException - getWUserDefByPkList() - can't obtain user list"
+					+ (ex.getMessage()!=null?". "+ex.getMessage():"")
+					+ (ex.getCause()!=null?". "+ex.getCause():"") ;
+			logger.error(mess);
+			throw new WUserDefException(mess);
+		} catch (Exception ex) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException - getWUserDefByPkList() - can't obtain user list"
+					+ (ex.getMessage()!=null?". "+ex.getMessage():"")
+					+ (ex.getCause()!=null?". "+ex.getCause():"")
+					+ (ex.getClass()!=null?". "+ex.getClass():"") ;
+			logger.error(mess);
+			throw new WUserDefException(mess);
+		}
+
+		return luser;
 	}
 
 	// dml 20120425

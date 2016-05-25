@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepSequenceDefDao;
-import org.beeblos.bpm.core.error.WProcessDefException;
+import org.beeblos.bpm.core.error.WEmailDefException;
 import org.beeblos.bpm.core.error.WStepDefException;
 import org.beeblos.bpm.core.error.WStepSequenceDefException;
 import org.beeblos.bpm.core.error.WStepWorkSequenceException;
@@ -63,6 +63,8 @@ public class WStepSequenceDefBL {
 
 			route.nullateEmtpyObjects();// nes 20150121
 			
+			this._checkNewWEmailDef(route, currentUserId); // dml 20160525
+			
 			// timestamp & trace info
 			route.setModDate(new DateTime());
 			route.setModUser(currentUserId);
@@ -74,6 +76,62 @@ public class WStepSequenceDefBL {
 		}
 		
 	}
+
+	/**
+	 * Checks if the WEmailDef associated is new and if it is it will save it before adding/updating
+	 * the WStepSequenceDef
+	 * 
+	 * @author dmuleiro 20160525
+	 * 
+	 * @param instance
+	 * @param currentUserId
+	 * @throws WStepSequenceDefException
+	 * 
+	 */
+	private void _checkNewWEmailDef(WStepSequenceDef instance, Integer currentUserId) throws WStepSequenceDefException {
+		
+		if (instance != null && instance.getEmailDef() != null 
+				&& !instance.getEmailDef().empty()
+				&& (instance.getEmailDef().getId() == null || instance.getEmailDef().getId().equals(0))){
+			
+			try {
+				instance.getEmailDef().setIdObject(instance.getId());
+				instance.getEmailDef().setIdObjectType(instance.getClass().getName());
+				
+				Integer idWEmailDef = new WEmailDefBL().add(instance.getEmailDef(), currentUserId);
+				
+				instance.getEmailDef().setId(idWEmailDef);
+				
+			} catch (WEmailDefException e) {
+				String mess = "Error trying to create the new associated Email Def"
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+				throw new WStepSequenceDefException(mess);
+			}
+			
+		} else if (instance != null && instance.getEmailDef() != null 
+				&& instance.getEmailDef().getEmailTemplate() != null
+				&& ! instance.getEmailDef().getEmailTemplate().empty()
+				&& ( instance.getEmailDef().getEmailTemplate().getId() == null ||  instance.getEmailDef().getEmailTemplate().getId().equals(0))){
+
+			/**
+			 * If the email template inside the WEmailDef is new, we have to update here because the 
+			 * update method will add the new emailtemplate - dml 20160525
+			 */
+			try {
+				new WEmailDefBL().update(instance.getEmailDef(), currentUserId);
+				
+			} catch (WEmailDefException e) {
+				String mess = "Error trying to create the new associated Email Def"
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+				throw new WStepSequenceDefException(mess);
+			}
+		}
+	}
+
 
 	/**
 	 * merge avoid brute force delete and update related collections....

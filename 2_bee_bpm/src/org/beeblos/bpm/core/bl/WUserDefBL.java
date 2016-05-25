@@ -2,6 +2,7 @@ package org.beeblos.bpm.core.bl;
 
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -133,6 +134,50 @@ public class WUserDefBL {
 			throw new WUserDefException(e);
 		}
 	}
+	
+	/**
+	 * Gets the WUserDef list where its ids are into pkList
+	 * 
+	 * @author dmuleiro 20160525
+	 * 
+	 * @param pkList
+	 * @param currentUserId
+	 * @return
+	 * @throws WUserDefException
+	 *
+	 */
+	public List<WUserDef> getWUserDefByPkList(List<String> pkList, Integer currentUserId) throws WUserDefException {
+
+		return new WUserDefDao().getWUserDefByPkList(pkList);
+
+	}
+	
+	/**
+	 * Gets the WUserDef list where its ids are into pkArray
+	 * 
+	 * @author dmuleiro 20160525
+	 * 
+	 * @param pkList
+	 * @param currentUserId
+	 * @return
+	 * @throws WUserDefException
+	 *
+	 */
+	public List<WUserDef> getWUserDefByPkArray(Integer[] pkArray, Integer currentUserId) throws WUserDefException {
+
+		if (pkArray == null){
+			return null;
+		}
+		
+		List<String> idList = new ArrayList<String>();
+		for (Integer id: pkArray) {
+			idList.add(id.toString());
+		}
+		
+		return new WUserDefDao().getWUserDefByPkList(idList);
+
+	}
+
 	
 	/**
 	 * Adds the user related role to the user "rolesRelated" list and returns the same user

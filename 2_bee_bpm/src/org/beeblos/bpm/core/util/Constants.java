@@ -6,6 +6,9 @@ import static com.sp.common.util.Resourceutil.getStringProperty;
 
 public class Constants {
 	
+	public static final Integer MANAGED_EMAIL_TEMPLATE_THEME_ID = 
+			getIntegerProperty("managed.email.template.theme.id", 12); // dml 20160525
+
 	public static final Integer BEEBLOS_WPROCESSWORK_DOCCLASS_ID = 
 			getIntegerProperty("beeblos.default.docclassid.wprocesswork"); // dml 20150414
 
