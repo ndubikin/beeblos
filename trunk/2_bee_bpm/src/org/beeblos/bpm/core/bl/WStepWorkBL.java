@@ -1,5 +1,8 @@
 package org.beeblos.bpm.core.bl;
 
+import static com.email.core.util.ConstantsEmailCore.BEEBLOS_DEFAULT_DOCCLASSID_EMAIL;
+import static com.email.core.util.ConstantsEmailCore.SAVE_IN_BEEBLOS;
+import static com.email.core.util.ConstantsEmailCore.SAVE_IN_EMAIL_TRAY;
 import static com.sp.common.core.util.ConstantsSPC.BEEBLOS_DEFAULT_REPOSITORY_ID;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
@@ -27,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.dao.WStepWorkDao;
 import org.beeblos.bpm.core.error.CantLockTheStepException;
+import org.beeblos.bpm.core.error.WEmailDefException;
 import org.beeblos.bpm.core.error.WExternalMethodException;
 import org.beeblos.bpm.core.error.WProcessDefException;
 import org.beeblos.bpm.core.error.WProcessWorkException;
@@ -42,6 +46,7 @@ import org.beeblos.bpm.core.error.WUserRoleException;
 import org.beeblos.bpm.core.error.WUserRoleWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WEmailAccount;
+import org.beeblos.bpm.core.model.WEmailDef;
 import org.beeblos.bpm.core.model.WExternalMethod;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessDef;
@@ -76,7 +81,9 @@ import org.joda.time.LocalDate;
 import com.email.core.bl.SendEmailBL;
 import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
+import com.email.tray.core.error.CreateEmailException;
 import com.email.tray.core.util.EmailPersonalizationUtilBL;
+import com.email.tray.core.util.EmailUtilBL;
 import com.sp.common.core.bl.DocumentManagerBL;
 import com.sp.common.core.error.BeeblosBLException;
 import com.sp.common.core.model.UserEmailAccount;
@@ -1810,9 +1817,9 @@ public class WStepWorkBL {
 							
 							/**
 							 * if route has sendEmail associated action the executes it!
-							 * dml today
+							 * dml 20150525
 							 */
-							_executeSendRelatedEmail();
+							_executeSendRelatedEmail(route, currentUserId);
 							
 							/**
 							 *  if route has external method execution related then execute it!
@@ -1900,6 +1907,245 @@ public class WStepWorkBL {
 
 		return qty;
 		
+	}
+	
+	/**
+	 * if route has WEmailDef associated with sendEmail associated action the executes it!
+	 * 
+	 * @author dmuleiro 20160525
+	 */
+	private void _executeSendRelatedEmail(WStepSequenceDef route, Integer currentUserId){
+		
+		try {
+			
+			if (route.getEmailDef() == null || route.getEmailDef().getId() == null 
+					|| route.getEmailDef().getId().equals(0)){
+				return;
+			}
+			
+			if (!route.getEmailDef().isSendEmailIsActive()){
+				String mess = "The route with id:" + route.getEmailDef().getId() 
+						+ " has a valid email definition but it has its 'Send email' as 'not active'";
+				logger.warn(mess);
+				return;
+			}
+			
+			// Here it begins the code to create the email and send it to the roles/users set in the
+			// WEmailDef associated
+			logger.debug("The route with id:" + route.getEmailDef().getId() 
+					+ " has a valid email definition and it will notify its related roles and users");
+			
+			/**
+			 * First of all we set the roles and users from its ids in the object, because in the
+			 * database we will only save the ids and this methos fills the role and user lists
+			 * in the object "route.getEmailDef()" - dml 20160525
+			 */
+			try {
+				
+				new WEmailDefBL().loadRoleAndUserLists( route.getEmailDef(), currentUserId);
+			
+			} catch (WEmailDefException e) {
+				String mess = "Error trying to load role and user list from step sequence's email def"
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error(mess);
+				return;
+			}
+		
+			/**
+			 * Getting the email's "to" from the "otherEmails" field, roles and users
+			 */
+			String emailAddresses = this._extractEmailsFromRolesAndUsersOfWEmailDef(route.getEmailDef());
+			
+			/**
+			 * Creating the email with the indicated data
+			 */
+			Email email = this._createEmailFromRoute(route.getEmailDef(), emailAddresses, currentUserId);
+			
+			if (email == null){
+				String mess = "Error trying to send the email related to the route, the email is not valid";
+				logger.error(mess);
+				return;
+			}
+			
+			/**
+			 * Sending the email
+			 */
+			this._sendEmailFromRoute(email, currentUserId);
+
+		} catch (Exception e){
+			String mess = e.getMessage() + (e.getCause()!=null?". "+e.getCause():"")
+					 + (e.getClass()!=null?". "+e.getClass():"");
+			logger.error(mess);
+			return;
+		}
+		
+	}
+
+	/**
+	 * Extrae los emails de los users relacionados con los roles seleccionados
+	 * para el paso 4.16
+	 * 
+	 * @author dmuleiro 20160523
+	 * 
+	 * @return
+	 * 
+	 */
+	private String _extractEmailsFromRolesAndUsersOfWEmailDef(WEmailDef emailDef) {
+		
+		/**
+		 *  First of all we take the "other emails" field
+		 */
+		String emailAddresses = emailDef.getOtherEmails();
+		
+		/**
+		 * In second place we take the role's users emails
+		 */
+		if (emailDef.getRolesRelated() != null && !emailDef.getRolesRelated().isEmpty()){
+			
+			/**
+			 * Si es nulo lo seteamos a cadena vacia, y si no acaba en coma se la agregamos
+			 * para seguir añadiendole direcciones
+			 */
+			if (emailAddresses == null){
+				emailAddresses = "";
+			} else if (!emailAddresses.trim().endsWith(",")){
+				emailAddresses += ", ";
+			}
+			
+			for (WRoleDef rol : emailDef.getRolesRelated()) {
+				
+				if (rol != null && rol.getUsersRelated() != null
+						&& !rol.getUsersRelated().isEmpty()){
+					
+					emailAddresses += rol.getUsersRelatedEmailsAsString() + ", ";
+					
+				}
+			}
+			
+			if (emailAddresses != null && emailAddresses.length() >= 2){
+				emailAddresses = emailAddresses.substring(0, emailAddresses.lastIndexOf(","));
+			}
+			
+		}
+
+		/**
+		 * In third place we take the user emails
+		 */
+		if (emailDef.getUsersRelated() != null && !emailDef.getUsersRelated().isEmpty()){
+			
+			/**
+			 * Si es nulo lo seteamos a cadena vacia, y si no acaba en coma se la agregamos
+			 * para seguir añadiendole direcciones
+			 */
+			if (emailAddresses == null){
+				emailAddresses = "";
+			} else if (!emailAddresses.trim().endsWith(",")){
+				emailAddresses += ", ";
+			}
+			
+			for (WUserDef user : emailDef.getUsersRelated()) {
+				
+				if (user != null && user.getEmail() != null){
+					
+					emailAddresses += user.getEmail() + ", ";
+					
+				}
+			}
+			
+			if (emailAddresses != null && emailAddresses.length() >= 2){
+				emailAddresses = emailAddresses.substring(0, emailAddresses.lastIndexOf(","));
+			}
+			
+		}
+
+		return emailAddresses;
+	}
+
+	/**
+	 * Construye el email con los datos que tenemos para el paso 4.16
+	 * 
+	 * @author dmuleiro 20160523
+	 * 
+	 * @param emailDef
+	 * @param emailAddresses
+	 * @param currentUserId
+	 * @return
+	 * 
+	 */
+	private Email _createEmailFromRoute(WEmailDef emailDef, String emailAddresses, Integer currentUserId) {
+		
+		if (emailDef.getEmailTemplate() == null || emailDef.getEmailTemplate().getId() == null
+				|| emailDef.getEmailTemplate().getId().equals(0)){
+			String mess = "Error trying to send the email definition related to the route, it has not a valid template";
+			logger.error(mess);
+			return null;
+		}
+		if (emailDef.getEmailTemplate().getDefaultEmailAccount() == null 
+				|| emailDef.getEmailTemplate().getDefaultEmailAccount().getId() == null
+				|| emailDef.getEmailTemplate().getDefaultEmailAccount().getId().equals(0)){
+			String mess = "Error trying to send the email definition related to the route, it has not a valid sender email account";
+			logger.error(mess);
+			return null;
+		}
+		
+		
+		try {
+			
+			Email email = new EmailUtilBL().createEmailMessage(emailAddresses, 
+					emailDef.getEmailTemplate().getDefaultEmailAccount(), 
+					!SAVE_IN_BEEBLOS, !SAVE_IN_EMAIL_TRAY, 
+					emailDef.getEmailTemplate().getSubject(), 
+					emailDef.getEmailTemplate().getHtmlTemplate());
+			
+			/**
+			 * If the email is marked as Bcc all emails has to be sent as BCC - dml 20160525
+			 */
+			String emailBcc = null;
+			if (!emailDef.isEmailDestinationFieldBcc()){
+				email.setBcc(emailBcc);
+			} else {
+				email.setTo(null);
+				email.setBcc(emailAddresses);
+			}
+			
+			return email;
+			
+		} catch (CreateEmailException e) {
+			String mess = "Error trying to create the email to send in the route process"
+					+". "+e.getMessage()+" "+(e.getCause()!=null?e.getCause():"");
+			logger.error(mess);
+			return null;
+		}
+
+	}
+
+	/**
+	 * Envia el email indispensable para el paso 4.16
+	 * 
+	 * @author dmuleiro 20160523
+	 * 
+	 * @param email
+	 * 
+	 */
+	private void _sendEmailFromRoute(Email email, Integer currentUserId) {
+		
+		try {
+			
+			new SendEmailBL().sendEmail(email, BEEBLOS_DEFAULT_REPOSITORY_ID, 
+					BEEBLOS_DEFAULT_DOCCLASSID_EMAIL, currentUserId);
+			
+		} catch (SendEmailException e) {
+			String message = "Error trying to send the email definition related to the current route"
+					+". "+e.getMessage()+" "+(e.getCause()!=null?e.getCause():"");
+			logger.error(message);
+			return;
+		} catch (BeeblosBLException e) {
+			String message = "Error trying to send the email definition related to the current route"
+					+". "+e.getMessage()+" "+(e.getCause()!=null?e.getCause():"");
+			logger.error(message);
+			return;
+		}
 	}
 
 	/**

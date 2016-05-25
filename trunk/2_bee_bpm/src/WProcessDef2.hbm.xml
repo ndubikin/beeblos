@@ -1401,6 +1401,12 @@
 			type="java.lang.Integer">
 			<column name="mod_user" />
 		</property>
+
+		<!-- dml 20160525 -->
+		<many-to-one class="org.beeblos.bpm.core.model.WEmailDef"
+			column="id_email_def" lazy="false" fetch="join" cascade="all"
+			name="emailDef" />
+
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef" 
 			column="id_origin_step" lazy="false" fetch="join" name="fromStep" />
 		<many-to-one class="org.beeblos.bpm.core.model.WStepDef"
@@ -2412,6 +2418,65 @@
 		<property name="comments" type="string">
 			<column name="comments" />
 		</property>
+	</class>
+
+	<!-- dml 20160525 -->
+	<class name="org.beeblos.bpm.core.model.WEmailDef" table="w_email_def">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+
+		<property name="sendEmailIsActive" type="java.lang.Boolean">
+			<column name="send_email_is_active" sql-type="bit" />
+		</property>
+		
+		<property name="emailDestinationFieldBcc" type="java.lang.Boolean">
+			<column name="email_destination_field_bcc" sql-type="bit" />
+		</property>
+
+		<property generated="never" lazy="false" name="idObject" type="java.lang.Integer">
+			<column name="id_object" />
+		</property>
+		<property generated="never" lazy="false" name="idObjectType" type="string">
+			<column name="id_object_type" />
+		</property>
+
+		<property generated="never" lazy="false" name="otherEmails" type="string">
+			<column name="other_emails" />
+		</property>
+
+		<property name="rolesRelatedIdList"
+			type="com.sp.common.model.usertype.IntegerArrayUserType">
+			<column name="id_roles_related" />
+		</property>
+
+		<property name="usersRelatedIdList"
+			type="com.sp.common.model.usertype.IntegerArrayUserType">
+			<column name="id_users_related" />
+		</property>
+
+		<property generated="never" lazy="false" name="addDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="add_date" />
+		</property>
+		<property generated="never" lazy="false" name="addUser"
+			type="java.lang.Integer">
+			<column name="add_user" />
+		</property>
+		<property generated="never" lazy="false" name="modDate" 
+			type="org.jadira.usertype.dateandtime.joda.PersistentDateTime">
+			<column name="mod_date" />
+		</property>
+		<property generated="never" lazy="false" name="modUser"
+			type="java.lang.Integer">
+			<column name="mod_user" />
+		</property>
+
+		<many-to-one class="com.sp.common.core.model.EmailTemplate"
+			column="id_email_template" lazy="false" fetch="join" cascade="all"
+			name="emailTemplate" />
+
 	</class>
 
 	<!-- returns a list of all runtime role ids in the system -->
