@@ -912,9 +912,13 @@ public class WStepDefDao {
 //
 //				tx.commit();
 
-				lwsd = session
-							.createQuery("Select Distinct w.id, w.stepHead.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws WHERE ws.process.id=? and w.id=ws.fromStep.id order by w.stepHead.name")
-							.setParameter(0, processDefId)
+				String query = " Select Distinct w.id, w.stepHead.name, w.stepComments ";
+				query += " From WStepDef w, WStepSequenceDef ws  ";
+				// dml 20160530 - in order to get the steps of a particular process, we must include the "toStep" of its sequences, not only the "fromStep"
+				query += " Where ws.process.id= :processDefId And (w.id=ws.fromStep.id Or w.id=ws.toStep.id) Order By w.stepHead.name";
+				
+				lwsd = session.createQuery(query)
+							.setParameter("processDefId", processDefId)
 							.list();
 				
 				tx.commit();
