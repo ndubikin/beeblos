@@ -622,4 +622,7 @@ ADD CONSTRAINT `fk_email_def_step_seq`
     
 ## dml 20160525 - nuevo email template grupo para las plantillas "Managed" por objetos del workflow
 INSERT INTO `email_template_theme` (`id`, `name`) VALUES ('12', 'Managed');
-    
+
+## nes 20160527
+ALTER TABLE `w_process_head` 
+ADD COLUMN `short_name` VARCHAR(45) NULL AFTER `name`;

@@ -26,7 +26,18 @@ public class WProcessHead implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
+	/**
+	 * Process name
+	 */
 	private String name;
+	/**
+	 * process short name
+	 * nes 20160527
+	 */
+	private String shortName;
+	/**
+	 * process related comments and other info
+	 */
 	private String comments;
 	
 	/**
@@ -113,6 +124,22 @@ public class WProcessHead implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * nes 20160527
+	 * @return the shortName
+	 */
+	public String getShortName() {
+		return shortName;
+	}
+
+	/**
+	 * nes 20160527
+	 * @param shortName the shortName to set
+	 */
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 
 	@XmlAttribute(name="description")
@@ -208,32 +235,31 @@ public class WProcessHead implements java.io.Serializable {
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result + ((comments == null) ? 0 : comments.hashCode());
+		result = prime * result + ((externalMethod == null) ? 0 : externalMethod.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((insertDate == null) ? 0 : insertDate.hashCode());
-		result = prime * result
-				+ ((insertUser == null) ? 0 : insertUser.hashCode());
-		result = prime
-				* result
-				+ ((managedTableConfiguration == null) ? 0
-						: managedTableConfiguration.hashCode());
+		result = prime * result + ((insertDate == null) ? 0 : insertDate.hashCode());
+		result = prime * result + ((insertUser == null) ? 0 : insertUser.hashCode());
+		result = prime * result + ((managedTableConfiguration == null) ? 0 : managedTableConfiguration.hashCode());
 		result = prime * result + ((modDate == null) ? 0 : modDate.hashCode());
 		result = prime * result + ((modUser == null) ? 0 : modUser.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime
-				* result
-				+ ((processDataFieldDef == null) ? 0 : processDataFieldDef
-						.hashCode());
+		result = prime * result + ((processDataFieldDef == null) ? 0 : processDataFieldDef.hashCode());
+		result = prime * result + ((shortName == null) ? 0 : shortName.hashCode());
 		return result;
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -247,6 +273,11 @@ public class WProcessHead implements java.io.Serializable {
 			if (other.comments != null)
 				return false;
 		} else if (!comments.equals(other.comments))
+			return false;
+		if (externalMethod == null) {
+			if (other.externalMethod != null)
+				return false;
+		} else if (!externalMethod.equals(other.externalMethod))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -266,8 +297,7 @@ public class WProcessHead implements java.io.Serializable {
 		if (managedTableConfiguration == null) {
 			if (other.managedTableConfiguration != null)
 				return false;
-		} else if (!managedTableConfiguration
-				.equals(other.managedTableConfiguration))
+		} else if (!managedTableConfiguration.equals(other.managedTableConfiguration))
 			return false;
 		if (modDate == null) {
 			if (other.modDate != null)
@@ -289,28 +319,33 @@ public class WProcessHead implements java.io.Serializable {
 				return false;
 		} else if (!processDataFieldDef.equals(other.processDataFieldDef))
 			return false;
+		if (shortName == null) {
+			if (other.shortName != null)
+				return false;
+		} else if (!shortName.equals(other.shortName))
+			return false;
 		return true;
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		final int maxLen = 2;
-		return "WProcessHead ["
-				+ (id != null ? "id=" + id + ", " : "")
-				+ (name != null ? "name=" + name + ", " : "")
+		return "WProcessHead [" + (id != null ? "id=" + id + ", " : "") + (name != null ? "name=" + name + ", " : "")
+				+ (shortName != null ? "shortName=" + shortName + ", " : "")
 				+ (comments != null ? "comments=" + comments + ", " : "")
-				+ (managedTableConfiguration != null ? "managedTableConfiguration="
-						+ managedTableConfiguration + ", "
+				+ (managedTableConfiguration != null ? "managedTableConfiguration=" + managedTableConfiguration + ", "
 						: "")
-				+ (processDataFieldDef != null ? "processDataFieldDef="
-						+ toString(processDataFieldDef, maxLen) + ", " : "")
-				+ (externalMethod != null ? "externalMethod="
-						+ toString(externalMethod, maxLen) + ", " : "")
+				+ (processDataFieldDef != null ? "processDataFieldDef=" + toString(processDataFieldDef, maxLen) + ", "
+						: "")
+				+ (externalMethod != null ? "externalMethod=" + toString(externalMethod, maxLen) + ", " : "")
 				+ (insertDate != null ? "insertDate=" + insertDate + ", " : "")
 				+ (insertUser != null ? "insertUser=" + insertUser + ", " : "")
-				+ (modDate != null ? "modDate=" + modDate + ", " : "")
-				+ (modUser != null ? "modUser=" + modUser : "") + "]";
+				+ (modDate != null ? "modDate=" + modDate + ", " : "") + (modUser != null ? "modUser=" + modUser : "")
+				+ "]";
 	}
 
 
@@ -333,6 +368,7 @@ public class WProcessHead implements java.io.Serializable {
 
 		if (id!=null && ! id.equals(0)) return false;
 		if (name!=null && ! "".equals(name)) return false;
+		if (shortName!=null && ! "".equals(shortName)) return false;
 		if (comments!=null && ! "".equals(comments)) return false;
 		
 		return true;
