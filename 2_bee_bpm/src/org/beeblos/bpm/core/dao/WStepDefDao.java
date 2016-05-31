@@ -872,7 +872,15 @@ public class WStepDefDao {
 
 	}
 	
-	// returns a list with step names
+	/**
+	 * returns a list with step names for a given processDef id
+	 * 
+	 * @param processDefId
+	 * @param firstLineText
+	 * @param blank
+	 * @return
+	 * @throws WProcessDefException
+	 */
 	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			Integer processDefId, String firstLineText, String blank )
@@ -912,10 +920,14 @@ public class WStepDefDao {
 //
 //				tx.commit();
 
-				String query = " Select Distinct w.id, w.stepHead.name, w.stepComments ";
-				query += " From WStepDef w, WStepSequenceDef ws  ";
+				/**
+				 * load step list referred for a given process. Step list will be deduced from steppDefs pointed by a route (WStepSequendeDef) belonging
+				 * process
+				 */
+				String query = " Select Distinct stepDef.id, stepDef.stepHead.name, stepDef.stepComments ";
+				query += " From WStepDef stepDef, WStepSequenceDef route  ";
 				// dml 20160530 - in order to get the steps of a particular process, we must include the "toStep" of its sequences, not only the "fromStep"
-				query += " Where ws.process.id= :processDefId And (w.id=ws.fromStep.id Or w.id=ws.toStep.id) Order By w.stepHead.name";
+				query += " Where route.process.id= :processDefId And (stepDef.id=route.fromStep.id Or stepDef.id=route.toStep.id) Order By stepDef.stepHead.name";
 				
 				lwsd = session.createQuery(query)
 							.setParameter("processDefId", processDefId)
