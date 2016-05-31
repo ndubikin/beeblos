@@ -428,7 +428,21 @@ public class WorkflowEditorMxBL {
 		
 		// lo codificamos para devolverlo con nuestra BL
 		returnValue = mxGraphMapManagerBL.encodeMxGraphIntoXmlMap(graph);
-			
+
+		/**
+		 * Cuando hacemos de nuevo el "encodeMxGraphIntoXmlMap" del mapa, las comillas simples
+		 * que estaban representadas en el mapa por su codigo ascii "&#x27;" se vuelven a sustituir
+		 * por comillas simples.
+		 * 
+		 * Para devolverlas a su codigo ascii agregamos este "replace" en el String, de lo 
+		 * contrario no funcionaria el pintado del mapa en el navegador 
+		 * 
+		 * @author dmuleiro 20160531
+		 */
+		if (returnValue != null && returnValue.contains("'")){
+			returnValue = returnValue.replace("'", "&#x27;");
+		}
+		
 		return returnValue;
 
 	}
