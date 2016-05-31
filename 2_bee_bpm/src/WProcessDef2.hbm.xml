@@ -12,6 +12,9 @@
 		<property generated="never" lazy="false" name="name" type="string">
 			<column name="name" />
 		</property>
+		<property name="shortName" generated="never" lazy="false" type="string">
+			<column name="short_name" />
+		</property>
 		<property generated="never" lazy="false" name="comments"
 			type="string">
 			<column name="comments" />
@@ -63,6 +66,9 @@
 		</id>
 		<property generated="never" lazy="false" name="name" type="string">
 			<column name="name" />
+		</property>
+		<property name="shortName" generated="never" lazy="false" type="string">
+			<column name="short_name" />
 		</property>
 	</class>
 

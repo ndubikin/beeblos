@@ -1915,7 +1915,7 @@ public class WStepWorkBL {
 	 * @author dmuleiro 20160525
 	 */
 	private void _executeSendRelatedEmail(WStepSequenceDef route, Integer currentUserId){
-		
+		logger.debug(">>> _executeSendRelatedEmail user:"+(currentUserId!=null?currentUserId:"null"));
 		try {
 			
 			if (route.getEmailDef() == null || route.getEmailDef().getId() == null 
@@ -1932,17 +1932,18 @@ public class WStepWorkBL {
 			
 			// Here it begins the code to create the email and send it to the roles/users set in the
 			// WEmailDef associated
-			logger.debug("The route with id:" + route.getEmailDef().getId() 
-					+ " has a valid email definition and it will notify its related roles and users");
+			logger.debug(">>> route with id:" + route.getId() 
+					+ " has a valid email definition ("
+					+ route.getEmailDef().getId() +") and it will notify its related roles and users");
 			
 			/**
-			 * First of all we set the roles and users from its ids in the object, because in the
+			 * load role and user list from its ids in the object, because in the
 			 * database we will only save the ids and this methos fills the role and user lists
 			 * in the object "route.getEmailDef()" - dml 20160525
 			 */
 			try {
 				
-				new WEmailDefBL().loadRoleAndUserLists( route.getEmailDef(), currentUserId);
+				new WEmailDefBL().loadRoleAndUserList( route.getEmailDef(), currentUserId);
 			
 			} catch (WEmailDefException e) {
 				String mess = "Error trying to load role and user list from step sequence's email def"
@@ -1974,8 +1975,10 @@ public class WStepWorkBL {
 			this._sendEmailFromRoute(email, currentUserId);
 
 		} catch (Exception e){
-			String mess = e.getMessage() + (e.getCause()!=null?". "+e.getCause():"")
-					 + (e.getClass()!=null?". "+e.getClass():"");
+			String mess = "ERROR!!! trying _executeSendRelatedEmail from route... : userid:"
+						+ (currentUserId!=null?currentUserId:"null")+" err:"
+						+  e.getMessage() + " "+(e.getCause()!=null?". "+e.getCause():"")+" "
+						+ (e.getClass()!=null?". "+e.getClass():"");
 			logger.error(mess);
 			return;
 		}

@@ -151,11 +151,21 @@ public class WProcessWork implements java.io.Serializable {
 	}
 	/**
 	 * convenience method to return process name (stored in processHead)
+	 * nes 20160527
+	 * @return
+	 */
+	public String getShortName() {
+		return this.processDef.getProcessHead().getShortName();
+	}
+
+	/**
+	 * convenience method to return process name (stored in processHead)
 	 * @return
 	 */
 	public String getName() {
 		return this.processDef.getProcessHead().getName();
 	}
+
 	
 	public Integer getId() {
 		return this.id;

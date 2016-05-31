@@ -107,7 +107,7 @@ public class WEmailDefBL {
 	 * @throws WEmailDefException 
 	 *
 	 */
-	public void loadRoleAndUserLists(WEmailDef emailDef, Integer currentUserId) throws WEmailDefException {
+	public void loadRoleAndUserList(WEmailDef emailDef, Integer currentUserId) throws WEmailDefException {
 		/**
 		 * Loading roles related to show into the popup view - dml 201605125
 		 */
