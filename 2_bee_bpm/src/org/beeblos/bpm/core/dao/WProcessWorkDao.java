@@ -177,11 +177,21 @@ public class WProcessWorkDao {
 			// 1st must be delete related managed data if exists ...
 			_deleteManagedDataRow(processWork);
 
+			/**
+			 * nes 20160622 - tengo que releer para refrescar el current processWork que quiero borrar,
+			 * porque si eliminé registros del managed data en la linea anterior, el objeto queda malformado
+			 * y luego da un error de por ejemplo: Batch update returned unexpected row count from update [0]; 
+			 * actual row count: 0; expected: 1
+			 * 
+			 * Esto saltó por el lado del delete de una Orden de Pago en ANII
+			 */
+			processWork = this.getWProcessWorkByPK(processWork.getId());
+			
 			HibernateUtil.delete(processWork);
 
 		} catch (HibernateException ex) {
 			String mess = "WProcessWorkDao: delete - Can't delete proccess definition record "+ processWork.getReference() +
-					" <id = "+processWork.getId()+ "> \n"+" - "+ex.getMessage()+"\n"+ex.getCause();
+					" id:"+processWork.getId()+ " "+" - "+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ");
 			logger.error(mess);
 			throw new WProcessWorkException(mess);
 
@@ -218,13 +228,22 @@ public class WProcessWorkDao {
 									schemaName, 
 									tableName, 
 									processWork.getId());
+
+					// nes 20160622 - coloque aquí que es el sitio correcto...
+					logger.info(">> managed data has been deleted ...");
+					
 				} catch (TableManagerException e) {
-					logger.error(e.getMessage());
+					// nes 20160622
+					String mess = "TableManagerException _deleteManagedDataRow: error deleting related managed data records "
+							+ processWork.getReference() +
+							" id:"+processWork.getId()+ " "+" - "+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ");
+					logger.error(mess);
+
 				}
 				
 			}
 
-			logger.debug(">> managed data has been deleted ...");
+
 			
 		}
 	}
