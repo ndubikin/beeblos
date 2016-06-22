@@ -422,7 +422,8 @@ public class WStepWorkBL {
 					throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
 							WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
 							WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
-		logger.debug(">>> processStep >> id:"+( idStepWork!=null?idStepWork:"null") );
+		logger.debug(">>> processStep >> id:"+( idStepWork!=null?idStepWork:"null") 
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 
 		// NOTA NESTOR: VER POR QUE NO ESTOY CONTROLANDO QUE MANDEN LAS COSAS EN NULL: idStepWork, idResponse, runtimeSettings
 		// processingDirection no deberian ser null...
@@ -600,7 +601,7 @@ public class WStepWorkBL {
 	public void uploadFileInfoList(Integer idWProcessWork, List<FileSP> newAttachedDocuments, 
 			Integer currentUserId) {
 
-		logger.debug(">>> uploadFileInfoList init");
+		logger.debug(">>> uploadFileInfoList init"+" user:"+(currentUserId!=null?currentUserId:"null"));
 
 		if (newAttachedDocuments == null || newAttachedDocuments.isEmpty()){
 			return;
@@ -628,16 +629,16 @@ public class WStepWorkBL {
 
 
 	
-	public Integer add(WStepWork stepw, Integer currentUser) throws WStepWorkException {
+	public Integer add(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
 		
 		logger.debug("add() WStepWork - CurrentStep-Work: ["+stepw.getCurrentStep().getName()
-				+"-"+stepw.getwProcessWork().getReference()+"]");
+				+"-"+stepw.getwProcessWork().getReference()+"]"+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		// timestamp & trace info
 		stepw.setArrivingDate(new DateTime());
-		stepw.setInsertUser( new WUserDef(currentUser) );
+		stepw.setInsertUser( new WUserDef(currentUserId) );
 		stepw.setModDate( DEFAULT_MOD_DATE_TIME);
-		stepw.setModUser(currentUser);
+		stepw.setModUser(currentUserId);
 		return new WStepWorkDao().add(stepw);
 
 	}
@@ -677,7 +678,8 @@ public class WStepWorkBL {
 	 * @throws WStepWorkException
 	 */
 	public void update(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
-		logger.debug(">>> update WStepWork id:" + (stepw!=null && stepw.getId()!=null?stepw.getId():"null") );
+		logger.debug(">>> update WStepWork id:" + (stepw!=null && stepw.getId()!=null?stepw.getId():"null") 
+				+" userId:"+(currentUserId!=null?currentUserId:"null"));
 		
 		if ( !stepw.equals(new WStepWorkDao().getWStepWorkByPK(stepw.getId())) ) {
 			logger.debug(">>>>>>>> 0");
@@ -695,9 +697,10 @@ public class WStepWorkBL {
 	}
 	
 	
-	public void delete(WStepWork stepw, Integer currentUser) throws WStepWorkException {
+	public void delete(WStepWork stepw, Integer currentUserId) throws WStepWorkException {
 
-		logger.info("delete() WStepWork - Name: ["+stepw.getId()+"] user:"+currentUser);
+		logger.info("delete() WStepWork - Name:"+stepw.getId()
+		+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		new WStepWorkDao().delete(stepw);
 
@@ -1429,18 +1432,19 @@ public class WStepWorkBL {
 	 * Returns a unlocked stepWork 
 	 * 
 	 * @param idStepWork
-	 * @param currentUser
+	 * @param currentUserId
 	 * @return
 	 * @throws WStepNotLockedException
 	 * @throws WStepLockedByAnotherUserException
 	 * @throws WStepWorkException
 	 */
 	public WStepWork getStep (
-			Integer idStepWork, Integer currentUser ) 
+			Integer idStepWork, Integer currentUserId ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
-		logger.debug(">> getStep - returns an unlocked step - idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">> getStep - returns an unlocked step - idStepWork:"+(idStepWork!=null?idStepWork:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
-		return new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+		return new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUserId);
 		
 	}
 	
@@ -1451,22 +1455,23 @@ public class WStepWorkBL {
 	 * Returns a locked stepWork
 	 * 
 	 * @param idStepWork
-	 * @param currentUser
+	 * @param currentUserId
 	 * @return
 	 * @throws WStepLockedByAnotherUserException
 	 * @throws CantLockTheStepException
 	 * @throws WStepWorkException
 	 */
 	public WStepWork getStepWithLock (
-			Integer idStepWork, Integer currentUser ) 
+			Integer idStepWork, Integer currentUserId ) 
 	throws WStepLockedByAnotherUserException,  WStepNotLockedException, WStepWorkException {
-		logger.debug(">> getStepWithLock idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">> getStepWithLock idStepWork:"+(idStepWork!=null?idStepWork:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 	
 		WStepWork storedStep;
 		
 		try {
 			
-			storedStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+			storedStep = new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUserId);
 			
 		} catch (WStepWorkException e) {
 			String message = "The indicated step ("
@@ -1484,14 +1489,14 @@ public class WStepWorkBL {
 		
 		try {
 			
-			_checkPreLockStepWork(idStepWork, currentUser, idObject, idObjectType, storedStep); // step is active an is not processed nor locked by another user
+			_checkPreLockStepWork(idStepWork, currentUserId, idObject, idObjectType, storedStep); // step is active an is not processed nor locked by another user
 
 			// set open date for the stepWork
-			_setOpenInfo(currentUser, storedStep);
+			_setOpenInfo(currentUserId, storedStep);
 			
 			// TODO IMPLEMENTAR CORRECTAMENTE ESTO ...
 			boolean isAdmin=false;
-			_lockStep(storedStep.getId(), currentUser, isAdmin);
+			_lockStep(storedStep.getId(), currentUserId, isAdmin);
 			
 		} catch ( WStepWorkException swe ) {  // if can't lock it returns exception ...
 				String message = "The indicated step ("
@@ -1504,7 +1509,7 @@ public class WStepWorkBL {
 				throw new WStepNotLockedException(message);
 		} catch (WUserDefException e) {
 			String message = "Current user indicated does not exist or have a problem ("
-					+ currentUser
+					+ currentUserId
 					+ ") The step can't be locked ..." 
 					+ e.getMessage() + " - "
 					+ e.getCause();
@@ -1520,21 +1525,22 @@ public class WStepWorkBL {
 	/**
 	 * confirms a wStepWork is locked (required condition to process it...)
 	 * @param idStepWork
-	 * @param currentUser
+	 * @param currentUserId
 	 * @param isAdminUser
 	 * @return
 	 * @throws WStepLockedByAnotherUserException
 	 */
 	public boolean checkLock( 
-			Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
+			Integer idStepWork, Integer currentUserId, boolean isAdminUser ) 
 					throws WStepLockedByAnotherUserException {
-		logger.debug(">>> checkLock ... id:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">>> checkLock ... id:"+(idStepWork!=null?idStepWork:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		boolean locked=false;
 		
 		try {
 			
-			locked = new WStepWorkDao().isLockedByUser(idStepWork, currentUser);
+			locked = new WStepWorkDao().isLockedByUser(idStepWork, currentUserId);
 			
 			if ( !locked  ) {  // nes 20140208
 				logger.info("the step id:"+idStepWork+" is not locked ...");
@@ -1549,9 +1555,10 @@ public class WStepWorkBL {
 	}
 	
 
-	public void checkStatus( Integer idStepWork, Integer currentUser, boolean isAdminUser ) 
+	public void checkStatus( Integer idStepWork, Integer currentUserId, boolean isAdminUser ) 
 			throws WStepAlreadyProcessedException, WStepWorkException  {
-		logger.debug(">> checkStatus idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">> checkStatus idStepWork:"+(idStepWork!=null?idStepWork:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		try {
 			
@@ -1575,22 +1582,23 @@ public class WStepWorkBL {
 	
 	// unlock given step
 	public Boolean unlockStep (
-			Integer idStepWork, Integer currentUser, boolean isAdmin ) 
+			Integer idStepWork, Integer currentUserId, boolean isAdmin ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
-		logger.debug(">> unlockStep idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">> unlockStep idStepWork:"+(idStepWork!=null?idStepWork:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		// get the step
 		WStepWork stepToUnlock = 
-				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUser);
+				new WStepWorkBL().getWStepWorkByPK(idStepWork, currentUserId);
 		
 		
 		// checks it and unlock
 		if ( stepToUnlock.isLocked() && 
-				( stepToUnlock.getLockedBy().getId().equals(currentUser) || // nes 20111218
+				( stepToUnlock.getLockedBy().getId().equals(currentUserId) || // nes 20111218
 						isAdmin ||
-						currentUser.equals(OMNIADMIN) ) ) {
+						currentUserId.equals(OMNIADMIN) ) ) {
 
-			this._unlockStep(stepToUnlock, currentUser, (isAdmin || currentUser.equals(OMNIADMIN)));
+			this._unlockStep(stepToUnlock, currentUserId, (isAdmin || currentUserId.equals(OMNIADMIN)));
 
 		} else if ( ! stepToUnlock.isLocked() ){
 			String message = "The indicated step ("+ stepToUnlock.getId() +")is not locked " ;
@@ -1626,7 +1634,8 @@ public class WStepWorkBL {
 	public Boolean lockStep (
 			Integer idStepWork, Integer lockUserId, Integer currentUserId, boolean isAdminUser ) 
 	throws WStepNotLockedException, WStepLockedByAnotherUserException, WStepWorkException {
-		logger.debug(">> lockStep idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">> lockStep idStepWork:"+(idStepWork!=null?idStepWork:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		// get the step
 //		WStepWork stepToLock = 
@@ -1664,7 +1673,8 @@ public class WStepWorkBL {
 	 */
 	private void _lockStep( Integer idStepWork, Integer currentUserId, boolean isAdmin )
 			throws WStepWorkException, WStepLockedByAnotherUserException {
-		logger.debug(">> _lockStep 2 idStepWork:"+(idStepWork!=null?idStepWork:"null"));
+		logger.debug(">> _lockStep 2 idStepWork:"+(idStepWork!=null?idStepWork:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		// IMPLEMENTAR BIEN ESTO Y CHEQUEAR EL USUARIO QUE LOCKEA EL PASO
 		
@@ -1746,7 +1756,8 @@ public class WStepWorkBL {
 		if (logger.isDebugEnabled()){
 			logger.debug(">>> _executeProcessStep >> idStepWork"+currentStepWork.getId()
 					+" isAdminProcess:"+isAdminProcess
-					+" idResponse:"+idResponse);
+					+" idResponse:"+idResponse
+					+" user:"+(currentUserId!=null?currentUserId:"null"));
 		}
 		
 		Integer qty=0;
@@ -1915,7 +1926,8 @@ public class WStepWorkBL {
 	 * @author dmuleiro 20160525
 	 */
 	private void _executeSendRelatedEmail(WStepSequenceDef route, Integer currentUserId){
-		logger.debug(">>> _executeSendRelatedEmail user:"+(currentUserId!=null?currentUserId:"null"));
+		logger.debug(">>> _executeSendRelatedEmail user:"+(currentUserId!=null?currentUserId:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		try {
 			
 			if (route.getEmailDef() == null || route.getEmailDef().getId() == null 
@@ -2367,7 +2379,8 @@ public class WStepWorkBL {
 	 */
 	public void _assignUsersToRuntimeRoles(WProcessWork processWork, Integer currentUserId){
 		logger.debug(">>> _assignUsersToRuntimeRoles ... idProcessDef:"
-					+(processWork!=null?processWork.getProcessDef().getId():"null"));
+					+(processWork!=null?processWork.getProcessDef().getId():"null")
+					+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		try {
 			// get runtime role list
@@ -2431,7 +2444,8 @@ public class WStepWorkBL {
 			Object objList, // nes 20160311 - generalized for 3 situations... 
 			WRoleDef role, Integer currentUserId) {
 		logger.debug(">>> _assignRuntimeUsersToRole:"+(role!=null?role.getId():"null")
-				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null"));
+				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 
 		try {
 			if (objList!=null) {
@@ -2459,7 +2473,8 @@ public class WStepWorkBL {
 	private Object _loadRuntimeUserListFromExternalMethod(WProcessWork processWork, 
 			WRoleDef role, Integer currentUserId){
 		logger.debug(">>> _loadRuntimeUserListFromExternalMethod:"+(role!=null?role.getId():"null")
-				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null"));
+				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		/**
 		 * Obtains the user id list from external method
@@ -2510,7 +2525,8 @@ public class WStepWorkBL {
 	private Object _loadRuntimeUserListFromNamedQuery(WProcessWork processWork, 
 			WRoleDef role, Integer currentUserId){
 		logger.debug(">>> _loadRuntimeUserListFromNamedQuery:"+(role!=null?role.getId():"null")
-				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null"));
+				+" idExternalMethod:"+(role.getIdExternalMethod()!=null?role.getIdExternalMethod():"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		if (role==null || role.getId()==null || role.getId()==0) {
 			logger.error("ERROR _loadRuntimeUserListFromNamedQuery - role is NULL!!!");
@@ -2553,7 +2569,7 @@ public class WStepWorkBL {
 	 * @param swaList
 	 */
 	private void _addRuntimeUserToRole(Object objList, WRoleDef role, Integer processWorkId, Integer currentUserId){
-		logger.debug(">>> processReturnedIdUser");
+		logger.debug(">>> processReturnedIdUser"+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		List<WUserRoleWork> urwList = new ArrayList<WUserRoleWork>();
 		
@@ -2601,7 +2617,7 @@ public class WStepWorkBL {
 	 */
 	private List<WStepWorkAssignment> _assignRuntimeUsers(
 			WStepWork stepWork, Integer idOriginatorUser, Integer idExternalMethod, Integer currentUserId) {
-		logger.debug("--->_assignRuntimeUsers");
+		logger.debug("--->_assignRuntimeUsers"+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		List<WStepWorkAssignment> swaList = new ArrayList<WStepWorkAssignment>();
 		
@@ -2675,7 +2691,7 @@ public class WStepWorkBL {
 	 * @param swaList
 	 */
 	private void _addExternalMethodReturnedUsersToList(Object objList, List<WStepWorkAssignment> swaList){
-		logger.debug(">>> processReturnedIdUser");
+		logger.debug(">>> processReturnedIdUser" );
 		
 		if (objList instanceof ArrayList<?> ) {
 
@@ -2706,7 +2722,7 @@ public class WStepWorkBL {
 	 * @param currentUserId
 	 */
 	private void _sendEmailNotification(WStepWork newStep, Integer currentUserId) {
-		logger.debug(">>> _sendEmailNotification");
+		logger.debug(">>> _sendEmailNotification"+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		if ( newStep.getCurrentStep().isEmailNotification()  ) {		
 			try {
@@ -2737,7 +2753,8 @@ public class WStepWorkBL {
 	private Object _executeExternalMethod(
 			Object[] objList, Integer methodId, Integer currentUserId) // nes 20141215
 					throws InstantiationException, IllegalAccessException {
-		logger.debug(">>>_executeExternalMethod id:"+(methodId!=null?methodId:"null"));
+		logger.debug(">>>_executeExternalMethod id:"+(methodId!=null?methodId:"null")
+				+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		if (methodId==null || methodId==0){
 			logger.warn("_executeExternalMethod: no method id arrives!!!");
@@ -2805,7 +2822,7 @@ public class WStepWorkBL {
 	 */
 	private void _executeRouteExternalMethodSafe(
 			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) {
-		logger.debug(">>>_executeRouteExternalMethod check...");
+		logger.debug(">>>_executeRouteExternalMethod check..."+" user:"+(currentUserId!=null?currentUserId:"null"));
 
 		try {
 			if (route.getExternalMethod()!=null && route.getExternalMethod().size()>0){
@@ -3063,7 +3080,7 @@ public class WStepWorkBL {
 	 */
 	private void _sendArrivingStepEmailNotifications( 
 			WStepWork stepWork, Integer currentUserId ) throws SendEmailException {
-		logger.debug(">>> _sendArrivingStepEmailNotifications init");
+		logger.debug(">>> _sendArrivingStepEmailNotifications init"+" user:"+(currentUserId!=null?currentUserId:"null"));
 		
 		if ( !stepWork.getCurrentStep().isArrivingAdminNotice() 
 				&& !stepWork.getCurrentStep().isArrivingUserNotice()) {
@@ -3733,7 +3750,8 @@ public class WStepWorkBL {
 	private void _setCurrentWorkitemToProcessed( WStepWork currentStep, WRuntimeSettings runtimeSettings,
 			Integer idResponse,	DateTime now, Integer currentUserId) throws WStepWorkException {
 		logger.debug(">>> _setCurrentWorkitemToProcessed currentStep id:"
-			+(currentStep!=null && currentStep.getId()!=null?currentStep.getId():"null")); // nes 20141125
+			+(currentStep!=null && currentStep.getId()!=null?currentStep.getId():"null")
+			+" user:"+(currentUserId!=null?currentUserId:"null")); // nes 20141125
 		
 		currentStep.setDecidedDate( now );
 		currentStep.setPerformer(new WUserDef(currentUserId));// nes 20120126

@@ -51,7 +51,8 @@ public class DevelopmentBL {
 	public boolean purgeProcessDefList(List<WProcessDef> processDefList, Integer currentUserId) 
 			throws DevelopmentException {
 
-		logger.info("DevelopmentBL.purgeProcessDef() - Begin Purge"); 
+		logger.info("DevelopmentBL.purgeProcessDef() - Begin Purge"
+				+" userId:"+(currentUserId!=null?currentUserId:"null")); 
 		
 		boolean returnValue = true;
 
@@ -84,7 +85,8 @@ public class DevelopmentBL {
 	 */
 	public boolean purgeProcessDef(WProcessDef processDef, Integer currentUserId) throws DevelopmentException {
 		
-		logger.info("DevelopmentBL.purgeProcessDef() - Beginning purge of:"+(processDef!=null?processDef.getId():"null")); 
+		logger.info("DevelopmentBL.purgeProcessDef() - Beginning purge of:"+(processDef!=null?processDef.getId():"null")
+				+" userId:"+(currentUserId!=null?currentUserId:"null")); 
 		
 		if (processDef == null || processDef.getId() == null || processDef.getId().equals(0)){
 			throw new DevelopmentException("Can't purge null process!!");
@@ -143,7 +145,8 @@ public class DevelopmentBL {
 	 */
 	private void _deleteWStepWorkSequenceList(Integer processDefId, Integer currentUserId) throws WStepWorkSequenceException{
 		
-		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step work sequences related to process : " + processDefId); 
+		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step work sequences related to process : " + processDefId
+				+" userId:"+(currentUserId!=null?currentUserId:"null")); 
 
 		WStepWorkSequenceBL wswsBL = new WStepWorkSequenceBL();
 		
@@ -179,7 +182,8 @@ public class DevelopmentBL {
 	private void _deleteWStepWorkList(Integer processDefId, Integer currentUserId) 
 			throws WProcessDefException, WStepDefException, WStepWorkException {
 		
-		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step works related to process : " + processDefId); 
+		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting step works related to process : " + processDefId
+				+" userId:"+(currentUserId!=null?currentUserId:"null")); 
 
 		WStepWorkBL wswBL = new WStepWorkBL();
 		
@@ -216,7 +220,8 @@ public class DevelopmentBL {
 	private void _deleteWProcessWorkAndWMTList(Integer processDefId, Integer currentUserId) 
 			throws WProcessWorkException, ClassNotFoundException, SQLException, TableManagerException {
 		
-		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting process works related to process : " + processDefId); 
+		logger.info("DevelopmentBL._deleteWStepWorkSequenceList() - deleting process works related to process : " + processDefId
+				+" userId:"+(currentUserId!=null?currentUserId:"null")); 
 
 		WProcessWorkBL wpwBL = new WProcessWorkBL();
 		TableManagerBL tmBL = new TableManagerBLImpl();
@@ -262,7 +267,8 @@ public class DevelopmentBL {
 	private void _deleteWStepSequenceDefsAndStepDefs(Integer processDefId, Integer processHeadId, Integer currentUserId) 
 			throws WStepSequenceDefException, WStepWorkSequenceException, WStepDefException, WStepWorkException, WProcessDefException, WStepHeadException {
 		
-		logger.info("DevelopmentBL._deleteWStepSequenceDefAndStepDefsList() - deleting step sequence defs (checked as 'deleted') related to process : " + processDefId); 
+		logger.info("DevelopmentBL._deleteWStepSequenceDefAndStepDefsList() - deleting step sequence defs (checked as 'deleted') related to process : " + processDefId
+				+" userId:"+(currentUserId!=null?currentUserId:"null")); 
 
 		WStepSequenceDefBL wpsdBL = new WStepSequenceDefBL();
 		WStepDefBL wpdBL = new WStepDefBL();
