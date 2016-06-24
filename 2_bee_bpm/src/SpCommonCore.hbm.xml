@@ -246,6 +246,11 @@
 		<property name="loginId" type="string">
 			<column name="login_id"    />
 		</property>
+
+		<!-- dml 20160624 - anadido el email porque por email tambien vamos a permitir agregar usuarios y cambiar el password -->
+		<property name="email" type="string">
+			<column name="email"    />
+		</property>
 		<property name="password" type="string">
 			<column name="password"    />
 		</property>		
