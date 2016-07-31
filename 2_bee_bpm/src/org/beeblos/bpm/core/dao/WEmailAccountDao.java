@@ -21,7 +21,7 @@ import org.hibernate.sql.JoinType;
 
 import com.email.core.error.UserEmailAccountException;
 import com.sp.common.core.model.UserEmailAccount;
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
 /**

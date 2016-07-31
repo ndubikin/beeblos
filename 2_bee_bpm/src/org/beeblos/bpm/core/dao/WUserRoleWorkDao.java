@@ -10,7 +10,7 @@ import org.beeblos.bpm.core.model.WUserRoleWork;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 
 /**

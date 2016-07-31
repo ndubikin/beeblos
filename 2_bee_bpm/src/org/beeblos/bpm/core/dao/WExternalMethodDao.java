@@ -9,7 +9,7 @@ import org.beeblos.bpm.core.error.WExternalMethodException;
 import org.beeblos.bpm.core.model.WExternalMethod;
 import org.hibernate.HibernateException;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
 /**

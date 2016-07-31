@@ -13,7 +13,7 @@ import org.beeblos.bpm.core.model.noper.EmailDConfBeeBPM;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.daemon.email.EmailDConf;
 import com.sp.daemon.util.EmailDaemonConfigurationList;
 

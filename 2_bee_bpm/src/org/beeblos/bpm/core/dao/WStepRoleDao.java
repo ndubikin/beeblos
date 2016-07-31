@@ -6,7 +6,7 @@ import org.beeblos.bpm.core.error.WStepRoleException;
 import org.beeblos.bpm.core.model.WStepRole;
 import org.hibernate.HibernateException;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 /**
  * Step role dao.

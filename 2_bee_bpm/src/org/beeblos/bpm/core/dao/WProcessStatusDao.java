@@ -9,7 +9,7 @@ import org.beeblos.bpm.core.model.WProcessStatus;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 
 public class WProcessStatusDao {

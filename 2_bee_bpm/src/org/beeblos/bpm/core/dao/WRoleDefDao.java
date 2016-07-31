@@ -11,7 +11,7 @@ import org.beeblos.bpm.core.model.WRoleDef;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.common.util.ListUtils;
 import com.sp.common.util.StringPair;
 

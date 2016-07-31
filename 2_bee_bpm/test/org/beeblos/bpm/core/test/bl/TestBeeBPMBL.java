@@ -8,7 +8,7 @@ import org.beeblos.bpm.core.model.WProcessWork;
 import org.beeblos.bpm.core.model.noper.WStartProcessResult;
 import org.junit.Test;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 public class TestBeeBPMBL extends TestCase {
 

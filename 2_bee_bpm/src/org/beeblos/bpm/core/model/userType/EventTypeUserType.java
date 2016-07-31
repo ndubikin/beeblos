@@ -9,7 +9,7 @@ import org.beeblos.bpm.core.model.enumerations.EventType;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 
-import com.sp.common.model.usertype.EnumIntegerUserType;
+import com.sp.hibernate.common.usertype.EnumIntegerUserType;
 
 
 /**
