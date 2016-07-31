@@ -11,7 +11,7 @@ import org.beeblos.bpm.core.model.WUserRole;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 public class WUserDeviceDao {
 	private static final Log logger = LogFactory.getLog(WUserDeviceDao.class.getName());

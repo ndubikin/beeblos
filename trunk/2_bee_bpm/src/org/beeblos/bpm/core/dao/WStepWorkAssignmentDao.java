@@ -11,7 +11,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 /**
  * Lo hice pero por ahora no le doy uso

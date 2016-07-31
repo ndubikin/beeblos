@@ -6,7 +6,7 @@ import org.beeblos.bpm.core.error.WEmailDefException;
 import org.beeblos.bpm.core.model.WEmailDef;
 import org.hibernate.HibernateException;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 public class WEmailDefDao implements java.io.Serializable {
 

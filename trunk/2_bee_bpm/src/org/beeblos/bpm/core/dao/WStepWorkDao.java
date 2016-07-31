@@ -44,7 +44,7 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 
 public class WStepWorkDao<T extends Serializable> {

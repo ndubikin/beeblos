@@ -17,7 +17,7 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 
 

@@ -6,7 +6,7 @@ import org.beeblos.bpm.core.error.WProcessUserException;
 import org.beeblos.bpm.core.model.WProcessUser;
 import org.hibernate.HibernateException;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 /**
  * Process user relation dao.

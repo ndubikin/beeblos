@@ -19,7 +19,7 @@ import org.beeblos.bpm.core.model.WStepRole;
 import org.hibernate.HibernateException;
 import org.joda.time.DateTime;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
 

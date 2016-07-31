@@ -10,7 +10,7 @@ import org.beeblos.bpm.core.error.WStepWorkSequenceException;
 import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.hibernate.HibernateException;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
 public class WStepWorkSequenceDao {

@@ -15,7 +15,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 
-import com.sp.common.util.HibernateUtil;
+import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.common.util.StringPair;
 
 public class WStepHeadDao {

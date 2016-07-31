@@ -138,13 +138,13 @@
 			</column>
 		</property>
 		<property name="paramlistName"
-			type="com.sp.common.model.usertype.StringArrayUserType">
+			type="com.sp.hibernate.common.usertype.StringArrayUserType">
 			<column name="paramlist_name">
 				<comment>for APP synchro: parameter list to send</comment>
 			</column>
 		</property>
 		<property name="paramlistType"
-			type="com.sp.common.model.usertype.ClassArrayUserType">
+			type="com.sp.hibernate.common.usertype.ClassArrayUserType">
 			<column name="paramlist_type">
 				<comment>for APP synchro: parameter list types (java types)</comment>
 			</column>
@@ -2453,12 +2453,12 @@
 		</property>
 
 		<property name="rolesRelatedIdList"
-			type="com.sp.common.model.usertype.IntegerArrayUserType">
+			type="com.sp.hibernate.common.usertype.IntegerArrayUserType">
 			<column name="id_roles_related" />
 		</property>
 
 		<property name="usersRelatedIdList"
-			type="com.sp.common.model.usertype.IntegerArrayUserType">
+			type="com.sp.hibernate.common.usertype.IntegerArrayUserType">
 			<column name="id_users_related" />
 		</property>
 
