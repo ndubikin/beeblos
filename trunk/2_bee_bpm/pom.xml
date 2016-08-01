@@ -105,11 +105,10 @@
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
-		<!-- sp_calendar2 -->
 		<dependency>
 			<groupId>softpoint</groupId>
-			<artifactId>sp_calendar2</artifactId>
-			<version>1.0.0</version>
+			<artifactId>sp_calendar_2</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- beeblosBL -->
