@@ -339,12 +339,12 @@
 		<property name="gender" type="java.lang.Boolean">
 			<column name="gender" sql-type="bit" />
 		</property>
-<!-- 		<property name="admon" type="string"> -->
-<!-- 			<column name="admon" length="1"   /> -->
-<!-- 		</property> -->
-<!-- 		<property name="suLectura" type="string"> -->
-<!-- 			<column name="su_lectura" length="1"   /> -->
-<!-- 		</property> -->
+		
+		<!-- dml 20160809 -->
+		<property name="companyId" type="java.lang.Integer">
+			<column name="company_id"  />
+		</property>
+		
 		<property name="systemUser" type="java.lang.Boolean">
 			<column name="system_user" sql-type="bit" />
 		</property>
