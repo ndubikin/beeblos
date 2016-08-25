@@ -117,6 +117,22 @@
 			<version>1.0.0</version>
 		</dependency>
 
+		<dependency><!-- OK -->
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.spi</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency><!-- OK -->
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.jodatime</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency><!-- OK -->
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
