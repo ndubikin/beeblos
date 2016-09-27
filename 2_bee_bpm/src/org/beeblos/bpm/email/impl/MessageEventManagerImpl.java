@@ -51,16 +51,16 @@ import org.joda.time.DateTime;
 
 import com.beeblos.wsapi.model.BeeblosException;
 import com.email.core.bl.SendEmailBL;
+import com.email.core.error.CreateEmailException;
 import com.email.core.error.SendEmailException;
 import com.email.core.error.UserEmailAccountException;
 import com.email.core.model.Email;
+import com.email.core.util.JavaxMailMessageUtilBL;
 import com.email.tray.core.bl.EmailTrayBL;
-import com.email.tray.core.error.CreateEmailException;
 import com.email.tray.core.error.EmailTrayException;
 import com.email.tray.core.model.EmailTray;
 import com.email.tray.core.util.EmailPersonalizationUtilBL;
 import com.email.tray.core.util.EmailUtilBL;
-import com.email.tray.core.util.JavaxMailMessageUtilBL;
 import com.sp.common.core.bl.BeeblosBL;
 import com.sp.common.core.bl.UserBL;
 import com.sp.common.core.error.BeeblosBLException;
