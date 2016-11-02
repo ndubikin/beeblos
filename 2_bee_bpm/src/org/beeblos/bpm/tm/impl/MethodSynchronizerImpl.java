@@ -269,6 +269,8 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * 
 	 * To get a value from external app please see invokeExternalMethodGet
 	 * 
+	 * UPDATE:dml 20161102 - ITS: 1995 - it receievs an "Object value" instead of the "String value".
+	 * 
 	 * @param classToInvoke
 	 * @param methodToInvoke
 	 * @param id
@@ -278,8 +280,10 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * @return
 	 */
 	@Override
+//	public Object invokeExternalMethodPut(
+//			String classToInvoke, String methodToInvoke, Integer id, String paramType, String value, Integer externalUserId ) {
 	public Object invokeExternalMethodPut(
-			String classToInvoke, String methodToInvoke, Integer id, String paramType, String value, Integer externalUserId ) {
+			String classToInvoke, String methodToInvoke, Integer id, String paramType, Object value, Integer externalUserId ) {
 		
 		Object obj=null;
 		Object res = null;
@@ -300,7 +304,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 					
 			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
 			
-			res = m.invoke(instance, new Object[] { id, value,1000 });
+			res = m.invoke(instance, new Object[] { id, value, 1000 });
 									
 		} catch (ClassNotFoundException e) {
 			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());

@@ -1107,12 +1107,18 @@ public class WStepWork implements java.io.Serializable {
 				 * solo identifico el numerico (que nosotros por ahora solo soportamos integer) y si lo es lo anoto como numero...
 				 */
 				if (mdf.getDataType().equals(WDataType.NUMBER)) {
+//					bindingsList.add( new ObjectPair(mdf.getName(),(mdf.getValue()==null || "".equals(mdf.getValue()) ? 0 : 
+//						Integer.parseInt(mdf.getValue().trim() ) )) );
+					// dml 20161028 - ITS: 1995 - ahora si será un Object que será Integer
 					bindingsList.add( new ObjectPair(mdf.getName(),(mdf.getValue()==null || "".equals(mdf.getValue()) ? 0 : 
-								Integer.parseInt(mdf.getValue().trim() ) )) );
+						(Integer) mdf.getValue() )) );
 					
 				} else {
+//					bindingsList.add( new ObjectPair(mdf.getName(),"'"
+//							+(mdf.getValue()==null || "".equals(mdf.getValue()) ? "EMPTY" : mdf.getValue().trim() )+"'") );
+					// dml 20161028 - ITS: 1995 - ahora si será un Object que será Integer
 					bindingsList.add( new ObjectPair(mdf.getName(),"'"
-							+(mdf.getValue()==null || "".equals(mdf.getValue()) ? "EMPTY" : mdf.getValue().trim() )+"'") );
+							+(mdf.getValue()==null || "".equals(mdf.getValue()) ? "EMPTY" : (Integer) mdf.getValue() )+"'") );
 					
 				}
 				

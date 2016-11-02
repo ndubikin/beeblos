@@ -230,8 +230,8 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 //					
 //				}
 				
-				
-				m.setValue((value!=null?value.toString():""));
+//				m.setValue((value!=null?value.toString():""));
+				m.setValue((value!=null?value:null)); // dml 20161028 - ITS: 1995 - puede aceptar cualquier dato
 			}
 		}
 	}
@@ -268,7 +268,8 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 											.invokeExternalMethodGet(
 													mdf.getClassName() 
 													,mdf.getGetMethod() 
-													,mdf.getParamType() 
+//													,mdf.getParamType() 
+													,mdf.getDataType().getJavaType() // dml 20161102 - ITS: 1995 - cambiado para usar el nuevo enum DataType 
 													,idObject
 													,externalUserId // nes 20140707
 												); 
@@ -306,7 +307,8 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 											pdf.getClassName()
 											,pdf.getPutMethod()
 											,work.getIdObject() //idObject es el único vínculo entre el BPM y la app externa...
-											,pdf.getParamType() 
+//											,pdf.getParamType() 
+											,pdf.getDataType().getJavaType() // dml 20161102 - ITS: 1995 - cambiado para usar el nuevo enum DataType 
 											,dataField.getValue()
 											,externalUserId  // nes 20140707
 											); 

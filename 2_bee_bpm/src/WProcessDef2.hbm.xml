@@ -2333,9 +2333,11 @@
 		<property name="putMethod" type="java.lang.String">
 			<column name="put_method" />
 		</property>
-		<property name="paramType" type="java.lang.String">
-			<column name="param_type" />
-		</property>
+		
+<!-- dml 20161102 - ITS: 1995 - comentado para evitar su uso, sustituido por el tipo de dato en el enum WDataType -->
+<!-- 		<property name="paramType" type="java.lang.String"> -->
+<!-- 			<column name="param_type" /> -->
+
 		<property name="paramList" type="java.lang.String">
 			<column name="paramlist" />
 		</property>

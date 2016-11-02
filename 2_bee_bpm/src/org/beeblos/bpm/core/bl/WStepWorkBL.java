@@ -2877,7 +2877,7 @@ public class WStepWorkBL {
 		Object[] paramValueObj = new Object[tope];
 		for (int i=0;i<tope;i++) {
 			String paramName=method.getParamlistName()[i];
-			Class paramType = method.getParamlistType()[i];
+//			Class paramType = method.getParamlistType()[i]; // dml 20161102 - ITS: 1995 - comentdo porque no se usa
 			Object obj = new Object(); //paramType.newInstance();
 			if (paramName.equals("idCurrentUser")) {
 				paramValueObj[i]=currentUserId;
