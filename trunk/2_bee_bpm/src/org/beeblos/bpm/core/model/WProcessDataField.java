@@ -89,10 +89,12 @@ public class WProcessDataField implements java.io.Serializable {
 	private String getMethod;
 	private String putMethod;
 	private String paramList;
-	/**
-	 * java class of type must get or put
-	 */
-	private String paramType;
+
+// dml 20161102 - ITS: 1995 - no se usa, cambiado para poner el tipo de dato java en el enum WDataType	
+//	/**
+//	 * java class of type must get or put
+//	 */
+//	private String paramType;
 	
 	/**
 	 * At process startup the fields are filled with external source data ...
@@ -383,13 +385,13 @@ public class WProcessDataField implements java.io.Serializable {
 	}
 
 	
-	public String getParamType() {
-		return paramType;
-	}
-
-	public void setParamType(String paramType) {
-		this.paramType = paramType;
-	}
+//	public String getParamType() {
+//		return paramType;
+//	}
+//
+//	public void setParamType(String paramType) {
+//		this.paramType = paramType;
+//	}
 
 	public String getParamList() {
 	
@@ -529,7 +531,7 @@ public class WProcessDataField implements java.io.Serializable {
 				+ (getMethod != null ? "getMethod=" + getMethod + ", " : "")
 				+ (putMethod != null ? "putMethod=" + putMethod + ", " : "")
 				+ (paramList != null ? "paramList=" + paramList + ", " : "")
-				+ (paramType != null ? "paramType=" + paramType + ", " : "")
+//				+ (paramType != null ? "paramType=" + paramType + ", " : "")
 				+ "atProcessStartup=" + atProcessStartup + ", atProcessEnd="
 				+ atProcessEnd + ", whenStepWorkIsInvoked="
 				+ whenStepWorkIsInvoked + ", whenStepWorkIsProcessed="
@@ -574,8 +576,8 @@ public class WProcessDataField implements java.io.Serializable {
 		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime * result
 				+ ((paramList == null) ? 0 : paramList.hashCode());
-		result = prime * result
-				+ ((paramType == null) ? 0 : paramType.hashCode());
+//		result = prime * result
+//				+ ((paramType == null) ? 0 : paramType.hashCode());
 		result = prime * result
 				+ ((processHeadId == null) ? 0 : processHeadId.hashCode());
 		result = prime * result
@@ -691,11 +693,11 @@ public class WProcessDataField implements java.io.Serializable {
 				return false;
 		} else if (!paramList.equals(other.paramList))
 			return false;
-		if (paramType == null) {
-			if (other.paramType != null)
-				return false;
-		} else if (!paramType.equals(other.paramType))
-			return false;
+//		if (paramType == null) {
+//			if (other.paramType != null)
+//				return false;
+//		} else if (!paramType.equals(other.paramType))
+//			return false;
 		if (processHeadId == null) {
 			if (other.processHeadId != null)
 				return false;

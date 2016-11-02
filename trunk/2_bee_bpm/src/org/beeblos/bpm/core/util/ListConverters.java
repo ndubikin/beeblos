@@ -50,7 +50,8 @@ public class ListConverters {
 						processDataField.getDataType(), 
 						processDataField.getName(),
 						processDataField.getColumnName(),
-						"", // value
+//						"", // value
+						null, // value - dml 20161031 - ITS: 1995 - cambiado porque ahora va a ser un "Object" no un String
 						processDataField.getOrder(), // display order
 						processDataField.getLength(),
 						false, // modified (flag to indicate modification of this datafield
@@ -87,7 +88,8 @@ public class ListConverters {
 						
 						stepDatField.getDataField().getColumnName(), // column name must not be null ...
 						
-						"", // value
+//						"", // value
+						null, // value - dml 20161102 - ITS: 1995 - cambiado porque ahora va a ser un "Object" no un String
 
 						// if step has his own order, use it, then use processHead defined order
 						(stepDatField.getOrder()!=null

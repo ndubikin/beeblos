@@ -324,8 +324,10 @@ public class TableManager {
 
 			
 		} catch (SQLException e) {
+			
 			logger.error("Error SQLException "+e.getMessage()+" - "+e.getCause());
-		}    finally{
+		
+		} finally{
 		      //finally block used to close resources
 		      try{
 		         if(stmt!=null)
@@ -467,11 +469,17 @@ public class TableManager {
 			dataType=mdf.getDataType().getName().toLowerCase();
 			if (dataType.equals("text")) {
 				mdf.setValue(rs.getString(mdf.getColumnName()));
+//			} else if (dataType.equals("integer")) {
+//				mdf.setValue(String.valueOf(new Integer(rs.getInt(mdf.getColumnName()))));
+//			} else if (dataType.equals("boolean")) {
+//				Boolean b = rs.getBoolean(mdf.getColumnName());
+//				mdf.setValue(b.toString());
+// dml 20161028 - ITS: 1995 - actualizados para aceptar integers y booleans no como strings
 			} else if (dataType.equals("integer")) {
-				mdf.setValue(String.valueOf(new Integer(rs.getInt(mdf.getColumnName()))));
+				mdf.setValue(new Integer(rs.getInt(mdf.getColumnName())));
 			} else if (dataType.equals("boolean")) {
 				Boolean b = rs.getBoolean(mdf.getColumnName());
-				mdf.setValue(b.toString());
+				mdf.setValue(b);
 			} else {
 				mdf.setValue(rs.getString(mdf.getColumnName()));
 			}
@@ -533,7 +541,20 @@ public class TableManager {
 		while(it.hasNext()) {
 			ManagedDataField dataField = it.next();
 			sql+=", "+dataField.getColumnName();
-			sqlValues+=", '"+dataField.getValue()+"' ";
+			
+			/**
+			 *  Si el datafield es string, hacemos lo de antes, si no lo es quitamos las comillas. 
+			 *  
+			 *  Si es null tambien eliminamos las comillas porque no debemos setear un valor "NULL" como string, si no anular
+			 *  el campo en si
+			 *  
+			 *  dml 20161028 - ITS: 1995
+			 */
+			if (dataField.getValue() != null && dataField.getValue() instanceof String){
+				sqlValues+=", '"+dataField.getValue()+"' ";
+			} else {
+				sqlValues+=", "+dataField.getValue();
+			}
 		}
 		sql+=" ) VALUES ( ";
 		sql+=sqlValues+" )";
@@ -562,12 +583,24 @@ public class TableManager {
 			if (i>0)  {sql+=", ";} // comma (field separator)
 			ManagedDataField dataField = it.next();
 			sql+=" "+dataField.getColumnName();
-			// nes 20140630 - its 389 - en campos tipo varchar deja null en vez de blanco
-			sql+="= '"
-						+(dataField.getValue()!=null ? dataField.getValue() 
-												: dataField.getDataType().getSqlType()==12
-														?"":null)
-				+"' ";
+
+			/**
+			 *  Si el datafield es string, hacemos lo de antes, si no lo es quitamos las comillas. 
+			 *  
+			 *  Si es null tambien eliminamos las comillas porque no debemos setear un valor "NULL" como string, si no anular
+			 *  el campo en si
+			 *  
+			 *  dml 20161028 - ITS: 1995
+			 */
+			if (dataField.getValue() != null && dataField.getValue() instanceof String){
+				// nes 20140630 - its 389 - en campos tipo varchar deja null en vez de blanco
+				sql += "= '" +(dataField.getValue()!=null ? dataField.getValue() 
+													: dataField.getDataType().getSqlType()==12
+															?"":null)
+					+"' ";
+			} else {
+				sql += "= " + dataField.getValue();
+			}
 			i++;
 		}
 		sql+=" WHERE id = "+managedData.getPk();
@@ -623,7 +656,7 @@ public class TableManager {
 
 				while(rs.next()) {
 					qty = rs.getInt("COUNT");
-				   System.out.println("The count is " + qty);
+				   logger.debug("The count is " + qty);
 				}				
 				
 			}
@@ -701,7 +734,7 @@ public class TableManager {
 		sql += fieldName;
 		sql +=") AS COUNT FROM "+tableName ;
 		sql+=(fieldName!=null?" WHERE "+fieldName.replace(" ", "_")+" IS NOT NULL":" ");
-		System.out.println("------>>>"+sql);
+		logger.debug("------>>>"+sql);
 		
 		try {
 			
@@ -711,7 +744,7 @@ public class TableManager {
 
 			while(rs.next()) {
 				qty = rs.getInt("COUNT");
-			   System.out.println("The count is " + qty);
+			   logger.debug("The count is " + qty);
 			}
 			
 			
@@ -764,9 +797,9 @@ public class TableManager {
 			md = conn.getMetaData();
 			rs = md.getColumns(null, schema, tableName, "%");
 			
-			System.out.println(rs==null);
+			logger.debug(rs==null);
 			rs.last();
-			System.out.println(rs.getRow());
+			logger.debug(rs.getRow());
 			
 			rs.beforeFirst();
 			while(rs.next()) { 
@@ -906,7 +939,7 @@ public class TableManager {
 		String sql = buildModifyColumnStatement( operation,  schema,  tableName, 
 									 origColName,  newColName,  sqlTypeName,  length, defaultValue);
 		
-		System.out.println("change column: "+sql);
+		logger.debug("change column: "+sql);
 		
 		try {
 			
@@ -942,7 +975,7 @@ public class TableManager {
 		String sql = buildAddColumnStatement( operation, schema, tableName, 
 				 		newColName, sqlTypeName, sqlType, length, defaultValue);
 		
-		System.out.println("add column: "+sql);
+		logger.debug("add column: "+sql);
 		
 		try {
 			
@@ -978,7 +1011,7 @@ public class TableManager {
 		String sql = buildDropColumnStatement( operation,  schema,  tableName, 
 				colName);
 		
-		System.out.println("drop column: "+sql);
+		logger.debug("drop column: "+sql);
 		
 		try {
 			
@@ -1012,9 +1045,9 @@ public class TableManager {
 			String origColName, String newColName, Integer sqlType, String sqlTypeName, Integer length, 
 			String defaultValue, Integer qtyColumns) throws TableManagerException {
 		
-		System.out.println(qtyColumns);
-		qtyColumns+=3; // id, process_work_id & process_id are not listed in field column list of managedData
-		System.out.println(qtyColumns);
+		logger.debug("Qty columns BEFORE counting default ones (id, process_work_id, process_id, fh_ts): " +  qtyColumns);
+		qtyColumns+=4; // id, process_work_id & process_id & fh_ts are not listed in field column list of managedData - dml 20161102 - ITS: 1995 (faltaba la fh_ts por sumar)
+		logger.debug("Qty columns AFTER counting default ones (id, process_work_id, process_id, fh_ts): " +  qtyColumns);
 		
 		Column columnToBeModified=null;
 		List<Column> lc = new ArrayList<Column>();
@@ -1218,7 +1251,7 @@ public class TableManager {
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 
-			System.out.println("table:"+tableName+" was created ...");
+			logger.debug("table:"+tableName+" was created ...");
 			
 			md = conn.getMetaData();
 			rs = md.getColumns(null, null, tableName, "%");
@@ -1233,7 +1266,7 @@ public class TableManager {
 			    
 			    
 			    String ordinalPosition = rs.getString("ORDINAL_POSITION");
-			    System.out.println(column 
+			    logger.debug(column 
 			    						+" type:"+ dataType
 			    						+" typeName:"+ typeName
 			    						+" colsize:"+ columnSize
@@ -1282,14 +1315,14 @@ public class TableManager {
 			md = conn.getMetaData();
 			rs = md.getColumns(null, schemaName, tableName, "%");
 			if (rs==null) {
-				System.out.println("table "+tableName+" doesn't exists ... can't drop it !");
+				logger.debug("table "+tableName+" doesn't exists ... can't drop it !");
 				return;
 			}
 			
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 
-			System.out.println("table:"+tableName+" was dropped ...");
+			logger.debug("table:"+tableName+" was dropped ...");
 			
 		} catch (SQLException e) {
 			throw new TableManagerException("removeTable: SQLException : Error removing table!! "
