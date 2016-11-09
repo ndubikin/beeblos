@@ -612,7 +612,9 @@ public class WStepWorkBL {
 			List<Long> returnedBeeblosId = 
 					new DocumentManagerBL().uploadFileSPListToBeeblos(
 					newAttachedDocuments, BEEBLOS_DEFAULT_REPOSITORY_ID,
-					BEEBLOS_WPROCESSWORK_DOCCLASS_ID, WProcessWork.class.getName(),
+					BEEBLOS_WPROCESSWORK_DOCCLASS_ID, 
+					"Document for idProcessWork:" + idWProcessWork, 
+					WProcessWork.class.getName(),
 					idWProcessWork.toString(), 
 					"WProcessWork id:" + idWProcessWork, 
 					null, currentUserId);
