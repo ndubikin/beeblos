@@ -377,7 +377,8 @@ public class WStepWorkBL {
 		List<WProcessDataField> wpdf = new ArrayList<WProcessDataField>();
 		if (insertedStepWork.getwProcessWork().getProcessDef().getProcessHead().getProcessDataFieldDefAsList()!=null) {
 			for (WProcessDataField pdf: insertedStepWork.getwProcessWork().getProcessDef().getProcessHead().getProcessDataFieldDefAsList()){
-				if (pdf.isActive() && pdf.isAtProcessStartup() && "G".equals(pdf.getSynchroWith()) ) {
+				if (pdf.isActive() && pdf.isAtProcessStartup() 
+						&& pdf.getSynchroWith() != null && "G".equals(pdf.getSynchroWith()) ) { // dml 20161130 - agregue comprobacion no nulidad en pdf.getSynchroWith()
 					dataFieldToLoad.add(pdf);
 				}
 			}
