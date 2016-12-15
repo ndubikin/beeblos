@@ -1153,12 +1153,12 @@ public class TableManager {
 		sql 		+=" ( id INTEGER AUTO_INCREMENT NOT NULL, "; // mandatory field ...
 		sql 		+=" process_work_id INTEGER NOT NULL, ";   // mandatory field ...
 		sql 		+=" process_id INTEGER NOT NULL, ";   // mandatory field indicates map version
+		sql 		+=" fh_ts timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, ";   // dml 20161212 - mandatory field indicates fh_ts
 		for (WProcessDataField column: columns) {
 			sql+=	column.getColumnName()+" "
 					+ column.getDataType().getSqlTypeName()+" "
 					+ getColumnSize(column)+", ";
 		}
-
 		// mandatory pk and foreign key
 		sql += " PRIMARY KEY ( id ), "; 
 		sql += " CONSTRAINT `fk_"+tableName+"_1` FOREIGN KEY (`process_work_id`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION ";
