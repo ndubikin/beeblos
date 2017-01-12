@@ -61,6 +61,7 @@ import com.email.core.util.JavaxMailMessageUtilBL;
 import com.email.tray.core.bl.EmailTrayBL;
 import com.email.tray.core.util.EmailPersonalizationUtilBL;
 import com.email.tray.core.util.EmailUtilBL;
+import com.email.tray.core.util.MailMessageUtil;
 import com.sp.common.core.bl.BeeblosBL;
 import com.sp.common.core.bl.UserBL;
 import com.sp.common.core.error.BeeblosBLException;
@@ -1138,7 +1139,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 		emailDLogRegister.setProcessed(true);
 		emailDLogRegister.setProcessedDate(new DateTime());;
 
-		emailDLogRegister.setFrom(emailTrayBL.getFrom(message));
+		emailDLogRegister.setFrom(MailMessageUtil.getMessageFrom(message));
 
 		try {
 			emailDLogRegister.setSubject(message.getSubject());
@@ -1149,7 +1150,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 		try {
 			emailDLogRegister
 				.setMessageId( 
-						emailTrayBL.getMessageId(message.getHeader(MESSAGE_ID)) );
+						MailMessageUtil.getMessageId(message) );
 		} catch (MessagingException e) {
 			emailDLogRegister.setMessageId("Error reading javax.mail.message "+MESSAGE_ID);
 		}
