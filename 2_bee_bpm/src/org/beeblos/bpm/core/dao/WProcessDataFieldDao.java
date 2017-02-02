@@ -2,8 +2,6 @@ package org.beeblos.bpm.core.dao;
 
 import static org.beeblos.bpm.core.util.Constants.ALL_DATA_FIELDS;
 
-import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +12,7 @@ import org.beeblos.bpm.core.error.WProcessHeadException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessHead;
+import org.beeblos.bpm.core.model.enumerations.ProcessDataFieldStatus;
 import org.beeblos.bpm.core.util.ListConverters;
 import org.beeblos.bpm.tm.TableManager;
 import org.beeblos.bpm.tm.exception.TableManagerException;
@@ -22,8 +21,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import com.sp.hb4util.core.util.HibernateUtil;
 import com.sp.common.util.StringPair;
+import com.sp.hb4util.core.util.HibernateUtil;
 
 
 public class WProcessDataFieldDao {
@@ -608,6 +607,74 @@ public class WProcessDataFieldDao {
 			throw new WProcessDataFieldException(mess);
 		}
 		return managedData;
+	}
+	
+	
+	/**
+	 * Takes the "resultTypeSelectFromListSQLQuery" value, executes the SQL Query and obtains the
+	 * result value that has to be a StringPair list
+	 * 
+	 * @author dmuleiro 20170201
+	 *
+	 * @param resultTypeSelectFromListSQLQuery
+	 * @return
+	 * StringPair
+	 * @throws WProcessDataFieldException 
+	 */
+	public List<StringPair> getResultTypeSelectFromListSQLQueryStringPairList(String resultTypeSelectFromListSQLQuery) throws WProcessDataFieldException{
+		
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
+
+		List<StringPair> returnValue = null;
+		
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+
+			tx.begin();
+
+			List<Object[]> list = session.createSQLQuery(resultTypeSelectFromListSQLQuery).list();
+
+			if (list != null){
+				
+				returnValue = new ArrayList<StringPair>();
+				
+				for (Object[] cols : list){
+					
+					returnValue.add(new StringPair(
+							(cols[0]!=null)?cols[0].toString():null, 
+							(cols[1]!=null)?cols[1].toString():null));
+				
+				}
+				
+			}
+
+			tx.commit();
+
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "HibernateException getResultTypeSelectFromListSQLQueryStringPairList(): error trying to execute the SQL query to obtain the result set values: " + resultTypeSelectFromListSQLQuery
+					+ (e.getMessage()!=null?". "+e.getMessage():"")
+					+ (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new WProcessDataFieldException(mess, e);
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			String mess = "Exception getResultTypeSelectFromListSQLQueryStringPairList(): error trying to execute the SQL query to obtain the result set values: " + resultTypeSelectFromListSQLQuery
+					+ (e.getMessage()!=null?". "+e.getMessage():"")
+					+ (e.getCause()!=null?". "+e.getCause():"")
+					+ (e.getClass()!=null?". "+e.getClass():"");
+			logger.error(mess);
+			throw new WProcessDataFieldException(mess, e);
+		}
+
+		
+		return returnValue;
+		
 	}
 	
 	

@@ -64,6 +64,7 @@ import org.beeblos.bpm.core.model.WStepWorkSequence;
 import org.beeblos.bpm.core.model.WUserDef;
 import org.beeblos.bpm.core.model.WUserRole;
 import org.beeblos.bpm.core.model.WUserRoleWork;
+import org.beeblos.bpm.core.model.enumerations.ProcessDataSynchroWithType;
 import org.beeblos.bpm.core.model.enumerations.StartProcessResult;
 import org.beeblos.bpm.core.model.enumerations.StepWorkStatus;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
@@ -378,7 +379,7 @@ public class WStepWorkBL {
 		if (insertedStepWork.getwProcessWork().getProcessDef().getProcessHead().getProcessDataFieldDefAsList()!=null) {
 			for (WProcessDataField pdf: insertedStepWork.getwProcessWork().getProcessDef().getProcessHead().getProcessDataFieldDefAsList()){
 				if (pdf.isActive() && pdf.isAtProcessStartup() 
-						&& pdf.getSynchroWith() != null && "G".equals(pdf.getSynchroWith()) ) { // dml 20161130 - agregue comprobacion no nulidad en pdf.getSynchroWith()
+						&& pdf.getSynchroWith() != null && ProcessDataSynchroWithType.GIVEN.equals(pdf.getSynchroWith()) ) { // dml 20161130 - agregue comprobacion no nulidad en pdf.getSynchroWith() y cambie a enum (dml 20170201)
 					dataFieldToLoad.add(pdf);
 				}
 			}
