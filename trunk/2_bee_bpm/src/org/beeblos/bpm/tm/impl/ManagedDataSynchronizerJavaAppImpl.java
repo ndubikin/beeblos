@@ -15,6 +15,7 @@ import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessWork;
+import org.beeblos.bpm.core.model.enumerations.ProcessDataSynchroWithType;
 import org.beeblos.bpm.core.model.enumerations.ProcessStage;
 import org.beeblos.bpm.tm.ManagedDataSynchronizer;
 import org.beeblos.bpm.tm.TableManager;
@@ -72,7 +73,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 			List<WProcessDataField> dftosApp = new ArrayList<WProcessDataField>();
 			for (WProcessDataField pdf: processWork.getProcessDef().getProcessHead().getProcessDataFieldDef()) {
 				if ( pdf.isSynchronize() && _checkAtSynchroStage(pdf,stage) ) {
-					if (pdf.getSynchroWith().equals("J")) {
+					if (pdf.getSynchroWith().equals(ProcessDataSynchroWithType.JDBC)) { // dml 20170201 - pasado el 'synchroWith' a ENUM
 						dftosJdbc.add(pdf);
 					} else {
 						dftosApp.add(pdf);
@@ -167,11 +168,12 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	public Object syncrhonizeField(
 			WProcessWork work, WProcessDataField pdf, ProcessStage stage, ManagedData md, Integer externalUserId ) 
 					throws ManagedDataSynchronizerException {
+		
 		logger.debug(">> syncrhonizeField : "+(pdf!=null?pdf.getName():"null"));
 		
 		// if there is not APP syncrhonized then throws exception
-		if (!pdf.getSynchroWith().equals("A")) {
-			String mess=":syncrhonizeField was called with Syncrhonize Mode nos APP...";
+		if (pdf.getSynchroWith() == null || !pdf.getSynchroWith().equals(ProcessDataSynchroWithType.APP)) { // dml 20170102 - añadido control de no nulidad y pasado el synchroWith a ENUM
+			String mess="syncrhonizeField(): was called with Syncrhonize Mode nos APP...";
 			logger.info(mess);
 			throw new ManagedDataSynchronizerException(mess);
 		}

@@ -597,7 +597,7 @@ public class WStepWorkDao<T extends Serializable> {
 	}
 	
 	
-	// loads the managedData for astepWork:
+	// loads the managedData for a stepWork:
 	// >>ManagedTableConfiguration with managed table info 
 	// >>data field list (definition) for this step
 	// >>current data from managed table

@@ -228,7 +228,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 
 			Method m = null;
 
-			Class[] paramTypes = new Class[]{ Integer.class, Integer.class }; // nes 20140806 - para 1 metodo get es suficiente con pasar el id y el currentUserId
+			Class<?>[] paramTypes = new Class[]{ Integer.class, Integer.class }; // nes 20140806 - para 1 metodo get es suficiente con pasar el id y el currentUserId
 					
 			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
 			
@@ -285,7 +285,6 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	public Object invokeExternalMethodPut(
 			String classToInvoke, String methodToInvoke, Integer id, String paramType, Object value, Integer externalUserId ) {
 		
-		Object obj=null;
 		Object res = null;
 		
 		try {
@@ -300,12 +299,12 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 
 			Method m = null;
 
-			Class[] paramTypes = new Class[]{ Integer.class, Class.forName(paramType), Integer.class };
+			Class<?>[] paramTypes = new Class[]{ Integer.class, Class.forName(paramType), Integer.class };
 					
 			m = instance.getClass().getMethod(methodToInvoke,paramTypes);
 			
-			res = m.invoke(instance, new Object[] { id, value, 1000 });
-									
+			res = m.invoke(instance, new Object[] { id, value, externalUserId });
+			
 		} catch (ClassNotFoundException e) {
 			logger.error("ManagedDataSynchronizerJavaAppImpl:invokeExternalMethod ClassNotFoundException class:"+classToInvoke+"  method:"+methodToInvoke+" id:"+id+" error:"+e.getMessage()+" - "+e.getCause());
 			e.printStackTrace();

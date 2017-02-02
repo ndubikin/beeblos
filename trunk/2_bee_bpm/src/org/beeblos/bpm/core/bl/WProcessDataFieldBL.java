@@ -187,7 +187,10 @@ public class WProcessDataFieldBL {
 	private void _processDataFieldDefaultUPDATEChecks(WProcessDataField processDataField, Integer currentUserId) throws WProcessDataFieldException, WDataTypeException {
 		
 		// check for duplicated names (not allowed)
-		WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
+		// dml 20170102 - modificado para comprobar que no se puedan repetir solo por nombre Y processHeadId
+//		WProcessDataField pdf = getWProcessDataFieldByName(processDataField.getName(),currentUserId);
+		WProcessDataField pdf = getWProcessDataFieldByNameAndProcessHeadId(
+				processDataField.getName(), processDataField.getProcessHeadId(), currentUserId);
 		if (pdf != null
 				&& pdf.getName()!=null
 				&& pdf.getId()!=processDataField.getId()
@@ -342,5 +345,24 @@ public class WProcessDataFieldBL {
 		return new WProcessDataFieldDao().hasProcessDataFields(processHeadId,status);
 	
 	}	
+
+	/**
+	 * Takes the "resultTypeSelectFromListSQLQuery" value, executes the SQL Query and obtains the
+	 * result value that has to be a StringPair list
+	 * 
+	 * @author dmuleiro 20170201
+	 *
+	 * @param resultTypeSelectFromListSQLQuery
+	 * @param currentUserId
+	 * @return
+	 * StringPair
+	 * @throws WProcessDataFieldException 
+	 */
+	public List<StringPair> getResultTypeSelectFromListSQLQueryStringPairList(String resultTypeSelectFromListSQLQuery, Integer currentUserId) throws WProcessDataFieldException{
+
+		return new WProcessDataFieldDao().getResultTypeSelectFromListSQLQueryStringPairList(resultTypeSelectFromListSQLQuery);
+		
+	}
+	
 }
 	

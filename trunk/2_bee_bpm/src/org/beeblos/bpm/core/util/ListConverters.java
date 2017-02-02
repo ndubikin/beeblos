@@ -57,7 +57,9 @@ public class ListConverters {
 						false, // modified (flag to indicate modification of this datafield
 						processDataField.isRequired(), // required
 						false,  // readonly
-						false); // force modification
+						false, // force modification
+						processDataField.getResultType() // dml 20170201
+						); 
 				mdfList.add(mdf);
 			}
 		}
@@ -104,7 +106,9 @@ public class ListConverters {
 						false, // modified (flag to indicate modification of this datafield
 						stepDatField.isRequired(), // required
 						stepDatField.isReadOnly(),  // readonly
-						stepDatField.isForceModification()); // force modification
+						stepDatField.isForceModification(),  // force modification
+						stepDatField.getDataField()!=null?stepDatField.getDataField().getResultType():null // dml 20170201
+						);
 				mdfList.add(mdf);
 			}
 		}
