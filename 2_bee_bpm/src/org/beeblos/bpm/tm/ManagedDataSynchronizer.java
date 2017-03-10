@@ -12,7 +12,7 @@ public interface ManagedDataSynchronizer {
 			WProcessWork processWork, ManagedData md, ProcessStage stage, Integer externalUserId )  // nes 20140707
 					throws ManagedDataSynchronizerException;
 	
-	public Object syncrhonizeField(
+	public Object synchronizeField(
 			WProcessWork work, WProcessDataField mdf, ProcessStage stage, ManagedData md, Integer externalUserId ) // nes 20140707
 					throws ManagedDataSynchronizerException;
 
