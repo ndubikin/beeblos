@@ -19,7 +19,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	private static final Log logger = LogFactory.getLog(MethodSynchronizerImpl.class.getName());
 	
 	/* (non-Javadoc)
-	 * @see org.beeblos.bpm.core.md.ManagedDataSynchronizer#syncrhonizeField(org.beeblos.bpm.core.model.WProcessWork, org.beeblos.bpm.core.model.WProcessDataField)
+	 * @see org.beeblos.bpm.core.md.ManagedDataSynchronizer#synchronizeField(org.beeblos.bpm.core.model.WProcessWork, org.beeblos.bpm.core.model.WProcessDataField)
 	 */
 
 	public void invokeExternalMethod(WExternalMethod method, Integer currentId) {
@@ -202,7 +202,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * 
 	 * @param classToInvoke
 	 * @param methodToInvoke
-	 * @param paramType - java type of parameter syncrhonized...
+	 * @param paramType - java type of parameter synchronized...
 	 * @param id
 	 * @param externalUserId - user id for external app
 	 * @return
@@ -274,7 +274,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * @param classToInvoke
 	 * @param methodToInvoke
 	 * @param id
-	 * @param paramType - java type of parameter syncrhonized...
+	 * @param paramType - java type of parameter synchronized...
 	 * @param value
 	 * @param externalUserId - user id for external app 
 	 * @return

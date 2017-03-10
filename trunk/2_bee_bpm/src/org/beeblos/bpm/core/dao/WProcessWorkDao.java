@@ -84,7 +84,7 @@ public class WProcessWorkDao {
 
 			try {
 				// if exists managed data then will be explore if there are managed data fields to synchronize 
-				// at startup process level... and syncrhonize it...
+				// at startup process level... and synchronize it...
 				if (processWork.getProcessDef().getProcessHead().getManagedTableConfiguration()!=null
 						&& processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()!=null
 						&& !"".equals(processWork.getProcessDef().getProcessHead().getManagedTableConfiguration().getName()) ) {

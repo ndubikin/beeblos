@@ -86,14 +86,14 @@ public class WProcessDataField implements java.io.Serializable {
 	private ProcessDataFieldJDBCType jdbcType;
 	
 	/**
-	 * jdbc syncrhonization parameters
+	 * jdbc synchronization parameters
 	 */
 	private String schema;
 	private String tableName;
 	private String fieldName;
 
 	/**
-	 * application syncrhonization
+	 * application synchronization
 	 */
 	private String className;
 	private String getMethod;

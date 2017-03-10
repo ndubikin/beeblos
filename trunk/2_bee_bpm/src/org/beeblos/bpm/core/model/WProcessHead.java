@@ -41,7 +41,7 @@ public class WProcessHead implements java.io.Serializable {
 	private String comments;
 	
 	/**
-	 * If a Process manage data fields for process interactions or for external data syncrhonization,
+	 * If a Process manage data fields for process interactions or for external data synchronization,
 	 * a managed table is defined and created. This object has the definition of this table
 	 */
 	private WProcessHeadManagedDataConfiguration managedTableConfiguration; // data fields table

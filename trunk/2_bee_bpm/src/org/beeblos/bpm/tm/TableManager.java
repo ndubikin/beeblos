@@ -861,7 +861,7 @@ public class TableManager {
 		
 	}
 
-	// syncrhonize managed table structure (update of a dataField definition)
+	// synchronize managed table structure (update of a dataField definition)
 	public Integer updateFieldSynchro(
 			ManagedData managedData, WProcessDataField storedDataField, WProcessDataField newDataField) 
 					throws TableManagerException {

@@ -749,7 +749,7 @@ public class WStepWorkDao<T extends Serializable> {
 					logger.error(message);
 				}
 				
-				logger.debug(">> managed data has been syncrhonized ...");				
+				logger.debug(">> managed data has been synchronized ...");				
 			}
 		} 
 	}

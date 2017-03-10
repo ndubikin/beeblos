@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.error.ManagedDataSynchronizerException;
-import org.beeblos.bpm.core.error.WProcessWorkException;
 import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WProcessWork;
@@ -68,7 +67,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 			logger.debug(">> _synchronizeProcessWorkManagedData: synchro managed data for ProcessDefId:"
 					+processWork.getProcessDef().getId()+" for created processWork id:"+processWork.getId()+" >> "+processWork.getIdObjectType());
 			
-			// obtain a list of managed data fields to syncrhonize ( dftos - Jdbc/App )
+			// obtain a list of managed data fields to synchronize ( dftos - Jdbc/App )
 			List<WProcessDataField> dftosJdbc = new ArrayList<WProcessDataField>();
 			List<WProcessDataField> dftosApp = new ArrayList<WProcessDataField>();
 			for (WProcessDataField pdf: processWork.getProcessDef().getProcessHead().getProcessDataFieldDef()) {
@@ -83,7 +82,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 			
 			// if no managed data fields to synchronize at startup, return...
 			if (dftosJdbc.size()<1 && dftosApp.size()<1) {
-				logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has no managed data fields to synchronize at "
+				logger.debug("synchronizeProcessWorkManagedData(): has no managed data fields to synchronize at "
 						+stage.stageName()+" ...");
 				return;			
 			}
@@ -93,7 +92,7 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 				
 				logger.info("JDBC synchronization coming soon ....");
 				
-				logger.debug("WStepWorkBL._synchronizeProcessWorkManagedData has "+dftosJdbc.size()+" for JDBC synchro ...");
+				logger.debug("synchronizeProcessWorkManagedData(): has "+dftosJdbc.size()+" for JDBC synchro ...");
 			}
 			
 			// synchronize app fields ...
@@ -103,11 +102,17 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 				
 				for (WProcessDataField pdf: dftosApp) {
 					try {
-						syncrhonizeField(processWork, pdf, stage, md,externalUserId );
+						synchronizeField(processWork, pdf, stage, md,externalUserId );
 					} catch (ManagedDataSynchronizerException e) {
-						logger.error("ManagedDataSynchronizerException: Can't sinchronize field:"+(pdf!=null?pdf.getName():"null"));
+						logger.error("ManagedDataSynchronizerException: Can't sinchronize field: " 
+								+ (pdf!=null?pdf.getName():"null")
+								+ (e.getMessage()!=null?". "+e.getMessage():"")
+								+ (e.getCause()!=null?". "+e.getCause():""));
 					} catch (Exception e) {
-						logger.error("Exception: Can't sinchronize field:"+pdf.getName());
+						logger.error("Exception: Can't sinchronize field: " + pdf.getName()
+								+ (e.getMessage()!=null?". "+e.getMessage():"")
+								+ (e.getCause()!=null?". "+e.getCause():"")
+								+ (e.getClass()!=null?". "+e.getClass():""));
 					}	
 				}
 			}
@@ -162,34 +167,36 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	
 	
 	/* (non-Javadoc)
-	 * @see org.beeblos.bpm.core.md.ManagedDataSynchronizer#syncrhonizeField(org.beeblos.bpm.core.model.WProcessWork, org.beeblos.bpm.core.model.WProcessDataField)
+	 * @see org.beeblos.bpm.core.md.ManagedDataSynchronizer#synchronizeField(org.beeblos.bpm.core.model.WProcessWork, org.beeblos.bpm.core.model.WProcessDataField)
 	 */
 	@Override
-	public Object syncrhonizeField(
+	public Object synchronizeField(
 			WProcessWork work, WProcessDataField pdf, ProcessStage stage, ManagedData md, Integer externalUserId ) 
 					throws ManagedDataSynchronizerException {
 		
-		logger.debug(">> syncrhonizeField : "+(pdf!=null?pdf.getName():"null"));
+		logger.debug("synchronizeField():  "+(pdf!=null?pdf.getName():"null"));
 		
-		// if there is not APP syncrhonized then throws exception
+		// if there is not APP synchronized then throws exception
 		if (pdf.getSynchroWith() == null || !pdf.getSynchroWith().equals(ProcessDataSynchroWithType.APP)) { // dml 20170102 - añadido control de no nulidad y pasado el synchroWith a ENUM
-			String mess="syncrhonizeField(): was called with Syncrhonize Mode nos APP...";
+			String mess="synchronizeField(): parameter with name: " + pdf.getName() 
+			+ " is trying to synchronize with mode: " + pdf.getSynchroWith()
+			+ " and the type to synchronize must be " + ProcessDataSynchroWithType.APP;
 			logger.info(mess);
 			throw new ManagedDataSynchronizerException(mess);
 		}
 		
 //		if (stage.equals(STARTUP) || stage.equals(STEP_WORK_IS_INVOKED)) {
 			if (pdf.isAtProcessStartup() && stage.equals(STARTUP)) {
-				logger.debug(">> syncrho at STARTUP");
+				logger.debug("synchronizeField(): synchro at STARTUP");
 				_setMDF(md, pdf.getName(), fromExternalDataSynchro(work.getIdObject(),pdf,stage,externalUserId));
 			} else if(pdf.isWhenStepWorkIsInvoked() && stage.equals(STEP_WORK_IS_INVOKED)) {
-				logger.debug(">> syncrho at STEP_WORK_IS_INVOKED");
+				logger.debug("synchronizeField(): synchro at STEP_WORK_IS_INVOKED");
 				_setMDF(md, pdf.getName(), fromExternalDataSynchro(work.getIdObject(),pdf,stage,externalUserId));
 			} else if (pdf.isAtProcessEnd() && stage.equals(END)) {
-				logger.debug(">> syncrho at END");
+				logger.debug("synchronizeField(): synchro at END");
 				toExternalDataSynchro(work,pdf,stage,md,externalUserId );
 			} else if (pdf.isWhenStepWorkIsProcessed() && stage.equals(STEP_WORK_WAS_PROCESSED)) {
-				logger.debug(">> syncrho at STEP_WORK_WAS_PROCESSED");
+				logger.debug("synchronizeField(): synchro at STEP_WORK_WAS_PROCESSED");
 				toExternalDataSynchro(work,pdf,stage,md,externalUserId );
 			}
 //		} else if (stage.equals(END) || stage.equals(STEP_WORK_WAS_PROCESSED)) {
