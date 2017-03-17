@@ -1,5 +1,7 @@
 package org.beeblos.bpm.tm;
 
+import static com.sp.common.util.ConstantsCommon.DATABASE_LOCALDATE_FORMAT;
+import static com.sp.common.util.ConstantsCommon.DATABASE_DATETIME_FORMAT;
 //import org.hibernate.Hibernate;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_VARCHAR_LENGHT;
 
@@ -20,6 +22,9 @@ import org.beeblos.bpm.core.model.ManagedData;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.model.Column;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 
 import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
 import com.sp.common.model.ManagedDataField;
@@ -144,24 +149,45 @@ public class TableManager {
 	 */
 	public Integer loadRecord(ManagedData managedData) throws TableManagerException {
 		
-		if (managedData==null) throw new TableManagerException("can't process null managedData!");
-		if (managedData.getManagedTableConfiguration()==null) throw new TableManagerException("can't process null managedTableConfiguration!!!");
+		if (managedData==null) {
+			String mess = "loadRecord(): can't process null managedData!";
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
+		if (managedData.getManagedTableConfiguration()==null) {
+			String mess = "loadRecord(): can't process null managedTableConfiguration!!!";
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 		if (managedData.getCurrentWorkId()==null 
-				|| managedData.getCurrentWorkId()==0) 
-				throw new TableManagerException("can't process managedData: current work is not defined (currentWorkId:"
-													+(managedData.getCurrentWorkId()==null?"null":"0"));
+				|| managedData.getCurrentWorkId()==0) {
+			String mess = "loadRecord(): can't process managedData: current work is not defined (currentWorkId:"
+					+(managedData.getCurrentWorkId()==null?"null":"0");
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 		if (managedData.getManagedTableConfiguration().getName()==null 
-				|| "".equals(managedData.getManagedTableConfiguration().getName()))  
-			throw new TableManagerException("can't process managedData: managed table is not defined (managedTableName:"
-					+(managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-"));
-
+				|| "".equals(managedData.getManagedTableConfiguration().getName())) {
+			String mess = "loadRecord(): can't process managedData: managed table is not defined (managedTableName:"
+					+ (managedData.getManagedTableConfiguration().getName()==null?"null":"-emtpy string-");
+			logger.error(mess);
+			throw new TableManagerException(mess);
+		}
 
 		try {
+			
 			return load(managedData);
+		
 		} catch (ClassNotFoundException e) {
-			throw new TableManagerException("Can't insert managed record: ClassNotFoundException:"+e.getMessage()+" - "+e.getCause());
+			String mess = "loadRecord() ClassNotFoundException: can't load managed record: "
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new TableManagerException(mess);
 		} catch (SQLException e) {
-			throw new TableManagerException("Can't insert managed record: SQLException:"+e.getMessage()+" - "+e.getCause());
+			String mess = "loadRecord() SQLException: can't insert load managed record: " 
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():"");
+			logger.error(mess);
+			throw new TableManagerException(mess);
 		}
 
 	}
@@ -333,6 +359,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -349,7 +376,7 @@ public class TableManager {
 	private Integer load(ManagedData managedData) throws ClassNotFoundException, SQLException {
 		logger.debug("TableManager:insert managedData");
 
-		Integer qty=null, id=null;
+		Integer id=null;
 
 		String sql = buildLoadDataQuery(managedData);
 		
@@ -376,11 +403,13 @@ public class TableManager {
 
 		} catch (MySQLSyntaxErrorException e1) {
 			
-			logger.error("load: Error MySQLSyntaxErrorException "+e1.getMessage()+" - "+e1.getCause());
+			logger.error("load(): Error MySQLSyntaxErrorException: " 
+					+ e1.getMessage() + (e1.getCause()!=null?". "+e1.getCause():""));
 
 			
 		} catch (SQLException e) {
-			logger.error("load: Error SQLException "+e.getMessage()+" - "+e.getCause());
+			logger.error("load(): Error MySQLSyntaxErrorException: " 
+					+ e.getMessage() + (e.getCause()!=null?". "+e.getCause():""));
 			id=-1;
 		}    finally{
 		      //finally block used to close resources
@@ -388,6 +417,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -404,7 +434,7 @@ public class TableManager {
 	public void delete(String schema, String tableName, Integer processWorkId) throws TableManagerException {
 		logger.debug("TableManager:DELETE FROM  schema.tableName WHERE process_work_id = processWorkId");
 
-		Integer qty=null, id=null;
+		Integer qty=null;
 
 		String sql = buildDeleteDataQuery(schema, tableName, processWorkId);
 		
@@ -435,13 +465,13 @@ public class TableManager {
 			
 		} catch (SQLException e) {
 			logger.error("load: Error SQLException "+e.getMessage()+" - "+e.getCause());
-			id=-1;
 		}    finally{
 		      //finally block used to close resources
 		      try{
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -463,26 +493,81 @@ public class TableManager {
 		managedData.setPk(rs.getInt(1));
 		managedData.setCurrentWorkId(rs.getInt(2));
 		managedData.setCurrentStepWorkId(rs.getInt(3));
-		String dataType;
+
 		for (ManagedDataField mdf: managedData.getDataField()){
 
-			dataType=mdf.getDataType().getName().toLowerCase();
-			if (dataType.equals("text")) {
-				mdf.setValue(rs.getString(mdf.getColumnName()));
+			// dml 20170317 - ITS: 2418 - cambiado el algoritmo para usar la clase en lugar del nombre
+			if (mdf.getDataType().getJavaType() != null){
+				
+				try {
+					if (mdf.getDataType().getJavaType().equals(String.class.getName())){
+						
+						mdf.setValue(rs.getString(mdf.getColumnName()));
+					
+					} else if (mdf.getDataType().getJavaType().equals(Integer.class.getName())){
+					
+						mdf.setValue(new Integer(rs.getInt(mdf.getColumnName())));
+						
+					} else if (mdf.getDataType().getJavaType().equals(Boolean.class.getName())){
+	
+						Boolean b = rs.getBoolean(mdf.getColumnName());
+						mdf.setValue(b);
+						
+					} else if (mdf.getDataType().getJavaType().equals(LocalDate.class.getName())){
+						
+						String value = rs.getString(mdf.getColumnName());
+						if (value != null){
+							LocalDate ld = DateTimeFormat.forPattern(DATABASE_LOCALDATE_FORMAT).parseLocalDate(value);
+							mdf.setValue(ld);
+						}
+						
+					} else if (mdf.getDataType().getJavaType().equals(DateTime.class.getName())){
+						
+						String value = rs.getString(mdf.getColumnName());
+						if (value != null){
+							DateTime dt = DateTimeFormat.forPattern(DATABASE_DATETIME_FORMAT).parseDateTime(value);
+							mdf.setValue(dt);
+						}
+						
+					} else {
+						
+						mdf.setValue(rs.getString(mdf.getColumnName()));
+					
+					}
+				
+				} catch (Exception e){
+					String mess = "loadRecord(): error trying to get the param value with name: "
+							+ mdf.getDataType().getName() 
+							+ " and type: " + mdf.getDataType().getJavaType()
+							+ " from the database"
+							+ (e.getMessage()!=null?". "+e.getMessage():"")
+							+ (e.getCause()!=null?". "+e.getCause():"")
+							+ (e.getClass()!=null?". "+e.getClass():"");
+					logger.error(mess);
+				}
+
+			}
+			
+// dml 20170317 - ITS: 2418 nuevo algoritmo encima (por tipo de dato, no por nombre)			
+
+//			String dataType = mdf.getDataType().getName().toLowerCase();
+//
+//			if (dataType.equals("text")) {
+//				mdf.setValue(rs.getString(mdf.getColumnName()));
 //			} else if (dataType.equals("integer")) {
 //				mdf.setValue(String.valueOf(new Integer(rs.getInt(mdf.getColumnName()))));
 //			} else if (dataType.equals("boolean")) {
 //				Boolean b = rs.getBoolean(mdf.getColumnName());
 //				mdf.setValue(b.toString());
 // dml 20161028 - ITS: 1995 - actualizados para aceptar integers y booleans no como strings
-			} else if (dataType.equals("integer")) {
-				mdf.setValue(new Integer(rs.getInt(mdf.getColumnName())));
-			} else if (dataType.equals("boolean")) {
-				Boolean b = rs.getBoolean(mdf.getColumnName());
-				mdf.setValue(b);
-			} else {
-				mdf.setValue(rs.getString(mdf.getColumnName()));
-			}
+//			} else if (dataType.equals("integer")) {
+//				mdf.setValue(new Integer(rs.getInt(mdf.getColumnName())));
+//			} else if (dataType.equals("boolean")) {
+//				Boolean b = rs.getBoolean(mdf.getColumnName());
+//				mdf.setValue(b);
+//			} else {
+//				mdf.setValue(rs.getString(mdf.getColumnName()));
+//			}
 		}
 	}
 
@@ -592,7 +677,8 @@ public class TableManager {
 			 *  
 			 *  dml 20161028 - ITS: 1995
 			 */
-			if (dataField.getValue() != null && dataField.getValue() instanceof String){
+			if (dataField.getValue() != null 
+					&& (dataField.getValue() instanceof String || dataField.getValue() instanceof LocalDate || dataField.getValue() instanceof DateTime)){
 				// nes 20140630 - its 389 - en campos tipo varchar deja null en vez de blanco
 				sql += "= '" +(dataField.getValue()!=null ? dataField.getValue() 
 													: dataField.getDataType().getSqlType()==12
@@ -680,6 +766,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -764,6 +851,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -848,6 +936,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -948,7 +1037,6 @@ public class TableManager {
 			stmt.executeUpdate(sql);
 			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -958,6 +1046,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -984,7 +1073,6 @@ public class TableManager {
 			stmt.executeUpdate(sql);
 			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -994,6 +1082,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -1020,7 +1109,6 @@ public class TableManager {
 			stmt.executeUpdate(sql);
 			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1030,6 +1118,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -1283,6 +1372,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
@@ -1333,6 +1423,7 @@ public class TableManager {
 		         if(stmt!=null)
 		            conn.close();
 		      }catch(SQLException se){
+		    	  se.printStackTrace();
 		      }// do nothing
 		      try{
 		         if(conn!=null)
