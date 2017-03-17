@@ -24,6 +24,7 @@ import org.beeblos.bpm.core.model.enumerations.StepWorkStatus;
 import org.beeblos.bpm.core.model.noper.StepWorkLight;
 import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.tm.TableManager;
+import org.beeblos.bpm.tm.TableManagerBeeBpmUtil;
 import org.beeblos.bpm.tm.exception.TableManagerException;
 import org.beeblos.bpm.tm.impl.ManagedDataSynchronizerJavaAppImpl;
 import org.hibernate.Criteria;
@@ -614,8 +615,7 @@ public class WStepWorkDao<T extends Serializable> {
 					&& !"".equals(stepWork.getwProcessWork().getManagedTableConfiguration().getName()) ) {
 				
 				// when load a wStepWork we must load related managed data ...
-				ManagedData md = 
-						org.beeblos.bpm.tm.TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
+				ManagedData md = TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
 
 				// IMPLEMENTAR
 				TableManager tm = new TableManager();
@@ -626,19 +626,18 @@ public class WStepWorkDao<T extends Serializable> {
 				} catch (TableManagerException e) {
 					String message = "TableManagerException: can't retrieve stored custom data from managed table:"
 							+ (md.getManagedTableConfiguration()!=null?(md.getManagedTableConfiguration().getName()!=null?md.getManagedTableConfiguration().getName():"null"):"managed table data is null")
-							+ e.getMessage() + " - "
-							+ e.getCause();
-						logger.warn(message);
+							+ (e.getMessage()!=null?". "+e.getMessage():"") 
+							+ (e.getCause()!=null?". "+e.getCause():"");
+					logger.warn(message);
+					throw new WStepWorkException(message);
 
-						throw new WStepWorkException(message);
 				} catch (Exception e) {
-					String message = "Exception: can't retrieve stored custom data from managed table:"
+					String message = "Exception: can't retrieve stored custom data from managed table: "
 							+ (md.getManagedTableConfiguration()!=null?(md.getManagedTableConfiguration().getName()!=null?md.getManagedTableConfiguration().getName():"null"):"managed table data is null")
-							+ e.getMessage() + " - "
-							+ e.getCause();
-						logger.warn(message);
-
-						throw new WStepWorkException(message);						
+							+ (e.getMessage()!=null?". "+e.getMessage():"") 
+							+ (e.getCause()!=null?". "+e.getCause():"");
+					logger.warn(message);
+					throw new WStepWorkException(message);						
 				}
 			}
 		} 
@@ -663,8 +662,7 @@ public class WStepWorkDao<T extends Serializable> {
 					&& !"".equals(stepWork.getwProcessWork().getManagedTableConfiguration().getName()) ) {
 				
 				// when load a wStepWork we must load related managed data ...
-				ManagedData md = 
-						org.beeblos.bpm.tm.TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
+				ManagedData md = TableManagerBeeBpmUtil.createManagedDataObject(stepWork);
 
 				return md;
 			}

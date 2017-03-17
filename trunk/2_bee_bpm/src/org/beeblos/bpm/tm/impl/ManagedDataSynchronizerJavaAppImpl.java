@@ -257,24 +257,24 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	private Object fromExternalDataSynchro(
 			Integer idObject, WProcessDataField mdf, ProcessStage stage, Integer externalUserId ) 
 					throws ManagedDataSynchronizerException {
+		
 		logger.debug(":fromExternalDataSynchro obtaining external data... ");
 
 		// si va a recuperar datos de 1 fuente externa via app, tendrá que tener nombre de clase y método a invocar
 		// y el método deberá devolver el valor requerido ...
 		
 		if (mdf.getClassName()==null || "".equals(mdf.getClassName())) {
-			String mess=":fromExternalDataSynchro no classname provided for synchronize with external APP...";
-			logger.info(mess);
+			String mess=":fromExternalDataSynchro no classname provided for synchronize with external APP";
+			logger.error(mess);
 			throw new ManagedDataSynchronizerException(mess);
 		}
 		if (mdf.getGetMethod()==null || "".equals(mdf.getGetMethod())) {
-			String mess=":fromExternalDataSynchro no get-method provided for synchronize with external APP...";
-			logger.info(mess);
+			String mess=":fromExternalDataSynchro no get-method provided for synchronize with external APP";
+			logger.error(mess);
 			throw new ManagedDataSynchronizerException(mess);
 		}
 		
-		Object returnedValue = new MethodSynchronizerImpl()
-											.invokeExternalMethodGet(
+		Object returnedValue = new MethodSynchronizerImpl().invokeExternalMethodGet(
 													mdf.getClassName() 
 													,mdf.getGetMethod() 
 //													,mdf.getParamType() 
@@ -299,20 +299,24 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 	private Object toExternalDataSynchro(
 			WProcessWork work, WProcessDataField pdf, ProcessStage stage, ManagedData md, Integer externalUserId ) 
 					throws ManagedDataSynchronizerException {
-		logger.debug(":toExternalDataSynchro sending data to another app... ");
+		
+		logger.debug(":toExternalDataSynchro sending data to another app");
 
 		if (pdf.getClassName()==null || "".equals(pdf.getClassName())) {
-			throw new ManagedDataSynchronizerException(":toExternalDataSynchro no classname provided for synchronize with external APP...");
+			String mess = ":toExternalDataSynchro no classname provided for synchronize with external APP";
+			logger.error(mess);
+			throw new ManagedDataSynchronizerException(mess);
 		}
 		if (pdf.getPutMethod()==null || "".equals(pdf.getPutMethod())) {
-			throw new ManagedDataSynchronizerException(":toExternalDataSynchro no get-method provided for synchronize with external APP...");
+			String mess = ":toExternalDataSynchro no get-method provided for synchronize with external APP";
+			logger.error(mess);
+			throw new ManagedDataSynchronizerException(mess);
 		}
 		
 		// obtains data fied with current value (in BPM)
 		ManagedDataField dataField = _getCurrentManagedDataValues(md,pdf);
 		
-		new MethodSynchronizerImpl()
-									.invokeExternalMethodPut( //classToInvoke, methodToInvoke, id, paramType, value)
+		new MethodSynchronizerImpl().invokeExternalMethodPut( //classToInvoke, methodToInvoke, id, paramType, value, externalUserId)
 											pdf.getClassName()
 											,pdf.getPutMethod()
 											,work.getIdObject() //idObject es el único vínculo entre el BPM y la app externa...
@@ -322,9 +326,8 @@ public class ManagedDataSynchronizerJavaAppImpl implements ManagedDataSynchroniz
 											,externalUserId  // nes 20140707
 											); 
 		
-
-		
 		return null;
+
 	}
 
 	private ManagedDataField _getCurrentManagedDataValues(ManagedData md, WProcessDataField pdf) {

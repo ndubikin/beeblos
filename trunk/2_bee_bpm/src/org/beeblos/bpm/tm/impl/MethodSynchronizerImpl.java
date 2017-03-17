@@ -38,7 +38,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * Invokes a method(methodToInvoke) from a class (classToInvoke) with passed params
 	 */
 	public void invokeExternalMethod(
-			String classToInvoke, String methodToInvoke, Class[] paramTypes, Object[] paramData) {
+			String classToInvoke, String methodToInvoke, Class<?>[] paramTypes, Object[] paramData) {
 		logger.debug(">>>invokeExternalMethod classToInvoke:"
 							+(classToInvoke!=null?classToInvoke:"null  methodToInvoke:"
 							+(methodToInvoke!=null?methodToInvoke:"null")));
@@ -127,7 +127,7 @@ public class MethodSynchronizerImpl implements MethodSynchronizer {
 	 * Invokes a method(methodToInvoke) from a class (classToInvoke) with passed params
 	 */
 	public Object invokeExternalMethod(
-			String classToInvoke, String methodToInvoke, Class[] paramTypes, Object[] paramData, Integer currentUserId) {
+			String classToInvoke, String methodToInvoke, Class<?>[] paramTypes, Object[] paramData, Integer currentUserId) {
 		logger.debug(">>>invokeExternalMethod with object return");
 		
 		Object obj=null;

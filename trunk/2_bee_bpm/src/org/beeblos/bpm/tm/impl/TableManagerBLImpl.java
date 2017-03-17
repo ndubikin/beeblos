@@ -1,6 +1,5 @@
 package org.beeblos.bpm.tm.impl;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.beeblos.bpm.core.model.WProcessDataField;

@@ -70,7 +70,6 @@ public class TableManagerUtil {
 		String generatedColName="";
 		
 		int i=0, currLen=0, tope=normalizedName.length();
-		boolean lastCharUnderscore;
 		while (i<tope) {
 			char ch = normalizedName.charAt(i);
 			char lch = lowerCaseBaseName.charAt(i);
