@@ -87,6 +87,7 @@ import com.email.tray.core.util.EmailPersonalizationUtilBL;
 import com.email.tray.core.util.EmailUtilBL;
 import com.sp.common.core.bl.DocumentManagerBL;
 import com.sp.common.core.error.BeeblosBLException;
+import com.sp.common.core.model.UserDisplay;
 import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.core.util.ApplicationURLUtil;
 import com.sp.common.model.FileSP;
@@ -3320,7 +3321,7 @@ public class WStepWorkBL {
 		try {
 			
 			// nes 20141125
-			UserEmailAccount uea = new UserEmailAccount(senderEmailAccount.getwUserDef().getId(), 
+			UserEmailAccount uea = new UserEmailAccount(new UserDisplay(senderEmailAccount.getwUserDef().getId()), 
 					senderEmailAccount.getName(), 
 					senderEmailAccount.isUserDefaultAccount(), senderEmailAccount.getEmail(), 
 					senderEmailAccount.getReplyTo(), senderEmailAccount.getSignatureTxt(), 
