@@ -91,6 +91,7 @@ import com.sp.common.core.model.UserDisplay;
 import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.core.util.ApplicationURLUtil;
 import com.sp.common.model.FileSP;
+import com.sp.common.model.ManagedDataField;
 import com.sp.common.util.Resourceutil;
 import com.sp.common.util.StringPair;
 
@@ -2490,7 +2491,10 @@ public class WStepWorkBL {
 			/**
 			 * External method to obtain runtime user list to assign a role must return an Integer[] or List<Integer>
 			 */
-			Object objList = _executeExternalMethod(new Object[]{processWork}, role.getIdExternalMethod(), currentUserId);
+			Object objList = _executeExternalMethod(new Object[]{processWork}, 
+					role.getIdExternalMethod(), 
+					null, 
+					currentUserId);
 
 			return objList;
 			
@@ -2643,7 +2647,9 @@ public class WStepWorkBL {
 		 */
 		try {
 			
-			Object objList = _executeExternalMethod(new Object[]{stepWork}, idExternalMethod, currentUserId);// nes 20141215 - generalizado
+			Object objList = _executeExternalMethod(new Object[]{stepWork}, idExternalMethod, 
+					stepWork.getManagedData(), // dml 20170329 
+					currentUserId);// nes 20141215 - generalizado
 			if (objList!=null) {
 				_addExternalMethodReturnedUsersToList(objList,swaList);
 			}
@@ -2756,7 +2762,9 @@ public class WStepWorkBL {
 	 * @throws IllegalAccessException
 	 */
 	private Object _executeExternalMethod(
-			Object[] objList, Integer methodId, Integer currentUserId) // nes 20141215
+			Object[] objList, Integer methodId, 
+			ManagedData managedData, // dml 20170329 - le pasamos el managed data por si el "param" se encuentra entre ellas
+			Integer currentUserId) // nes 20141215
 					throws InstantiationException, IllegalAccessException {
 		logger.debug(">>>_executeExternalMethod id:"+(methodId!=null?methodId:"null")
 				+" user:"+(currentUserId!=null?currentUserId:"null"));
@@ -2772,7 +2780,7 @@ public class WStepWorkBL {
 			method = new WExternalMethodBL().getExternalMethodByPK(methodId);
 			if (method!=null){
 				if (method.getParamlistName().length>0){
-					_setParamValues(method, objList, currentUserId); // nes 20141215 - generalizado setParamValues
+					_setParamValues(method, objList, managedData, currentUserId); // nes 20141215 - generalizado setParamValues
 				}
 				result = new MethodSynchronizerImpl().invokeExternalMethod(method, null,currentUserId);
 			}			
@@ -2825,21 +2833,30 @@ public class WStepWorkBL {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	private void _executeRouteExternalMethodSafe(
-			WStepSequenceDef route, WStepWork currentStepWork, Integer currentUserId) {
-		logger.debug(">>>_executeRouteExternalMethod check..."+" user:"+(currentUserId!=null?currentUserId:"null"));
+	private void _executeRouteExternalMethodSafe(WStepSequenceDef route, WStepWork currentStepWork,
+			Integer currentUserId) {
+		
+		logger.debug(">>>_executeRouteExternalMethodSafe check..."+" user:"+(currentUserId!=null?currentUserId:"null"));
 
 		try {
+			
 			if (route.getExternalMethod()!=null && route.getExternalMethod().size()>0){
+				
 				for (WExternalMethod method: route.getExternalMethod()) {
-					logger.debug(">>>_executeRouteExternalMethod:"+method.getClassname()+"."+method.getMethodname());
+					
+					logger.debug(">>>_executeRouteExternalMethodSafe:"+method.getClassname()+"."+method.getMethodname());
+				
 					if (method.getParamlistName().length>0){
-						_setParamValues(
-								method,
-								new Object[]{
-											currentStepWork,
-											currentStepWork.getwProcessWork(), // nes 20150116 - its:775 - no encontraba idObject pues estaba en wProcessWork
-											route}, currentUserId);
+						
+						Object[] objects = new Object[]{
+								currentStepWork,
+								currentStepWork.getwProcessWork(), // nes 20150116 - its:775 - no encontraba idObject pues estaba en wProcessWork
+								route};
+						
+						_setParamValues(method, 
+								objects, 
+								currentStepWork.getManagedData(), // dml 20170329 - le pasamos el managed data por si el "param" se encuentra entre ellas 
+								currentUserId);
 					}
 					new MethodSynchronizerImpl().invokeExternalMethod(method, currentUserId);
 				}
@@ -2864,6 +2881,7 @@ public class WStepWorkBL {
 	 * 
 	 * @param method
 	 * @param objList[] - list of objects to search paramName defined in externalMethod
+	 * @param managedData - le pasamos el managed data por si el "param" se encuentra entre ellas
 	 * @param currentUserId
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
@@ -2871,6 +2889,7 @@ public class WStepWorkBL {
 	private void _setParamValues(
 			WExternalMethod method, //WStepWork currentStepWork, WStepSequenceDef route,
 			Object[] objList, // nes 20141215 - generalizado
+			ManagedData managedData, // dml 20170329 - le pasamos el managed data por si el "param" se encuentra entre ellas
 			Integer currentUserId) throws InstantiationException, IllegalAccessException {
 		/**
 		 * set array limit at qty parameters defined for external method.
@@ -2884,10 +2903,10 @@ public class WStepWorkBL {
 			String paramName=method.getParamlistName()[i];
 //			Class paramType = method.getParamlistType()[i]; // dml 20161102 - ITS: 1995 - comentdo porque no se usa
 			Object obj = new Object(); //paramType.newInstance();
-			if (paramName.equals("idCurrentUser")) {
+			if (paramName.equals("idCurrentUser") || paramName.equals("currentUserId") || paramName.equals("cui")) { // dml 20170329 - ampliado el hardcodeo para que acepte más nombres para el currentUserId
 				paramValueObj[i]=currentUserId;
 			} else {
-				obj = _setPropertyValue(objList, paramName);
+				obj = _setPropertyValue(objList, managedData, paramName);
 				paramValueObj[i]=obj;
 			}
 		}
@@ -2905,9 +2924,11 @@ public class WStepWorkBL {
 	 * like the search for paramName will be in all the passed object and not in concrete stepWork or route....
 	 * 
 	 * @param mainObjList - object list to find/obtain paramName
+	 * @param managedData - dml 20170329 - le pasamos el managed data por si el "param" se encuentra entre ellas
 	 * @param paramName - the name of parameter must be passed to an exernal method
 	 */
-	private Object _setPropertyValue(Object[] mainObjList, String paramName) {
+	private Object _setPropertyValue(Object[] mainObjList, ManagedData managedData, String paramName) {
+		
 		Object obj=null;
 		// find field (paramName) in currentStepWork / currentProcessWork and route 
 		try {
@@ -2925,6 +2946,18 @@ public class WStepWorkBL {
 						obj = PropertyUtils.getIndexedProperty(o, paramName);						
 					}
 					
+				}
+			}
+			
+			// dml 20170330
+			if (obj == null && managedData != null 
+					&& managedData.getDataField() != null && !managedData.getDataField().isEmpty()){
+				for (ManagedDataField mdf : managedData.getDataField()) {
+					if (mdf != null && mdf.getName() != null
+							&& mdf.getName().equals(paramName)){
+						obj = mdf.getValue();
+						break;
+					}
 				}
 			}
 
