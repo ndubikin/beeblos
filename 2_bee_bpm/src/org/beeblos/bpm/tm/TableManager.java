@@ -501,8 +501,15 @@ public class TableManager {
 				
 				try {
 					if (mdf.getDataType().getJavaType().equals(String.class.getName())){
-						
-						mdf.setValue(rs.getString(mdf.getColumnName()));
+
+						/*
+						 *  dml 20170329 - si viene un valor de cadena vacia no lo seteamos, porque cadena vacia es un
+						 *  valor que es como "null" y en ese caso, es posible que en el "value" venga precargado el
+						 *  "default value", en cuyo caso tenemos que mantenerlo
+						 */
+						if (rs.getString(mdf.getColumnName()) != null && !"".equals(rs.getString(mdf.getColumnName()))){
+							mdf.setValue(rs.getString(mdf.getColumnName()));
+						}
 					
 					} else if (mdf.getDataType().getJavaType().equals(Integer.class.getName())){
 					
@@ -511,7 +518,14 @@ public class TableManager {
 					} else if (mdf.getDataType().getJavaType().equals(Boolean.class.getName())){
 	
 						Boolean b = rs.getBoolean(mdf.getColumnName());
-						mdf.setValue(b);
+						/*
+						 *  dml 20170329 - si viene un valor "null" no lo seteamos, porque en ese caso 
+						 *  es posible que en el "value" venga precargado el "default value", en cuyo 
+						 *  caso tenemos que mantenerlo
+						 */
+						if (b != null){
+							mdf.setValue(b);
+						}
 						
 					} else if (mdf.getDataType().getJavaType().equals(LocalDate.class.getName())){
 						
@@ -531,7 +545,14 @@ public class TableManager {
 						
 					} else {
 						
-						mdf.setValue(rs.getString(mdf.getColumnName()));
+						/*
+						 *  dml 20170329 - si viene un valor de cadena vacia no lo seteamos, porque cadena vacia es un
+						 *  valor que es como "null" y en ese caso, es posible que en el "value" venga precargado el
+						 *  "default value", en cuyo caso tenemos que mantenerlo
+						 */
+						if (rs.getString(mdf.getColumnName()) != null && !"".equals(rs.getString(mdf.getColumnName()))){
+							mdf.setValue(rs.getString(mdf.getColumnName()));
+						}
 					
 					}
 				
