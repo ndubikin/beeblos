@@ -70,6 +70,7 @@ import com.sp.common.core.model.User;
 import com.sp.common.util.Configuration;
 import com.sp.common.util.DesEncrypter;
 import com.sp.common.util.StringPair;
+import com.sp.common.util.StringUtil;
 import com.sp.daemon.bl.DaemonLogBL;
 import com.sp.daemon.bl.DaemonPollBL;
 import com.sp.daemon.email.EmailDLog;
@@ -833,6 +834,9 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 						properties.put(bl.REPOSITORY_PROP_ID_OBJETO, (referenceId!=null?referenceId.toString():""));
 						properties.put(bl.REPOSITORY_PROP_USUARIO, userLogin);
 						properties.put(bl.REPOSITORY_PROP_REFERENCIA, reference);
+
+						// dml 20170328 - ITS 2407 - formateamos el file name para mandarlo al beeblos sin caracteres raros
+						fileName = StringUtil.formatFileName(fileName); 
 
 						ret = bl.addFile(
 								Long.valueOf(repositoryId), 
