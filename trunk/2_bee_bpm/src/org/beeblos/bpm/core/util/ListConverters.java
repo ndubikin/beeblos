@@ -1,5 +1,11 @@
 package org.beeblos.bpm.core.util;
 
+import static com.sp.common.util.ConstantsCommon.DATE_FORMAT;
+import static com.sp.common.util.ConstantsCommon.DATE_HOUR_FORMAT;
+import static com.sp.common.util.ConstantsCommon.FALSE_STRING;
+import static com.sp.common.util.ConstantsCommon.HOUR_FORMAT;
+import static com.sp.common.util.ConstantsCommon.NOW_STRING;
+import static com.sp.common.util.ConstantsCommon.TRUE_STRING;
 import static org.beeblos.bpm.core.util.Constants.ACTIVE_DATA_FIELDS;
 import static org.beeblos.bpm.core.util.Constants.ALL_DATA_FIELDS;
 
@@ -9,15 +15,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.beeblos.bpm.core.model.WProcessDataField;
 import org.beeblos.bpm.core.model.WStepDataField;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
 
 import com.sp.common.model.ManagedDataField;
+import com.sp.common.model.en.WDataType;
+import com.sp.common.util.StringUtil;
 
-/*
- * NOTA IMPORTANTE RAUL: CUANDO MIGREMOS A JSF2 USAR sp_common_jsf.utilsvs
- */
 public class ListConverters {
+
+	private static final Log logger = LogFactory.getLog(ListConverters.class);
 
 	public ListConverters() {
     }
@@ -41,9 +54,18 @@ public class ListConverters {
 		if (convSet.size()==0) return null;
 		
 		List<ManagedDataField> mdfList = new ArrayList<ManagedDataField>(convSet.size());
+
 		for(WProcessDataField processDataField: convSet) {
+		
 			if ( mode==ALL_DATA_FIELDS 
 					|| mode==ACTIVE_DATA_FIELDS && processDataField.isActive() ) {
+			
+				// dml 20170329 - Gets the default value converted into the correct object
+				Object defaultValue = _setDefaultValueAsCorrectObject(
+						processDataField.getName(), 
+						processDataField.getDefaultValue(), 
+						processDataField.getDataType());
+				
 				ManagedDataField mdf = new ManagedDataField(
 						currentWorkId, 
 						currentStepWorkId, 
@@ -51,16 +73,19 @@ public class ListConverters {
 						processDataField.getName(),
 						processDataField.getColumnName(),
 //						"", // value
-						null, // value - dml 20161031 - ITS: 1995 - cambiado porque ahora va a ser un "Object" no un String
+						defaultValue, // value - dml 20161031 - ITS: 1995 - cambiado porque ahora va a ser un "Object" no un String
 						processDataField.getOrder(), // display order
 						processDataField.getLength(),
 						false, // modified (flag to indicate modification of this datafield
 						processDataField.isRequired(), // required
 						false,  // readonly
 						false, // force modification
-						processDataField.getResultType() // dml 20170201
+						processDataField.getResultType(), // dml 20170201
+						processDataField.getComments()// comments - dml 20170329
 						); 
+				
 				mdfList.add(mdf);
+				
 			}
 		}
 		
@@ -75,8 +100,16 @@ public class ListConverters {
 		
 		List<ManagedDataField> mdfList = new ArrayList<ManagedDataField>(stepDataFieldDef.size());
 		for(WStepDataField stepDatField: stepDataFieldDef) {
+			
 			if ( mode==ALL_DATA_FIELDS 
 					|| mode==ACTIVE_DATA_FIELDS && stepDatField.getDataField().isActive() ) {
+			
+				// dml 20170329 - Gets the default value converted into the correct object
+				Object defaultValue = _setDefaultValueAsCorrectObject(
+						stepDatField.getDataField().getName(), 
+						stepDatField.getDefaultValue(), 
+						stepDatField.getDataField().getDataType());
+				
 				ManagedDataField mdf = new ManagedDataField(
 						currentWorkId, 
 						currentStepWorkId, 
@@ -91,7 +124,7 @@ public class ListConverters {
 						stepDatField.getDataField().getColumnName(), // column name must not be null ...
 						
 //						"", // value
-						null, // value - dml 20161102 - ITS: 1995 - cambiado porque ahora va a ser un "Object" no un String
+						defaultValue, // value - dml 20161102 - ITS: 1995 - cambiado porque ahora va a ser un "Object" no un String
 
 						// if step has his own order, use it, then use processHead defined order
 						(stepDatField.getOrder()!=null
@@ -107,9 +140,12 @@ public class ListConverters {
 						stepDatField.isRequired(), // required
 						stepDatField.isReadOnly(),  // readonly
 						stepDatField.isForceModification(),  // force modification
-						stepDatField.getDataField()!=null?stepDatField.getDataField().getResultType():null // dml 20170201
+						stepDatField.getDataField()!=null?stepDatField.getDataField().getResultType():null, // dml 20170201
+						stepDatField.getComments()// comments - dml 20170329
 						);
+				
 				mdfList.add(mdf);
+			
 			}
 		}
 		
@@ -119,6 +155,107 @@ public class ListConverters {
 		Collections.sort(mdfList, sortMDFByName());
 		
 		return mdfList;
+	}
+
+	/**
+	 * Checks the data type of the field and returns the correct Object type to set to 
+	 * the "Object value" as default
+	 *
+	 * @author dmuleiro 20170329
+	 *
+	 * @param datafieldName
+	 * @param defaultValue
+	 * @param dataType
+	 * @return
+	 * Object
+	 */
+	private static Object _setDefaultValueAsCorrectObject(String datafieldName, String defaultValue, WDataType dataType) {
+		
+		if (defaultValue == null || "".equals(defaultValue)){
+			return null;
+		}
+		
+		if (dataType != null){
+			
+			try {
+				
+				if (dataType.equals(WDataType.DATE)){
+					
+					// if the WDataType is DATE it will be a LocalDate
+
+					if (defaultValue.equals(NOW_STRING)){
+						return new LocalDate();
+					}
+					return DateTimeFormat.forPattern(DATE_FORMAT)
+							.parseLocalDate(defaultValue);
+					
+				} else if (dataType.equals(WDataType.DATETIME)){
+					
+					// if the WDataType is DATETIME it will be a DateTime
+
+					if (defaultValue.equals(NOW_STRING)){
+						return new DateTime();
+					}
+					return DateTimeFormat.forPattern(DATE_HOUR_FORMAT)
+							.parseDateTime(defaultValue);
+
+				} else if (dataType.equals(WDataType.TIME)){
+					
+					// if the WDataType is TIME it will be a LocalTime
+
+					if (defaultValue.equals(NOW_STRING)){
+						return new LocalTime();
+					}
+					return DateTimeFormat.forPattern(HOUR_FORMAT)
+							.parseDateTime(defaultValue).toLocalTime();
+
+				} else if (dataType.equals(WDataType.BOOLEAN)){
+
+					// if the WDataType is BOOLEAN it will be a boolean
+
+					if (defaultValue.equals(TRUE_STRING)){
+						return true;
+					} else if (defaultValue.equals(FALSE_STRING)){
+						return false;
+					} else {
+						logger.error("Error trying to recover default value to set into attribute '"
+								+ datafieldName + "'" + " where default value should be boolean and it is '" + defaultValue + "'" );
+						return null;
+					}
+					
+				} else if (dataType.equals(WDataType.NUMBER)){
+					
+					// if the WDataType is NUMBER it will be a Integer
+					
+					if (StringUtil.isInteger(defaultValue)){
+						return StringUtil.convertParamStringToInteger(defaultValue);
+					} else {
+						logger.error("Error trying to recover default value to set into attribute '"
+								+ datafieldName + "'" + " where default value should be integer and it is '" + defaultValue + "'" );
+						return null;
+					}
+					
+				} else {
+					
+					// if the WDataType is other it will be a String
+					
+					return defaultValue;
+				}
+				
+			} catch (Exception e){
+				String mess = "Error trying to recover default value to set into attribute '"
+						+ datafieldName + "'" + " where default value is '" + defaultValue + "'" 
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"")
+						+ (e.getClass()!=null?". "+e.getClass():"");
+				logger.error(mess);
+				return null;
+			}
+			
+		}
+		
+		return null;
+		
 	}
 
 
