@@ -6,6 +6,7 @@ import static com.email.core.util.ConstantsEmailCore.SAVE_IN_EMAIL_TRAY;
 import static com.sp.common.core.util.ConstantsSPC.BEEBLOS_DEFAULT_REPOSITORY_ID;
 import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
 import static com.sp.common.util.ConstantsCommon.EMPTY_OBJECT;
+import static com.sp.common.util.ConstantsCommon.ERROR_MESSAGE;
 import static org.beeblos.bpm.core.util.Constants.ALIVE;
 import static org.beeblos.bpm.core.util.Constants.BEEBLOS_WPROCESSWORK_DOCCLASS_ID;
 import static org.beeblos.bpm.core.util.Constants.DEFAULT_PROCESS_STATUS;
@@ -22,7 +23,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -75,7 +78,23 @@ import org.beeblos.bpm.core.model.noper.WStepWorkCheckObject;
 import org.beeblos.bpm.core.model.util.RouteEvaluationOrder;
 import org.beeblos.bpm.tm.impl.MethodSynchronizerImpl;
 import org.beeblos.rule.engine.BasicProcessor;
+import org.beeblos.rule.engine.Operations;
 import org.beeblos.rule.engine.Rule;
+import org.beeblos.rule.engine.Rules;
+import org.beeblos.rule.engine.dispatcher.ActionDispatcher;
+import org.beeblos.rule.engine.dispatcher.OutPatientDispatcher;
+import org.beeblos.rule.engine.operations.And;
+import org.beeblos.rule.engine.operations.Equals;
+import org.beeblos.rule.engine.operations.Greater;
+import org.beeblos.rule.engine.operations.GreaterThan;
+import org.beeblos.rule.engine.operations.IsAfter;
+import org.beeblos.rule.engine.operations.IsBefore;
+import org.beeblos.rule.engine.operations.IsEqual;
+import org.beeblos.rule.engine.operations.Less;
+import org.beeblos.rule.engine.operations.LessThan;
+import org.beeblos.rule.engine.operations.Not;
+import org.beeblos.rule.engine.operations.NotEquals;
+import org.beeblos.rule.engine.operations.Or;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -92,6 +111,7 @@ import com.sp.common.core.model.UserEmailAccount;
 import com.sp.common.core.util.ApplicationURLUtil;
 import com.sp.common.model.FileSP;
 import com.sp.common.model.ManagedDataField;
+import com.sp.common.model.WindowMessage;
 import com.sp.common.util.Resourceutil;
 import com.sp.common.util.StringPair;
 
@@ -391,6 +411,134 @@ public class WStepWorkBL {
 	}
 	
 	/**
+	 * Before processing WStepWork, we must check if the user managed data validations (if they exist)
+	 * are valid and not return errors.
+	 * 
+	 * This method have to be called from the Bean and from this BL.
+	 *
+	 * @author dmuleiro 20170330
+	 *
+	 * @param md
+	 * @param currentUserId
+	 * @return
+	 * List<WindowMessage>
+	 */
+	public List<WindowMessage> evaluateStepManagedData(ManagedData md, Integer currentUserId) {
+		
+		if (md == null || md.getDataField() == null || md.getDataField().isEmpty()){
+			return null;
+		}
+
+		logger.debug("_evaluateStepManagedDataFields(): init");
+		
+		List<WindowMessage> wml = new ArrayList<>();
+		for (ManagedDataField mdf : md.getDataField()) {
+			
+			evaluateStepManagedDataField(mdf, wml);
+			
+		}
+		
+		return wml;
+		
+	}
+
+	public void evaluateStepManagedDataField(ManagedDataField mdf, List<WindowMessage> wml) {
+		mdf.setEvaluationFail(false);
+
+		try {
+			
+			/**
+			 * If data is required we have to warn the user but continue the algorithm
+			 */
+			if (mdf.isRequired() && mdf.getValue() == null){
+				String mess = Resourceutil.getStringMessageFromJavaResource(
+						"label_el_dato_xxx_es_obligatorio_en_este_paso_debe_completarlo_para_continuar_el_proceso", new String[]{mdf.getName()});
+				logger.error(mess);
+				wml.add(new WindowMessage(ERROR_MESSAGE, mess));
+				mdf.setEvaluationFail(true);
+			}
+			
+			// If there is not "evaluatonExpression" we go to the next param
+			if (mdf.getEvaluationExpression() == null || "".equals(mdf.getEvaluationExpression().trim())){
+				return;
+			}
+
+			boolean evaluationOK = false;
+
+			if (!mdf.getEvaluationExpression().contains("{value}")){
+			
+				String mess = "_evaluateStepManagedDataFields(): the evaluation expression for attribute '" + mdf.getName()
+					+ "'does not contains the '{value}' string, so it cannot be evaluated. It is like '"
+					+ mdf.getEvaluationExpression() + "'";
+				logger.error(mess);
+				mdf.setEvaluationFail(true);
+				throw new WStepWorkException(mess);
+
+			}
+			
+			logger.debug("_evaluateStepManagedDataFields(): evaluating data defined expressions for attribute '" + mdf.getName()
+					+ "' with value '" + mdf.getEvaluationExpression() + "'");
+				
+			// create a singleton container for operations
+			Operations operations = Operations.INSTANCE;
+
+			// register new operations with the previously created container
+			operations.registerOperation(new And());
+			operations.registerOperation(new Or());
+			operations.registerOperation(new Equals());
+			operations.registerOperation(new Equals(), "EQUALS");
+			operations.registerOperation(new Not());
+			operations.registerOperation(new Less());
+			operations.registerOperation(new Greater());
+			operations.registerOperation(new LessThan());
+			operations.registerOperation(new GreaterThan());
+			operations.registerOperation(new NotEquals());
+			operations.registerOperation(new IsBefore());
+			operations.registerOperation(new IsAfter());
+			operations.registerOperation(new IsEqual());
+
+			Map<String, Object> bindings = new HashMap<>();
+			bindings.put("{value}", mdf.getValue());
+			
+			ActionDispatcher outPatient = new OutPatientDispatcher();
+			
+			Rule rule = new Rule.Builder().withExpression(mdf.getEvaluationExpression()).withDispatcher(outPatient).build();
+			Rules rules = new Rules();
+			rules.addRule(rule);
+			
+			evaluationOK = rules.eval(bindings);
+			
+			if (!evaluationOK){
+				
+				mdf.setEvaluationFail(true);
+				logger.error("_evaluateStepManagedDataFields(): evaluating data defined expressions for attribute '" + mdf.getName()
+					+ "' does not accomplish evaluation expression '" + mdf.getEvaluationExpression() + "'");
+				
+				if (mdf.getEvaluationMessage() != null && !"".equals(mdf.getEvaluationMessage().trim())){
+					logger.error(mdf.getEvaluationMessage());
+					wml.add(new WindowMessage(ERROR_MESSAGE, mdf.getEvaluationMessage()));
+				} else {
+					String mess = Resourceutil.getStringMessageFromJavaResource(
+							"label_data_with_name_xxx_does_not_accomplish_evaluation_expression_yyy_please_check_it", 
+							new String[]{mdf.getName(), mdf.getEvaluationExpression()});
+					logger.error(mess);
+					wml.add(new WindowMessage(ERROR_MESSAGE, mess));
+				}
+			}
+
+		} catch (Exception e){
+			String mess = "Se ha producido un error tratando de evaluar el dato " + mdf.getName()
+				+ " con la expresión " + mdf.getEvaluationExpression();
+			logger.error("_evaluateStepManagedDataFields(): " + mess 
+					+ (e.getMessage()!=null?". "+e.getMessage():"")
+					+ (e.getCause()!=null?". "+e.getCause():"")
+					+ (e.getClass()!=null?". "+e.getClass():""));
+			wml.add(new WindowMessage(ERROR_MESSAGE, mess));
+			mdf.setEvaluationFail(true);
+		}
+	}
+
+	/**
 	 * process a step - returns qty new routes started ( new workitems generated if no end routes has)
 	 * 
 	 * precondition: wStepWork MUST BE LOCKED!!!
@@ -422,15 +570,21 @@ public class WStepWorkBL {
 			/*Integer idProcess, Integer idObject, String idObjectType, */
 			boolean isAdminProcess, String processingDirection, boolean autoLock, 
 			WStartProcessResult startProcessResult, Integer currentUserId ) 
-	
-					throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
-							WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
-							WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
+		throws WProcessDefException, WStepDefException, WStepWorkException, WStepSequenceDefException, 
+			WStepLockedByAnotherUserException, WStepNotLockedException, WUserDefException, 
+			WStepAlreadyProcessedException, WStepWorkSequenceException, WProcessWorkException {
+
 		logger.debug(">>> processStep >> id:"+( idStepWork!=null?idStepWork:"null") 
 				+" user:"+(currentUserId!=null?currentUserId:"null"));
 
-		// NOTA NESTOR: VER POR QUE NO ESTOY CONTROLANDO QUE MANDEN LAS COSAS EN NULL: idStepWork, idResponse, runtimeSettings
+		// NOTA NESTOR: VER POR QUE NO ESTOY CONTROLANDO QUE MANDEN LAS COSAS EN NULL: idStepWork, runtimeSettings
 		// processingDirection no deberian ser null...
+		
+		/**
+		 * First of all we have to evaluate if "managedData" that logged user has introduce 
+		 * does not have any error - dml 20170330 
+		 */
+		_evaluateManagedDataBeforeProcessStep(runtimeSettings, currentUserId);
 		
 		DateTime now = new DateTime();
 		Integer qtyNewRoutes=0;
@@ -523,6 +677,48 @@ public class WStepWorkBL {
 		
 		return qtyNewRoutes; // devuelve la cantidad de nuevas rutas generadas ...
 		
+	}
+
+	/**
+	 * First of all we have to evaluate if "managedData" that logged user has introduce 
+	 * does not have any error
+	 *
+	 * @author dmuleiro 20170330
+	 *
+	 * @param runtimeSettings
+	 * @param currentUserId
+	 * @throws WStepWorkException
+	 * void
+	 */
+	private void _evaluateManagedDataBeforeProcessStep(WRuntimeSettings runtimeSettings, Integer currentUserId)
+			throws WStepWorkException {
+		try {
+			List<WindowMessage> evaluationErrorList = this.evaluateStepManagedData(
+					runtimeSettings!=null?runtimeSettings.getManagedData():null, 
+					currentUserId);
+			
+			if (evaluationErrorList != null && !evaluationErrorList.isEmpty()){
+				String mess = "";
+				for (WindowMessage error : evaluationErrorList) {
+					mess += error.getMessage() + ", ";
+				}
+				if (mess != null && mess.length() > 2){
+					mess = mess.substring(0, mess.length()-2);
+				}
+				mess = "The evaluation of the step managed data fields throws errors: "
+						+ mess + ". The step process cannot continue";
+				logger.error(mess);
+				throw new WStepWorkException(mess);
+			}
+			
+		} catch (Exception e){
+			String mess = "Error trying to evaluate the step managed data fields" 
+					+ (e.getMessage()!=null?". "+e.getMessage():"")
+					+ (e.getCause()!=null?". "+e.getCause():"")
+					+ (e.getClass()!=null?". "+e.getClass():"");
+			logger.error(mess);
+			throw new WStepWorkException(mess);
+		}
 	}
 
 	/**

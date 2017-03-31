@@ -30,7 +30,12 @@ public class WStepDataField implements java.io.Serializable {
 	private WProcessDataField dataField;
 	private Integer order;
 	private String name;
+	
+	/**
+	 * This 'Description' will be shown in the workflow process step next to the attribute to help the final user to fill its value
+	 */
 	private String comments;
+	
 	private boolean active;
 	private boolean readOnly; // indicates this data field must be showeD but no modified (default step processor)
 	private boolean forceModification; // idicates user must input the value in this WStepDataField
@@ -38,6 +43,16 @@ public class WStepDataField implements java.io.Serializable {
 
 	private Integer length;
 	private String defaultValue;
+	
+	/**
+	 * Expression that will evaluate the "Object value" attribute once final user inserts it in the step
+	 * before processing the step and message that will be shown if "value" does not accomplish the evaluationExpression
+	 * 
+	 * @author dmuleiro 20170330
+	 */
+	private String evaluationExpression;
+	private String evaluationMessage;
+	
 	// trail
 	private DateTime insertDate;
 	private Integer insertUser;
@@ -132,6 +147,22 @@ public class WStepDataField implements java.io.Serializable {
 
 	public boolean isRequired() {
 		return required;
+	}
+
+	public String getEvaluationExpression() {
+		return evaluationExpression;
+	}
+
+	public void setEvaluationExpression(String evaluationExpression) {
+		this.evaluationExpression = evaluationExpression;
+	}
+
+	public String getEvaluationMessage() {
+		return evaluationMessage;
+	}
+
+	public void setEvaluationMessage(String evaluationMessage) {
+		this.evaluationMessage = evaluationMessage;
 	}
 
 	public String getComments() {
@@ -261,8 +292,9 @@ public class WStepDataField implements java.io.Serializable {
 				+ ((processHeadId == null) ? 0 : processHeadId.hashCode());
 		result = prime * result + (readOnly ? 1231 : 1237);
 		result = prime * result + (required ? 1231 : 1237);
-		result = prime * result
-				+ ((stepHeadId == null) ? 0 : stepHeadId.hashCode());
+		result = prime * result + ((stepHeadId == null) ? 0 : stepHeadId.hashCode());
+		result = prime * result + ((evaluationExpression == null) ? 0 : evaluationExpression.hashCode());
+		result = prime * result + ((evaluationMessage == null) ? 0 : evaluationMessage.hashCode());
 		return result;
 	}
 
@@ -347,6 +379,16 @@ public class WStepDataField implements java.io.Serializable {
 			if (other.stepHeadId != null)
 				return false;
 		} else if (!stepHeadId.equals(other.stepHeadId))
+			return false;
+		if (evaluationExpression == null) {
+			if (other.evaluationExpression != null)
+				return false;
+		} else if (!evaluationExpression.equals(other.evaluationExpression))
+			return false;
+		if (evaluationMessage == null) {
+			if (other.evaluationMessage != null)
+				return false;
+		} else if (!evaluationMessage.equals(other.evaluationMessage))
 			return false;
 		return true;
 	}

@@ -81,7 +81,9 @@ public class ListConverters {
 						false,  // readonly
 						false, // force modification
 						processDataField.getResultType(), // dml 20170201
-						processDataField.getComments()// comments - dml 20170329
+						null, // comments - dml 20170329
+						null, // evaluationExpression - dml 20170330
+						null // evaluationMessage - dml 20170330
 						); 
 				
 				mdfList.add(mdf);
@@ -141,7 +143,9 @@ public class ListConverters {
 						stepDatField.isReadOnly(),  // readonly
 						stepDatField.isForceModification(),  // force modification
 						stepDatField.getDataField()!=null?stepDatField.getDataField().getResultType():null, // dml 20170201
-						stepDatField.getComments()// comments - dml 20170329
+						stepDatField.getComments(), // comments - dml 20170329
+						stepDatField.getEvaluationExpression(), // evaluationExpression - dml 20170330
+						stepDatField.getEvaluationMessage() // evaluationMessage - dml 20170330
 						);
 				
 				mdfList.add(mdf);
