@@ -591,7 +591,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 			}
 	
 			if (emailTrayId != null){
-				this.writeLogAndBeeblosBackup(conf, message, emailTrayId);
+				this.writeLogAndBeeblosBackup(conf, message, emailTrayId, currentUserId);
 			} else {
 				logger.error("Impossible to create email tray register and save a email copy in beeblos");
 			}
@@ -749,7 +749,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	}
 
 	private void writeLogAndBeeblosBackup(EmailDConfBeeBPM conf, Message message,
-			Integer emailTrayId) throws DaemonJobRunningException {
+			Integer emailTrayId, Integer currentUserId) throws DaemonJobRunningException {
 		try {
 			
 			
@@ -762,7 +762,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 		}
 		
 		this.saveValidEmailInBeeblosAndInFileSystem(message, emailTrayId,
-				BEEBLOS_DEFAULT_REPOSITORY_ID, conf.getEmailAccount().getName());
+				BEEBLOS_DEFAULT_REPOSITORY_ID, conf.getEmailAccount().getName(), currentUserId);
 
 	}
 
@@ -782,7 +782,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 	 * @throws IOException
 	 */
 	private Integer saveValidEmailInBeeblosAndInFileSystem(Message message, 
-			Integer emailTrayId, Integer repositoryId , String userLogin) throws DaemonJobRunningException {
+			Integer emailTrayId, Integer repositoryId , String userLogin, Integer currentUserId) throws DaemonJobRunningException {
 
 		Integer returnValue = null;
 
@@ -843,7 +843,7 @@ public class MessageEventManagerImpl implements DaemonExecutor {
 								fileName, message.getContentType(), description,
 								Configuration.getConfigurationResourceBundle()
 										.getString("beeblos.default.docclassid.email"),
-								properties, out.toByteArray());
+								properties, out.toByteArray(), currentUserId);
 
 						// rrl 20111130 comprobar que es un docid valido
 						if (ret > 0) {
