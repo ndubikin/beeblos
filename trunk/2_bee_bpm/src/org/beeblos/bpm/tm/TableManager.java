@@ -656,7 +656,8 @@ public class TableManager {
 			 *  
 			 *  dml 20161028 - ITS: 1995
 			 */
-			if (dataField.getValue() != null && dataField.getValue() instanceof String){
+			if (dataField.getValue() != null 
+					&& (dataField.getValue() instanceof String || dataField.getValue() instanceof LocalDate || dataField.getValue() instanceof DateTime)){
 				sqlValues+=", '"+dataField.getValue()+"' ";
 			} else {
 				sqlValues+=", "+dataField.getValue();
