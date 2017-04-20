@@ -347,20 +347,20 @@ public class WProcessDataFieldBL {
 	}	
 
 	/**
-	 * Takes the "resultTypeSelectFromListSQLQuery" value, executes the SQL Query and obtains the
+	 * Takes the "resultTypeSelectFromList" value, executes the SQL Query and obtains the
 	 * result value that has to be a StringPair list
 	 * 
 	 * @author dmuleiro 20170201
 	 *
-	 * @param resultTypeSelectFromListSQLQuery
+	 * @param resultTypeSelectFromList
 	 * @param currentUserId
 	 * @return
 	 * StringPair
 	 * @throws WProcessDataFieldException 
 	 */
-	public List<StringPair> getResultTypeSelectFromListSQLQueryStringPairList(String resultTypeSelectFromListSQLQuery, Integer currentUserId) throws WProcessDataFieldException{
+	public List<StringPair> getResultTypeSelectFromListStringPairList(String resultTypeSelectFromList, Integer currentUserId) throws WProcessDataFieldException{
 
-		return new WProcessDataFieldDao().getResultTypeSelectFromListSQLQueryStringPairList(resultTypeSelectFromListSQLQuery);
+		return new WProcessDataFieldDao().getResultTypeSelectFromListStringPairList(resultTypeSelectFromList);
 		
 	}
 	

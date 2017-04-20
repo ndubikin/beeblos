@@ -85,17 +85,17 @@
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
-		<dependency>
-			<groupId>softpoint</groupId>
-			<artifactId>sp_notification_core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>softpoint</groupId> -->
+<!-- 			<artifactId>sp_notification_core</artifactId> -->
+<!-- 			<version>1.0.0-SNAPSHOT</version> -->
+<!-- 		</dependency> -->
 
-		<dependency>
-			<groupId>softpoint</groupId>
-			<artifactId>sp_scheduler</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>softpoint</groupId> -->
+<!-- 			<artifactId>sp_scheduler</artifactId> -->
+<!-- 			<version>1.0.1-SNAPSHOT</version> -->
+<!-- 		</dependency> -->
 
 
 		<dependency>
