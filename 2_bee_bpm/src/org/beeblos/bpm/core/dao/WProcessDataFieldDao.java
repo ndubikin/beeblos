@@ -611,17 +611,17 @@ public class WProcessDataFieldDao {
 	
 	
 	/**
-	 * Takes the "resultTypeSelectFromListSQLQuery" value, executes the SQL Query and obtains the
+	 * Takes the "resultTypeSelectFromList" value, executes the SQL Query and obtains the
 	 * result value that has to be a StringPair list
 	 * 
 	 * @author dmuleiro 20170201
 	 *
-	 * @param resultTypeSelectFromListSQLQuery
+	 * @param resultTypeSelectFromList
 	 * @return
 	 * StringPair
 	 * @throws WProcessDataFieldException 
 	 */
-	public List<StringPair> getResultTypeSelectFromListSQLQueryStringPairList(String resultTypeSelectFromListSQLQuery) throws WProcessDataFieldException{
+	public List<StringPair> getResultTypeSelectFromListStringPairList(String resultTypeSelectFromList) throws WProcessDataFieldException{
 		
 		org.hibernate.Session session = null;
 		org.hibernate.Transaction tx = null;
@@ -635,7 +635,7 @@ public class WProcessDataFieldDao {
 
 			tx.begin();
 
-			List<Object[]> list = session.createSQLQuery(resultTypeSelectFromListSQLQuery).list();
+			List<Object[]> list = session.createSQLQuery(resultTypeSelectFromList).list();
 
 			if (list != null){
 				
@@ -656,7 +656,7 @@ public class WProcessDataFieldDao {
 		} catch (HibernateException e) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "HibernateException getResultTypeSelectFromListSQLQueryStringPairList(): error trying to execute the SQL query to obtain the result set values: " + resultTypeSelectFromListSQLQuery
+			String mess = "HibernateException getResultTypeSelectFromListStringPairList(): error trying to execute the SQL query to obtain the result set values: " + resultTypeSelectFromList
 					+ (e.getMessage()!=null?". "+e.getMessage():"")
 					+ (e.getCause()!=null?". "+e.getCause():"");
 			logger.error(mess);
@@ -664,7 +664,7 @@ public class WProcessDataFieldDao {
 		} catch (Exception e) {
 			if (tx != null)
 				tx.rollback();
-			String mess = "Exception getResultTypeSelectFromListSQLQueryStringPairList(): error trying to execute the SQL query to obtain the result set values: " + resultTypeSelectFromListSQLQuery
+			String mess = "Exception getResultTypeSelectFromListStringPairList(): error trying to execute the SQL query to obtain the result set values: " + resultTypeSelectFromList
 					+ (e.getMessage()!=null?". "+e.getMessage():"")
 					+ (e.getCause()!=null?". "+e.getCause():"")
 					+ (e.getClass()!=null?". "+e.getClass():"");

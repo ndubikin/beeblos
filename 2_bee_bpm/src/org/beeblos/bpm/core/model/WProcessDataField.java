@@ -133,11 +133,14 @@ public class WProcessDataField implements java.io.Serializable {
 	 * 1. SET_VALUE -> The user in the workflow process will set the result (it is for strings, integer, booleans...)
 	 * 2. SELECT_FROM_LIST -> a list of values will be presented to the user in order to force him to choose 
 	 * one value. This option is for select one menu options
+	 * 3. SELECT_FROM_ENUM -> a list of values will be presented to the user in order to force him to choose one value. This
+	 * option. The field "resultTypeSelectFromList" must have values like:
+	 * (1, OPTION_SELECT_ONE_MENU_1), (2, OPTION_SELECT_ONE_MENU_2), ...
 	 * 
 	 * @author dmuleiro 20170201
 	 */
 	private DataFieldResultType resultType;
-	private String resultTypeSelectFromListSQLQuery;
+	private String resultTypeSelectFromList;
 	
 	// trail
 	private DateTime insertDate;
@@ -353,12 +356,12 @@ public class WProcessDataField implements java.io.Serializable {
 		this.resultType = DataFieldResultType.findByKey(code);
 	}
 
-	public String getResultTypeSelectFromListSQLQuery() {
-		return resultTypeSelectFromListSQLQuery;
+	public String getResultTypeSelectFromList() {
+		return resultTypeSelectFromList;
 	}
 
-	public void setResultTypeSelectFromListSQLQuery(String resultTypeSelectFromListSQLQuery) {
-		this.resultTypeSelectFromListSQLQuery = resultTypeSelectFromListSQLQuery;
+	public void setResultTypeSelectFromList(String resultTypeSelectFromList) {
+		this.resultTypeSelectFromList = resultTypeSelectFromList;
 	}
 
 	public boolean isSynchronize() {
@@ -670,7 +673,7 @@ public class WProcessDataField implements java.io.Serializable {
 				+ ", "
 				+ (synchroWith != null ? "synchroWith=" + synchroWith + ", " : "")
 				+ (resultType != null ? "resultType=" + resultType + ", " : "")
-				+ (resultTypeSelectFromListSQLQuery != null ? "resultTypeSelectFromListSQLQuery=" + resultTypeSelectFromListSQLQuery + ", " : "")
+				+ (resultTypeSelectFromList != null ? "resultTypeSelectFromList=" + resultTypeSelectFromList + ", " : "")
 				+ (jdbcType != null ? "jdbcType=" + jdbcType + ", " : "")
 				+ (schema != null ? "schema=" + schema + ", " : "")
 				+ (tableName != null ? "tableName=" + tableName + ", " : "")
@@ -735,7 +738,7 @@ public class WProcessDataField implements java.io.Serializable {
 		result = prime * result + ((schema == null) ? 0 : schema.hashCode());
 		result = prime * result + ((synchroWith == null) ? 0 : synchroWith.hashCode());
 		result = prime * result + ((resultType == null) ? 0 : resultType.hashCode());
-		result = prime * result + ((resultTypeSelectFromListSQLQuery == null) ? 0 : resultTypeSelectFromListSQLQuery.hashCode());
+		result = prime * result + ((resultTypeSelectFromList == null) ? 0 : resultTypeSelectFromList.hashCode());
 		result = prime * result + ((jdbcType == null) ? 0 : jdbcType.hashCode());
 		result = prime * result + (synchronize ? 1231 : 1237);
 		result = prime * result
@@ -877,10 +880,10 @@ public class WProcessDataField implements java.io.Serializable {
 				return false;
 		} else if (!resultType.equals(other.resultType))
 			return false;
-		if (resultTypeSelectFromListSQLQuery == null) {
-			if (other.resultTypeSelectFromListSQLQuery != null)
+		if (resultTypeSelectFromList == null) {
+			if (other.resultTypeSelectFromList != null)
 				return false;
-		} else if (!resultTypeSelectFromListSQLQuery.equals(other.resultTypeSelectFromListSQLQuery))
+		} else if (!resultTypeSelectFromList.equals(other.resultTypeSelectFromList))
 			return false;
 		if (jdbcType == null) {
 			if (other.jdbcType != null)
