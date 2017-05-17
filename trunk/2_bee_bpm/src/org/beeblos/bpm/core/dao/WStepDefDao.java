@@ -804,70 +804,79 @@ public class WStepDefDao {
 			String textoPrimeraLinea, String separacion )
 	throws WStepDefException {
 		 
-			List<WStepDef> lwpd = null;
-			List<StringPair> retorno = new ArrayList<StringPair>(10);
-			
-			org.hibernate.Session session = null;
-			org.hibernate.Transaction tx = null;
-
-			try {
-
-				session = HibernateUtil.obtenerSession();
-				tx = session.getTransaction();
-				tx.begin();
-
-				lwpd = session
-						.createQuery("From WStepDef Order By stepHead.name ")
-						.list();
+		List<WStepDef> lwpd = null;
+		List<StringPair> retorno = new ArrayList<StringPair>(10);
 		
-				tx.commit();
+		org.hibernate.Session session = null;
+		org.hibernate.Transaction tx = null;
 
-				if (lwpd!=null) {
-					
-					// inserta los extras
-					if ( textoPrimeraLinea!=null && !"".equals(textoPrimeraLinea) ) {
-						if ( !textoPrimeraLinea.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,textoPrimeraLinea));  // deja la primera línea con lo q venga
-						} else {
-							retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
-						}
-					}
-					
-					if ( separacion!=null && !"".equals(separacion) ) {
-						if ( !separacion.equals("WHITESPACE") ) {
-							retorno.add(new StringPair(null,separacion));  // deja la separación línea con lo q venga
-						} else {
-							retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
-						}
-					}
-					
+		try {
+
+			session = HibernateUtil.obtenerSession();
+			tx = session.getTransaction();
+			tx.begin();
+
+			lwpd = session
+					.createQuery("From WStepDef Order By stepHead.name ")
+					.list();
+	
+			tx.commit();
+
+		} catch (HibernateException ex) {
+			if (tx != null)
+				tx.rollback();
+			throw new WStepDefException(
+					"Can't obtain WStepDef combo list "
+					+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ") );
+		} catch (Exception e) {
+			if (tx != null)
+				tx.rollback();
+			throw new WStepDefException(
+					"Can't obtain WStepDef combo list "
+					+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ")
+					+" "+e.getClass());				
+		}
+
+		// dml 20170516 - bloque movido fuera del try/catch de la session de hibernate para que no afecte al rollback
+		try {
+			
+			if (lwpd!=null) {
 				
-					
-					for (WStepDef wpd: lwpd) {
-						retorno.add(new StringPair(wpd.getId(),wpd.getName()));
+				// inserta los extras
+				if ( textoPrimeraLinea!=null && !"".equals(textoPrimeraLinea) ) {
+					if ( !textoPrimeraLinea.equals("WHITESPACE") ) {
+						retorno.add(new StringPair(null,textoPrimeraLinea));  // deja la primera línea con lo q venga
+					} else {
+						retorno.add(new StringPair(null," ")); // deja la primera línea en blanco ...
 					}
-				} else {
-					// nes  - si el select devuelve null entonces devuelvo null
-					retorno=null;
 				}
 				
+				if ( separacion!=null && !"".equals(separacion) ) {
+					if ( !separacion.equals("WHITESPACE") ) {
+						retorno.add(new StringPair(null,separacion));  // deja la separación línea con lo q venga
+					} else {
+						retorno.add(new StringPair(null," ")); // deja la separacion con linea en blanco ...
+					}
+				}
 				
-			} catch (HibernateException ex) {
-				if (tx != null)
-					tx.rollback();
-				throw new WStepDefException(
-						"Can't obtain WStepDef combo list "
-						+ex.getMessage()+" "+(ex.getCause()!=null?ex.getCause():" ") );
-			} catch (Exception e) {
-				if (tx != null)
-					tx.rollback();
-				throw new WStepDefException(
-						"Can't obtain WStepDef combo list "
-						+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ")
-						+" "+e.getClass());				
+			
+				
+				for (WStepDef wpd: lwpd) {
+					retorno.add(new StringPair(wpd.getId(),wpd.getName()));
+				}
+			} else {
+				// nes  - si el select devuelve null entonces devuelvo null
+				retorno=null;
 			}
-
-			return retorno;
+			
+		} catch (Exception e) {
+			throw new WStepDefException(
+					"Can't obtain WStepDef combo list "
+					+e.getMessage()+" "+(e.getCause()!=null?e.getCause():" ")
+					+" "+e.getClass());				
+		}
+		
+		return retorno;
 
 
 	}
@@ -913,12 +922,10 @@ public class WStepDefDao {
 //
 //						lwsd = (List<WStepDef>) crit.list();
 //
-//						tx.commit();
 //				lwsd = (List<WStepDef>) session.createCriteria(WStepDef.class).add(
 //						Restrictions.naturalId().set("name", name))
 //						.uniqueResult();
 //
-//				tx.commit();
 
 				/**
 				 * load step list referred for a given process. Step list will be deduced from steppDefs pointed by a route (WStepSequendeDef) belonging
@@ -935,6 +942,23 @@ public class WStepDefDao {
 				
 				tx.commit();
 
+			} catch (HibernateException ex) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			}
+
+			try {
+				
+				// dml 20170516 - bloque movido fuera del try/catch de la session de hibernate para que no afecte al rollback
 				if (lwsd!=null) {
 					
 					// inserta los extras
@@ -969,16 +993,7 @@ public class WStepDefDao {
 					retorno=null;
 				}
 				
-				
-			} catch (HibernateException ex) {
-				if (tx != null)
-					tx.rollback();
-				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
-				logger.error(mess);
-				throw new WProcessDefException();
 			} catch (Exception e) {
-				if (tx != null)
-					tx.rollback();
 				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
@@ -1000,6 +1015,7 @@ public class WStepDefDao {
 	 * @return
 	 * @throws WProcessDefException
 	 */
+	@SuppressWarnings("unchecked")
 	public List<StringPair> getComboList(
 			Integer processDefId, String eventTypeId, String firstLineText, String blank )
 	throws WProcessDefException {
@@ -1031,12 +1047,10 @@ public class WStepDefDao {
 //
 //						lwsd = (List<WStepDef>) crit.list();
 //
-//						tx.commit();
 //				lwsd = (List<WStepDef>) session.createCriteria(WStepDef.class).add(
 //						Restrictions.naturalId().set("name", name))
 //						.uniqueResult();
 //
-//				tx.commit();
 
 				String hqlQuery = 
 						"Select Distinct w.id, w.stepHead.name, w.stepComments FROM WStepDef w, WStepSequenceDef ws "
@@ -1053,6 +1067,23 @@ public class WStepDefDao {
 				
 				tx.commit();
 
+			} catch (HibernateException ex) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			}
+
+			try {
+				
+				// dml 20170516 - bloque movido fuera del try/catch de la session de hibernate para que no afecte al rollback
 				if (lwsd!=null) {
 					
 					// inserta los extras
@@ -1088,15 +1119,7 @@ public class WStepDefDao {
 				}
 				
 				
-			} catch (HibernateException ex) {
-				if (tx != null)
-					tx.rollback();
-				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
-				logger.error(mess);
-				throw new WProcessDefException();
 			} catch (Exception e) {
-				if (tx != null)
-					tx.rollback();
 				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
@@ -1193,7 +1216,24 @@ public class WStepDefDao {
 						.list();
 
 				tx.commit();
+				
+			} catch (HibernateException ex) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			} catch (Exception e) {
+				if (tx != null)
+					tx.rollback();
+				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
+				logger.error(mess);
+				throw new WProcessDefException();
+			}
 
+			try {
+				
+				// dml 20170516 - bloque movido fuera del try/catch de la session de hibernate para que no afecte al rollback
 				if (lwsd!=null) {
 					
 					// inserta los extras
@@ -1229,15 +1269,7 @@ public class WStepDefDao {
 				}
 				
 				
-			} catch (HibernateException ex) {
-				if (tx != null)
-					tx.rollback();
-				String mess="Can't obtain WProcessDefs combo list " +ex.getMessage()+" "+ex.getCause();
-				logger.error(mess);
-				throw new WProcessDefException();
 			} catch (Exception e) {
-				if (tx != null)
-					tx.rollback();
 				String mess="Can't obtain WProcessDefs combo list " +e.getMessage()+" "+e.getCause();
 				logger.error(mess);
 				throw new WProcessDefException();
