@@ -102,7 +102,7 @@ import com.email.core.bl.SendEmailBL;
 import com.email.core.error.CreateEmailException;
 import com.email.core.error.SendEmailException;
 import com.email.core.model.Email;
-import com.email.tray.core.util.EmailPersonalizationUtilBL;
+import com.email.core.util.EmailPersonalizationUtilBL;
 import com.email.tray.core.util.EmailUtilBL;
 import com.sp.common.core.bl.DocumentManagerBL;
 import com.sp.common.core.error.BeeblosBLException;
