@@ -972,6 +972,9 @@ public class WStepWorkDao<T extends Serializable> {
 	 * @param deadlineDate
 	 * @param commentsAndReferenceFilter
 	 * @param maxResults  - dml 20160418 - ITS: 1695
+	 * @param idObject - dml 20170725
+	 * @param idObjectType - dml 20170725
+	 * @param includeManagedData - dml 20170725 - if it is true, each return object in the list will contain the managed data, calculated before the main query
 	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
@@ -983,13 +986,19 @@ public class WStepWorkDao<T extends Serializable> {
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
 			String commentsAndReferenceFilter,
 			Integer maxResults,  // dml 20160418 - ITS: 1695
+			Integer idObject, // dml 20170725 
+			String idObjectType, // dml 20170725
+			boolean includeManagedData, // dml 20170725 - if it is true, each return object in the list will contain the managed data, calculated before the main query
 			Integer currentUserId) 
 	throws WStepWorkException {
-		logger.debug(">>> getWorkListByProcess... idProcess:"+(idProcess!=null?idProcess:"null"));
+		
+		logger.debug(">>> getWorkListByProcess() idProcess:"+(idProcess!=null?idProcess:"null"));
 		
 		List<WStepWork> stepws = (List<WStepWork>) getWorkListByProcessExecute(_RECOVER_WSTEPWORK_LIST, 
 				idProcess, idCurrentStep, status, userId, isAdmin, arrivingDate, openDate, deadlineDate, 
-				commentsAndReferenceFilter, maxResults, currentUserId);
+				commentsAndReferenceFilter, maxResults, 
+				idObject, idObjectType, includeManagedData, // dml 20170725 
+				currentUserId);
 		
 		
 		return stepws;
@@ -1026,12 +1035,17 @@ public class WStepWorkDao<T extends Serializable> {
 			Integer maxResults, 
 			Integer currentUserId) 
 	throws WStepWorkException {
-		logger.debug(">>> getWorkListByProcess... idProcess:"+(idProcess!=null?idProcess:"null"));
+		
+		logger.debug(">>> getStepDefListFromCurrentWorkByProcess() idProcess: "+(idProcess!=null?idProcess:"null"));
+		
+		boolean _INCLUDE_MANAGED_DATA = false; // dml 20170725
 		
 		@SuppressWarnings("unchecked")
 		List<Integer> stepws = (List<Integer>) getWorkListByProcessExecute(_RECOVER_ID_STEP_DEF, 
 				idProcess, _ID_CURRENT_STEP_NULL, status, userId, isAdmin, arrivingDate, openDate, deadlineDate, 
-				commentsAndReferenceFilter, maxResults, currentUserId);
+				commentsAndReferenceFilter, maxResults, 
+				null, null, _INCLUDE_MANAGED_DATA, 
+				currentUserId);
 		
 		
 		return stepws;
@@ -1061,6 +1075,9 @@ public class WStepWorkDao<T extends Serializable> {
 	 * @param deadlineDate
 	 * @param commentsAndReferenceFilter
 	 * @param maxResults - dml 20160418 - ITS: 1695
+	 * @param idObject - dml 20170725
+	 * @param idObjectType - dml 20170725
+	 * @param includeManagedData - dml 20170725 - if it is true, each return object in the list will contain the managed data, calculated before the main query
 	 * @param currentUserId
 	 * @return
 	 * @throws WStepWorkException
@@ -1072,6 +1089,9 @@ public class WStepWorkDao<T extends Serializable> {
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
 			String commentsAndReferenceFilter,
 			Integer maxResults, 
+			Integer idObject, // dml 20170725 
+			String idObjectType, // dml 20170725
+			boolean includeManagedData, // dml 20170725 - if it is true, each return object in the list will contain the managed data, calculated before the main query
 			Integer currentUserId) 
 	throws WStepWorkException {
 
@@ -1085,8 +1105,11 @@ public class WStepWorkDao<T extends Serializable> {
 		// build filter from user params. String and Integer values will be added to
 		// the String directly in the string filter.
 		// Date parameters must be added to hibernate query in the try / catch clause below
-		String userFilter = " (" + 
-							getSQLFilter(idProcess, idCurrentStep, status, arrivingDate, openDate, deadlineDate, commentsAndReferenceFilter ) +
+		String userFilter = " (" 
+							+ getSQLFilter(idProcess, idCurrentStep, status, 
+									arrivingDate, openDate, deadlineDate, 
+									commentsAndReferenceFilter, 
+									idObject, idObjectType) +
 							" ) ";
 		
 		String requiredFilter = getRequiredFilter(userId, isAdmin);
@@ -1220,8 +1243,65 @@ public class WStepWorkDao<T extends Serializable> {
 			logger.warn(message );
 			throw new WStepWorkException(message);
 		}
+
+		// dml 20170725
+		if (includeManagedData && retList != null && !retList.isEmpty()) {
+	
+			_fillManagedDataInWStepWorkList((List<WStepWork>) retList);
+
+		}
 		
 		return retList;
+	}
+
+	/**
+	 * Fills the DataFields and the ManagedData of each WStepWork
+	 *
+	 * @author dmuleiro 20170725
+	 *
+	 * @param retList
+	 * @throws WStepWorkException
+	 * void
+	 */
+	private void _fillManagedDataInWStepWorkList(List<WStepWork> retList) throws WStepWorkException {
+		
+		logger.debug("_fillManagedDataInWStepWorkList");
+		
+		for (WStepWork wsw: retList) {
+
+			try {
+				// pab 29122014
+				if(wsw.getwProcessWork() != null
+						&& wsw.getwProcessWork().getProcessHeadId() != null
+						&& wsw.getCurrentStep() != null
+						&& wsw.getCurrentStep().getStepHead() != null){
+					
+					List<WStepDataField> dataFields = 
+							new WStepDataFieldDao().getWStepDataFieldList(
+									wsw.getwProcessWork().getProcessHeadId(),
+									wsw.getCurrentStep().getStepHead().getId());
+	
+					wsw.getCurrentStep().setDataFieldDef(dataFields);
+				}
+			
+				if (wsw.getCurrentStep() != null
+						&& wsw.getCurrentStep().getDataFieldDef() != null
+						&& !wsw.getCurrentStep().getDataFieldDef().isEmpty()) {
+					
+					loadStepWorkManagedData(wsw);
+				
+				}
+
+			} catch (Exception e) {
+				String mess = "getWStepDefByPK()"
+						+ (e.getMessage()!=null?". "+e.getMessage():"")
+						+ (e.getCause()!=null?". "+e.getCause():"");
+				logger.error( mess );
+				throw new WStepWorkException(mess, e);
+			}
+
+		}
+
 	}
 
 	/**
@@ -1479,7 +1559,10 @@ public class WStepWorkDao<T extends Serializable> {
 	
 	private String getSQLFilter(Integer idProcess, Integer idCurrentStep,
 			String status,	LocalDate arrivingDate, LocalDate openedDate, LocalDate deadlineDate,
-			String commentsAndReferenceFilter) {
+			String commentsAndReferenceFilter, 
+			Integer idObject, // dml 20170725
+			String idObjectType // dml 20170725
+			) {
 
 		String filter="";
 		
@@ -1553,6 +1636,22 @@ public class WStepWorkDao<T extends Serializable> {
 			filter +=" ( wpw.comments LIKE '%"+commentsAndReferenceFilter+"%' ";
 			filter +=" OR wpw.reference LIKE '%"+commentsAndReferenceFilter+"%' ) ";
 
+		}
+		
+		// dml 20170725
+		if (idObject != null && !idObject.equals(0)) {
+			if ( filter ==null || !"".equals(filter)) {
+				filter +=" AND ";
+			}
+			filter+=" wpw.id_object = " + idObject;
+		}
+		
+		// dml 20170725
+		if (idObjectType != null && !"".equals(idObjectType)) {
+			if ( filter ==null || !"".equals(filter)) {
+				filter +=" AND ";
+			}
+			filter+=" wpw.id_object_type Like '" + idObjectType + "'";
 		}
 		
 		return filter;
