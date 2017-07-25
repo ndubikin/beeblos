@@ -626,3 +626,5 @@ INSERT INTO `email_template_theme` (`id`, `name`) VALUES ('12', 'Managed');
 ## nes 20160527
 ALTER TABLE `w_process_head` 
 ADD COLUMN `short_name` VARCHAR(45) NULL AFTER `name`;
+
+## dml 20170725 - hasta aqui VERSION 250

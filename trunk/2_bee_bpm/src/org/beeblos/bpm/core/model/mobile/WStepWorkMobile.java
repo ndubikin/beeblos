@@ -30,6 +30,7 @@ public class WStepWorkMobile {
 	private String processReference;
 	private String processName;
 	private String processComments;
+	
 	public WStepWorkMobile() {
 		super();
 		// TODO Auto-generated constructor stub

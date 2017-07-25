@@ -76,6 +76,7 @@ public class ListConverters {
 						defaultValue, // value - dml 20161031 - ITS: 1995 - cambiado porque ahora va a ser un "Object" no un String
 						processDataField.getOrder(), // display order
 						processDataField.getLength(),
+						processDataField.isActive(),  // dml 20170725
 						false, // modified (flag to indicate modification of this datafield
 						processDataField.isRequired(), // required
 						false,  // readonly
@@ -138,6 +139,7 @@ public class ListConverters {
 						?stepDatField.getLength()
 						:stepDatField.getDataField().getLength()), // display order
 						
+						stepDatField.isActive(),  // dml 20170725
 						false, // modified (flag to indicate modification of this datafield
 						stepDatField.isRequired(), // required
 						stepDatField.isReadOnly(),  // readonly

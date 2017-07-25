@@ -1444,6 +1444,9 @@ public class WStepWorkBL {
 	 * @param filtroComentariosYReferencia
 	 * @param maxResults - dml 20160418 - ITS: 1695
 	 * @param currentUserId
+	 * @param idObject - dml 20170725
+	 * @param idObjectType - dml 20170725
+	 * @param includeManagedData - dml 20170725 - if it is true, each return object in the list will contain the managed data, calculated before the main query
 	 * @return
 	 * @throws WStepWorkException
 	 *
@@ -1454,6 +1457,9 @@ public class WStepWorkBL {
 			LocalDate arrivingDate, LocalDate openDate, LocalDate deadlineDate, 
 			String filtroComentariosYReferencia, 
 			Integer maxResults, 
+			Integer idObject, // dml 20170725 
+			String idObjectType, // dml 20170725
+			boolean includeManagedData, // dml 20170725 - if it is true, each return object in the list will contain the managed data, calculated before the main query
 			Integer currentUserId) 
 	throws WStepWorkException {
 		
@@ -1474,7 +1480,9 @@ public class WStepWorkBL {
 								idProcess, idCurrentStep, status,
 								userId, isAdmin, arrivingDate, openDate, 
 								deadlineDate, filtroComentariosYReferencia,
-								maxResults, currentUserId);
+								maxResults, 
+								idObject, idObjectType, includeManagedData, // dml 20170725 
+								currentUserId);
 		
 	}
 
