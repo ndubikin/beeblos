@@ -1,0 +1,19 @@
+SET foreign_key_checks = 0;
+
+DELETE FROM `bee_bpm_dev`.`w_step_work`  where id > 1;
+ALTER TABLE  `bee_bpm_dev`.`w_step_work`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_work_assignment`  where id > 1;
+ALTER TABLE  `bee_bpm_dev`.`w_step_work_assignment`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_work_sequence`  where id > 1;
+ALTER TABLE  `bee_bpm_dev`.`w_step_work_sequence`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_work`  where id > 1;
+ALTER TABLE  `bee_bpm_dev`.`w_process_work` AUTO_INCREMENT=1;
+
+## hay q borrar los wmt q puedan existir ..
+## delete from wmt_1 where id > 1;
+## delete from wmt_2 where id > 1;
+
+SET foreign_key_checks = 1;

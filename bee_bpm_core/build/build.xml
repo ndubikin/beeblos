@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- @author: sgurin  -->
+<project name="2_bee_bpm" default="jar">
+
+	<property file="build.properties"/>
+	<description>
+        make java doc of all this java project
+		@author: nes
+    </description>
+
+	<path id="libraries">
+	    <pathelement path="${binFolder}"/>
+		<fileset dir="lib" includes="*.jar" />
+	</path>
+
+	
+	<target name="compile">
+	    <javac srcdir="${srcFolder}" destdir="${binFolder}" classpathref="libraries"/>
+
+  	</target>		  
+	
+	<target name="jar" depends="compile" description="">
+		 <jar destfile="${distFolder}/${jarName}"
+	         basedir="${binFolder}"
+	         includes="**/*.class, **/*.xml, **/*.properties"
+		 	 excludes="**/hibernate.cfg.xml, **/*.hbm.xml, **/*.properties"
+	         />
+	</target>
+
+	<!-- dml 20140124 - con este 'target' copiamos el jar generado a todos los proyectos que lo van a usar  -->
+	<target name="copyToOtherProjs" depends="jar" description="OJO USAR CON CUIDADO!!">
+
+		<copy file="${distFolder}/${jarName}" todir="../../gespro_core/lib" />
+		<copy file="${distFolder}/${jarName}" todir="../../gespro_jsf/lib" />
+		<copy file="${distFolder}/${jarName}" todir="../../gespro_web/src/main/webapp/WEB-INF/lib" />
+
+		<copy file="${distFolder}/${jarName}" todir="../../itc_gespro_web/src/main/webapp/WEB-INF/lib" />
+
+	</target>	
+
+</project>

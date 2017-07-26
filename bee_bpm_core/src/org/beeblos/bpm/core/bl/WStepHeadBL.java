@@ -1,0 +1,141 @@
+package org.beeblos.bpm.core.bl;
+
+import static com.sp.common.util.ConstantsCommon.DEFAULT_MOD_DATE_TIME;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.beeblos.bpm.core.dao.WStepHeadDao;
+import org.beeblos.bpm.core.error.WStepDefException;
+import org.beeblos.bpm.core.error.WStepHeadException;
+import org.beeblos.bpm.core.model.WStepHead;
+import org.joda.time.DateTime;
+
+import com.sp.common.util.StringPair;
+
+public class WStepHeadBL {
+
+	private static final Log logger = LogFactory.getLog(WStepHeadBL.class.getName());
+
+	public WStepHeadBL() {
+
+	}
+
+	public Integer add(WStepHead stepHead, Integer currentUserId) throws WStepHeadException {
+
+		logger.debug("add() WStepHead - Name: [" + stepHead.getName() + "]");
+
+		// timestamp & trace info
+		stepHead.setInsertDate(new DateTime());
+		stepHead.setModDate(DEFAULT_MOD_DATE_TIME);
+		stepHead.setInsertUser(currentUserId);
+		stepHead.setModUser(currentUserId);
+		return new WStepHeadDao().add(stepHead);
+
+	}
+
+	/**
+	 * 
+	 * Se encarga de crear un WStepDef cuando creamos un WStepHead. Esto es debido a que no tiene sentido crear
+	 * un WStepHead sin crear a la vez un WStepDef. Este último no tendrá valores en los campos 
+	 * "rules, stepComments e instructions" (ya que estamos creando un WStepDef vacio)
+	 * por los que se pasan como "null"
+	 * 
+	 * @author dmuleiro 20130508
+	 * 
+	 * @param stepHead
+	 * @param currentUserId
+	 * @return
+	 * @throws WStepHeadException
+	 * @throws WStepDefException
+	 */
+	public Integer addStepAndFirstWStepDef(WStepHead stepHead, Integer currentUserId) throws WStepHeadException, WStepDefException {
+		
+		logger.debug("addStepAndFirstWStepDef() WStepHead - Name: ["+stepHead.getName()+"]");
+		
+		Integer stepHeadId = this.add(stepHead, currentUserId);
+		stepHead.setId(stepHeadId);
+		
+		new WStepDefBL().createNewWStepDef(stepHeadId, null, null, null, currentUserId);
+		
+		return stepHeadId;
+
+	}
+		
+	public void update(WStepHead stepHead, Integer currentUserId) throws WStepHeadException {
+
+		logger.debug("update() WStepHead < id = " + stepHead.getId() + ">");
+
+		if (!stepHead.equals(new WStepHeadDao().getStepDefByPK(stepHead.getId()))) {
+
+			// timestamp & trace info
+			stepHead.setModDate(new DateTime());
+			stepHead.setModUser(currentUserId);
+			new WStepHeadDao().update(stepHead);
+
+		} else {
+
+			logger.debug("WStepHeadBL.update - nothing to do ...");
+		}
+
+	}
+
+	public void delete(WStepHead stepHead, Integer currentUserId) throws WStepHeadException {
+
+		logger.info("delete() WStepHead - Name: [" + stepHead.getName() + "] id:["
+				+ stepHead.getId() + "]");
+
+		new WStepHeadDao().delete(stepHead);
+
+	}
+
+	public WStepHead getWStepHeadByPK(Integer id, Integer userId) throws WStepHeadException {
+
+		return new WStepHeadDao().getStepDefByPK(id);
+	}
+
+	public WStepHead getWStepHeadByName(String name, Integer userId) throws WStepHeadException {
+
+		return new WStepHeadDao().getStepDefByName(name);
+	}
+
+	public List<WStepHead> getStepDefs(Integer userId) throws WStepHeadException {
+
+		// nota: falta revisar el tema de los permisos de usuario para esto ...
+		return new WStepHeadDao().getWStepHeads();
+
+	}
+
+	public List<StringPair> getComboList(String firstLineText, String blank)
+			throws WStepHeadException {
+
+		return new WStepHeadDao().getComboList(firstLineText, blank);
+
+	}
+
+	public List<WStepHead> getStepListByFinder(String nameFilter, String commentFilter,
+			Integer userId, boolean isAdmin, String searchOrder) throws WStepHeadException {
+
+		return new WStepHeadDao().getStepListByFinder(nameFilter, commentFilter, userId, isAdmin,
+				searchOrder);
+
+	}
+
+
+	/**
+	 * Checks if given stepHead id has almost 1 wStepDef related.
+	 * This method will be used mainly to delete orphans purpose ...
+	 * dml 20130129
+	 * 
+	 * @param stepHeadId
+	 * @return
+	 * @throws WStepHeadException
+	 */
+	public boolean hasWStepDef(Integer stepHeadId) throws WStepHeadException{
+		
+		return new WStepHeadDao().hasWStepDef(stepHeadId);
+		
+	}
+
+}
