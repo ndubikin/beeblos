@@ -1,0 +1,630 @@
+#################33####### NOTA IMPORTANTE #############################
+
+### OJO que todo esto está apuntando a bee-bpm-dev pero si estáis trabajando con otra bd como gespro_generic habrá q ejecutarlo para esa también...
+### porque las tablas del workflow las utilizamos integradas con el schema de cada app
+
+# nes 20140122
+INSERT INTO `bee_bpm_dev`.`w_data_type` (`id`, `name`, `max_length`, `default_length`, `show_name`, `sql_type`) VALUES (8, 'TextArea', 2048, 512, 'TextArea', 12);
+UPDATE `bee_bpm_dev`.`w_data_type` SET `insert_date`='2014-01-21 21:44:36', `insert_user`=1000, `mod_user`=1000 WHERE `id`='8';
+
+ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` CHANGE COLUMN `order` `order` INT(3) NULL DEFAULT '0'  AFTER `active` ;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` 
+	ADD COLUMN `synchronize` BIT NOT NULL DEFAULT 0 COMMENT 'allows synchronize with a db or a java class/method'  AFTER `mod_user` , 
+	ADD COLUMN `synchrowith` CHAR NULL COMMENT 'J: JDBD / A: APP'  AFTER `synchronize` , 
+	ADD COLUMN `schema_` VARCHAR(150) NULL COMMENT 'for JDBC synchro: schema name'  AFTER `synchrowith` , 
+	ADD COLUMN `tablename` VARCHAR(150) NULL COMMENT 'for JDBC synchro: table name'  AFTER `schema_` , 
+	ADD COLUMN `fieldname` VARCHAR(150) NULL COMMENT 'for JDBC synchro: field name'  AFTER `tablename` , 
+	ADD COLUMN `classname` VARCHAR(255) NULL COMMENT 'for APP synchro: class name to execute'  AFTER `fieldname` , 
+	ADD COLUMN `get_method` VARCHAR(150) NULL COMMENT 'for APP synchro: method name to execute to get info from external source'  AFTER `classname` , 
+	ADD COLUMN `put_method` VARCHAR(150) NULL COMMENT 'for APP synchro: method name to execute to put info into external source'  AFTER `get_method` , 
+	ADD COLUMN `paramlist` VARCHAR(150) NULL COMMENT 'for APP synchro: parameter list to send'  AFTER `put_method` , 
+	ADD COLUMN `at_process_startup` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: at process startup must synchronize getting data from source'  AFTER `paramlist` , 
+	ADD COLUMN `at_process_end` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: at process ends must synchronize putting data to source'  AFTER `at_process_startup` , 
+	ADD COLUMN `when_step_work_is_invoked` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: with each new step uploaded must synchronize getting data from source'  AFTER `at_process_end` , 
+	ADD COLUMN `when_step_work_is_processed` BIT(1) NULL DEFAULT 0 COMMENT 'synchronize time: with each new step processed must synchronize putting data to source'  AFTER `when_step_work_is_invoked` , 
+	CHANGE COLUMN `required` `required` BIT(1) NOT NULL DEFAULT b'0'  ;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` CHANGE COLUMN `order` `order_` INT(3) NULL DEFAULT '0'  ;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_head_managed_data` CHANGE COLUMN `sxema` `schema_` VARCHAR(100) NOT NULL  ;
+
+## nes 20140207 - tabla para definir metodos para interacciones con sistemas externos...
+CREATE TABLE `bee_bpm_dev`.`w_process_head_method` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `head_id` int(11) NOT NULL DEFAULT '0',
+  `classname` varchar(255) DEFAULT NULL COMMENT 'for APP synchro: class name to execute',
+  `methodname` varchar(150) DEFAULT NULL COMMENT 'for APP synchro: method name to execute to get info from external source',
+  `type` varchar(1) DEFAULT 'P' COMMENT 'P = put method executes and receives 1 parameter response - G = get method executes and receive 1 loaded object as response',
+  `paramlist` varchar(512) DEFAULT NULL COMMENT 'for APP synchro: parameter list to send',
+  `at_process_startup` bit(1) DEFAULT b'0' COMMENT 'synchronize time: at process startup must synchronize getting data from source',
+  `at_process_end` bit(1) DEFAULT b'0' COMMENT 'synchronize time: at process ends must synchronize putting data to source',
+  `when_step_work_is_invoked` bit(1) DEFAULT b'0' COMMENT 'synchronize time: with each new step uploaded must synchronize getting data from source',
+  `when_step_work_is_processed` bit(1) DEFAULT b'0' COMMENT 'synchronize time: with each new step processed must synchronize putting data to source',
+  `logicalConditionExecution` varchar(512) DEFAULT NULL COMMENT 'logical condition valid form bee-bpm execution environment. If true then executes de method',
+  `insert_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `insert_user` int(11) NOT NULL DEFAULT '1000',
+  `mod_date` datetime DEFAULT '1970-01-01 01:01:00',
+  `mod_user` int(11) NOT NULL DEFAULT '1000',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `fk_w_process_head_managed_data_10` (`head_id`),
+  CONSTRAINT `fk_w_process_head_managed_data_10` FOREIGN KEY (`head_id`) REFERENCES `w_process_head` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='external methods for interactions with external systems...';
+
+CREATE TABLE `bee_bpm_dev`.`w_stepsequence_method` (
+  `id_step_sequence` int(11) NOT NULL,
+  `id_method` int(11) NOT NULL,
+  `enabled` bit(1) DEFAULT b'1',
+  `insert_user` int(11) NOT NULL,
+  `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_step_sequence`,`id_method`) USING BTREE,
+  KEY `ix_role` (`id_step_sequence`),
+  KEY `ix_user` (`id_method`),
+  KEY `fk_w_stepsequence_method_1` (`id_step_sequence`),
+  KEY `fk_w_stepsequence_method_2` (`id_method`),
+  CONSTRAINT `fk_w_stepsequence_method_1` FOREIGN KEY (`id_step_sequence`) REFERENCES `w_step_sequence_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_w_stepsequence_method_2` FOREIGN KEY (`id_method`) REFERENCES `w_process_head_methods` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation w-step-sequence-def with w-process-head-methods';
+
+ALTER TABLE `bee_bpm_dev`.`w_process_head_data_field` 
+COMMENT = 'Para definir los datafields pertenecientes a los procesos. Se definen aqui a nivel de WProcessHead y luego se puede dar visibilidad en cada step' ;
+
+## nes 20140705 - quito algunos not null que inicializabamos a cero y que en realidad no serían requeridos ...
+ALTER TABLE `bee_bpm_dev`.`w_step_work_assignment` 
+CHANGE COLUMN `reassigned_date` `reassigned_date` TIMESTAMP NULL DEFAULT NULL COMMENT 'TIMESTAMP CON LA REASIGNACIÓN'; 
+ALTER TABLE `bee_bpm_dev`.`w_step_work_assignment` 
+CHANGE COLUMN `from_reassignment_date` `from_reassignment_date` TIMESTAMP NULL DEFAULT NULL COMMENT 'TIMESTAMP CON LA REASIGNACIÓN' ;
+ALTER TABLE `bee_bpm_dev`.`w_step_work_assignment` 
+CHANGE COLUMN `insert_date` `insert_date` TIMESTAMP NULL DEFAULT NULL ,
+CHANGE COLUMN `insert_user` `insert_user` INT(11) NULL DEFAULT NULL ;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `id_user_assignment_method` INT DEFAULT NULL AFTER `expired_user_notice`;
+
+## nes 20140721 - quitados campos no utilizados en OP
+ALTER TABLE `gespro_anii`.`orden_pago`
+DROP FOREIGN KEY `fk_ur_orden_pago_4`,
+DROP FOREIGN KEY `fk_up_orden_pago_5`,
+DROP FOREIGN KEY `fk_ua_orden_pago_3`;
+ALTER TABLE `gespro_anii`.`orden_pago`
+DROP COLUMN `fecha_pagador`,
+DROP COLUMN `id_usuario_pagador`,
+DROP COLUMN `fecha_revisor`,
+DROP COLUMN `id_usuario_revisor`,
+DROP COLUMN `fecha_autorizador`,
+DROP COLUMN `id_usuario_autorizador`,
+ADD COLUMN `origen` SMALLINT NULL DEFAULT 0 COMMENT '0=Manual x sistema 1=Importado desde Postulacion 9=Migrado desde SGP' AFTER `id_orden_pago`,
+DROP INDEX `fk_up_orden_pago_5` ,
+DROP INDEX `fk_ur_orden_pago_4` ,
+DROP INDEX `fk_ua_orden_pago_3` ; 
+
+##dml 20140909
+ALTER TABLE `bee_bpm_dev`.`email_template` 
+ADD COLUMN `automatic_send` BIT(1) NULL DEFAULT b'0' AFTER `email_theme_id`,
+ADD COLUMN `id_user_email_account` INT(11) DEFAULT NULL AFTER `automatic_send`;
+
+##dml 20140911
+ALTER TABLE `bee_bpm_dev`.`email_template` 
+ADD COLUMN `to_` VARCHAR(255) NULL DEFAULT NULL AFTER `template_file_name`,
+ADD COLUMN `cc` VARCHAR(255) NULL DEFAULT NULL AFTER `to_`,
+ADD COLUMN `bcc` VARCHAR(255) NULL DEFAULT NULL AFTER `cc`;
+
+##dml 20141010
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+ADD COLUMN `priority` INT(11) NULL DEFAULT 0 AFTER `category`;
+
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+CHANGE COLUMN `label_user_readable` `label_user_readable` VARCHAR(255) NULL ;
+
+## nes 20141014
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+ADD COLUMN `system_role` BIT NOT NULL DEFAULT 0 COMMENT 'Indica que es un rol del sistema. Los roles del sistema no se pueden borrar' AFTER `name`;
+
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+CHANGE COLUMN `insert_user` `insert_user` INT(11) NULL ,
+CHANGE COLUMN `insert_date` `insert_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CHANGE COLUMN `mod_user` `mod_user` INT(11) NULL ,
+CHANGE COLUMN `mod_date` `mod_date` DATETIME NOT NULL DEFAULT  '1970-01-02 00:00:02' ;
+
+INSERT INTO `bee_bpm_dev`.`w_role_def` (`id`, `name`, `system_role`) VALUES ('1', 'ORIGINATOR', 1);
+INSERT INTO `bee_bpm_dev`.`w_role_def` (`id`, `name`, `system_role`) VALUES ('2', 'PROCESS_ADMINISTRATOR', 1);
+
+##dml 20141010
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+ADD COLUMN `priority` INT(11) NULL DEFAULT 0 AFTER `category`;
+
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+CHANGE COLUMN `label_user_readable` `label_user_readable` VARCHAR(255) NULL ;
+
+#dml 20141020
+ALTER TABLE `bee_bpm_dev`.`notification_event` 
+ADD COLUMN `comments` VARCHAR(255) NULL DEFAULT NULL AFTER `priority`;
+
+### repetido mas abajo - nes 20141215
+## nes 20141027
+#CREATE TABLE `w_process_step_def` (
+#  `id_process` int(11) NOT NULL,
+#  `id_step` int(11) NOT NULL,
+#  `add_date` timestamp NOT NULL DEFAULT '1970-01-01 02:01:00',
+#  `add_user` int(11) DEFAULT NULL,
+#  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#  `mod_user` int(11) DEFAULT NULL,
+#  PRIMARY KEY (`id_process`,`id_step`)
+#) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation between process and their steps';
+#
+### carga los step para el proceso id=1
+#insert into w_process_step_def
+#SELECT 1, sd.id,null,null,null,null 
+#FROM w_step_def sd  
+#WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  w_step_sequence_def wsd WHERE wsd.process_id = 1
+#	UNION SELECT DISTINCT id_dest_step FROM w_step_sequence_def WHERE process_id = 1  ) ;
+	
+# nes 20141027
+CREATE TABLE `bee_bpm_dev`.`w_process_step_def` (
+  `id_process` int(11) NOT NULL,
+  `id_step` int(11) NOT NULL,
+  `add_date` timestamp NOT NULL DEFAULT '1970-01-01 02:01:00',
+  `add_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_process`,`id_step`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='relation between process and their steps';
+
+## carga los step para el proceso id=1
+insert into `bee_bpm_dev`.`w_process_step_def`
+SELECT 1, sd.id,null,null,null,null 
+FROM `bee_bpm_dev`.`w_step_def` sd  
+WHERE sd.id IN (SELECT DISTINCT wsd.id_origin_step FROM  `bee_bpm_dev`.`w_step_sequence_def` wsd WHERE wsd.process_id = 1
+	UNION SELECT DISTINCT id_dest_step FROM `bee_bpm_dev`.`w_step_sequence_def` WHERE process_id = 1  ) ;
+	
+
+## dml 20141031 - Cambios tablas de relacion process-role
+ALTER TABLE `bee_bpm_dev`.`w_process_role` 
+DROP PRIMARY KEY;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_role` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+
+## dml 20141031 - Cambios tablas de relacion process-user
+ALTER TABLE `bee_bpm_dev`.`w_process_user` 
+DROP PRIMARY KEY;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_user` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+
+
+## dml 20141031 - Cambios tablas de relacion step-role
+ALTER TABLE `bee_bpm_dev`.`w_step_role`
+DROP FOREIGN KEY `fk_rol`,
+DROP FOREIGN KEY `fk_step`;
+ALTER TABLE `bee_bpm_dev`.`w_step_role`
+DROP PRIMARY KEY;
+ALTER TABLE `bee_bpm_dev`.`w_step_role`
+ADD CONSTRAINT `fk_rol_1z`
+  FOREIGN KEY (`id_role`)
+  REFERENCES `bee_bpm_dev`.`w_role_def` (`id`),
+ADD CONSTRAINT `fk_step_1z`
+  FOREIGN KEY (`id_step`)
+  REFERENCES `bee_bpm_dev`.`w_step_def` (`id`); 
+  
+ALTER TABLE `bee_bpm_dev`.`w_step_role` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+
+## dml 20141031 - Cambios tablas de relacion step-user
+ALTER TABLE `bee_bpm_dev`.`w_step_user` 
+DROP PRIMARY KEY;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_user` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+ADD PRIMARY KEY (`id`);
+
+## dml 20141104 - Cambios tablas de relacion w_user_def-w_role_def
+ALTER TABLE `bee_bpm_dev`.`w_user_role` 
+ADD COLUMN `id` INT(11) NOT NULL AUTO_INCREMENT FIRST,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id`);
+
+## dml 20141128
+ALTER TABLE `bee_bpm_dev`.`w_step_work` 
+CHANGE COLUMN `mod_date` `mod_date` DATETIME NOT NULL DEFAULT '0001-01-01 00:00:01' ;
+ALTER TABLE `bee_bpm_dev`.`w_step_work` 
+ADD COLUMN `url_data` VARCHAR(255) NULL DEFAULT NULL AFTER `send_user_notes_to_next_step`;
+
+## nes 20141128
+ALTER TABLE `bee_bpm_dev`.`system_object` 
+ADD COLUMN `object_class_bl` VARCHAR(255) NULL DEFAULT NULL AFTER `object_class`;
+
+## nes 20141206
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+ADD COLUMN `runtime_role` BIT(1) NULL DEFAULT b'0' AFTER `system_role`;
+
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+ADD COLUMN `id_external_method` INT DEFAULT NULL AFTER `runtime_role`;
+
+
+ALTER TABLE `bee_bpm_dev`.`w_role_def` 
+ADD INDEX `fk_external_method_01_idx` (`id_external_method` ASC);
+
+ALTER TABLE `bee_bpm_dev`.`w_role_def`
+ADD CONSTRAINT `fk_external_method_01`
+  FOREIGN KEY (`id_external_method`)
+  REFERENCES `bee_bpm_dev`.`w_process_head_method` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+ALTER TABLE `bee_bpm_dev`.`w_process_def` 
+CHANGE COLUMN `version` `version` INT(3) NOT NULL DEFAULT 1 COMMENT 'version del proceso' ;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+CHANGE COLUMN `active` `active` BIT(1) NOT NULL DEFAULT b'1' ;
+
+## mod user debe poder ser null porque si no se ha modificado el registro ...
+ALTER TABLE `bee_bpm_dev`.`w_step_response_def` 
+CHANGE COLUMN `mod_user` `mod_user` INT(11) NULL ;
+
+## nes 20141215
+
+CREATE TABLE `bee_bpm_dev`.`w_user_role_work` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_user` int(11) NOT NULL COMMENT 'ID usuario asignado a un rol en tiempo de ejecución',
+  `id_role` int(11) NOT NULL,
+  `id_process_work` int(11) NOT NULL COMMENT 'ID del proceso en ejecución',
+  `insert_date` datetime DEFAULT NULL,
+  `insert_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `wurw_x_wru` (`id_process_work`,`id_role`,`id_user`),
+  KEY `wurw_x_ru` (`id_role`,`id_user`),
+  KEY `wurw_x_ur` (`id_user`,`id_role`),
+  CONSTRAINT `fk_wurw_user1` FOREIGN KEY (`id_user`) REFERENCES `w_user_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_wurw_role1` FOREIGN KEY (`id_role`) REFERENCES `w_role_def` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_wurw_work1` FOREIGN KEY (`id_process_work`) REFERENCES `w_process_work` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='para asignar usuarios a un rol en tiempo de ejecución';
+
+## dml 20141218 - nuevo campo de user
+ALTER TABLE `incidencias_sp`.`user` 
+ADD COLUMN `system_user` BIT(1) NULL DEFAULT b'0' AFTER `login_id`;
+
+##--
+## pab 20141213
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `xml_href` TEXT NULL AFTER `route_eval_order`,
+ADD COLUMN `xml_id` TEXT NULL AFTER `xml_href`,
+ADD COLUMN `xml_label` TEXT NULL AFTER `xml_id`,
+ADD COLUMN `xml_rules` TEXT NULL AFTER `xml_label`,
+ADD COLUMN `mxcell_string` TEXT NULL AFTER `xml_rules`;
+
+ALTER TABLE `bee_bpm_dev`.`w_process_def` 
+ADD COLUMN `xml_only_objects_string` TEXT NULL AFTER `mod_user`;
+
+##--
+ALTER TABLE `bee_bpm_dev`.`w_step_sequence_def` 
+ADD COLUMN `mxcell_string` TEXT NULL AFTER `mod_user`,
+ADD COLUMN `xml_id` TEXT NULL AFTER `mxcell_string`;
+##--
+ALTER TABLE `bee_bpm_dev`.`w_process_def` 
+ADD COLUMN `xml_symbols` TEXT NULL AFTER `mod_user`,
+ADD COLUMN `xml_layers` TEXT NULL AFTER `xml_symbols`;
+
+## nes 20150102 - porque definimos que el source que viene desde el begin puede venir con null.
+ALTER TABLE `bee_bpm_dev`.`w_step_sequence_def` 
+CHANGE COLUMN `id_origin_step` `id_origin_step` INT(11) NULL DEFAULT NULL ;
+
+## nes 20150107 quitar fechas en cero...
+UPDATE bee_bpm_dev.w_step_type_def set mod_date='2013-09-15 11:05:52',insert_date='1970-01-01 01:00:00' where id>1;
+
+## pab 20150107 - esto es para cambiar el id de w_step_type_def de smallint a int. primero hay que borrar la foreign key de la tabla w_step_def,
+## luego cambiar las columnas en las dos tablas a int y luego volver a crear la foreign key
+ALTER TABLE `bee_bpm_dev`.`w_step_def`  
+DROP FOREIGN KEY `fk_w_step_def_2`;
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
+CHANGE COLUMN `id` `id` INT NOT NULL;
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+CHANGE COLUMN `step_type_id` `step_type_id` INT NOT NULL;
+ALTER TABLE `bee_bpm_dev`.`w_step_def`  
+ADD CONSTRAINT `fk_w_step_def_2`  
+FOREIGN KEY (`step_type_id`)   
+REFERENCES `bee_bpm_dev`.`w_step_type_def` (`id`)   ON DELETE NO ACTION   ON UPDATE NO ACTION;
+
+##--
+##pab 20150216
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` ADD COLUMN `allowed_responses` BIT NOT NULL DEFAULT 0 AFTER `type`;
+## set allowed responses to true for task type
+UPDATE `bee_bpm_dev`.`w_step_type_def` SET allowed_responses=1 WHERE id=1; 
+
+## nes 20150225
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+DROP COLUMN `xml_label`;
+
+ALTER TABLE `bee_bpm_dev`.`w_stepsequence_method` 
+CHANGE COLUMN `insert_user` `insert_user` INT(11) NULL;
+
+## dml 20150410 Tablas para la gestión de los demonios de las cuentas de email
+CREATE TABLE `bee_bpm_dev`.`email_d_conf` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `enabled` bit(1) NOT NULL DEFAULT b'1',
+  `user_email_account_id` int(11) DEFAULT NULL,
+  `email_template_id` int(11) DEFAULT NULL,
+  `polling_frequency` int(11) DEFAULT NULL,
+  `daemon_class_implementation_name` varchar(255) DEFAULT NULL,
+  `doc_class_id` int(11) DEFAULT NULL,
+  `doc_class_name` varchar(255) DEFAULT NULL,
+  `beeblos_server_id` int(11) DEFAULT NULL,
+  `input_folder` varchar(50) DEFAULT NULL,
+  `mark_as_read` bit(1) DEFAULT b'0',
+  `leave_on_input_folder` bit(1) DEFAULT b'0',
+  `valid_email_folder` varchar(50) DEFAULT NULL,
+  `move_to_valid_folder` bit(1) DEFAULT b'0',
+  `invalid_email_folder` varchar(50) DEFAULT NULL,
+  `move_to_invalid_folder` bit(1) DEFAULT b'0',
+  `error_email_folder` varchar(50) DEFAULT NULL,
+  `move_to_error_folder` bit(1) DEFAULT b'0',
+  `checking_field_name` varchar(50) DEFAULT NULL,
+  `checking_field_value` varchar(50) DEFAULT NULL,
+  `type` varchar(10) DEFAULT NULL,
+  `add_date` datetime NOT NULL DEFAULT '1970-01-01 01:01:00',
+  `add_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_email_d_conf_1_idx` (`user_email_account_id`),
+  KEY `fk_email_d_conf_2_idx` (`email_template_id`),
+  CONSTRAINT `fk_email_d_conf_1` FOREIGN KEY (`user_email_account_id`) REFERENCES `usuario_cuentas_email` (`id_uce`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_email_d_conf_2` FOREIGN KEY (`email_template_id`) REFERENCES `email_template` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `bee_bpm_dev`.`email_d_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email_d_conf_id` int(11) DEFAULT NULL,
+  `processed` bit(1) DEFAULT b'0',
+  `processed_date` datetime DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `object_id` int(11) DEFAULT NULL,
+  `object_class` varchar(255) DEFAULT NULL,
+  `from_account` varchar(255) DEFAULT NULL,
+  `message_id` varchar(255) DEFAULT NULL,
+  `store_folder` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_email_d_log_1_idx` (`email_d_conf_id`),
+  KEY `fk_email_d_log_2_idx` (`user_id`),
+  CONSTRAINT `fk_email_d_log_1` FOREIGN KEY (`email_d_conf_id`) REFERENCES `email_d_conf` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_email_d_log_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE `bee_bpm_dev`.`email_d_poll` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email_d_conf_id` int(11) DEFAULT NULL,
+  `begin_date` datetime DEFAULT NULL,
+  `end_date` datetime DEFAULT NULL,
+  `thread_name` varchar(100) DEFAULT NULL,
+  `qty_input_email` int(11) DEFAULT NULL,
+  `qty_valid_email` int(11) DEFAULT NULL,
+  `qty_invalid_email` int(11) DEFAULT NULL,
+  `qty_error_email` int(11) DEFAULT NULL,
+  `comment` varchar(255) DEFAULT NULL,
+  `comment_last_modified` datetime DEFAULT NULL,
+  `add_date` datetime NOT NULL DEFAULT '1970-01-01 01:01:00',
+  `add_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mod_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_email_d_poll_1_idx` (`email_d_conf_id`),
+  CONSTRAINT `fk_email_d_poll_1` FOREIGN KEY (`email_d_conf_id`) REFERENCES `email_d_conf` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+### nes - dml - 20150413
+## demonio de test
+INSERT INTO `bee_bpm_dev`.`email_d_conf`
+VALUES ('2', 1, '4', '1', '10', 'org.beeblos.bpm.email.impl.EmailDaemonPollerClassImpl', '614', 'eMail', NULL, 'Inbox', 0, 0, 'Read', 0, 'Revision', 0, 'Error', 0, NULL, NULL, 'INPUT', '2015-04-13 09:54:29', '1000', '2015-04-13 11:30:53', '1000');
+
+
+## dml 20150414 - Definición de la nueva tabla de "InitEvent"
+CREATE TABLE `bee_bpm_dev`.`w_step_type_def_ie` (
+  `id_step_type_def` int(11) NOT NULL,
+  PRIMARY KEY (`id_step_type_def`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+## dml 20150414 - Definición de la nueva tabla de "MessageBegin"
+CREATE TABLE `bee_bpm_dev`.`w_step_type_def_mb` (
+  `id_step_type_def` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id_step_type_def`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='defines a message begin step type';
+
+## dml 20150414 - Definición de la tabla de relacion entre MessageBegin e EmailDConf
+CREATE TABLE `bee_bpm_dev`.`w_step_type_def_email_d_conf` (
+  `id` int(11) NOT NULL,
+  `id_step_type_def` int(11) NOT NULL,
+  `id_email_d_conf` int(11) NOT NULL,
+  `add_date` timestamp NOT NULL DEFAULT '1970-01-01 01:01:01',
+  `add_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_w_std_mb_edc_1_idx` (`id_email_d_conf` ASC),
+  INDEX `fk_w_std_mb_edc_2_idx` (`id_step_type_def` ASC),
+  CONSTRAINT `fk_w_std_mb_edc_1`
+    FOREIGN KEY (`id_email_d_conf`)
+    REFERENCES `bee_bpm_dev`.`email_d_conf` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_w_std_mb_edc_2`
+    FOREIGN KEY (`id_step_type_def`)
+    REFERENCES `bee_bpm_dev`.`w_step_type_def_mb` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+    
+## dml 20150414 - Definición de la nueva tabla de "GenericGroup"
+CREATE TABLE `bee_bpm_dev`.`w_step_type_def_gen_group` (
+  `id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    
+## dml 20150414 - Definición de la nueva tabla de "GenericType"
+CREATE TABLE `bee_bpm_dev`.`w_step_type_def_gen_type` (
+  `id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+## dml 20150414 - insertamos el MessageBegin que tenemos (que es el de id=22) dentro del grupo, del MB y la relacion con el EmailDConf
+INSERT INTO bee_bpm_dev.w_step_type_def_ie
+VALUES('22');
+INSERT INTO bee_bpm_dev.w_step_type_def_mb
+VALUES('22');
+INSERT INTO bee_bpm_dev.w_std_mb_edc
+VALUES('1', '22', '2', '2013-09-14 09:02:45', '1000');
+
+## dml 20150414 - insertamos el resto en la tabla de "GenericGroup"
+INSERT INTO bee_bpm_dev.w_step_type_def_gen_group
+SELECT id FROM bee_bpm_dev.w_step_type_def
+where id != 22;
+
+
+## pab 14042015 - hay que inicializar en '' el string instrucciones porque si no en el mapa da problemas el JS y es mas lioso de resolver a nivel de js
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+CHANGE COLUMN `instructions` `instructions` VARCHAR(255) DEFAULT '' ;
+
+
+update `bee_bpm_dev`.`w_step_def`  set `instructions` = "" where `instructions` is null and id>0;
+
+##--
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `allow_attach_documents` BIT(1) NULL DEFAULT b'0' AFTER `mxcell_string`,
+ADD COLUMN `render_attached_documents` BIT(1) NULL DEFAULT b'0' AFTER `allow_attach_documents`;
+
+## dml 20150420 - faltaba el autoincrement a esta tabla
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def_email_d_conf` 
+CHANGE COLUMN `id_step_type_def` `id_step_type_def` INT(11) NOT NULL AUTO_INCREMENT ;
+
+##--
+## dml 20150424 - faltaba el autoincrement a esta tabla
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `step_type_configuration` LONGTEXT NULL DEFAULT NULL AFTER `render_attached_documents`;
+
+## dml 20150424 - como he borrado los mappings, para que sepa que los "MessageBegin" son de ese tipo tengo que poner unos datos básicos en el XML de los WStepDef con step_type_id = 22 (que es el de MessageBegin)
+UPDATE bee_bpm_dev.w_step_def
+SET step_type_configuration = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><messageBegin><active>false</active><deleted>false</deleted><engineReq>false</engineReq></messageBegin>'
+WHERE step_type_id = 22;
+
+##--
+## dml 20150424 - campo donde se guardará el paquete.objeto al que se mapeará cada steptype
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
+ADD COLUMN `related_class` VARCHAR(255) NULL DEFAULT NULL AFTER `allowed_responses`;
+
+## dml 20150424 - metemos los valores default para el campo insertado arriba
+UPDATE `bee_bpm_dev`.`w_step_type_def` 
+SET `related_class`='org.beeblos.bpm.core.model.bpmn.MessageBegin' 
+WHERE `id`='22';
+UPDATE `bee_bpm_dev`.`w_step_type_def` 
+SET `related_class`='org.beeblos.bpm.core.model.bpmn.GenericStepType' 
+WHERE `id`!='22';
+
+
+##dml 20150528
+ALTER TABLE `bee_bpm_dev`.`user_settings` 
+ADD COLUMN `only_my_app_info` BIT(1) NULL DEFAULT b'0' AFTER `auto_bind_filter`;
+
+## nes 20151018
+ALTER TABLE `bee_bpm_dev`.`w_step_work` 
+CHANGE COLUMN `response` `response` INT(11) NULL DEFAULT NULL COMMENT 'El id de la respuesta elegida ( o aclaracion si no habian opciones / rutas )' ;
+
+UPDATE `bee_bpm_dev`.`w_step_work` set response=null WHERE response=0;
+
+## nes 20151020
+ALTER TABLE `bee_bpm_dev`.`w_step_type_def` 
+CHANGE COLUMN `type` `event_type` VARCHAR(15) NOT NULL ,
+CHANGE COLUMN `active` `active` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'event type: begin event, end, event, gateway, etc' ;
+
+ALTER TABLE `bee_bpm_dev`.`w_step_def` 
+ADD COLUMN `turn_back_enabled` BIT(1) NULL DEFAULT b'0' AFTER `deleted`;
+
+## dml 20151105 - borramos las dos columnas su_lectura y admon que estaran obsoletas
+ALTER TABLE `bee_bpm_dev`.`user` 
+DROP COLUMN `su_lectura`,
+DROP COLUMN `admon`;
+
+## dml 20151105 - cambiamos el enabled a bit y la inicializacion de la addDate que estaba en '0000-...
+ALTER TABLE `bee_bpm_dev`.`user` 
+CHANGE COLUMN `enabled` `enabled` BIT(1) NULL DEFAULT b'1' ,
+CHANGE COLUMN `add_date` `add_date` TIMESTAMP NOT NULL DEFAULT '1970-01-01 01:01:00' ;
+
+## dml 20151105 - updateamos para que todos los user que existian esten enabled
+UPDATE `bee_bpm_dev`.`user` SET enabled = true;
+
+## nes 20160311 - campos para anotar la query de runtime roles
+ALTER TABLE `gespro_generic_prod`.`w_role_def` 
+ADD COLUMN `rtr_named_query` VARCHAR(100) NULL COMMENT 'Nombre de la named query que devuelve la lista de ids que tienen permisos sobre el paso. Se le pasará el id del objeto relacionado' AFTER `runtime_role`;
+
+ALTER TABLE `gespro_generic_prod`.`w_role_def` 
+CHANGE COLUMN `rtr_query` `rtr_query` VARCHAR(1200) NULL DEFAULT NULL COMMENT 'query que debe devolver la lista de id-usuario (w_useridmapper) que pertenecen al rol' ;
+
+
+## nes - agregada prioridad en las tareas del beebpm
+ALTER TABLE `gespro_generic_prod`.`w_step_work` 
+ADD COLUMN `priority` INT NOT NULL DEFAULT 0 AFTER `arriving_date`;
+
+
+## pab 20160322 - tabla para habilitar móviles para los usuarios. Va independiente a wuserdef.
+CREATE TABLE `w_user_device` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(255) NOT NULL,
+  `device_id` varchar(36) NOT NULL,
+  `phone_number` varchar(45) DEFAULT NULL,
+  `device_type_id` int(11) DEFAULT NULL,
+  `is_authorized` bit(1) DEFAULT NULL,
+  `authorization_user` int(11) DEFAULT NULL,
+  `authorization_date` timestamp NULL DEFAULT '1970-01-02 01:00:02',
+  `add_user` int(11) DEFAULT NULL,
+  `add_date` timestamp NULL DEFAULT '1970-01-02 01:00:02',
+  `mod_user` int(11) DEFAULT NULL,
+  `mod_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+## dml 20160524 - nueva tabla para el envio de email en rutas, pasos y procesos
+CREATE TABLE `w_email_def` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `send_email_is_active` BIT(1) NOT NULL DEFAULT b'0',
+  `id_object` INT(11) NOT NULL,
+  `id_object_type` VARCHAR(255) NOT NULL,
+  `email_destination_field_bcc` BIT(1) NOT NULL DEFAULT b'0',
+  `id_roles_related` VARCHAR(255) NULL,
+  `id_users_related` VARCHAR(255) NULL,
+  `other_emails` VARCHAR(255) NULL,
+  `id_email_template` INT(11) NULL,
+  `add_date` DATETIME NOT NULL,
+  `add_user` INT(11) NOT NULL,
+  `mod_date` DATETIME NULL DEFAULT NULL,
+  `mod_user` INT(11) NULL DEFAULT NULL,
+  `fh_ts` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'campo automatico para TS de base de datos' ,
+  PRIMARY KEY (`id`),
+  INDEX `fk_wed_1_idx` (`id_email_template` ASC),
+  CONSTRAINT `fk_wed_1`
+    FOREIGN KEY (`id_email_template`)
+    REFERENCES `email_template` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+## dml 20160525 - relacion con la w_step_sequence_def del w_email_def
+ALTER TABLE `w_step_sequence_def` 
+ADD COLUMN `id_email_def` INT(11) NULL DEFAULT NULL AFTER `xml_id`,
+ADD INDEX `fk_email_def_step_seq_idx` (`id_email_def` ASC);
+ALTER TABLE `w_step_sequence_def` 
+ADD CONSTRAINT `fk_email_def_step_seq`
+  FOREIGN KEY (`id_email_def`)
+  REFERENCES `w_email_def` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+    
+## dml 20160525 - nuevo email template grupo para las plantillas "Managed" por objetos del workflow
+INSERT INTO `email_template_theme` (`id`, `name`) VALUES ('12', 'Managed');
+
+## nes 20160527
+ALTER TABLE `w_process_head` 
+ADD COLUMN `short_name` VARCHAR(45) NULL AFTER `name`;
+
+## dml 20170725 - hasta aqui VERSION 250

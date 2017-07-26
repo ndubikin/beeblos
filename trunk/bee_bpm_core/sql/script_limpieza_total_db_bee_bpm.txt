@@ -1,0 +1,56 @@
+SET foreign_key_checks = 0;
+
+DELETE FROM `bee_bpm_dev`.`w_process_def`;
+ALTER TABLE `bee_bpm_dev`.`w_process_def` AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_role`;
+ALTER TABLE  `bee_bpm_dev`.`w_process_role`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_head`;
+ALTER TABLE  `bee_bpm_dev`.`w_process_head`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_head_data_field`;
+ALTER TABLE  `bee_bpm_dev`.`w_process_head_data_field`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_head_managed_data`;
+ALTER TABLE  `bee_bpm_dev`.`w_process_head_managed_data`  AUTO_INCREMENT=1;
+
+
+DELETE FROM `bee_bpm_dev`.`w_stepsequence_method`;
+ALTER TABLE  `bee_bpm_dev`.`w_stepsequence_method`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_head_method`;
+ALTER TABLE  `bee_bpm_dev`.`w_process_head_method`  AUTO_INCREMENT=1;
+
+
+DELETE FROM `bee_bpm_dev`.`w_step_data_field` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_data_field`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_def` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_def`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_head`;
+ALTER TABLE  `bee_bpm_dev`.`w_step_head` AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_response_def` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_response_def`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_role` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_role`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_sequence_def` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_sequence_def`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_work` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_work`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_work_assignment` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_work_assignment`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_step_work_sequence` ;
+ALTER TABLE  `bee_bpm_dev`.`w_step_work_sequence`  AUTO_INCREMENT=1;
+
+DELETE FROM `bee_bpm_dev`.`w_process_work`;
+ALTER TABLE  `bee_bpm_dev`.`w_process_work` AUTO_INCREMENT=1;
+
+SET foreign_key_checks = 1;
